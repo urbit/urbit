@@ -7729,22 +7729,31 @@
           %+  ev-tace  fin.veb.bug.ames-state
           |.("give %sage={(spud path)}")
         ::
-        ::
         ++  ev-give-rate
-          |=  [spar =rate]
+          |=  [listeners=(jug duct ints) =spar =rate]
           ^+  ev-core
-          ?~  ms=(~(get by pit.per) path)
-            %-  %+  ev-tace  |(odd.veb.bug.ames-state fin.veb.bug.ames-state)
-                |.("weird %rate; missing path={(spud path)}}")
-            ev-core
-          %-  ~(rep by for.u.ms)
+          %-  ~(rep by listeners)
           |=  [[hen=duct ints=(set ints)] core=_ev-core]
           %-  ~(rep by ints)
           |=  [int=^ints c=_core]
           ?@  int  c
-          %.  (ev-emit:c hen %give %rate ship^path rate)
+          ::  XX decrypt path.spar
+          %.  (ev-emit:c hen %give %rate spar rate)
           %+  ev-tace  fin.veb.bug.ames-state
-          |.("give %rate={(spud path)}")
+          |.("give %rate={(spud path.spar)}")
+        ::
+        :: ++  ev-give-ints
+        ::   |=  [target=ints spar =rate =sage]
+        ::   |=  [output=ints core=_ev-core]
+        ::   ^+  ev-core
+        ::   :: %-  %+  ev-tace:core  fin.veb.bug.ames-state
+        ::   ::     |.("give {<target>}={(spud path.spar)}")
+        ::   ?.  =(target output)  core
+        ::   :: %+  ev-tace  fin.veb.bug.ames-state
+        ::   :: |.("give %rate={(spud path)}")
+        ::   ?@  target
+        ::     (ev-emit:core hen %give %sage spar sage)
+        ::   (ev-emit:core hen %give %rate spar rate)
         ::
         ++  ev-add-rate
           |=  [=path task=?(~ ?([%chum ~] [%keen kid=(unit @)])) freq=@ud]
@@ -7780,11 +7789,33 @@
           ^+  ev-core
           %-  %+  ev-tace  fin.veb.bug.ames-state
               |.("cancel peek path={(spud path)}}")
-          ?~  ms=(~(get by pit.per) path)
+          =+  ls=(~(get ju tip.per) path)
+          ?:  =(~ ls)  :: XX TMI
+            %-  %+  ev-tace  odd.veb.bug.ames-state
+                |.("no tips for path={(spud path)}}")
+            :: XX check if there's something in the .pit?
             ev-core
           ?:  all
+            %-  ~(rep in ls)
+            |=  [[=duct =^path] core=_ev-core]
+            ?~  ms=(~(get by pit.per) path)  core
             =.  pit.per  (~(del by pit.per) path)
-            (ev-give-sage for.u.ms path ~)
+            ?>  (~(has in ~(key by for.u.ms)) duct)
+            =.  core  (ev-give-rate:core for.u.ms her^path *rate)
+            (ev-give-sage:core for.u.ms path ~)
+          ::  find namespace path used by the listener
+          ::
+          =.  path
+            %-  ~(rep in ls)
+            |=  [[=duct =^path] p=_path]
+            ?~  ms=(~(get by pit.per) path)          p
+            ?.  =(hen duct)                          p
+            ?.  (~(has in ~(key by for.u.ms)) duct)  p
+            path
+          ?~  ms=(~(get by pit.per) path)
+            %-  %+  ev-tace  odd.veb.bug.ames-state
+                |.("no pit for path={(spud path)}}")
+            ev-core  :: XX weird log
           =.  for.u.ms
             %-  ~(rep by for.u.ms)
             |=  [[hen=duct ints=(set ints)] for=_for.u.ms]
@@ -10702,8 +10733,12 @@
       =^  moves  ames-state
         ?.  ?=([~ %known *] +.ship-state)
           !!  :: no %aliens allowed
-        =<  ev-abet
-        (ev-give-rate:(ev-foco:ev-core ship.spar +.u.ship-state) spar rate)
+        =+  ev-core=(ev-foco:ev-core ship.spar +.u.ship-state)
+        ?^  ms=(~(get by pit.per.ev-core) path.spar)
+          ev-abet:(ev-give-rate:ev-core for.u.ms spar rate)
+        %-  %+  ev-tace:ev-core  [|(odd fin)]:veb.bug.ames-state
+            |.("weird %rate; missing path={(spud path.spar)}}")
+        `ames-state
       moves^vane-gate
     ::  register interest in the %rate of the peek for this path
     ::
