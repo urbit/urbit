@@ -879,15 +879,24 @@
     ::  when changing any of the tasks above, please follow the same patterns
     ::  that exist in ames.hoon.
     ::
-        [%mate (unit ship) dry=?]     ::  per-peer migration
-        [%rege (unit ship) dry=?]     ::  per-peer regression
-        [%load ?(%mesa %ames)]        ::  load core for new peers; XX [... term]
+        [%mate (unit ship) dry=?]   :: per-peer migration
+        [%rege (unit ship) dry=?]   :: per-peer regression
+        [%load ?(%mesa %ames)]      :: load core for new peers; XX [... term]
     ::
-        [%heer =lane:pact p=@]        ::  receive a packet
-        [%mess =mess]                 ::  receive a message
-        [%moke =space =spar =path]    ::  initiate %poke request
-        [%meek =space =spar]          ::  initiate %peek request
-        [%mage =space =spar]          ::  send %page of data; intended for acks
+        [%heer =lane:pact p=@]      :: receive a packet
+        [%mess =mess]               :: receive a message
+        [%moke =space =spar =path]  :: initiate %poke request
+        [%meek =space =spar]        :: initiate %peek request
+        [%mage =space =spar]        :: send %page of data; intended for acks
+        [%rate =spar rate]          :: get rate progress for +peeks, from unix
+        $:  %prog                   :: subscribe to progress %rate
+            =spar                   :: if ?=(^ task), use it to modify path.spar
+            $=  task
+            $@(~ ?([%chum ~] [%keen kid=(unit @)]))
+            feq=@ud
+        ==
+        [%whey =spar boq=@ud]       :: weight of noun bounded at .path.spar
+                                    :: as measured by .boq
     ==
   ::
   ::  $gift: effect from ames
@@ -930,6 +939,7 @@
         [%push p=(list lane:pact) q=@]   :: send a request/response packet
         [%sage =sage:mess]               :: give deserialized/open payload
         $>(%page mess)                   :: give serialized/sealed payload
+        $>(%rate task)
     ==
   ::
   ::::                                                  ::  (1a2)
@@ -1116,8 +1126,8 @@
     $+  alien-agenda
     $:  messages=(list [=duct =plea])
         packets=(set =blob)
-        keens=(jug path duct)
-        chums=(jug path duct)
+        keens=(jug [path ints] duct)
+        chums=(jug [path ints] duct)
     ==
   +$  chain  ((mop ,@ ,[key=@ =path]) lte)
   ::  $peer-state: state for a peer with known life and keys
@@ -1167,7 +1177,7 @@
         num-fragments=@ud
         num-received=@ud
         next-wake=(unit @da)
-        listeners=(set duct)
+        listeners=(jug duct ints)
         metrics=pump-metrics
     ==
   +$  want
@@ -1625,12 +1635,11 @@
   +$  ovni-state
     $+  ovni-state
     $:  pokes=(list [=duct message=mesa-message])
-        peeks=(jug path duct)
-        chums=(jug path duct)
+        peeks=(jug [path ints] duct)
+        chums=(jug [path ints] duct)
     ==
   ::
   +$  fren-state
-    $+  fren-state
     $:  azimuth-state
         lane=(unit lane:pact)
         =qos
@@ -1643,12 +1652,17 @@
         ::  read data:  path=pek-path
         ::              path=ack-path  (~nec) /ack/~zod/flow/bone=0/mess=1
         ::
-        pit=(map path request-state)
-        =client=chain            ::  stores keys for %shut requests
+        pit=(map path request-state)  ::  namespace paths
+        =client=chain                 ::  stores keys for %shut requests
+        tip=(jug path [duct path])    ::  reverse lookup for non-namespace paths
     ==
   ::
+  ::  interest gifts per path in the pith
+  ::
+  +$  ints  ?(%sage %tune [%rate boq=@ud feq=@ud])
+  +$  rate  [boq=@ud fag=(unit @ud) tot=@ud]
   +$  request-state
-    $:  for=(set duct)
+    $:  for=(jug duct ints)
         pay=(unit path)
         ps=(unit pact-state)
     ==

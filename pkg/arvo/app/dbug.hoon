@@ -637,8 +637,8 @@
       %-  pairs
       :~  'messages'^(numb (lent messages))
           'packets'^(numb ~(wyt in packets))
-          'keens'^(set-array ~(key by keens) path)
-          'chums'^(set-array ~(key by chums) path)
+          'keens'^(alien-listeners ~(key by keens))
+          'chums'^(alien-listeners ~(key by chums))
       ==
     ::
     ::  json for known peer is structured to closely match the peer-state type.
@@ -975,7 +975,7 @@
           'num-fragments'^(numb num-fragments)
           'num-received'^(numb num-received)
           'next-wake'^(maybe next-wake time)
-          'listeners'^(set-array listeners from-duct)
+          'listeners'^(set-array ~(key by listeners) from-duct)  :: XX add $ints
         ::
           ::  XX  refactor (see metric in snd-with-bone)
           :-  'metrics'
@@ -1016,8 +1016,8 @@
       |=  ovni-state
       %-  pairs
       :~  'pokes'^(numb (lent pokes))
-          'peeks'^(set-array ~(key by peeks) path)
-          'chums'^(set-array ~(key by chums) path)
+          'peeks'^(alien-listeners ~(key by peeks))
+          'chums'^(alien-listeners ~(key by chums))
       ==
     ::
     ::  json for known peer is structured to closely match the peer-state type.
@@ -1207,13 +1207,18 @@
       |^  ^-  json
       %-  pairs
       :~  'payload'^(maybe pay path)
-          'listeners'^(set-array for from-duct)
+          'listeners'^(set-array ~(key by for) from-duct)  :: XX add %ints
           'packets'^~
       ==
       ::
       ::  X TODO pact-state
       --
     --
+  ::
+  ++  alien-listeners
+    |=  paths=(set [path ints:ames])
+    ^-  json
+    a+(turn ~(tap in paths) |=([=path =ints:ames] (path:enjs:format path)))
   ::
   --
 ::
