@@ -9881,6 +9881,87 @@
     |=  gen=hoon  ^-  type
     (chip | gen)
   ::
+  ++  chyp  ::  nu-chip and co
+    =<  chip
+    |%
+    +$  hippo
+      $@  ~
+      $%  [%wtts =wing =zebra =type]
+          [%wthx =wing =zebra =skin]
+          [%wtpm =(list hippo)]
+          [%wtbr =(list hippo)]
+      ==
+    ::
+    ++  chip
+      =+  lol=|
+      |=  gen=hoon
+      ^-  hippo
+      ?:  ?=([%wtts *] gen)
+        [%wtts q.gen ?:(lol *zebra (unzip %both q.gen)) (play ~(example ax p.gen))]
+      ?:  ?=([%wthx *] gen)
+        [%wthx q.gen ?:(lol *zebra (unzip %both q.gen)) p.gen]
+      ?:  ?=([%wtpm *] gen)
+        =.  lol  &
+        :-  %wtpm
+        |-(?~(p.gen ~ [^$(gen i.p.gen) $(p.gen t.p.gen)]))
+      ?:  ?=([%wtbr *] gen)
+        =.  lol  &
+        :-  %wtbr
+        |-(?~(p.gen ~ [^$(gen i.p.gen) $(p.gen t.p.gen)]))
+      =+  neg=~(open ap gen)
+      ?:(=(neg gen) ~ $(gen neg))
+    ::
+    ++  gain
+      =+  lol=|
+      |=  =hippo
+      ^-  type
+      ?~  hippo  sut
+      ?-  -.hippo
+          %wtts
+        =?  zebra.hippo  lol  (unzip %both wing.hippo)
+        ?.  ?=([%pale *] zebra.hippo)  sut
+        q:(take zebra.hippo |=(a=type (fuse(sut a) type.hippo)))
+      ::
+          %wthx
+        =?  zebra.hippo  lol  (unzip %both wing.hippo)
+        ?.  ?=([%pale *] zebra.hippo)  sut
+        q:(take zebra.hippo |=(a=type ~(gain ar a skin.hippo)))
+      ::
+          %wtpm
+        =.  lol  &
+        |-
+        ?~  list.hippo  sut
+        $(sut ^$(hippo i.list.hippo), list.hippo t.list.hippo)
+      ::
+        %wtbr  sut
+      ==
+    ::
+    ++  lose
+      =+  lol=|
+      |=  =hippo
+      ^-  type
+      ?~  hippo  sut
+      ?-  -.hippo
+          %wtts
+        =?  zebra.hippo  lol  (unzip %both wing.hippo)
+        ?.  ?=([%pale *] zebra.hippo)  sut
+        q:(take zebra.hippo |=(a=type (crop(sut a) type.hippo)))
+      ::
+          %wthx
+        =?  zebra.hippo  lol  (unzip %both wing.hippo)
+        ?.  ?=([%pale *] zebra.hippo)  sut
+        q:(take zebra.hippo |=(a=type ~(lose ar a skin.hippo)))
+      ::
+        %wtpm  sut
+      ::
+          %wtbr
+        =.  lol  &
+        |-
+        ?~  list.hippo  sut
+        $(sut ^$(hippo i.list.hippo), list.hippo t.list.hippo)
+      ==
+    --
+  ::
   ++  chip
     ~/  %chip
     |=  [how=? gen=hoon]  ^-  type
@@ -10167,7 +10248,8 @@
     ::
         [%wtcl *]
       =+  nor=$(gen p.gen, gol bool)
-      =+  [fex=(gain p.gen) wux=(lose p.gen)]
+      =+  hip=(chyp p.gen)
+      =+  [fex=(gain:chyp hip) wux=(lose:chyp hip)]
       ::
       ::  if either branch is impossible, eliminate it
       ::  (placing the conditional in a dynamic hint to preserve crashes)
@@ -10341,8 +10423,10 @@
     ::
         [%wtcl *]
       =+  nor=$(gen p.gen, gol bool)
+      =+  hip=(chyp p.gen)
+      =+  dip=(chyp(sut dox) p.gen)
       =+  ^=  hiq  ^-  [p=type q=type]
-          =+  fex=[p=(gain p.gen) q=(gain(sut dox) p.gen)]
+          =+  fex=[p=(gain:chyp hip) q=(gain:chyp(sut dox) dip)]
           ?:  =(%void p.fex)
             :-  %void
             ?:  =(%void q.fex)
@@ -10352,7 +10436,7 @@
             ~>(%mean.'mull-bonk-b' !!)
           $(sut p.fex, dox q.fex, gen q.gen)
       =+  ^=  ran  ^-  [p=type q=type]
-          =+  wux=[p=(lose p.gen) q=(lose(sut dox) p.gen)]
+          =+  wux=[p=(lose:chyp hip) q=(lose:chyp(sut dox) dip)]
           ?:  =(%void p.wux)
             :-  %void
             ?:  =(%void q.wux)
