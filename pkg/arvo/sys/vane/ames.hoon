@@ -3857,27 +3857,8 @@
             %cork  (cork-bone bone.deep)
             %kill  (kill-bone bone.deep)
             %ahoy  (migrate-peer bone.deep)  :: XX remove bone; it's next-bone
+            %lete  (delete-tip [duct path]:deep)
           ==
-          ::
-          ++  migrate-peer
-            |=  =bone
-            ::  XX  defer migrating the peer until we can read from their
-            ::  namespace that they have migrated us?
-            ::  XX  requires a namespace for migrated peers
-            ::
-            :: %-  %^  ev-trace  sun.veb  ship.deep
-            ::     |.("migrating to |mesa")
-            ~&  >>  "migrating to |mesa"
-            =~  ::  ack ahoy plea, if we don't crash
-                ::
-                abet:(call:(abed:mi:peer-core bone) %done ok=%.y)
-                ::  migrate all flows
-                ::
-                on-migrate
-                :: after migration succeeds, delete ship from .peers
-                ::
-                pe-abel
-            ==
           ::
           ++  send-nack-trace
             |=  [=nack=bone =message]
@@ -3906,6 +3887,28 @@
             ==
           ::
           ++  kill-bone  |=(=bone abet:(on-kill-flow:peer-core bone))
+          ++  migrate-peer
+            |=  =bone
+            ::  XX  defer migrating the peer until we can read from their
+            ::  namespace that they have migrated us?
+            ::  XX  requires a namespace for migrated peers
+            ::
+            :: %-  %^  ev-trace  sun.veb  ship.deep
+            ::     |.("migrating to |mesa")
+            ~&  >>  "migrating to |mesa"
+            =~  ::  ack ahoy plea, if we don't crash
+                ::
+                abet:(call:(abed:mi:peer-core bone) %done ok=%.y)
+                ::  migrate all flows
+                ::
+                on-migrate
+                :: after migration succeeds, delete ship from .peers
+                ::
+                pe-abel
+            ==
+          ::
+          ++  delete-tip  |=([=^duct =path] abet:(on-delete-tip:peer-core +<))
+          ::
           --
         ::  +on-stun: poke %ping app when hearing a STUN response
         ::
@@ -4106,15 +4109,27 @@
           =/  ship-state  (~(get by peers.ames-state) ship)
           ?:  ?=([~ %known *] ship-state)
             ?~  sec
+              =?  tip.u.ship-state  =>  .(path `(pole knot)`path)
+                                    ?&  ?=([van=@ car=@ cas=@ des=@ pur=*] path)
+                                        !?=([%fine *] pur.path)
+                                        !?=([%chum *] pur.path)
+                                    ==
+                ::  this adds public paths in the tip which is redundant but
+                ::  allows us to keep the same logic for cancelling peeks
+                ::
+                (~(put ju tip.u.ship-state) path duct path)
               abet:(on-keen:(abed-peer:pe ship +.u.ship-state) path duct)
             =.  chain.u.ship-state
               (put:on:chain chain.u.ship-state [idx key /]:u.sec)
-            =.  peers.ames-state
-              (~(put by peers.ames-state) ship u.ship-state)
             =/  enc
               (scot %uv (en:crub:crypto key.u.sec (spat path)))
             =/  lav  /a/x/1//fine/shut/(scot %ud idx.u.sec)/[enc]
             =/  wir  /fine/shut/(scot %ud idx.u.sec)
+            =.  tip.u.ship-state
+              (~(put ju tip.u.ship-state) path [[%ames wir] duct] lav) :: XX
+            =.  peers.ames-state
+              (~(put by peers.ames-state) ship u.ship-state)
+            ~&  lav^wir
             (emit duct %pass wir %a %keen ~ ship lav)
           :: XX: key exchange over ames forces all encrypted scries to be
           :: to a known peer
@@ -4135,7 +4150,11 @@
             (scot %uv (en:crub:crypto symmetric-key.u.ship-state (spat path)))
           =/  lav
             /a/x/1//chum/(scot %p our)/(scot %ud life.ames-state)/[cyf]
-          (emit duct [%pass /chum %a %keen ~ ship lav])
+          =.  tip.u.ship-state
+            (~(put ju tip.u.ship-state) path [/ames/chum duct] lav) :: XX
+          =.  peers.ames-state
+            (~(put by peers.ames-state) ship u.ship-state)
+          (emit duct %pass /chum %a %keen ~ ship lav)
         ::
         ++  on-cancel-scry
           |=  [all=? spar]
@@ -4147,10 +4166,34 @@
             %.  event-core
             %^  trace  vane  fin.veb
             [ship ships.bug.ames-state |.("peer still alien, skip cancel-scry")]
-          =+  peer=(abed:pe ship)
-          ?.  (~(has by keens.peer-state.peer) path)
+          =+  pe-core=(abed:pe ship)
+          =+  fi-core=%*(. fi:pe-core path path)
+          ?.  all
+            abet:fi-abet:(fi-unsub:fi-core duct)
+          =+  original-path=path
+          =+  ls=(~(get ju tip.peer-state.fi-core) path)
+          ::
+          ?:  =(~ ls)  :: XX TMI
+            %-  %+  fi-trace:fi-core  fin.veb
+                |.("path not in .tip {<fi-full-path.fi-core>}")
+            :: XX check if there's something in the .pit?
             event-core
-          abet:fi-abet:(fi-unsub:(abed:fi:peer path) duct all)
+          %-  %+  fi-trace:fi-core  fin.veb
+              |.("unsub all {<fi-full-path.fi-core>}")
+          ::
+          =;  core=_pe-core
+            abet:core(tip.peer-state (~(del by tip.peer-state.fi-core) path))
+          %-  ~(rep in `(set [=^duct =^path])`ls)
+          |=  [[=^duct =^path] core=_pe-core]
+          ?~  (~(get by keens.core) path)
+            ::  that path has been deleted by a previous iteration
+            ::
+            core
+          =+  fi-core=(abed:fi:core path)
+          =.  fi-core
+            (~(rep by listeners.keen.fi-core) (fi-give-tune:fi-core ~))
+          =.  listeners.keen.fi-core    ~
+          fi-abet:fi-core
         ::
         +|  %migration-entry-points
         ::
@@ -4688,6 +4731,10 @@
             ::  since we got one cork ack, try the next one
             ::
             recork-one
+          ::
+          ++  on-delete-tip
+            |=  [=^duct =path]
+            peer-core(tip.peer-state (~(del ju tip.peer-state) path duct))
           ::
           +|  %migration
           ::
@@ -6359,12 +6406,14 @@
             ::  scry is autocancelled in +abet if no more listeners
             ::
             ++  fi-unsub
-              |=  [=^duct all=?]
+              |=  hen=^duct
               ^+  fine
-              ?:  all
-                %-  (fi-trace fin.veb |.("unsub all {<fi-full-path>}"))
-                =.  fine  (~(rep by listeners.keen) (fi-give-tune ~))
-                fine(listeners.keen ~)
+              =+  original-path=path
+              =+  ls=(~(get ju tip.peer-state) path)
+              ?:  =(~ ls)  :: XX TMI
+                %-  (fi-trace fin.veb |.("path no in tip {<fi-full-path>}"))
+                :: XX check if there's something in the .pit?
+                fine
               ::
               :: ?:  (~(has in listeners.keen) duct)
               ::   %-  (fi-trace fin.veb |.("unsub {<fi-full-path>} on {<duct>}"))
@@ -6372,15 +6421,36 @@
               :: ::
               :: %.  fine
               :: (fi-trace fin.veb |.("unknown {<fi-full-path>} {<duct>}"))
+              ::  find internal path assigned for the listener
+              ::
+              =.  path
+                %-  ~(rep in ls)
+                |=  [[=^duct =^path] p=_path]
+                ~&  path^hen^duct
+                ?~  ms=(~(get by keens.peer-state) path)       p
+                ~&  listeners.u.ms
+                ?.  (~(has in ~(key by listeners.u.ms)) duct)  p
+                =/  unsub-listener=^^duct
+                  ?.(?=([[%ames *] *] duct) duct t.duct)
+                ?.  =(unsub-listener hen)  p
+                path
+              ?~  ms=(~(get by keens.peer-state) path)
+                %-  %+  fi-trace  fin.veb.bug.ames-state
+                    |.("no keen for path={(spud path)}}")
+                fine
+              =.  keen  u.ms
               ?:  =(~ listeners.keen)  ::  XX TMI
                 %.  fine
-                (fi-trace fin.veb |.("unknown {<fi-full-path>} {<duct>}"))
-              %-  (fi-trace fin.veb |.("unsub {<fi-full-path>} on {<duct>}"))
+                (fi-trace fin.veb |.("unknown {<fi-full-path>} {<hen>}"))
+              %-  (fi-trace fin.veb |.("unsub {<fi-full-path>} on {<hen>}"))
               ::
               :: ?~  ints=(~(get ju listeners.keen) duct)  fine
-              %-  ~(rep in `(set ints)`(~(get ju listeners.keen) duct))
+              =.  fine
+                %^  fi-emit  hen  %pass
+                [/delete-tip %a %deep %lete her hen original-path]
+              %-  ~(rep in `(set ints)`(~(get ju listeners.keen) hen))
               |=  [=ints =_fine]
-              fine(listeners.keen (~(del ju listeners.keen) duct ints))
+              fine(listeners.keen (~(del ju listeners.keen) hen ints))
             ::  XX
             ::
             ++  fi-rat

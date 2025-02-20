@@ -1042,6 +1042,7 @@
         [%cork =ship =bone]
         [%kill =ship =bone]
         [%ahoy =ship =bone]  :: XX remove bone; it's just next-bone.ossuary
+        [%lete =ship =duct =path]
     ==
   ::  $stun: STUN notifications, from unix
   ::
@@ -1168,6 +1169,7 @@
         corked=(set bone)
         keens=(map path keen-state)
         =chain
+        tip=(jug path [duct path])    ::  reverse map for %chum and %shut paths
     ==
   +$  keen-state
     $+  keen-state
