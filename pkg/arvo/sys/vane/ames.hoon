@@ -3001,7 +3001,7 @@
           |=  s=ship-state-21
           ^-  ship-state
           ?:  ?=(%alien -.s)
-            %=  s
+            %=    s
                 keens
               %-  ~(rep by keens.s)
               |=  [[=path ducts=(set duct)] keens=(jug [path ints] duct)]
@@ -3012,7 +3012,37 @@
               |=  [[=path ducts=(set duct)] chums=(jug [path ints] duct)]
               (~(put by chums) path^%tune ducts)
             ==
-          %=  s
+          %=    s
+              chain
+            :-  chain.s
+            %-  ~(rep by keens.s)
+            |=  [[=outer=path sat=keen-state-21] tip=(jug path [duct path])]
+            =>  .(outer-path `(pole knot)`outer-path)
+            ~|  make-peeks-crashed/outer-path
+            ?.  ?=([van=@ car=@ cas=@ desk=@ pat=*] outer-path)
+              :: XX validate van, car, cas, desk ?
+              ::
+              ~&  skip-weird-path/outer-path  tip
+            =;  inner=path
+              ~&  outer-path^inner
+              %-  ~(rep in listeners.sat)
+              |=  [=duct t=_tip]
+              (~(put ju t) inner [duct outer-path])
+            ?+    pat.outer-path  outer-path
+              ::
+                [%fine %shut idx=@ cyf=@ ~]
+              =/  idx=@ud    (slav %ud idx.pat.outer-path)
+              =/  cyf=@      (slav %uv cyf.pat.outer-path)
+              =/  key=@      key:(got:on:chain chain.s idx)
+              ~|  [%shut-crash key cyf]
+              (rash `@t`(dy:crub:crypto key cyf) stap)
+              ::
+                [%chum her=@ lyf=@ cyf=@ ~]
+              =+  cyf=(slav %uv cyf.pat.outer-path)
+              ~|  [%chum-crash symmetric-key.s cyf]
+              (rash `@t`(dy:crub:crypto key=symmetric-key.s cyf) stap)
+            ==
+          ::
               keens
             %-  ~(run by keens.s)
             |=  keen=keen-state-21
