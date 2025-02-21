@@ -1042,7 +1042,7 @@
         [%cork =ship =bone]
         [%kill =ship =bone]
         [%ahoy =ship =bone]  :: XX remove bone; it's just next-bone.ossuary
-        [%lete =ship =duct =path]
+        [%lete =ship =user=path =duct =ames=path]
     ==
   ::  $stun: STUN notifications, from unix
   ::

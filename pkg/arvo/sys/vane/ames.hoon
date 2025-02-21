@@ -3774,7 +3774,11 @@
             =/  pax=path
               (stab raw)
             =;  dat=(unit (unit page))
-              (emit duct [%give %near [ship.s pax] dat])
+              %-  emil
+              :~  [duct %give %near [ship.s pax] dat]
+                  :^  duct  %pass  /delete-tip
+                  [%a %deep %lete ship.s pax [ames/wire duct] path.s]
+              ==
             ?:  ?|  ?=(~ roar)
                     ?=(~ q.dat.u.roar)
                 ==
@@ -3794,7 +3798,11 @@
             ?>  ?=([%atom @] u.q.dat.u.roar)
             =-  `?~(- ~ `(,page (cue -)))
             (dy:crub:crypto symmetric-key.u.per q.u.q.dat.u.roar)
-          (emit duct [%give %near [ship.s pax] dat])
+          %-  emil
+          :~  [duct %give %near [ship.s pax] dat]
+              :^  duct  %pass  /delete-tip
+              [%a %deep %lete ship.s pax [ames/wire duct] path.s]
+          ==
         ::  +on-cork: handle request to kill a flow
         ::
         ++  on-cork
@@ -3857,7 +3865,7 @@
             %cork  (cork-bone bone.deep)
             %kill  (kill-bone bone.deep)
             %ahoy  (migrate-peer bone.deep)  :: XX remove bone; it's next-bone
-            %lete  (delete-tip [duct path]:deep)
+            %lete  abet:(delete-tip [duct user-path ames-path]:deep)
           ==
           ::
           ++  send-nack-trace
@@ -3907,7 +3915,8 @@
                 pe-abel
             ==
           ::
-          ++  delete-tip  |=([=^duct =path] abet:(on-delete-tip:peer-core +<))
+          ++  delete-tip
+            |=([=^duct =user=path =ames=path] (on-delete-tip:peer-core +<))
           ::
           --
         ::  +on-stun: poke %ping app when hearing a STUN response
@@ -4179,7 +4188,7 @@
             :: XX check if there's something in the .pit?
             event-core
           %-  %+  fi-trace:fi-core  fin.veb
-              |.("unsub all {<fi-full-path.fi-core>}")
+              |.("unsub all {<`^path`fi-full-path.fi-core>}")
           ::
           =;  core=_pe-core
             abet:core(tip.peer-state (~(del by tip.peer-state.fi-core) path))
@@ -4733,8 +4742,10 @@
             recork-one
           ::
           ++  on-delete-tip
-            |=  [=^duct =path]
-            peer-core(tip.peer-state (~(del ju tip.peer-state) path duct))
+            |=  [=^duct =user=path =ames=path]
+            =.  tip.peer-state
+              (~(del ju tip.peer-state) user-path duct ames-path)
+            peer-core
           ::
           +|  %migration
           ::
@@ -6328,6 +6339,13 @@
               |=  [int=^ints f=_fine]
               ?^  int  f
               ::  XX give rate if present?
+              =?  f  =>  .(path `(pole knot)`path)
+                         ?&  ?=([van=@ car=@ cas=@ des=@ pur=*] path)
+                             !?=([%fine *] pur.path)
+                             !?=([%chum *] pur.path)
+                         ==
+                %^  fi-emit:f  duct  %pass
+                [/delete-tip %a %deep %lete her path duct path]
               (fi-emit:f duct %give %tune her^path dat)
             ::
             ++  fi-give-rate
@@ -6426,9 +6444,7 @@
               =.  path
                 %-  ~(rep in ls)
                 |=  [[=^duct =^path] p=_path]
-                ~&  path^hen^duct
                 ?~  ms=(~(get by keens.peer-state) path)       p
-                ~&  listeners.u.ms
                 ?.  (~(has in ~(key by listeners.u.ms)) duct)  p
                 =/  unsub-listener=^^duct
                   ?.(?=([[%ames *] *] duct) duct t.duct)
@@ -6447,7 +6463,7 @@
               :: ?~  ints=(~(get ju listeners.keen) duct)  fine
               =.  fine
                 %^  fi-emit  hen  %pass
-                [/delete-tip %a %deep %lete her hen original-path]
+                [/delete-tip %a %deep %lete her original-path hen path]
               %-  ~(rep in `(set ints)`(~(get ju listeners.keen) hen))
               |=  [=ints =_fine]
               fine(listeners.keen (~(del ju listeners.keen) hen ints))
@@ -6776,9 +6792,10 @@
           ::
               [%fine %shut kef=@ enc=@ ~]
             =/  key-idx  (slav %ud kef.tyl)
-            =/  key  (got:on:chain server-chain.ames-state (slav %ud kef.tyl))
+            ?~  key=(get:on:chain server-chain.ames-state key-idx)
+              ~
             =/  pat=(unit path)
-              (rush `@t`(dy:crub:crypto key.key (slav %uv enc.tyl)) stap)
+              (rush `@t`(dy:crub:crypto key.u.key (slav %uv enc.tyl)) stap)
             ?~  pat
               [~ ~]
             ?~  blk=(de-part:balk our rift.ames-state life.ames-state u.pat)
@@ -6792,8 +6809,6 @@
               [~ ~]
             ?~  u.res
               ``atom+!>(~)
-            ?~  key=(get:on:chain server-chain.ames-state key-idx)
-              ~
             =-  ``atom+!>(-)
             `@uv`(en:crub:crypto -.u.key (jam [p q.q]:u.u.res))
           ::
@@ -7901,9 +7916,9 @@
             ?~  ms=(~(get by pit.per.core) path)  core
             =.  pit.per.core  (~(del by pit.per.core) path)
             ?>  (~(has in ~(key by for.u.ms)) duct)
-            =.  core  (ev-give-rate:core for.u.ms her^path *rate)
+            =.  core  (ev-give-rate:core for.u.ms her^path *rate)  ::  XX ?
             (ev-give-sage:core for.u.ms path ~)
-          ::  find namespace path used by the listener
+          ::  find namespace path assigned to the listener
           ::
           =.  path
             %-  ~(rep in ls)
@@ -7915,7 +7930,7 @@
           ?~  ms=(~(get by pit.per) path)
             %-  %+  ev-tace  odd.veb.bug.ames-state
                 |.("no pit for path={(spud path)}}")
-            ev-core  :: XX weird log
+            ev-core
           =.  for.u.ms
             %-  ~(rep by for.u.ms)
             |=  [[hen=duct ints=(set ints)] for=_for.u.ms]
@@ -11234,7 +11249,7 @@
       ?.(?=(?(%flow %cork %whey %meta) -.tyl) ~ (scry:me-core sample))
     ?+    -.tyl  ~
         %fine                                   (scry:am-core sample)
-        ?(%mess %publ %chum %shut %veri %pawn)  (scry:me-core sample)
+        ?(%mess %publ %shut %veri %pawn)        (scry:me-core sample)
       ::
         %chum
       ?+  +.tyl  ~
