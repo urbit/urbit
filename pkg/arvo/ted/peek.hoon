@@ -4,16 +4,21 @@
 ^-  thread:spider
 =>  |%  +$  out  $%  [%sage =sage:mess:ames]
                      [%tune (pair spar:ames (unit roar:ames))]
+                     [%page (pair spar:ames (unit (unit page)))]
                  ==
     --
 ::
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<([~ =spar:ames sec=$@(%chum (unit [idx=@ key=@]))] arg)
+=+  !<([~ =spar:ames sec=$@(~ ?([%chum ~] [%shut idx=@ key=@]))] arg)
 ;<    ~   bind:m
-  ?@  sec  (chum:strandio /peek spar)
-  (meen:strandio /peek spar sec)
+  ?@  sec  (meen:strandio /peek spar ~)
+  ?-  -.sec
+    %chum  (chum:strandio /peek spar)
+    %shut  (meen:strandio /peek spar `+.sec)
+  ==
+
 ;<  =out  bind:m  (take-message:strandio /peek)
 =/  =sage:mess:ames
   ?-  -.out
@@ -22,6 +27,10 @@
            ?~  q.+.out  ~
            ?~  q.dat.u.q.+.out  ~
            u.q.dat.u.q.+.out
+    %page  :-  p.+.out
+           ?~  q.+.out    ~
+           ?~  u.q.+.out  ~
+           u.u.q.+.out
   ==
 ?~  q.sage
   (pure:m !>(~))
