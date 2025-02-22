@@ -13,10 +13,10 @@
 ^-  form:m
 =+  !<([~ =spar:ames sec=$@(~ ?([%chum ~] [%shut idx=@ key=@]))] arg)
 ;<    ~   bind:m
-  ?@  sec  (meen:strandio /peek spar ~)
+  ?@  sec  (keen:strandio /peek spar ~)
   ?-  -.sec
     %chum  (chum:strandio /peek spar)
-    %shut  (meen:strandio /peek spar `+.sec)
+    %shut  (keen:strandio /peek spar `+.sec)
   ==
 
 ;<  =out  bind:m  (take-message:strandio /peek)

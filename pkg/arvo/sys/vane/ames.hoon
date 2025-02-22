@@ -7675,7 +7675,7 @@
             ~|  gage-res-failed/`@ux`res
             =+  ;;(=gage:mess (cue res))
             ?>  ?=(^ gage)
-            (ev-give-sage for.u.ms path.spar gage)
+            ((ev-give-sage path) for.u.ms path.spar gage)
           ::
           ++  hear-poke
             |=  [dud=(unit goof) =ack=spar =pok=spar =gage:mess]
@@ -7830,10 +7830,12 @@
         +|  %peek-subscribers
         ::
         ++  ev-give-sage
+          |=  =ames=path
           |=  [listeners=(jug duct ints) =path =gage:mess]
           ^+  ev-core
           %-  ~(rep by listeners)
           |=  [[hen=duct ints=(set ints)] core=_ev-core]
+          =.  tip.per.core  (~(del ju tip.per.core) path hen ames-path)
           %-  ~(rep by ints)
           |=  [int=^ints c=_core]
           ?^  int
@@ -7841,8 +7843,7 @@
                 |.("no %sage={(spud path)}; no-op")
             c
           %.  (ev-emit:c hen %give %sage her^path gage)
-          %+  ev-tace  fin.veb.bug.ames-state
-          |.("give %sage={(spud path)}")
+          (ev-tace fin.veb.bug.ames-state |.("give %sage={(spud path)}"))
         ::
         ++  ev-give-rate
           |=  [listeners=(jug duct ints) =spar =rate]
@@ -7909,36 +7910,51 @@
             %-  %+  ev-tace  odd.veb.bug.ames-state
                 |.("no tips for path={(spud path)}}")
             :: XX check if there's something in the .pit?
-            ev-core
+            ?~  ms=(~(get by pit.per) path)
+              ev-core
+            =.  pit.per  (~(del by pit.per) path)
+            ((ev-give-sage path) for.u.ms path ~)
           ?:  all
+            =;  core=_ev-core
+              core(tip.per (~(del by tip.per.core) path))
             %-  ~(rep in ls)
-            |=  [[=duct =^path] core=_ev-core]
-            ?~  ms=(~(get by pit.per.core) path)  core
-            =.  pit.per.core  (~(del by pit.per.core) path)
+            |=  [[=duct =ames=^path] core=_ev-core]
+            ?~  ms=(~(get by pit.per.core) ames-path)  core
+            =.  pit.per.core  (~(del by pit.per.core) ames-path)
             ?>  (~(has in ~(key by for.u.ms)) duct)
-            =.  core  (ev-give-rate:core for.u.ms her^path *rate)  ::  XX ?
-            (ev-give-sage:core for.u.ms path ~)
-          ::  find namespace path assigned to the listener
+            =.  core  (ev-give-rate:core for.u.ms her^ames-path *rate)  ::  XX ?
+            ((ev-give-sage:core path) for.u.ms ames-path ~)
+          ::  find namespace path used by the .hen listener
           ::
-          =.  path
+          =^  [listener=duct =ames=^path]  ev-core
             %-  ~(rep in ls)
-            |=  [[=duct =^path] p=_path]
-            ?~  ms=(~(get by pit.per) path)          p
-            ?.  =(hen duct)                          p
-            ?.  (~(has in ~(key by for.u.ms)) duct)  p
-            path
-          ?~  ms=(~(get by pit.per) path)
+            |=  [[=duct =ames=^path] [l=duct p=^path] core=_ev-core]
+            ?~  ms=(~(get by pit.per) ames-path)  [l p]^core
+            ?.  =(hen duct)                       [l p]^core
+            ?~  ints=(~(get by for.u.ms) duct)    [l p]^core  :: XX weird
+            :-  hen^ames-path
+            ::  XX deletes all interest of this listener
+            ::
+            =.  for.u.ms  (~(del by for.u.ms) duct)
+              ::     use a task to remove individual interest?
+              ::
+              :: (~(rep by u.ints) |=([=ints f=_for.u.ms] (~(del ju f) hen ints)))
+            %_  core
+              tip.per  (~(del ju tip.per.core) path hen ames-path)
+              pit.per  (~(put by pit.per.core) ames-path u.ms)
+            ==
+          ?~  ms=(~(get by pit.per) ames-path)
             %-  %+  ev-tace  odd.veb.bug.ames-state
-                |.("no pit for path={(spud path)}}")
+                |.("no pit for path={(spud ames-path)}}")
             ev-core
-          =.  for.u.ms
-            %-  ~(rep by for.u.ms)
-            |=  [[hen=duct ints=(set ints)] for=_for.u.ms]
-            (~(rep by ints) |=([int=^ints f=_for] (~(del ju f) hen int)))
+          ?~  listener
+            %-  %+  ev-tace  odd.veb.bug.ames-state
+                |.("listener not in pit")
+            ev-core
           =.  pit.per
             ?~  for.u.ms
-              (~(del by pit.per) path)
-            (~(put by pit.per) path u.ms)
+              (~(del by pit.per) ames-path)
+            (~(put by pit.per) ames-path u.ms)
           ev-core
         ::
         +|  %internals
@@ -9821,7 +9837,7 @@
       ++  co
         =|  moves=(list move)
         ::
-        |_  hen=duct
+        |_  [hen=duct pax=path]  ::  .hen listens to +peek .pax
         ::
         +|  %helpers
         ::
@@ -9852,12 +9868,14 @@
         ::
         ++  co-make-peek
           |=  [=space =spar]
+          =.  pax  path.spar  :: XX skip adding flow paths to the .tip?
           (co-make-mess spar(path (make-space-path space path.spar)) ~)
         ::
         ++  co-make-poke
           |=  [=space =ack=spar =poke=path]
           ::  XX  make all paths when the %moke task is sent?
           ::
+          =.  pax  path.ack-spar  :: XX skip  adding flow paths to the .tip?
           =.  path.ack-spar   (make-space-path space path.ack-spar)
           =.  poke-path
             =?  space  ?=(?(%publ %chum) -.space)
@@ -9925,6 +9943,8 @@
             =.  pit.per
               %+  ~(put by pit.per)  path.remote
               u.res(for (~(put ju for.u.res) hen %sage))
+            ?>  ?=(^ pax)
+            ?>  (~(has ju tip.per) pax [hen path.remote])
             %_  co-core
                 chums.ames-state
               (~(put by chums.ames-state) ship.remote known/per)
@@ -9934,11 +9954,13 @@
             ~|  [remote=remote payload=payload rift=rift.per]
             !!
           =|  new=request-state
-          =.  for.new   (~(put ju for.new) hen %sage)
-          =.  pay.new   payload
+          =.  for.new  (~(put ju for.new) hen %sage)
+          =.  pay.new  payload
+          =.  pit.per  (~(put by pit.per) path.remote new)
+          ?>  ?=(^ pax)
+          =.  tip.per  (~(put ju tip.per) pax [hen path.remote])
           =.  chums.ames-state
-            %+  ~(put by chums.ames-state)  ship.remote
-            known/per(pit (~(put by pit.per) path.remote new))
+            (~(put by chums.ames-state) ship.remote known/per)
           ::
           ?:  =(~ unix-duct)
             %.  co-core

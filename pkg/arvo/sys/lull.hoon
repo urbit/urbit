@@ -1661,7 +1661,7 @@
   ::
   ::  interest gifts per path in the pith
   ::
-  +$  ints  ?(%sage %tune [%rate boq=@ud feq=@ud])
+  +$  ints  ?(%sage %tune [%rate boq=@ud feq=@ud])  ::  XX give %rate every .feq of bloq .boq
   +$  rate  [boq=@ud fag=(unit @ud) tot=@ud]
   +$  request-state
     $:  for=(jug duct ints)
