@@ -4744,6 +4744,8 @@
           ++  on-delete-tip
             |=  [=^duct =user=path =ames=path]
             =.  tip.peer-state
+              ?:  &(?=(~ duct) ?=(~ ames-path))
+                (~(del by tip.peer-state) user-path)
               (~(del ju tip.peer-state) user-path duct ames-path)
             peer-core
           ::
@@ -6335,17 +6337,18 @@
               |=  dat=(unit roar)
               :: |=([=^duct =_fine] (fi-emit:fine duct %give %tune [her path] dat))
               |=  [[=^duct ints=(set ints)] =_fine]
+              =;  core=_fine
+                =?  core  =>  .(path `(pole knot)`path)
+                          ?&  ?=([van=@ car=@ cas=@ des=@ pur=*] path)
+                              !?=([%fine *] pur.path)
+                              !?=([%chum *] pur.path)
+                          ==
+                  %^  fi-emit:core  duct  %pass
+                  [/delete-tip %a %deep %lete her path duct=~ ames-path=~]
+                core
               %-  ~(rep in ints)
               |=  [int=^ints f=_fine]
               ?^  int  f
-              ::  XX give rate if present?
-              =?  f  =>  .(path `(pole knot)`path)
-                         ?&  ?=([van=@ car=@ cas=@ des=@ pur=*] path)
-                             !?=([%fine *] pur.path)
-                             !?=([%chum *] pur.path)
-                         ==
-                %^  fi-emit:f  duct  %pass
-                [/delete-tip %a %deep %lete her path duct path]
               (fi-emit:f duct %give %tune her^path dat)
             ::
             ++  fi-give-rate
@@ -6460,13 +6463,20 @@
                 (fi-trace fin.veb |.("unknown {<fi-full-path>} {<hen>}"))
               %-  (fi-trace fin.veb |.("unsub {<fi-full-path>} on {<hen>}"))
               ::
-              :: ?~  ints=(~(get ju listeners.keen) duct)  fine
-              =.  fine
-                %^  fi-emit  hen  %pass
-                [/delete-tip %a %deep %lete her original-path hen path]
-              %-  ~(rep in `(set ints)`(~(get ju listeners.keen) hen))
-              |=  [=ints =_fine]
-              fine(listeners.keen (~(del ju listeners.keen) hen ints))
+              ?~  ints=(~(get ju listeners.keen) duct)
+                ::  XX weird; log?
+                ::
+                fine
+              ::  XX deletes all interest of this listener
+              ::
+              ::     use a task to remove individual interest?
+              ::
+              :: %-  ~(rep in `(set ints)`(~(get ju listeners.keen) hen))
+              :: |=  [=ints =_fine]
+              :: fine(listeners.keen (~(del ju listeners.keen) hen ints))
+              =.  listeners.keen  (~(del by listeners.keen) hen)
+              %^  fi-emit  hen  %pass
+              [/delete-tip %a %deep %lete her original-path hen path]
             ::  XX
             ::
             ++  fi-rat
@@ -6512,14 +6522,11 @@
                 [[her [life.peer-state sig]] ~ ~]
               ::
               %-  (fi-trace fin.veb |.("done {(spud ful)}"))
-              :: (~(rep in listeners.keen) (fi-give-tune roar))
+              ::
               %-  ~(rep by listeners.keen)
               |=  [[=^duct ints=(set ints)] =_fine]
-              %-  ~(rep in ints)
-              |=  [int=^ints f=_fine]
+              =.  fine  ((fi-give-tune roar) [duct^ints fine])
               %.  [duct^ints fine]
-              ?@  int
-                (fi-give-tune roar)
               (fi-give-rate boq=*@ [`num-received num-fragments]:keen)
             ::
             ++  fi-first-rcv
