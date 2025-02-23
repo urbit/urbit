@@ -6357,7 +6357,11 @@
               %-  ~(rep in ints)
               |=  [int=^ints f=_fine]
               ?@  int  f
-              (fi-emit:f duct %give %rate her^path rate(boq boq.int))
+              =?  f  ?&  ?=(^ fag.rate)
+                          =(0 (mod u.fag.rate feq.int))
+                     ==
+                (fi-emit:f duct %give %rate her^path rate(boq boq.int))
+              f
             ::
             +|  %entry-points
             ::
@@ -6553,6 +6557,9 @@
               =.      tries.want   +(tries.want)
               =.        wan.keen   (put:fi-mop wan.keen [fra .]:want)
               =.            fine   (fi-send `@ux`hoot.want)
+              =.  fine
+                %-  ~(rep in listeners.keen)
+                (fi-give-rate boq=*@ud [`num-received num-fragments]:keen)
               $(inx +(inx))
             ::
             ++  fi-sift-full
