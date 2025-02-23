@@ -3776,8 +3776,8 @@
             =;  dat=(unit (unit page))
               %-  emil
               :~  [duct %give %near [ship.s pax] dat]
-                  :^  duct  %pass  /delete-tip
-                  [%a %deep %lete ship.s pax [ames/wire duct] path.s]
+                  :^  duct  %pass  /prune-tip
+                  [%a %deep %prun ship.s pax [ames/wire duct] path.s]
               ==
             ?:  ?|  ?=(~ roar)
                     ?=(~ q.dat.u.roar)
@@ -3800,8 +3800,8 @@
             (dy:crub:crypto symmetric-key.u.per q.u.q.dat.u.roar)
           %-  emil
           :~  [duct %give %near [ship.s pax] dat]
-              :^  duct  %pass  /delete-tip
-              [%a %deep %lete ship.s pax [ames/wire duct] path.s]
+              :^  duct  %pass  /prune-tip
+              [%a %deep %prun ship.s pax [ames/wire duct] path.s]
           ==
         ::  +on-cork: handle request to kill a flow
         ::
@@ -3865,7 +3865,7 @@
             %cork  (cork-bone bone.deep)
             %kill  (kill-bone bone.deep)
             %ahoy  (migrate-peer bone.deep)  :: XX remove bone; it's next-bone
-            %lete  abet:(delete-tip [duct user-path ames-path]:deep)
+            %prun  abet:(prune-tip [duct user-path ames-path]:deep)
           ==
           ::
           ++  send-nack-trace
@@ -3915,8 +3915,8 @@
                 pe-abel
             ==
           ::
-          ++  delete-tip
-            |=([=^duct =user=path =ames=path] (on-delete-tip:peer-core +<))
+          ++  prune-tip
+            |=([=^duct =user=path =ames=path] (on-prune-tip:peer-core +<))
           ::
           --
         ::  +on-stun: poke %ping app when hearing a STUN response
@@ -4741,7 +4741,7 @@
             ::
             recork-one
           ::
-          ++  on-delete-tip
+          ++  on-prune-tip
             |=  [=^duct =user=path =ames=path]
             =.  tip.peer-state
               ?:  &(?=(~ duct) ?=(~ ames-path))
@@ -6344,7 +6344,7 @@
                               !?=([%chum *] pur.path)
                           ==
                   %^  fi-emit:core  duct  %pass
-                  [/delete-tip %a %deep %lete her path duct=~ ames-path=~]
+                  [/prune-tip %a %deep %prun her path duct=~ ames-path=~]
                 core
               %-  ~(rep in ints)
               |=  [int=^ints f=_fine]
@@ -6476,7 +6476,7 @@
               :: fine(listeners.keen (~(del ju listeners.keen) hen ints))
               =.  listeners.keen  (~(del by listeners.keen) hen)
               %^  fi-emit  hen  %pass
-              [/delete-tip %a %deep %lete her original-path hen path]
+              [/prune-tip %a %deep %prun her original-path hen path]
             ::  XX
             ::
             ++  fi-rat
