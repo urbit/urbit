@@ -9954,11 +9954,13 @@
           =/  per=fren-state  +.u.her
           ?^  res=(~(get by pit.per) path.remote)
             ?>  =(payload pay.u.res)  ::  prevent overriding payload
+            ?>  (~(has by tip.per) pax)
             =.  pit.per
               %+  ~(put by pit.per)  path.remote
               u.res(for (~(put ju for.u.res) hen %sage))
             ?>  ?=(^ pax)
-            ?>  (~(has ju tip.per) pax [hen path.remote])
+            =.  tip.per  (~(put ju tip.per) pax [hen path.remote])
+            ~|  [user-pax=pax ames-pax=path.remote pit.per]
             %_  co-core
                 chums.ames-state
               (~(put by chums.ames-state) ship.remote known/per)
