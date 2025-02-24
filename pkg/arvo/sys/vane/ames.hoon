@@ -4179,8 +4179,8 @@
           =+  fi-core=%*(. fi:pe-core path path)
           ?.  all
             abet:fi-abet:(fi-unsub:fi-core duct)
-          =+  original-path=path
-          =+  ls=(~(get ju tip.peer-state.fi-core) path)
+          =*  user-path  path
+          =+  ls=(~(get ju tip.peer-state.fi-core) user-path)
           ::
           ?:  =(~ ls)  :: XX TMI
             %-  %+  fi-trace:fi-core  fin.veb
@@ -4191,14 +4191,14 @@
               |.("unsub all {<`^path`fi-full-path.fi-core>}")
           ::
           =;  core=_pe-core
-            abet:core(tip.peer-state (~(del by tip.peer-state.fi-core) path))
-          %-  ~(rep in `(set [=^duct =^path])`ls)
-          |=  [[=^duct =^path] core=_pe-core]
-          ?~  (~(get by keens.core) path)
+            abet:core(tip.peer-state (~(del by tip.peer-state.core) user-path))
+          %-  ~(rep in ls)
+          |=  [[=^duct =ames=^path] core=_pe-core]
+          ?~  (~(get by keens.core) ames-path)
             ::  that path has been deleted by a previous iteration
             ::
             core
-          =+  fi-core=(abed:fi:core path)
+          =+  fi-core=(abed:fi:core ames-path)
           =.  fi-core
             (~(rep by listeners.keen.fi-core) (fi-give-tune:fi-core ~))
           =.  listeners.keen.fi-core    ~
