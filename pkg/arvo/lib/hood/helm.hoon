@@ -197,13 +197,20 @@
   |=  [her=ship test=?]  =<  abet
   =/  =wire
     :+  %helm  %ahoy
-    ?.(test /(scot %p her) /test-10/(scot %p her))
-  =/  =path  ?:(test /test /mesa)
+    ?.(test /(scot %p her) /test/(scot %p her))
+  =/  =path  ?:(test /test/mesa /mesa)
   (emit %pass wire %arvo %a %plea her %$ path %ahoy ~)
+::
+++  poke-mass-mate
+  |=  test=?
+  =/  =wire
+    :+  %helm  %mate
+    ?.(test ~ /test)
+  abet:(emit %pass wire %arvo %a %mate ~ dry=%.y)
 ::
 ++  take-ahoy
   |=  [way=wire error=(unit error:ames)]
-  ?:  ?=([%test-10 @ *] way)
+  ?:  ?=([%test @ *] way)
     ?~  error
       ~&  >   %migration-test-worked
       ~&  >>  %test-local-migration
@@ -219,7 +226,8 @@
   ::  XX retry?
   ::
   %-  (slog %take-ahoy-failed u.error)
-  abet:(emit %pass `wire`[%helm %ahoy-crash way] %arvo %b %wait (add now.bowl ~s30)) :: XX exp backoff?
+  abet
+  :: abet:(emit %pass `wire`[%helm %ahoy-crash way] %arvo %b %wait (add now.bowl ~s30)) :: XX exp backoff?
 ::
 ++  take-ahoy-crash
   |=  [way=wire error=(unit tang)]
@@ -232,13 +240,45 @@
   %-  (slog %take-ahoy-wake-crash u.error)
   abet:(emit %pass `wire`[%helm %ahoy-crash way] %arvo %b %wait (add now.bowl ~s30)) :: XX exp backoff?
 ::
+++  poke-send-rege
+  |=  [her=ship test=?]  =<  abet
+  =/  =wire
+    :+  %helm  %rege
+    ?.(test /(scot %p her) /test/(scot %p her))
+  =/  =path  ?:(test /test/ames /ames)
+  (emit %pass wire %arvo %a %plea her %$ path %back ~)
+::
+++  take-rege
+  |=  [way=wire error=(unit error:ames)]
+  ?:  ?=([%test @ *] way)
+    ?~  error
+      ~&  >   %rege-test-worked
+      ~&  >>  %test-local-rege
+      abet:(emit %pass /helm/migrate %arvo %a %rege (slaw %p i.t.way) dry=%.y)
+    %-  (slog %take-rege-test-failed u.error)
+    abet
+  ?>  ?=([@ ~] way)
+  ?~  error
+      ~&  >   %remote-regress-worked
+      ~&  >>  %try-local-rege
+    abet:(emit %pass /helm/migrate %arvo %a %rege (slaw %p i.way) dry=%.n)
+  ~&  >>>  %rege-crash
+  ::  XX retry?
+  ::
+  %-  (slog %take-rege-failed u.error)
+  abet
+  :: abet:(emit %pass `wire`[%helm %ahoy-crash way] %arvo %b %wait (add now.bowl ~s30)) :: XX exp backoff?
+::
 ++  poke-hi
-  |=  mes=@t
+  |=  mes=@t  =<  abet
   ~|  %poke-hi-fail
   ?:  =(%fail mes)
     ~&  %poke-hi-fail
     !!
-  abet:(flog %text "< {<src.bowl>}: {(scow %ud (met 3 mes))}")
+  =+  size=(met 3 mes)
+  =+  hash=`@ux`(mug mes)
+  %+  flog  %text
+  "< {<src.bowl>}: {?:((gth size 100) <[hash=hash size=size]> (trip mes))}"
 ::
 ++  poke-ames-prod
   |=  ships=(list ship)
@@ -619,6 +659,8 @@
     %helm-rekey            =;(f (f !<(_+<.f vase)) poke-rekey)
     %helm-send-hi          =;(f (f !<(_+<.f vase)) poke-send-hi)
     %helm-send-ahoy        =;(f (f !<(_+<.f vase)) poke-send-ahoy)
+    %helm-mass-mate        =;(f (f !<(_+<.f vase)) poke-mass-mate)
+    %helm-send-rege        =;(f (f !<(_+<.f vase)) poke-send-rege)
     %helm-serve            =;(f (f !<(_+<.f vase)) poke-serve)
     %helm-trim             =;(f (f !<(_+<.f vase)) poke-trim)
     %helm-verb             =;(f (f !<(_+<.f vase)) poke-verb)
@@ -650,6 +692,8 @@
     [%moon-breach *]  %+  take-wake-moon-breach  t.wire
                       ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
     [%ahoy *]         %+  take-ahoy  t.wire
+                      ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
+    [%rege *]         %+  take-rege  t.wire
                       ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
     [%ahoy-crash *]   %+  take-ahoy-crash  t.wire
                       ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)

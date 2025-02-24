@@ -59,17 +59,27 @@
   |=  [[=duct =ship =path] =subs]
   ?:  &(?=(^ peer) !=(u.peer ship))
     subs
-  ?.  ?=([[%gall %sys %req @ @ *] [%ames %bone @ @ @ *] *] duct)
+  ?.  ?=([[%gall %sys %req @ @ *] *] duct)
+    subs
+  ?.  ?=([^ [%ames %bone @ @ @ ~] *] duct)
     subs
   =*  app    &5:i.duct
-  =*  rift   &4:i.t.duct  :: XX ?
-  =/  =bone  (slav %ud &5:i.t.duct)
-  =+  .^  corked=?  %ax
-        ^-  ^path
-        :~  (scot %p p.bec)  %$  (scot %da now)
-            %corked   (scot %p ship)  %bak
-            (scot %ud bone)
+  :: =*  rift   &4:i.t.duct  :: XX ?
+  =/  [=bone scry-path=^path]
+    =/  =bone
+      (slav %ud &5:i.t.duct)
+    ::
+    =+  .^  ahoyed=?  %ax
+          [(scot %p p.bec) %$ (scot %da now) %ahoyed (scot %p ship) ~]
         ==
-      ==
+    =.  bone  ?.(ahoyed bone (mix 0b1 bone))
+    :-  bone
+    :*  (scot %p p.bec)  %$  (scot %da now)
+        %corked   (scot %p ship)
+        ?.  ahoyed
+          [(scot %ud bone) ~]
+        [%bak (scot %ud bone) ~]
+    ==
+  =+  .^(corked=? %ax scry-path)
   (~(add ja subs) [ship `@ta`app path] [bone corked ship app duct])
 --
