@@ -7852,38 +7852,48 @@
           =.  tip.per.core  (~(del ju tip.per.core) path hen ames-path)
           %-  ~(rep by ints)
           |=  [int=^ints c=_core]
-          ?^  int
-            %-  %+  ev-tace  |(odd.veb.bug.ames-state fin.veb.bug.ames-state)
-                |.("no %sage={(spud path)}; no-op")
-            c
-          %.  (ev-emit:c hen %give %sage her^path gage)
-          (ev-tace fin.veb.bug.ames-state |.("give %sage={(spud path)}"))
+          ?@  int
+            %.  (ev-emit:c hen %give %sage her^path gage)
+            (ev-tace fin.veb.bug.ames-state |.("give %sage={(spud path)}"))
+          ?~  gage  c  ::  XX  =(1 (met 3 (jam ~)))
+          =|  =rate
+          =/  tot=@  (met 3 (jam gage))
+          =.  rate   rate(boq boq.int, fag ~, tot tot)   ::  XX  rate=(unit)?
+          %.  (ev-emit:c hen %give %rate her^path rate)  ::  XX  her^ames-path?
+          (ev-tace fin.veb.bug.ames-state |.("give %rate={(spud path)}"))
         ::
         ++  ev-give-rate
-          |=  [listeners=(jug duct ints) =spar =rate]
-          ^+  ev-core
-          %-  ~(rep by listeners)
+          |=  [=spar =rate]
           |=  [[hen=duct ints=(set ints)] core=_ev-core]
           %-  ~(rep by ints)
           |=  [int=^ints c=_core]
           ?@  int  c
-          ::  XX decrypt path.spar
+          ::  XX check that =(boq.rate boq.int)
           %.  (ev-emit:c hen %give %rate spar rate)
-          %+  ev-tace  fin.veb.bug.ames-state
-          |.("give %rate={(spud path.spar)}")
+          (ev-tace fin.veb.bug.ames-state |.("give %rate={(spud path.spar)}"))
         ::
         :: ++  ev-give-ints
-        ::   |=  [target=ints spar =rate =sage]
-        ::   |=  [output=ints core=_ev-core]
-        ::   ^+  ev-core
-        ::   :: %-  %+  ev-tace:core  fin.veb.bug.ames-state
-        ::   ::     |.("give {<target>}={(spud path.spar)}")
-        ::   ?.  =(target output)  core
-        ::   :: %+  ev-tace  fin.veb.bug.ames-state
-        ::   :: |.("give %rate={(spud path)}")
-        ::   ?@  target
-        ::     (ev-emit:core hen %give %sage spar sage)
-        ::   (ev-emit:core hen %give %rate spar rate)
+        ::   |=  $:  =spar
+        ::           $=  give
+        ::           $%  [%rate rate=(unit rate)]
+        ::               [%sage =ames=path =gage:mess]
+        ::       ==  ==
+        ::   |=  [[hen=duct ints=(set ints)] core=_ev-core]
+        ::   %-  ~(rep by ints)
+        ::   |=  [int=^ints c=_core]
+        ::   ?.  ?=(-.give -.int)
+        ::     c  ::  skip interest not given at the moment
+        ::   ?@  int
+        ::     =.  tip.per.core  (~(del ju tip.per.core) path.spar hen ames-path)
+        ::     %.  (ev-emit:c hen %give %sage spar gage)
+        ::     (ev-tace fin.veb.bug.ames-state |.("give %sage={(spud path.spar)}"))
+        ::   ?~  gage  c  ::  XX  =(1 (met 3 (jam ~)))
+        ::   =|  =rate
+        ::   =/  tot=@  (met 3 (jam gage))
+        ::   =.  rate   rate(boq boq.int, fag ~, tot tot)   ::  XX  rate=(unit)?
+        ::   ::  XX check that =(boq.rate boq.int)
+        ::   %.  (ev-emit:c hen %give %rate spar rate)
+        ::   (ev-tace fin.veb.bug.ames-state |.("give %rate={(spud path.spar)}"))
         ::
         ++  ev-add-rate
           |=  [=path task=?(~ ?([%chum ~] [%keen kid=(unit @)])) freq=@ud]
@@ -7936,7 +7946,7 @@
             ?~  ms=(~(get by pit.per.core) ames-path)  core
             =.  pit.per.core  (~(del by pit.per.core) ames-path)
             ?>  (~(has in ~(key by for.u.ms)) duct)
-            =.  core  (ev-give-rate:core for.u.ms her^ames-path *rate)  ::  XX ?
+            =.  core  (~(rep by for.u.ms) (ev-give-rate:core her^path *rate))
             ((ev-give-sage:core path) for.u.ms ames-path ~)
           ::  find namespace path used by the .hen listener
           ::
@@ -10888,7 +10898,10 @@
           !!  :: no %aliens allowed
         =+  ev-core=(ev-foco:ev-core ship.spar +.u.ship-state)
         ?^  ms=(~(get by pit.per.ev-core) path.spar)
-          ev-abet:(ev-give-rate:ev-core for.u.ms spar rate)
+          ::  XX  call ev-decrypt-path path.spar?
+          ::
+          =.  ev-core  (~(rep by for.u.ms) (ev-give-rate:ev-core spar rate))
+          ev-abet:ev-core
         %-  %+  ev-tace:ev-core  [|(odd fin)]:veb.bug.ames-state
             |.("weird %rate; missing path={(spud path.spar)}}")
         `ames-state

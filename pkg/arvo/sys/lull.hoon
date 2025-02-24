@@ -1170,6 +1170,7 @@
         keens=(map path keen-state)
         =chain
         tip=(jug path [duct path])    ::  reverse map for %chum and %shut paths
+        ::  (mip =user=path listener=duct =ames=path)
     ==
   +$  keen-state
     $+  keen-state
@@ -1657,12 +1658,17 @@
         pit=(map path request-state)  ::  namespace paths
         =client=chain                 ::  stores keys for %shut requests
         tip=(jug path [duct path])    ::  reverse lookup for non-namespace paths
+        ::  (mip =user=path listener=duct =ames=path)
     ==
   ::
   ::  interest gifts per path in the pith
+  ::    %sage used by |mesa
+  ::    %tune used by |fine
+  ::    %rate  XX give $rate every .feq of bloq size .boq
   ::
-  +$  ints  ?(%sage %tune [%rate boq=@ud feq=@ud])  ::  XX give %rate every .feq of bloq .boq
+  +$  ints  ?(%sage %tune [%rate boq=@ud feq=@ud])
   +$  rate  [boq=@ud fag=(unit @ud) tot=@ud]
+            :: $@(~ [boq=@ud fag=@ud tot=@ud])
   +$  request-state
     $:  for=(jug duct ints)
         pay=(unit path)
