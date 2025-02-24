@@ -1169,8 +1169,7 @@
         corked=(set bone)
         keens=(map path keen-state)
         =chain
-        tip=(jug path [duct path])    ::  reverse map for %chum and %shut paths
-        ::  (mip =user=path listener=duct =ames=path)
+        tip=(jug path [duct path])    ::  reverse map for %chum and %shut paths:7868        ::  (mip =user=path listener=duct =ames=path)
     ==
   +$  keen-state
     $+  keen-state
@@ -1667,8 +1666,7 @@
   ::    %rate  XX give $rate every .feq of bloq size .boq
   ::
   +$  ints  ?(%sage %tune [%rate boq=@ud feq=@ud])
-  +$  rate  [boq=@ud fag=(unit @ud) tot=@ud]
-            :: $@(~ [boq=@ud fag=@ud tot=@ud])
+  +$  rate  $@(~ [boq=@ud fag=@ud tot=@ud])
   +$  request-state
     $:  for=(jug duct ints)
         pay=(unit path)

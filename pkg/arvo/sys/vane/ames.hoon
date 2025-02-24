@@ -3145,6 +3145,7 @@
                 %chum  (on-chum:event-core +.task)
                 %yawn  (on-cancel-scry:event-core | +.task)
                 %wham  (on-cancel-scry:event-core & +.task)
+                %whey  !!  :: XX
               ::
                 %mate  (on-mate:event-core +.task)
               ==
@@ -6357,10 +6358,11 @@
               %-  ~(rep in ints)
               |=  [int=^ints f=_fine]
               ?@  int  f
-              =?  f  ?&  ?=(^ fag.rate)
-                          =(0 (mod u.fag.rate feq.int))
-                     ==
-                (fi-emit:f duct %give %rate her^path rate(boq boq.int))
+              =?  f  ?|  ?=(~ rate)
+                         ?&  =(boq.rate boq.int)
+                             =(0 (mod fag.rate feq.int))
+                     ==  ==
+                (fi-emit:f duct %give %rate her^path rate)
               f
             ::
             +|  %entry-points
@@ -6530,8 +6532,7 @@
               %-  ~(rep by listeners.keen)
               |=  [[=^duct ints=(set ints)] =_fine]
               =.  fine  ((fi-give-tune roar) [duct^ints fine])
-              %.  [duct^ints fine]
-              (fi-give-rate boq=*@ [`num-received num-fragments]:keen)
+              ((fi-give-rate ~) duct^ints fine)
             ::
             ++  fi-first-rcv
               |=  =meow
@@ -6559,7 +6560,7 @@
               =.            fine   (fi-send `@ux`hoot.want)
               =.  fine
                 %-  ~(rep in listeners.keen)
-                (fi-give-rate boq=*@ud [`num-received num-fragments]:keen)
+                (fi-give-rate boq=13 [num-received num-fragments]:keen)
               $(inx +(inx))
             ::
             ++  fi-sift-full
@@ -7855,11 +7856,7 @@
           ?@  int
             %.  (ev-emit:c hen %give %sage her^path gage)
             (ev-tace fin.veb.bug.ames-state |.("give %sage={(spud path)}"))
-          ?~  gage  c  ::  XX  =(1 (met 3 (jam ~)))
-          =|  =rate
-          =/  tot=@  (met 3 (jam gage))
-          =.  rate   rate(boq boq.int, fag ~, tot tot)   ::  XX  rate=(unit)?
-          %.  (ev-emit:c hen %give %rate her^path rate)  ::  XX  her^ames-path?
+          %.  (ev-emit:c hen %give %rate her^path ~)
           (ev-tace fin.veb.bug.ames-state |.("give %rate={(spud path)}"))
         ::
         ++  ev-give-rate
@@ -7868,7 +7865,10 @@
           %-  ~(rep by ints)
           |=  [int=^ints c=_core]
           ?@  int  c
-          ::  XX check that =(boq.rate boq.int)
+          ?>  ?&  ?=(^ rate)
+                  =(boq.rate boq.int)
+                  =(0 (mod fag.rate feq.int))
+              ==
           %.  (ev-emit:c hen %give %rate spar rate)
           (ev-tace fin.veb.bug.ames-state |.("give %rate={(spud path.spar)}"))
         ::
@@ -7946,7 +7946,7 @@
             ?~  ms=(~(get by pit.per.core) ames-path)  core
             =.  pit.per.core  (~(del by pit.per.core) ames-path)
             ?>  (~(has in ~(key by for.u.ms)) duct)
-            =.  core  (~(rep by for.u.ms) (ev-give-rate:core her^path *rate))
+            =.  core  (~(rep by for.u.ms) (ev-give-rate:core her^path ~))
             ((ev-give-sage:core path) for.u.ms ames-path ~)
           ::  find namespace path used by the .hen listener
           ::
@@ -10891,6 +10891,7 @@
     ++  pe-rate
       |=  [dud=(unit goof) =spar =rate]
       ::
+      ?~  rate  `vane-gate
       =/  ship-state  (pe-find-peer ship.spar)
       ?>  ?=(%mesa -.ship-state)
       =^  moves  ames-state
@@ -10917,7 +10918,10 @@
       ::  XX also for |ames; move to common tasks
       ::
       =/  ship-state  (pe-find-peer ship.spar)
-      ?:  ?=(%ames -.ship-state)  !!
+      ?:  ?=(%ames -.ship-state)
+        ::  XX support |ames
+        ::
+        !!
       =^  moves  ames-state
         ?.  ?=([~ %known *] +.ship-state)
           !!  :: no %aliens allowed
