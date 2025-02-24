@@ -15,6 +15,13 @@
   ``val
 ::
 ++  test-watch
+  ::  uncomment to turn on verbose debug output
+  ::
+  =^  *  nec
+    (ames-call:v nec ~[/none] [%spew ~[%msg %snd %rcv %odd %rot %fin]] *roof)
+  =^  *  bud
+    (ames-call:v bud ~[/none] [%spew ~[%msg %snd %rcv %odd %rot %fin]] *roof)
+  ::
   %-  run-chain
   |.  :-  %|
   ::
@@ -30,12 +37,12 @@
   =/  =space:ames
     [%chum server-life=bud-life client=~nec client-life=nec-life key]
   =/  poke-plea  [%x /ge/pok [%0 %m noun/0]]
-  =/  poke-path  /flow/0/plea/~bud/1
-  =/  ack-path   /flow/0/ack-plea/~nec/1
-  =/  nax-path   /flow/0/nax/~nec/1
+  =/  poke-path  /flow/0/poke/for/~bud/1
+  =/  ack-path   /flow/0/ack/bak/~nec/1
+  =/  nax-path   /flow/0/naxp/bak/~nec/1
   ::
   =/  ack-wire   /mesa/flow/ack/for/~bud/0/0
-  =/  vane-wire  /mesa/flow/van/bak/~nec/0/0
+  =/  vane-wire  /bone/~nec/0/1
   =/  nax-wire   /mesa/flow/nax/for/~bud/0/0
   ::
   =/  moke=[%moke space:ames =spar:ames =path]
@@ -80,7 +87,7 @@
   :-  error-moves  |.  :-  %|
   ::  start
   ::
-  ~?  >  dbug  'naxplanation payload is accesible at /flow/0/nax/~nec/1'
+  ~?  >  dbug  'naxplanation payload is accesible at /flow/0/nax/bak/~nec/1'
   =/  moves-1
     %+  expect-eq
     !>  nax/*goof
