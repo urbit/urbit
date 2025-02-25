@@ -3463,8 +3463,8 @@
       ?~  jol  !!
       ?-    wil                                         :: mint-vain on empty
           :: [wit=* t=*]
-          [* t=*]
-        =>  .(wil [wit *]=wil)
+          [* *]
+        =>  .(wil [wit t]=wil)
         ?~  t.wil  ?^(t.jol !! (wit.wil i.jol))
         [(wit.wil i.jol) ((at-raw t.wil) t.jol)]
       ==
@@ -3530,8 +3530,8 @@
       |-
       ?-    wer                                         :: mint-vain on empty
           :: [[key=@t wit=*] t=*]
-          [[key=@t *] t=*]
-        =>  .(wer [[* wit] *]=wer)
+          [[@t *] *]
+        =>  .(wer [[key wit] t]=wer)
         ?:  =(key.wer p.n.p.jon)
           [key.wer ~|(key+key.wer (wit.wer q.n.p.jon))]
         ?~  t.wer  ~|(bad-key+p.n.p.jon !!)
@@ -3549,8 +3549,8 @@
       |=  jom=(map @t json)
       ?-    wer                                         :: mint-vain on empty
           :: [[key=@t wit=*] t=*]
-          [[key=@t *] t=*]
-        =>  .(wer [[* wit] *]=wer)
+          [[@t *] *]
+        =>  .(wer [[key wit] t]=wer)
         =/  ten  ~|(key+key.wer (wit.wer (~(got by jom) key.wer)))
         ?~(t.wer ten [ten ((ot-raw t.wer) jom)])
       ==
@@ -3566,8 +3566,8 @@
       |=  jom=(map @t json)
       ?-    wer                                         :: mint-vain on empty
           :: [[key=@t wit=*] t=*]
-          [[key=@t *] t=*]
-        =>  .(wer [[* wit] *]=wer)
+          [[@t *] *]
+        =>  .(wer [[key wit] t]=wer)
         =/  ten  ~|(key+key.wer (wit.wer (~(get by jom) key.wer)))
         ?~(t.wer ten [ten ((ou-raw t.wer) jom)])
       ==
@@ -3590,7 +3590,6 @@
       %-  malt
       %+  turn  ~(tap by jom)
       |*  [a=cord b=*]
-      =>  .(+< [a b]=+<)
       [(rash a fel) b]
     ::                                                  ::  ++pa:dejs:format
     ++  pa                                              ::  string as path

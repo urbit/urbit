@@ -5927,13 +5927,23 @@
   ?~  run  [~ ~]
   ::TODO  if it ever gets filled properly, pass in the full fur.
   ::
-  =/  for=(unit ship)  ?~(lyc ~ ?~(u.lyc ~ `n.u.lyc))
   ?:  &(=(our his) ?=(?(%d %x) ren) =(%$ syd) =([%da now] u.luk))
     ?.  =([~ ~] lyc)  ~
     ?-  ren
       %d  (read-buc-d tyl)
       %x  (read-buc-x tyl)
     ==
+  =/  aut=?
+    ?^  lyc
+      %.y
+    =+  pem=(rof [~ ~] /clay %cp bem)
+    ?.  ?=(^ pem)    %.n
+    ?.  ?=(^ u.pem)  %.n
+    ~|  u.u.pem
+    =+  per=!<([r=dict:clay w=dict:clay] q.u.u.pem)
+    =([%black ~ ~] rul.r.per)
+  ?.  aut  ~
+  =/  for=(unit ship)  ?~(lyc ~ ?~(u.lyc ~ `n.u.lyc))
   =/  den  ((de now rof [/scryduct ~] ruf) his syd)
   =/  result  (mule |.(-:(aver:den for u.run u.luk tyl)))
   ?:  ?=(%| -.result)

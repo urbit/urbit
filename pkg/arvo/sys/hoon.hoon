@@ -6407,6 +6407,7 @@
     [%dbug p=spot q=hoon]                               ::  debug info in trace
     [%eror p=tape]                                      ::  assembly error
     [%hand p=type q=nock]                               ::  premade result
+    [%fuse p=type q=wing]                               ::  lazy specialization
     [%note p=note q=hoon]                               ::  annotate
     [%fits p=hoon q=wing]                               ::  underlying ?=
     [%knit p=(list woof)]                               ::  assemble string
@@ -8327,10 +8328,10 @@
       (bind $(gen q.gen) |=(=skin [%help p.p.gen skin]))
     ::
         [%wing *]
-      ?:  ?=([@ ~] p.gen)
-        `i.p.gen
       =/  depth  0
       |-  ^-  (unit skin)
+      ?:  ?=([@ ~] p.gen)
+        `i.p.gen
       ?~  p.gen  `[%wash depth]
       ?.  =([%| 0 ~] i.p.gen)  ~
       $(p.gen t.p.gen)
@@ -8990,7 +8991,7 @@
                        ?.  =(%noun ^skin.skin)
                          (cell - ^$(skin ^skin.skin, ref %noun))
                        [%core - q.ref]
-            [%face *]  $(ref q.ref)
+            [%face *]  (face p.ref $(ref q.ref))
             [%fork *]  (fork (turn ~(tap in p.ref) |=(=type ^$(ref type))))
             [%hint *]  (hint p.ref $(ref q.ref))
             [%hold *]  ?:  (~(has in gil) ref)  %void
@@ -9118,8 +9119,13 @@
           [%cell *]
         ?+  ref      sint
           [%atom *]  sut
-          [%cell *]  ?.  (nest(sut p.ref) | p.sut)  sut
-                     (cell p.sut dext(sut q.sut, ref q.ref))
+          [%cell *]  =/  lef  dext(sut p.sut, ref p.ref)
+                     =/  ryt  dext(sut q.sut, ref q.ref)
+                     %-  fork
+                     :~  (cell lef q.sut)
+                         (cell p.sut ryt)
+                         (cell lef ryt)
+                     ==
         ==
       ::
           [%core *]  ?:(?=(?([%atom *] [%cell *]) ref) sut sint)
@@ -9136,12 +9142,12 @@
       ^-  type
       ?+    ref    !!
         [%core *]  sut
-        [%face *]  dext(ref repo(sut ref))
+        [%face *]  dext(ref q.ref)
         [%fork *]  =+  yed=~(tap in p.ref)
                    |-  ^-  type
                    ?~  yed  sut
                    $(yed t.yed, sut dext(ref i.yed))
-        [%hint *]  dext(ref repo(sut ref))
+        [%hint *]  dext(ref q.ref)
         [%hold *]  dext(ref repo(sut ref))
       ==
     --
@@ -9149,13 +9155,7 @@
   ++  cool
     |=  [pol=? hyp=wing ref=type]
     ^-  type
-    =+  zeb=(unzip %both hyp)
-    ?+  zeb  sut
-      [%pale *]
-          =<  q
-          %+  take  zeb
-          |=(a=type ?:(pol (fuse(sut a) ref) (crop(sut a) ref)))
-    ==
+    !!  ::NOTE  should be dead code, see +chyp
   ::
   ++  duck  ^-(tank ~(duck us sut))
   ++  dune  |.(duck)
@@ -9670,9 +9670,13 @@
     |=  [way=vial gen=hoon]
     ^-  port
     =+  hup=~(reek ap gen)
-    ?~  hup
-      [%| (mint %noun gen)]
-    (find way u.hup)
+    ?^  hup
+      (find way u.hup)
+    =+  tok=(mint %noun gen)
+    ?.  ?=([%0 @] q.tok)
+      [%| tok]
+    ::TODO  could optimize on %9 also
+    [%& `vein`[`p.q.tok ~] `opal`[%& p.tok]]
   ::
   ++  fine
     ~/  %fine
@@ -9751,31 +9755,34 @@
     =+  rev=|
     |-  ^-  type
     ?:  ?|(=(sut ref) =(%noun ref))
+      ?:  &(!rev ?=([%face *] sut))  ::REVIEW
+        q.sut
       sut
     ?-    sut
         [%atom *]
       ?-    ref
-          [%atom *]   =/  foc
-                        =+  fit=(fitz ?:(rev [p.sut p.ref] [p.ref p.sut]))
-                        ?:(fit p.sut p.ref)
-                      ?^  q.sut
-                        ?^  q.ref
-                          ?:  =(q.sut q.ref)
-                            [%atom foc q.sut]
+          [%atom *]   =+  [a b]=?:(rev [ref sut] [sut ref])
+                      =+  foc=?:((fitz p.b p.a) p.a p.b)
+                      ?^  q.a
+                        ?^  q.b
+                          ?:  =(q.a q.b)
+                            [%atom foc q.a]
                           %void
-                        [%atom foc q.sut]
-                      [%atom foc q.ref]
+                        [%atom foc q.a]
+                      [%atom foc q.b]
           [%cell *]   %void
           *           $(sut ref, ref sut, rev !rev)
       ==
         [%cell *]
       ?-  ref
-        [%cell *]   (cell $(sut p.sut, ref p.ref) $(sut q.sut, ref q.ref))
-        *           $(sut ref, ref sut, rev !rev)
+          [%cell *]   =+  hed=$(sut p.sut, ref p.ref)
+                      ?:  ?=(%void hed)  %void
+                      (cell hed $(sut q.sut, ref q.ref))
+          *           $(sut ref, ref sut, rev !rev)
       ==
     ::
         [%core *]  $(sut repo)
-        [%face *]  (face p.sut $(sut q.sut))
+        [%face *]  ?:(rev (face p.sut $(sut q.sut)) $(sut q.sut))
         [%fork *]  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
         [%hint *]  (hint p.sut $(sut q.sut))
         [%hold *]
@@ -9785,6 +9792,76 @@
     ::
         %noun       ref
         %void       %void
+    ==
+  ::
+  ++  flux
+    ~/  %flux
+    |=  ref=type
+    ::  nam: pattern-name to [axis pattern-type]
+    ::
+    =|  nam=(map term (pair axis type))
+    ^-  [typ=type nam=_nam]
+    =|  hid=_|
+    =|  bix=(set [type type])
+    =+  rev=|
+    =+  axe=1
+    ::
+    |-  ^+  [*type nam]
+    ?:  ?|(=(sut ref) =(%noun ref))
+      [sut nam]
+    ?-    sut
+        [%atom *]
+      ?-    ref
+          [%atom *]   :_  nam
+                      =+  [a b]=?:(rev [ref sut] [sut ref])
+                      =+  foc=?:((fitz p.b p.a) p.a p.b)
+                      ?^  q.a
+                        ?^  q.b
+                          ?:  =(q.a q.b)
+                            [%atom foc q.a]
+                          %void
+                        [%atom foc q.a]
+                      [%atom foc q.b]
+          [%cell *]   [%void nam]
+          *           $(sut ref, ref sut, rev !rev)
+      ==
+        [%cell *]
+      ?-  ref
+        [%cell *]   =^  l  nam  $(axe (peg axe 2), sut p.sut, ref p.ref)
+                    =^  r  nam  $(axe (peg axe 3), sut q.sut, ref q.ref)
+                    [(cell l r) nam]
+        *           $(sut ref, ref sut, rev !rev)
+      ==
+    ::
+        [%core *]  $(sut repo)
+    ::
+        [%face *]  ?.  rev
+                     =^  a  nam  $(sut q.sut)
+                     [(face p.sut a) nam]
+                   ?:  |(hid ?=(^ p.sut))
+                     $(sut q.sut)
+                   %_  $
+                     sut  q.sut
+                     hid  &
+                     nam  (~(put by nam) p.sut [axe q.sut])
+                   ==
+    ::
+        [%fork *]  =^  s  nam
+                     %-  ~(rep in p.sut)
+                     |=  [t=type s=(list type) n=_nam]
+                     =^  a  n  ^$(sut t)
+                     [[a s] n]
+                   [(fork s) nam]
+    ::
+        [%hint *]  =^  a  nam  $(sut q.sut)
+                   [(hint p.sut a) nam]
+        [%hold *]
+      ?:  (~(has in bix) [sut ref])
+        ~>(%mean.'fuse-loop' !!)
+      $(sut repo, bix (~(put in bix) [sut ref]))
+    ::
+        %noun       [ref nam]
+        %void       [%void nam]
     ==
   ::
   ++  gain
@@ -9920,7 +9997,17 @@
           %wtts
         =?  zebra.hippo  lol  (unzip %both wing.hippo)
         ?.  ?=([%pale *] zebra.hippo)  sut
-        q:(take zebra.hippo |=(a=type (fuse(sut a) type.hippo)))
+        =<  q
+        %+  take  zebra.hippo
+        |=  a=type
+        =/  [typ=type nam=(map term (pair axis type))]
+          (flux(sut a) type.hippo)
+        ?:  ?=(%void typ)  %void
+        ?:  =(~ nam)  typ  ::NOTE  tmi
+        %-  (curr face typ)
+        %-  ~(rep by nam)
+        |=  [[l=term a=axis n=type] t=tune]
+        t(p (~(put by p.t) l `[%fuse n &+a ~]))
       ::
           %wthx
         =?  zebra.hippo  lol  (unzip %both wing.hippo)
@@ -10211,6 +10298,7 @@
     ::
         [%dtwt *]  [(nice bool) [%3 q:$(gen p.gen, gol %noun)]]
         [%hand *]  [p.gen q.gen]
+        [%fuse *]  =+($(gen [%cnts q.gen ~]) [(fuse(sut p) p.gen) q])
         [%ktbr *]  =+(vat=$(gen p.gen) [(nice (wrap(sut p.vat) %iron)) q.vat])
     ::
         [%ktls *]
@@ -10763,6 +10851,7 @@
       [%dtts *]  bool
       [%dtwt *]  bool
       [%hand *]  p.gen
+      [%fuse *]  (fuse(sut $(gen [%cnts q.gen ~])) p.gen)
       [%ktbr *]  (wrap(sut $(gen p.gen)) %iron)
       [%ktls *]  $(gen p.gen)
       [%ktpm *]  (wrap(sut $(gen p.gen)) %zinc)
@@ -10773,7 +10862,8 @@
       [%sggr *]  $(gen q.gen)
       [%tsgr *]  $(gen q.gen, sut $(gen p.gen))
       [%tscm *]  $(gen q.gen, sut (busk p.gen))
-      [%wtcl *]  =+  [fex=(gain p.gen) wux=(lose p.gen)]
+      [%wtcl *]  =+  hip=(chyp p.gen)
+                 =+  [fex=(gain:chyp hip) wux=(lose:chyp hip)]
                  %-  fork  :~
                    ?:(=(%void fex) %void $(sut fex, gen q.gen))
                    ?:(=(%void wux) %void $(sut wux, gen r.gen))
@@ -11370,6 +11460,7 @@
                 $%  [%mato p=term]                      ::
                     [%core p=(list @ta) q=wine]         ::
                     [%face p=term q=wine]               ::
+                    [%lens p=(set term) q=wine]         ::
                     [%list p=term q=wine]               ::
                     [%pear p=term q=@]                  ::
                     [%bcwt p=(list wine)]               ::
@@ -11434,6 +11525,12 @@
           [%face *]
         =^  cox  gid  $(q.ham q.q.ham)
         :_(gid [%palm [['=' ~] ~ ~ ~] [%leaf (trip p.q.ham)] cox ~])
+      ::
+          [%lens *]
+        =^  cox  gid  $(q.ham q.q.ham)
+        =/  nos=tank
+          [%rose ["," "\{" "}"] `(list tank)`(sort ~(tap in p.q.ham) aor)]
+        :_(gid [%palm ["≛" ~ ~ ~] cox nos ~])
       ::
           [%list *]
         =^  cox  gid  $(q.ham q.q.ham)
@@ -11568,6 +11665,9 @@
       ?~  wal
         ~
       [~ %palm [['=' ~] ~ ~ ~] [%leaf (trip p.q.ham)] u.wal ~]
+    ::
+        [%lens *]
+      $(q.ham q.q.ham)
     ::
         [%list *]
       ?:  =(~ lum)
@@ -11773,7 +11873,10 @@
     ::
         [%face *]
       =+  yad=$(sut q.sut)
-      ?^(p.sut yad [p.yad [%face p.sut q.yad]])
+      :-  p.yad
+      ?@  p.sut
+        [%face p.sut q.yad]
+      [%lens ~(key by p.p.sut) q.yad]
     ::
         [%fork *]
       =+  yed=(sort ~(tap in p.sut) aor)
@@ -14289,8 +14392,8 @@
         |=(a=axis [%& a])
       ;~  pose
         ;~(pfix lus dim:ag)
-        ;~(pfix pam (cook |=(a=@ ?:(=(0 a) 0 (mul 2 +($(a (dec a)))))) dim:ag))
-        ;~(pfix bar (cook |=(a=@ ?:(=(0 a) 1 +((mul 2 $(a (dec a)))))) dim:ag))
+        ;~(pfix pam (cook |=(a=@ (sub (bex +(a)) 2)) dim:ag))
+        ;~(pfix bar (cook |=(a=@ (sub (bex +(a)) 1)) dim:ag))
         ven
         (cold 1 dot)
       ==
