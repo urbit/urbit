@@ -1169,7 +1169,7 @@
         corked=(set bone)
         keens=(map path keen-state)
         =chain
-        tip=(jug path [duct path])    ::  reverse map for %chum and %shut paths:7868        ::  (mip =user=path listener=duct =ames=path)
+        tip=(jug =user=path [duct =ames=path])
     ==
   +$  keen-state
     $+  keen-state
@@ -1654,10 +1654,9 @@
         ::  read data:  path=pek-path
         ::              path=ack-path  (~nec) /ack/~zod/flow/bone=0/mess=1
         ::
-        pit=(map path request-state)  ::  namespace paths
-        =client=chain                 ::  stores keys for %shut requests
-        tip=(jug path [duct path])    ::  reverse lookup for non-namespace paths
-        ::  (mip =user=path listener=duct =ames=path)
+        pit=(map path request-state)           :: active +peek namespace paths
+        =client=chain                          :: stores keys for %shut requests
+        tip=(jug =user=path [duct =ames=path]) :: reverse .pip lookup map
     ==
   ::
   ::  interest gifts per path in the pith

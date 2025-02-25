@@ -3085,12 +3085,17 @@
               client-chain
             :-  client-chain.c
             %-  ~(rep by pit.c)
-            |=  [[=outer=path req=request-state-23] tip=(jug path [duct path])]
-            =/  [=space cyf=(unit @) =inner=path]
-              (ev-decrypt-path:ev:(mesa:adult-core now eny rof) outer-path her)
+            |=  [[=ames=path req=request-state-23] tip=(jug path [duct path])]
+            =|  tmp-per=fren-state
+            =.  tmp-per  tmp-per(- +<.c, client-chain client-chain.c)
+            =+  ev-core=ev:(mesa:adult-core now eny rof)
+            =.  chums.ames-state.ev-core
+              (~(put by chums.ames-state) her known/tmp-per)
+            =/  [=space cyf=(unit @) =user=path]
+              (ev-decrypt-path:ev-core ames-path her)
             %-  ~(rep in for.req)
             |=  [=duct t=_tip]
-            (~(put ju t) inner-path [duct outer-path])
+            (~(put ju t) user-path [duct ames-path])
           ==
         ==
       ::
@@ -5086,13 +5091,13 @@
                 ::
                   [%fine %shut idx=@ cyf=@]
                 =/  idx=@ud    (slav %ud idx.pat.path)
-                =/  cyf=@      (slav %ud cyf.pat.path)
-                =/  key=@      key:(got:on:chain server-chain.ames-state idx)
+                =/  cyf=@      (slav %uv cyf.pat.path)
+                =/  key=@      key:(got:on:chain chain.per idx)
                 =/  pax=^path  (rash `@t`(dy:crub:crypto key cyf) stap)
                 [pax %shut idx key]
                 ::
                   [%chum her=@ lyf=@ cyf=@]
-                =/  cyf=@      (slav %ud cyf.pat.path)
+                =/  cyf=@      (slav %uv cyf.pat.path)
                 =*  key        symmetric-key.per
                 =/  pax=^path  (rash `@t`(dy:crub:crypto key cyf) stap)
                 [pax %chum life.ames-state her life.per key]
@@ -6796,6 +6801,7 @@
         =*  syd  q.bem
         =*  lot=coin  $/r.bem
         =*  tyl  s.bem
+        =+  ev-core=(ev [now eny rof] [//scry]~ ames-state)
         ::
         ?:  ?&  =(&+our why)
                 =([%ud 1] r.bem)
@@ -6902,9 +6908,7 @@
             ?~  res  ~
             =/  =hunk  [(slav %ud lop.tyl) (slav %ud len.tyl)]
             ::
-            =/  hu-co
-              %+  etch-hunk  our
-              [life.ames-state (nol:nu:crub:crypto priv.ames-state)]
+            =+  hu-co=(etch-hunk our life.ames-state crypto-core:ev-core)
             ?-  res
               [~ ~]    ``noun+!>((etch-open:hu-co pax.tyl hunk ~))
               [~ ~ *]  ``noun+!>((etch-open:hu-co pax.tyl hunk [p q.q]:u.u.res))
@@ -6986,7 +6990,6 @@
                 ::  if the peer is %alien or missing, send to the sponsor galaxy
                 ::
                 ?:(=(our u.gal) ~ [%& u.gal]~)
-              =/  ev-core  (ev [now eny rof] [//scry]~ ames-state)
               (get-forward-lanes our +.u.peer peers.ames-state)
             ==
           ::
@@ -7299,14 +7302,14 @@
           ^+  ser
           ?-  -.space
             ?(%none %publ)  ser
-            %shut           (decrypt:crypt key.space (need cyf) ser)
-            %chum           (decrypt:crypt key.space (need cyf) ser)
+            %shut  (decrypt:crypt key.space (need cyf) ser)
+            %chum  (decrypt:crypt key.space (need cyf) ser)
           ==
         ::  XX move to utility core chapter since we use got-per?
         ::
         ++  ev-decrypt-path
           |=  [=path =ship]
-          ^-  [=space (unit cyf=@) inner=^path]
+          ^-  [=space cyf=(unit cyf=@) inner=^path]
           =/  tyl=(pole knot)  path
           ?+    tyl  ~|(ev-decrypt-path/tyl !!)
               [%publ lyf=@ pat=*]  :: unencrypted
@@ -7336,9 +7339,8 @@
             :: ?>  ?=(%known -.per)  :: XX wat if %alien?
             ?~  key=(get:key-chain client-chain.sat u.kid)
               !!  :: XX handle
-            :^    [%shut u.kid -.u.key]
-                cyf
-              -.u.key
+            :+  [%shut u.kid -.u.key]
+              cyf
             (open-path:crypt -.u.key u.cyf)
           ==
         ::
@@ -7950,35 +7952,27 @@
             ((ev-give-sage:core path) for.u.ms ames-path ~)
           ::  find namespace path used by the .hen listener
           ::
-          =^  [listener=duct =ames=^path]  ev-core
+          =^  listener  ev-core
             %-  ~(rep in ls)
-            |=  [[=duct =ames=^path] [l=duct p=^path] core=_ev-core]
-            ?~  ms=(~(get by pit.per) ames-path)  [l p]^core
-            ?.  =(hen duct)                       [l p]^core
-            ?~  ints=(~(get by for.u.ms) duct)    [l p]^core  :: XX weird
-            :-  hen^ames-path
+            |=  [[=duct =ames=^path] l=duct core=_ev-core]
+            ?~  ms=(~(get by pit.per.core) ames-path)  l^core
+            ?.  =(hen duct)                            l^core
+            ?~  ints=(~(get by for.u.ms) duct)         l^core  :: XX weird
+            :-  hen
             ::  XX deletes all interest of this listener
             ::
             =.  for.u.ms  (~(del by for.u.ms) duct)
-              ::     use a task to remove individual interest?
+            =.  pit.per.core
+              ?~  for.u.ms
+                (~(del by pit.per) ames-path)
+              (~(put by pit.per) ames-path u.ms)
+              ::  use a task to remove individual interest?
+              ::  XX what if other listener subscribed to %rate gifts?
               ::
               :: (~(rep by u.ints) |=([=ints f=_for.u.ms] (~(del ju f) hen ints)))
-            %_  core
-              tip.per  (~(del ju tip.per.core) path hen ames-path)
-              pit.per  (~(put by pit.per.core) ames-path u.ms)
-            ==
-          ?~  ms=(~(get by pit.per) ames-path)
-            %-  %+  ev-tace  odd.veb.bug.ames-state
-                |.("no pit for path={(spud ames-path)}}")
-            ev-core
-          ?~  listener
-            %-  %+  ev-tace  odd.veb.bug.ames-state
-                |.("listener not in pit")
-            ev-core
-          =.  pit.per
-            ?~  for.u.ms
-              (~(del by pit.per) ames-path)
-            (~(put by pit.per) ames-path u.ms)
+            core(tip.per (~(del ju tip.per.core) path hen ames-path))
+          =+  ?^  listener  ~
+              ((ev-tace odd.veb.bug.ames-state |.("listener not in pit")) ~)
           ev-core
         ::
         +|  %internals
@@ -10058,8 +10052,9 @@
         =/  gag  [p q.q]:u.u.res  :: XX how does receiver distinguish these?
         =/  ful  (en-beam bem)
         =/  ser  (jam gag)  :: unencrypted
+        =/  sig  (sign:crypt priv ful (root:lss (met 3 ser)^ser))
         :^  ~  ~  %message
-        !>([%sign (sign:crypt priv ful (root:lss (met 3 ser)^ser)) ser])
+        !>([%sign sig ser])
       ::  publisher-side, message-level (two-party encrypted namespace)
       ::
       ++  peek-chum
@@ -10113,15 +10108,15 @@
         ?~  u.res
           [~ ~]
         ::  XX  rift.ames-state
-        =>  [key=key cyf=u.cyf bem=bem res=res ..crypt]
+        =/  prv=@uxI  (end 8 (rsh 3 priv.ames-state))  :: extract ed25519 key
+        =>  [key=key cyf=u.cyf bem=bem res=res prv=prv ..crypt]
         :: ~>  %memo./ames/shut
-        =/  cry=@uxI  (rsh 8 (rsh 3 -.u.key))
-        =/  sgn=@uxI  (end 8 (rsh 3 -.u.key))
+        =/  cry=@uxI  -.u.key  :: XX
         =/  gag  [p q.q]:u.u.res
         =/  ful  (en-beam bem)
         =/  ser  (jam gag)
         =/  cyr  (encrypt:crypt cry iv=cyf ser)
-        =/  sig  (sign:crypt sgn ful (root:lss (met 3 cyr)^cyr))
+        =/  sig  (sign:crypt prv ful (root:lss (met 3 cyr) cyr))
         ``[%message !>([%sign sig cyr])]
       ::  publisher-side, flow-level
       ::
@@ -10214,8 +10209,8 @@
         =/  ful  (en-beam [[u.her %$ ud+1] pat.tyl])
         :^  ~  ~  %flag  !>  :: XX is this right?
         ?-  typ.tyl
-          %sign  (verify-sig:crypt (sig-key pat.tyl u.her) u.aut ful u.rut)
-          %hmac  (verify-mac:crypt (mac-key pat.tyl u.her) u.aut ful u.rut)
+          %sign  (verify-sig:crypt (get-path-key pat.tyl u.her) u.aut ful u.rut)
+          %hmac  (verify-mac:crypt (get-path-key pat.tyl u.her) u.aut ful u.rut)
         ==
       ::  metadata query; XX only flow information supported
       ::
@@ -10398,7 +10393,6 @@
                 ?:  =(wid 1)
                   [%& mes]  :: single-fragment special case
                 [%| (snag fag pairs.lss-proof)]
-                ::
               =/  dat  [tob aut (cut boq [fag 1] ser)]
               =/  pairs
                 =/  per  (bex (sub boq 13))  ::  XX  unguarded
@@ -10623,33 +10617,23 @@
         ?>  ?=([%& *] aut)
         =/  ful  (en-beam [[her.name %$ ud+1] pat.name])
         ?-  -.p.aut
-          %&  (verify-sig:crypt (sig-key [pat her]:name) p.p.aut ful rut)
-          %|  (verify-mac:crypt (mac-key [pat her]:name) p.p.aut ful rut)
+          %&  (verify-sig:crypt (get-path-key [pat her]:name) p.p.aut ful rut)
+          %|  (verify-mac:crypt (get-path-key [pat her]:name) p.p.aut ful rut)
         ==
       ::
-      ++  sig-key
+      ++  get-path-key
         |=  [=path =ship]
         ^-  @uxI
         =/  tyl=(pole knot)  path
-        ?>  ?=([%publ lyf=@ pat=*] tyl)
-        =/  lyf  (slaw %ud lyf.tyl)
-        ?>  ?=(^ lyf)
         =+  sat=(got-per ship)
-        ?>  =(life.sat u.lyf)
-        (end 8 (rsh 3 public-key.sat))
-      ::
-      ++  mac-key
-        |=  [=path =ship]
-        ^-  @uxI
-        =/  tyl=(pole knot)  path
+        =+  pub=`@uxI`(end 8 (rsh 3 public-key.sat))
+        =+  sym=`@uxI`symmetric-key.sat
         ?+    tyl  !!
-            [%chum lyf=@ her=@ hyf=@ pat=[cyf=@ ~]]
-          =/  her  (slaw %p her.tyl)
-          ?>  ?=(^ her)
-          =/  her=@p  ?:(=(u.her our) ship u.her)
-          =+  sat=(got-per her)
-          ?>  (lte (met 3 symmetric-key.sat) 32)
-          `@uxI`symmetric-key.sat
+            [%publ lyf=@ pat=*]
+          =/  lyf  (slaw %ud lyf.tyl)
+          ?>  ?=(^ lyf)
+          ?>  =(life.sat u.lyf)
+          pub
         ::
             [%shut kid=@ pat=[cyf=@ ~]]
           =/  kid  (slaw %ud kid.tyl)
@@ -10657,7 +10641,15 @@
           ?~  key=(get:key-chain client-chain:(got-per ship) u.kid)
             !!  :: XX handle
           ?>  (lte (met 3 -.u.key) 32)
-          `@uxI`-.u.key
+          pub
+        ::
+            [%chum lyf=@ her=@ hyf=@ pat=[cyf=@ ~]]
+          =/  her  (slaw %p her.tyl)
+          ?>  ?=(^ her)
+          =/  her=@p  ?:(=(u.her our) ship u.her)
+          =+  sat=(got-per her)
+          ?>  (lte (met 3 symmetric-key.sat) 32)
+          `@uxI`symmetric-key.sat
         ==
       ::
       ++  crypto-core
