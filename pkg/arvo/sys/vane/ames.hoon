@@ -5063,6 +5063,7 @@
             ++  make-peeks
               |=  fren=fren-state
               ^-  (quip move axle)
+              =+  ev-core=(ev-foco:ev:(mesa now eny rof) her fren)
               =/  co-core
                 =/  chums  (~(put by chums.ames-state) her known/fren)
                 %*  co-core  co:(mesa now eny rof)
@@ -5083,7 +5084,17 @@
               =;  [pax=^path =space]
                 %-  ~(rep by listeners.keen)
                 |=  [[=^duct ints=(set ints)] core=_core]
+                ::  if the scry was created by the |fine core, %ames becomes the
+                ::  listener to the encrypted %tune (which will be transformed
+                ::  into a %near, and given to the original listener). %ames
+                ::  uses  the /ames/[?(%chum %fine %shut ...)] wire to tell arvo
+                ::  to make it re-entrant into itself, so we neeed to remove
+                ::  that wire since co-make-peek is going to add a /mesa wire
+                ::
+                =?  duct  ?=([[%ames ?(%chum %fine) *] *] duct)  t.duct
                 ::  XX  call the rate task
+                ::
+                ~&  >>  duct/duct
                 (co-make-peek:core(hen duct) space her pax)
               ::  XX unitize this and no-op if failure to convert
               ::
@@ -5098,9 +5109,9 @@
                 ::
                   [%chum her=@ lyf=@ cyf=@ ~]
                 =/  cyf=@      (slav %uv cyf.pat.path)
-                =*  key        symmetric-key.per
+                =*  key  symmetric-key.per
                 =/  pax=^path  (rash `@t`(dy:crub:crypto key cyf) stap)
-                [pax %chum life.ames-state her life.per key]
+                [pax chum-to-our:ev-core]
               ==
             ::
             ++  get-lane
@@ -9627,26 +9638,13 @@
             ::
             ?:  ?=([[%ames %mesa %flow *] *] hen)
               c
-            =.  path
-              =/  [=space pax=^path]
-                [space inner]:(ev-decrypt-path:ev path her)
-              ?-    -.space
-                  ?(%none %publ)  pax
-              ::
-                  %chum
-                =/  cyf
-                  (scot %uv (en:crub:crypto key.space (spat pax)))
-                /a/x/1//chum/(scot %p our)/(scot %ud life.ames-state)/[cyf]
-              ::
-                  %shut
-                =/  enc
-                  (scot %uv (en:crub:crypto key.space (spat pax)))
-                /a/x/1//fine/shut/(scot %ud kid.space)/[enc]
-              ==
-            ::
-            ::  XX migrate back listeners' interest as well
-            ::
-            (on-keen:core(duct hen) ~ her path)
+            =/  [=space pax=^path]
+              [space inner]:(ev-decrypt-path:ev path her)
+            ?-  -.space
+              ?(%none %publ)  (on-keen:c(duct hen) ~ her pax)
+                       %chum  (on-chum:c(duct hen) her pax)
+                       %shut  (on-keen:c(duct hen) `[kid key]:space her pax)
+            ==
           ::
           ++  get-route
             |=  lane=(unit lane:pact)
