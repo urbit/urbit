@@ -6824,7 +6824,9 @@
           ::
               [%fine %shut kef=@ enc=@ ~]
             =/  key-idx  (slav %ud kef.tyl)
-            =/  key  (got:on:chain server-chain.ames-state (slav %ud kef.tyl))
+            ?~  key=(get:on:chain server-chain.ames-state (slav %ud kef.tyl))
+              [~ ~]
+            =/  key  -.u.key
             =/  pat=(unit path)
               (rush `@t`(dy:crub:crypto key.key (slav %uv enc.tyl)) stap)
             ?~  pat
@@ -10101,24 +10103,24 @@
         ?:  |(?=(~ kid) ?=(~ cyf))
           [~ ~]
         ?~  key=(get:key-chain server-chain.ames-state u.kid)
-          ~
-        =/  pat  (open-path:crypt -.u.key u.cyf)
+          [~ ~]
+        =/  key  -.u.key
+        =/  pat  (open-path:crypt key u.cyf)
         ::  XX check path prefix
         ?~  inn=(inner-path-to-beam our pat)
-          ~
+          [~ ~]
         ?~  res=(rof [~ ~] /ames/shut vew.u.inn bem.u.inn)
-          ~
+          [~ ~]
         ?~  u.res
           [~ ~]
         ::  XX  rift.ames-state
         =/  prv=@uxI  (end 8 (rsh 3 priv.ames-state))  :: extract ed25519 key
         =>  [key=key cyf=u.cyf bem=bem res=res prv=prv ..crypt]
         :: ~>  %memo./ames/shut
-        =/  cry=@uxI  -.u.key  :: XX
         =/  gag  [p q.q]:u.u.res
         =/  ful  (en-beam bem)
         =/  ser  (jam gag)
-        =/  cyr  (encrypt:crypt cry iv=cyf ser)
+        =/  cyr  (encrypt:crypt `@uxI`key iv=cyf ser)
         =/  sig  (sign:crypt prv ful (root:lss (met 3 cyr) cyr))
         ``[%message !>([%sign sig cyr])]
       ::  publisher-side, flow-level

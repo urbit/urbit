@@ -33,7 +33,7 @@
            u.u.q.+.out
   ==
 ?~  q.sage
-  (pure:m !>(~))
+  (pure:m !>([leaf+"... empty response ..." ~]))
 ::
 ;<  =bowl:spider  bind:m  get-bowl:strandio
 =+  .^  =dais:clay  %cb
