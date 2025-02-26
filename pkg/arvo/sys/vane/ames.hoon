@@ -4848,6 +4848,8 @@
                   =+  mesa-core=(mesa now eny rof)
                   :: XX check that we don't add a naxplanation .bone here?
                   ::
+                  =?  flow  (~(has by flows) bone^dire)
+                    (~(got by flows) bone^dire)
                   =.  flows.fren  (~(put by flows.fren) bone^dire flow)
                   %.  [duct bone dire]
                   fo-abed:fo:~(ev-core ev:mesa-core [duct her^fren])
@@ -4955,7 +4957,7 @@
                   ==
                 ::  all live messages processed; set next seq payload
                 ::
-                =.  next.snd.flow  next.pump
+                =?  next.snd.flow  !naxp-bone  next.pump
                 ::  any pending %cork should be already in the load queue
                 ::
                 =.  closing.flow  (~(has in closing.peer-state) bone)
