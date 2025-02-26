@@ -5089,14 +5089,14 @@
               ::
               ?+    pat.path  [path [%publ life.per]]
                 ::
-                  [%fine %shut idx=@ cyf=@]
+                  [%fine %shut idx=@ cyf=@ ~]
                 =/  idx=@ud    (slav %ud idx.pat.path)
                 =/  cyf=@      (slav %uv cyf.pat.path)
                 =/  key=@      key:(got:on:chain chain.per idx)
                 =/  pax=^path  (rash `@t`(dy:crub:crypto key cyf) stap)
                 [pax %shut idx key]
                 ::
-                  [%chum her=@ lyf=@ cyf=@]
+                  [%chum her=@ lyf=@ cyf=@ ~]
                 =/  cyf=@      (slav %uv cyf.pat.path)
                 =*  key        symmetric-key.per
                 =/  pax=^path  (rash `@t`(dy:crub:crypto key cyf) stap)
