@@ -239,7 +239,6 @@
     ?:  ?=(%spider-kill mark)
       (on-load on-save)
     =^  cards  state
-      ~&  >>  mark/mark
       ?+  mark  (on-poke:def mark vase)
           %spider-input   (on-poke-input:sc !<(input vase))
           %spider-start   (handle-start-thread:sc !<(start-args:spider vase))
