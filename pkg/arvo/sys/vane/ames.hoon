@@ -7172,7 +7172,6 @@
                 %init  sy-abet:sy-init:sy-core
                 %born  sy-abet:sy-born:sy-core
                 %cong  sy-abet:sy-cong:sy-core
-                %plug  sy-abet:(sy-plug:sy-core path.task)
                 %prod  (sy-prod:sy-core ships.task)
                 %snub  sy-abet:(sy-snub:sy-core [form ships]:task)
                 %stun  sy-abet:(sy-stun:sy-core stun.task)
@@ -7180,6 +7179,9 @@
                 %tame  sy-abet:(sy-tame:sy-core ship.task)
                 %sift  sy-abet:(sy-sift:sy-core ships.task)
                 %spew  sy-abet:(sy-spew:sy-core veb.task)
+              ::  key reservation for %shut namespave
+              ::
+                ?(%plug %gulp)  sy-abet:(sy-plug:sy-core task)
               ::  regression
               ::
                 %rege  sy-abet:(sy-rege:sy-core +.task)
@@ -8775,9 +8777,13 @@
         ::  +sy-plug: handle key reservation
         ::
         ++  sy-plug
-          |=  =path
+          |=  [task=?(%plug %gulp) =path]
           ^+  sy-core
-          =/  key=@  (kdf:crypt 32 "mesa-shut-key" 32^eny)
+          =/  key=@
+            ?-  task
+              %gulp  (kdf:crypt 32 "mesa-shut-key" 32^eny)
+              %plug  (shaz eny)  :: size = 64 bytes
+            ==
           =/  kid=@ud
             ?~  latest=(ram:key-chain server-chain.ames-state)
               1
@@ -11176,7 +11182,9 @@
     (call:me-core sample)
     ::  flow-independent tasks
     ::
-      ?(%vega %init %born %snub %spew %stun %sift %plug %dear %init %tame %cong)
+      $?  %vega  %init  %born  %snub  %spew  %stun  %gulp
+          %sift  %plug  %dear  %init  %tame  %cong
+      ==
     (call:me-core sample)
     ::  common tasks
     ::
