@@ -1913,13 +1913,17 @@
           %-  ~(rep by rcv.ames)
           |=  [[=bone sink=message-sink-state] ok=?]
           ?:  =(%2 (mod bone 4))  ok  :: ignore naxplanation %ack bones
-          =+  back-sink=(~(got by rcv.back) bone)
+          ?~  back-sink=(~(get by rcv.back) bone)
+            ::  this happens if the flow we are migrating has not acked anything
+            ::
+            ~&  >>  weird-missing-rcv-bone/bone
+            ok
           ?&  ok
               =-  ~?  !-
-                    [bone=bone ames=last-acked.sink back=last-acked.back-sink]
+                    [bone=bone ames=last-acked.sink back=last-acked.u.back-sink]
                   -
               %+  print-check  %backwards-flows-acked
-              =(last-acked.sink last-acked.back-sink)
+              =(last-acked.sink last-acked.u.back-sink)
           ==
       ==
     ::
@@ -9552,10 +9556,13 @@
                 ::
                 =|  pump=message-pump-state
                 %+  ~(put by snd.peer-state.core)  bone
-                =*  next  next.snd.state
-                ?~  loads.snd.state
-                  pump(next next, current next)
-                pump(current (dec next), next (dec next))
+                =+  next=next.snd.state
+                ?~  fist=(pry:fo-mop:fo-core loads.snd.state)
+                  pump(current next, next next)
+                %_  pump
+                  current  key.u.fist
+                  next     key.u.fist
+                ==
               ::  message-pump for %pleas and %boons
               ::
               %^  (dip:fo-mop:fo-core ,cor=_core)  loads.snd.state
@@ -9577,7 +9584,6 @@
             =?  closing.peer-state.core  closing.state
               (~(put in closing.peer-state.core) bone)
             ?:  &(?=(%bak dire) closing.state)
-              ~&  >  %flow-in-closing^bone
               ::  this is going to reset timers for %boon/%naxplanations that
               ::  don't exist (probably fine?)
               ::
