@@ -3024,7 +3024,6 @@
               ::
               ~&  skip-weird-path/outer-path  tip
             =;  inner=path
-              ~&  outer-path^inner
               %-  ~(rep in listeners.sat)
               |=  [=duct t=_tip]
               (~(put ju t) inner [duct outer-path])
@@ -4144,7 +4143,6 @@
               (~(put ju tip.u.ship-state) path [[%ames wir] duct] lav) :: XX
             =.  peers.ames-state
               (~(put by peers.ames-state) ship u.ship-state)
-            ~&  lav^wir
             (emit duct %pass wir %a %keen ~ ship lav)
           :: XX: key exchange over ames forces all encrypted scries to be
           :: to a known peer
@@ -6824,9 +6822,8 @@
           ::
               [%fine %shut kef=@ enc=@ ~]
             =/  key-idx  (slav %ud kef.tyl)
-            ?~  key=(get:on:chain server-chain.ames-state (slav %ud kef.tyl))
-              [~ ~]
-            =/  key  -.u.key
+            =/  key  (got:on:chain server-chain.ames-state (slav %ud kef.tyl))
+
             =/  pat=(unit path)
               (rush `@t`(dy:crub:crypto key.key (slav %uv enc.tyl)) stap)
             ?~  pat
@@ -10103,16 +10100,16 @@
         ?:  |(?=(~ kid) ?=(~ cyf))
           [~ ~]
         ?~  key=(get:key-chain server-chain.ames-state u.kid)
-          [~ ~]
+          ~
         =/  key  -.u.key
         =/  pat  (open-path:crypt key u.cyf)
         ::  XX check path prefix
         ?~  inn=(inner-path-to-beam our pat)
-          [~ ~]
+          ~
         ?~  res=(rof [~ ~] /ames/shut vew.u.inn bem.u.inn)
-          [~ ~]
+          ~
         ?~  u.res
-          [~ ~]
+          ~
         ::  XX  rift.ames-state
         =/  prv=@uxI  (end 8 (rsh 3 priv.ames-state))  :: extract ed25519 key
         =>  [key=key cyf=u.cyf bem=bem res=res prv=prv ..crypt]
