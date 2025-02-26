@@ -6824,10 +6824,9 @@
           ::
               [%fine %shut kef=@ enc=@ ~]
             =/  key-idx  (slav %ud kef.tyl)
-            ?~  key=(get:on:chain server-chain.ames-state key-idx)
-              ~
+            =/  key  (got:on:chain server-chain.ames-state (slav %ud kef.tyl))
             =/  pat=(unit path)
-              (rush `@t`(dy:crub:crypto key.u.key (slav %uv enc.tyl)) stap)
+              (rush `@t`(dy:crub:crypto key.key (slav %uv enc.tyl)) stap)
             ?~  pat
               [~ ~]
             ?~  blk=(de-part:balk our rift.ames-state life.ames-state u.pat)
@@ -6842,7 +6841,7 @@
             ?~  u.res
               ``atom+!>(~)
             =-  ``atom+!>(-)
-            `@uv`(en:crub:crypto -.u.key (jam [p q.q]:u.u.res))
+            `@uv`(en:crub:crypto key.key (jam [p q.q]:u.u.res))
           ::
               [%chum her=@ lyf=@ cyf=@ ~]
             =/  who  (slaw %p her.tyl)
