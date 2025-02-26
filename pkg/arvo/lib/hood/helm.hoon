@@ -202,11 +202,11 @@
   (emit %pass wire %arvo %a %plea her %$ path %ahoy ~)
 ::
 ++  poke-mass-mate
-  |=  test=?
+  |=  [ship=(unit ship) test=?]
   =/  =wire
     :+  %helm  %mate
     ?.(test ~ /test)
-  abet:(emit %pass wire %arvo %a %mate ~ dry=%.y)
+  abet:(emit %pass wire %arvo %a %mate ship dry=%.y)
 ::
 ++  take-ahoy
   |=  [way=wire error=(unit error:ames)]
