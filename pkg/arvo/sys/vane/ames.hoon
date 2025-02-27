@@ -9570,8 +9570,13 @@
             ::
             =.  core
               =;  [cor=_core loads=_loads.snd.state]
+                =?  closing.peer-state.cor  &(?=(%for dire) closing.state)
+                  ::  only a forward flow that is in closing gets migrated;
+                  ::  if this was a backward flow, the flow (and its peek for a
+                  ::  cork will get automatically removed in -regress-peeks)
+                  ::
+                  (~(put in closing.peer-state.cor) bone)
                 cor
-              ::  init message-pump with highest sent and acked messages
               ::
               =?  snd.peer-state.core  (gth next.snd.state 1)
                 ::  if we haven't sent anything, skip entry in .snd map
