@@ -4979,7 +4979,8 @@
                 =?  next.snd.flow  !naxp-bone  next.pump
                 ::  any pending %cork should be already in the load queue
                 ::
-                =.  closing.flow  (~(has in closing.peer-state) bone)
+                =?  closing.flow  !naxp-bone
+                  (~(has in closing.peer-state) bone)
                 ::
                 ::  XX  do we care about this?
                 ::
