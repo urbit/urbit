@@ -1900,11 +1900,7 @@
           %-  ~(rep by snd.ames)
           |=  [[=bone pump=message-pump-state] ok=?]
           ?:  =(%3 (mod bone 4))  ok  :: ignore naxplanation bones
-          ?~  back-pump=(~(get by snd.back) bone)
-            ::  XX ??
-            ::
-            ok
-          =+  back-pump=u.back-pump
+          =+  back-pump=(~(got by snd.back) bone)
           ?&  ok
               =-  ~?  !-  [bone=bone ames=current.pump back=current.back-pump]
                   -
