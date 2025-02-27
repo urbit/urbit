@@ -1879,8 +1879,14 @@
                                                  lane.u.route.back
                                      ==  ==
           %+  print-check  %ossuary  =(ossuary.ames ossuary.back)
+          =-  ~?  !-  :+  ames=~(wyt in closing.ames)
+                         back=~(wyt in closing.back)
+                      (~(dif in closing.back) closing.ames)
+              -
           %+  print-check  %closing  =(closing.ames closing.back)
-          =-  ~?  !-  [ames=corked.ames back=corked.back]
+          =-  ~?  !-  :+  ames=~(wyt in corked.ames)
+                         back=~(wyt in corked.back)
+                      (~(dif in corked.back) corked.ames)
               -
           %+  print-check  %corked   =(corked.ames corked.back)
           %+  print-check  %chain    =(chain.ames chain.back)
@@ -1894,16 +1900,29 @@
           %-  ~(rep by snd.ames)
           |=  [[=bone pump=message-pump-state] ok=?]
           ?:  =(%3 (mod bone 4))  ok  :: ignore naxplanation bones
-          =+  back-pump=(~(got by snd.back) bone)
+          ?~  back-pump=(~(get by snd.back) bone)
+            ::  XX ??
+            ::
+            ok
+          =+  back-pump=u.back-pump
           ?&  ok
               =-  ~?  !-  [bone=bone ames=current.pump back=current.back-pump]
                   -
               %+  print-check  %forward-flows-current
               =(current.pump current.back-pump)
+            ::
               =-  ~?  !-  [bone=bone ames=next.pump back=next.back-pump]
                   -
               %+  print-check  %forward-flows-next
-              =(next.pump next.back-pump)
+              ?|  =(next.pump next.back-pump)
+                  ::  if next doesn't match, we could have messages that were
+                  ::  live in the unsent message queue
+                  ::
+                  =/  diff=@ud   (sub next.pump next.back-pump)
+                  ::  unsent messages queue needs to have at least .diff
+                  ::
+                  (gte ~(wyt by unsent-messages.back-pump) diff)
+              ==
               ::  XX TODO: check live message sequence number
               ::
           ==
@@ -1915,7 +1934,7 @@
           ?:  =(%2 (mod bone 4))  ok  :: ignore naxplanation %ack bones
           ?~  back-sink=(~(get by rcv.back) bone)
             ::  this happens if the flow we are migrating has not acked anything
-            ::
+            ::  (e.g. due to a %flub ?)
             ~&  >>  weird-missing-rcv-bone/bone
             ok
           ?&  ok
