@@ -7,4 +7,4 @@
   ::
 /?    310
 :-  %say
-|=([^ ~ ~ ~] helm-mass-mate/dry=&)
+|=([^ [who=(unit ship) ~] dry=_& ~] helm-mass-mate/who^dry=&)
