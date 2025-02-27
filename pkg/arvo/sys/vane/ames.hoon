@@ -9577,6 +9577,7 @@
                   ::
                   (~(put in closing.peer-state.cor) bone)
                 cor
+              ::  init message-pump with highest acked message number
               ::
               =?  snd.peer-state.core  (gth next.snd.state 1)
                 ::  if we haven't sent anything, skip entry in .snd map
@@ -9605,16 +9606,7 @@
               core
             ::
             =|  sink=message-sink-state
-            ::  if the flow is in closing we need to stop +peeking for the %cork
-            ::  (in +regress-peek) and remove the flow on our side
             ::
-            =?  closing.peer-state.core  closing.state
-              (~(put in closing.peer-state.core) bone)
-            ?:  &(?=(%bak dire) closing.state)
-              ::  this is going to reset timers for %boon/%naxplanations that
-              ::  don't exist (probably fine?)
-              ::
-              (handle-cork:core bone)
             ::  drop any pending ack state and past naxplanations
             ::  XX  if some is still actively reading a naxplanation,
             ::      do we need to send it?
@@ -9674,6 +9666,18 @@
             ::      can this makes us end up in a bad state?
             ::
             ?:  ?=([[%ames %mesa %flow *] *] hen)
+              =>  .(i.hen `(pole knot)`i.hen)
+              ::  if the flow is in closing we need to stop +peeking for the %cork
+              ::  (in +regress-peek) and remove the flow on our side
+              ::
+
+              =?  c  ?=([@ @ @ %cor %bak her=@ rift=@ bone=@ ~] i.hen)
+                =+  bone=(slav %ud bone.i.hen)
+                =+  ship=(slav %p her.i.hen)
+                =+  flow=(~(got by flows.fren) bone %bak)
+                ?.  closing.flow  c
+                =+  pe-core=(abed-got:pe:c ship)
+                abet:(handle-cork:pe-core bone)
               c
             =/  [=space pax=^path]
               [space inner]:(ev-decrypt-path:ev path her)
