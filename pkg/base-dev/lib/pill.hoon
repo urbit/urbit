@@ -35,14 +35,14 @@
       [/sys/arvo hoon/arvo]
   ==
 ::  +dirs: filter for userspace directories to include
-::     
+::
 ++  dirs
   |=  [bas=path exc=(list spur)]
   ^-  (list spur)
   ?~  exc  ~(tap in dir:.^(arch %cy bas))
   %+  skim
     ~(tap in dir:.^(arch %cy bas))
-  |=(=spur =(~ (find ~[spur] exc)))  
+  |=(=spur =(~ (find ~[spur] exc)))
 ::  +file-ovum: userspace filesystem load
 ::
 ::    bas: full path to / directory
@@ -202,7 +202,7 @@
         :-  (boot-ovum:pill compiler-src arvo-src)
         %+  turn
           (snoc (turn dez tail) bas)
-        |=  =path  
+        |=  =path
         (file-ovum2 [path exc])
       .*(0 arvo-formula)
     |=  [ovo=ovum ken=*]
@@ -236,12 +236,19 @@
   :+  %pill  %solid
   :^  boot-ova  ~
     =.  dez  (snoc dez [%base bas])
-    %+  weld
+    ;:  weld
       %+  turn  dez
       |=  [dek=desk bas=path]
       (file-ovum [dek bas exc])
-    ?.  prime  ~
-    [(prep-ovum (turn dez tail))]~
+    ::
+      ?.  prime  ~
+      [(prep-ovum (turn dez tail))]~
+    ::
+      %+  turn  dez
+      |=  [dek=desk *]
+      ^-  unix-event
+      [/c/essential/[dek] %esse dek %.y]
+    ==
   cache=~
 ::
 ++  brass
