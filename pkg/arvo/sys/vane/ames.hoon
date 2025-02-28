@@ -5308,6 +5308,19 @@
                   =(message-num message-num.key.u.top)
               ==
             ::
+            ++  nax-for-cork
+              =+  top=top-live:packet-pump
+              ?&  closing
+                  ?=(~ top)  ::  cork removed from the queue
+                  =(0 ~(wyt in unsent-messages.state))
+                  =(0 (lent unsent-fragments.state))
+                  =(0 ~(wyt by live.packet-pump-state.state))
+                  (gth [next current]:state)
+                  ::  delay +(current) until naxplanation arrives
+                  ::
+                  =(1 (sub [next current]:state))
+              ==
+            ::
             +|  %entry-points
             ::  +call: handle a $message-pump-task
             ::
@@ -5337,7 +5350,7 @@
                 %prod  abet:(call:packet-pump %prod ~)
                 %wake  abet:(call:packet-pump %wake current.state)
                 %near  %-  on-done
-                       :_  (ack-for-cork message-num.naxplanation.task)
+                       :_  nax-for-cork
                        [message-num %naxplanation error]:naxplanation.task
                 %hear
                   ?-    -.ack-meat.task
