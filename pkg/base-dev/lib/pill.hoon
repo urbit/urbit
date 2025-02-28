@@ -294,15 +294,7 @@
         (file-ovum2 [bas exc])
     ==
   ::
-  =/  cache=(list)
-    %~  tap  by
-    +:(mice (weld boot-ova `(list)`(turn kernel-ova (lead *@da))) [2 [0 3] 0 2])
-  ~&  >>>  (lent cache)
-  ::
-  ::  a pill is a 3-tuple of event-lists: [boot kernel userspace]
-  ::
-  :+  %pill  %brass
-  :^    boot-ova  kernel-ova
+  =/  userspace-ova
     =.  dez  (snoc dez [%base bas])
     %+  weld
       %+  turn  dez
@@ -310,7 +302,46 @@
       (file-ovum [dek bas exc])
     ?.  prime  ~
     [(prep-ovum (turn dez tail))]~
-  cache
+  ::
+  =/  cache=(list)
+    %~  tap  by
+    :: +:(mice (weld boot-ova `(list)`(turn kernel-ova (lead *@da))) [2 [0 3] 0 2])
+    =<  +
+    %-  mice
+    :_  [2 [0 3] 0 2]
+    ;:  weld
+      boot-ova
+      ^-  (list)
+      :~  [*@da //arvo %wack *@uvJ]
+          [*@da //arvo %whom *@p]
+          :-  *@da
+          :^  /  %wyrd  [~.nonce /]
+          ^-  (list (pair term @))
+          :~  zuse+zuse
+              lull+lull
+              arvo+arvo
+              hoon+hoon-version
+              nock+4
+          ==
+      ==
+      `(list)`(turn kernel-ova (lead *@da))
+      `(list)`(turn userspace-ova (lead *@da))
+    ==
+  ::  TODO
+  ::  pin mice call, print if not %0
+  ::
+  ::  get out of larval sequence
+  ::
+  ::  [*@da //arvo [%wyrd *vere:part]]
+  ::  [*@da //arvo %wack 0]
+  ::  [*@da //arvo %whom 0]
+  ::
+  ~&  >>>  (lent cache)
+  ::  a pill is a 4-tuple of event-lists and a cache:
+  ::  [boot kernel userspace cache]
+  ::
+  :+  %pill  %brass
+  [boot-ova kernel-ova userspace-ova cache]
 ::
 ++  ivory
   |=  sys=path
