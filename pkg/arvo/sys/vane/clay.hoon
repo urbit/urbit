@@ -893,7 +893,13 @@
       %+  gain-leak  file+path
       |=  nob=state
       =.  nub  nob
-      =/  res=vase  (slap sut hoon.pile)
+      =/  res=vase
+        =>  [sut=sut pile=hoon=hoon.pile ..slap]
+        ~>  %memo./clay/build
+        ::  print
+        ::  new desk, make change to zuse
+        ::  version of slap where we memoize mint
+        (slap sut hoon.pile)
       [[%vase res] nub]
     ::
     ++  build-file
