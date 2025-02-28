@@ -1901,6 +1901,18 @@
           %-  ~(rep by snd.ames)
           |=  [[=bone pump=message-pump-state] ok=?]
           ?:  =(%3 (mod bone 4))  ok  :: ignore naxplanation bones
+          ?:  ?&  (~(has in closing.ames) bone)
+                  ?=(~ live.packet-pump-state.pump)
+                  ?=(~ unsent-messages.pump)
+                  ?=(~ unsent-fragments.pump)
+                  (lth [current next]:pump)
+                  (~(has by queued-message-acks.pump) (dec next.pump))
+               ==
+            ::  ignore closing bones, with no live messages
+            ::  XX check also that this is a subscription flow without a nonce
+            ::  in the wire?
+            ::
+            ok
           =+  back-pump=(~(got by snd.back) bone)
           ?&  ok
               =-  ~?  !-  [bone=bone ames=current.pump back=current.back-pump]
@@ -4865,6 +4877,15 @@
                   (mix 0b1 (mix 0b10 bone))   ::  from %3 to [%0 dire=%bak]
                 ?:  (~(has in corked.peer-state) target-bone)
                   ~&  >>  corked-naxp-flow/target=target-bone^naxp=original-bone
+                  moves^flows
+                ?:  ?&  (~(has in closing.peer-state) original-bone)
+                        ?=(~ live.packet-pump-state.pump)
+                        ?=(~ unsent-messages.pump)
+                        ?=(~ unsent-fragments.pump)
+                        (lth [current next]:pump)
+                        (~(has by queued-message-acks.pump) (dec next.pump))
+                    ==
+                   ~&  >>  closing-flow/bone=original-bone^curr=current.pump^next=next.pump
                   moves^flows
                 ::  initialize fo-core
                 ::
