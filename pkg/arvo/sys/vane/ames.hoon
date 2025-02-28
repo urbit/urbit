@@ -5460,7 +5460,11 @@
                   %nack  pump
               ::
                   %naxplanation
-                =.  peer-core  (pump-done current.state `error.u.cur)
+                =+  ?.  cork  ~
+                    %.  ~
+                    %+  pe-trace  odd.veb
+                    |.("%cork got naxplained {<bone=bone seq=current.state>}")
+                =?  peer-core  !cork  (pump-done current.state `error.u.cur)
                 $(current.state +(current.state))
               ==
             ::
