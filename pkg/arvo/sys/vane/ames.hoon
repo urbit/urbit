@@ -1863,8 +1863,9 @@
     ::                   .back is the regressed state, from $chums to %ships
     ::
     ++  migration-test
-      |=  [ames=ship-state back=ship-state]
+      |=  [=ship ames=ship-state back=ship-state]
       ^-  ?
+      =-  ~?  >>>  !-  ship-failed/ship  -
       ?>  =(-.ames -.back)     :: both %known or %alien
       ?:  ?=(%alien -.ames)
         =(ames back)
@@ -1931,7 +1932,9 @@
           ?~  back-sink=(~(get by rcv.back) bone)
             ::  this happens if the flow we are migrating has not acked anything
             ::  (e.g. due to a %flub ?)
-            ~&  >>  weird-missing-rcv-bone/bone
+            ::
+            ~?  >>  (gth last-acked.sink 0)  weird-missing-rcv-bone/bone
+            ?>  =(0 last-acked.sink)
             ok
           ?&  ok
               =-  ~?  !-
@@ -5166,7 +5169,7 @@
               ==
             ::  compare pre/post migrated states
             ::
-            %+  migration-test
+            %^  migration-test  her
               (~(got by peers.ames-state) her)
             (~(got by peers.rege-state) her)
           ::
