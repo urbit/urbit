@@ -3864,6 +3864,12 @@
         ++  on-kroc
           |=  bones=(list [ship bone])
           ^+  event-core
+          ?:  =(~ bones)  :: XX TMI
+            %-  ~(rep by peers.ames-state)
+            |=  [[her=ship per=ship-state] core=_event-core]
+            ?.  ?=(%known -.per)
+              core
+            abet:recork-one:(abed-peer:pe:core her +.per)
           ?:  &
             %-  (slog 'ames: %kroc task not allowed; TBD in |mesa' ~)
             event-core
@@ -4106,13 +4112,11 @@
             event-core
           ::  recork up to one bone per peer
           ::
-          =/  pez  ~(tap by peers.ames-state)
-          |-  ^+  event-core
-          ?~  pez  event-core
-          =+  [her sat]=i.pez
-          ?.  ?=(%known -.sat)
-            $(pez t.pez)
-          $(pez t.pez, event-core abet:recork-one:(abed-peer:pe her +.sat))
+          %-  ~(rep by peers.ames-state)
+          |=  [[her=ship per=ship-state] core=_event-core]
+          ?.  ?=(%known -.per)
+            core
+          abet:recork-one:(abed-peer:pe:core her +.per)
         ::  +on-trim: handle request to free memory
         ::
         ::    (%ruin comets not seen for six months)
@@ -5290,6 +5294,20 @@
                 %.n
               !(~(has by queued-message-acks.state) message-num)
             ::
+            ++  ack-for-cork
+              |=  =message-num
+              =+  top=top-live:packet-pump
+              ::  If we send a %cork and get an ack, we can know by
+              ::  sequence number that the ack is for the %cork message
+              ::
+              ?&  closing
+                  ?=(^ top)
+                  =(0 ~(wyt in unsent-messages.state))
+                  =(0 (lent unsent-fragments.state))
+                  =(1 ~(wyt by live.packet-pump-state.state))
+                  =(message-num message-num.key.u.top)
+              ==
+            ::
             +|  %entry-points
             ::  +call: handle a $message-pump-task
             ::
@@ -5319,25 +5337,15 @@
                 %prod  abet:(call:packet-pump %prod ~)
                 %wake  abet:(call:packet-pump %wake current.state)
                 %near  %-  on-done
-                      [[message-num %naxplanation error]:naxplanation.task %&]
+                       :_  (ack-for-cork message-num.naxplanation.task)
+                       [message-num %naxplanation error]:naxplanation.task
                 %hear
                   ?-    -.ack-meat.task
                       %&
                   (on-hear [message-num fragment-num=p.ack-meat]:task)
                   ::
                       %|
-                    =/  cork=?
-                      =+  top=top-live:packet-pump
-                      ::  If we send a %cork and get an ack, we can know by
-                      ::  sequence number that the ack is for the %cork message
-                      ::
-                      ?&  closing
-                          ?=(^ top)
-                          =(0 ~(wyt in unsent-messages.state))
-                          =(0 (lent unsent-fragments.state))
-                          =(1 ~(wyt by live.packet-pump-state.state))
-                          =(message-num:task message-num.key.u.top)
-                      ==
+                    =/  cork=?  (ack-for-cork message-num.task)
                     =+  [ack msg]=[p.ack-meat message-num]:task
                     =.  pump
                       %-  on-done
