@@ -4858,10 +4858,14 @@
                   moves^flows
                 =/  naxp-bone=?  =(%3 (mod bone 4))
                 =/  original-bone  bone
+                =/  target-bone    (mix 0b10 bone)
                 =?  bone  =(%1 (mod bone 4))
                   (mix 0b1 bone)              ::  from %1 to [%0 dire=%bak]
                 =?  bone  =(%3 (mod bone 4))
                   (mix 0b1 (mix 0b10 bone))   ::  from %3 to [%0 dire=%bak]
+                ?:  (~(has in corked.peer-state) target-bone)
+                  ~&  >>  corked-naxp-flow/target=target-bone^naxp=original-bone
+                  moves^flows
                 ::  initialize fo-core
                 ::
                 =/  fo-core
