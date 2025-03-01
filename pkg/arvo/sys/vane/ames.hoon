@@ -4878,14 +4878,34 @@
                 ?:  (~(has in corked.peer-state) target-bone)
                   ~&  >>  corked-naxp-flow/target=target-bone^naxp=original-bone
                   moves^flows
-                ?:  ?&  (~(has in closing.peer-state) original-bone)
+                ?:  ?&  (lth [current next]:pump)
                         ?=(~ live.packet-pump-state.pump)
-                        ?=(~ unsent-messages.pump)
                         ?=(~ unsent-fragments.pump)
-                        (lth [current next]:pump)
-                        (~(has by queued-message-acks.pump) (dec next.pump))
+                        ?=(~ unsent-messages.pump)
                     ==
-                   ~&  >>  closing-flow/bone=original-bone^curr=current.pump^next=next.pump
+                  ::  no live messages, but there are some (n)acks waiting to
+                  ::  be processed, or the flow is in closing
+                  ::
+                  ?:  (~(has in closing.peer-state) original-bone)
+                    ?.  (~(has by queued-message-acks.pump) (dec next.pump))
+                      ~&  >>  weird-closing-flow-no-queue/bone=original-bone^curr=current.pump^next=next.pump
+                      moves^flows
+                    ~&  >>  closing-flow/bone=original-bone^curr=current.pump^next=next.pump
+                    moves^flows
+                  ::  if this was a subscription flow there exists an entry in
+                  ::  the receiving map for the %boons, and maybe a flow for
+                  ::  acking the naxplanations. in the new subscription
+                  ::  protocol (with nonces in the wires), when any plea in
+                  ::  the subscription flow is nacked (maybe a non-deterministic
+                  ::  crash while handling a %watch/%leave), a new subscription
+                  ::  should be created,
+                  ::
+                  ?.  ?&  (~(has by rcv.peer-state) original-bone)
+                          (~(has by rcv.peer-state) (mix 0b10 original-bone))
+                      ==
+                    ~&  >>  weird-not-naxp-flow/bone=original-bone^curr=current.pump^next=next.pump
+                    moves^flows
+                  ~&  >>  weird-naxp-flow/bone=original-bone^curr=current.pump^next=next.pump
                   moves^flows
                 ::  initialize fo-core
                 ::
