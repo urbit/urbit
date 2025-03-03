@@ -7098,7 +7098,7 @@
               [%protocol %version ~]
             ``noun+!>(protocol-version)
           ::
-              [%boot ~]
+              [%boot req=*]
             =/  who
               =/  ship  our
               |-
@@ -7111,41 +7111,29 @@
             =/  chu  (~(get by chums.ames-state) who)
             ::
             ?:  =(who our)
-              ::  galaxy
-              ::
-              =;  out=(unit [rift=@ud life=@ud bone=(unit @ud) last-acked=(unit @ud)])
-                ?~  out
-                  ``noun+!>(~)
-                [~ ~ %noun !>([~ who rift life bone last-acked]:[u.out .])]
-              ?:   ?=([~ %known *] per)
-                =,  u.per
-                =/  ducs
-                  %+  skim
-                    ~(tap in ~(key by by-duct.ossuary))
-                  |=  =duct
-                  =(-.duct /gall/sys/way/(scot %p who)/ping)
-                ?~  ducs
+              =;  out=(unit [rift=@ud life=@ud bone=(unit @ud) last=(unit @ud)])
+                ?~  out  ~
+                [~ ~ %noun !>([rift life bone last]:u.out)]
+              =/  ping-bone=(unit @ud)
+                ?.  ?=([ping-bone=@ ~] req.tyl)
                   ~
-                =/  ping-bone  (~(get by by-duct.ossuary) -.ducs)
-                =/  last-acked
-                  ?~  ping-bone  ~
-                  ?~  rcv=(~(get by rcv) (mix 0b1 u.ping-bone))  ~
-                  `last-acked.u.rcv
-                `[rift life ping-bone last-acked]
-              ?.   ?=([~ %known *] chu)  ~
-              =,  u.chu
-              =/  ducs
-                %+  skim
-                  ~(tap in ~(key by by-duct.ossuary))
-                |=  =duct
-                =(-.duct /gall/sys/way/(scot %p who)/ping)
-              ?~  ducs
-                ~
-              =/  ping-bone  (~(get by by-duct.ossuary) -.ducs)
-              =/  last-acked
+                (slaw %ud ping-bone.req.tyl)
+              ?:   ?=([~ %known *] per)
+                :-  ~
+                :^  rift.u.per  life.u.per  ping-bone
                 ?~  ping-bone  ~
-                `last-acked.rcv:(~(got by flows) u.ping-bone %for)
-              `[rift life ping-bone last-acked]
+                ?~  rcv=(~(get by rcv.u.per) (mix 0b1 u.ping-bone))
+                  ~
+                `last-acked.u.rcv
+              ?.   ?=([~ %known *] chu)  ~
+              :-  ~
+              :^  rift.u.chu  life.u.chu  ping-bone
+              ?~  ping-bone  ~
+              ?~  flow=(~(get by flows.u.chu) u.ping-bone %bak)
+                ~
+              `last-acked.rcv.u.flow
+            ?.  ?=(~ req.tyl)
+              ``noun+!>(~)
             ?:   ?=([~ %known *] per)
               =,  u.per
               =/  ducs

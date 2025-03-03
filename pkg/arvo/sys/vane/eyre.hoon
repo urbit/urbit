@@ -1087,7 +1087,8 @@
       %^  return-static-data-on-duct  405  'text/html'
       (error-page 405 & url.request "may only GET boot data")
     =/  crumbs  q:(rash url.request apat:de-purl:html)
-    ?.  ?=([@t @t @t *] crumbs)
+    =>  .(crumbs `(pole knot)`crumbs)
+    ?.  ?=([%'~' %boot ship=@ req=*] crumbs)
       %^  return-static-data-on-duct  400  'text/html'
       %:  error-page
         400
@@ -1095,15 +1096,12 @@
         url.request
         "Invalid input: Expected /~/boot/<ship=@p> or /~/boot/<ship=@p>/<bone=@u>"
       ==
-    =/  ship  %+(slaw %p i.t.t.crumbs)
-    =/  bone
-      %+  slaw
-        %ud
-      ?:  ?=([@t @t @t @t ~] crumbs)
-        i.t.t.t.crumbs
-      ''
+    =/  ship=(unit ship)  (slaw %p ship.crumbs)
+    =/  bone=(unit @ud)
+      ?.  ?=([bone=@ ~] req.crumbs)  ~
+      (slaw %ud bone.req.crumbs)
     ?:  ?|  ?=(~ ship)
-            ?&(?=([@t @t @t @t ~] crumbs) ?=(~ bone))
+            &(?=([bone=@ ~] req.crumbs) ?=(~ bone))
         ==
       %^  return-static-data-on-duct  400  'text/html'
       %:  error-page
@@ -1112,13 +1110,15 @@
         url.request
         "Invalid input: Expected /~/boot/<ship=@p> or /~/boot/<ship=@p>/<bone=@u>"
       ==
+    ::
     =/  des=(unit (unit cage))
       %:  rof
         [~ ~]
         /eyre
         %ax
         [our %$ da+now]
-        /boot/(scot %p u.ship)
+        :+  %boot  (scot %p u.ship)
+        ?~(bone ~ [(scot %ud u.bone) ~])  :: XX
       ==
     ?.  ?=([~ ~ %noun *] des)
       %^  return-static-data-on-duct  404  'text/html'
