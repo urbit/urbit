@@ -1118,23 +1118,19 @@
         /eyre
         %ax
         [our %$ da+now]
-        /peers/(scot %p u.ship)
+        /boot/(scot %p u.ship)
       ==
     ?.  ?=([~ ~ %noun *] des)
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 & url.request "Peer {(scow %p u.ship)} not found.")
-    =/  ship-state
-      !<  ship-state:ames  q.u.u.des
-    ?>  ?=(%known -.ship-state)
+    =+  !<  [rift=@ud life=@ud bone=(unit @ud) last-acked=(unit @ud)]  q.u.u.des
     ?~  bone
       %^  return-static-data-on-duct  200  'application/octet-stream'
       %-  as-octs:mimes:html
       %-  jam
       ^-  boot
-      [%1 (galaxy-for u.ship) rift.-.+.ship-state life.-.+.ship-state ~ ~]
-    =/  rcv=(map bone:ames message-sink-state:ames)  rcv.+.ship-state
-    =/  mss=(unit message-sink-state:ames)  (~(get by rcv) u.bone)
-    ?~  mss
+      [%1 (galaxy-for u.ship) rift life ~ ~]
+    ?~  last-acked
       %^  return-static-data-on-duct  404  'text/html'
       %:  error-page
         404
@@ -1146,13 +1142,7 @@
     %-  as-octs:mimes:html
     %-  jam
     ^-  boot
-    :*  %1
-        (galaxy-for u.ship)
-        rift.-.+.ship-state
-        life.-.+.ship-state
-        bone
-        [~ last-acked.u.mss]
-    ==
+    [%1 (galaxy-for u.ship) rift life bone last-acked]
   ::  +handle-name: respond with the requester's @p
   ::
   ++  handle-name

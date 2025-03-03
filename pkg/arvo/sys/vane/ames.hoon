@@ -7108,23 +7108,80 @@
                 next
               $(ship next)
             =/  per  (~(get by peers.ames-state) who)
-            ?.  ?=([~ %known *] per)  ``noun+!>(~)
-            =,  u.per
-            =/  ducs
-              %+  skim
-                ~(tap in ~(key by by-duct.ossuary))
-              |=  =duct
-              =(-.duct /gall/sys/way/(scot %p who)/ping)
-            ?~  ducs  ``noun+!>(~)
-            =/  ping-bone
-              (~(got by by-duct.ossuary) -.ducs)
-            =/  ping-snd=message-pump-state
-              (~(got by snd) ping-bone)
-            :^  ~  ~  %noun
-            !>  :*  ~  who  rift.ames-state  life.ames-state
-                    ping-bone  current.ping-snd  next.ping-snd
-                ==
-          ::
+            =/  chu  (~(get by chums.ames-state) who)
+            ::
+            ?:  =(who our)
+              ::  galaxy
+              ::
+              =;  out=(unit [rift=@ud life=@ud bone=(unit @ud) last-acked=(unit @ud)])
+                ?~  out
+                  ``noun+!>(~)
+                [~ ~ %noun !>([~ who rift life bone last-acked]:[u.out .])]
+              ?:   ?=([~ %known *] per)
+                =,  u.per
+                =/  ducs
+                  %+  skim
+                    ~(tap in ~(key by by-duct.ossuary))
+                  |=  =duct
+                  =(-.duct /gall/sys/way/(scot %p who)/ping)
+                ?~  ducs
+                  ~
+                =/  ping-bone  (~(get by by-duct.ossuary) -.ducs)
+                =/  last-acked
+                  ?~  ping-bone  ~
+                  ?~  rcv=(~(get by rcv) (mix 0b1 u.ping-bone))  ~
+                  `last-acked.u.rcv
+                `[rift life ping-bone last-acked]
+              ?.   ?=([~ %known *] chu)  ~
+              =,  u.chu
+              =/  ducs
+                %+  skim
+                  ~(tap in ~(key by by-duct.ossuary))
+                |=  =duct
+                =(-.duct /gall/sys/way/(scot %p who)/ping)
+              ?~  ducs
+                ~
+              =/  ping-bone  (~(get by by-duct.ossuary) -.ducs)
+              =/  last-acked
+                ?~  ping-bone  ~
+                `last-acked.rcv:(~(got by flows) u.ping-bone %for)
+              `[rift life ping-bone last-acked]
+            ?:   ?=([~ %known *] per)
+              =,  u.per
+              =/  ducs
+                %+  skim
+                  ~(tap in ~(key by by-duct.ossuary))
+                |=  =duct
+                =(-.duct /gall/sys/way/(scot %p who)/ping)
+              ?~  ducs  ``noun+!>(~)
+              =/  ping-bone
+                (~(got by by-duct.ossuary) -.ducs)
+              =/  ping-snd=message-pump-state
+                (~(got by snd) ping-bone)
+              :^  ~  ~  %noun
+              !>  :*  ~  who  rift.ames-state  life.ames-state
+                      ping-bone  current.ping-snd  next.ping-snd
+                  ==
+            ?:   ?=([~ %known *] chu)
+              =,  u.chu
+              =/  ducs
+                %+  skim
+                  ~(tap in ~(key by by-duct.ossuary))
+                |=  =duct
+                =(-.duct /gall/sys/way/(scot %p who)/ping)
+              ?~  ducs  ``noun+!>(~)
+              =/  ping-bone
+                (~(got by by-duct.ossuary) -.ducs)
+              =/  flow=flow-state
+                (~(got by flows) ping-bone %for)
+              =+  flow-mop=((on ,@ud mesa-message) lte)
+              =/  first=[@ud mesa-message]  (need (pry:flow-mop loads.snd.flow))
+              :^  ~  ~  %noun
+              !>  =-  ~&  -  -
+                  :*  ~  who  rift.ames-state  life.ames-state
+                      ping-bone  +.first  next.snd.flow
+                  ==
+            ``noun+!>(~)
           ==
       ::
       --
