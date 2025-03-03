@@ -1900,17 +1900,48 @@
           %+  print-check  %forward-flows
           %-  ~(rep by snd.ames)
           |=  [[=bone pump=message-pump-state] ok=?]
-          ?:  =(%3 (mod bone 4))  ok  :: ignore naxplanation bones
+          =/  nothing-in-flight=?
+            ?&  ?=(~ live.packet-pump-state.pump)
+                ?=(~ unsent-fragments.pump)
+                ?=(~ unsent-messages.pump)
+            ==
+          ?:  =(%3 (mod bone 4))
+            :: ignore naxplanation bones
+            ::
+            ok
           ?:  ?&  (~(has in closing.ames) bone)
-                  ?=(~ live.packet-pump-state.pump)
-                  ?=(~ unsent-messages.pump)
-                  ?=(~ unsent-fragments.pump)
+                  nothing-in-flight
+                  (~(has by rcv.ames) bone)
+                  (~(has by rcv.ames) (mix 0b10 bone))
+              ==
+            ::  ignore closing bones, with no live messages. this case is
+            ::  handled by +recork-one, for peers that still not support the new
+            ::  protocol that removes subscription flows, and therefore nack any
+            ::  %cork pleas. If they don't support that protocol, they won't
+            ::  support |mesa either, unless the flow is broken.
+            ::
+            ok
+          ?:  ?&  (~(has in closing.ames) bone)
                   (lth [current next]:pump)
-                  (~(has by queued-message-acks.pump) (dec next.pump))
-               ==
-            ::  ignore closing bones, with no live messages
+                  nothing-in-flight
+              ==
+            ::  if this is a closing flow with nothing live, but somehow current
+            ::  has not been acked, we have not migrated this flow; skip
             ::  XX check also that this is a subscription flow without a nonce
             ::  in the wire?
+            ::
+            ok
+          ?:  ?&  !(~(has in closing.ames) bone)
+                  (lth [current next]:pump)
+                  =/  packet-qeu
+                    ((ordered-map live-packet-key live-packet-val) lte-packets)
+                  ?~  top=(pry:packet-qeu live.packet-pump-state.pump)
+                    %.n
+                  =(current.pump message-num.key.u.top)
+              ==
+            ::  this flow is not in closing and ther are live messages, but the
+            ::  top live message does not match current. this is weird but the
+            ::  flow is in a bad state; skip
             ::
             ok
           =+  back-pump=(~(got by snd.back) bone)
