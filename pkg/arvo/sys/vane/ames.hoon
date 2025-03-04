@@ -7099,7 +7099,6 @@
             ``noun+!>(protocol-version)
           ::
               [%boot req=*]
-            ~&  >>  tyl
             =/  who
               =/  ship  our
               |-
@@ -7112,7 +7111,6 @@
               =/  per  (~(get by peers.ames-state) who)
               =/  chu  (~(get by chums.ames-state) who)
               ?:   ?=([~ %known *] per)
-                ~&  >>  %ames
                 =,  u.per
                 =/  ducs
                   %+  skim
@@ -7130,24 +7128,18 @@
                     ==
               ?.   ?=([~ %known *] chu)
                 ``noun+!>(~)
-              ~&  >>  %mesa
               =,  u.chu
               =/  ducs
                 %+  skim
                   ~(tap in ~(key by by-duct.ossuary))
                 |=  =duct
                 =(-.duct /gall/sys/way/(scot %p who)/ping)
-              ~&  >>>  ducs
               ?~  ducs  ``noun+!>(~)
-              ~&  >  has-duct/(~(has by by-duct.ossuary) -.ducs)
               =/  ping-bone
                 (~(got by by-duct.ossuary) -.ducs)
-              ~&  >>  has-flow/(~(has by flows) ping-bone %for)
               =/  flow=flow-state
                 (~(got by flows) ping-bone %for)
               =+  flow-mop=((on ,@ud mesa-message) lte)
-              ~&  >>>   (pry:flow-mop loads.snd.flow)
-
               =/  first=[@ud mesa-message]  (need (pry:flow-mop loads.snd.flow))
               :^  ~  ~  %noun
               !>  :*  ~  who  rift.ames-state  life.ames-state
@@ -7155,7 +7147,6 @@
                   ==
             ?~  ship=(slaw %p ship.req.tyl)
               ``noun+!>(~)
-            ~&  ship
             ::
             =/  per  (~(get by peers.ames-state) u.ship)
             =/  chu  (~(get by chums.ames-state) u.ship)
