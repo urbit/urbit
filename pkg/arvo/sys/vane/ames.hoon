@@ -7098,7 +7098,8 @@
               [%protocol %version ~]
             ``noun+!>(protocol-version)
           ::
-              [%boot ship=@ req=*]
+              [%boot req=*]
+            ~&  >>  tyl
             =/  who
               =/  ship  our
               |-
@@ -7107,70 +7108,80 @@
               ?:  ?=(%czar (clan:title next))
                 next
               $(ship next)
-            ?~  ship=(slaw %p ship.tyl)
-              ``noun+!>(~)
-            =/  per  (~(get by peers.ames-state) u.ship)
-            =/  chu  (~(get by chums.ames-state) u.ship)
-            ::
-            ?:  =(who our)
-              =;  out=(unit [rift=@ud life=@ud bone=(unit @ud) last=(unit @ud)])
-                ?~  out  ~
-                [~ ~ %noun !>([rift life bone last]:u.out)]
-              =/  ping-bone=(unit @ud)
-                ?.  ?=([ping-bone=@t ~] req.tyl)
-                  ~
-                (slaw %ud ping-bone.req.tyl)
+            ?.  ?=([ship=@t bon=*] req.tyl)
+              =/  per  (~(get by peers.ames-state) who)
+              =/  chu  (~(get by chums.ames-state) who)
               ?:   ?=([~ %known *] per)
-                :-  ~
-                :^  rift.u.per  life.u.per  ping-bone
-                ?~  ping-bone  ~
-                ?~  rcv=(~(get by rcv.u.per) (mix 0b1 u.ping-bone))
-                  ~
-                `last-acked.u.rcv
-              ?.   ?=([~ %known *] chu)  ~
-              :-  ~
-              :^  rift.u.chu  life.u.chu  ping-bone
-              ?~  ping-bone  ~
-              ?~  flow=(~(get by flows.u.chu) u.ping-bone %bak)
-                ~
-              `last-acked.rcv.u.flow
-            ?.  ?=(~ req.tyl)
-              ``noun+!>(~)
-            ?:   ?=([~ %known *] per)
-              =,  u.per
-              =/  ducs
-                %+  skim
-                  ~(tap in ~(key by by-duct.ossuary))
-                |=  =duct
-                =(-.duct /gall/sys/way/(scot %p who)/ping)
-              ?~  ducs  ``noun+!>(~)
-              =/  ping-bone
-                (~(got by by-duct.ossuary) -.ducs)
-              =/  ping-snd=message-pump-state
-                (~(got by snd) ping-bone)
-              :^  ~  ~  %noun
-              !>  :*  ~  who  rift.ames-state  life.ames-state
-                      ping-bone  current.ping-snd  next.ping-snd
-                  ==
-            ?:   ?=([~ %known *] chu)
+                ~&  >>  %ames
+                =,  u.per
+                =/  ducs
+                  %+  skim
+                    ~(tap in ~(key by by-duct.ossuary))
+                  |=  =duct
+                  =(-.duct /gall/sys/way/(scot %p who)/ping)
+                ?~  ducs  ``noun+!>(~)
+                =/  ping-bone
+                  (~(got by by-duct.ossuary) -.ducs)
+                =/  ping-snd=message-pump-state
+                  (~(got by snd) ping-bone)
+                :^  ~  ~  %noun
+                !>  :*  ~  who  rift.ames-state  life.ames-state
+                        ping-bone  current.ping-snd  next.ping-snd
+                    ==
+              ?.   ?=([~ %known *] chu)
+                ``noun+!>(~)
+              ~&  >>  %mesa
               =,  u.chu
               =/  ducs
                 %+  skim
                   ~(tap in ~(key by by-duct.ossuary))
                 |=  =duct
                 =(-.duct /gall/sys/way/(scot %p who)/ping)
+              ~&  >>>  ducs
               ?~  ducs  ``noun+!>(~)
+              ~&  >  has-duct/(~(has by by-duct.ossuary) -.ducs)
               =/  ping-bone
                 (~(got by by-duct.ossuary) -.ducs)
+              ~&  >>  has-flow/(~(has by flows) ping-bone %for)
               =/  flow=flow-state
                 (~(got by flows) ping-bone %for)
               =+  flow-mop=((on ,@ud mesa-message) lte)
+              ~&  >>>   (pry:flow-mop loads.snd.flow)
+
               =/  first=[@ud mesa-message]  (need (pry:flow-mop loads.snd.flow))
               :^  ~  ~  %noun
               !>  :*  ~  who  rift.ames-state  life.ames-state
                       ping-bone  -.first  next.snd.flow
                   ==
-            ``noun+!>(~)
+            ?~  ship=(slaw %p ship.req.tyl)
+              ``noun+!>(~)
+            ~&  ship
+            ::
+            =/  per  (~(get by peers.ames-state) u.ship)
+            =/  chu  (~(get by chums.ames-state) u.ship)
+            ?.  =(who our)
+              ``noun+!>(~)
+            =;  out=(unit [rift=@ud life=@ud bone=(unit @ud) last=(unit @ud)])
+              ?~  out  ~
+              [~ ~ %noun !>([rift life bone last]:u.out)]
+            =/  ping-bone=(unit @ud)
+              ?.  ?=([ping-bone=@t ~] bon.req.tyl)
+                ~
+              (slaw %ud ping-bone.bon.req.tyl)
+            ?:   ?=([~ %known *] per)
+              :-  ~
+              :^  rift.u.per  life.u.per  ping-bone
+              ?~  ping-bone  ~
+              ?~  rcv=(~(get by rcv.u.per) (mix 0b1 u.ping-bone))
+                ~
+              `last-acked.u.rcv
+            ?.   ?=([~ %known *] chu)  ~
+            :-  ~
+            :^  rift.u.chu  life.u.chu  ping-bone
+            ?~  ping-bone  ~
+            ?~  flow=(~(get by flows.u.chu) u.ping-bone %bak)
+              ~
+            `last-acked.rcv.u.flow
           ==
       ::
       --
