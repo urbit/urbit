@@ -9807,7 +9807,7 @@
     =+  axe=1
     ::
     |-  ^+  [*type nam]
-    ?:  ?|(=(sut ref) =(%noun ref))
+    ?:  ?|(=(sut ref) &(!rev =(%noun ref)))
       [sut nam]
     ?-    sut
         [%atom *]
@@ -9846,12 +9846,27 @@
                      nam  (~(put by nam) p.sut [axe q.sut])
                    ==
     ::
-        [%fork *]  =^  s  nam
-                     %-  ~(rep in p.sut)
-                     |=  [t=type s=(list type) n=_nam]
-                     =^  a  n  ^$(sut t)
-                     [[a s] n]
-                   [(fork s) nam]
+        [%fork *]  ::  faces in the pattern must be properly reflected
+                   ::  for each branch of the fork in the type
+                   ::
+                   ?:  rev
+                     =^  s  nam
+                       %-  ~(rep in p.sut)
+                       |=  [t=type s=(list type) n=_nam]
+                       =^  a  n  ^$(sut t, nam n)
+                       [[a s] n]
+                     [(fork s) nam]
+                   =+  %-  ~(rep in p.sut)
+                       |=  [t=type s=(list type) m=(list _nam)]
+                       =+  [a n]=^$(sut t, nam ~)
+                       [[a s] [n m]]
+                   :-  (fork s)
+                   %-  ~(uni by nam)
+                   ?~  m  ~
+                   %+  roll  t.m
+                   |=  [n=_nam m=_i.m]
+                   ::NOTE  axes cannot be different, order doesn't matter
+                   (~(uni by m) n)
     ::
         [%hint *]  =^  a  nam  $(sut q.sut)
                    [(hint p.sut a) nam]
@@ -9860,7 +9875,34 @@
         ~>(%mean.'fuse-loop' !!)
       $(sut repo, bix (~(put in bix) [sut ref]))
     ::
-        %noun       [ref nam]
+        %noun       ?:  rev  [ref nam]
+                    ::  identity traversal that strips faces
+                    ::
+                    |-  ^-  [type _nam]
+                    ?:  ?=(?(%noun %void [%atom *]) ref)
+                      [ref nam]
+                    ?-  -.ref
+                      %cell  =^  p  nam  $(ref p.ref, axe (peg axe 2))
+                             =^  q  nam  $(ref q.ref, axe (peg axe 3))
+                             [(cell p q) nam]
+                      %core  $(ref repo)
+                      %face  ?:  |(hid ?=(^ p.ref))
+                               $(ref q.ref)
+                             %_  $
+                               ref  q.ref
+                               hid  &
+                               nam  (~(put by nam) p.ref [axe q.ref])
+                             ==
+                      %fork  =^  f  nam
+                               %+  roll  ~(tap in p.ref)
+                               |=  [t=type l=(list type) =_nam]
+                               =^  n  nam  ^$(ref t, nam nam)
+                               [[n l] nam]
+                             [(fork f) nam]
+                      %hint  =^  h  nam  $(ref q.ref)
+                             [(hint p.ref h) nam]
+                      %hold  $(ref repo)
+                    ==
         %void       [%void nam]
     ==
   ::
