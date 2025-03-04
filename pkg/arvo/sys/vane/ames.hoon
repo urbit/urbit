@@ -1923,16 +1923,15 @@
             ::
             ~&  >>  ignore-recork-bone/bone^ship
             ok
-          :: ?:  ?&  (~(has in closing.ames) bone)
-          ::         (lth [current next]:pump)
-          ::         nothing-in-flight
-          ::     ==
-          ::   ::  if this is a closing flow with nothing live, but somehow current
-          ::   ::  has not been acked, we have not migrated this flow; skip
-          ::   ::  XX check also that this is a subscription flow without a nonce
-          ::   ::  in the wire?
-          ::   ::
-          ::   ok
+          ?:  ?&  (~(has in closing.ames) bone)
+                  (lth [current next]:pump)
+                  nothing-in-flight
+              ==
+            ::  if this is a closing flow with nothing live, but somehow current
+            ::  has not been acked, we are going to just peek for the cork since
+            ::  current and next are irrelevant
+            ::
+            ok
           ?:  ?&  !(~(has in closing.ames) bone)
                   (lth [current next]:pump)
                   ?|  =/  packet-qeu
@@ -4986,12 +4985,16 @@
                         nothing-in-flight
                     ==
                   ::  if this is a closing flow with nothing live, but somehow
-                  ::  current has not been acked, skip
+                  ::  current has not been acked, try to read %cork
                   ::  XX check also that this is a subscription flow without a nonce
                   ::  in the wire?
                   ::
                   ~&  >>>  weird-closing-missing-current/her^original-bone^[current next]:pump
-                  moves^flows
+                  =^  peek-cork  flow  [moves state]:fo-peek-cork:fo-core
+                  =?  closing.flow  !naxp-bone
+                    (~(has in closing.peer-state) bone)
+                  :-  (weld moves peek-cork)
+                  (~(put by flows) [bone dire] flow)
                 ?:  ?&  !(~(has in closing.peer-state) bone)
                         (lth [current next]:pump)
                         =/  packet-qeu
