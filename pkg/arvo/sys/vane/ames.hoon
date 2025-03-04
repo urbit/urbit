@@ -7098,7 +7098,7 @@
               [%protocol %version ~]
             ``noun+!>(protocol-version)
           ::
-              [%boot req=*]
+              [%boot ship=@ req=*]
             =/  who
               =/  ship  our
               |-
@@ -7107,15 +7107,17 @@
               ?:  ?=(%czar (clan:title next))
                 next
               $(ship next)
-            =/  per  (~(get by peers.ames-state) who)
-            =/  chu  (~(get by chums.ames-state) who)
+            ?~  ship=(slaw %p ship.tyl)
+              ``noun+!>(~)
+            =/  per  (~(get by peers.ames-state) u.ship)
+            =/  chu  (~(get by chums.ames-state) u.ship)
             ::
             ?:  =(who our)
               =;  out=(unit [rift=@ud life=@ud bone=(unit @ud) last=(unit @ud)])
                 ?~  out  ~
                 [~ ~ %noun !>([rift life bone last]:u.out)]
               =/  ping-bone=(unit @ud)
-                ?.  ?=([ping-bone=@ ~] req.tyl)
+                ?.  ?=([ping-bone=@t ~] req.tyl)
                   ~
                 (slaw %ud ping-bone.req.tyl)
               ?:   ?=([~ %known *] per)
@@ -7165,9 +7167,8 @@
               =+  flow-mop=((on ,@ud mesa-message) lte)
               =/  first=[@ud mesa-message]  (need (pry:flow-mop loads.snd.flow))
               :^  ~  ~  %noun
-              !>  =-  ~&  -  -
-                  :*  ~  who  rift.ames-state  life.ames-state
-                      ping-bone  +.first  next.snd.flow
+              !>  :*  ~  who  rift.ames-state  life.ames-state
+                      ping-bone  -.first  next.snd.flow
                   ==
             ``noun+!>(~)
           ==

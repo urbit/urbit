@@ -1088,7 +1088,7 @@
       (error-page 405 & url.request "may only GET boot data")
     =/  crumbs  q:(rash url.request apat:de-purl:html)
     =>  .(crumbs `(pole knot)`crumbs)
-    ?.  ?=([%'~' %boot ship=@ req=*] crumbs)
+    ?.  ?=([%'~' %boot ship=@t req=*] crumbs)
       %^  return-static-data-on-duct  400  'text/html'
       %:  error-page
         400
@@ -1098,7 +1098,7 @@
       ==
     =/  ship=(unit ship)  (slaw %p ship.crumbs)
     =/  bone=(unit @ud)
-      ?.  ?=([bone=@ ~] req.crumbs)  ~
+      ?.  ?=([bone=@t ~] req.crumbs)  ~
       (slaw %ud bone.req.crumbs)
     ?:  ?|  ?=(~ ship)
             &(?=([bone=@ ~] req.crumbs) ?=(~ bone))
