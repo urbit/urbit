@@ -1087,7 +1087,8 @@
       %^  return-static-data-on-duct  405  'text/html'
       (error-page 405 & url.request "may only GET boot data")
     =/  crumbs  q:(rash url.request apat:de-purl:html)
-    ?.  ?=([@t @t @t *] crumbs)
+    =>  .(crumbs `(pole knot)`crumbs)
+    ?.  ?=([%'~' %boot ship=@t req=*] crumbs)
       %^  return-static-data-on-duct  400  'text/html'
       %:  error-page
         400
@@ -1095,15 +1096,12 @@
         url.request
         "Invalid input: Expected /~/boot/<ship=@p> or /~/boot/<ship=@p>/<bone=@u>"
       ==
-    =/  ship  %+(slaw %p i.t.t.crumbs)
-    =/  bone
-      %+  slaw
-        %ud
-      ?:  ?=([@t @t @t @t ~] crumbs)
-        i.t.t.t.crumbs
-      ''
+    =/  ship=(unit ship)  (slaw %p ship.crumbs)
+    =/  bone=(unit @ud)
+      ?.  ?=([bone=@t ~] req.crumbs)  ~
+      (slaw %ud bone.req.crumbs)
     ?:  ?|  ?=(~ ship)
-            ?&(?=([@t @t @t @t ~] crumbs) ?=(~ bone))
+            &(?=([bone=@ ~] req.crumbs) ?=(~ bone))
         ==
       %^  return-static-data-on-duct  400  'text/html'
       %:  error-page
@@ -1112,29 +1110,27 @@
         url.request
         "Invalid input: Expected /~/boot/<ship=@p> or /~/boot/<ship=@p>/<bone=@u>"
       ==
+    ::
     =/  des=(unit (unit cage))
       %:  rof
         [~ ~]
         /eyre
         %ax
         [our %$ da+now]
-        /peers/(scot %p u.ship)
+        :+  %boot  (scot %p u.ship)
+        ?~(bone ~ [(scot %ud u.bone) ~])  :: XX
       ==
     ?.  ?=([~ ~ %noun *] des)
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 & url.request "Peer {(scow %p u.ship)} not found.")
-    =/  ship-state
-      !<  ship-state:ames  q.u.u.des
-    ?>  ?=(%known -.ship-state)
+    =+  !<  [rift=@ud life=@ud bone=(unit @ud) last-acked=(unit @ud)]  q.u.u.des
     ?~  bone
       %^  return-static-data-on-duct  200  'application/octet-stream'
       %-  as-octs:mimes:html
       %-  jam
       ^-  boot
-      [%1 (galaxy-for u.ship) rift.-.+.ship-state life.-.+.ship-state ~ ~]
-    =/  rcv=(map bone:ames message-sink-state:ames)  rcv.+.ship-state
-    =/  mss=(unit message-sink-state:ames)  (~(get by rcv) u.bone)
-    ?~  mss
+      [%1 (galaxy-for u.ship) rift life ~ ~]
+    ?~  last-acked
       %^  return-static-data-on-duct  404  'text/html'
       %:  error-page
         404
@@ -1146,13 +1142,7 @@
     %-  as-octs:mimes:html
     %-  jam
     ^-  boot
-    :*  %1
-        (galaxy-for u.ship)
-        rift.-.+.ship-state
-        life.-.+.ship-state
-        bone
-        [~ last-acked.u.mss]
-    ==
+    [%1 (galaxy-for u.ship) rift life bone last-acked]
   ::  +handle-name: respond with the requester's @p
   ::
   ++  handle-name
