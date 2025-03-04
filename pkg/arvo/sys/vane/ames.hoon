@@ -1911,6 +1911,7 @@
             ok
           ?:  ?&  (~(has in closing.ames) bone)
                   nothing-in-flight
+                  =(current.pump next.pump)
                   (~(has by rcv.ames) bone)
                   (~(has by rcv.ames) (mix 0b10 bone))
               ==
@@ -1920,30 +1921,53 @@
             ::  %cork pleas. If they don't support that protocol, they won't
             ::  support |mesa either, unless the flow is broken.
             ::
+            ~&  >>  ignore-recork-bone/bone^ship
             ok
-          ?:  ?&  (~(has in closing.ames) bone)
+          :: ?:  ?&  (~(has in closing.ames) bone)
+          ::         (lth [current next]:pump)
+          ::         nothing-in-flight
+          ::     ==
+          ::   ::  if this is a closing flow with nothing live, but somehow current
+          ::   ::  has not been acked, we have not migrated this flow; skip
+          ::   ::  XX check also that this is a subscription flow without a nonce
+          ::   ::  in the wire?
+          ::   ::
+          ::   ok
+          ?:  ?&  !(~(has in closing.ames) bone)
                   (lth [current next]:pump)
-                  nothing-in-flight
-              ==
-            ::  if this is a closing flow with nothing live, but somehow current
-            ::  has not been acked, we have not migrated this flow; skip
-            ::  XX check also that this is a subscription flow without a nonce
-            ::  in the wire?
+                  ?|  =/  packet-qeu
+                      ((ordered-map live-packet-key live-packet-val) lte-packets)
+                      ?~  top=(pry:packet-qeu live.packet-pump-state.pump)
+                        %.n
+                      !=(current.pump message-num.key.u.top)
+                  ::
+                      ?&  nothing-in-flight
+                          (~(has by queued-message-acks.pump) (dec next.pump))
+                          (~(has by queued-message-acks.pump) current.pump)
+              ==  ==  ==
+            ::  this flow is not in closing and
+            ::  -  there are live messages, but the top live message does not
+            ::  match current. this is weird but the flow is in a bad state
             ::
+            ::  - nothing is live, so the acked should be queued up to next
+            ::
+            ~&  >>   ignore-flow-missing-current/ship^bone^[current next]:pump
             ok
           ?:  ?&  !(~(has in closing.ames) bone)
                   (lth [current next]:pump)
-                  =/  packet-qeu
-                    ((ordered-map live-packet-key live-packet-val) lte-packets)
-                  ?~  top=(pry:packet-qeu live.packet-pump-state.pump)
-                    %.n
-                  =(current.pump message-num.key.u.top)
+                  (~(has by rcv.ames) (mix 0b10 bone))
+                  %+  gte   last-acked:(~(got by rcv.ames) (mix 0b10 bone))
+                  (sub [next current]:pump)  :: missing naxplanations
               ==
-            ::  this flow is not in closing and ther are live messages, but the
-            ::  top live message does not match current. this is weird but the
-            ::  flow is in a bad state; skip
+            ::  this flow has not processed a naxplanation properly. the other
+            ::  has probably sent it, and we have probably acked it, so we try
+            ::  to find as many acked naxplanations as the differnce between
+            ::  current and pump, as a proxy for the actual "missing"
+            ::  naxplanation that we miss
             ::
+            ~&  >>   ignore-flow-missing-naxplanaiton/ship^bone^[current next]:pump
             ok
+          ~|  [%bone-back-pump-missing bone=bone ship=ship]
           =+  back-pump=(~(got by snd.back) bone)
           ?&  ok
               =-  ~?  !-  [bone=bone ames=current.pump back=current.back-pump]
@@ -4909,35 +4933,11 @@
                 ?:  (~(has in corked.peer-state) target-bone)
                   ~&  >>  corked-naxp-flow/target=target-bone^naxp=original-bone
                   moves^flows
-                ?:  ?&  (lth [current next]:pump)
-                        ?=(~ live.packet-pump-state.pump)
-                        ?=(~ unsent-fragments.pump)
-                        ?=(~ unsent-messages.pump)
-                    ==
-                  ::  no live messages, but there are some (n)acks waiting to
-                  ::  be processed, or the flow is in closing
-                  ::
-                  ?:  (~(has in closing.peer-state) original-bone)
-                    ?.  (~(has by queued-message-acks.pump) (dec next.pump))
-                      ~&  >>  weird-closing-flow-no-queue/bone=original-bone^curr=current.pump^next=next.pump
-                      moves^flows
-                    ~&  >>  closing-flow/bone=original-bone^curr=current.pump^next=next.pump
-                    moves^flows
-                  ::  if this was a subscription flow there exists an entry in
-                  ::  the receiving map for the %boons, and maybe a flow for
-                  ::  acking the naxplanations. in the new subscription
-                  ::  protocol (with nonces in the wires), when any plea in
-                  ::  the subscription flow is nacked (maybe a non-deterministic
-                  ::  crash while handling a %watch/%leave), a new subscription
-                  ::  should be created,
-                  ::
-                  ?.  ?&  (~(has by rcv.peer-state) original-bone)
-                          (~(has by rcv.peer-state) (mix 0b10 original-bone))
-                      ==
-                    ~&  >>  weird-not-naxp-flow/bone=original-bone^curr=current.pump^next=next.pump
-                    moves^flows
-                  ~&  >>  weird-naxp-flow/bone=original-bone^curr=current.pump^next=next.pump
-                  moves^flows
+                =/  nothing-in-flight=?
+                  ?&  ?=(~ live.packet-pump-state.pump)
+                      ?=(~ unsent-fragments.pump)
+                      ?=(~ unsent-messages.pump)
+                  ==
                 ::  initialize fo-core
                 ::
                 =/  fo-core
@@ -4951,6 +4951,86 @@
                   =.  flows.fren  (~(put by flows.fren) bone^dire flow)
                   %.  [duct bone dire]
                   fo-abed:fo:~(ev-core ev:mesa-core [duct her^fren])
+                ::
+                ?:  ?&  =(%for dire)
+                        (~(has in closing.peer-state) original-bone)
+                        nothing-in-flight
+                        =(current.pump next.pump)
+                        ::  subscription flow with associated naxplanation bone
+                        ::
+                        (~(has by rcv.peer-state) original-bone)
+                        (~(has by rcv.peer-state) (mix 0b10 original-bone))
+                    ==
+                  ::  closing bone, with no live messages. this case is
+                  ::  handled by +recork-one, for peers that still not support the
+                  ::  new protocol that removes subscription flows, and therefore
+                  ::  nack any %cork pleas. enqueue the %cork, and also start
+                  ::  peeking for it, just in case the other side has already
+                  ::  corked it.
+                  ::
+                  =.  fo-core
+                    =~  %.  [%pump %plea %$ /flow %cork ~]
+                        fo-call:fo-core(next.snd.state next.pump)
+                    ::
+                        fo-peek-cork
+                    ==
+                  ~&  >>  recork-one/her^bone
+                  =^  cork-moves  flow  [moves state]:fo-core
+                  =?  closing.flow  !naxp-bone
+                    (~(has in closing.peer-state) bone)
+                  :-  (weld moves cork-moves)
+                  (~(put by flows) [bone dire] flow)
+                ::
+                ?:  ?&  (~(has in closing.peer-state) bone)
+                        (lth [current next]:pump)
+                        nothing-in-flight
+                    ==
+                  ::  if this is a closing flow with nothing live, but somehow
+                  ::  current has not been acked, skip
+                  ::  XX check also that this is a subscription flow without a nonce
+                  ::  in the wire?
+                  ::
+                  ~&  >>>  weird-closing-missing-current/her^original-bone^[current next]:pump
+                  moves^flows
+                ?:  ?&  !(~(has in closing.peer-state) bone)
+                        (lth [current next]:pump)
+                        =/  packet-qeu
+                        ((ordered-map live-packet-key live-packet-val) lte-packets)
+                        ?~  top=(pry:packet-qeu live.packet-pump-state.pump)
+                          %.n
+                        !=(current.pump message-num.key.u.top)
+                    ==
+                  ~&  weird-current-live/her^bone^[current next]:pump
+                    moves^flows
+                :: ?:  ?&  !(~(has in closing.peer-state) bone)
+                ::         (lth [current next]:pump)
+                ::         ?|  =/  packet-qeu
+                ::             ((ordered-map live-packet-key live-packet-val) lte-packets)
+                ::             ?~  top=(pry:packet-qeu live.packet-pump-state.pump)
+                ::               %.n
+                ::             =-  ~?  !-  weird-current-live/her^bone^[current next]:pump
+                ::                 -
+                ::             !=(current.pump message-num.key.u.top)
+                ::         ::
+                ::             ?&  nothing-in-flight
+                ::                 ?|  ?&  (~(has by queued-message-acks.pump) (dec next.pump))
+                ::                         (~(has by queued-message-acks.pump) current.pump)
+                ::                     ==
+                ::                     ?&  (~(has by rcv.peer-state) (mix 0b10 bone))
+                ::                         %+  gte   last-acked:(~(got by rcv.ames) (mix 0b10 bone))
+                ::                         (sub [next current]:pump)  :: missing naxplanations
+                ::     ==  ==  ==  ==  ==
+                ::   ::  this flow is not in closing and
+                ::   ::  -  there are live messages, but the top live message does not
+                ::   ::  match current. this is weird but the flow is in a bad state
+                ::   ::
+                ::   ::  - nothing is live, so the acked should be queued up to next
+                ::   ::
+                ::   ~&  >>   ignore-flow-missing-current/her^original-bone^[current next]:pump
+                ::   ?.  (~(has by queued-message-acks.pump) (dec next.pump))
+                ::     ~&  >>  weird-closing-flow-no-queue/bone=original-bone
+                ::     moves^flows
+                ::   moves^flows
                 ::
                 =?  moves  !=(current.pump next.pump)
                   ::  we are waiting for an %ack, or have heard a %nack and
@@ -4982,6 +5062,7 @@
                   ::  the sender of the naxplanation will have bind it in
                   ::  their namespace, so we start +peeking it
                   ::
+                  ~&  missing-naxplanation/her^original-bone^current.pump
                   %+  weld  moves
                   moves:(fo-peek-naxplanation:fo-core current.pump)
                 ::
