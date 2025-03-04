@@ -325,6 +325,7 @@
           ==
       ==
       `(list)`(turn kernel-ova (lead *@da))
+      `(list)`[*@da `unix-event`[/d/term/1 %boot & %fake *@p]]^~
       `(list)`(turn userspace-ova (lead *@da))
     ==
   ::  TODO
