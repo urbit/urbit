@@ -55,6 +55,7 @@
 ++  state
   $:  gate=_eyre-gate
       now=@da
+      guest=_&        ::  false if we intenionally authed as a real ship
       sesh=(unit @t)  ::  last-heard cookie string, as 'urbauth-~xxx=0vyyy'
   ==
 ::
@@ -134,6 +135,13 @@
   ?.  (aor k.head key.i.heads)  [i.heads $(heads t.heads)]
   [head heads]
 ::
+++  set-guest
+  |=  guest=?
+  =/  m  (mare ,~)
+  ^-  form:m
+  |=  =state
+  [%& ~ state(guest guest)]
+::
 ++  get-token
   %-  easy:(mare ,@t)
   |=  =state
@@ -144,6 +152,9 @@
   |=  =state
   (need sesh.state)
 ::
+++  guest-time  '604800'
+++  auth-time   '2592000'
+::
 ++  expected-cookie
   =/  next=@t  g-cook
   |=  live=?
@@ -152,7 +163,7 @@
   %+  rap  3
   :~  (fall sesh.state next)
       '; Path=/; Max-Age='
-      ?:(live '2592000' '0')
+      ?:(live ?:(guest.state guest-time auth-time) '0')
   ==
 ::
 ++  read-moves
@@ -495,7 +506,7 @@
   =/  m  (mare ,~)
   |=  computation=form:m
   ^-  tang
-  =/  res  (computation eyre-gate ~1111.1.1 ~)
+  =/  res  (computation eyre-gate ~1111.1.1 guest=& sesh=~)
   ?-  -.res
     %&  ~
     %|  p.res
@@ -531,9 +542,12 @@
   [~ ~ %noun !>(.~lidlut-tabwed-savheb-loslux)]
 ::
 ++  bake-cookie
-  |=  sesh=@t
-  %^  cat  3  sesh
-  '; Path=/; Max-Age=2592000' ::604800'
+  |=  [guest=? sesh=@t]
+  %+  rap  3
+  :~  sesh
+      '; Path=/; Max-Age='
+      ?:(guest guest-time auth-time)
+  ==
 ::
 ++  g-name  ~fitbur-togtep-ladnup-ronbus--tanmer-sibsyn-lavryg-ramnul
 ++  g-cook  'urbauth-~nul=0v5.gbhev.sbeh0.3rov1.o6ibh.a3t9r'
@@ -1448,13 +1462,14 @@
   ;<  mos=(list move)  bind:m
     =/  body  'password=lidlut-tabwed-pillex-ridrup&redirect=/~landscape'
     (post '/~/login' ~ body)
+  ;<  ~  bind:m  (set-guest |)  ::  authed as self, no longer guest
   ;<  ~  bind:m
     ::NOTE  post-hoc token rationalization, but this tests the mechanism used
     ::      in these tests for capturing it from moves coming out of eyre.
     ;<  t=@t  bind:m  get-token
     =/  headers
       :~  ['location' '/~landscape']
-          ['set-cookie' (bake-cookie (cat 3 'urbauth-~nul=' t))]
+          ['set-cookie' (bake-cookie | (cat 3 'urbauth-~nul=' t))]
       ==
     =/  token  t
     (expect-moves mos (ex-sessions token ~ ~) (ex-response 303 headers ~) ~)
@@ -1577,7 +1592,9 @@
       ::  of eyre killing the old session first, and the tests passing a static
       ::  entropy value.
       ::
-      'urbauth-~nul=0v5.gbhev.sbeh0.3rov1.o6ibh.a3t9r; Path=/; Max-Age=2592000'
+      %^  cat  3
+        'urbauth-~nul=0v5.gbhev.sbeh0.3rov1.o6ibh.a3t9r; Path=/; Max-Age='
+      auth-time
     %+  expect-moves  mos
     :~  (ex-response 303 ~['location'^'/final' 'set-cookie'^nook] ~)
     ==
@@ -1721,7 +1738,7 @@
   ;<  ~  bind:m  (setup-for-eauth 'http://client.com')
   ::  visitor attempts to approve an eauth attempt without being authenticated
   ::
-  ;<  ~  bind:m  |=(=state [%& ~ state(sesh ~)])
+  ;<  ~  bind:m  |=(=state [%& ~ state(guest &, sesh ~)])
   ;<  mos=(list move)  bind:m
     =/  body  'server=~hoster&nonce=0vnonce'
     (post '/~/eauth' ~ body)
