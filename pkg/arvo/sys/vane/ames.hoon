@@ -4257,11 +4257,10 @@
             ^+  core
             ?>  ?=([%known *] ship-state)
             =+  peer-core=(abed-peer:pe:core ship +.ship-state)
-            ?:  dry
-              ~?  >>>  !on-migration-test:peer-core
-                %local-test-migration-failed
-              core
+            ~|  %local-migration-failed
+            ?>  on-migration-test:peer-core
             ~&  >  %local-migration-worked
+            ?:  dry  core
             pe-abel:on-migrate:peer-core
           ::
           --
