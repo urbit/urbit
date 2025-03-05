@@ -8993,11 +8993,14 @@
             ::  recalculate paths in the .pit using the new key
             ::
             =?  peer  ?=([%chum ~ %known *] peer)
-              =;  pit=_pit.u.peer
-                peer(pit.u pit)
+              =;  [pit=_pit.u.peer tip=_tip.u.peer]
+                peer(pit.u pit, tip.u tip)
               %-  ~(rep by pit.u.peer)
-              |=  [[=path req=request-state] pit=(map path request-state)]
-              =/  [=space ack=^path]
+              |=  $:  [=path req=request-state]
+                      pit=(map path request-state)
+                      tip=(jug =user=path [duct =ames=path])
+                  ==
+              =/  [=space user-path=^path]
                 [space inner]:(ev-decrypt-path:ev path ship)
               =.  space
                 ::  update life/keys in the space; for acks, update the client
@@ -9006,7 +9009,7 @@
                   %publ  space(life life)
                   %chum  space(client-life life, key new-key)
                 ==
-              =.  path  (make-space-path space ack)
+              =.  path  (make-space-path space user-path)
               ::  only recalculate poke paths if there's an associated payload
               ::
               =?  pay.req  ?=(^ pay.req)
@@ -9019,7 +9022,10 @@
                     %chum  space(server-life life, key new-key)
                   ==
                 `(make-space-path space poke)
-              (~(put by pit) path req(ps ~))  :: XX drop any partial state
+              :-  (~(put by pit) path req(ps ~))   :: XX drop any partial state
+              %-  ~(rep by ~(key by for.req))
+              |=  [for=duct tip=_tip]
+              (~(put ju tip) user-path for path)
             ::  update values
             ::
             =.  symmetric-key.+.u.peer  new-key
