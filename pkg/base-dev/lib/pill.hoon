@@ -305,7 +305,6 @@
   ::
   =/  cache=(list)
     %~  tap  by
-    :: +:(mice (weld boot-ova `(list)`(turn kernel-ova (lead *@da))) [2 [0 3] 0 2])
     =<  +
     %-  mice
     :_  [2 [0 3] 0 2]
@@ -328,14 +327,6 @@
       `(list)`[*@da `unix-event`[/d/term/1 %boot & %fake *@p]]^~
       `(list)`(turn userspace-ova (lead *@da))
     ==
-  ::  TODO
-  ::  pin mice call, print if not %0
-  ::
-  ::  get out of larval sequence
-  ::
-  ::  [*@da //arvo [%wyrd *vere:part]]
-  ::  [*@da //arvo %wack 0]
-  ::  [*@da //arvo %whom 0]
   ::
   ~&  >>>  (lent cache)
   ::  a pill is a 4-tuple of event-lists and a cache:
