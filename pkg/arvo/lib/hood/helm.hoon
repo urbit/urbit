@@ -199,7 +199,12 @@
     :+  %helm  %ahoy
     ?.(test /(scot %p her) /test/(scot %p her))
   =/  =path  ?:(test /test/mesa /mesa)
-  (emit %pass wire %arvo %a %plea her %$ path %ahoy ~)
+  ::  before migrating, test if we can migrate, regress, and check that there
+  ::  are not flows in a weird state. if we don't crash, send the %ahoy $plea
+  ::
+  =^  mate-moves  sat  (poke-mass-mate `her test=%.y)
+  =^  ahoy-moves  sat  abet:(emit %pass wire %arvo %a %plea her %$ path %ahoy ~)
+  (emil (weld mate-moves ahoy-moves))
 ::
 ++  poke-mass-mate
   |=  [ship=(unit ship) test=?]

@@ -3891,7 +3891,7 @@
             %drop  abet:(clear-nack [nack-bone message-num]:deep)
             %cork  (cork-bone bone.deep)
             %kill  (kill-bone bone.deep)
-            %ahoy  (migrate-peer bone.deep)  :: XX remove bone; it's next-bone
+            %ahoy  (migrate-peer [ship bone]:deep) :: XX remove bone
             %prun  abet:(prune-tip [duct user-path ames-path]:deep)
           ==
           ::
@@ -3923,7 +3923,7 @@
           ::
           ++  kill-bone  |=(=bone abet:(on-kill-flow:peer-core bone))
           ++  migrate-peer
-            |=  =bone
+            |=  [=ship =bone]
             ::  XX  defer migrating the peer until we can read from their
             ::  namespace that they have migrated us?
             ::  XX  requires a namespace for migrated peers
@@ -3931,6 +3931,11 @@
             :: %-  %^  ev-trace  sun.veb  ship.deep
             ::     |.("migrating to |mesa")
             ~&  >>  "migrating to |mesa"
+            ::  before migrating check that we can migrate this peer without
+            ::  crashing. if so, we will nack the %ahoy $plea.
+            ::
+            =.  event-core  (on-mate `ship dry=%.y)
+            ::
             =~  ::  ack ahoy plea, if we don't crash
                 ::
                 abet:(call:(abed:mi:peer-core bone) %done ok=%.y)
@@ -4236,7 +4241,7 @@
           |=  [ship=(unit ship) dry=?]
           |^  ^+  event-core
           =;  updated-core=_event-core
-              ?:(dry event-core updated-core)
+            ?:(dry event-core updated-core)
           ::
           ?^  ship
             ?~  peer=(~(get by peers.ames-state) u.ship)
