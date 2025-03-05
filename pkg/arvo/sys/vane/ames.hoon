@@ -10109,7 +10109,10 @@
         ::
         ++  co-make-peek
           |=  [=space =spar]
-          =.  pax  path.spar  :: XX skip adding flow paths to the .tip?
+          =.  pax
+            ?+  -.space  path.spar  :: XX skip adding flow paths to the .tip?
+              %none  inner:(ev-decrypt-path:ev [path ship]:spar)
+            ==
           (co-make-mess spar(path (make-space-path space path.spar)) ~)
         ::
         ++  co-make-poke
