@@ -4867,6 +4867,11 @@
                 ?:  (~(has in corked.peer-state) target-bone)
                   ~&  >>  corked-naxp-flow/target=target-bone^naxp=original-bone
                   moves^flows
+                =/  nothing-in-flight=?
+                  ?&  ?=(~ live.packet-pump-state.pump)
+                      ?=(~ unsent-fragments.pump)
+                      ?=(~ unsent-messages.pump)
+                  ==
                 ::  initialize fo-core
                 ::
                 =/  fo-core
@@ -4881,6 +4886,40 @@
                   %.  [duct bone dire]
                   fo-abed:fo:~(ev-core ev:mesa-core [duct her^fren])
                 ::
+                ?:  ?&  =(%for dire)
+                        (~(has in closing.peer-state) original-bone)
+                        nothing-in-flight
+                        =(current.pump next.pump)
+                        ::  subscription flow with associated naxplanation bone
+                        ::
+                        (~(has by rcv.peer-state) original-bone)
+                        (~(has by rcv.peer-state) (mix 0b10 original-bone))
+                    ==
+                  ::  closing bone, with no live messages. this case is
+                  ::  handled by +recork-one, for peers that don't support the
+                  ::  new protocol that removes subscription flows, and nack
+                  ::  any %cork pleas. enqueue the %cork, and also start
+                  ::  peeking for it, just in case the other side has already
+                  ::  corked it.
+                  ::
+                  ::  XX this case is not considered in the migration-test
+                  ::  checks. if this peer dosn't support %corks, it shouldn't
+                  ::  support |mesa either, unless we manage to send the $ahoy
+                  ::  $plea right after the %ames vane is updated, but before
+                  ::  the recork timer fires
+                  ::
+                  =.  fo-core
+                    =~  %.  [%pump %plea %$ /flow %cork ~]
+                        fo-call:fo-core(next.snd.state next.pump)
+                    ::
+                        fo-peek-cork
+                    ==
+                  ~&  >>  recork-one/her^bone
+                  =^  cork-moves  flow  [moves state]:fo-core
+                  =?  closing.flow  !naxp-bone
+                    (~(has in closing.peer-state) bone)
+                  :-  (weld moves cork-moves)
+                  (~(put by flows) [bone dire] flow)
                 =?  moves  !=(current.pump next.pump)
                   ::  we are waiting for an %ack, or have heard a %nack and
                   ::  so we defer processing it until we receive the
