@@ -609,6 +609,11 @@
         =.  nub  nob
         :_  nub  :-  %vase
         ^-  vase  ::  vase of nave
+        =>  :*  slap=slap  with-faces=with-faces  deg=deg
+                tub=tub  but=but  cor=cor  bud=nave=nave.bud
+                hoon=hoon  nave=nave  clay=clay
+            ==
+        ~>  %memo./clay/nave
         %+  slap
           (with-faces deg+deg tub+tub but+but cor+cor nave+nave.bud ~)
         !,  *hoon
@@ -634,6 +639,10 @@
       =.  nub  nob
       :_  nub  :-  %vase
       ^-  vase  ::  vase of nave
+      =>  :*  slap=slap  slop=slop  with-face=with-face
+              cor=cor  bud=zuse=zuse.bud  hoon=hoon  clay=clay
+          ==
+      ~>  %memo./clay/nave
       %+  slap  (slop (with-face cor+cor) zuse.bud)
       !,  *hoon
       =/  typ  _+<.cor
@@ -678,6 +687,7 @@
       :_  nub  :-  %dais
       ^-  dais
       =>  [nav=nav ..zuse]
+      ~>  %memo./clay/dais
       |_  sam=vase
       ++  diff
         |=  new=vase
@@ -741,6 +751,8 @@
         %-  (trace 4 |.("{<a>} -> {<b>}: +{(trip b)}:grow:{(trip a)}"))
         =.  nub  nob
         :_  nub  :-  %vase
+        =>  [slap=slap with-faces=with-faces old=old hoon=hoon b=b]
+        ~>  %memo./clay/cast
         %+  slap  (with-faces cor+old ~)
         ^-  hoon
         :+  %brcl  !,(*hoon v=+<.cor)
@@ -750,7 +762,11 @@
       ::
       =^  new=vase  nub  (build-fit %mar b)
       =/  arm=?  (has-arm %grab a new)
-      =/  rab  (mule |.((slap new tsgl/[limb/a limb/%grab])))
+      =/  rab
+        %-  mule
+        =>  [slap=slap new=new a=a]
+        ~>  %memo./clay/cast
+        |.((slap new tsgl/[limb/a limb/%grab]))
       ?:  &(arm ?=(%& -.rab) ?=(^ q.p.rab))
         %+  gain-leak  cast+a^b
         |=  nob=state
@@ -813,7 +829,12 @@
       |=  nob=state
       =.  nub  nob
       %-  (trace 1 |.("make tube {<a>} -> {<b>}"))
-      :_(nub [%tube =>([gat=gat ..zuse] |=(v=vase (slam gat v)))])
+      :_  nub
+      :-  %tube
+      =>  [gat=gat ..zuse]
+      ~>  %memo./clay/tube
+      |=  v=vase
+      (slam gat v)
     ::
     ++  validate-page
       |=  [=path =page]
@@ -894,11 +915,8 @@
       |=  nob=state
       =.  nub  nob
       =/  res=vase
-        =>  [sut=sut pile=hoon=hoon.pile ..slap]
+        =>  [sut=sut pile=hoon=hoon.pile slap=slap]
         ~>  %memo./clay/build
-        ::  print
-        ::  new desk, make change to zuse
-        ::  version of slap where we memoize mint
         (slap sut hoon.pile)
       [[%vase res] nub]
     ::
