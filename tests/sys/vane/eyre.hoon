@@ -152,7 +152,7 @@
   %+  rap  3
   :~  (fall sesh.state next)
       '; Path=/; Max-Age='
-      ?:(live '604800' '0')
+      ?:(live '2592000' '0')
   ==
 ::
 ++  read-moves
@@ -533,7 +533,7 @@
 ++  bake-cookie
   |=  sesh=@t
   %^  cat  3  sesh
-  '; Path=/; Max-Age=604800'
+  '; Path=/; Max-Age=2592000' ::604800'
 ::
 ++  g-name  ~fitbur-togtep-ladnup-ronbus--tanmer-sibsyn-lavryg-ramnul
 ++  g-cook  'urbauth-~nul=0v5.gbhev.sbeh0.3rov1.o6ibh.a3t9r'
@@ -1571,7 +1571,16 @@
     (make-ex-resp 303 ['location' '/final']~ ~)
   ;<  mos=(list move)  bind:m  final
   ;<  ~  bind:m
-    (expect-moves mos ex-rs ~)
+    =/  nook
+      ::  a new cookie gets generated with the proper expiry time.
+      ::  the fact that the token here matches the +g-cook one is a side-effect
+      ::  of eyre killing the old session first, and the tests passing a static
+      ::  entropy value.
+      ::
+      'urbauth-~nul=0v5.gbhev.sbeh0.3rov1.o6ibh.a3t9r; Path=/; Max-Age=2592000'
+    %+  expect-moves  mos
+    :~  (ex-response 303 ~['location'^'/final' 'set-cookie'^nook] ~)
+    ==
   (pure:m ~)
 ::
 ++  test-eauth-incoming-bad-token

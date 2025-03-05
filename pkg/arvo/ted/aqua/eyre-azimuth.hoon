@@ -286,8 +286,8 @@
         0w9N.5uIvA.Jg0cx.NCD2R.o~MtZ.uEQOB.9uTbp.6LHvg.0yYTP.
         3q3td.T4UF0.d5sDL.JGpZq.S3A92.QUuWg.IHdw7.izyny.j9W92
       (pit:nu:crub:crypto 512 (shaz (jam who life=1 %entropy)))
-    =/  =seed:jael
-      [who 1 sec:ex:cub ~]
+    =/  =feed:jael
+      [[%2 ~] who 0 [1 sec:ex:cub] ~]
     =/  =pass  pub:ex:cub
     =/  com=tape
       =/  rank  ?:(=(%earl clan) "moon" "comet")
@@ -298,7 +298,7 @@
   ==
 ::
 ++  dawn
-  |=  [who=ship seed=(unit seed:jael)]
+  |=  [who=ship feed=(unit feed:jael)]
   ^-  dawn-event:jael
   =/  spon=(list [ship point:azimuth])
     %-  flop
@@ -321,13 +321,14 @@
     ?:  ?=(%czar (clan:title ship))
       [a-point]~
     [a-point $(who ship)]
-  =/  =seed:jael
-    ?^  seed
-      u.seed
+  =/  =feed:jael
+    ?^  feed
+      u.feed
     =/  life-rift  (~(got by lives.state) who)
     =/  =life  lyfe.life-rift
-    [who life sec:ex:(get-keys who life) ~]
-  :*  seed
+    =/  =rift  rut.life-rift
+    [[%2 ~] who rift [life sec:ex:(get-keys who life)]~]
+  :*  feed
       spon
       get-czars
       ~[~['arvo' 'netw' 'ork']]

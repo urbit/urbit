@@ -16,8 +16,10 @@ export class LocalReducer {
     //
       this.threads(data, state);
     //
+      this.amesAll(data, state);
       this.amesPeers(data, state);
       this.amesPeer(data, state);
+      this.amesChum(data, state);
     //
       this.behnTimers(data, state);
     //
@@ -147,6 +149,25 @@ export class LocalReducer {
     const data = _.get(obj, 'amesPeer', false);
     if (data) {
       state.peers.deets[data.who] = data;
+    }
+  }
+
+  amesChum(obj, state) {
+    const data = _.get(obj, 'amesChum', false);
+    if (data) {
+      state.chums.deets[data.who] = data;
+    }
+  }
+
+  amesAll(obj, state) {
+    const data = _.get(obj, 'amesAll', false);
+      console.log("BLABLA", data);
+
+    if (data) {
+      state.peers.known = data.peers.known;
+      state.peers.alien = data.peers.alien;
+      state.chums.known = data.chums.known;
+      state.chums.alien = data.chums.alien;
     }
   }
 

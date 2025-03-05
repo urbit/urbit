@@ -14,63 +14,64 @@
 =/  comet2  ^$:((ames our-comet2))
 ::
 =.  now.nec        ~1111.1.1
-=.  eny.nec        0xdead.beef
+=.  eny.nec        `@uvJ`0xdead.beef
 =.  life.ames-state.nec  2
 =.  rift.ames-state.nec  0
 =.  rof.nec  |=(* ``[%noun !>(*(list turf))])
-=.  crypto-core.ames-state.nec  (pit:nu:crub:crypto 512 (shaz 'nec'))
-=/  nec-pub  pub:ex:crypto-core.ames-state.nec
-=/  nec-sec  sec:ex:crypto-core.ames-state.nec
+=+  crypto-core=(pit:nu:crub:crypto 512 (shaz 'nec'))
+=/  nec-pub   pub:ex:crypto-core
+=.  priv.ames-state.nec  sec:ex:crypto-core
 ::
 =.  now.bud        ~1111.1.1
-=.  eny.bud        0xbeef.dead
+=.  eny.bud        `@uvJ`0xbeef.dead
 =.  life.ames-state.bud  3
 =.  rift.ames-state.bud  0
 =.  rof.bud  |=(* ``[%noun !>(*(list turf))])
-=.  crypto-core.ames-state.bud  (pit:nu:crub:crypto 512 (shaz 'bud'))
-=/  bud-pub  pub:ex:crypto-core.ames-state.bud
-=/  bud-sec  sec:ex:crypto-core.ames-state.bud
+=+  crypto-core=(pit:nu:crub:crypto 512 (shaz 'bud'))
+=/  bud-pub  pub:ex:crypto-core
+=/  bud-sec  sec:ex:crypto-core
+=.  priv.ames-state.bud  sec:ex:crypto-core
 ::
 =.  now.marbud        ~1111.1.1
-=.  eny.marbud        0xbeef.beef
+=.  eny.marbud        `@uvJ`0xbeef.beef
 =.  life.ames-state.marbud  4
 =.  rift.ames-state.marbud  0
 =.  rof.marbud  |=(* ``[%noun !>(*(list turf))])
-=.  crypto-core.ames-state.marbud  (pit:nu:crub:crypto 512 (shaz 'marbud'))
-=/  marbud-pub  pub:ex:crypto-core.ames-state.marbud
-=/  marbud-sec  sec:ex:crypto-core.ames-state.marbud
+=+  crypto-core=(pit:nu:crub:crypto 512 (shaz 'marbud'))
+=/  marbud-pub   pub:ex:crypto-core
+=.  priv.ames-state.marbud  sec:ex:crypto-core
 ::
 =.  now.comet        ~1111.1.1
-=.  eny.comet        0xbeef.cafe
+=.  eny.comet        `@uvJ`0xbeef.cafe
 =.  life.ames-state.comet  1
 =.  rift.ames-state.comet  0
 =.  rof.comet  |=(* ``[%noun !>(*(list turf))])
-=.  crypto-core.ames-state.comet
+=/  crypto-core
   %-  nol:nu:crub:crypto
   0w9N.5uIvA.Jg0cx.NCD2R.o~MtZ.uEQOB.9uTbp.6LHvg.0yYTP.
   3q3td.T4UF0.d5sDL.JGpZq.S3A92.QUuWg.IHdw7.izyny.j9W92
-=/  comet-pub  pub:ex:crypto-core.ames-state.comet
-=/  comet-sec  sec:ex:crypto-core.ames-state.comet
+=/  comet-pub   pub:ex:crypto-core
+=.  priv.ames-state.comet  sec:ex:crypto-core
 ::
 =.  now.comet2        ~1111.1.1
-=.  eny.comet2        0xcafe.cafe
+=.  eny.comet2        `@uvJ`0xcafe.cafe
 =.  life.ames-state.comet2  1
 =.  rift.ames-state.comet2  0
 =.  rof.comet2  |=(* ``[%noun !>(*(list turf))])
-=.  crypto-core.ames-state.comet2  (pit:nu:crub:crypto 512 0v1eb4)
-=/  comet2-pub  pub:ex:crypto-core.ames-state.comet2
-=/  comet2-sec  sec:ex:crypto-core.ames-state.comet2
+=+  crypto-core=(pit:nu:crub:crypto 512 0v1eb4)
+=/  comet2-pub   pub:ex:crypto-core
+=.  priv.ames-state.comet2  sec:ex:crypto-core
 ::
-=/  nec-sym  (derive-symmetric-key:ames bud-pub nec-sec)
-=/  bud-sym  (derive-symmetric-key:ames nec-pub bud-sec)
+=/  nec-sym  (derive-symmetric-key:ames bud-pub priv.ames-state.nec)
+=/  bud-sym  (derive-symmetric-key:ames nec-pub priv.ames-state.bud)
 ?>  =(nec-sym bud-sym)
-=/  nec-marbud-sym  (derive-symmetric-key:ames marbud-pub nec-sec)
+=/  nec-marbud-sym  (derive-symmetric-key:ames marbud-pub priv.ames-state.nec)
 ::
-=/  marbud-sym  (derive-symmetric-key:ames marbud-pub comet-sec)
-=/  marbud2-sym  (derive-symmetric-key:ames marbud-pub comet2-sec)
-=/  bud-marbud-sym  (derive-symmetric-key:ames bud-pub marbud-sec)
+=/  marbud-sym  (derive-symmetric-key:ames marbud-pub priv.ames-state.comet)
+=/  marbud2-sym  (derive-symmetric-key:ames marbud-pub priv.ames-state.comet2)
+=/  bud-marbud-sym  (derive-symmetric-key:ames bud-pub priv.ames-state.marbud)
 ::
-=/  comet-sym  (derive-symmetric-key:ames bud-pub comet-sec)
+=/  comet-sym  (derive-symmetric-key:ames bud-pub priv.ames-state.comet)
 ::
 =.  peers.ames-state.nec
   %+  ~(put by peers.ames-state.nec)  ~bud
@@ -598,8 +599,8 @@
   =/  ror  (sift-roar:ames num-frag (flop paz))  :: XX rename
   =/   event-core
     ~!  nec
-    =/   foo  [*@da *@ rof.nec]
-    (ev:(nec foo) [*@da *@ rof.nec] *duct ames-state.nec)
+    =/   foo  [*@da *@uvJ rof.nec]
+    (ev:ames:(nec foo) foo *duct ames-state.nec)
   =/  dat
     ?>  ?=(^ dat.ror)
     ;;(@ux q.dat.ror)
@@ -702,19 +703,26 @@
   =^  moves  nec
     (call nec ~[/g/talk] %plug /foo)
   =/  expected-key
-      3.782.450.905.364.316.746.465.724.430.826.633.339.627.682.402.565.789.971.442.035.627.125.517.743.962.901.817.756.764.395.497.041.697.150.935.487.420.935.470.530.023.121.462.879.251.503.082.973.208.842.762
+    3.782.450.905.364.316.746.465.724.430.826.633.339.627.682.402.565.789.971.442.035.627.125.517.743.962.901.817.756.764.395.497.041.697.150.935.487.420.935.470.530.023.121.462.879.251.503.082.973.208.842.762
   %-  zing
-  :- 
-    %+  expect-eq  !>(moves)
-    !>  ^-  (list move:ames)
-    :~  [~[/g/talk] %give %stub 1 expected-key]
-    ==
+  :-  %-  expect-eq
+      :_  !>(moves)
+      !>  ^-  (list move:ames)
+      :~  [~[/g/talk] %give %stub 1 expected-key]
+      ==
   =^  moves2  bud
     (call bud ~[/g/talk] %keen `[1 expected-key] ~nec /foo/bar)
   :_  ~
-  %+  expect-eq  !>(moves2)
+  %-  expect-eq
+  :_  !>(moves2)
   !>  ^-  (list move:ames)
-  :~  [~[/g/talk] [%pass /fine/shut/1 [%a [%keen sec=~ ship=~nec path=/a/x/1//fine/shut/1/0v1.vvaek.7boon.0tp04.21q1h.be1i0.494an.qimof.e2fku.ern01]]]]
+  :~  :-  ~[/g/talk]
+      :+  %pass  /fine/shut/1
+      :-  %a
+      :^    %keen
+          sec=~
+        ship=~nec
+      path=/a/x/1//fine/shut/1/0v1.vvaek.7boon.0tp04.21q1h.be1i0.494an.qimof.e2fku.ern01
   ==
 ::
 --

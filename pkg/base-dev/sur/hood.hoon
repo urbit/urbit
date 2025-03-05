@@ -206,6 +206,8 @@
       %held  'suspended until next update'
     ==
   =/  kul=cord  (print-wefts (waft-to-wefts waft))
+  =/  ese=cord
+    ?:(.^(? %cx /[ego]//[wen]/esse/[syd]) 'yes' 'no')
   =/  pax=path  /(scot %p our)/[syd]/(scot %da now)
   ?.  verb
     :~  '::'
@@ -213,6 +215,7 @@
         (cat 3 '  pending updates:       ' (print-wefts wic.dek))
         (cat 3 '  source ship:           ' ?~(sink '~' (scot %p her.u.sink)))
         (cat 3 '  app status:            ' sat)
+        (cat 3 '  essential desk:        ' ese)
         (cat 3 '  %cz hash ends in:      ' (print-shorthash hash))
         (cat 3 '  /sys/kelvin:           ' (print-wefts (waft-to-wefts waft)))
         (cat 3 '%' syd)
@@ -242,6 +245,7 @@
       (cat 3 '  force off:        ' (print-agents of))
       (cat 3 '  force on:         ' (print-agents on))
       (cat 3 '  app status:       ' sat)
+      (cat 3 '  essential desk:   ' ese)
   ::
       (cat 3 '  %cz hash:         ' (scot %uv hash))
       (cat 3 '  base hash:        ' (print-mergebases meb))

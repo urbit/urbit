@@ -475,6 +475,19 @@
     ?:  ?=(%nuke -.q.i.apps)  $(apps t.apps)
     =/  ap-core  (ap-yoke:ap p.i.apps [~ our prov] q.i.apps)
     $(apps t.apps, mo-core ap-abet:(ap-rake:ap-core all))
+  ::  +mo-lave: delete all incoming stale subscriptions
+  ::
+  ++  mo-lave
+    |=  [prov=path subs=(list [v=?(%g %a) =ship =dude =duct])]
+    ^+  mo-core
+    |-  ^+  mo-core
+    ?~  subs  mo-core
+    ?~  yoke=(~(get by yokes.state) dude.i.subs)
+      $(subs t.subs)
+    =?  mo-core  ?=(%live -.u.yoke)
+      =/  ap-core  (ap-yoke:ap dude.i.subs [~ ship.i.subs prov] u.yoke)
+      ap-abet:(ap-lave:ap-core [v duct]:i.subs)
+    $(subs t.subs)
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
@@ -763,6 +776,9 @@
       ::
       =?  mo-core
           &(?=(^ err) |(?=(%watch-as remote-request) ?=(%watch remote-request)))
+          ::  XX TODO maybe also send a %cork if we get a %nack for a %poke?
+          ::  &(?=(^ err) ?+(remote-request %.y %leave %.n, %missing %.n))
+          ::
         (mo-pass sys+wire %a %cork ship)
       ::
       ?-  remote-request
@@ -803,7 +819,7 @@
             =/  key  [[%sys wire] hen]
             =?  outstanding.state  =(~ (~(gut by outstanding.state) key ~))
               (~(del by outstanding.state) key)
-            (mo-pass [%sys wire] %a %cork ship)
+            (mo-pass sys+wire a/cork+ship)
       ==
     ::
         [%ames %lost *]
@@ -1170,7 +1186,6 @@
         %u  [%leave ~]
       ==
     (mo-pass wire %g %deal [ship our /] agent-name deal)
-
   ::  +mo-spew: handle request to set verbosity toggles on debug output
   ::
   ++  mo-spew
@@ -1382,6 +1397,7 @@
         ==
       =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent]))
       ap-core
+    ::
     ++  ap-match-coop
       |=  =path
       ^-  (unit coop)
@@ -1394,9 +1410,8 @@
         (ap-request-brood wire spar)
       =.  ken.yoke  (~(put ju ken.yoke) spar wire)
       (ap-pass wire %arvo %a %keen ~ spar)
-    ::
-    ::
     ::  +ap-tend: bind path in namespace, encrypted
+    ::
     ++  ap-tend
       |=  [=coop =path =page]
       ?~  cop=(~(get-hutch of-farm sky.yoke) coop)
@@ -1739,11 +1754,15 @@
         ?.  ?=([~ ~ *] tuc)  ~
         `!<(tube:clay q.u.u.tuc)
       ?~  tub
-        ((slog leaf+"peek no tube from {(trip have)} to {(trip want)}" ~) ~)
+        =/  msg  "%{(trip agent-name)}: ".
+                 "peek no tube from {(trip have)} to {(trip want)}"
+        ((slog leaf+msg ~) ~)
       =/  res  (mule |.((u.tub vase)))
       ?:  ?=(%& -.res)
         ``want^p.res
-      ((slog leaf+"peek failed tube from {(trip have)} to {(trip want)}" ~) ~)
+      =/  msg  "%{(trip agent-name)}: ".
+               "peek failed tube from {(trip have)} to {(trip want)}"
+      ((slog leaf+msg ~) ~)
     ::  +ap-move: send move
     ::
     ++  ap-move
@@ -2145,6 +2164,16 @@
         =/  sat  !<(ship-state:ames q.u.u.sky)
         ?>(?=(%known -.sat) (some +.sat))
       --
+    ::  +ap-lave: delete stale incoming subscriptions in %gall
+    ::
+    ++  ap-lave
+      |=  [v=?(%a %g) =duct]
+      ^+  ap-core
+      =;  core=_ap-core
+        core(agent-duct agent-duct)
+      ?:  ?=(%a v)
+        ap-kill-up(agent-duct duct)
+      ap-load-delete(agent-duct duct)
     ::  +ap-mule: run virtualized with intercepted scry, preserving type
     ::
     ::    Compare +mute and +mule.  Those pass through scry, which
@@ -2379,7 +2408,7 @@
       =+  ;;(=fine-request noun)
       =<  mo-abet
       (mo-handle-key-request:mo-core ship agent-name path.fine-request)
-    ?>  ?=([%ge @ ~] path)
+    ?>  ?=([?(%ge %gm) @ ~] path)
     =/  agent-name  i.t.path
     ::
     =+  ;;(=ames-request-all noun)
@@ -2394,6 +2423,7 @@
       %nuke  mo-abet:(mo-nuke:mo-core prov dude.task)
       %doff  mo-abet:(mo-doff:mo-core prov +.task)
       %rake  mo-abet:(mo-rake:mo-core prov +.task)
+      %lave  mo-abet:(mo-lave:mo-core prov +.task)
       %spew  mo-abet:(mo-spew:mo-core veb.task)
       %sift  mo-abet:(mo-sift:mo-core dudes.task)
       %trim  [~ gall-payload]
@@ -2932,6 +2962,17 @@
     ?&  =(path (scag (lent path) spur))
         !=(path spur)
     ==
+  ::
+  ?:  ?&  =(%y care)
+          =(~ path)
+          =([%$ %da now] coin)
+          =(our ship)
+      ==
+    :+  ~  ~
+    :-  %yokes  !>  ^+  yokes.state
+    %-  ~(rep by yokes.state)
+    |=  [[=dude =yoke] acc=_yokes.state]
+    ?:(?=(%live -.yoke) acc (~(del by acc) dude))
   ::
   ?:  ?&  =(%z care)
           =(our ship)
