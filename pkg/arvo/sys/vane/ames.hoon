@@ -1902,27 +1902,28 @@
           |=  [[=bone pump=message-pump-state] ok=?]
           ?:  =(%3 (mod bone 4))  ok  :: ignore naxplanation bones
           =+  back-pump=(~(got by snd.back) bone)
-          ?&  ok
-              =-  ~?  !-  [bone=bone ames=current.pump back=current.back-pump]
-                  -
-              %+  print-check  %forward-flows-current
-              =(current.pump current.back-pump)
-            ::
-              =-  ~?  !-  [bone=bone ames=next.pump back=next.back-pump]
-                  -
-              %+  print-check  %forward-flows-next
-              ?|  =(next.pump next.back-pump)
-                  ::  if next doesn't match, we could have messages that were
-                  ::  live in the unsent message queue
-                  ::
-                  =/  diff=@ud   (sub next.pump next.back-pump)
-                  ::  unsent messages queue needs to have at least .diff
-                  ::
-                  (gte ~(wyt by unsent-messages.back-pump) diff)
-              ==
-              ::  XX TODO: check live message sequence number
+          =/  test
+            ?&  =-  ~?  !-  [bone=bone ames=current.pump back=current.back-pump]
+                    -
+                %+  print-check  %forward-flows-current
+                =(current.pump current.back-pump)
               ::
-          ==
+                =-  ~?  !-  [bone=bone ames=next.pump back=next.back-pump]
+                    -
+                %+  print-check  %forward-flows-next
+                ?|  =(next.pump next.back-pump)
+                    ::  if next doesn't match, we could have messages that were
+                    ::  live in the unsent message queue
+                    ::
+                    =/  diff=@ud   (sub next.pump next.back-pump)
+                    ::  unsent messages queue needs to have at least .diff
+                    ::
+                    (gte ~(wyt by unsent-messages.back-pump) diff)
+                ==
+                ::  XX TODO: check live message sequence number
+                ::
+            ==
+          &(ok test)
         ::  backwards flows
         ::
           %+  print-check  %backwards-flows
@@ -1936,13 +1937,14 @@
             ~?  >>  (gth last-acked.sink 0)  weird-missing-rcv-bone/bone
             ?>  =(0 last-acked.sink)
             ok
-          ?&  ok
-              =-  ~?  !-
-                    [bone=bone ames=last-acked.sink back=last-acked.u.back-sink]
-                  -
-              %+  print-check  %backwards-flows-acked
-              =(last-acked.sink last-acked.u.back-sink)
-          ==
+          =/  test
+            ?&  =-  ~?  !-
+                      [bone=bone ames=last-acked.sink back=last-acked.u.back-sink]
+                    -
+                %+  print-check  %backwards-flows-acked
+                =(last-acked.sink last-acked.u.back-sink)
+            ==
+          &(ok test)
       ==
     ::
     ++  regression-test
