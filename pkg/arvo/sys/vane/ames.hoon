@@ -1863,8 +1863,9 @@
     ::                   .back is the regressed state, from $chums to %ships
     ::
     ++  migration-test
-      |=  [ames=ship-state back=ship-state]
+      |=  [=ship ames=ship-state back=ship-state]
       ^-  ?
+      =-  ~?  >>>  !-  ship-failed/ship  -
       ?>  =(-.ames -.back)     :: both %known or %alien
       ?:  ?=(%alien -.ames)
         =(ames back)
@@ -1901,27 +1902,45 @@
           |=  [[=bone pump=message-pump-state] ok=?]
           ?:  =(%3 (mod bone 4))  ok  :: ignore naxplanation bones
           =+  back-pump=(~(got by snd.back) bone)
-          ?&  ok
-              =-  ~?  !-  [bone=bone ames=current.pump back=current.back-pump]
-                  -
-              %+  print-check  %forward-flows-current
-              =(current.pump current.back-pump)
-            ::
-              =-  ~?  !-  [bone=bone ames=next.pump back=next.back-pump]
-                  -
-              %+  print-check  %forward-flows-next
-              ?|  =(next.pump next.back-pump)
-                  ::  if next doesn't match, we could have messages that were
-                  ::  live in the unsent message queue
-                  ::
-                  =/  diff=@ud   (sub next.pump next.back-pump)
-                  ::  unsent messages queue needs to have at least .diff
-                  ::
-                  (gte ~(wyt by unsent-messages.back-pump) diff)
-              ==
-              ::  XX TODO: check live message sequence number
+          =/  test
+            ?&  =-  ~?  !-  [bone=bone ames=current.pump back=current.back-pump]
+                    -
+                %+  print-check  %forward-flows-current
+                =(current.pump current.back-pump)
               ::
-          ==
+                =-  ~?  !-  [bone=bone ames=next.pump back=next.back-pump]
+                    -
+                %+  print-check  %forward-flows-next
+                ?|  =(next.pump next.back-pump)
+                    ::  if next doesn't match, we could have messages that were
+                    ::  live in the unsent message queue
+                    ::
+                    =/  diff=@ud
+                      ?:  (lth next.pump next.back-pump)
+                        0
+                      (sub next.pump next.back-pump)
+                    ?.  &(=(0 diff) =(1 (sub next.back-pump next.pump)))
+                      ::  unsent messages queue needs to have at least .diff
+                      ::
+                      (gte ~(wyt by unsent-messages.back-pump) diff)
+                    ::  the extra message being sent needs to be a %cork $plea
+                    ::
+                    ?&  (~(has in closing.ames) bone)
+                        (~(has in closing.back) bone)
+                        =/  pac-qeu
+                          %-  (ordered-map live-packet-key live-packet-val)
+                          lte-packets
+                        =/  head  (pry:pac-qeu live.packet-pump-state.back-pump)
+                        ?.  ?=(^ head)  %.n
+                        =/  num  num-fragments.val.u.head
+                        =/  fag  fragment.val.u.head
+                        =/  blob=*  (cue (rep packet-size [fag]~))
+                        ?=(^ ;;((soft [%$ path %cork ~]) blob))
+                ==  ==
+                ::  XX TODO: check live message sequence number
+                ::
+            ==
+          &(ok test)
         ::  backwards flows
         ::
           %+  print-check  %backwards-flows
@@ -1931,15 +1950,18 @@
           ?~  back-sink=(~(get by rcv.back) bone)
             ::  this happens if the flow we are migrating has not acked anything
             ::  (e.g. due to a %flub ?)
-            ~&  >>  weird-missing-rcv-bone/bone
+            ::
+            ~?  >>  (gth last-acked.sink 0)  weird-missing-rcv-bone/bone
+            ?>  =(0 last-acked.sink)
             ok
-          ?&  ok
-              =-  ~?  !-
-                    [bone=bone ames=last-acked.sink back=last-acked.u.back-sink]
-                  -
-              %+  print-check  %backwards-flows-acked
-              =(last-acked.sink last-acked.u.back-sink)
-          ==
+          =/  test
+            ?&  =-  ~?  !-
+                      [bone=bone ames=last-acked.sink back=last-acked.u.back-sink]
+                    -
+                %+  print-check  %backwards-flows-acked
+                =(last-acked.sink last-acked.u.back-sink)
+            ==
+          &(ok test)
       ==
     ::
     ++  regression-test
@@ -3888,7 +3910,7 @@
             %drop  abet:(clear-nack [nack-bone message-num]:deep)
             %cork  (cork-bone bone.deep)
             %kill  (kill-bone bone.deep)
-            %ahoy  (migrate-peer bone.deep)  :: XX remove bone; it's next-bone
+            %ahoy  (migrate-peer [ship bone]:deep) :: XX remove bone
             %prun  abet:(prune-tip [duct user-path ames-path]:deep)
           ==
           ::
@@ -3920,7 +3942,7 @@
           ::
           ++  kill-bone  |=(=bone abet:(on-kill-flow:peer-core bone))
           ++  migrate-peer
-            |=  =bone
+            |=  [=ship =bone]
             ::  XX  defer migrating the peer until we can read from their
             ::  namespace that they have migrated us?
             ::  XX  requires a namespace for migrated peers
@@ -3928,6 +3950,11 @@
             :: %-  %^  ev-trace  sun.veb  ship.deep
             ::     |.("migrating to |mesa")
             ~&  >>  "migrating to |mesa"
+            ::  before migrating check that we can migrate this peer without
+            ::  crashing. if so, we will nack the %ahoy $plea.
+            ::
+            =.  event-core  (on-mate `ship dry=%.y)
+            ::
             =~  ::  ack ahoy plea, if we don't crash
                 ::
                 abet:(call:(abed:mi:peer-core bone) %done ok=%.y)
@@ -4232,8 +4259,9 @@
         ++  on-mate
           |=  [ship=(unit ship) dry=?]
           |^  ^+  event-core
+          ~?  >>   dry  %testing-dry-migration
           =;  updated-core=_event-core
-              ?:(dry event-core updated-core)
+            ?:(dry event-core updated-core)
           ::
           ?^  ship
             ?~  peer=(~(get by peers.ames-state) u.ship)
@@ -4249,11 +4277,10 @@
             ^+  core
             ?>  ?=([%known *] ship-state)
             =+  peer-core=(abed-peer:pe:core ship +.ship-state)
-            ?:  dry
-              ~?  >>>  !on-migration-test:peer-core
-                %local-test-migration-failed
-              core
+            ~|  %local-migration-failed
+            ?>  on-migration-test:peer-core
             ~&  >  %local-migration-worked
+            ?:  dry  core
             pe-abel:on-migrate:peer-core
           ::
           --
@@ -4851,10 +4878,19 @@
                   moves^flows
                 =/  naxp-bone=?  =(%3 (mod bone 4))
                 =/  original-bone  bone
+                =/  target-bone    (mix 0b10 bone)
                 =?  bone  =(%1 (mod bone 4))
                   (mix 0b1 bone)              ::  from %1 to [%0 dire=%bak]
                 =?  bone  =(%3 (mod bone 4))
                   (mix 0b1 (mix 0b10 bone))   ::  from %3 to [%0 dire=%bak]
+                ?:  (~(has in corked.peer-state) target-bone)
+                  ~&  >>  corked-naxp-flow/target=target-bone^naxp=original-bone
+                  moves^flows
+                =/  nothing-in-flight=?
+                  ?&  ?=(~ live.packet-pump-state.pump)
+                      ?=(~ unsent-fragments.pump)
+                      ?=(~ unsent-messages.pump)
+                  ==
                 ::  initialize fo-core
                 ::
                 =/  fo-core
@@ -4869,6 +4905,40 @@
                   %.  [duct bone dire]
                   fo-abed:fo:~(ev-core ev:mesa-core [duct her^fren])
                 ::
+                ?:  ?&  =(%for dire)
+                        (~(has in closing.peer-state) original-bone)
+                        nothing-in-flight
+                        =(current.pump next.pump)
+                        ::  subscription flow with associated naxplanation bone
+                        ::
+                        (~(has by rcv.peer-state) original-bone)
+                        (~(has by rcv.peer-state) (mix 0b10 original-bone))
+                    ==
+                  ::  closing bone, with no live messages. this case is
+                  ::  handled by +recork-one, for peers that don't support the
+                  ::  new protocol that removes subscription flows, and nack
+                  ::  any %cork pleas. enqueue the %cork, and also start
+                  ::  peeking for it, just in case the other side has already
+                  ::  corked it.
+                  ::
+                  ::  XX this case is not considered in the migration-test
+                  ::  checks. if this peer dosn't support %corks, it shouldn't
+                  ::  support |mesa either, unless we manage to send the $ahoy
+                  ::  $plea right after the %ames vane is updated, but before
+                  ::  the recork timer fires
+                  ::
+                  =.  fo-core
+                    =~  %.  [%pump %plea %$ /flow %cork ~]
+                        fo-call:fo-core(next.snd.state next.pump)
+                    ::
+                        fo-peek-cork
+                    ==
+                  ~&  >>  recork-one/her^bone
+                  =^  cork-moves  flow  [moves state]:fo-core
+                  =?  closing.flow  !naxp-bone
+                    (~(has in closing.peer-state) bone)
+                  :-  (weld moves cork-moves)
+                  (~(put by flows) [bone dire] flow)
                 =?  moves  !=(current.pump next.pump)
                   ::  we are waiting for an %ack, or have heard a %nack and
                   ::  so we defer processing it until we receive the
@@ -5162,7 +5232,7 @@
               ==
             ::  compare pre/post migrated states
             ::
-            %+  migration-test
+            %^  migration-test  her
               (~(got by peers.ames-state) her)
             (~(got by peers.rege-state) her)
           ::
@@ -9034,11 +9104,14 @@
             ::  recalculate paths in the .pit using the new key
             ::
             =?  peer  ?=([%chum ~ %known *] peer)
-              =;  pit=_pit.u.peer
-                peer(pit.u pit)
+              =;  [pit=_pit.u.peer tip=_tip.u.peer]
+                peer(pit.u pit, tip.u tip)
               %-  ~(rep by pit.u.peer)
-              |=  [[=path req=request-state] pit=(map path request-state)]
-              =/  [=space ack=^path]
+              |=  $:  [=path req=request-state]
+                      pit=(map path request-state)
+                      tip=(jug =user=path [duct =ames=path])
+                  ==
+              =/  [=space user-path=^path]
                 [space inner]:(ev-decrypt-path:ev path ship)
               =.  space
                 ::  update life/keys in the space; for acks, update the client
@@ -9047,7 +9120,7 @@
                   %publ  space(life life)
                   %chum  space(client-life life, key new-key)
                 ==
-              =.  path  (make-space-path space ack)
+              =.  path  (make-space-path space user-path)
               ::  only recalculate poke paths if there's an associated payload
               ::
               =?  pay.req  ?=(^ pay.req)
@@ -9060,7 +9133,10 @@
                     %chum  space(server-life life, key new-key)
                   ==
                 `(make-space-path space poke)
-              (~(put by pit) path req(ps ~))  :: XX drop any partial state
+              :-  (~(put by pit) path req(ps ~))   :: XX drop any partial state
+              %-  ~(rep by ~(key by for.req))
+              |=  [for=duct tip=_tip]
+              (~(put ju tip) user-path for path)
             ::  update values
             ::
             =.  symmetric-key.+.u.peer  new-key
@@ -9711,10 +9787,9 @@
             ::
             ?:  ?=([[%ames %mesa %flow *] *] hen)
               =>  .(i.hen `(pole knot)`i.hen)
-              ::  if the flow is in closing we need to stop +peeking for the %cork
-              ::  (in +regress-peek) and remove the flow on our side
+              ::  if the flow is in closing we need to stop +peeking for the
+              ::  %cork (in +regress-peek) and remove the flow on our side
               ::
-
               =?  c  ?=([@ @ @ %cor %bak her=@ rift=@ bone=@ ~] i.hen)
                 =+  bone=(slav %ud bone.i.hen)
                 =+  ship=(slav %p her.i.hen)
@@ -9969,7 +10044,10 @@
         ::
         ++  co-make-peek
           |=  [=space =spar]
-          =.  pax  path.spar  :: XX skip adding flow paths to the .tip?
+          =.  pax
+            ?+  -.space  path.spar  :: XX skip adding flow paths to the .tip?
+              %none  inner:(ev-decrypt-path:ev [path ship]:spar)
+            ==
           (co-make-mess spar(path (make-space-path space path.spar)) ~)
         ::
         ++  co-make-poke
