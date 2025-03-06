@@ -1915,11 +1915,28 @@
                     ::  if next doesn't match, we could have messages that were
                     ::  live in the unsent message queue
                     ::
-                    =/  diff=@ud   (sub next.pump next.back-pump)
-                    ::  unsent messages queue needs to have at least .diff
+                    =/  diff=@ud
+                      ?:  (lth next.pump next.back-pump)
+                        0
+                      (sub next.pump next.back-pump)
+                    ?.  &(=(0 diff) =(1 (sub next.back-pump next.pump)))
+                      ::  unsent messages queue needs to have at least .diff
+                      ::
+                      (gte ~(wyt by unsent-messages.back-pump) diff)
+                    ::  the extra message being sent needs to be a %cork $plea
                     ::
-                    (gte ~(wyt by unsent-messages.back-pump) diff)
-                ==
+                    ?&  (~(has in closing.ames) bone)
+                        (~(has in closing.back) bone)
+                        =/  pac-qeu
+                          %-  (ordered-map live-packet-key live-packet-val)
+                          lte-packets
+                        =/  head  (pry:pac-qeu live.packet-pump-state.back-pump)
+                        ?.  ?=(^ head)  %.n
+                        =/  num  num-fragments.val.u.head
+                        =/  fag  fragment.val.u.head
+                        =/  blob=*  (cue (rep packet-size [fag]~))
+                        ?=(^ ;;((soft [%$ path %cork ~]) blob))
+                ==  ==
                 ::  XX TODO: check live message sequence number
                 ::
             ==
