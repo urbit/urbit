@@ -4240,6 +4240,7 @@
         ++  on-mate
           |=  [ship=(unit ship) dry=?]
           |^  ^+  event-core
+          ~?  >>   dry  %testing-dry-migration
           =;  updated-core=_event-core
             ?:(dry event-core updated-core)
           ::
@@ -9767,10 +9768,9 @@
             ::
             ?:  ?=([[%ames %mesa %flow *] *] hen)
               =>  .(i.hen `(pole knot)`i.hen)
-              ::  if the flow is in closing we need to stop +peeking for the %cork
-              ::  (in +regress-peek) and remove the flow on our side
+              ::  if the flow is in closing we need to stop +peeking for the
+              ::  %cork (in +regress-peek) and remove the flow on our side
               ::
-
               =?  c  ?=([@ @ @ %cor %bak her=@ rift=@ bone=@ ~] i.hen)
                 =+  bone=(slav %ud bone.i.hen)
                 =+  ship=(slav %p her.i.hen)
