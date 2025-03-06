@@ -57,16 +57,17 @@
     "tools": {
       "flake": false,
       "locked": {
-        "lastModified": 1687273483,
-        "narHash": "sha256-41X9PWXGM7lFzPiIj4dw3i8bgMvpT85iYHSeyIxPJcc=",
+        "lastModified": 1697246408,
+        "narHash": "sha256-5G2cU+jc04pVNDKwxJmwqnCDmWJiGPRVdEkGYHro/lQ=",
         "owner": "urbit",
         "repo": "tools",
-        "rev": "2ad116fdb539e4116dc18d86772a241415cc1ef4",
+        "rev": "d454e2482c3d4820d37db6d5625a6d40db975864",
         "type": "github"
       },
       "original": {
         "owner": "urbit",
         "repo": "tools",
+        "rev": "d454e2482c3d4820d37db6d5625a6d40db975864",
         "type": "github"
       }
     }

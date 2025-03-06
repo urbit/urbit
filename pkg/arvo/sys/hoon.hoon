@@ -1393,6 +1393,20 @@
       |
     ?|((b q.n.a) $(a l.a) $(a r.a))
   ::
+  ++  apt                                               ::  check correctness
+    =<  $
+    ~/  %apt
+    =|  [l=(unit) r=(unit)]
+    |.  ^-  ?
+    ?~  a   &
+    ?&  ?~(l & &((gor p.n.a u.l) !=(p.n.a u.l)))
+        ?~(r & &((gor u.r p.n.a) !=(u.r p.n.a)))
+        ?~  l.a   &
+        &((mor p.n.a p.n.l.a) !=(p.n.a p.n.l.a) $(a l.a, l `p.n.a))
+        ?~  r.a   &
+        &((mor p.n.a p.n.r.a) !=(p.n.a p.n.r.a) $(a r.a, r `p.n.a))
+    ==
+  ::
   ++  bif                                               ::  splits a by b
     ~/  %bif
     |*  b=*
@@ -1452,20 +1466,6 @@
     ?:  (gor b p.n.a)
       $(a l.a, c (peg c 6))
     $(a r.a, c (peg c 7))
-  ::
-  ++  apt                                               ::  check correctness
-    =<  $
-    ~/  %apt
-    =|  [l=(unit) r=(unit)]
-    |.  ^-  ?
-    ?~  a   &
-    ?&  ?~(l & &((gor p.n.a u.l) !=(p.n.a u.l)))
-        ?~(r & &((gor u.r p.n.a) !=(u.r p.n.a)))
-        ?~  l.a   &
-        &((mor p.n.a p.n.l.a) !=(p.n.a p.n.l.a) $(a l.a, l `p.n.a))
-        ?~  r.a   &
-        &((mor p.n.a p.n.r.a) !=(p.n.a p.n.r.a) $(a r.a, r `p.n.a))
-    ==
   ::
   ++  gas                                               ::  concatenate
     ~/  %gas
@@ -1536,6 +1536,14 @@
       a(l $(a l.a))
     ::
     a(r $(a r.a))
+  ::
+  ++  key                                               ::  set of keys
+    =<  $
+    ~/  %key
+    =+  b=`(set _?>(?=(^ a) p.n.a))`~
+    |.  ^+  b
+    ?~  a   b
+    $(a r.a, b $(a l.a, b (~(put in b) p.n.a)))
   ::
   ++  mar                                               ::  add with validation
     |*  [b=* c=(unit *)]
@@ -1648,14 +1656,6 @@
     ~%  %wyt  +  ~
     |.  ^-  @
     ?~(a 0 +((add $(a l.a) $(a r.a))))
-  ::
-  ++  key                                               ::  set of keys
-    =<  $
-    ~/  %key
-    =+  b=`(set _?>(?=(^ a) p.n.a))`~
-    |.  ^+  b
-    ?~  a   b
-    $(a r.a, b $(a l.a, b (~(put in b) p.n.a)))
   ::
   ++  val                                               ::  list of vals
     =+  b=`(list _?>(?=(^ a) q.n.a))`~
