@@ -7186,7 +7186,7 @@
                   %+  skim
                     ~(tap in ~(key by by-duct.ossuary))
                   |=  =duct
-                  =(-.duct /gall/sys/way/(scot %p who)/ping)
+                  ?=([* [%gall %use %ping @ %out @ %ping %ping] *] duct)
                 ?~  ducs  ``noun+!>(~)
                 =/  ping-bone
                   (~(got by by-duct.ossuary) -.ducs)
@@ -7203,7 +7203,7 @@
                 %+  skim
                   ~(tap in ~(key by by-duct.ossuary))
                 |=  =duct
-                =(-.duct /gall/sys/way/(scot %p who)/ping)
+                ?=([* [%gall %use %ping @ %out @ %ping %ping] *] duct)
               ?~  ducs  ``noun+!>(~)
               =/  ping-bone
                 (~(got by by-duct.ossuary) -.ducs)
