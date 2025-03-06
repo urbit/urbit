@@ -598,7 +598,7 @@
       =.  cycle.nub  (~(put in cycle.nub) nave+mak)
       %-  (trace 1 |.("make mark {<mak>}"))
       =^  cor=vase  nub  (build-fit %mar mak)
-      =/  gad=vase  (slap cor limb/%grad)
+      =/  gad=vase  (slub cor limb/%grad)
       ?@  q.gad
         =+  !<(mok=mark gad)
         =^  deg=vase  nub  ^$(mak mok)
@@ -609,12 +609,7 @@
         =.  nub  nob
         :_  nub  :-  %vase
         ^-  vase  ::  vase of nave
-        =>  :*  slap=slap  with-faces=with-faces  deg=deg
-                tub=tub  but=but  cor=cor  bud=nave=nave.bud
-                hoon=hoon  nave=nave  clay=clay
-            ==
-        ~>  %memo./clay/nave
-        %+  slap
+        %+  slub
           (with-faces deg+deg tub+tub but+but cor+cor nave+nave.bud ~)
         !,  *hoon
         =/  typ  _+<.cor
@@ -639,11 +634,7 @@
       =.  nub  nob
       :_  nub  :-  %vase
       ^-  vase  ::  vase of nave
-      =>  :*  slap=slap  slop=slop  with-face=with-face
-              cor=cor  bud=zuse=zuse.bud  hoon=hoon  clay=clay
-          ==
-      ~>  %memo./clay/nave
-      %+  slap  (slop (with-face cor+cor) zuse.bud)
+      %+  slub  (slop (with-face cor+cor) zuse.bud)
       !,  *hoon
       =/  typ  _+<.cor
       =/  dif  _*diff:grad:cor
@@ -687,36 +678,35 @@
       :_  nub  :-  %dais
       ^-  dais
       =>  [nav=nav ..zuse]
-      ~>  %memo./clay/dais
       |_  sam=vase
       ++  diff
         |=  new=vase
-        (slam (slap nav limb/%diff) (slop sam new))
-      ++  form  !<(mark (slap nav limb/%form))
+        (slam (slub nav limb/%diff) (slop sam new))
+      ++  form  !<(mark (slub nav limb/%form))
       ++  join
         |=  [a=vase b=vase]
         ^-  (unit (unit vase))
-        =/  res=vase  (slam (slap nav limb/%join) (slop a b))
+        =/  res=vase  (slam (slub nav limb/%join) (slop a b))
         ?~  q.res    ~
         ?~  +.q.res  [~ ~]
-        ``(slap res !,(*hoon ?>(?=([~ ~ *] .) u.u)))
+        ``(slub res !,(*hoon ?>(?=([~ ~ *] .) u.u)))
       ++  mash
         |=  [a=[=ship =desk diff=vase] b=[=ship =desk diff=vase]]
         ^-  (unit vase)
         =/  res=vase
-          %+  slam  (slap nav limb/%mash)
+          %+  slam  (slub nav limb/%mash)
           %+  slop
             :(slop [[%atom %p ~] ship.a] [[%atom %tas ~] desk.a] diff.a)
           :(slop [[%atom %p ~] ship.b] [[%atom %tas ~] desk.b] diff.b)
         ?~  q.res
           ~
-        `(slap res !,(*hoon ?>((^ .) u)))
+        `(slub res !,(*hoon ?>((^ .) u)))
       ++  pact
         |=  diff=vase
-        (slam (slap nav limb/%pact) (slop sam diff))
+        (slam (slub nav limb/%pact) (slop sam diff))
       ++  vale
-        |:  noun=q:(slap nav !,(*hoon *vale))
-        (slam (slap nav limb/%vale) noun/noun)
+        |:  noun=q:(slub nav !,(*hoon *vale))
+        (slam (slub nav limb/%vale) noun/noun)
       --
     ::  +build-cast: produce gate to convert mark .a to, statically typed
     ::
@@ -751,9 +741,7 @@
         %-  (trace 4 |.("{<a>} -> {<b>}: +{(trip b)}:grow:{(trip a)}"))
         =.  nub  nob
         :_  nub  :-  %vase
-        =>  [slap=slap with-faces=with-faces old=old hoon=hoon b=b]
-        ~>  %memo./clay/cast
-        %+  slap  (with-faces cor+old ~)
+        %+  slub  (with-faces cor+old ~)
         ^-  hoon
         :+  %brcl  !,(*hoon v=+<.cor)
         :+  %tsgl  limb/b
@@ -762,11 +750,7 @@
       ::
       =^  new=vase  nub  (build-fit %mar b)
       =/  arm=?  (has-arm %grab a new)
-      =/  rab
-        %-  mule
-        =>  [slap=slap new=new a=a]
-        ~>  %memo./clay/cast
-        |.((slap new tsgl/[limb/a limb/%grab]))
+      =/  rab  (mule |.((slub new tsgl/[limb/a limb/%grab])))
       ?:  &(arm ?=(%& -.rab) ?=(^ q.p.rab))
         %+  gain-leak  cast+a^b
         |=  nob=state
@@ -775,7 +759,7 @@
         :_(nub vase+p.rab)
       ::  try +jump
       ::
-      =/  jum  (mule |.((slap old tsgl/[limb/b limb/%jump])))
+      =/  jum  (mule |.((slub old tsgl/[limb/b limb/%jump])))
       ?:  &((has-arm %jump a old) ?=(%& -.jum))
         =/  via  !<(mark p.jum)
         %-  (trace 4 |.("{<a>} -> {<b>}: via {<via>} per +jump:{(trip a)}"))
@@ -801,14 +785,14 @@
       |=  nob=state
       =.  nub  nob
       :_  nub  :-  %vase
-      %+  slap
+      %+  slub
         (with-faces uno+uno dos+dos ~)
       !,(*hoon |=(_+<.uno (dos (uno +<))))
     ::
     ++  has-arm
       |=  [arm=@tas =mark core=vase]
       ^-  ?
-      =/  rib  (mule |.((slap core [%wing ~[arm]])))
+      =/  rib  (mule |.((slub core [%wing ~[arm]])))
       ?:  ?=(%| -.rib)  %.n
       =/  lab  (mule |.((slob mark p.p.rib)))
       ?:  ?=(%| -.lab)  %.n
@@ -829,12 +813,7 @@
       |=  nob=state
       =.  nub  nob
       %-  (trace 1 |.("make tube {<a>} -> {<b>}"))
-      :_  nub
-      :-  %tube
-      =>  [gat=gat ..zuse]
-      ~>  %memo./clay/tube
-      |=  v=vase
-      (slam gat v)
+      :_(nub [%tube =>([gat=gat ..zuse] |=(v=vase (slam gat v)))])
     ::
     ++  validate-page
       |=  [=path =page]
@@ -914,10 +893,7 @@
       %+  gain-leak  file+path
       |=  nob=state
       =.  nub  nob
-      =/  res=vase
-        =>  [sut=sut pile=hoon=hoon.pile slap=slap]
-        ~>  %memo./clay/build
-        (slap sut hoon.pile)
+      =/  res=vase  (slub sut hoon.pile)
       [[%vase res] nub]
     ::
     ++  build-file
