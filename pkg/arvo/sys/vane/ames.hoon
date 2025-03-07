@@ -4716,12 +4716,18 @@
               =/  =wire  (make-pump-timer-wire her bone)
               (pe-emit duct %pass wire %b %wait (add now.channel ~s30))
             ::  expire direct route if the peer is not responding;
+            ::
             ::  update and print connection state
-            ::  (routes/qos for galaxies will remain direct/%live)
+            ::    (routes/qos for galaxies will remain direct/%live)
+            ::
+            =/  expiry=@da  (add ~s30 last-contact.qos.peer-state)
+            =?  -.qos.peer-state  (gte now expiry)
+              %dead
+            =.  peer-core  (update-qos %ames qos.peer-state)
+            ::  expire direct route if the peer is not responding
             ::
             =/  old-route   route.peer-state
             =.  peer-state  (update-peer-route her peer-state)
-            =.  peer-core   (update-qos %ames qos.peer-state)
             =?  peer-core   !=(old-route route.peer-state)
               %-  pe-emit
               :*  unix-duct  %give  %nail  her
@@ -6739,15 +6745,17 @@
               ^+  fine
               ::
               =.  next-wake.keen  ~
-              ::  has the direct route expired?
-              ::
-              =/  old-route     route.peer-state
-              ::  routes/qos for galaxies will remain direct/%live
-              ::
-              =.  peer-state    (update-peer-route her peer-state)
+              =/  expiry=@da  (add ~s30 last-contact.qos.peer-state)
+              =?  -.qos.peer-state  (gte now expiry)
+                %dead
               =.  peer-core     (update-qos %fine qos.peer-state)
               =.  metrics.keen  %*(on-timeout fi-gauge vane %fine)
+              ::  has the direct route expired?
               ::
+              =/  old-route   route.peer-state
+              ::  routes/qos for galaxies will remain direct/%live
+              ::
+              =.  peer-state  (update-peer-route her peer-state)
               ?:  =(~ unix-duct)
                 ::  no-op; fi-abet will reset the timer
                 ::
@@ -7650,7 +7658,14 @@
             =.  per  (ev-update-lane lane hop.pact ~)
             ::  update and print connection status
             ::
-            =?  ev-core  ?=(^ lane.per)  (ev-update-qos %live last-contact=now)
+            =/  new=qos  [%live last-contact=now]
+            =.  ev-core
+              ::  only switch to live if the peer reaches out directly
+              ::
+              %-  ev-update-qos
+              ?:  &(=(1 hop.pact) ?=(^ lane.per))
+                new
+              qos.per(last-contact last-contact.new)
             =?  ev-core  ?=(~ lane.per)  (ev-update-qos %dead last-contact=now)
             ::
             ?.  =(1 (div (add tob.data.pact 1.023) 1.024))
@@ -7724,9 +7739,14 @@
               ev-core
             ::
             =.  per  (ev-update-lane lane hop.pact next.pact)
-            ::  update and print connection status
+            ::  update and print connection status if the page comes directly
             ::
-            =.  ev-core  (ev-update-qos %live last-contact=now)
+            =/  new=qos  [%live last-contact=now]
+            =.  ev-core
+              %-  ev-update-qos
+              ?:  =(1 hop.pact)
+                new
+              qos.per(last-contact last-contact.new)
             ::
             =/  tof  (div (add tob.data 1.023) 1.024)
             ::
@@ -8948,53 +8968,6 @@
               %^  sy-emit  hen  %pass
               [/public-keys %j %public-keys [ship.iota ~ ~]]
             ==
-          ?:  ?=([%routes ~] wire)
-            ::  re-setting the %dead-routes-timer happens in the |ames core
-            ::
-            =^  total-dead  sy-core
-              %-  ~(rep by chums.ames-state)
-              |=  [[her=ship chum=chum-state] n=@ core=_sy-core]
-              ?.  ?=(%known -.chum)
-                [n core]
-              =*  fren     +.chum
-              =/  old-qos  -.qos.fren
-              =?  fren     (is-lane-dead now her qos.fren)
-                fren(-.qos %dead)
-              =/  expired=?
-                ?&  !=(old-qos -.qos.fren)  ::  .qos have changed to %dead
-                    ?=(%dead -.qos.fren)    ::
-                ==
-              ?.  expired
-                [n core]
-              :-  +(n)
-              ::
-              %-  %+  %*(ev-tace ev her her)  kay.veb.bug.ames-state.core
-                  |.("lane has expired")
-              ::
-              =.  chums.ames-state.core
-                (~(put by chums.ames-state.core) her chum)
-              %-  sy-emit:core
-              :*  unix-duct  %give  %nail  her
-                ^-  (list lane)
-                ::  XX refactor
-                %+  turn
-                  (get-forward-lanes-mesa our fren chums.ames-state.core)
-                |=  =lane:pact
-                ^-  (each @pC address)
-                ?@  lane
-                  [%.y `@p`lane]
-                :-  %.n
-                %+  can  3
-                :~  4^p.lane
-                    2^q.lane
-                ==
-              ==
-            ::
-            =+  ?.  &(!=(0 total-dead) kay.veb.bug.ames-state)
-                  ~
-                %.  ~
-                (slog leaf/"mesa: {<`@`total-dead>} routes have expired" ~)
-            sy-core
           ?.  ?=([%mesa %retry ~] wire)
             ~&  >>>  %evil-behn-timer^wire
             sy-core
@@ -10781,12 +10754,17 @@
       ++  make-lanes
         |=  [her=ship dir=(unit lane:pact) =qos]
         ^-  (list lane:pact:ames)
-        %+  weld
+        =/  sponsor=(unit @ux)  (get-sponsor her)
+        =/  spon-lane=(unit lane:pact)
           ?.  (is-lane-dead now her qos)  ~
           ::  if the route has expired, send to the sponsor as well
           ::
-          (drop (get-sponsor her))
-        ?~(dir ~ (drop dir))
+          sponsor
+        ?~  dir
+          (drop ?^(spon-lane spon-lane sponsor))
+        %+  weld  (drop dir)
+        ?~  spon-lane  ~
+        (drop spon-lane)
       ::
       ++  get-sponsor
         |=  =ship
@@ -11453,11 +11431,6 @@
     ~>  %slog.0^leaf/"ames: unix-duct missing; delay {<i.wire>} for {<ship>}"
     :_  wires
     [%mesa %ask /public-keys/[(scot %p ship)]]
-  ?:  ?=([%routes ~] wire)
-    =^  ames-moves  vane-gate  (take:am-core sample)
-    =^  mesa-moves  vane-gate
-      (take:me-core(ames-state ames-state.vane-gate) sample)
-    [(weld ames-moves mesa-moves) vane-gate]
   ?~  parsed-wire=(parse-bone-wire wire)
     ::  not a /bone wire—used when passing %pleas to a local vane; use |ames
     ::  XX this is not a |mesa wire so it shouldn't happen for migrated flows
