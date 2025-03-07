@@ -2015,7 +2015,7 @@
     +|  %routes
     ::
     ++  is-lane-dead
-      |=  [now=@da her=ship fren=fren-state]
+      |=  [now=@da her=ship =qos]
       ^-  ?
       ?&  ::  ?=(^ lane.fren)  XX
           !=(%czar (clan:title her))
@@ -2024,8 +2024,8 @@
           ::  and we haven't received any packets from the fren, check if
           ::  the peer is actually dead
           ::
-          ?|  ?=(%dead -.qos.fren)
-              (gte now (add ~s30 last-contact.qos.fren))
+          ?|  ?=(%dead -.qos)
+              (gte now (add ~s30 last-contact.qos))
       ==  ==
     ::
     --
@@ -8958,7 +8958,7 @@
                 [n core]
               =*  fren     +.chum
               =/  old-qos  -.qos.fren
-              =?  fren     (is-lane-dead now her fren)
+              =?  fren     (is-lane-dead now her qos.fren)
                 fren(-.qos %dead)
               =/  expired=?
                 ?&  !=(old-qos -.qos.fren)  ::  .qos have changed to %dead
@@ -9540,7 +9540,7 @@
               =*  ship  her.core
               ::  update and print connection status
               ::
-              =?  core  (is-lane-dead:core now ship peer)
+              =?  core  (is-lane-dead:core now ship qos.peer)
                 (ev-update-qos:core dead/now)
               ::  if =(~ pay.req); %naxplanation, %cork or external (i.e. not
               ::  coming from %ames) $peek request
@@ -10782,7 +10782,7 @@
         |=  [her=ship dir=(unit lane:pact) =qos]
         ^-  (list lane:pact:ames)
         %+  weld
-          ?:  ?=(%live -.qos)  ~
+          ?.  (is-lane-dead now her qos)  ~
           ::  if the route has expired, send to the sponsor as well
           ::
           (drop (get-sponsor her))
