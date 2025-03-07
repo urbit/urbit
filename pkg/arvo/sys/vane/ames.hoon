@@ -7659,7 +7659,7 @@
               ::  only switch to live if the peer reaches out directly
               ::
               %-  ev-update-qos
-              ?:  &(=(1 hop.pact) ?=(^ lane.per))
+              ?:  &(=(0 hop.pact) ?=(^ lane.per))
                 new
               qos.per(last-contact last-contact.new)
             =?  ev-core  ?=(~ lane.per)  (ev-update-qos %dead last-contact=now)
@@ -7728,7 +7728,7 @@
             =/  new=qos  [%live last-contact=now]
             =.  ev-core
               %-  ev-update-qos
-              ?:  =(1 hop.pact)
+              ?:  =(0 hop.pact)
                 new
               qos.per(last-contact last-contact.new)
             ::
