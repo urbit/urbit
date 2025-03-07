@@ -1797,7 +1797,6 @@
           ~
       ==
     ::
-    ::
     +|  %state-migrations
     ::
     +$  axle-23
@@ -2012,6 +2011,22 @@
                   [last-acked pending-ack]:rcv.back-flow
           ==
       ==
+    ::
+    +|  %routes
+    ::
+    ++  is-lane-dead
+      |=  [now=@da her=ship fren=fren-state]
+      ^-  ?
+      ?&  ::  ?=(^ lane.fren)  XX
+          !=(%czar (clan:title her))
+          ::  if we haven't tried to contact the fren, there hasn't been any
+          ::  /pump or /fine timers that could have turned the fren to %dead
+          ::  and we haven't received any packets from the fren, check if
+          ::  the peer is actually dead
+          ::
+          ?|  ?=(%dead -.qos.fren)
+              (gte now (add ~s30 last-contact.qos.fren))
+      ==  ==
     ::
     --
 ::  external vane interface
@@ -4004,7 +4019,7 @@
           ^+  event-core
           =.  rots.dead.ames-state.event-core
             rots/`[~[/ames] /routes `@da`(add now ~m2)]
-          (emit ~[/ames] %pass /routes %b %wait `@da`(add now ~m2))
+          (emit ~[/ames] %pass /routes %b %wait `@da`(add now ~m2))  :: XX ~s25?
         :: +wake-dead-flows: call on-wake on all dead flows, discarding any
         ::                   ames-state changes
         ::
@@ -4755,8 +4770,7 @@
             |=  [=path =^duct]
             ^+  peer-core
             ?:  (~(has by keens) path)
-              ::  TODO use fi-trace
-              ~>  %slog.0^leaf/"fine: dupe {(spud path)}"
+              %-  (fi-trace:fi fin.veb |.("dupe {(spud path)}"))
               fi-abet:(fi-sub:(abed:fi path) duct)
             =.  keens  (~(put by keens) path *keen-state)
             fi-abet:(fi-start:(abed:fi path) duct)
@@ -4874,7 +4888,8 @@
                 ::   (~(put by flows) bone^dire flow)
                 ?:  =(%2 (mod bone 4))
                   ::  XX this shouldn't exist
-                  ~&  >>>  weird-naxp-ack-bone/bone=bone
+                  ~?  >>>  odd.veb.bug.ames-state
+                    weird-naxp-ack-bone/bone=bone
                   moves^flows
                 =/  naxp-bone=?  =(%3 (mod bone 4))
                 =/  original-bone  bone
@@ -4884,7 +4899,8 @@
                 =?  bone  =(%3 (mod bone 4))
                   (mix 0b1 (mix 0b10 bone))   ::  from %3 to [%0 dire=%bak]
                 ?:  (~(has in corked.peer-state) target-bone)
-                  ~&  >>  corked-naxp-flow/target=target-bone^naxp=original-bone
+                  ~?  >>  odd.veb.bug.ames-state
+                    corked-naxp-flow/target=target-bone^naxp=original-bone
                   moves^flows
                 =/  nothing-in-flight=?
                   ?&  ?=(~ live.packet-pump-state.pump)
@@ -4933,7 +4949,8 @@
                     ::
                         fo-peek-cork
                     ==
-                  ~&  >>  recork-one/her^bone
+                  ~?  >>  odd.veb.bug.ames-state
+                    recork-one/her^bone
                   =^  cork-moves  flow  [moves state]:fo-core
                   =?  closing.flow  !naxp-bone
                     (~(has in closing.peer-state) bone)
@@ -4959,7 +4976,8 @@
                   ?:  naxp-bone
                     ::  sanity check that this is not a naxplanation bone
                     ::
-                    ~&  >>>  weird-naxp-flow-got-nacked/bone=bone
+                    ~?  >>>  odd.veb.bug.ames-state
+                    weird-naxp-flow-got-nacked/bone=bone
                     moves
                   ::  if the packet-pump has no state about current.pump,
                   ::  it means that we have heard the %nack, and clear
@@ -5184,7 +5202,6 @@
                 =?  duct  ?=([[%ames ?(%chum %fine) *] *] duct)  t.duct
                 ::  XX  call the rate task
                 ::
-                ~&  >>  duct/duct
                 (co-make-peek:core(hen duct) space her pax)
               ::  XX unitize this and no-op if failure to convert
               ::
@@ -8171,22 +8188,6 @@
           ~|  %dangling-bone^her^bone
           (~(got by by-bone.ossuary.per) bone)
         ::
-        +|  %routes
-        ::
-        ++  ev-is-lane-dead
-          |=  [fren=ship =fren-state]
-          ^-  ?
-          ?&  ?=(^ lane.fren-state)
-              !=(%czar (clan:title fren))
-              ::  if we haven't tried to contact the fren, there hasn't been any
-              ::  /pump or /fine timers that could have turned the fren to %dead
-              ::  and we haven't received any packets from the fren, check if
-              ::  the peer is actually dead
-              ::
-              ?|  ?=(%dead -.qos.fren-state)
-                  (gte now (add ~s30 last-contact.qos.fren-state))
-          ==  ==
-        ::
         +|  %flows
         ::
         ++  fo
@@ -8947,6 +8948,53 @@
               %^  sy-emit  hen  %pass
               [/public-keys %j %public-keys [ship.iota ~ ~]]
             ==
+          ?:  ?=([%routes ~] wire)
+            ::  re-setting the %dead-routes-timer happens in the |ames core
+            ::
+            =^  total-dead  sy-core
+              %-  ~(rep by chums.ames-state)
+              |=  [[her=ship chum=chum-state] n=@ core=_sy-core]
+              ?.  ?=(%known -.chum)
+                [n core]
+              =*  fren     +.chum
+              =/  old-qos  -.qos.fren
+              =?  fren     (is-lane-dead now her fren)
+                fren(-.qos %dead)
+              =/  expired=?
+                ?&  !=(old-qos -.qos.fren)  ::  .qos have changed to %dead
+                    ?=(%dead -.qos.fren)    ::
+                ==
+              ?.  expired
+                [n core]
+              :-  +(n)
+              ::
+              %-  %+  %*(ev-tace ev her her)  kay.veb.bug.ames-state.core
+                  |.("lane has expired")
+              ::
+              =.  chums.ames-state.core
+                (~(put by chums.ames-state.core) her chum)
+              %-  sy-emit:core
+              :*  unix-duct  %give  %nail  her
+                ^-  (list lane)
+                ::  XX refactor
+                %+  turn
+                  (get-forward-lanes-mesa our fren chums.ames-state.core)
+                |=  =lane:pact
+                ^-  (each @pC address)
+                ?@  lane
+                  [%.y `@p`lane]
+                :-  %.n
+                %+  can  3
+                :~  4^p.lane
+                    2^q.lane
+                ==
+              ==
+            ::
+            =+  ?.  &(!=(0 total-dead) kay.veb.bug.ames-state)
+                  ~
+                %.  ~
+                (slog leaf/"mesa: {<`@`total-dead>} routes have expired" ~)
+            sy-core
           ?.  ?=([%mesa %retry ~] wire)
             ~&  >>>  %evil-behn-timer^wire
             sy-core
@@ -9492,7 +9540,7 @@
               =*  ship  her.core
               ::  update and print connection status
               ::
-              =?  core  (ev-is-lane-dead:core ship peer)
+              =?  core  (is-lane-dead:core now ship peer)
                 (ev-update-qos:core dead/now)
               ::  if =(~ pay.req); %naxplanation, %cork or external (i.e. not
               ::  coming from %ames) $peek request
@@ -10723,7 +10771,7 @@
           ==
         ::
         %-  %+  %*(ev-tace ev her ship)  snd.veb.bug.ames-state
-            |.("pushing {<+<.pact>} packet")
+            |.("pushing {<+<.pact>} packet on {<lanes>}")
         ::
         =/  p=plot  (en:^pact pact)
         =/  =blob   p:(fax:plot p)
@@ -11405,6 +11453,11 @@
     ~>  %slog.0^leaf/"ames: unix-duct missing; delay {<i.wire>} for {<ship>}"
     :_  wires
     [%mesa %ask /public-keys/[(scot %p ship)]]
+  ?:  ?=([%routes ~] wire)
+    =^  ames-moves  vane-gate  (take:am-core sample)
+    =^  mesa-moves  vane-gate
+      (take:me-core(ames-state ames-state.vane-gate) sample)
+    [(weld ames-moves mesa-moves) vane-gate]
   ?~  parsed-wire=(parse-bone-wire wire)
     ::  not a /bone wire—used when passing %pleas to a local vane; use |ames
     ::  XX this is not a |mesa wire so it shouldn't happen for migrated flows
@@ -11422,22 +11475,6 @@
 ::
 ++  load
   |=  state=axle
-  :: =.  peers.state   (~(del by peers.state) ~fyr)
-  :: =.  chums.state    ~
-    :: %-  ~(run by chums.state)
-    :: |=  =chum-state
-    :: ?:  ?=(%alien -.chum-state)
-    ::   ~&  %cleaning-alien
-    ::   chum-state
-    ::   :: chum-state(pit ~)
-    :: %_  chum-state
-    ::   flows    ~&  %cleaning-flows  ~
-    ::   pit      ~&  %cleaning-pit  ~
-    ::   corked   ~
-    ::   ossuary  =|  =ossuary  ossuary
-    ::           ::  %_  ossuary
-    ::             :: next-bone  40
-    :: ==        :: ==
   vane-gate(ames-state state)
 ::  +scry: dereference namespace
 ::
