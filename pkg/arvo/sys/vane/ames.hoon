@@ -2019,14 +2019,10 @@
       ^-  ?
       ?&  ::  ?=(^ lane.fren)  XX
           !=(%czar (clan:title her))
-          ::  if we haven't tried to contact the fren, there hasn't been any
-          ::  /pump or /fine timers that could have turned the fren to %dead
-          ::  and we haven't received any packets from the fren, check if
-          ::  the peer is actually dead
+          ::  if we have contacted .her more than ~s30, lane is dead
           ::
-          ?|  ?=(%dead -.qos)
-              (gte now (add ~s30 last-contact.qos))
-      ==  ==
+          (gte now (add ~s30 last-contact.qos))
+      ==
     ::
     --
 ::  external vane interface
@@ -7726,6 +7722,16 @@
             =*  sealed-path  pat.name
             =/  [=space cyf=(unit @) =inner=path]
               (ev-decrypt-path pat.name her)
+            =.  per  (ev-update-lane lane hop.pact next.pact)
+            ::  update and print connection status if the page comes directly
+            ::
+            =/  new=qos  [%live last-contact=now]
+            =.  ev-core
+              %-  ev-update-qos
+              ?:  =(1 hop.pact)
+                new
+              qos.per(last-contact last-contact.new)
+            ::
             ?~  res=(~(get by pit.per) sealed-path)
               %.  ev-core
               %+  ev-tace  odd.veb.bug.ames-state
@@ -7738,15 +7744,6 @@
                   |.("wrong rift {<[rift.per rif.name]>}; skip")
               ev-core
             ::
-            =.  per  (ev-update-lane lane hop.pact next.pact)
-            ::  update and print connection status if the page comes directly
-            ::
-            =/  new=qos  [%live last-contact=now]
-            =.  ev-core
-              %-  ev-update-qos
-              ?:  =(1 hop.pact)
-                new
-              qos.per(last-contact last-contact.new)
             ::
             =/  tof  (div (add tob.data 1.023) 1.024)
             ::
