@@ -10855,7 +10855,6 @@
           ::  if the last heard lane is direct, check .qos timestamp
           ::
           ?.((is-peer-dead now her qos) ~ sponsor)
-        ~&  spon-lane^lan
         ?~  lan
           (drop sponsor)
         :-  lane.u.lan
