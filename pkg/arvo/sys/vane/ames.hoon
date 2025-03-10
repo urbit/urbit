@@ -1574,7 +1574,7 @@
       ^-  (list lane:pact)
       =;  zar=(trap (list lane:pact))
         ?~  lane.fren  $:zar
-        [u.lane.fren $:zar]
+        [+.u.lane.fren $:zar]
       |.  ^-  (list lane:pact)
       ?:  ?=(%czar (clan:title sponsor.fren))
         ?:  =(our sponsor.fren)
@@ -1799,6 +1799,45 @@
     ::
     +|  %state-migrations
     ::
+    +$  axle-24
+      $:  peers=(map ship ship-state)
+          =unix=duct  ::  [//ames/0v0 ~]
+          =life
+          =rift
+          =bug
+          snub=[form=?(%allow %deny) ships=(set ship)]
+          cong=[msg=_5 mem=_100.000]
+          $=  dead
+          $:  flow=[%flow (unit dead-timer)]
+              chum=[%chum (unit dead-timer)]
+              cork=[%cork (unit dead-timer)]
+              rots=[%rots (unit dead-timer)]
+          ==
+          ::
+          =server=chain
+          priv=private-key
+          chums=(map ship chum-state-24)
+          core=?(%ames %mesa)
+      ==
+    ::
+    +$  chum-state-24
+      $+  chum-state-24
+      $%  [%alien ovni-state]
+          [%known fren-state-24]
+      ==
+    ::
+    +$  fren-state-24
+      $:  azimuth-state
+          lane=(unit lane:pact)
+          =qos
+          corked=(set side)
+          =ossuary
+          flows=(map side flow-state)
+          pit=(map path request-state)
+          =client=chain
+          tip=(jug =user=path [duct =ames=path])
+      ==
+    ::
     +$  axle-23
       $:  peers=(map ship ship-state-21)
           =unix=duct  ::  [//ames/0v0 ~]
@@ -1817,7 +1856,7 @@
           =server=chain
           priv=private-key
           chums=(map ship chum-state-23)
-          core=_`?(%ames %mesa)`%ames
+          core=?(%ames %mesa)
       ==
     ::
     +$  chum-state-23
@@ -2014,15 +2053,15 @@
     ::
     +|  %routes
     ::
-    ++  is-lane-dead
+    ++  is-peer-dead
       |=  [now=@da her=ship =qos]
       ^-  ?
-      ?&  ::  ?=(^ lane.fren)  XX
-          !=(%czar (clan:title her))
-          ::  if we have contacted .her more than ~s30, lane is dead
-          ::
-          (gte now (add ~s30 last-contact.qos))
-      ==
+      ?&  !=(%czar (clan:title her))
+          ?|  ?=(%dead -.qos)
+            ::  if we have contacted .her more than ~s30, consider peer dead
+            ::
+            (gte now (add ~s30 last-contact.qos))
+      ==  ==
     ::
     --
 ::  external vane interface
@@ -2069,7 +2108,8 @@
             [%21 ames-state-21]
             [%22 ames-state-22]
             [%23 axle-23]
-            [%24 axle]
+            [%24 axle-24]
+            [%25 axle]
         ==
     ::
     ::
@@ -2144,7 +2184,7 @@
       ~>  %slog.0^leaf/"ames: metamorphosis on %take"
       [:(weld molt-moves queu-moves take-moves) adult-gate]
     ::
-    ++  stay  [%24 larva/ames-state]
+    ++  stay  [%25 larva/ames-state]
     ++  scry  scry:adult-core
     ++  load
       |=  $=  old
@@ -2286,6 +2326,10 @@
                   state=axle-23
               ==
               $:  %24                            :: add reverse .pit lookup map
+                  ?(%adult %larva)               ::
+                  state=axle-24
+              ==
+              $:  %25                            :: add hop to |mesa lanes
                   ?(%adult %larva)               ::
                   state=axle
           ==  ==
@@ -2551,6 +2595,11 @@
         larval-gate
       ::
           [%24 *]
+        =.  cached-state  `[%24 state.old]
+        ~>  %slog.1^leaf/"ames: larva %24 reload"
+        larval-gate
+      ::
+          [%25 *]
         ?-  +<.old
           %larva  larval-gate
           %adult  (load:adult-core state.old)
@@ -2629,7 +2678,7 @@
       |^  ^+  [moz larval-core]
       ?~  cached-state  [~ larval-core]
       =*  old  u.cached-state
-      ?:  ?=(%24 -.old)
+      ?:  ?=(%25 -.old)
         ::  no state migrations left; update state, clear cache, and exit
         ::
         [(flop moz) larval-core(ames-state.adult-gate +.old, cached-state ~)]
@@ -2704,8 +2753,10 @@
             moz
           [[/ames]~ %pass /mesa/retry %b %wait `@da`(add now ~m2)]^moz
         ==
-      ?>  ?=(%23 -.old)
-      $(cached-state `24+(state-23-to-24 +.old))
+      ?:  ?=(%23 -.old)
+        $(cached-state `24+(state-23-to-24 +.old))
+      ?>  ?=(%24 -.old)
+      $(cached-state `25+(state-24-to-25 +.old))
       ::
       ++  our-beam  `beam`[[our %rift %da now] /(scot %p our)]
       ++  state-4-to-5
@@ -3045,7 +3096,7 @@
       ::
       ++  state-23-to-24
         |=  old=axle-23
-        ^-  axle
+        ^-  axle-24
         ~>  %slog.0^leaf/"ames: migrating from state %23 to %24"
         %=    old
             peers
@@ -3108,7 +3159,7 @@
             chums
           %-  ~(urn by chums.old)
           |=  [her=ship c=chum-state-23]
-          ^-  chum-state
+          ^-  chum-state-24
           ?:  ?=(%alien -.c)
             %=  c
                 peeks
@@ -3148,6 +3199,20 @@
             |=  [=duct t=_tip]
             (~(put ju t) user-path [duct ames-path])
           ==
+        ==
+      ::
+      ++  state-24-to-25
+        |=  old=axle-24
+        ^-  axle
+        ~>  %slog.0^leaf/"ames: migrating from state %24 to %25"
+        %=    old
+            chums
+          %-  ~(run by chums.old)
+          |=  c=chum-state-24
+          ^-  chum-state
+          ?:  ?=(%alien -.c)  c
+          ?~  lane.c          c
+          c(lane `[hop=1 u.lane.c])  ::  XX bigger hop?
         ==
       ::
       --
@@ -3702,9 +3767,9 @@
           ::  non-galaxy: update route with heard lane or forwarded lane
           ::
           =?  route.peer-state  !=(%czar (clan:title her.channel))
-            ::  if new packet is direct, use that.  otherwise, if the new new
-            ::  and old lanes are indirect, use the new one.  if the new lane
-            ::  is indirect but the old lane is direct, then if the lanes are
+            ::  if new packet is direct, use that.  otherwise, if the new and
+            ::  old lanes are indirect, use the new one.  if the new lane is
+            ::  indirect but the old lane is direct, then if the lanes are
             ::  identical, don't mark it indirect; if they're not identical,
             ::  use the new lane and mark it indirect.
             ::
@@ -4455,12 +4520,13 @@
                 ::
                 ?~  lane.u.chum-state  ~
                 :-  ~
-                ?@  u.lane.u.chum-state
-                  [direct=%.y %.y `@p`u.lane.u.chum-state]
-                :+  direct=%.n   %.n
+                =+  lan=lane.u.lane.u.chum-state
+                =+  hop=hop.u.lane.u.chum-state
+                ?@  lan  [direct=%.y %.y `@p`lan]
+                :+  direct=?:(=(0 hop) %.y %.n)   %.n
                 %+  can  3
-                :~  4^p.u.lane.u.chum-state
-                    2^q.u.lane.u.chum-state
+                :~  4^p.lan
+                    2^q.lan
                 ==
               ::
               ::  XX  routing hack to mimic old ames.
@@ -5224,14 +5290,16 @@
               ==
             ::
             ++  get-lane
-              ^-  (unit lane:pact)
+              ^-  (unit [hop=@ lane:pact])
               ?~  route.peer-state  ~
-              =*  lane  lane.u.route.peer-state
+              =+  lane=lane.u.route.peer-state
+              =+  dire=direct.u.route.peer-state
               :-  ~
               ?-  -.lane
-                %&  `@ux`p.lane  ::  galaxy
+                %&  [hop=0 `@ux`p.lane]  ::  galaxy
               ::
                   %|
+                :-  hop=?:(dire 0 1)
                 :+    %if
                   ip=`@if`(end [0 32] p.lane)
                 pt=`@ud`(cut 0 [32 16] p.lane)
@@ -7651,7 +7719,7 @@
             ::
             %-  (ev-tace rcv.veb.bug.ames-state |.("hear poke packet"))
             ::
-            =.  per  (ev-update-lane lane hop.pact ~)
+            =.  per  (ev-update-lane lane hop.pact next=~)
             ::  update and print connection status
             ::
             =?  ev-core  ?=(^ lane.per)  (ev-update-qos %live last-contact=now)
@@ -8173,15 +8241,21 @@
         ++  ev-update-lane
           |=  [=lane:pact hop=@ud next=(list lane:pact)]
           ^+  per
+          ?:  =(%czar (clan:title her))
+            per
           ?:  =(0 hop)
             %-  %+  ev-tace  rcv.veb.bug.ames-state
                 |.("hear direct packet")
-            per(lane `lane)
+            per(lane `[hop=0 lane])
           ::  XX  mark lane.per as indirect
           ::
           ?~  next
             %-  %+  ev-tace  rcv.veb.bug.ames-state
                 |.("hear indirect packet hop={<hop>}; no next lane")
+            ::  XX forwarded poke; keep lane if any but increase hop?
+            ::  XX this could resetting the lane to indirect, even though we
+            ::  could have the same lane?
+            ::
             per
           =/  lane=tape
             ?@  i.next
@@ -8189,7 +8263,22 @@
             "lane={(scow %if p.i.next)}:{((d-co:^co 1) q.i.next)}"
           %-  %+  ev-tace  rcv.veb.bug.ames-state
               |.("hear indirect packet hop={<hop>} {lane}")
-          per(lane `i.next)
+          %_    per
+              lane
+            ?~  lane.per  `[hop i.next]
+            =+  lan=lane.u.lane.per
+            =+  hop=hop.u.lane.per
+            ?.  =(0 hop)
+              ::  indirect route in state; update lane
+              ::
+              `[hop i.next]
+            ::  direct route in state; check lanes:
+            ::
+            ::    - if lanes are equal, keep direct
+            ::    - otherwise accept and update indirect route
+            ::
+            ?:(=(lan i.next) lane.per `[hop i.next])
+          ==
         ::
         ++  ev-got-duct
           |=  =bone
@@ -9037,7 +9126,7 @@
               ::  XX  reinitialize galaxy route if applicable
               ::
               =?  lane.+.u.peer  =(%czar (clan:title ship))
-                (some `@ux`ship)
+                (some [hop=0 `@ux`ship])
               (~(put by chums.ames-state) ship u.peer)
             =?  peers.ames-state  ?=(%ship -.peer)
               =.  +>.u.peer  +:*peer-state
@@ -9409,7 +9498,7 @@
             ::
             ?:  ?=(%chum -.peer)
               =?  lane.peer  ?=(%czar (clan:title ship))
-                (some `@ux`ship)
+                (some [hop=0 `@ux`ship])
               =.  chums.ames-state
                 (~(put by chums.ames-state) ship known/+.peer)
               [%chum known/+.peer]^sy-core
@@ -9502,8 +9591,14 @@
               =*  ship  her.core
               ::  update and print connection status
               ::
-              =?  core  (is-lane-dead:core now ship qos.peer)
+              =?  core  (is-peer-dead:core now ship qos.peer)
                 (ev-update-qos:core dead/now)
+              ::  we don't switch the lane to indirect, but if .qos is %dead
+              ::  +make-lanes will send to the sponsor
+              ::
+              :: =.  per.core
+              ::   ?~  lane.per.core  per.core
+              ::   (ev-update-lane:core *lane:pact hop=1 lane.u.lane.per.core ~)
               ::  if =(~ pay.req); %naxplanation, %cork or external (i.e. not
               ::  coming from %ames) $peek request
               ::
@@ -9563,7 +9658,7 @@
             sy-core
           =?  chums.ames-state  ?=(%chum -.peer)
             =.  lane.+.u.peer
-              :-  ~
+              :+  ~  hop=0
               ^-  lane:pact
               ?-  -.lane
                   %&  `@ux`p.lane
@@ -9817,16 +9912,18 @@
             ==
           ::
           ++  get-route
-            |=  lane=(unit lane:pact)
+            |=  lane=(unit [hop=@ =lane:pact])
             ^-  (unit [direct=? =^lane])
             ?~  lane  ~
+            =+  hop=hop.u.lane
+            =+  lane=lane.u.lane
             :-  ~
-            ?@  u.lane
-              [direct=%.y %.y `@p`u.lane]
-            :+  direct=%.n   %.n
+            ?@  lane
+              [direct=%.y %.y `@p`lane]
+            :+  direct=?:(=(0 hop) %.y %.n)   %.n
             %+  can  3
-            :~  4^p.u.lane
-                2^q.u.lane
+            :~  4^p.lane
+                2^q.lane
             ==
           ::
           --
@@ -9964,7 +10061,7 @@
             !!
           %-  %^  al-tace  fin.veb.bug.ames-state  comet
               |.("peek for attestation proof")
-          (al-emit (push-pact u.pact (make-lanes comet `lane *qos)))
+          (al-emit (push-pact u.pact (make-lanes comet `[0 lane] *qos)))
         ::
         ++  al-take-proof
           |=  [=lane:pact hop=@ud =name:pact =data:pact =next:pact]
@@ -10740,24 +10837,29 @@
                     "{<`@p`lane>}, "
                   "{(scow %if p.lane)}:{((d-co:^co 1) q.lane)}, "
                 ::  XX remove last separator
-                "]"
+                "...]"
         ::
         [unix-duct %give %push lanes blob=p:(fax:plot (en:^pact pact))]
       ::
       ++  make-lanes
-        |=  [her=ship dir=(unit lane:pact) =qos]
+        |=  [her=ship lan=(unit [hop=@ =lane:pact]) =qos]
         ^-  (list lane:pact:ames)
         =/  sponsor=(unit @ux)  (get-sponsor her)
         =/  spon-lane=(unit lane:pact)
-          ?.  (is-lane-dead now her qos)  ~
-          ::  if the route has expired, send to the sponsor as well
+          ?.  ?&  ?=(^ lan)
+                  =(0 hop.u.lan)
+              ==
+            ::  if the last heard lane is indirect, send to sponsor
+            ::
+            sponsor
+          ::  if the last heard lane is direct, check .qos timestamp
           ::
-          sponsor
-        ?~  dir
-          (drop ?^(spon-lane spon-lane sponsor))
-        %+  weld  (drop dir)
-        ?~  spon-lane  ~
-        (drop spon-lane)
+          ?.((is-peer-dead now her qos) ~ sponsor)
+        ~&  spon-lane^lan
+        ?~  lan
+          (drop sponsor)
+        :-  lane.u.lan
+        ?~(spon-lane ~ (drop spon-lane))
       ::
       ++  get-sponsor
         |=  =ship
@@ -11436,7 +11538,7 @@
   take:me-core
 ::  +stay: extract state before reload
 ::
-++  stay  [%24 adult/ames-state]
+++  stay  [%25 adult/ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load

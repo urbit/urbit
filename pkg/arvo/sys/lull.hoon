@@ -1644,7 +1644,7 @@
   ::
   +$  fren-state
     $:  azimuth-state
-        lane=(unit lane:pact)
+        lane=(unit [hop=@ =lane:pact])  :: XX (list)
         =qos
         corked=(set side)  ::  can be +peeked in the namespace
                            ::  XX how many flows to keep here?

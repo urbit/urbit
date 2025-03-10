@@ -1035,12 +1035,13 @@
         ::
           :-  'lane'
           %+  maybe  lane
-          |=  =lane:pact
+          |=  [hop=@ =lane:pact]
           ^-  json
           ?@  lane  (ship `@`lane)
           ::
           %-  tape
-          "{(scow -.lane p.lane)}:{((d-co:co 1) q.lane)} ({(scow %ux p.lane)})"
+          :-  ?:(=(0 hop) 'direct' 'indirect')
+          " {(scow -.lane p.lane)}:{((d-co:co 1) q.lane)} ({(scow %ux p.lane)})"
         ::
           :-  'qos'
           %-  pairs
