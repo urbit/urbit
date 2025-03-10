@@ -66,7 +66,7 @@
           public-key=bud-pub
           sponsor=~bud
       ==
-    =.  lane.fren-state  `*lane:pact:ames
+    =.  lane.fren-state  `[0 *lane:pact:ames]
     [%known fren-state]
   ::  tell ~bud about ~nec
   ::
@@ -80,7 +80,7 @@
           public-key=nec-pub
           sponsor=~nec
       ==
-    =.  lane.fren-state  `*lane:pact:ames
+    =.  lane.fren-state  `[0 *lane:pact:ames]
     [%known fren-state]
   ::  metamorphose
   ::
