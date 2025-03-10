@@ -7654,14 +7654,9 @@
             =.  per  (ev-update-lane lane hop.pact ~)
             ::  update and print connection status
             ::
-            =/  new=qos  [%live last-contact=now]
-            =.  ev-core
-              ::  only switch to live if the peer reaches out directly
-              ::
-              %-  ev-update-qos
-              ?:  &(=(0 hop.pact) ?=(^ lane.per))
-                new
-              qos.per(last-contact last-contact.new)
+            =?  ev-core  ?=(^ lane.per)  (ev-update-qos %live last-contact=now)
+            ::  XX this happens after first (forwarded) contact
+            ::
             =?  ev-core  ?=(~ lane.per)  (ev-update-qos %dead last-contact=now)
             ::
             ?.  =(1 (div (add tob.data.pact 1.023) 1.024))
@@ -7717,20 +7712,15 @@
             ?>  ?=(%page +<.pact)
             =*  data     data.pact
             =*  name     name.pact
-            ::  check for pending request (peek|poke)
-            ::
             =*  sealed-path  pat.name
             =/  [=space cyf=(unit @) =inner=path]
               (ev-decrypt-path pat.name her)
             =.  per  (ev-update-lane lane hop.pact next.pact)
-            ::  update and print connection status if the page comes directly
+            ::  update and print connection status
             ::
-            =/  new=qos  [%live last-contact=now]
-            =.  ev-core
-              %-  ev-update-qos
-              ?:  =(0 hop.pact)
-                new
-              qos.per(last-contact last-contact.new)
+            =.  ev-core  (ev-update-qos %live last-contact=now)
+            ::
+            ::  check for pending request (peek|poke)
             ::
             ?~  res=(~(get by pit.per) sealed-path)
               %.  ev-core
@@ -8187,6 +8177,8 @@
             %-  %+  ev-tace  rcv.veb.bug.ames-state
                 |.("hear direct packet")
             per(lane `lane)
+          ::  XX  mark lane.per as indirect
+          ::
           ?~  next
             %-  %+  ev-tace  rcv.veb.bug.ames-state
                 |.("hear indirect packet hop={<hop>}; no next lane")
@@ -10730,7 +10722,7 @@
       +|  %helpers
       ::
       ++  push-pact  :: XX forwarding?
-        |=  [=pact:pact lanes=(list lane:pact:ames)]
+        |=  [=pact:pact lanes=(list lane:pact)]
         ^-  move
         ?<  =(~ unix-duct)
         =/  =ship
@@ -10741,12 +10733,16 @@
           ==
         ::
         %-  %+  %*(ev-tace ev her ship)  snd.veb.bug.ames-state
-            |.("pushing {<+<.pact>} packet on {<lanes>}")
+            |.  %+  weld  %+  roll  lanes
+                  |=  [=lane:pact:ames tape=_"push {<+<.pact>} on lanes=["]
+                  %+  weld  tape
+                  ?@  lane
+                    "{<`@p`lane>}, "
+                  "{(scow %if p.lane)}:{((d-co:^co 1) q.lane)}, "
+                ::  XX remove last separator
+                "]"
         ::
-        =/  p=plot  (en:^pact pact)
-        =/  =blob   p:(fax:plot p)
-        =+  parse-h=|=(a=@ -:($:de:head a))
-        [unix-duct %give %push lanes blob]
+        [unix-duct %give %push lanes blob=p:(fax:plot (en:^pact pact))]
       ::
       ++  make-lanes
         |=  [her=ship dir=(unit lane:pact) =qos]
