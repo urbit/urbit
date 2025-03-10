@@ -12,6 +12,12 @@
           boot-ova=(list)
           kernel-ova=(list unix-event)
           userspace-ova=(list unix-event)
+      ==
+      $:  %cash
+          nam=term
+          boot-ova=(list)
+          kernel-ova=(list unix-event)
+          userspace-ova=(list unix-event)
           cache=(list)
   ==  ==
 ::
@@ -234,22 +240,21 @@
   ::    filesystem sync event.
   ::
   :+  %pill  %solid
-  :^  boot-ova  ~
-    =.  dez  (snoc dez [%base bas])
-    ;:  weld
-      %+  turn  dez
-      |=  [dek=desk bas=path]
-      (file-ovum [dek bas exc])
-    ::
-      ?.  prime  ~
-      [(prep-ovum (turn dez tail))]~
-    ::
-      %+  turn  dez
-      |=  [dek=desk *]
-      ^-  unix-event
-      [/c/essential/[dek] %esse dek %.y]
-    ==
-  cache=~
+  :+  boot-ova  ~
+  =.  dez  (snoc dez [%base bas])
+  ;:  weld
+    %+  turn  dez
+    |=  [dek=desk bas=path]
+    (file-ovum [dek bas exc])
+  ::
+    ?.  prime  ~
+    [(prep-ovum (turn dez tail))]~
+  ::
+    %+  turn  dez
+    |=  [dek=desk *]
+    ^-  unix-event
+    [/c/essential/[dek] %esse dek %.y]
+  ==
 ::
 ++  brass
   ::  sys: root path to boot system, `/~me/[desk]/now/sys`
@@ -332,7 +337,7 @@
   ::  a pill is a 4-tuple of event-lists and a cache:
   ::  [boot kernel userspace cache]
   ::
-  :+  %pill  %brass
+  :+  %cash  %brass
   [boot-ova kernel-ova userspace-ova cache]
 ::
 ++  ivory
