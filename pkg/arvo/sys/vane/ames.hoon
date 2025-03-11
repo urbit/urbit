@@ -7174,13 +7174,24 @@
                 ?.  ?=([~ ~ *] sax)
                   ~
                 `(rear ;;((list ship) q.q.u.u.sax))
-              ?.  ?=([~ %known *] peer)
+              ?:  ?=([~ %known *] peer)
+                (get-forward-lanes our +.u.peer peers.ames-state)
+              ?.  ?=([~ %known *] chum)
                 ?~  gal
                   ~
                 ::  if the peer is %alien or missing, send to the sponsor galaxy
                 ::
                 ?:(=(our u.gal) ~ [%& u.gal]~)
-              (get-forward-lanes our +.u.peer peers.ames-state)
+              %+  turn  (get-forward-lanes-mesa our +.u.chum chums.ames-state)
+              |=  =lane:pact
+              ^-  ^lane
+              ?@  lane
+                [%.y `@p`lane]
+              :-  %.n
+              %+  can  3
+              :~  4^p.lane
+                  2^q.lane
+              ==
             ==
           ::
               [%bones her=@ ~]
