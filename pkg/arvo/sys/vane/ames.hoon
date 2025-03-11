@@ -10510,7 +10510,7 @@
         =,  state:fo-core
         ?+    qery.pat.tyl  ~
             ~          ~ :: XX implement full meta
-            [%clos ~]  ``message/!>(clogs/closing)
+            [%clos ~]  ``message/!>(clos/closing)
             [%cork ~]  ?~(r=(fo-peek:fo-core %cork 0) ~ ``[%message !>(u.r)])
             [%line ~]  ``message/!>(line/line)
             [%lods ~]  ``message/!>(lods/(wyt:fo-mop:fo-core loads.snd))
