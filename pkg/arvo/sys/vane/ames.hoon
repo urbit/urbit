@@ -9587,29 +9587,21 @@
               =;  c=_core  ev-abet:c
               %-  ~(rep by pit.per.core)
               |=  [[=path req=request-state] core=_core]
-              =*  peer  per.core
-              =*  ship  her.core
               ::  update and print connection status
               ::
-              =?  core  (is-peer-dead:core now ship qos.peer)
-                (ev-update-qos:core dead/now)
-              ::  we don't switch the lane to indirect, but if .qos is %dead
-              ::  +make-lanes will send to the sponsor
-              ::
-              :: =.  per.core
-              ::   ?~  lane.per.core  per.core
-              ::   (ev-update-lane:core *lane:pact hop=1 lane.u.lane.per.core ~)
+              =?  core  (is-peer-dead:core now [her qos.per]:core)
+                (ev-update-qos:core qos.per.core(- %dead))
               ::  if =(~ pay.req); %naxplanation, %cork or external (i.e. not
               ::  coming from %ames) $peek request
               ::
-              ?~  pact=(co-make-pact:co ack=[ship path] pay.req rift.peer)
+              ?~  pact=(co-make-pact:co [her.core path] pay.req rift.per.core)
                 ::  XX don't crash since we are going to block the queue
                 ev-core:core
               ?:  =(~ unix-duct)
                 %.  ev-core:core
                 (slog leaf+"ames: unix-duct pending; retry %push" ~)
               %-  ev-emit:core
-              (push-pact u.pact (make-lanes ship [lane qos]:per.core))
+              (push-pact u.pact (make-lanes [her [lane qos]:per]:core))
             :_  state
             (weld moves resend-moves)
           ::
