@@ -2063,6 +2063,19 @@
             (gte now (add ~s30 last-contact.qos))
       ==  ==
     ::
+    ++  mesa-to-ames-lanes
+      |=  lanes=(list lane:pact)
+      ^-  (list lane)
+      %+  turn  lanes
+      |=  =lane:pact
+      ?@  lane
+        [%.y `@p`lane]
+      :-  %.n
+      %+  can  3
+      :~  4^p.lane
+          2^q.lane
+      ==
+    ::
     --
 ::  external vane interface
 ::
@@ -7075,6 +7088,7 @@
         ?.  ?=(%x ren)  ~
         =>  .(tyl `(pole knot)`tyl)
         ::  public endpoints
+        ::
         ?:  ?=([%fine %hunk lop=@t len=@t pax=^] tyl)
           ::  TODO
           ::  separate endpoint for the full message (instead of packet list)
@@ -7105,6 +7119,7 @@
             ==
           --
         ::  private endpoints
+        ::
         ?.  =([~ ~] lyc)  ~
           ?+    tyl  ~
               [%$ %whey ~]
@@ -7182,16 +7197,8 @@
                 ::  if the peer is %alien or missing, send to the sponsor galaxy
                 ::
                 ?:(=(our u.gal) ~ [%& u.gal]~)
-              %+  turn  (get-forward-lanes-mesa our +.u.chum chums.ames-state)
-              |=  =lane:pact
-              ^-  ^lane
-              ?@  lane
-                [%.y `@p`lane]
-              :-  %.n
-              %+  can  3
-              :~  4^p.lane
-                  2^q.lane
-              ==
+              %-  mesa-to-ames-lanes
+              (get-forward-lanes-mesa our +.u.chum chums.ames-state)
             ==
           ::
               [%bones her=@ ~]
@@ -9165,19 +9172,8 @@
               :*  unix-duct  %give  %nail  ship
                   ?.  ?=(%chum -.peer)
                     (get-forward-lanes our +.u.peer peers.ames-state)
-                  ^-  (list lane)
-                  ::  XX refactor
-                  %+  turn
-                    (get-forward-lanes-mesa our +.u.peer chums.ames-state)
-                  |=  =lane:pact
-                  ^-  (each @pC address)
-                  ?@  lane
-                    [%.y `@p`lane]
-                  :-  %.n
-                  %+  can  3
-                  :~  4^p.lane
-                      2^q.lane
-                  ==
+                  %-  mesa-to-ames-lanes
+                  (get-forward-lanes-mesa our +.u.peer chums.ames-state)
               ==
             ::  if one of our sponsors breached, give the updated list to vere
             ::
@@ -9285,19 +9281,8 @@
             :*  unix-duct  %give  %nail  ship
                 ?.  ?=(%chum -.peer)
                   (get-forward-lanes our +.u.peer peers.ames-state)
-                ^-  (list lane)
-                ::  XX refactor
-                %+  turn
-                  (get-forward-lanes-mesa our +.u.peer chums.ames-state)
-                |=  =lane:pact
-                ^-  ^lane
-                ?@  lane
-                  [%.y `@p`lane]
-                :-  %.n
-                %+  can  3
-                :~  4^p.lane
-                    2^q.lane
-                ==
+                %-  mesa-to-ames-lanes
+                (get-forward-lanes-mesa our +.u.peer chums.ames-state)
             ==
           ::  +on-publ-full: handle new pki data for peer(s)
           ::
@@ -9490,19 +9475,8 @@
               :*  unix-duct  %give  %nail  ship
                   ?.  ?=(%chum -.peer)
                     (get-forward-lanes our +.peer peers.ames-state)
-                  ^-  (list lane)
-                  ::  XX  refactor
-                  %+  turn
-                    (get-forward-lanes-mesa our +.peer chums.ames-state)
-                  |=  =lane:pact
-                  ^-  ^lane
-                  ?@  lane
-                    [%.y `@p`lane]
-                  :-  %.n
-                  %+  can  3
-                  :~  4^p.lane
-                      2^q.lane
-                  ==
+                  %-  mesa-to-ames-lanes
+                  (get-forward-lanes-mesa our +.peer chums.ames-state)
               ==
             ::
             ::  automatically set galaxy route, since unix handles lookup
@@ -9611,8 +9585,12 @@
               ?:  =(~ unix-duct)
                 %.  ev-core:core
                 (slog leaf+"ames: unix-duct pending; retry %push" ~)
-              %-  ev-emit:core
-              (push-pact u.pact (make-lanes [her [lane qos]:per]:core))
+              =/  lanes=(list lane:pact:ames)
+                (get-forward-lanes-mesa our per.core chums.ames-state)
+              %-  ev-emil:core
+              :~  [unix-duct %give %nail her.core (mesa-to-ames-lanes lanes)]
+                  (push-pact u.pact lanes)
+              ==
             :_  state
             (weld moves resend-moves)
           ::
