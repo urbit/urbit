@@ -107,7 +107,7 @@
     ::  +qos-update-text: notice text for if connection state changes
     ::
     ++  qos-update-text
-      |=  [s=ship mode=?(%ames %fine) old=qos new=qos k=? ships=(set ship)]
+      |=  [s=ship mode=?(%ames %fine %mesa) old=qos new=qos k=? ships=(set ship)]
       ^-  (unit tape)
       ::
       =+  trace=(cury trace mode)
@@ -4684,7 +4684,7 @@
           ::  +update-qos: update and maybe print connection status
           ::
           ++  update-qos
-            |=  [mode=?(%ames %fine) =new=qos]
+            |=  [mode=?(%ames %fine %mesa) =new=qos]
             ^+  peer-core
             ::
             =^  old-qos  qos.peer-state  [qos.peer-state new-qos]
@@ -8247,7 +8247,7 @@
           =/  old      qos.per
           =.  qos.per  new
           =/  text
-            %^  qos-update-text  her  %ames
+            %^  qos-update-text  her  %mesa
             [old new [kay.veb ships]:bug.ames-state]
           ::  if no update worth reporting, we're done
           ::
@@ -8612,7 +8612,7 @@
                 ::  know for sure, but, because we were not removing the
                 ::  correct message from nax.sink it's very likely that
                 ::  if line.state is not in nax.rcv that's because it
-                ::  was indeed a %nack.
+                ::  was indeed an %ack.
                 ::
                 ~
               ?:  ?&  (lth seq last-acked.rcv)
@@ -9587,10 +9587,7 @@
                 (slog leaf+"ames: unix-duct pending; retry %push" ~)
               =/  lanes=(list lane:pact:ames)
                 (get-forward-lanes-mesa our per.core chums.ames-state)
-              %-  ev-emil:core
-              :~  [unix-duct %give %nail her.core (mesa-to-ames-lanes lanes)]
-                  (push-pact u.pact lanes)
-              ==
+              (ev-emit:core (push-pact u.pact lanes))
             :_  state
             (weld moves resend-moves)
           ::
@@ -10202,8 +10199,11 @@
         ++  co-make-mess
           |=  [remote=spar payload=(unit path)]
           ^+  co-core
-          =/  her  (~(get by chums.ames-state) ship.remote)
-          ?>  ?=([~ %known *] her)
+          ?~  her=(~(get by chums.ames-state) ship.remote)
+            %-  %^  co-tace  odd.veb.bug.ames-state  ship.remote
+                |.("missing chum on {<[ship path]:remote>}")
+            co-core
+          ?>  ?=([%known *] u.her)
           =/  per=fren-state  +.u.her
           ?^  res=(~(get by pit.per) path.remote)
             ?>  =(payload pay.u.res)  ::  prevent overriding payload
