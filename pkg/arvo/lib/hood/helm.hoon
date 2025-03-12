@@ -213,6 +213,13 @@
     ?.(test ~ /test)
   abet:(emit %pass wire %arvo %a %mate ship dry=%.y)
 ::
+++  poke-mass-rege
+  |=  [ship=(unit ship) test=?]
+  =/  =wire
+    :+  %helm  %rege
+    ?.(test ~ /test)
+  abet:(emit %pass wire %arvo %a %rege ship dry=%.y)
+::
 ++  take-ahoy
   |=  [way=wire error=(unit error:ames)]
   ?:  ?=([%test @ *] way)
@@ -251,7 +258,12 @@
     :+  %helm  %rege
     ?.(test /(scot %p her) /test/(scot %p her))
   =/  =path  ?:(test /test/ames /ames)
-  (emit %pass wire %arvo %a %plea her %$ path %back ~)
+  ::  before regressing, test if we can regress, migrate, and check that there
+  ::  are not flows in a weird state. if we don't crash, send the %back $plea
+  ::
+  =^  rege-moves  sat  (poke-mass-rege `her test=%.y)
+  =^  back-moves  sat  abet:(emit %pass wire %arvo %a %plea her %$ path %back ~)
+  (emil (weld rege-moves back-moves))
 ::
 ++  take-rege
   |=  [way=wire error=(unit error:ames)]

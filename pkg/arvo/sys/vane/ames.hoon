@@ -7429,7 +7429,14 @@
                 ?(%plug %gulp)  sy-abet:(sy-plug:sy-core task)
               ::  regression
               ::
-                %rege  sy-abet:(sy-rege:sy-core +.task)
+                %rege  ?.  dry.task  sy-abet:(sy-rege:sy-core +.task)
+                       ?~  +<.task
+                         ~&  >>  %mass-rege-not-supported
+                         `ames-state
+                       ~|  %dry-regression-failed
+                       ?>  (regression-test u.+<.task)
+                       ~&  >  %dry-regression-worked
+                       `ames-state
               ::  from internal %ames request
               ::
                 ?(%meek %moke %mage)  co-abet:(co-call:co-core task)
@@ -8712,10 +8719,10 @@
               ::  ack %rege plea
               ::
               =.  fo-core  (fo-take-done:fo-core ~)
+              ?>  (regression-test(ames-state ames-state:fo-abet:fo-core) her)
+              ~&  >  %regression-test-worked
               ?+    path.plea  ~|  %mesa-evil-rege^our^her^path.plea  !!
                   [%test %ames ~]
-                ?>  (regression-test(ames-state ames-state:fo-abet:fo-core) her)
-                ~&  >  %regression-test-worked
                 fo-core
               ::
                   [%ames ~]
