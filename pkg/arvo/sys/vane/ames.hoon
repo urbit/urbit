@@ -6348,6 +6348,14 @@
                   ::  using %$ as the recipient vane to handle peers
                   ::  that have not migrated into the new protocol
                   ::
+                  ::  XX if %back pleas are regressed, and sent, they will crash
+                  ::  here, sending a nack and a naxplanation. these are bening
+                  ::  but could be annoying since they will print the stack
+                  ::  trace to the dojo—this happens if the sender repetedly
+                  ::  sends many %back $pleas, the first one gets acked,
+                  ::  triggers the regression of all flows, and puts the pleas
+                  ::  in the |ames message-pump
+                  ::
                   ?+    -.payload.plea  ~|(weird-migration-plea/plea !!)
                       %ahoy
                     ?>  ?=(%mesa -.path.plea)
