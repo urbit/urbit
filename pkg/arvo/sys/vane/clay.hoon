@@ -485,6 +485,96 @@
     %mult  [- mool]:rov
     %many  [- track moat]:rov
   ==
+::
+++  parse-pile
+  ~/  %parse-pile
+  |=  [pax=path txt=@t]
+  ^-  pile
+  =/  [=hair res=(unit [=pile =nail])]
+    %-  road  |.
+    ((pile-rule pax) [1 1] (trip txt))
+  ?^  res  pile.u.res
+  %-  mean
+  =/  lyn  p.hair
+  =/  col  q.hair
+  ^-  (list tank)
+  :~  leaf+"syntax error at [{<lyn>} {<col>}] in {<pax>}"
+    ::
+      =/  =wain  (to-wain:format txt)
+      ?:  (gth lyn (lent wain))
+        '<<end of file>>'
+      (snag (dec lyn) wain)
+    ::
+      leaf+(runt [(dec col) '-'] "^")
+  ==
+::
+++  pile-rule
+  |=  pax=path
+  %-  full
+  %+  ifix
+    :_  gay
+    ::  parse optional /? and ignore
+    ::
+    ;~(plug gay (punt ;~(plug fas wut gap dem gap)))
+  |^
+  ;~  plug
+    %+  cook  (bake zing (list (list taut)))
+    %+  rune  hep
+    (most ;~(plug com gaw) taut-rule)
+  ::
+    %+  cook  (bake zing (list (list taut)))
+    %+  rune  lus
+    (most ;~(plug com gaw) taut-rule)
+  ::
+    %+  rune  tis
+    ;~(plug sym ;~(pfix gap stap))
+  ::
+    %+  rune  sig
+    ;~((glue gap) sym wyde:vast stap)
+  ::
+    %+  rune  cen
+    ;~(plug sym ;~(pfix gap ;~(pfix cen sym)))
+  ::
+    %+  rune  buc
+    ;~  (glue gap)
+      sym
+      ;~(pfix cen sym)
+      ;~(pfix cen sym)
+    ==
+  ::
+    %+  rune  tar
+    ;~  (glue gap)
+      sym
+      ;~(pfix cen sym)
+      ;~(pfix stap)
+    ==
+  ::
+    %+  stag  %tssg
+    (most gap tall:(vang & pax))
+  ==
+  ::
+  ++  pant
+    |*  fel=^rule
+    ;~(pose fel (easy ~))
+  ::
+  ++  mast
+    |*  [bus=^rule fel=^rule]
+    ;~(sfix (more bus fel) bus)
+  ::
+  ++  rune
+    |*  [bus=^rule fel=^rule]
+    %-  pant
+    %+  mast  gap
+    ;~(pfix fas bus gap fel)
+  ::
+  ++  taut-rule
+    %+  cook  |=(taut +<)
+    ;~  pose
+      (stag ~ ;~(pfix tar sym))
+      ;~(plug (stag ~ sym) ;~(pfix tis sym))
+      (cook |=(a=term [`a a]) sym)
+    ==
+  --
 --  =>
 ~%  %clay  +  ~
 |%
@@ -865,8 +955,8 @@
       ^-  vase
       =^  cag=cage  nub  (read-file path)
       ?>  =(%hoon p.cag)
-      =/  tex=tape  (trip !<(@t q.cag))
-      =/  =pile  (parse-pile path tex)
+      =+  !<(txt=@t q.cag)
+      =/  =pile  (parse-pile path txt)
       =.  hoon.pile  !,(*hoon .)
       =^  res=vase  nub  (run-prelude pile)
       res
@@ -887,8 +977,8 @@
       =.  cycle.nub  (~(put in cycle.nub) file+path)
       =^  cag=cage  nub  (read-file path)
       ?>  =(%hoon p.cag)
-      =/  tex=tape  (trip !<(@t q.cag))
-      =/  =pile  (parse-pile path tex)
+      =+  !<(txt=@t q.cag)
+      =/  =pile  (parse-pile path txt)
       =^  sut=vase  nub  (run-prelude pile)
       %+  gain-leak  file+path
       |=  nob=state
@@ -946,96 +1036,6 @@
       =^  sut=vase  nub  (run-caz sut caz.pile)
       =^  sut=vase  nub  (run-bar sut bar.pile)
       [sut nub]
-    ::
-    ++  parse-pile
-      ~/  %parse-pile
-      |=  [pax=path tex=tape]
-      ^-  pile
-      =/  [=hair res=(unit [=pile =nail])]
-        %-  road  |.
-        ((pile-rule pax) [1 1] tex)
-      ?^  res  pile.u.res
-      %-  mean
-      =/  lyn  p.hair
-      =/  col  q.hair
-      ^-  (list tank)
-      :~  leaf+"syntax error at [{<lyn>} {<col>}] in {<pax>}"
-        ::
-          =/  =wain  (to-wain:format (crip tex))
-          ?:  (gth lyn (lent wain))
-            '<<end of file>>'
-          (snag (dec lyn) wain)
-        ::
-          leaf+(runt [(dec col) '-'] "^")
-      ==
-    ::
-    ++  pile-rule
-      |=  pax=path
-      %-  full
-      %+  ifix
-        :_  gay
-        ::  parse optional /? and ignore
-        ::
-        ;~(plug gay (punt ;~(plug fas wut gap dem gap)))
-      |^
-      ;~  plug
-        %+  cook  (bake zing (list (list taut)))
-        %+  rune  hep
-        (most ;~(plug com gaw) taut-rule)
-      ::
-        %+  cook  (bake zing (list (list taut)))
-        %+  rune  lus
-        (most ;~(plug com gaw) taut-rule)
-      ::
-        %+  rune  tis
-        ;~(plug sym ;~(pfix gap stap))
-      ::
-        %+  rune  sig
-        ;~((glue gap) sym wyde:vast stap)
-      ::
-        %+  rune  cen
-        ;~(plug sym ;~(pfix gap ;~(pfix cen sym)))
-      ::
-        %+  rune  buc
-        ;~  (glue gap)
-          sym
-          ;~(pfix cen sym)
-          ;~(pfix cen sym)
-        ==
-      ::
-        %+  rune  tar
-        ;~  (glue gap)
-          sym
-          ;~(pfix cen sym)
-          ;~(pfix stap)
-        ==
-      ::
-        %+  stag  %tssg
-        (most gap tall:(vang & pax))
-      ==
-      ::
-      ++  pant
-        |*  fel=^rule
-        ;~(pose fel (easy ~))
-      ::
-      ++  mast
-        |*  [bus=^rule fel=^rule]
-        ;~(sfix (more bus fel) bus)
-      ::
-      ++  rune
-        |*  [bus=^rule fel=^rule]
-        %-  pant
-        %+  mast  gap
-        ;~(pfix fas bus gap fel)
-      --
-    ::
-    ++  taut-rule
-      %+  cook  |=(taut +<)
-      ;~  pose
-        (stag ~ ;~(pfix tar sym))
-        ;~(plug (stag ~ sym) ;~(pfix tis sym))
-        (cook |=(a=term [`a a]) sym)
-      ==
     ::
     ++  run-tauts
       |=  [sut=vase wer=?(%lib %sur) taz=(list taut)]
