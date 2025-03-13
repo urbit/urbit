@@ -8275,6 +8275,10 @@
           |=  [=lane:pact hop=@ud next=(list lane:pact)]
           ^+  per
           ?:  =(%czar (clan:title her))
+            =?  per  ?=(~ lane.per)
+              ::  XX shouldn't happen
+              ~&  >>>  %missing-galaxy-lane
+              per(lane [~ 0 `@ux`her])
             per
           ?:  =(0 hop)
             %-  %+  ev-tace  rcv.veb.bug.ames-state
@@ -9739,8 +9743,8 @@
               sy-core
             (regress-chum u.ship +.chum-state)
           %-  ~(rep by chums.ames-state)
-          |=  [[=^ship state=chum-state] core=_sy-core]
-          ?:  ?=(%alien -.state)  core
+          |=  [[=^ship state=chum-state] =_sy-core]
+          ?:  ?=(%alien -.state)  sy-core
           (regress-chum ship +.state)
           ::
           ++  regress-chum
@@ -10835,6 +10839,8 @@
       ++  make-lanes
         |=  [her=ship lan=(unit [hop=@ =lane:pact]) =qos]
         ^-  (list lane:pact:ames)
+        ?:  =(%czar (clan:title her))
+          [lane:(need lan)]~
         =/  sponsor=(unit @ux)  (get-sponsor her)
         =/  spon-lane=(unit lane:pact)
           ?.  ?&  ?=(^ lan)
