@@ -207,18 +207,18 @@
   (emil (weld mate-moves ahoy-moves))
 ::
 ++  poke-mass-mate
-  |=  [ship=(unit ship) test=?]
+  |=  [ship=(unit ship) dry=?]
   =/  =wire
     :+  %helm  %mate
-    ?.(test ~ /test)
-  abet:(emit %pass wire %arvo %a %mate ship dry=%.y)
+    ?.(dry ~ /test)
+  abet:(emit %pass wire %arvo %a %mate ship dry)
 ::
 ++  poke-mass-rege
-  |=  [ship=(unit ship) test=?]
+  |=  [ship=(unit ship) dry=?]
   =/  =wire
     :+  %helm  %rege
-    ?.(test ~ /test)
-  abet:(emit %pass wire %arvo %a %rege ship dry=%.y)
+    ?.(dry ~ /test)
+  abet:(emit %pass wire %arvo %a %rege ship dry)
 ::
 ++  take-ahoy
   |=  [way=wire error=(unit error:ames)]
@@ -678,6 +678,7 @@
     %helm-send-ahoy        =;(f (f !<(_+<.f vase)) poke-send-ahoy)
     %helm-mass-mate        =;(f (f !<(_+<.f vase)) poke-mass-mate)
     %helm-send-rege        =;(f (f !<(_+<.f vase)) poke-send-rege)
+    %helm-mass-rege        =;(f (f !<(_+<.f vase)) poke-mass-rege)
     %helm-serve            =;(f (f !<(_+<.f vase)) poke-serve)
     %helm-trim             =;(f (f !<(_+<.f vase)) poke-trim)
     %helm-verb             =;(f (f !<(_+<.f vase)) poke-verb)

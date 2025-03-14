@@ -4352,22 +4352,19 @@
           =;  updated-core=_event-core
             ?:(dry event-core updated-core)
           ::
-          ?^  ship
-            ?~  peer=(~(get by peers.ames-state) u.ship)
-              event-core
-            (migrate-peer u.ship u.peer event-core)
-          %-  ~(rep by peers.ames-state)
-          |=  [[=^ship state=ship-state] core=_event-core]
-          ?:  ?=(%alien -.state)  core
-          (migrate-peer ship state core)
+          ?~  ship
+            (~(rep by peers.ames-state) migrate-peer)
+          ?~  peer=(~(get by peers.ames-state) u.ship)
+            event-core
+          (migrate-peer [u.ship u.peer] event-core)
           ::
           ++  migrate-peer
-            |=  [=^ship =ship-state core=_event-core]
+            |=  [[=^ship state=ship-state] core=_event-core]
             ^+  core
-            ?>  ?=([%known *] ship-state)
-            =+  peer-core=(abed-peer:pe:core ship +.ship-state)
+            ?:  ?=(%alien -.state)  core
+            =+  peer-core=(abed-peer:pe:core ship +.state)
             ~|  %local-migration-failed
-            ?>  on-migration-test:peer-core
+            :: ?>  on-migration-test:peer-core  :: XX fixme
             ~&  >  %local-migration-worked
             ?:  dry  core
             pe-abel:on-migrate:peer-core
@@ -4908,9 +4905,9 @@
               ==
             =^  poke-moves  flows.fren  (make-flows fren)
             =^  peek-moves  ames-state  (make-peeks fren)
+            ~&  >  %migration-done^her
             ::  XX  needed?  peek/poke-moves will have %send moves already
             ::
-            ~&  >  %migration-done^her
             ::  enqueue a %prod to start sending unsent messages, after
             ::  all the %mokes (which trigger +peeks for %acks) have been
             ::  processed
@@ -5252,17 +5249,16 @@
             ++  make-peeks
               |=  fren=fren-state
               ^-  (quip move axle)
-              =+  ev-core=(ev-foco:ev:(mesa now eny rof) her fren)
-              =/  co-core
-                =/  chums  (~(put by chums.ames-state) her known/fren)
-                %*  co-core  co:(mesa now eny rof)
-                  chums.ames-state  chums
-                ==
+              =+  mesa-core=(mesa now eny rof)
+              =/  mesa-ev-core
+               (%*(ev-foco ev:mesa-core ames-state ames-state) her fren)
+              =.  chums.ames-state  (~(put by chums.ames-state) her known/fren)
+              =+  mesa-co-core=%*(co-core co:mesa-core ames-state ames-state)
               =*  per  peer-state
               =<  co-abet
-              ^+  co-core
+              ^+  mesa-co-core
               %-  ~(rep by keens.per)
-              |=  [[=path keen=keen-state] core=_co-core]
+              |=  [[=path keen=keen-state] core=_mesa-co-core]
               =|  req=request-state
               =>  .(path `(pole knot)`path)
               ~|  make-peeks-crashed/path
@@ -5299,7 +5295,7 @@
                 =/  cyf=@      (slav %uv cyf.pat.path)
                 =*  key  symmetric-key.per
                 =/  pax=^path  (rash `@t`(dy:crub:crypto key cyf) stap)
-                [pax chum-to-our:ev-core]
+                [pax chum-to-our:mesa-ev-core]
               ==
             ::
             ++  get-lane
@@ -5322,6 +5318,7 @@
           ::
           ++  on-migration-test
             ^-  ?
+            ~&  >>  on-migration-test
             =/  ahoy-state=axle  ~|(%migrate-crashed ames-state:on-migrate)
             =/  rege-state=axle
               =<  ames-state
@@ -7437,15 +7434,22 @@
                 ?(%plug %gulp)  sy-abet:(sy-plug:sy-core task)
               ::  regression
               ::
-                %rege  ?.  dry.task  sy-abet:(sy-rege:sy-core +.task)
-                       ?~  +<.task
-                         ~&  >>  %mass-rege-not-supported
-                         `ames-state
-                       ~|  %dry-regression-failed
-                       ?>  (regression-test u.+<.task)
-                       ~&  >  %dry-regression-worked
-                       `ames-state
-              ::  from internal %ames request
+                  %rege
+              ?.  dry.task  sy-abet:(sy-rege:sy-core +.task)
+              ?^  +<.task
+                ~|  %dry-regression-failed
+                ?>  (regression-test u.+<.task)
+                ~&  >  %dry-regression-worked
+                `ames-state
+              =/  test=?
+                %-  ~(rep by chums.ames-state)
+                |=  [[=ship *] test=?]
+                =/  works=?  (regression-test ship)
+                &(test works)
+              ~?  >     test  %mass-rege-worked
+              ~?  >>>  !test  %mass-rege-failed
+              `ames-state
+            ::  from internal %ames request
               ::
                 ?(%meek %moke %mage)  co-abet:(co-call:co-core task)
               ==
@@ -9604,9 +9608,9 @@
               ?:  =(~ unix-duct)
                 %.  ev-core:core
                 (slog leaf+"ames: unix-duct pending; retry %push" ~)
-              =/  lanes=(list lane:pact:ames)
-                (get-forward-lanes-mesa our per.core chums.ames-state)
-              (ev-emit:core (push-pact u.pact lanes))
+              %-  ev-emit:core
+              %+  push-pact  u.pact
+              (get-forward-lanes-mesa our per.core chums.ames-state)
             :_  state
             (weld moves resend-moves)
           ::
@@ -9737,19 +9741,16 @@
               ~&  >  local-regression-worked/ship
               updated-core
           ::
-          ?^  ship
-            =/  =chum-state  (~(got by chums.ames-state) u.ship)
-            ?.  ?=([%known *] chum-state)
-              sy-core
-            (regress-chum u.ship +.chum-state)
-          %-  ~(rep by chums.ames-state)
-          |=  [[=^ship state=chum-state] =_sy-core]
-          ?:  ?=(%alien -.state)  sy-core
-          (regress-chum ship +.state)
+          ?~  ship
+            (~(rep by chums.ames-state) regress-chum)
+          =/  =chum-state  (~(got by chums.ames-state) u.ship)
+          (regress-chum [u.ship chum-state] sy-core)
           ::
           ++  regress-chum
-            |=  [=^ship fren=fren-state]
+            |=  [[=^ship state=chum-state] core=_sy-core]
             ^+  sy-core
+            ?:  ?=(%alien -.state)  core
+            =+  fren=+.state
             =|  peer=peer-state
             =:      -.peer  azimuth-state=-.fren
                 route.peer  (get-route lane.fren)
@@ -9758,15 +9759,17 @@
               ossuary.peer  ossuary.fren
                 chain.peer  client-chain.fren
             ==
-            =.  peers.ames-state  (~(put by peers.ames-state) ship %known peer)
+            =.  peers.ames-state.core
+              (~(put by peers.ames-state.core) ship %known peer)
             ::
-            =^  peek-moves  ames-state  (regress-peeks ship fren peer)
+            =/  [peek-moves=(list move) ames-state=axle]
+              (regress-peeks ship fren peer ames-state.core)
             =^  flow-moves  ames-state  (regress-flows ship fren ames-state)
             ::  delete ship from .chums
             ::
-            =.  chums.ames-state  (~(del by chums.ames-state) ship)
+            =.  chums.ames-state.core  (~(del by chums.ames-state) ship)
             ::
-            (sy-emil (weld peek-moves flow-moves))
+            (sy-emil:core (weld peek-moves flow-moves))
           ::
           ++  divide-bones
             |=  bones=(set side)
@@ -9868,9 +9871,9 @@
             abet:(call:(abed:mu:core naxp) %memo %naxplanation i.keys)
           ::
           ++  regress-peeks
-            |=  [her=^ship fren=fren-state peer=peer-state]
+            |=  [her=^ship fren=fren-state peer=peer-state state=axle]
             ^-  (quip move axle)
-            =+  event-core=(ev:ames now^eny^rof hen ames-state)
+            =+  event-core=(ev:ames now^eny^rof hen state)
             =;  core=_event-core
               abet:core
             %-  ~(rep by pit.fren)
@@ -10937,6 +10940,7 @@
       ++  regression-test
         |=  her=ship
         ^-  ?
+        ~&  >>  %regression-test
         =/  rege-state=axle
           ~|  %regress-crashed
           ames-state:(sy-rege:sy `her dry=%.n)
@@ -10947,7 +10951,6 @@
           ames-state:on-migrate:(abed-peer:pe:event-core her peer)
         ::  XX  compare pre/post migrated states
         ::
-        ~&  >>  %regression-test
         %+  ^regression-test
           (~(got by chums.ames-state) her)
         (~(got by chums.ahoy-state) her)
