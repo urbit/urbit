@@ -3573,6 +3573,7 @@
   ~/  %eyre-call
   |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _http-server-gate]
+  ~>  %spin.[%eyre]  ~>  %spin.[%call]
   ::
   =/  task=task  ((harden task) wrapped-task)
   ::
@@ -3876,6 +3877,7 @@
   ~/  %eyre-take
   |=  [=wire =duct dud=(unit goof) =sign]
   ^-  [(list move) _http-server-gate]
+  ~>  %spin.[%eyre]  ~>  %spin.[%take]
   =>  %=    .
           sign
         ?:  ?=(%gall -.sign)
@@ -4266,6 +4268,7 @@
       --
   |=  old=axle-any
   ^+  http-server-gate
+  ~>  %spin.[%eyre]  ~>  %spin.[%load]
   ?-    -.old
   ::
   ::  adds /~/name
@@ -4396,6 +4399,7 @@
   ^-  roon
   |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
+  ~>  %spin.[%eyre]  ~>  %spin.[%scry]
   =*  ren  car
   =*  why=shop  &/p.bem
   =*  syd  q.bem

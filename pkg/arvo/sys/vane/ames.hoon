@@ -11307,6 +11307,7 @@
 ++  call
   |=  [hen=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _vane-gate]
+  ~>  %spin.[%ames]  ~>  %spin.[%call]
   =*  sample  +<
   =+  me-core=(mesa now eny rof)
   =+  am-core=(ames now eny rof)
@@ -11360,6 +11361,7 @@
 ++  take
   |=  [=wire =duct dud=(unit goof) =sign]
   ^-  [(list move) _vane-gate]
+  ~>  %spin.[%ames]  ~>  %spin.[%take]
   =*  sample  +<
   =+  me-core=(mesa now eny rof)
   =+  am-core=(ames now eny rof)
@@ -11422,6 +11424,7 @@
 ::
 ++  load
   |=  state=axle
+  ~>  %spin.[%ames]  ~>  %spin.[%load]
   :: =.  peers.state   (~(del by peers.state) ~fyr)
   :: =.  chums.state    ~
     :: %-  ~(run by chums.state)
@@ -11443,6 +11446,7 @@
 ::
 ++  scry
   ^-  roon
+  ~>  %spin.[%ames]  ~>  %spin.[%scry]
   |=  [lyc=gang pov=path car=term bem=beam]
   =*  sample  +<
   =+  me-core=(mesa now eny rof)
