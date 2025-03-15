@@ -7463,6 +7463,8 @@
                 %-  ~(rep by chums.ames-state)
                 |=  [[=ship *] test=?]
                 =/  works=?  (regression-test ship)
+                ~?  >     test  rege-worked/ship
+                ~?  >>   !test  rege-failed/ship
                 &(test works)
               ~?  >     test  %mass-rege-worked
               ~?  >>>  !test  %mass-rege-failed
@@ -10960,7 +10962,6 @@
       ++  regression-test
         |=  her=ship
         ^-  ?
-        ~&  >>  %regression-test
         =/  rege-state=axle
           ~|  %regress-crashed
           ames-state:(sy-rege:sy `her dry=%.n)
