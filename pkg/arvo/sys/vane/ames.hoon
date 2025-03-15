@@ -3281,7 +3281,22 @@
                 %wham  (on-cancel-scry:event-core & +.task)
                 %whey  !!  :: XX
               ::
-                %mate  (on-mate:event-core +.task)
+                %mate  ?.  dry.task  (on-mate:event-core +.task)
+                       ?^  +<.task
+                         ~|  %dry-migration-failed
+                         ?>  (on-mate-test:event-core u.+<.task)
+                         ~&  >  %dry-migration-worked
+                         event-core
+                       =/  test=?
+                         %-  ~(rep by peers.ames-state)
+                         |=  [[=ship *] test=?]
+                         =/  works=?  (on-mate-test:event-core ship)
+                         ~?  >     test  mate-worked/ship
+                         ~?  >>   !test  mate-failed/ship
+                         &(test works)
+                       ~?  >     test  %mass-rege-worked
+                       ~?  >>>  !test  %mass-rege-failed
+                       event-core
               ==
             ::
             [moves vane-gate]
@@ -4042,7 +4057,7 @@
             ::  before migrating check that we can migrate this peer without
             ::  crashing. if so, we will nack the %ahoy $plea.
             ::
-            ?>  on-migration-test:peer-core
+            ?>  (on-mate-test ship)
             ::
             =~  ::  ack ahoy plea, if we don't crash
                 ::
@@ -4348,9 +4363,12 @@
         ++  on-mate
           |=  [ship=(unit ship) dry=?]
           |^  ^+  event-core
-          ~?  >>   dry  %testing-dry-migration
           =;  updated-core=_event-core
-            ?:(dry event-core updated-core)
+            ?:  dry
+              ~&  >  test-local-migration-worked/ship
+              event-core
+            ~&  >  local-migration-worked/ship
+            updated-core
           ::
           ?~  ship
             (~(rep by peers.ames-state) migrate-peer)
@@ -4362,13 +4380,31 @@
             |=  [[=^ship state=ship-state] core=_event-core]
             ^+  core
             ?:  ?=(%alien -.state)  core
-            =+  peer-core=(abed-peer:pe:core ship +.state)
-            :: ~|  %local-migration-failed
-            :: ~&  >  %local-migration-worked
             ?:  dry  core
-            pe-abel:on-migrate:peer-core
+            pe-abel:on-migrate:(abed-peer:pe:core ship +.state)
           ::
           --
+        ::
+        ++  on-mate-test
+          |=  =ship
+          ^-  ?
+          =/  ship-state  (~(get by peers.ames-state) ship)
+          ?>  ?=([~ %known *] ship-state)
+          =+  peer-core=(abed-peer:pe ship +.u.ship-state)
+          =/  ahoy-state=axle
+            ~|(%migrate-crashed ames-state:on-migrate:peer-core)
+          =/  rege-state=axle
+            =<  ames-state
+            ~|  %regress-crashed
+            %.  [`ship dry=%.n]
+            %*  sy-rege  sy:(mesa now eny rof)
+              ames-state  ahoy-state
+            ==
+          ::  compare pre/post migrated states
+          ::
+          %^  migration-test  ship
+            (~(got by peers.ames-state) ship)
+          (~(got by peers.rege-state) ship)
         ::
         ++  on-ack-ahoy
           |=  =shot
@@ -5314,22 +5350,6 @@
               ==
             ::
             --
-          ::
-          ++  on-migration-test
-            ^-  ?
-            =/  ahoy-state=axle  ~|(%migrate-crashed ames-state:on-migrate)
-            =/  rege-state=axle
-              =<  ames-state
-              ~|  %regress-crashed
-              %.  [`her dry=%.n]
-              %*  sy-rege  sy:(mesa now eny rof)
-                ames-state  ahoy-state
-              ==
-            ::  compare pre/post migrated states
-            ::
-            %^  migration-test  her
-              (~(got by peers.ames-state) her)
-            (~(got by peers.rege-state) her)
           ::
           +|  %implementation
           ::  +send-shut-packet: fire encrypted packet at rcvr (maybe sponsors)
@@ -6325,7 +6345,7 @@
                     ::  check that we can migrate this peer, without
                     ::  modifying the state
                     ::
-                    ?>  on-migration-test
+                    ?>  (on-mate-test her)
                     ::
                     :: %-  %^  ev-trace  sun.veb  her
                     ::     |.("migrating {<her>} test succeded")
@@ -9731,7 +9751,6 @@
         ::
         ++  sy-rege
           |=  [ship=(unit ship) dry=?]
-          ~&  >  sy-rege/ship
           |^  ^+  sy-core
           =;  updated-core=_sy-core
               ?:  dry
