@@ -4042,7 +4042,7 @@
             ::  before migrating check that we can migrate this peer without
             ::  crashing. if so, we will nack the %ahoy $plea.
             ::
-            =.  event-core  (on-mate `ship dry=%.y)
+            ?>  on-migration-test:peer-core
             ::
             =~  ::  ack ahoy plea, if we don't crash
                 ::
@@ -4363,9 +4363,8 @@
             ^+  core
             ?:  ?=(%alien -.state)  core
             =+  peer-core=(abed-peer:pe:core ship +.state)
-            ~|  %local-migration-failed
-            :: ?>  on-migration-test:peer-core  :: XX fixme
-            ~&  >  %local-migration-worked
+            :: ~|  %local-migration-failed
+            :: ~&  >  %local-migration-worked
             ?:  dry  core
             pe-abel:on-migrate:peer-core
           ::
@@ -4424,7 +4423,7 @@
           =+  ev-core=(ev-foco:ev:(mesa now eny rof) sndr.shot +.chum-state)
           =+  fo-core=(fo-abed:fo:ev-core ~[//scry] side=[(mix 1 bone) %bak])
           ?~  res=(fo-peek:fo-core %ack message-num)
-            %-  (ev-trace odd.veb sndr.shot |.("ack missing"))
+            %-  (ev-trace odd.veb sndr.shot |.("ack missing seq={<message-num>}"))
             event-core
           ?.  ?=([%ack error=@] u.res)
             %-  (ev-trace odd.veb sndr.shot |.("weird ack"))
@@ -5318,7 +5317,6 @@
           ::
           ++  on-migration-test
             ^-  ?
-            ~&  >>  on-migration-test
             =/  ahoy-state=axle  ~|(%migrate-crashed ames-state:on-migrate)
             =/  rege-state=axle
               =<  ames-state
@@ -9733,6 +9731,7 @@
         ::
         ++  sy-rege
           |=  [ship=(unit ship) dry=?]
+          ~&  >  sy-rege/ship
           |^  ^+  sy-core
           =;  updated-core=_sy-core
               ?:  dry
@@ -9762,12 +9761,13 @@
             =.  peers.ames-state.core
               (~(put by peers.ames-state.core) ship %known peer)
             ::
-            =/  [peek-moves=(list move) ames-state=axle]
-              (regress-peeks ship fren peer ames-state.core)
-            =^  flow-moves  ames-state  (regress-flows ship fren ames-state)
+            =^  peek-moves  ames-state.core
+              (regress-peeks ship fren ames-state.core)
+            =^  flow-moves  ames-state.core
+              (regress-flows ship fren ames-state.core)
             ::  delete ship from .chums
             ::
-            =.  chums.ames-state.core  (~(del by chums.ames-state) ship)
+            =.  chums.ames-state.core  (~(del by chums.ames-state.core) ship)
             ::
             (sy-emil:core (weld peek-moves flow-moves))
           ::
@@ -9871,9 +9871,10 @@
             abet:(call:(abed:mu:core naxp) %memo %naxplanation i.keys)
           ::
           ++  regress-peeks
-            |=  [her=^ship fren=fren-state peer=peer-state state=axle]
+            |=  [her=^ship fren=fren-state state=axle]
             ^-  (quip move axle)
             =+  event-core=(ev:ames now^eny^rof hen state)
+            =/  peer=peer-state  (got-peer-state:event-core her)
             =;  core=_event-core
               abet:core
             %-  ~(rep by pit.fren)
