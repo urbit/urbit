@@ -207,11 +207,18 @@
   (emil (weld mate-moves ahoy-moves))
 ::
 ++  poke-mass-mate
-  |=  [ship=(unit ship) test=?]
+  |=  [ship=(unit ship) dry=?]
   =/  =wire
     :+  %helm  %mate
-    ?.(test ~ /test)
-  abet:(emit %pass wire %arvo %a %mate ship dry=%.y)
+    ?.(dry ~ /test)
+  abet:(emit %pass wire %arvo %a %mate ship dry)
+::
+++  poke-mass-rege
+  |=  [ship=(unit ship) dry=?]
+  =/  =wire
+    :+  %helm  %rege
+    ?.(dry ~ /test)
+  abet:(emit %pass wire %arvo %a %rege ship dry)
 ::
 ++  take-ahoy
   |=  [way=wire error=(unit error:ames)]
@@ -251,7 +258,12 @@
     :+  %helm  %rege
     ?.(test /(scot %p her) /test/(scot %p her))
   =/  =path  ?:(test /test/ames /ames)
-  (emit %pass wire %arvo %a %plea her %$ path %back ~)
+  ::  before regressing, test if we can regress, migrate, and check that there
+  ::  are not flows in a weird state. if we don't crash, send the %back $plea
+  ::
+  =^  rege-moves  sat  (poke-mass-rege `her test=%.y)
+  =^  back-moves  sat  abet:(emit %pass wire %arvo %a %plea her %$ path %back ~)
+  (emil (weld rege-moves back-moves))
 ::
 ++  take-rege
   |=  [way=wire error=(unit error:ames)]
@@ -666,6 +678,7 @@
     %helm-send-ahoy        =;(f (f !<(_+<.f vase)) poke-send-ahoy)
     %helm-mass-mate        =;(f (f !<(_+<.f vase)) poke-mass-mate)
     %helm-send-rege        =;(f (f !<(_+<.f vase)) poke-send-rege)
+    %helm-mass-rege        =;(f (f !<(_+<.f vase)) poke-mass-rege)
     %helm-serve            =;(f (f !<(_+<.f vase)) poke-serve)
     %helm-trim             =;(f (f !<(_+<.f vase)) poke-trim)
     %helm-verb             =;(f (f !<(_+<.f vase)) poke-verb)
