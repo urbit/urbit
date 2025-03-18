@@ -7776,7 +7776,17 @@
             ::
             %-  (ev-tace rcv.veb.bug.ames-state |.("hear poke packet"))
             ::
+            =+  old-lane=lane.per
             =.  per  (ev-update-lane lane hop.pact next=~)
+            ::  if lane has changed, give %nail so forward-lane scries stop
+            ::  using the old cached lane
+            ::
+            =?  ev-core  !=(old-lane lane.per)
+              %-  ev-emit
+              :*  unix-duct  %give  %nail  her
+                  %-  mesa-to-ames-lanes
+                  (get-forward-lanes-mesa our per chums.ames-state)
+              ==
             ::  update and print connection status
             ::
             =?  ev-core  ?=(^ lane.per)  (ev-update-qos %live last-contact=now)
@@ -7840,7 +7850,17 @@
             =*  sealed-path  pat.name
             =/  [=space cyf=(unit @) =inner=path]
               (ev-decrypt-path pat.name her)
+            =+  old-lane=lane.per
             =.  per  (ev-update-lane lane hop.pact next.pact)
+            ::  if lane has changed, give %nail so forward-lane scries stop
+            ::  using the old cached lane
+            ::
+            =?  ev-core  !=(old-lane lane.per)
+              %-  ev-emit
+              :*  unix-duct  %give  %nail  her
+                  %-  mesa-to-ames-lanes
+                  (get-forward-lanes-mesa our per chums.ames-state)
+              ==
             ::  update and print connection status
             ::
             =.  ev-core  (ev-update-qos %live last-contact=now)
