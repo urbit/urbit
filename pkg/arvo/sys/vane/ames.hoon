@@ -3294,8 +3294,8 @@
                          ~?  >     test  mate-worked/ship
                          ~?  >>   !test  mate-failed/ship
                          &(test works)
-                       ~?  >     test  %mass-rege-worked
-                       ~?  >>>  !test  %mass-rege-failed
+                       ~?  >     test  %mass-mate-worked
+                       ~?  >>>  !test  %mass-mate-failed
                        event-core
               ==
             ::
@@ -6349,7 +6349,7 @@
                     ::
                     :: %-  %^  ev-trace  sun.veb  her
                     ::     |.("migrating {<her>} test succeded")
-                    ~&  >  "migrating {<her>} test succeded"
+                    ~&  >  "testing dry migration {<her>} succeded"
                     ::
                     (done ok=%.y)
                 =.  peer-core
@@ -9629,8 +9629,7 @@
                 %.  ev-core:core
                 (slog leaf+"ames: unix-duct pending; retry %push" ~)
               %-  ev-emit:core
-              %+  push-pact  u.pact
-              (get-forward-lanes-mesa our per.core chums.ames-state)
+              (push-pact u.pact (make-lanes [her [lane qos]:per]:core))
             :_  state
             (weld moves resend-moves)
           ::
