@@ -8347,9 +8347,7 @@
           %_    per
               lane
             ?~  lane.per  `[hop i.next]
-            =+  lan=lane.u.lane.per
-            =+  hop=hop.u.lane.per
-            ?.  =(0 hop)
+            ?.  =(0 hop.u.lane.per)
               ::  indirect route in state; update lane
               ::
               `[hop i.next]
@@ -8358,7 +8356,7 @@
             ::    - if lanes are equal, keep direct
             ::    - otherwise accept and update indirect route
             ::
-            ?:(=(lan i.next) lane.per `[hop i.next])
+            ?:(=(lane.u.lane.per i.next) lane.per `[hop i.next])
           ==
         ::
         ++  ev-got-duct
