@@ -4900,7 +4900,7 @@
             |=  b=bone
             ^+  peer-core
             ?:  (~(has in corked.peer-state) b)
-              ~>  %slog.0^leaf/"ames: ignoring kill on corked bone {<b>}"
+              ~>  %slog.0^leaf/"ames: {<her>} ignore %kill on corked bone {<b>}"
               peer-core
             =.  peer-state
               =,  peer-state
