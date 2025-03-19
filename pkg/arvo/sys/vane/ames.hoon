@@ -3291,8 +3291,8 @@
                          %-  ~(rep by peers.ames-state)
                          |=  [[=ship *] test=?]
                          =/  works=?  (on-mate-test:event-core ship)
-                         ~?  >     test  mate-worked/ship
-                         ~?  >>   !test  mate-failed/ship
+                         ~?  >     works  mate-worked/ship
+                         ~?  >>   !works  mate-failed/ship
                          &(test works)
                        ~?  >     test  %mass-mate-worked
                        ~?  >>>  !test  %mass-mate-failed
@@ -7463,8 +7463,8 @@
                 %-  ~(rep by chums.ames-state)
                 |=  [[=ship *] test=?]
                 =/  works=?  (regression-test ship)
-                ~?  >     test  rege-worked/ship
-                ~?  >>   !test  rege-failed/ship
+                ~?  >     works  rege-worked/ship
+                ~?  >>   !works  rege-failed/ship
                 &(test works)
               ~?  >     test  %mass-rege-worked
               ~?  >>>  !test  %mass-rege-failed
