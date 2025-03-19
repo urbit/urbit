@@ -1903,7 +1903,6 @@
     ++  migration-test
       |=  [=ship ames=ship-state back=ship-state]
       ^-  ?
-      =-  ~?  >>>  !-  ship-failed/ship  -
       ?>  =(-.ames -.back)     :: both %known or %alien
       ?:  ?=(%alien -.ames)
         =(ames back)
@@ -2010,8 +2009,10 @@
         =(mesa back)
       ::
       ?&  ?=(%known -.back)
-          %+  print-check  %keys     =(+<.mesa +<.back)
-          %+  print-check  %lane    ?|  ?&  ?=(~ lane.mesa)
+          %+  print-check  %keys    =(+<.mesa +<.back)
+          %+  print-check  %lane    =-  ~?  !-  [back=lane.back mesa=lane.mesa]
+                                        -
+                                    ?|  ?&  ?=(~ lane.mesa)
                                              =(lane.mesa lane.back)
                                          ==
                                          ?&  ?=(^ lane.mesa)  ?=(^ lane.back)
@@ -3251,7 +3252,6 @@
             |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
             ^-  [(list move) _vane-gate]
             ::
-            ~|  wrapped-task
             =/  =task       ((harden task) wrapped-task)
             =/  event-core  (ev now^eny^rof duct ames-state)
             ::
@@ -3283,13 +3283,16 @@
               ::
                 %mate  ?.  dry.task  (on-mate:event-core +.task)
                        ?^  +<.task
-                         ~|  %dry-migration-failed
+                         ~|  %dry-migration-failed^u.+<.task
                          ?>  (on-mate-test:event-core u.+<.task)
-                         ~&  >  %dry-migration-worked
+                         ~&  >  %dry-migration-worked^u.+<.task
                          event-core
+                       ~&  >>
+                        "test migration of {<~(wyt by peers.ames-state)>} peers"
                        =/  test=?
                          %-  ~(rep by peers.ames-state)
-                         |=  [[=ship *] test=?]
+                         |=  [[=ship =ship-state] test=?]
+                         ?:  ?=(%alien -.ship-state)  test
                          =/  works=?  (on-mate-test:event-core ship)
                          ~?  >     works  mate-worked/ship
                          ~?  >>   !works  mate-failed/ship
@@ -4393,7 +4396,7 @@
           |=  =ship
           ^-  ?
           =/  ship-state  (~(get by peers.ames-state) ship)
-          ?>  ?=([~ %known *] ship-state)
+          ?.  ?=([~ %known *] ship-state)  %.n
           =+  peer-core=(abed-peer:pe ship +.u.ship-state)
           =/  ahoy-state=axle
             ~|(%migrate-crashed ames-state:on-migrate:peer-core)
@@ -7463,6 +7466,7 @@
                 ?>  (regression-test u.+<.task)
                 ~&  >  %dry-regression-worked
                 `ames-state
+              ~&  >>  "test regression of {<~(wyt by chums.ames-state)>} chums"
               =/  test=?
                 %-  ~(rep by chums.ames-state)
                 |=  [[=ship *] test=?]
