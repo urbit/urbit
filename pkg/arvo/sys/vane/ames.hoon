@@ -3990,6 +3990,12 @@
         ++  on-kroc
           |=  bones=(list [ship bone])
           ^+  event-core
+          ?:  =(~ bones)  :: XX TMI
+            %-  ~(rep by peers.ames-state)
+            |=  [[her=ship per=ship-state] core=_event-core]
+            ?.  ?=(%known -.per)
+              core
+            abet:recork-one:(abed-peer:pe:core her +.per)
           ?:  &
             %-  (slog 'ames: %kroc task not allowed; TBD in |mesa' ~)
             event-core
@@ -4237,13 +4243,11 @@
             event-core
           ::  recork up to one bone per peer
           ::
-          =/  pez  ~(tap by peers.ames-state)
-          |-  ^+  event-core
-          ?~  pez  event-core
-          =+  [her sat]=i.pez
-          ?.  ?=(%known -.sat)
-            $(pez t.pez)
-          $(pez t.pez, event-core abet:recork-one:(abed-peer:pe her +.sat))
+          %-  ~(rep by peers.ames-state)
+          |=  [[her=ship per=ship-state] core=_event-core]
+          ?.  ?=(%known -.per)
+            core
+          abet:recork-one:(abed-peer:pe:core her +.per)
         ::  +on-trim: handle request to free memory
         ::
         ::    (%ruin comets not seen for six months)
@@ -4899,10 +4903,10 @@
           ++  on-kill-flow
             |=  b=bone
             ^+  peer-core
-            ?:  (~(has in corked.peer-state) b)
-              ~>  %slog.0^leaf/"ames: {<her>} ignore %kill on corked bone {<b>}"
-              peer-core
-            =.  peer-state
+            =+  ?.  (~(has in corked.peer-state) b)  ~
+                ~>  %slog.0^leaf/"ames: {<her>} ignore %kill; corked bone {<b>}"
+                ~
+            =?  peer-state  !(~(has in corked.peer-state) b)
               =,  peer-state
               %_  peer-state
                 ::  if the publisher was behind, preemptively remove any nacks
