@@ -3290,6 +3290,7 @@
                        ~&  >>
                         "test migration of {<~(wyt by peers.ames-state)>} peers"
                        =/  test=?
+                         ~>  %bout.[1 %make-mass-mate]
                          %-  ~(rep by peers.ames-state)
                          |=  [[=ship =ship-state] test=?]
                          ?:  ?=(%alien -.ship-state)  test
@@ -5136,6 +5137,13 @@
                   |=  $:  [=message-num =message-blob]
                           blobs=(list [message-num message])
                       ==
+                  ?:  ?&  ?=(^ blobs)
+                          ?=(%plea +<.i.blobs)
+                          =([0 117 0] payload.i.blobs)  ::  leave=[%0 %u ~]
+                      ==
+                    ::  filter any duplicate leaves
+                    ::
+                    blobs
                   :_  blobs
                   :-  message-num
                   ;;  message  :_  (cue message-blob)
@@ -5151,6 +5159,13 @@
                     =<  msgs
                     %-  ~(rep by unsent-messages.pump)
                     |=  [=message num=_next.pump msgs=(list [@ud message])]
+                    ?:  ?&  ?=(^ msgs)
+                            ?=(%plea +<.i.msgs)
+                            =([0 117 0] payload.i.msgs)  ::  leave=[%0 %u ~]
+                        ==
+                      ::  filter any duplicate leaves
+                      ::
+                      num^msgs
                     :-  +(num)
                     [num^message msgs]
                   %+  roll  (weld live unsent)
@@ -7468,6 +7483,7 @@
                 `ames-state
               ~&  >>  "test regression of {<~(wyt by chums.ames-state)>} chums"
               =/  test=?
+                ~>  %bout.[1 %make-mass-rege]
                 %-  ~(rep by chums.ames-state)
                 |=  [[=ship *] test=?]
                 =/  works=?  (regression-test ship)
