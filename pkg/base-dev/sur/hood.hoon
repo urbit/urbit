@@ -11,7 +11,7 @@
 ::
 +$  pikes  (map desk pike)
 ::  $jump: changes to update source change requests
-::      
+::
 +$  jump
   $%  [%all all=(map dock dock)]        :: pending requests
       [%add old=dock new=dock]          :: new request
@@ -211,13 +211,16 @@
   =/  pax=path  /(scot %p our)/[syd]/(scot %da now)
   ?.  verb
     :~  '::'
-        (cat 3 '  /desk/bill:            ' (crip "{<.^((list dude:gall) cx+(weld pax /desk/bill))>}"))
-        (cat 3 '  pending updates:       ' (print-wefts wic.dek))
-        (cat 3 '  source ship:           ' ?~(sink '~' (scot %p her.u.sink)))
-        (cat 3 '  app status:            ' sat)
-        (cat 3 '  essential desk:        ' ese)
-        (cat 3 '  %cz hash ends in:      ' (print-shorthash hash))
-        (cat 3 '  /sys/kelvin:           ' (print-wefts (waft-to-wefts waft)))
+        =+  .^(exist=? cu+(weld pax /desk/bill))
+        ?.  exist  '  /desk/bill:             missing'
+        =+  .^(dudes=(list dude:gall) cx+(weld pax /desk/bill))
+        (cat 3 '  /desk/bill:             ' (crip "{<dudes>}"))
+        (cat 3 '  pending updates:        ' (print-wefts wic.dek))
+        (cat 3 '  source ship:            ' ?~(sink '~' (scot %p her.u.sink)))
+        (cat 3 '  app status:             ' sat)
+        (cat 3 '  essential desk:         ' ese)
+        (cat 3 '  %cz hash ends in:       ' (print-shorthash hash))
+        (cat 3 '  /sys/kelvin:            ' (print-wefts (waft-to-wefts waft)))
         (cat 3 '%' syd)
     ==
   ::
