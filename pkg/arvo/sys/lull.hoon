@@ -1644,20 +1644,15 @@
   ::
   +$  fren-state
     $:  azimuth-state
-        lane=(unit lane:pact)
+        lane=(unit [hop=@ =lane:pact])  :: XX (list)
         =qos
         corked=(set side)  ::  can be +peeked in the namespace
                            ::  XX how many flows to keep here?
         =ossuary      ::  XX redefine ossuary in terms of bone^side
         flows=(map side flow-state)
-      ::  outgoing/incoming requests  - sndr -    - rcvr -
-        ::  write-data: path=pok-path  (~zod) /poke/~nec/flow/bone=0/mess=1
-        ::  read data:  path=pek-path
-        ::              path=ack-path  (~nec) /ack/~zod/flow/bone=0/mess=1
-        ::
         pit=(map path request-state)           :: active +peek namespace paths
         =client=chain                          :: stores keys for %shut requests
-        tip=(jug =user=path [duct =ames=path]) :: reverse .pip lookup map
+        tip=(jug =user=path [duct =ames=path]) :: reverse .pit lookup map
     ==
   ::
   ::  interest gifts per path in the pith
@@ -1725,17 +1720,15 @@
           ::  the ordered map guarantees that we receive the acks in ordered
           ::  if (dec received-ack=@ud) has not been acked, we drop it
           ::
-          ::  payloads can be +peek'ed via a well-formed path with a known structure
-          ::  e.g.  /flow/bone=0/plea/~zod/seq=1
+          ::  payloads can be +peek'ed via a well-formed path with the format:
+          ::  e.g.  /flow/[bone=0]/[load]/?[%for %bak]/[ship]/[seq=1]
           ::
           ::  XX option to include messages that won't be bounded into the namespace (two-layer queue)
           loads=((mop ,@ud mesa-message) lte)         :: all unacked
           next=_1                                     :: =(next +(last-acked))
           ::
           send-window-max=_1                          :: how many pleas to send
-          send-window=_1                              ::
-          ::nax=(map seq=@ud [?(%wait %done) error])    :: last 10 nacked messages
-          ::nax=((mop seq=,@ud [?(%wait %done) error]) lte)
+          send-window=_1                              :: XX
           :: cache=((mop ,@ud ?) lte)  :: out-of-order acks XX TODO
         ==
         ::  incoming %pokes, pending their ack from the vane
