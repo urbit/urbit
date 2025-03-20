@@ -107,6 +107,26 @@
 ::
 ++  file-ovum2  |=(z=[path (list spur)] `unix-event`[//arvo what/(user-files z)])
 ::
+++  get-wynn
+  |=  [sys=path new-wynn=?]
+  ^-  wynn
+  ?.  new-wynn
+    :~  zuse+zuse
+        lull+lull
+        arvo+arvo
+        hoon+hoon-version
+    ==
+  ~>  %bout.[0 %get-wynn]
+  =+  .^(zus=vase %ca (welp sys /zuse/hoon))
+  =+  .^(lul=vase %ca (welp sys /lull/hoon))
+  =+  .^(arv=vase %ca (welp sys /arvo/hoon))
+  =+  .^(hun=vase %ca (welp sys /hoon/hoon))
+  :~  [%zuse ;;(@ud q:(slap zus limb+%zuse))]
+      [%lull ;;(@ud q:(slap lul limb+%lull))]
+      [%arvo ;;(@ud q:(slap arv limb+%arvo))]
+      [%hoon ;;(@ud q:(slap hun limb+%hoon-version))]
+  ==
+::
 ++  prep-ovum
   |=  dez=(list path)
   ^-  unix-event
@@ -261,7 +281,7 @@
   ::  dez: secondary desks and their root paths
   ::  exc: list of desk folders to exclude
   ::
-  |=  [sys=path dez=(list [desk path]) prime=? exc=(list spur)]
+  |=  [sys=path dez=(list [desk path]) prime=? new-wynn=? exc=(list spur)]
   ^-  pill
   =/  bas=path  (scag 3 sys)
   ::  compiler-source: hoon source file producing compiler, `sys/hoon`
@@ -308,25 +328,19 @@
     ?.  prime  ~
     [(prep-ovum (turn dez tail))]~
   ::
+  =/  =wynn  (get-wynn sys new-wynn)
+  ::
   =/  cache=(list)
     %~  tap  by
     =<  +
     %-  mice
-    :_  [2 [0 3] 0 2]
+    :_  [%2 [%0 3] %0 2]
     ;:  weld
       boot-ova
       ^-  (list)
       :~  [*@da //arvo %wack *@uvJ]
           [*@da //arvo %whom *@p]
-          :-  *@da
-          :^  /  %wyrd  [~.nonce /]
-          ^-  (list (pair term @))
-          :~  zuse+zuse
-              lull+lull
-              arvo+arvo
-              hoon+hoon-version
-              nock+4
-          ==
+          [*@da //arvo %wyrd [~.nonce /] wynn]
       ==
       `(list)`(turn kernel-ova (lead *@da))
       `(list)`[*@da `unix-event`[/d/term/1 %boot & %fake *@p]]^~
@@ -334,7 +348,7 @@
     ==
   ::
   ~&  >>>  (lent cache)
-  ::  a pill is a 4-tuple of event-lists and a cache:
+  ::  a cash pill is a 4-tuple of event-lists and a cache:
   ::  [boot kernel userspace cache]
   ::
   :+  %cash  %brass
@@ -356,7 +370,7 @@
       =/  nok  !.
         =>  *[ver=(trap vase) ~]
         !=  q:$:ver
-      ivory/[nok ver ~ ~]
+      ivory/[nok ver ~]
   ::
   ++  build-sys
     |=  [sub=(trap vase) nam=term]  ^-  (trap vase)
@@ -421,6 +435,7 @@
     ==
   --
 --
+::
 ~%  %non  ..part  ~
 ::  +mice: %memo hint caching version of mink
 ::
@@ -428,7 +443,7 @@
 ++  mice  !.
   ~/  %mice
   |=  [subject=* formula=*]
-  =/  scry=$-(^ (unit (unit)))  _~
+  =/  scry=$-(^ (unit (unit)))  |~(^ ~)
   =|  trace=(list [@ta *])
   =|  memo=(map)
   =;  [ton=tone mem=_memo]
