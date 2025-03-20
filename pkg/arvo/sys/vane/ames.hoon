@@ -1974,8 +1974,54 @@
                         =/  blob=*  (cue (rep packet-size [fag]~))
                         ?=(^ ;;((soft [%$ path %cork ~]) blob))
                 ==  ==
-                ::  XX TODO: check live message sequence number
-                ::
+              ::
+                :: %+  print-check  %forward-flows-unsent-fragments
+                :: =-  ~?  !-  :*  unsent-fragments.pump
+                ::                unsent-fragments.back-pump
+                ::                live.packet-pump-state.pump
+                ::             ==
+                ::     -
+                :: ::  only if if there were unsent fragments
+                :: ::
+                :: ?|  ?=(~ unsent-fragments.pump)
+                ::     .=  (lent unsent-fragments.pump)
+                ::         (lent unsent-fragments.back-pump)
+                :: ==
+              ::  XX TODO: check live message sequence number
+              ::
+                :: =-  ~?  !-  [pump back-pump]
+                ::     -
+                %+  print-check  %forward-flows-unsent-messages
+                ?|  ::  we can end up with more unsent-messages in the back-pump
+                    ::  if we had more than one live message before migration
+                    ::
+                    %+  lth  ~(wyt by unsent-messages.pump)
+                    ~(wyt by unsent-messages.back-pump)
+                  ::
+                    ?&  =(next.pump next.back-pump)
+                        =(current.pump current.back-pump)
+                      ::
+                        =|  done=?
+                        =|  has-leave=?
+                        |-  ^+  done
+                        ?:  ?&  ?=(~ unsent-messages.pump)
+                                ?=(~ unsent-messages.back-pump)
+                            ==
+                          done
+                        ?:  =(~ unsent-messages.pump)  done
+                        =^  head-pump  unsent-messages.pump
+                          ~(get to unsent-messages.pump)
+                        =/  is-leave=?
+                          ?&  ?=(%plea -.head-pump)
+                              =([0 117 0] payload.+.head-pump)
+                          ==
+                        ?:  &(has-leave is-leave)
+                          $
+                        =.  has-leave  is-leave
+                        =^  head-back  unsent-messages.back-pump
+                          ~(get to unsent-messages.back-pump)
+                        $(done &(done =(head-pump head-back)))
+                ==  ==
             ==
           &(ok test)
         ::  backwards flows
@@ -3289,17 +3335,18 @@
                          event-core
                        ~&  >>
                         "test migration of {<~(wyt by peers.ames-state)>} peers"
-                       =/  test=?
+                       =/  [failed=@ test=?]
                          ~>  %bout.[1 %make-mass-mate]
                          %-  ~(rep by peers.ames-state)
-                         |=  [[=ship =ship-state] test=?]
-                         ?:  ?=(%alien -.ship-state)  test
+                         |=  [[=ship =ship-state] n=@ test=?]
+                         ?:  ?=(%alien -.ship-state)  n^test
                          =/  works=?  (on-mate-test:event-core ship)
-                         ~?  >     works  mate-worked/ship
+                        ::  ~?  >     works  mate-worked/ship
                          ~?  >>   !works  mate-failed/ship
-                         &(test works)
+                         =?  n  !works  +(n)
+                         n^&(test works)
                        ~?  >     test  %mass-mate-worked
-                       ~?  >>>  !test  %mass-mate-failed
+                       ~?  >>>  !test  %mass-mate-failed^peers=failed
                        event-core
               ==
             ::
@@ -5156,18 +5203,23 @@
                     [moves state]:core
                   =/  unsent=(list [message-num message])
                     %-  flop
-                    =<  msgs
-                    %-  ~(rep by unsent-messages.pump)
-                    |=  [=message num=_next.pump msgs=(list [@ud message])]
+                    =|  msgs=(list [@ud message])
+                    =+  num=next.pump
+                    |-  ^+  msgs
+                    ?:  =(~ unsent-messages.pump)  :: XX TMI
+                      msgs
+                    =^  message  unsent-messages.pump
+                      ~(get to unsent-messages.pump)
                     ?:  ?&  ?=(^ msgs)
                             ?=(%plea +<.i.msgs)
-                            =([0 117 0] payload.i.msgs)  ::  leave=[%0 %u ~]
+                            =([0 117 0] payload.i.msgs)
+                            ?=(%plea -.message)
+                            =(payload.i.msgs payload.+.message)
                         ==
-                      ::  filter any duplicate leaves
+                      ::  filter any duplicate leave(s)=[%0 %u ~]
                       ::
-                      num^msgs
-                    :-  +(num)
-                    [num^message msgs]
+                      $
+                    $(num +(num), msgs [num^message msgs])
                   %+  roll  (weld live unsent)
                   ::
                   |=  [[=message-num =message] core=_fo-core]
@@ -8721,12 +8773,11 @@
             =+  loads=loads.snd ::  cache
             |-  ^+  fo-core
             =*  loop  $
-            =+  num=(wyt:fo-mop loads)
-            ?:  =(0 num)
-              fo-core
             ?.  (gth send-window.snd 0)
               fo-core
             ::
+            ?~  (pry:fo-mop loads)
+              fo-core
             =^  [seq=@ud request=mesa-message]  loads  (pop:fo-mop loads)
             =.  send-window.snd  (dec send-window.snd)
             ::
