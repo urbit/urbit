@@ -347,7 +347,7 @@
       `(list)`(turn userspace-ova (lead *@da))
     ==
   ::
-  ~&  >>>  (lent cache)
+  ~>  %slog.[0 leaf+"brass: cache entries: {<(lent cache)>}"]
   ::  a cash pill is a 4-tuple of event-lists and a cache:
   ::  [boot kernel userspace cache]
   ::
