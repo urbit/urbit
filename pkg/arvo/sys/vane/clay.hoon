@@ -743,6 +743,8 @@
         :_  nub  :-  %vase
         %+  slap  (with-faces cor+old ~)
         ^-  hoon
+        :+  %sggr  
+          [%spin %cltr [%sand %t (crip "grow-{<a>}->{<b>}")] ~]
         :+  %brcl  !,(*hoon v=+<.cor)
         :+  %tsgl  limb/b
         !,(*hoon ~(grow cor v))
@@ -750,7 +752,13 @@
       ::
       =^  new=vase  nub  (build-fit %mar b)
       =/  arm=?  (has-arm %grab a new)
-      =/  rab  (mule |.((slap new tsgl/[limb/a limb/%grab])))
+      =/  rab 
+        %-  mule  |.
+        %+  slap  new 
+        ^-  hoon
+        :+  %sggr  
+          [%spin %cltr [%sand %t (crip "grab-{<a>}->{<b>}")] ~]
+        tsgl/[limb/a limb/%grab]
       ?:  &(arm ?=(%& -.rab) ?=(^ q.p.rab))
         %+  gain-leak  cast+a^b
         |=  nob=state
@@ -802,6 +810,7 @@
     ++  build-tube
       |=  [a=mark b=mark]
       ^-  [tube state]
+      ~>  %spin.[%build-tube]  ~>  %spin.[a]  ~>  %spin.[b]
       ~|  error-building-tube+[a b]
       %-  soak-tube
       %+  gain-sprig  tube+a^b  |.
