@@ -5261,6 +5261,7 @@
                   |=  [[=message-num =message] core=_fo-core]
                   ?.  ?=(%naxplanation -.message)
                     =?  core  ?=([%plea %$ [%flow ~] %cork ~] message)
+                      ?>  (~(has in closing.peer-state) original-bone)
                       ::  if we are sending a %cork, we don't know if the other
                       ::  side has corked the flow after receiving it, and the
                       ::  %ack got lost, so we could still be trying to send the
