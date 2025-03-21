@@ -1938,6 +1938,7 @@
           %-  ~(rep by snd.ames)
           |=  [[=bone pump=message-pump-state] ok=?]
           ?:  =(%3 (mod bone 4))  ok  :: ignore naxplanation bones
+          ~|  bone-crashed/bone^ship
           =+  back-pump=(~(got by snd.back) bone)
           =/  test
             ?&  =-  ~?  !-  [bone=bone ames=current.pump back=current.back-pump]
@@ -1960,7 +1961,8 @@
                       ::  unsent messages queue needs to have at least .diff
                       ::
                       (gte ~(wyt by unsent-messages.back-pump) diff)
-                    ::  the extra message being sent needs to be a %cork $plea
+                    ::  if in closing, the extra message being sent needs to be
+                    ::  a %cork $plea
                     ::
                     ?&  (~(has in closing.ames) bone)
                         (~(has in closing.back) bone)
@@ -1995,11 +1997,14 @@
                 ?|  ::  we can end up with more unsent-messages in the back-pump
                     ::  if we had more than one live message before migration
                     ::
+                    ::  XX TODO: check live message sequence numbers
+                    ::  XX TODO: check that the difference in unsent messages
+                    ::  is in live
+                    ::
                     %+  lth  ~(wyt by unsent-messages.pump)
                     ~(wyt by unsent-messages.back-pump)
                   ::
-                    ?&  =(next.pump next.back-pump)
-                        =(current.pump current.back-pump)
+                    ?&  =(current.pump current.back-pump)
                       ::
                         =|  done=?
                         =|  has-leave=?
@@ -2016,7 +2021,9 @@
                               =([0 117 0] payload.+.head-pump)
                           ==
                         ?:  &(has-leave is-leave)
+                          :: ~&  >>  %filter
                           $
+                        :: ~&  >  %nope
                         =.  has-leave  is-leave
                         =^  head-back  unsent-messages.back-pump
                           ~(get to unsent-messages.back-pump)
@@ -2082,20 +2089,34 @@
           |=  [[side back-flow=flow-state] ok=?]
           ~|  [%not-found side=bone^dire]
           =+  flow=(~(got by flows.mesa) bone^dire)
-          ?&  ok
-              :: XX lines don't match for the ahoy flow
-              :: =(line.flow line.back-flow)
-              =(closing.flow closing.back-flow)
-              :: =-  ~?  !-  snd/[mesa=snd.flow back=snd.back-flow]
-              ::     -
-              =(snd.flow snd.back-flow)
-              :: =-  ~?  !-  rcv/[mesa=rcv.flow back=rcv.back-flow]
-              ::     -
+          =/  test=?
+            ?&  :: XX lines don't match for the ahoy flow
+                :: =(line.flow line.back-flow)
+                =-  ~?  !-  closing/[closing.flow closing.back-flow]
+                    -
+                =(closing.flow closing.back-flow)
+            ::
+                =-  ~?  !-  snd/[bone=bone mesa=snd.flow back=snd.back-flow]
+                    -
+                =(next.snd.flow next.snd.back-flow)
+              ::
+                =+  mop=((on ,@ud mesa-message) lte)
+                =+  snd-wyt=(wyt:mop loads.snd.flow)
+                =+  bak-wyt=(wyt:mop loads.snd.back-flow)
+                =-  ~?  !-  snd-wyt/[mesa=snd-wyt back=bak-wyt]
+                    -
+                =(snd-wyt bak-wyt)
+              ::
+                =(loads.snd.back-flow loads.snd.flow)
+              ::
+                =-  ~?  !-  rcv/[mesa=rcv.flow back=rcv.back-flow]
+                    -
               ::  nacked pokes are not migrated
               ::
-              .=  [last-acked pending-ack]:rcv.flow
-                  [last-acked pending-ack]:rcv.back-flow
-          ==
+                .=  [last-acked pending-ack]:rcv.flow
+                    [last-acked pending-ack]:rcv.back-flow
+            ==
+          &(test ok)
       ==
     ::
     +|  %routes
@@ -5184,13 +5205,6 @@
                   |=  $:  [=message-num =message-blob]
                           blobs=(list [message-num message])
                       ==
-                  ?:  ?&  ?=(^ blobs)
-                          ?=(%plea +<.i.blobs)
-                          =([0 117 0] payload.i.blobs)  ::  leave=[%0 %u ~]
-                      ==
-                    ::  filter any duplicate leaves
-                    ::
-                    blobs
                   :_  blobs
                   :-  message-num
                   ;;  message  :_  (cue message-blob)
@@ -5210,16 +5224,38 @@
                       msgs
                     =^  message  unsent-messages.pump
                       ~(get to unsent-messages.pump)
-                    ?:  ?&  ?=(^ msgs)
-                            ?=(%plea +<.i.msgs)
-                            =([0 117 0] payload.i.msgs)
-                            ?=(%plea -.message)
-                            =(payload.i.msgs payload.+.message)
-                        ==
-                      ::  filter any duplicate leave(s)=[%0 %u ~]
+                    ?:  =(message [%plea %$ /flow %cork ~])
+                      ::  if we find a $cork, add it and skip everything else
                       ::
-                      $
+                      [num^message msgs]
+                    ::  XX TODO
+                    ::
+                    :: ?:  ?&  ?=(^ msgs)
+                    ::         ?=(%plea +<.i.msgs)
+                    ::         =([%0 %u ~] payload.i.msgs)
+                    ::         ?=(%plea -.message)
+                    ::         =(payload.i.msgs payload.+.message)
+                    ::     ==
+                    ::   ::  filter any duplicate leave(s)
+                    ::   ::
+                    ::   $
                     $(num +(num), msgs [num^message msgs])
+                  ::  XX TODO
+                  ::
+                  :: =?  unsent  ?&  ?=([[@ ^] ~] unsent)
+                  ::                 ?=(%plea +<.i.unsent)
+                  ::                 =([%0 %u ~] payload.+>.i.unsent)
+                  ::             ==
+                  ::   ::  if there is an unsent %leave, check if we have already
+                  ::   ::  _live_ leaves, and if so drop them
+                  ::   ::
+                  ::   ?~  live  unsent
+                  ::   =/  live=message  +:(rear live)
+                  ::   ?:  ?&  ?=(%plea -.live)
+                  ::           =([%0 %u ~] payload.+.live)
+                  ::       ==
+                  ::     ~
+                  ::   unsent
                   %+  roll  (weld live unsent)
                   ::
                   |=  [[=message-num =message] core=_fo-core]
@@ -5247,7 +5283,10 @@
                   ==
                 ::  all live messages processed; set next seq payload
                 ::
-                =?  next.snd.flow  !naxp-bone  next.pump
+                =?  next.snd.flow  !naxp-bone
+                  ::  if there are loads, we already have next up to date
+                  ::
+                  ?^(loads.snd.flow next.snd.flow next.pump)
                 ::  any pending %cork should be already in the load queue
                 ::
                 =?  closing.flow  !naxp-bone
@@ -11055,10 +11094,10 @@
         |=  her=ship
         ^-  ?
         =/  rege-state=axle
-          ~|  %regress-crashed
+          ~|  regress-crashed/her
           ames-state:(sy-rege:sy `her dry=%.n)
         =/  ahoy-state=axle
-          ~|  %migrate-crashed
+          ~|  migrate-crashed/her
           =+  event-core=(ev:ames now^eny^rof ~[//rege] rege-state)
           =/  peer=peer-state  (got-peer-state:event-core her)
           ames-state:on-migrate:(abed-peer:pe:event-core her peer)
