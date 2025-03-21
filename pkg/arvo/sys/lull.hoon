@@ -879,15 +879,25 @@
     ::  when changing any of the tasks above, please follow the same patterns
     ::  that exist in ames.hoon.
     ::
-        [%mate (unit ship) dry=?]     ::  per-peer migration
-        [%rege (unit ship) dry=?]     ::  per-peer regression
-        [%load ?(%mesa %ames)]        ::  load core for new peers; XX [... term]
+        [%mate (unit ship) dry=?]   :: per-peer migration
+        [%rege (unit ship) dry=?]   :: per-peer regression
+        [%load ?(%mesa %ames)]      :: load core for new peers; XX [... term]
     ::
-        [%heer =lane:pact p=@]        ::  receive a packet
-        [%mess =mess]                 ::  receive a message
-        [%moke =space =spar =path]    ::  initiate %poke request
-        [%meek =space =spar]          ::  initiate %peek request
-        [%mage =space =spar]          ::  send %page of data; intended for acks
+        [%heer =lane:pact p=@]      :: receive a packet
+        [%mess =mess]               :: receive a message
+        [%moke =space =spar =path]  :: initiate %poke request
+        [%meek =space =spar]        :: initiate %peek request
+        [%mage =space =spar]        :: send %page of data; intended for acks
+        [%rate =spar rate]          :: get rate progress for +peeks, from unix
+        $:  %prog                   :: subscribe to progress %rate
+            =spar                   :: if ?=(^ task), use it to modify path.spar
+            $=  task
+            $@(~ ?([%chum ~] [%keen kid=(unit @)]))
+            feq=@ud
+        ==
+        [%whey =spar boq=@ud]       :: weight of noun bounded at .path.spar
+                                    :: as measured by .boq
+        [%gulp path]                :: like %plug, but for |mesa
     ==
   ::
   ::  $gift: effect from ames
@@ -930,6 +940,7 @@
         [%push p=(list lane:pact) q=@]   :: send a request/response packet
         [%sage =sage:mess]               :: give deserialized/open payload
         $>(%page mess)                   :: give serialized/sealed payload
+        $>(%rate task)
     ==
   ::
   ::::                                                  ::  (1a2)
@@ -1032,6 +1043,7 @@
         [%cork =ship =bone]
         [%kill =ship =bone]
         [%ahoy =ship =bone]  :: XX remove bone; it's just next-bone.ossuary
+        [%prun =ship =user=path =duct =ames=path]
     ==
   ::  $stun: STUN notifications, from unix
   ::
@@ -1116,8 +1128,8 @@
     $+  alien-agenda
     $:  messages=(list [=duct =plea])
         packets=(set =blob)
-        keens=(jug path duct)
-        chums=(jug path duct)
+        keens=(jug [path ints] duct)
+        chums=(jug [path ints] duct)
     ==
   +$  chain  ((mop ,@ ,[key=@ =path]) lte)
   ::  $peer-state: state for a peer with known life and keys
@@ -1158,6 +1170,7 @@
         corked=(set bone)
         keens=(map path keen-state)
         =chain
+        tip=(jug =user=path [duct =ames=path])
     ==
   +$  keen-state
     $+  keen-state
@@ -1167,7 +1180,7 @@
         num-fragments=@ud
         num-received=@ud
         next-wake=(unit @da)
-        listeners=(set duct)
+        listeners=(jug duct ints)
         metrics=pump-metrics
     ==
   +$  want
@@ -1625,30 +1638,32 @@
   +$  ovni-state
     $+  ovni-state
     $:  pokes=(list [=duct message=mesa-message])
-        peeks=(jug path duct)
-        chums=(jug path duct)
+        peeks=(jug [path ints] duct)
+        chums=(jug [path ints] duct)
     ==
   ::
   +$  fren-state
-    $+  fren-state
     $:  azimuth-state
-        lane=(unit lane:pact)
+        lane=(unit [hop=@ =lane:pact])  :: XX (list)
         =qos
         corked=(set side)  ::  can be +peeked in the namespace
                            ::  XX how many flows to keep here?
         =ossuary      ::  XX redefine ossuary in terms of bone^side
         flows=(map side flow-state)
-      ::  outgoing/incoming requests  - sndr -    - rcvr -
-        ::  write-data: path=pok-path  (~zod) /poke/~nec/flow/bone=0/mess=1
-        ::  read data:  path=pek-path
-        ::              path=ack-path  (~nec) /ack/~zod/flow/bone=0/mess=1
-        ::
-        pit=(map path request-state)
-        =client=chain            ::  stores keys for %shut requests
+        pit=(map path request-state)           :: active +peek namespace paths
+        =client=chain                          :: stores keys for %shut requests
+        tip=(jug =user=path [duct =ames=path]) :: reverse .pit lookup map
     ==
   ::
+  ::  interest gifts per path in the pith
+  ::    %sage used by |mesa
+  ::    %tune used by |fine
+  ::    %rate  XX give $rate every .feq of bloq size .boq
+  ::
+  +$  ints  ?(%sage %tune [%rate boq=@ud feq=@ud])
+  +$  rate  $@(~ [boq=@ud fag=@ud tot=@ud])
   +$  request-state
-    $:  for=(set duct)
+    $:  for=(jug duct ints)
         pay=(unit path)
         ps=(unit pact-state)
     ==
@@ -1705,17 +1720,15 @@
           ::  the ordered map guarantees that we receive the acks in ordered
           ::  if (dec received-ack=@ud) has not been acked, we drop it
           ::
-          ::  payloads can be +peek'ed via a well-formed path with a known structure
-          ::  e.g.  /flow/bone=0/plea/~zod/seq=1
+          ::  payloads can be +peek'ed via a well-formed path with the format:
+          ::  e.g.  /flow/[bone=0]/[load]/?[%for %bak]/[ship]/[seq=1]
           ::
           ::  XX option to include messages that won't be bounded into the namespace (two-layer queue)
           loads=((mop ,@ud mesa-message) lte)         :: all unacked
           next=_1                                     :: =(next +(last-acked))
           ::
           send-window-max=_1                          :: how many pleas to send
-          send-window=_1                              ::
-          ::nax=(map seq=@ud [?(%wait %done) error])    :: last 10 nacked messages
-          ::nax=((mop seq=,@ud [?(%wait %done) error]) lte)
+          send-window=_1                              :: XX
           :: cache=((mop ,@ud ?) lte)  :: out-of-order acks XX TODO
         ==
         ::  incoming %pokes, pending their ack from the vane
@@ -1884,8 +1897,8 @@
         ==
       =/  gum
         (end [0 20] (mug (cut -.c [(rig b -.c) +.c] dat)))
-      :: ~&  gum.hed^gum
-      ::?>(=(gum.hed gum) [pac c])  :: XX jumbo fragments have wrong mug
+      ~|  gum.hed^gum
+      ?>  =(gum.hed gum)  :: XX jumbo fragments have wrong mug; fixed?
       [pac c]
     --
   ::

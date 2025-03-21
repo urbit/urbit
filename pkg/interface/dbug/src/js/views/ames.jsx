@@ -384,9 +384,6 @@ export class Ames extends Component {
       <b>{peek['scry-path']}</b><br/>
       <h5 style={{marginTop: '1em'}}>listeners:</h5>
       {renderDuct(peek['keen-state'].listeners)}
-      if (peek['keen-state'].payload) {
-        peek['keen-state'].payload
-      }
       <h5 style={{marginTop: '1em'}}>Payload path:</h5>
       {peek['keen-state'].payload}
     </>);

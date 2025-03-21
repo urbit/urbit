@@ -507,11 +507,11 @@
       ::      use case for this is comets, about who nobody cares.
       =/  dus  (~(uni in nel.zim.pki) ~(key by yen.zim.pki))
       =/  sus  ~(. su hen now pki etn)
-      =/  sis  ~(tap in ships.tac)
-      |-
-      ?~  sis  (curd abet:sus)
-      =.  sus  (exec:sus dus %give %public-keys %breach i.sis)
-      $(sis t.sis)
+      =;  core=_sus
+        (curd abet:core)
+      %-  ~(rep in ships.tac)
+      |=  [=ship s=_sus]
+      (exec:s dus %give %public-keys %breach ship)
     ==
   ::
   ++  take
@@ -623,10 +623,10 @@
   ::
   ++  exec                                              ::  mass gift
     |=  [yen=(set duct) cad=card]
-    =/  noy  ~(tap in yen)
-    |-  ^+  this-su
-    ?~  noy  this-su
-    $(noy t.noy, moz [[i.noy cad] moz])
+    ^+  this-su
+    %-  ~(rep in yen)
+    |=  [=duct su=_this-su]
+    su(moz [[duct cad] moz])
   ::
   ++  emit-peer
     |=  [app=term =path]
