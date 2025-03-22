@@ -691,14 +691,20 @@
   ::      > (sqt .1)
   ::      .1
   ::      > (sqt .2)
-  ::      .1.4142128
-  ::      > (~(sqt rs [%z .1e-8]) .2)
-  ::      .1.414213
+  ::      .1.4142135
+  ::      > (sqt .1e5)
+  ::      .316.22775
   ::  Source
   ++  sqt
     |=  x=@rs  ^-  @rs
     ?>  (sgn x)
-    (pow x .0.5)
+    ?:  =(.0 x)  .0
+    =/  g=@rs  (div x .2)
+    |-
+    =/  n=@rs  (mul .0.5 (add g (div x g)))
+    ?.  (gth (abs (sub g n)) rtol)
+      n
+    $(g n)
   ::    +cbrt:  @rs -> @rs
   ::
   ::  Returns the cube root of a floating-point atom.
@@ -1472,14 +1478,20 @@
   ::      > (sqt .~1)
   ::      .~1
   ::      > (sqt .~2)
-  ::      .~1.4142135623721421
-  ::      > (~(sqt rd [%z .~1e-15]) .~2)
-  ::      .~1.4142135623730923
+  ::      .~1.414213562373095
+  ::      > (sqt 1e5)
+  ::      .~316.2277660168379
   ::  Source
   ++  sqt
     |=  x=@rd  ^-  @rd
     ?>  (sgn x)
-    (pow x .~0.5)
+    ?:  =(.~0 x)  .~0
+    =/  g=@rd  (div x .~2)
+    |-
+    =/  n=@rd  (mul .~0.5 (add g (div x g)))
+    ?.  (gth (abs (sub g n)) rtol)
+      n
+    $(g n)
   ::    +cbrt:  @rd -> @rd
   ::
   ::  Returns the cube root of a floating-point atom.
@@ -2235,14 +2247,20 @@
   ::      > (sqt .~~1)
   ::      .~~1
   ::      > (sqt .~~2)
-  ::      .~~1.412
-  ::      > (~(sqt rh [%z .~~1e-1]) .~~2)
-  ::      .~~1.404
+  ::      .~~1.414
+  ::      > (sqt .~~1e3)
+  ::      .~~31.61
   ::  Source
   ++  sqt
     |=  x=@rh  ^-  @rh
     ?>  (sgn x)
-    (pow x .~~0.5)
+    ?:  =(.~~0 x)  .~~0
+    =/  g=@rh  (div x .~~2)
+    |-
+    =/  n=@rh  (mul .~~0.5 (add g (div x g)))
+    ?.  (gth (abs (sub g n)) rtol)
+      n
+    $(g n)
   ::    +cbrt:  @rh -> @rh
   ::
   ::  Returns the cube root of a floating-point atom.
@@ -2933,14 +2951,20 @@
   ::      > (sqt .~~~1)
   ::      .~~~1
   ::      > (sqt .~~~2)
-  ::      .~~~1.4142135623730950488015335862957159
-  ::      > (~(sqt rq:math [%z .~~~1e-10]) .~~~2)
-  ::      .~~~1.4142135623721439870165294373250435
+  ::      .~~~1.414213562373095048801688724209698
+  ::      > (sqt .~~~1e5)
+  ::      .~~~316.2277660168379331998893544432718
   ::  Source
   ++  sqt
     |=  x=@rq  ^-  @rq
     ?>  (sgn x)
-    (pow x .~~~0.5)
+    ?:  =(.~~~0 x)  .~~~0
+    =/  g=@rq  (div x .~~~2)
+    |-
+    =/  n=@rq  (mul .~~~0.5 (add g (div x g)))
+    ?.  (gth (abs (sub g n)) rtol)
+      n
+    $(g n)
   ::    +cbrt:  @rq -> @rq
   ::
   ::  Returns the cube root of a floating-point atom.
