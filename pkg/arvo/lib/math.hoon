@@ -699,7 +699,7 @@
     |=  x=@rs  ^-  @rs
     ?>  (sgn x)
     ?:  =(.0 x)  .0
-    =/  g=@rs  .2
+    =/  g=@rs  (div x .2)
     |-
     =/  n=@rs  (mul .0.5 (add g (div x g)))
     ?.  (gth (abs (sub g n)) rtol)
@@ -1486,7 +1486,7 @@
     |=  x=@rd  ^-  @rd
     ?>  (sgn x)
     ?:  =(.~0 x)  .~0
-    =/  g=@rd  .~2
+    =/  g=@rd  (div x .~2)
     |-
     =/  n=@rd  (mul .~0.5 (add g (div x g)))
     ?.  (gth (abs (sub g n)) rtol)
@@ -2255,7 +2255,7 @@
     |=  x=@rh  ^-  @rh
     ?>  (sgn x)
     ?:  =(.~~0 x)  .~~0
-    =/  g=@rh  .~~2
+    =/  g=@rh  (div x .~~2)
     |-
     =/  n=@rh  (mul .~~0.5 (add g (div x g)))
     ?.  (gth (abs (sub g n)) rtol)
@@ -2959,7 +2959,7 @@
     |=  x=@rq  ^-  @rq
     ?>  (sgn x)
     ?:  =(.~~~0 x)  .~~~0
-    =/  g=@rq  .~~~2
+    =/  g=@rq  (div x .~~~2)
     |-
     =/  n=@rq  (mul .~~~0.5 (add g (div x g)))
     ?.  (gth (abs (sub g n)) rtol)
