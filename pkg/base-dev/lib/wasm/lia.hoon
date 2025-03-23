@@ -76,19 +76,20 @@
 ::  ++run: extend & extract. Type monomorphic.
 ::
 ++  run
-  ~/  %run-v0
-  |=  [input=run-input =seed hint=term]
+  ~/  %run-v1
+  |=  [input=run-input =seed hint=*]
   ::
   =,  engine-sur
   =/  m  runnable
   =>  [- [input=input seed=seed] +>]  ::  remove hint
-  ^-  [yield:m * _seed]
+  ^-  [[yield:m *] _seed]
   =.  seed
     ?-    -.input
         %&
       ::  jet matching hack
       ::  past.seed >> p.input
       ::
+      !.
       seed(past ((try:m) past.seed =>(p.input |=(* +>))))
     ::
         %|
@@ -98,9 +99,9 @@
   =/  valid  (validate-module:validator ast)
   ?>  ?=(%& -.valid)
   =/  sat=(lia-state)  [(conv:engine ast ~) shop.seed import.seed]
-  |^  ^-  [yield:m * _seed]
+  |^  ^-  [[yield:m *] _seed]
   =^  yil=yield:m  sat  (;<(* try:m init past.seed) sat)  ::  ((init >> past.seed) sat)
-  [yil p.r.sat seed]
+  [[yil p.r.sat] seed]
   ::
   ++  init
     =/  m  (script ,~ *)
@@ -131,7 +132,7 @@
 ++  arrows
   :: =*  ctx  .
   |*  m-acc=mold
-  ^?  |%
+  ^?  !.  |%
   ++  m-sat  (lia-state m-acc)
   ++  call
     |=  [name=cord args=(list @)]

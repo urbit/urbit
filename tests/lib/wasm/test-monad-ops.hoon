@@ -1,13 +1,14 @@
 /+  *test
-/+  wasm=wasm-lia
-/*  bin  %wasm  /tests/lib/wasm/wat2wasm/wasm
+/+  wasm-lib=wasm-lia
+/*  parser-bin  %wasm  /tests/lib/wasm/wat2wasm/wasm
 ::
-=/  lv  lia-value:lia-sur:wasm
-=/  cw  coin-wasm:wasm-sur:wasm
-=/  import  import:lia-sur:wasm
-=/  script  script:lia-sur:wasm
-=/  arr  ^?((arrows:wasm *))
-=/  wasm  ^?(wasm)
+=/  lv  lia-value:lia-sur:wasm-lib
+=/  cw  coin-wasm:wasm-sur:wasm-lib
+=/  import  import:lia-sur:wasm-lib
+=/  script  script:lia-sur:wasm-lib
+=/  arr  ^?((arrows:wasm-lib *))
+
+=/  wasm  ^?(wasm-lib)
 =>  |%
     ++  i8neg   ^~((cury sub (bex 8)))
     ++  i16neg  ^~((cury sub (bex 16)))
@@ -22,7 +23,7 @@
     ?>  ?=([[%octs *] ~] out)
     +.i.out
   %-  yield-need:wasm  =<  -
-  %^  (run-once:wasm (list lv) *)  [bin `~]  %$
+  %^  (run-once:wasm (list lv) *)  [parser-bin `~]  %$
   =,  arr
   =/  m  runnable:wasm
   ;<  retptr=@  try:m  (call-1 '__wbindgen_add_to_stack_pointer' (i32neg 16) ~)
@@ -57,6 +58,41 @@
       -:((run-once:wasm (list lv) *) sed %$ script)
     ?:  =(nock fast)  &+~
     [%| nock+nock fast+fast]
+  ::
+  ++  run-once-comp-list
+    =/  m  runnable:wasm
+    |=  [sed=[module=octs =(import *)] scripts=(list form:m)]
+    =/  script
+      =/  m  (script:lia-sur:wasm-lib (list (list lv)) *)
+      =|  out=(list (list lv))
+      |-  ^-  form:m
+      ?~  scripts  (return:m out)
+      ;<  res=(list lv)  try:m  i.scripts
+      $(out [res out], scripts t.scripts)
+    ^-  (each ~ [[%nock yield:m] [%fast yield:m]])
+    ?.  print-time
+      =/  nock  -:((run-once:wasm (list (list lv)) *) sed %none script)
+      =/  fast  -:((run-once:wasm (list (list lv)) *) sed %$ script)
+      ?>  ?=(%0 -.nock)
+      ?>  ?=(%0 -.fast)
+      |-
+      ?:  =(~ p.nock)  &+~
+      ?.  =(-.p.nock -.p.fast)  [%| nock+0+,.-.p.nock fast+0+,.-.p.fast]
+      $(p.nock +.p.nock, p.fast +.p.fast)
+    =/  nock
+      ~&  %nock
+      ~>  %bout
+      -:((run-once:wasm (list (list lv)) *) sed %none script)
+    =/  fast
+      ~&  %fast
+      ~>  %bout
+      -:((run-once:wasm (list (list lv)) *) sed %$ script)
+    ?>  ?=(%0 -.nock)
+    ?>  ?=(%0 -.fast)
+    |-
+    ?:  =(~ p.nock)  &+~
+    ?.  =(-.p.nock -.p.fast)  [%| nock+0+,.-.p.nock fast+0+,.-.p.fast]
+    $(p.nock +.p.nock, p.fast +.p.fast)
   ::
   ++  m-inputs
     ^~
@@ -681,20 +717,20 @@
     ?~  ops  types-loop(types t.types)
     =/  binary=octs  (bin i.types i.ops)
     =/  input0=(list @)  (~(got by m-inputs) i.types)
-    |-  =*  input0-loop  $
-    ?~  input0  ops-loop(ops t.ops)
     =/  input1=(list @)  (~(got by m-inputs) i.types)
-    |-  =*  input1-loop  $
-    ?~  input1  input0-loop(input0 t.input0)
-    ::
-    =;  res=(each ~ [[%nock yield:m] [%fast yield:m]])
-      ?:  ?=(%| -.res)  res
-      input1-loop(input1 t.input1)
-    %+  run-once-comp  [binary `~]
-    =,  arr
+    =;  scripts=(list form:m)
+      (run-once-comp-list [binary `~] scripts)
+    =|  scripts=(list form:m)
+    |-
+    ?~  input0  scripts
+    =/  input1-copy  input1
+    |-
+    ?~  input1  ^$(input0 t.input0, input1 input1-copy)
+    :_  $(input1 t.input1)
     =/  m  runnable:wasm
+    =,  arr
     ;<  a=@  try:m  (call-1 'test' i.input0 i.input1 ~)
-    (return:m ;;(lv [(crip i.types) a]) ~)
+    (return:m ;;(lv [(crip i.types) a]) ~)  
     ::
     ++  bin
       |=  [type=tape op=tape]
@@ -724,20 +760,20 @@
     ?~  signs  types-loop(types t.types)
     =/  binary=octs  (bin i.types i.signs)
     =/  input0=(list @)  (~(got by m-inputs) i.types)
-    |-  =*  input0-loop  $
-    ?~  input0  signs-loop(signs t.signs)
     =/  input1=(list @)  (~(got by m-inputs) i.types)
-    |-  =*  input1-loop  $
-    ?~  input1  input0-loop(input0 t.input0)
-    ::
-    =;  res=(each ~ [[%nock yield:m] [%fast yield:m]])
-      ?:  ?=(%| -.res)  res
-      input1-loop(input1 t.input1)
-    %+  run-once-comp  [binary `~]
-    =,  arr
+    =;  scripts=(list form:m)
+      (run-once-comp-list [binary `~] scripts)
+    =|  scripts=(list form:m)
+    |-
+    ?~  input0  scripts
+    =/  input1-copy  input1
+    |-
+    ?~  input1  ^$(input0 t.input0, input1 input1-copy)
+    :_  $(input1 t.input1)
     =/  m  runnable:wasm
+    =,  arr
     ;<  a=@  try:m  (call-1 'test' i.input0 i.input1 ~)
-    (return:m ;;(lv [(crip i.types) a]) ~)
+    (return:m ;;(lv [(crip i.types) a]) ~)  
     ::
     ++  bin
       |=  [type=tape sign=tape]
@@ -767,20 +803,20 @@
     ?~  ops  types-loop(types t.types)
     =/  binary=octs  (bin i.types i.ops)
     =/  input0=(list @)  (~(got by m-inputs) i.types)
-    |-  =*  input0-loop  $
-    ?~  input0  ops-loop(ops t.ops)
     =/  input1=(list @)  (~(got by m-inputs) i.types)
-    |-  =*  input1-loop  $
-    ?~  input1  input0-loop(input0 t.input0)
-    ::
-    =;  res=(each ~ [[%nock yield:m] [%fast yield:m]])
-      ?:  ?=(%| -.res)  res
-      input1-loop(input1 t.input1)
-    %+  run-once-comp  [binary `~]
-    =,  arr
+    =;  scripts=(list form:m)
+      (run-once-comp-list [binary `~] scripts)
+    =|  scripts=(list form:m)
+    |-
+    ?~  input0  scripts
+    =/  input1-copy  input1
+    |-
+    ?~  input1  ^$(input0 t.input0, input1 input1-copy)
+    :_  $(input1 t.input1)
     =/  m  runnable:wasm
+    =,  arr
     ;<  a=@  try:m  (call-1 'test' i.input0 i.input1 ~)
-    (return:m ;;(lv [(crip i.types) a]) ~)
+    (return:m ;;(lv [(crip i.types) a]) ~)  
     ::
     ++  bin
       |=  [type=tape op=tape]
@@ -862,9 +898,10 @@
       """
       (module
         (memory 1)
-        (func (export "write_i32")
-          (param i32)
-          (i32.store (local.get 0) (i32.const 42))
+        (func (export "write_i32") (param i32)
+          (loop   ;; test suspension stack
+            (i32.store (local.get 0) (i32.const 42))
+          )
         )
       )
       """
@@ -895,9 +932,10 @@
       """
       (module
         (memory 1)
-        (func (export "write_i64")
-          (param i32)
-          (i64.store (local.get 0) (i64.const 42))
+        (func (export "write_i64") (param i32)
+          (loop   ;; test suspension stack
+            (i64.store (local.get 0) (i64.const 42))
+          )
         )
       )
       """
@@ -928,10 +966,11 @@
       """
       (module
         (memory 1)
-        (func (export "read_i32")
-          (param i32)
-          (i32.load (local.get 0))
-          drop
+        (func (export "read_i32") (param i32)
+          (loop   ;; test suspension stack
+            (i32.load (local.get 0))
+            drop
+          )
         )
       )
       """
@@ -962,10 +1001,11 @@
       """
       (module
         (memory 1)
-        (func (export "read_i64")
-          (param i32)
-          (i64.load (local.get 0))
-          drop
+        (func (export "read_i64") (param i32)
+          (loop   ;; test suspension stack
+            (i64.load (local.get 0))
+            drop
+          )
         )
       )
       """
