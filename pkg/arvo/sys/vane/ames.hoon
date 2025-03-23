@@ -7561,6 +7561,7 @@
                 %tame  sy-abet:(sy-tame:sy-core ship.task)
                 %sift  sy-abet:(sy-sift:sy-core ships.task)
                 %spew  sy-abet:(sy-spew:sy-core veb.task)
+                %trim  sy-abet:sy-trim:sy-core
               ::  key reservation for %shut namespave
               ::
                 ?(%plug %gulp)  sy-abet:(sy-plug:sy-core task)
@@ -10081,6 +10082,29 @@
             ==
           ::
           --
+        ::
+        ::  +sy-trim: handle request to free memory
+        ::
+        ::    (%ruin comets not seen for six months)
+        ::
+        ++  sy-trim
+          ^+  sy-core
+          %-  sy-emit
+          :*  hen  %pass  /ruin  %j  %ruin
+              %-  ~(rep by chums.ames-state)
+              |=  [[=ship c=chum-state] coms=(set @p)]
+              ?.  &(?=(%known -.c) =(%pawn (clan:title ship)))
+                coms
+              ::  XX alien comets?
+              ::
+              =?  coms  ?&  (gth (sub now ~d180) last-contact.qos.c)
+                            %-  ~(any by flows.c)
+                            |=  f=flow-state
+                            !=(~ loads.snd.f)  ::  XX !?=([^ ^ *] loads.snd.f)
+                        ==
+                (~(put in coms) ship)
+              coms
+          ==
         ::
         +|  %internals
         ::
