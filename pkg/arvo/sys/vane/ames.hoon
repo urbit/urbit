@@ -5916,7 +5916,7 @@
                 =.  peer-core
                   %+  roll  sent
                   |=  [packet=static-fragment core=_peer-core]
-                  (send-shut-packet bone [message-num %& +]:packet)
+                  (send-shut-packet:core bone [message-num %& +]:packet)
                 pack
               ::
               +|  %tasks
@@ -5997,7 +5997,7 @@
                   =.  peer-core
                     %+  reel  resends.res
                     |=  [packet=static-fragment core=_peer-core]
-                    (send-shut-packet bone [message-num %& +]:packet)
+                    (send-shut-packet:core bone [message-num %& +]:packet)
                   pack
                 ::
                 =/  acc
@@ -6048,7 +6048,7 @@
                     =.  peer-core
                       %+  reel  resends.-
                       |=  [packet=static-fragment core=_peer-core]
-                      (send-shut-packet bone [message-num %& +]:packet)
+                      (send-shut-packet:core bone [message-num %& +]:packet)
                     (fast-resend-after-ack message-num fragment-num)
                 ::
                 =/  acc
