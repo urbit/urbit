@@ -1,6 +1,6 @@
 /+  *test
 /+  wasm-lib=wasm-lia
-/+  parser=wasm-tools-wat-parser-lia
+/*  parser-bin  %wasm  /tests/lib/wasm/wat2wasm/wasm
 ::
 =/  lv  lia-value:lia-sur:wasm-lib
 =/  cw  coin-wasm:wasm-sur:wasm-lib
@@ -15,6 +15,26 @@
     ++  i32neg  ^~((cury sub (bex 32)))
     ++  i64neg  ^~((cury sub (bex 64)))
     --
+=/  parser
+  |=  string-in=tape
+  ^-  octs
+  ?>  (levy string-in (curr lte 0x7f))
+  =;  out=(list lv)
+    ?>  ?=([[%octs *] ~] out)
+    +.i.out
+  %-  yield-need:wasm  =<  -
+  %^  (run-once:wasm (list lv) *)  [parser-bin `~]  %$
+  =,  arr
+  =/  m  runnable:wasm
+  ;<  retptr=@  try:m  (call-1 '__wbindgen_add_to_stack_pointer' (i32neg 16) ~)
+  =/  len0=@  (lent string-in)
+  ;<  ptr0=@    try:m  (call-1 '__wbindgen_malloc' len0 1 ~)
+  ;<  ~         try:m  (memwrite ptr0 len0 (crip string-in))
+  ;<  *         try:m  (call 'process' retptr ptr0 len0 ~)
+  ;<  r0=octs   try:m  (memread retptr 4)
+  ;<  r1=octs   try:m  (memread (add retptr 4) 4)
+  ;<  r2=octs   try:m  (memread q.r0 q.r1)
+  (return:m octs+r2 ~)
 =>
   =/  print-time=?  |
   |%
