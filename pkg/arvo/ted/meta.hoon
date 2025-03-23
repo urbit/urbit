@@ -14,11 +14,11 @@
 ?>  ?=(%message p.q.sage)
 %-  pure:m  !>
 ?+  -.q.q.sage  !!
-  %clos  "flow in closing? "^"{<;;(? +.q.q.sage)>}"
-  %gone  "flow is corked?"^"%.y"
-  %line  "migration line: "^;;(@ud +.q.q.sage)
-  %lods  "unacked payloads: "^;;(@ud +.q.q.sage)::(wyt:fo-mop:fo-core loads.snd))
-  %next  "next payload: "^;;(@ud +.q.q.sage)::next.snd)
-  %last  "last acked: "^;;(@ud +.q.q.sage)::last-acked.rcv)
-  %naxp  "message nacked? "^"{<;;(? +.q.q.sage)>}"
+  %clos  ["flow in closing? " "{<;;(? +.q.q.sage)>}"]
+  %gone  ["flow is corked?" "%.y"]
+  %line  ["migration line: " "{<;;(@ud +.q.q.sage)>}"]
+  %lods  ["unacked payloads: " "{<;;(@ud +.q.q.sage)>}"]
+  %next  ["next payload: " "{<;;(@ud +.q.q.sage)>}"]
+  %last  ["last acked: " "{<;;(@ud +.q.q.sage)>}"]
+  %naxp  ["message nacked? " "{<;;(? +.q.q.sage)>}"]
 ==

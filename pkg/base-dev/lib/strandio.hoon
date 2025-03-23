@@ -233,6 +233,7 @@
 ++  take-message
   =>  |%  +$  out  $%  [%sage sage:mess:ames]
                        [%tune spar:ames (unit roar:ames)]
+                       [%page spar:ames (unit (unit page))]
                    ==
       --
   |=  =wire
@@ -251,6 +252,11 @@
     ?.  =(wire wire.u.in.tin)
       `[%skip ~]
     `[%done %tune +>.sign-arvo.u.in.tin]
+    ::
+      [~ %sign * %ames %near ^ *]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    `[%done %page +>.sign-arvo.u.in.tin]
   ==
 ::
 ++  take-near
@@ -420,16 +426,16 @@
   ==
 ::
 ++  keen
-  |=  [=wire =spar:ames]
-  =/  m  (strand ,~)
-  ^-  form:m
-  (send-raw-card %pass wire %arvo %a %keen ~ spar)
-::
-++  meen
   |=  [=wire =spar:ames sec=(unit [@ @])]
   =/  m  (strand ,~)
   ^-  form:m
   (send-raw-card %pass wire %arvo %a %keen sec spar)
+::
+++  chum
+  |=  [=wire =spar:ames]
+  =/  m  (strand ,~)
+  ^-  form:m
+  (send-raw-card %pass wire %arvo %a %chum spar)
 ::
 ++  keen-shut
   |=  [=wire =spar:ames]
