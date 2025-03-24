@@ -7201,6 +7201,48 @@
             =-  ``atom+!>(`@ux`-)
             %+  en:crub:crypto  symmetric-key.u.per
             ?~(u.res ~ (jam [p q.q]:u.u.res))
+            ::  private namespaces
+            ::
+            ::  metadata query; XX only pump/sink/closing/corked info supported
+            ::
+              [%meta %ship ship=@ %ames bone=@ qery=*]
+            ?:  =(~ lyc)
+              ~
+            ^-  (unit (unit cage))
+            =/  ship  (slaw %p ship.tyl)
+            =/  bone  (slaw %ud bone.tyl)
+            ?:  |(?=(~ ship) ?=(~ bone))
+              [~ ~]
+            ::  XX check that ship is in .lyc
+            ::
+            ?.  &(?=(^ lyc) (~(has in u.lyc) u.ship))
+              [~ ~]
+            =/  per  (~(get by peers.ames-state) u.ship)
+            ?.  ?=([~ %known *] per)
+              ~  ::  %alien or missing
+            ?+    qery.tyl  ~
+                ~          ~ :: XX implement full meta
+                  [%clos ~]
+                ?.  (~(has in closing.u.per) u.bone)  ~
+                ``message/!>(clos/&)
+              ::
+                  [%cork ~]
+                ?.  (~(has in corked.u.per) u.bone)  ~
+                ``message/!>(cork/&)
+              ::
+                  [%next ~]
+                ?~  pump=(~(get by snd.u.per) u.bone)  ~
+                ``message/!>(next/next.u.pump)
+              ::
+                  [%curr ~]
+                ?~  pump=(~(get by snd.u.per) u.bone)  ~
+                ``message/!>(curr/current.u.pump)
+              ::
+                  [%last ~]
+                ?~  sink=(~(get by rcv.u.per) u.bone)  ~
+                ``message/!>(last/last-acked.u.sink)
+              ::
+            ==
           ==
         ::
         ::  only respond for the local identity, %$ desk, current timestamp
@@ -7496,42 +7538,6 @@
               ~
             `last-acked.rcv.u.flow
           ::
-          ::  metadata query; XX only pump/sink/closing/corked info supported
-          ::
-              [%meta %ship ship=@ %ames bone=@ qery=*]
-            ^-  (unit (unit cage))
-            =/  ship  (slaw %p ship.tyl)
-            =/  bone  (slaw %ud bone.tyl)
-            ~&  >>>  ship^bone
-            ?:  |(?=(~ ship) ?=(~ bone))
-              [~ ~]
-            =/  per  (~(get by peers.ames-state) u.ship)
-            ?.  ?=([~ %known *] per)
-              ~  ::  %alien or missing
-            ~&  >>>  hey/per
-            ?+    qery.tyl  ~
-                ~          ~ :: XX implement full meta
-                  [%clos ~]
-                ?.  (~(has in closing.u.per) u.bone)  ~
-                ``message/!>(clos/&)
-              ::
-                  [%cork ~]
-                ?.  (~(has in corked.u.per) u.bone)  ~
-                ``message/!>(cork/&)
-              ::
-                  [%next ~]
-                ?~  pump=(~(get by snd.u.per) u.bone)  ~
-                ``message/!>(next/next.u.pump)
-              ::
-                  [%curr ~]
-                ?~  pump=(~(get by snd.u.per) u.bone)  ~
-                ``message/!>(curr/current.u.pump)
-              ::
-                  [%last ~]
-                ?~  sink=(~(get by rcv.u.per) u.bone)  ~
-                ``message/!>(last/last-acked.u.sink)
-              ::
-            ==
         ==
       ::
       --

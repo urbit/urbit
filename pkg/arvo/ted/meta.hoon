@@ -40,4 +40,5 @@
   %next  ["next payload: " "{<;;(@ud +.q.q.sage)>}"]
   %last  ["last acked: " "{<;;(@ud +.q.q.sage)>}"]
   %naxp  ["message nacked? " "{<;;(? +.q.q.sage)>}"]
+  %curr  ["currest message: " "{<;;(@ud +.q.q.sage)>}"]
 ==
