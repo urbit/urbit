@@ -2014,7 +2014,7 @@
       =/  [nit=@ tau=@ gaf=@ gyf=@ fag=@]
         ?~  wan
           [0b1 0b0 0b0 0 0]
-        =/  gaf  (dec (xeb (met 3 (max 1 fag.wan))))  :: XX xeb wrong here; fragments > 0xffff?
+        =/  gaf  (dec (xeb (met 3 (max 1 fag.wan))))
         [0b0 ?:(?=(%auth typ.wan) 0b1 0b0) gaf (bex gaf) fag.wan]
       ::
       =/  tap  =-([p=(met 3 -) q=-] `@t`(rap 3 (join '/' pat)))
@@ -2070,7 +2070,7 @@
     ++  en
       |=  [tob=@ud aut=auth:pact dat=@]
       ^-  plot
-      =/  lot  (dec (met 3 (max 1 tob)))
+      =/  lot  (dec (xeb (met 3 (max 1 tob))))
       ?>  (lte lot 3)
       ::
       =/  [aub=@ubB aum=plat:plot]
