@@ -4408,7 +4408,7 @@
           =+  pe-core=(abed:pe ship)
           =+  fi-core=%*(. fi:pe-core path path)
           ?.  all
-            abet:fi-abet:(fi-unsub:fi-core duct)
+            abet:fi-abet:fi-unsub:fi-core
           =*  user-path  path
           =+  ls=(~(get ju tip.peer-state.fi-core) user-path)
           ::
@@ -4416,6 +4416,10 @@
             %-  %+  fi-trace:fi-core  fin.veb
                 |.("path not in .tip {<fi-full-path.fi-core>}")
             :: XX check if there's something in the .pit?
+            :: =.  fi-core
+            ::   (~(rep by listeners.keen.fi-core) (fi-give-tune:fi-core ~))
+            :: =.  listeners.keen.fi-core    ~
+            :: abet:fi-abet:fi-core
             event-core
           %-  %+  fi-trace:fi-core  fin.veb
               |.("unsub all {<`^path`fi-full-path.fi-core>}")
@@ -6776,9 +6780,8 @@
             ::  scry is autocancelled in +abet if no more listeners
             ::
             ++  fi-unsub
-              |=  hen=^duct
               ^+  fine
-              =+  original-path=path
+              =+  user-path=path
               =+  ls=(~(get ju tip.peer-state) path)
               ?:  =(~ ls)  :: XX TMI
                 %-  (fi-trace fin.veb |.("path no in tip {<fi-full-path>}"))
@@ -6793,27 +6796,32 @@
               :: (fi-trace fin.veb |.("unknown {<fi-full-path>} {<duct>}"))
               ::  find internal path assigned for the listener
               ::
-              =.  path
+              =/  [=keen=^path =ames=^duct]
                 %-  ~(rep in ls)
-                |=  [[=^duct =^path] p=_path]
-                ?~  ms=(~(get by keens.peer-state) path)       p
-                ?.  (~(has in ~(key by listeners.u.ms)) duct)  p
-                =/  unsub-listener=^^duct
-                  ?.(?=([[%ames *] *] duct) duct t.duct)
-                ?.  =(unsub-listener hen)  p
-                path
-              ?~  ms=(~(get by keens.peer-state) path)
+                |=  [[=internal=^duct =^path] =ames=_path =ames=^duct]
+                ?~  ms=(~(get by keens.peer-state) path)
+                  ames-path^ames-duct
+                ?.  (~(has in ~(key by listeners.u.ms)) internal-duct)
+                  ames-path^ames-duct
+                =/  unsub-listener=^duct
+                  ?.  ?=([[%ames *] *] internal-duct)  internal-duct
+                  t.internal-duct
+                ?.  =(unsub-listener duct)
+                  ames-path^ames-duct
+                path^internal-duct
+              ?~  ms=(~(get by keens.peer-state) keen-path)
                 %-  %+  fi-trace  fin.veb.bug.ames-state
-                    |.("no keen for path={(spud path)}}")
+                    |.("no keen for path={(spud keen-path)}}")
                 fine
               =.  keen  u.ms
               ?:  =(~ listeners.keen)  ::  XX TMI
                 %.  fine
-                (fi-trace fin.veb |.("unknown {<fi-full-path>} {<hen>}"))
-              %-  (fi-trace fin.veb |.("unsub {<fi-full-path>} on {<hen>}"))
+                (fi-trace fin.veb |.("unknown {<fi-full-path>} {<duct>}"))
+              %-  (fi-trace fin.veb |.("unsub {<fi-full-path>} on {<duct>}"))
               ::
-              ?~  ints=(~(get ju listeners.keen) duct)
-                ::  XX weird; log?
+              ?~  ints=(~(get ju listeners.keen) ames-duct)
+                %-  %+  fi-trace  fin.veb.bug.ames-state
+                    |.("no interest for path={(spud keen-path)}}")
                 ::
                 fine
               ::  XX deletes all interest of this listener
@@ -6823,9 +6831,9 @@
               :: %-  ~(rep in `(set ints)`(~(get ju listeners.keen) hen))
               :: |=  [=ints =_fine]
               :: fine(listeners.keen (~(del ju listeners.keen) hen ints))
-              =.  listeners.keen  (~(del by listeners.keen) hen)
-              %^  fi-emit  hen  %pass
-              [/prune-tip %a %deep %prun her original-path hen path]
+              =.  listeners.keen  (~(del by listeners.keen) ames-duct)
+              %^  fi-emit(path keen-path)  duct  %pass
+              [/prune-tip %a %deep %prun her user-path ames-duct keen-path]
             ::  XX
             ::
             ++  fi-rat
