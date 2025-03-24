@@ -7487,7 +7487,44 @@
             ?~  flow=(~(get by flows.u.chu) u.ping-bone %bak)
               ~
             `last-acked.rcv.u.flow
-          ==
+          ::
+          ::  metadata query; XX only pump/sink/closing/corked info supported
+          ::
+              [%meta %ship ship=@ %ames bone=@ qery=*]
+            ^-  (unit (unit cage))
+            =/  ship  (slaw %p ship.tyl)
+            =/  bone  (slaw %ud bone.tyl)
+            ~&  >>>  ship^bone
+            ?:  |(?=(~ ship) ?=(~ bone))
+              [~ ~]
+            =/  per  (~(get by peers.ames-state) u.ship)
+            ?.  ?=([~ %known *] per)
+              ~  ::  %alien or missing
+            ~&  >>>  hey/per
+            ?+    qery.tyl  ~
+                ~          ~ :: XX implement full meta
+                  [%clos ~]
+                ?.  (~(has in closing.u.per) u.bone)  ~
+                ``message/!>(clos/&)
+              ::
+                  [%cork ~]
+                ?.  (~(has in corked.u.per) u.bone)  ~
+                ``message/!>(cork/&)
+              ::
+                  [%next ~]
+                ?~  pump=(~(get by snd.u.per) u.bone)  ~
+                ``message/!>(next/next.u.pump)
+              ::
+                  [%curr ~]
+                ?~  pump=(~(get by snd.u.per) u.bone)  ~
+                ``message/!>(curr/current.u.pump)
+              ::
+                  [%last ~]
+                ?~  sink=(~(get by rcv.u.per) u.bone)  ~
+                ``message/!>(last/last-acked.u.sink)
+              ::
+            ==
+        ==
       ::
       --
     ::  directed M E S s A ging
@@ -11741,7 +11778,12 @@
     ?.  =(~ lyc)
       ::  private, message-level namespaces
       ::
-      ?.(?=(?(%flow %cork %whey %meta) -.tyl) ~ (scry:me-core sample))
+      ?.  ?=([%meta req=*] tyl)
+        ?.  ?=(?(%flow %cork %whey) -.tyl)  ~   (scry:me-core sample)
+      ?+  req.tyl                               ~
+        [%ship @ %ames *]                       (scry:am-core sample)
+        [%ship @ %flow *]                       (scry:me-core sample)
+      ==
     ?+    -.tyl  ~
         %fine                                   (scry:am-core sample)
         ?(%mess %publ %shut %veri %pawn)        (scry:me-core sample)
