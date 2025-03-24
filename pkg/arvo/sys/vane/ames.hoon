@@ -9727,9 +9727,8 @@
           $(ships t.ships, moves (weld moves new-moves))
           ::
           ++  prod-peer
-            |=  [[=ship =chum-state] moves=(list move) state=_ames-state]
-            =+  per-sat=(get-per:ev ship)
-            ?.  ?=([~ ~ %known *] per-sat)
+            |=  [[=ship per-sat=chum-state] moves=(list move) state=_ames-state]
+            ?.  ?=([%known *] per-sat)
               :_  state
               ::  XX  this shouldn't be needed
               ::  XX  only if %alien
@@ -9743,7 +9742,7 @@
               :_  moves
               [[//keys]~ %pass /public-keys %j %public-keys ship ~ ~]
             ::
-            =+  core=~(ev-core ev hen ship +.u.u.per-sat)
+            =+  core=~(ev-core ev(ames-state state) hen ship +.per-sat)
             ::
             =^  resend-moves  state
               =;  c=_core  ev-abet:c
