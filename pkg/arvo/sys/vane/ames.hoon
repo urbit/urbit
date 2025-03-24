@@ -8401,8 +8401,8 @@
             =.  for.u.ms  (~(del by for.u.ms) duct)
             =.  pit.per.core
               ?~  for.u.ms
-                (~(del by pit.per) ames-path)
-              (~(put by pit.per) ames-path u.ms)
+                (~(del by pit.per.core) ames-path)
+              (~(put by pit.per.core) ames-path u.ms)
               ::  use a task to remove individual interest?
               ::  XX what if other listener subscribed to %rate gifts?
               ::
