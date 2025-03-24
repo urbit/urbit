@@ -2235,15 +2235,43 @@
       ++  decompress-point  decompress-point:curve
       ++  add-points        add-points:curve
       ++  mul-point-scalar  mul-point-scalar:curve
+      ::
+      ++  add-tweak-scalar
+        ~/  %tweak-sec
+        |=  [sek=@ tek=@]
+        ^-  @
+        ?>  (lte (met 3 tek) 32)
+        ?>  (lte (met 3 sek) 32)
+        (sit:field-n:curve (add sek tek))
+      ::
+      ++  add-tweak-compressed-point
+        ~/  %tweak-pub
+        |=  [cop=@ tek=@]
+        ^-  @
+        ?>  (lte (met 3 tek) 32)
+        ?>  (lte (met 3 cop) 33)
+        %-  compress-point
+        %+  add-points
+          :: validates point
+          (decompress-point cop)
+        (mul-point-scalar g:t tek)
+      ::
       ++  make-k
         ~/  %make
         |=  [hash=@uvI private-key=@]
         ::  checks sizes
         (make-k:curve hash private-key)
-      ++  priv-to-pub
+      ::
+      ++  priv-to-cmp-pub
+        ~/  %priv-to-pub
         |=  private-key=@
         ::  checks sizes
-        (priv-to-pub:curve private-key)
+        (compress-point (priv-to-pub:curve private-key))
+      ::
+      ++  priv-to-pub
+        |=  private-key=@
+        ::  wrap compressed-point jet interface for backcompatibility
+        (decompress-point (priv-to-cmp-pub private-key))
       ::
       ++  ecdsa-raw-sign
         ~/  %sign
