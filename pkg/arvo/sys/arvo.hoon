@@ -1764,7 +1764,7 @@
   |=  hir=$<(%grub heir)
   ^-  ^
   ~|  %load
-  ~>  %spin.[%arvo]  ~>  %spin.[%load]
+  ~>  %spin.['load/arvo')]
   ::  store persistent state
   ::
   =.  sol
@@ -1802,7 +1802,7 @@
           ==
       ==
   ^-  (unit (cask))
-  ~>  %spin.[%arvo]  ~>  %spin.[%peek]
+  ~>  %spin.['peek/arvo')]
   =/  hap=(unit [pat=? omen])
     ?-  nom
       [%& *]        ?~(mon=(de-omen p.nom) ~ `[| u.mon])
@@ -1822,7 +1822,7 @@
 ++  poke                                                ::  +23
   |=  [now=@da ovo=ovum]
   ^-  ^
-  ~>  %spin.[%arvo]  ~>  %spin.[%poke]
+  ~>  %spin.['poke/arvo')]
   ::  this assertion is not yet viable, as vere's timestamps
   ::  are too unreliable. sad!
   ::
@@ -1846,7 +1846,7 @@
 ::
 ++  wish                                                ::  +10
   |=  txt=@
-  ~>  %spin.[%arvo]  ~>  %spin.[%wish]
+  ~>  %spin.['wish/arvo')]
   q:(slap zus.mod (ream txt))
 --  =>
 ::

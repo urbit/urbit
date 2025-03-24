@@ -396,6 +396,7 @@
 ::
 =|  state=state-16
 |=  [now=@da eny=@uvJ rof=roof]
+~>  %spin.[%gall]
 =*  gall-payload  .
 ~%  %gall-top  ..part  ~
 |%
@@ -1373,7 +1374,7 @@
     ++  ap-idle
       ^+  ap-core
       ?:  ?=(%| -.agent.yoke)  ap-core
-      ~>  %spin.[agent-name]  ~>  %spin.[%on-save]
+      ~>  %spin.[(crip "on-save/{<agent-name>}")]
       =>  [ken=ken.yoke (ap-ingest ~ |.([ap-yawn-all p.agent.yoke]))]
       ap-core(ken.yoke ken, agent.yoke |+on-save:ap-agent-core)
     ::
@@ -1723,7 +1724,7 @@
       ~/  %ap-peek
       |=  [veb=? care=term tyl=path]
       ^-  (unit (unit cage))
-      ~>  %spin.[agent-name]  ~>  %spin.[%on-peek]
+      ~>  %spin.[(crip "on-peek/{<agent-name>}")]
       ::  take trailing mark off path for %x scrys
       ::
       =^  want=mark  tyl
@@ -1806,7 +1807,7 @@
       ~/  %ap-reinstall
       |=  =agent
       ^+  ap-core
-      ~>  %spin.[agent-name]  ~>  %spin.[%on-save]
+      ~>  %spin.[(crip "on-save/{<agent-name>}")]
       =/  old-state=vase
         ?:  ?=(%& -.agent.yoke)
           on-save:ap-agent-core
@@ -1835,7 +1836,7 @@
       ~/  %ap-subscribe
       |=  pax=path
       ^+  ap-core
-      ~>  %spin.[agent-name]  ~>  %spin.[%on-watch]
+      ~>  %spin.[(crip "on-watch/{<agent-name>}")]
       =/  incoming   [ship.attributing.agent-routes pax]
       =.  bitt.yoke  (~(put by bitt.yoke) agent-duct incoming)
       =^  maybe-tang  ap-core
@@ -1850,7 +1851,7 @@
       ~/  %ap-poke
       |=  =cage
       ^+  ap-core
-      ~>  %spin.[agent-name]  ~>  %spin.[%on-poke]
+      ~>  %spin.[(crip "on-poke/{<agent-name>}")]
       =^  maybe-tang  ap-core
         %+  ap-ingest  %poke-ack  |.
         (on-poke:ap-agent-core cage)
@@ -1860,7 +1861,7 @@
     ++  ap-error
       |=  [=term =tang]
       ^+  ap-core
-      ~>  %spin.[agent-name]  ~>  %spin.[%on-fail]
+      ~>  %spin.[(crip "on-fail/{<agent-name>}")]
       =/  form  |=(=tank [%rose [~ "! " ~] tank ~])
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
@@ -1872,7 +1873,7 @@
       ~/  %ap-generic-take
       |=  [=wire =sign-arvo]
       ^+  ap-core
-      ~>  %spin.[agent-name]  ~>  %spin.[%on-arvo]
+      ~>  %spin.[(crip "on-arvo/{<agent-name>}")]
       =?  sign-arvo  ?=([%lick *] sign-arvo)
         ?+  sign-arvo
           ~|(%nope !!)
@@ -1952,7 +1953,7 @@
       ::
       ++  sub-key  [agent-wire dock]
       ++  ingest   
-        ~>  %spin.[agent-name]  ~>  %spin.[%on-agent]
+        ~>  %spin.[(crip "on-agent/{<agent-name>}")]
         (ap-ingest ~ |.((on-agent:ap-agent-core agent-wire sign)))
       ++  run-sign
         ?-    -.sign
@@ -2046,7 +2047,7 @@
       ~/  %ap-upgrade-state
       |=  maybe-vase=(unit vase)
       ^-  [(unit tang) _ap-core]
-      ~>  %spin.[agent-name]  ~>  %spin.[%on-init]
+      ~>  %spin.[(crip "on-init/{<agent-name>}")]
       ::
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~
@@ -2063,7 +2064,7 @@
     ::
     ++  ap-load-delete
       ^+  ap-core
-      ~>  %spin.[agent-name]  ~>  %spin.[%on-leave]
+      ~>  %spin.[(crip "on-leave/{<agent-name>}")]
       ::
       =/  maybe-incoming  (~(get by bitt.yoke) agent-duct)
       ?~  maybe-incoming
@@ -2377,7 +2378,7 @@
   ~%  %gall-call  +>   ~
   |=  [=duct dud=(unit goof) hic=(hobo task)]
   ^-  [(list move) _gall-payload]
-  ~>  %spin.[%gall]  ~>  %spin.[%call]
+  ~>  %spin.[%call]
   ?^  dud
     ~|(%gall-call-dud (mean tang.u.dud))
   ::
@@ -2445,7 +2446,7 @@
 ::
 ++  load
   |^  |=  old=spore-any
-      ~>  %spin.[%gall]  ~>  %spin.[%load]
+      ~>  %spin.[%load]
       =?  old  ?=(%7 -.old)   (spore-7-to-8 +.old)
       =?  old  ?=(%8 -.old)   (spore-8-to-9 +.old)
       =?  old  ?=(%9 -.old)   (spore-9-to-10 +.old)
@@ -2775,7 +2776,7 @@
   ^-  roon
   |=  [lyc=gang pov=path care=term bem=beam]
   ^-  (unit (unit cage))
-  ~>  %spin.[%gall]  ~>  %spin.[%scry]
+  ~>  %spin.[%scry]
   =*  ship  p.bem
   =*  dap  q.bem
   =/  =coin  $/r.bem
@@ -3033,7 +3034,7 @@
   ~/  %gall-take
   |=  [=wire =duct dud=(unit goof) syn=sign-arvo]
   ^-  [(list move) _gall-payload]
-  ~>  %spin.[%gall]  ~>  %spin.[%take]
+  ~>  %spin.[%take]
   ?^  dud
     ~&(%gall-take-dud ((slog tang.u.dud) [~ gall-payload]))
   ?:  =(/nowhere wire)

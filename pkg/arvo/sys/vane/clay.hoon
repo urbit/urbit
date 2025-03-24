@@ -743,9 +743,9 @@
         :_  nub  :-  %vase
         %+  slap  (with-faces cor+old ~)
         ^-  hoon
+        :+  %brcl  !,(*hoon v=+<.cor)
         :+  %sggr  
           [%spin %cltr [%sand %t (crip "grow-{<a>}->{<b>}")] ~]
-        :+  %brcl  !,(*hoon v=+<.cor)
         :+  %tsgl  limb/b
         !,(*hoon ~(grow cor v))
       ::  try direct +grab
@@ -4896,6 +4896,7 @@
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
+~>  %spin.[%clay]
 ~%  %clay-top  ..part  ~
 |%                                                    ::
 ++  call                                              ::  handle request
@@ -4905,7 +4906,7 @@
           wrapped-task=(hobo task)
       ==
   ^-  [(list move) _..^$]
-  ~>  %spin.[%clay]  ~>  %spin.[%call]
+  ~>  %spin.[%call]
   ::
   =/  req=task  ((harden task) wrapped-task)
   ::
@@ -5680,7 +5681,7 @@
       --
   |=  old=raft-any
   |^
-  ~>  %spin.[%clay]  ~>  %spin.[%load]
+  ~>  %spin.[%load]
   =?  old  ?=(%6 -.old)   7+(raft-6-to-7 +.old)
   =?  old  ?=(%7 -.old)   8+(raft-7-to-8 +.old)
   =?  old  ?=(%8 -.old)   9+(raft-8-to-9 +.old)
@@ -6020,7 +6021,7 @@
   ^-  roon
   |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
-  ~>  %spin.[%clay]  ~>  %spin.[%scry]
+  ~>  %spin.[%scry]
   =*  scry-loop  $
   |^
   =*  ren  car
@@ -6241,7 +6242,7 @@
   ~/  %clay-take
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^+  [*(list move) ..^$]
-  ~>  %spin.[%clay]  ~>  %spin.[%take]
+  ~>  %spin.[%take]
   ?^  dud
     ?+    tea
       ~|(%clay-take-dud (mean tang.u.dud))

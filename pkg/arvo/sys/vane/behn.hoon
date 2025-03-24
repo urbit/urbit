@@ -205,6 +205,7 @@
 =|  behn-state
 =*  state  -
 |=  [now=@da eny=@uvJ rof=roof]
+~>  %spin.[%behn]
 =*  behn-gate  .
 ^?
 |%
@@ -217,7 +218,7 @@
           wrapped-task=(hobo task)
       ==
   ^-  [(list move) _behn-gate]
-  ~>  %spin.[%behn]  ~>  %spin.[%call]
+  ~>  %spin.[%call]
   =/  =task  ((harden task) wrapped-task)
   =/  event-core  (per-event [now hen] state)
   =^  moves  state
@@ -228,7 +229,7 @@
 ++  load
   |=  old=behn-state
   ^+  behn-gate
-  ~>  %spin.[%behn]  ~>  %spin.[%load]
+  ~>  %spin.[%load]
   behn-gate(state old)
 ::  +scry: view timer state
 ::
@@ -237,7 +238,7 @@
 ::
 ++  scry
   ^-  roon
-  ~>  %spin.[%behn]  ~>  %spin.[%scry]
+  ~>  %spin.[%scry]
   |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
   =*  ren  car
@@ -309,7 +310,7 @@
 ++  take
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^-  [(list move) _behn-gate]
-  ~>  %spin.[%behn]  ~>  %spin.[%take]
+  ~>  %spin.[%take]
   ?^  dud
     ~|(%behn-take-dud (mean tang.u.dud))
   ::
