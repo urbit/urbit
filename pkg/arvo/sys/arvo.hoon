@@ -1886,7 +1886,7 @@
             ~>  %slog.[0 leaf/"{cap}: {(scow uv+(mug txt))}"]
             %-  road  |.
             ~_  leaf/"{cap}: build failed"
-            (swat sub (rain pax txt))
+            (beat sub (rain pax txt))
           --
       ::
       |=  [grub fil=(list (pair path (cask)))]
