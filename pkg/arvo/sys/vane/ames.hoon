@@ -10028,7 +10028,6 @@
             |=  [her=^ship fren=fren-state state=axle]
             ^-  (quip move axle)
             =+  event-core=(ev:ames now^eny^rof hen state)
-            =/  peer=peer-state  (got-peer-state:event-core her)
             =;  core=_event-core
               abet:core
             %-  ~(rep by pit.fren)
