@@ -5266,7 +5266,7 @@
         [~ [i.rax ~]]
       =+  `[ext=term [@ @] fyl=tape]`u.q.raf
       :-  `ext
-      ?:(=(~ fyl) ~ [(crip (flop fyl)) ~])
+      [(crip (flop fyl)) ~]
     ::                                                  ::  ++apat:de-purl:html
     ++  apat                                            ::  2396 abs_path
       %+  cook  deft
