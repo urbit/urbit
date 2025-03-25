@@ -7158,11 +7158,11 @@
             ==
           =>  .(tyl `(pole knot)`tyl)
           ?+    tyl  ~
-          ::
+            ::  public namespaces
+            ::
               [%fine %shut kef=@ enc=@ ~]
             =/  key-idx  (slav %ud kef.tyl)
             =/  key  (got:on:chain server-chain.ames-state (slav %ud kef.tyl))
-
             =/  pat=(unit path)
               (rush `@t`(dy:crub:crypto key.key (slav %uv enc.tyl)) stap)
             ?~  pat
@@ -11789,24 +11789,26 @@
           =(%x car)
       ==
     =/  tyl=(pole knot)  s.bem
-    ?.  =(~ lyc)
-      ::  private, message-level namespaces
-      ::
-      ?.  ?=([%meta req=*] tyl)
-        ?.  ?=(?(%flow %cork %whey) -.tyl)  ~   (scry:me-core sample)
-      ?+  req.tyl                               ~
-        [%ship @ %ames *]                       (scry:am-core sample)
-        [%ship @ %flow *]                       (scry:me-core sample)
+    ?:  ?=(?(%mess %publ %shut %veri %pawn %fine %chum) -.tyl)
+      ?-    -.tyl
+          %fine                                   (scry:am-core sample)
+          ?(%mess %publ %shut %veri %pawn)        (scry:me-core sample)
+        ::
+          %chum
+        ?+  +.tyl  ~
+          [our=@ lyf=@ cyf=@ ~]                   (scry:am-core sample)
+          [lyf=@ her=@ hyf=@ cyf=@ ~]             (scry:me-core sample)
+        ==
       ==
-    ?+    -.tyl  ~
-        %fine                                   (scry:am-core sample)
-        ?(%mess %publ %shut %veri %pawn)        (scry:me-core sample)
-      ::
-        %chum
-      ?+  +.tyl  ~
-        [our=@ lyf=@ cyf=@ ~]                   (scry:am-core sample)
-        [lyf=@ her=@ hyf=@ cyf=@ ~]             (scry:me-core sample)
-      ==
+    ?.  =([~ ~] lyc)
+      ~
+    ::  private, message-level namespaces
+    ::
+    ?.  ?=([%meta req=*] tyl)
+      ?.  ?=(?(%flow %cork %whey) -.tyl)  ~   (scry:me-core sample)
+    ?+  req.tyl                               ~
+      [%ship @ %ames *]                       (scry:am-core sample)
+      [%ship @ %flow *]                       (scry:me-core sample)
     ==
   ::
   ?.  ?&  =(our p.bem)
