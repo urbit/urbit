@@ -163,7 +163,6 @@
     ==
   ::
   =?  old-state  ?=(%5 -.old-state)
-    ^-  app-state
     %=    old-state
         -  %6
         dogs
