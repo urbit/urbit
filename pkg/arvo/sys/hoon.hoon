@@ -11451,6 +11451,14 @@
   =+  gun=(~(mint ut p.vax) %noun gen)
   [p.gun .*(q.vax q.gun)]
 ::
+++  slub
+  |=  [vax=vase gen=hoon]  ^-  vase                     ::  memoized slap
+  =/  gun
+    =>  [vax=p=p.vax gen=gen ut=ut]
+    ~>  %memo./hoon/mint
+    (~(mint ut p.vax) %noun gen)
+  [p.gun .*(q.vax q.gun)]
+::
 ++  slog                                                ::  deify printf
   =|  pri=@                                             ::  priority level
   |=  a=tang  ^+  same                                  ::  .=  ~&(%a 1)
