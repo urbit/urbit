@@ -626,7 +626,7 @@
     $(a ai, b bi)
   ::  +atan2:  [@rs @rs] -> @rs
   ::
-  ::  Returns the inverse tangent of a floating-point radian coordinate.
+  ::  Returns the inverse tangent of a floating-point coordinate.
   ::    Examples
   ::      > (atan2 .0 .1)
   ::      .0
@@ -1501,7 +1501,7 @@
     $(a ai, b bi)
   ::  +atan2:  [@rd @rd] -> @rd
   ::
-  ::  Returns the inverse tangent of a floating-point radian coordinate.
+  ::  Returns the inverse tangent of a floating-point coordinate.
   ::    Examples
   ::      > (atan2 .~0 .~1)
   ::      .~0
@@ -2367,7 +2367,7 @@
     $(a ai, b bi)
   ::  +atan2:  [@rh @rh] -> @rh
   ::
-  ::  Returns the inverse tangent of a floating-point radian coordinate.
+  ::  Returns the inverse tangent of a floating-point coordinate.
   ::    Examples
   ::      > (atan2 .~~0 .~~1)
   ::      .~~0
@@ -3152,7 +3152,7 @@
     $(a ai, b bi)
   ::  +atan2:  [@rq @rq] -> @rq
   ::
-  ::  Returns the inverse tangent of a floating-point radian coordinate.
+  ::  Returns the inverse tangent of a floating-point coordinate.
   ::    Examples
   ::      > (atan2 .~~~0 .~~~1)
   ::      .~~~0
