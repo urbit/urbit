@@ -14,10 +14,11 @@
           userspace-ova=(list unix-event)
       ==
       $:  %cash
-          nam=term
-          boot-ova=(list)
-          kernel-ova=(list unix-event)
-          userspace-ova=(list unix-event)
+          $:  nam=term
+              boot-ova=(list)
+              kernel-ova=(list unix-event)
+              userspace-ova=(list unix-event)
+          ==
           cache=(list)
   ==  ==
 ::
@@ -348,11 +349,10 @@
     ==
   ::
   ~>  %slog.[0 leaf+"brass: cache entries: {<(lent cache)>}"]
-  ::  a cash pill is a 4-tuple of event-lists and a cache:
-  ::  [boot kernel userspace cache]
   ::
-  :+  %cash  %brass
-  [boot-ova kernel-ova userspace-ova cache]
+  :-  %cash
+  :_  cache
+  [%brass boot-ova kernel-ova userspace-ova]
 ::
 ++  ivory
   |=  sys=path
@@ -540,7 +540,6 @@
         [%0 u.mutant]
       ::
           [%11 tag=@ next=*]
-        :: ~&  >  [%11 `@t`tag.formula]
         =^  next  memo  $(formula next.formula)
         :_  memo
         ?.  ?=(%0 -.next)  next
