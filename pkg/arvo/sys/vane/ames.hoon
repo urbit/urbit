@@ -8803,8 +8803,11 @@
               ::
                 %van
               ?+  -.sign  !!  :: %sage doesn't come from vanes
-                %done  (fo-take-done +.sign)  :: ack from client vane
                 %flub  =.(pending-ack.rcv %.n fo-core)
+                %done  :: ack from client vane
+                       ::
+                       ?>  =(%.y pending-ack.rcv)
+                       (fo-take-done +.sign)
               ==
             ==
           ::
@@ -8914,15 +8917,19 @@
           ++  fo-sink-plea
             |=  [=page ok=?]
             ^+  fo-core
+            ::  receiver of a %plea request
+            ::
+            ?.  ok
+              ::  XX  if we have errored at this point,
+              ::      is pending-ack %.y ?
+              ::
+              (fo-take-done:fo-core `*error)
+            ::
             ?:  pending-ack.rcv
               ::  if the previous plea is pending, no-op
               ::
               fo-core
             =.  pending-ack.rcv  %.y
-            ::  receiver of a %plea request
-            ::
-            ?.  ok
-              (fo-take-done:fo-core `*error)
             ::
             =+  ;;([%plea =plea] page)
             %-  %+  ev-tace  msg.veb.bug.ames-state
@@ -8985,9 +8992,6 @@
           ++  fo-take-done
             |=  error=(unit error)
             ^+  fo-core
-            ::  if there's a pending-vane ack, is always +(last-acked)
-            ::
-            ?>  =(%.y pending-ack.rcv)
             =/  seq=@ud  +(last-acked.rcv)
             =:  last-acked.rcv   seq
                 pending-ack.rcv  %.n
