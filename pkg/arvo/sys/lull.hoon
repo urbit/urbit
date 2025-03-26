@@ -2294,7 +2294,7 @@
           ++  frag  (=+(aura -(zer |)) 'udF')
           ++  hash  (aura 'uxI')
           ++  mess-auth
-            (pick (both (just %&) (aura 'uxJ')) (both (just %|) hash))
+            (pick (both (just %&) (aura 'uxJ')) (both (just %|) (aura 'uxH')))
           ++  auth
             ;:  pick
               :(both (just %|) (pick (just ~) :(both (just ~) hash hash)))
