@@ -11805,7 +11805,7 @@
           [lyf=@ her=@ hyf=@ cyf=@ ~]        (scry:me-core sample)
         ==
       ==
-    ?.  =([~ ~] lyc)
+    ?:  =(~ lyc)
       ~
     ::  private, message-level namespaces
     ::
