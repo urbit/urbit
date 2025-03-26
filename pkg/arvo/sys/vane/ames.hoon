@@ -8812,7 +8812,8 @@
             |=  [=load seq=@ud]
             ^-  (unit page)
             ::  XX assert flow direction?
-            ::  %ack and %nax can be both %for (%plea) and %bak (%boon)
+            ::  %ack can be both %for (%plea) and %bak (%boon)
+            ::  %naxp only %for (%plea)
             ::
             ?-    load
                 %naxp  ?~(nax=(~(get by nax.rcv) seq) ~ `nax/u.nax)
@@ -8837,11 +8838,11 @@
                 ::  naxplanation had suceeded then they are not going to
                 ::  resend the payload anymore.
                 ::
-                ::  if line.state was an %ack but it got lost we can not
+                ::  if line.state was a %(n)ack but it got lost we can not
                 ::  know for sure, but, because we were not removing the
                 ::  correct message from nax.sink it's very likely that
-                ::  if line.state is not in nax.rcv that's because it
-                ::  was indeed an %ack.
+                ::  if line.state is in nax.rcv that's because it
+                ::  was indeed a %nack.
                 ::
                 ~
               ?:  ?&  (lth seq last-acked.rcv)
@@ -8913,6 +8914,10 @@
           ++  fo-sink-plea
             |=  [=page ok=?]
             ^+  fo-core
+            ?:  pending-ack.rcv
+              ::  if the previous plea is pending, no-op
+              ::
+              fo-core
             =.  pending-ack.rcv  %.y
             ::  receiver of a %plea request
             ::
@@ -11791,13 +11796,13 @@
     =/  tyl=(pole knot)  s.bem
     ?:  ?=(?(%mess %publ %shut %veri %pawn %fine %chum) -.tyl)
       ?-    -.tyl
-          %fine                                   (scry:am-core sample)
-          ?(%mess %publ %shut %veri %pawn)        (scry:me-core sample)
+          %fine                              (scry:am-core sample)
+          ?(%mess %publ %shut %veri %pawn)   (scry:me-core sample)
         ::
           %chum
         ?+  +.tyl  ~
-          [our=@ lyf=@ cyf=@ ~]                   (scry:am-core sample)
-          [lyf=@ her=@ hyf=@ cyf=@ ~]             (scry:me-core sample)
+          [our=@ lyf=@ cyf=@ ~]              (scry:am-core sample)
+          [lyf=@ her=@ hyf=@ cyf=@ ~]        (scry:me-core sample)
         ==
       ==
     ?.  =([~ ~] lyc)
@@ -11805,10 +11810,10 @@
     ::  private, message-level namespaces
     ::
     ?.  ?=([%meta req=*] tyl)
-      ?.  ?=(?(%flow %cork %whey) -.tyl)  ~   (scry:me-core sample)
-    ?+  req.tyl                               ~
-      [%ship @ %ames *]                       (scry:am-core sample)
-      [%ship @ %flow *]                       (scry:me-core sample)
+      ?.  ?=(?(%flow %cork %whey) -.tyl)  ~  (scry:me-core sample)
+    ?+  req.tyl                              ~
+      [%ship @ %ames *]                      (scry:am-core sample)
+      [%ship @ %flow *]                      (scry:me-core sample)
     ==
   ::
   ?.  ?&  =(our p.bem)
