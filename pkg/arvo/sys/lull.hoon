@@ -2075,10 +2075,17 @@
       ::
       =/  [aub=@ubB aum=plat:plot]
         ?-  aut
-          [%& %& *]   [0b0 64 +.p.aut]
-          [%& %| *]   [0b10 16 +.p.aut]
+          [%& %& *]   ?>  (lte (met 3 +.p.aut) 64)
+                      [0b0 64 +.p.aut]
+        ::
           [%| ~]      [0b1 0]
-          [%| ^]      [0b11 s+~ 8 [1 p] [1 q] ~]:u.p.aut
+        ::
+          [%& %| *]   ?>  (lte (met 3 +.p.aut) 16)
+                      [0b10 16 +.p.aut]
+        ::
+          [%| ^]      ?>  (lte (met 3 p.u.p.aut) 32)
+                      ?>  (lte (met 3 q.u.p.aut) 32)
+                      [0b11 s+~ 3 [32 p] [32 q] ~]:u.p.aut
         ==
       ::
       =/  len  (met 3 dat)
