@@ -11768,10 +11768,11 @@
   =/  ship-state  (pe-find-peer her.u.parsed-wire)
   %.  sample
   ?:  ?=(%ames -.ship-state)
-    ?:  ?=(%jael -.sign)
-      ::  any %jael gifts are captured in the |sy:mesa core. the case for this
-      ::  shows up as planets (that have not been migrated) giving the keys for
-      ::  their moons
+    ?:  ?|  ?=([%jael %private-keys *] sign)
+            ?=([%jael %public-keys *] sign)
+            ?=([%jael %turf *] sign)
+        ==
+      ::  key/turf %jael gifts are captured in the |sy:mesa core
       ::
       take:me-core
     take:am-core
