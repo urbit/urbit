@@ -2014,8 +2014,8 @@
       =/  [nit=@ tau=@ gaf=@ gyf=@ fag=@]
         ?~  wan
           [0b1 0b0 0b0 0 0]
-        =/  gaf  (dec (xeb (met 3 (max 1 fag.wan))))  :: XX xeb wrong here; fragments > 0xffff?
-        [0b0 ?:(?=(%auth typ.wan) 0b1 0b0) gaf (bex (add 3 gaf)) fag.wan]
+        =/  gaf  (xeb (dec (met 3 (max 1 fag.wan))))
+        [0b0 ?:(?=(%auth typ.wan) 0b1 0b0) gaf (bex gaf) fag.wan]
       ::
       =/  tap  =-([p=(met 3 -) q=-] `@t`(rap 3 (join '/' pat)))
       ?>  &(?=(^ pat) (lth p.tap ^~((bex 16)))) :: XX truncate instead?
@@ -2036,7 +2036,7 @@
         %-  (hew b pat)
         :^    who=[her=(bex +(ran.c)) rif=+(ryf.c)]
             boq=1
-          fag=?:(=(0b1 nit.c) 0 (bex (add 3 gaf.c)))
+          fag=?:(=(0b1 nit.c) 0 (bex gaf.c))
         tap=2
       ::
       ::  XX ?<  =(0 tap.d)
@@ -2070,7 +2070,7 @@
     ++  en
       |=  [tob=@ud aut=auth:pact dat=@]
       ^-  plot
-      =/  lot  (dec (met 3 (max 1 tob)))
+      =/  lot  (xeb (dec (met 3 (max 1 tob))))
       ?>  (lte lot 3)
       ::
       =/  [aub=@ubB aum=plat:plot]
