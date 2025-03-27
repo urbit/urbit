@@ -2014,7 +2014,7 @@
       =/  [nit=@ tau=@ gaf=@ gyf=@ fag=@]
         ?~  wan
           [0b1 0b0 0b0 0 0]
-        =/  gaf  (dec (xeb (met 3 (max 1 fag.wan))))  :: XX xeb wrong here; fragments > 0xffff?
+        =/  gaf  (xeb (dec (met 3 (max 1 fag.wan))))
         [0b0 ?:(?=(%auth typ.wan) 0b1 0b0) gaf (bex gaf) fag.wan]
       ::
       =/  tap  =-([p=(met 3 -) q=-] `@t`(rap 3 (join '/' pat)))
@@ -2070,15 +2070,22 @@
     ++  en
       |=  [tob=@ud aut=auth:pact dat=@]
       ^-  plot
-      =/  lot  (dec (met 3 (max 1 tob)))
+      =/  lot  (xeb (dec (met 3 (max 1 tob))))
       ?>  (lte lot 3)
       ::
       =/  [aub=@ubB aum=plat:plot]
         ?-  aut
-          [%& %& *]   [0b0 64 +.p.aut]
-          [%& %| *]   [0b10 16 +.p.aut]
+          [%& %& *]   ?>  (lte (met 3 +.p.aut) 64)
+                      [0b0 64 +.p.aut]
+        ::
           [%| ~]      [0b1 0]
-          [%| ^]      [0b11 s+~ 8 [1 p] [1 q] ~]:u.p.aut
+        ::
+          [%& %| *]   ?>  (lte (met 3 +.p.aut) 16)
+                      [0b10 16 +.p.aut]
+        ::
+          [%| ^]      ?>  (lte (met 3 p.u.p.aut) 32)
+                      ?>  (lte (met 3 q.u.p.aut) 32)
+                      [0b11 s+~ 3 [32 p] [32 q] ~]:u.p.aut
         ==
       ::
       =/  len  (met 3 dat)
@@ -2294,7 +2301,7 @@
           ++  frag  (=+(aura -(zer |)) 'udF')
           ++  hash  (aura 'uxI')
           ++  mess-auth
-            (pick (both (just %&) (aura 'uxJ')) (both (just %|) hash))
+            (pick (both (just %&) (aura 'uxJ')) (both (just %|) (aura 'uxH')))
           ++  auth
             ;:  pick
               :(both (just %|) (pick (just ~) :(both (just ~) hash hash)))

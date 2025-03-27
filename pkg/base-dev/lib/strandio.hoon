@@ -462,8 +462,9 @@
   |=  [=wire =spar:ames]
   =/  m  (strand ,~)
   ^-  form:m
-  ?+    path.spar  (pure:m ~)
-      $%  [%flow bone=@ =dire:ames ~]
+  ?+    path.spar  !!
+      $%  [%ames bone=@ ?(%clos %cork %next %last %curr) ~]
+          [%flow bone=@ =dire:ames ~]
           [%flow bone=@ =dire:ames ?(%clos %cork %line %lods %next %last) ~]
           [%flow bone=@ =dire:ames %mess mess=@ %whey ~]
           [%flow bone=@ =dire:ames %mess mess=@ %naxp ~]
