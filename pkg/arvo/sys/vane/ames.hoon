@@ -10625,7 +10625,7 @@
         =/  pat=path  (open-path:crypt u.key u.cyf)
         ?~  inn=(inner-path-to-beam our pat)
           ~
-        ?~  res=(rof `[u.her ~ ~] /ames/chum vew.u.inn bem.u.inn)
+        ?~  res=(rof [~ ~] /ames/chum vew.u.inn bem.u.inn)
           ~
         ?~  u.res
           [~ ~]
