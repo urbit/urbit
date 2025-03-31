@@ -11753,7 +11753,9 @@
     (~(call pe-core hen) dud task)
     ::  core-dependent tasks
     ::
-      ?(%prod %trim)
+      ?(%prod %trim %stir)
+    ?:  ?=([%stir %clos] task)
+      (call:me-core sample)
     =^  ames-moves  vane-gate  (call:am-core sample)
     =^  mesa-moves  vane-gate
       (call:me-core(ames-state ames-state.vane-gate) sample)
