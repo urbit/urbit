@@ -7613,7 +7613,7 @@
                 %sift  sy-abet:(sy-sift:sy-core ships.task)
                 %spew  sy-abet:(sy-spew:sy-core veb.task)
                 %trim  sy-abet:sy-trim:sy-core
-              ::  key reservation for %shut namespave
+              ::  key reservation for %shut namespace
               ::
                 ?(%plug %gulp)  sy-abet:(sy-plug:sy-core task)
               ::  regression
@@ -9114,8 +9114,13 @@
             ::  if the bone belongs to a closing flow and we got a
             ::  naxplanation, don't relay ack to the client vane
             ::
-            ?:  closing.state  fo-core
-            ?:  miss-nax       fo-core
+            ?:  closing.state
+              ::  this would mean that the %cork has been nacked
+              ::
+              %-  %+  ev-tace  odd.veb.bug.ames-state
+                  |.("%naxplanation for closing flow {<[bone=bone seq=seq]>}")
+              fo-core
+            ?:  miss-nax  fo-core
             ::
             ::  if there are no unacked messages in the queue, this naxplanation
             ::  should be from migrating a nacked flow.
@@ -9301,6 +9306,32 @@
               %^  sy-emit  hen  %pass
               [/public-keys %j %public-keys [ship.iota ~ ~]]
             ==
+          ?:  ?=([%recork ~] wire)
+            ::  XX don't reset the timer; this is done in on-take-wake:ames
+            ::
+            ::  recork up to one bone per peer
+            ::
+            %-  ~(rep by chums.ames-state)
+            |=  [[her=ship per=chum-state] core=_sy-core]
+            ?.  ?=(%known -.per)
+              core
+            =+  ev-core=~(ev-core ev(ames-state ames-state.core) hen her +.per)
+            ::  XX sort flows?
+            ::
+            =;  core=_ev-core
+              =^  moves  ames-state  ev-abet:core
+              (sy-emil moves)
+            %-  ~(rep by flows.per.ev-core)
+            |=  [[side state=flow-state] c=_ev-core]
+            ?:  =(%back dire)  c
+            ?.  closing.state  c
+            =+  fo-core=~(fo-core fo:c [hen bone dire=%for] state)
+            ::  sanity check on the flow state
+            ::
+            ?^  first=(pry:fo-mop:fo-core loads.snd.fo-core)  c
+            ::  XX  if nothing outstansing, the cork has been nacked; resend it
+            ::
+            fo-abet:(fo-call:fo-core %pump %plea %$ /flow %cork ~)
           ?.  ?=([%mesa %retry ~] wire)
             ~&  >>>  %evil-behn-timer^wire
             sy-core
@@ -9319,6 +9350,8 @@
             ?^(error `ames-state (sy-prod ~))
           %-  sy-emil
           :_  prod-moves
+          ::  XX reuse the ~m2 %dead-flow timer?
+          ::
           [~[/ames] %pass /mesa/retry %b %wait `@da`(add now ~m2)]
         ::
         ++  sy-publ
@@ -11721,6 +11754,11 @@
   ?^  dud
     ~|(%ames-take-dud (mean tang.u.dud))
   ::
+  ?:  ?=([%recork ~] wire)
+    =^  ames-moves  vane-gate  (take:am-core sample)
+    =^  mesa-moves  vane-gate
+      (take:me-core(ames-state ames-state.vane-gate) sample)
+    [(weld ames-moves mesa-moves) vane-gate]
   ?:  ?=([?(%turf %mesa %private-keys %public-keys) *] wire)
     ?.  ?&  ?=(?(%turf %public-keys) -.wire)
             ?=(~ unix-duct)
