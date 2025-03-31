@@ -282,7 +282,7 @@
   ::  dez: secondary desks and their root paths
   ::  exc: list of desk folders to exclude
   ::
-  |=  [sys=path dez=(list [desk path]) prime=? new-wynn=? exc=(list spur)]
+  |=  [sys=path dez=(list [desk path]) cache=? prime=? new-wynn=? exc=(list spur)]
   ^-  pill
   =/  bas=path  (scag 3 sys)
   ::  compiler-source: hoon source file producing compiler, `sys/hoon`
@@ -332,6 +332,7 @@
   =/  =wynn  (get-wynn sys new-wynn)
   ::
   =/  cache=(list)
+    ?.  cache  ~
     %~  tap  by
     =<  +
     %-  mice
@@ -443,7 +444,6 @@
 ++  mice  !.
   ~/  %mice
   |=  [subject=* formula=*]
-  =/  scry=$-(^ (unit (unit)))  |~(^ ~)
   =|  trace=(list [@ta *])
   =|  memo=(map)
   =;  [ton=tone mem=_memo]
@@ -525,7 +525,15 @@
         ==
       ::
           [%9 axis=@ core=*]
-        [(mink [subject formula] scry) memo]
+        =^  core  memo
+          $(formula core.formula)
+        ?.  ?=(%0 -.core)  [core memo]
+        =/  arm  (frag axis.formula product.core)
+        ?~  arm  [[%2 trace] memo]
+        %=  $
+          subject  product.core
+          formula  u.arm
+        ==
       ::
           [%10 [axis=@ value=*] target=*]
         ?:  =(0 axis.formula)  [[%2 trace] memo]
@@ -553,7 +561,7 @@
         ?:  ?=(%memo tag.formula)
           ?^  hit=(~(get by memo) subject next.formula)
             [[%0 u.hit] memo]
-          =/  ton  (mink [subject next.formula] scry)
+          =^  ton  memo  $(formula next.formula)
           ?.  ?=(%0 -.ton)
             [ton memo]
           [ton (~(put by memo) [subject next.formula] product.ton)]
@@ -567,19 +575,6 @@
         :-  %0
         .*  subject
         [11 [tag.formula 1 product.clue] 1 product.next]
-      ::
-          [%12 ref=* path=*]
-        =^  ref  memo  $(formula ref.formula)
-        ?.  ?=(%0 -.ref)  [ref memo]
-        =^  path  memo  $(formula path.formula)
-        :_  memo
-        ?.  ?=(%0 -.path)  path
-        =/  result  (scry product.ref product.path)
-        ?~  result
-          [%1 product.path]
-        ?~  u.result
-          [%2 [%hunk product.ref product.path] trace]
-        [%0 u.u.result]
       ==
   ::
   ++  frag

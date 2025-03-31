@@ -24,6 +24,7 @@
             rest=(list desk)
         ==
       ::
+        cache=_&
         prime=_|
         wynn=_|
         exc=(list spur)
@@ -47,4 +48,4 @@
   |=  =desk
   [desk /(scot %p p.bec)/[desk]/(scot %da now)]
 ::
-(brass:pill sys dez prime wynn exc)
+(brass:pill sys dez cache prime wynn exc)
