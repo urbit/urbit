@@ -7580,7 +7580,7 @@
               ::   print it but do nothing else, since we need to continue
               ::   peeking/retrying sending the poke.
               ::
-              ::  XX  what to do with peers that we know are missbehaving?
+              ::  XX  what to do with peers that we know are misbehaving?
               ::
               ?^  dud
                 ?+    -.task  sy-abet:(~(sy-crud sy hen) -.task tang.u.dud)
@@ -7599,7 +7599,7 @@
               ?+  -.task
                   ::  ?(%plea %keen %cork) calls are handled directly in |peer
                   ::
-                  `ames-state ::  XX TODO: ?(%trim %stir)
+                  `ames-state ::  XX TODO: ?(%kroc %deep %mate)
               ::
                 %vega  `ames-state  ::  handle kernel reload
                 %init  sy-abet:sy-init:sy-core
@@ -7613,6 +7613,7 @@
                 %sift  sy-abet:(sy-sift:sy-core ships.task)
                 %spew  sy-abet:(sy-spew:sy-core veb.task)
                 %trim  sy-abet:sy-trim:sy-core
+                %stir  sy-abet:(sy-stir:sy-core arg.task)
               ::  key reservation for %shut namespace
               ::
                 ?(%plug %gulp)  sy-abet:(sy-plug:sy-core task)
@@ -7835,6 +7836,10 @@
               |.("send {<msg>} {<[bone=bone seq=next path=(spud path)]>}")
           ::
           ?:  closing.state.fo-core
+            ::  block any external pleas send by a client vane;
+            ::  only %cork $pleas will be resend on the /recork timer by the
+            ::  [%stir %clos] handler
+            ::
             %-  %+  ev-tace  odd.veb.bug.ames-state
                 |.("flow {<bone=bone>} in closing; skip")
             ev-core
@@ -8617,6 +8622,8 @@
           ::
           ++  fo-emit  |=(=move fo-core(moves [move moves]))
           ++  fo-emil  |=(mos=(list move) fo-core(moves (weld mos moves)))
+          ::  +fo-to-close: block non-cork pleas to be send if we are in closing
+          ::
           ++  fo-to-close
             |=  poke=mesa-message
             ?&(closing.state !=(poke [%plea %$ /flow %cork ~]))
@@ -8743,7 +8750,7 @@
               ?:  |((fo-to-close load) fo-corked)
                 %-  %+  ev-tace  odd.veb.bug.ames-state
                     ?:  (fo-to-close load)
-                      |.("skip %cork $plea; flow {<bone>} is closing")
+                      |.("skip $plea; flow {<bone>} is closing")
                     |.("skip send; flow {<bone>} has been corked")
                 fo-core
               ::
@@ -9309,29 +9316,7 @@
           ?:  ?=([%recork ~] wire)
             ::  XX don't reset the timer; this is done in on-take-wake:ames
             ::
-            ::  recork up to one bone per peer
-            ::
-            %-  ~(rep by chums.ames-state)
-            |=  [[her=ship per=chum-state] core=_sy-core]
-            ?.  ?=(%known -.per)
-              core
-            =+  ev-core=~(ev-core ev(ames-state ames-state.core) hen her +.per)
-            ::  XX sort flows?
-            ::
-            =;  core=_ev-core
-              =^  moves  ames-state  ev-abet:core
-              (sy-emil moves)
-            %-  ~(rep by flows.per.ev-core)
-            |=  [[side state=flow-state] c=_ev-core]
-            ?:  =(%back dire)  c
-            ?.  closing.state  c
-            =+  fo-core=~(fo-core fo:c [hen bone dire=%for] state)
-            ::  sanity check on the flow state
-            ::
-            ?^  first=(pry:fo-mop:fo-core loads.snd.fo-core)  c
-            ::  XX  if nothing outstansing, the cork has been nacked; resend it
-            ::
-            fo-abet:(fo-call:fo-core %pump %plea %$ /flow %cork ~)
+            (sy-stir %clos)
           ?.  ?=([%mesa %retry ~] wire)
             ~&  >>>  %evil-behn-timer^wire
             sy-core
@@ -10196,6 +10181,37 @@
                 (~(put in coms) ship)
               coms
           ==
+        ::
+        ++  sy-stir
+          |=  arg=@t
+          ^+  sy-core
+          |^  ?+  arg  sy-core
+                %clos  do-clos
+              ==
+          ::
+          ++  do-clos
+            %-  ~(rep by chums.ames-state)
+            |=  [[her=ship per=chum-state] core=_sy-core]
+            ?.  ?=(%known -.per)
+              core
+            =+  ev-core=~(ev-core ev(ames-state ames-state.core) hen her +.per)
+            ::  XX sort flows?
+            ::
+            =;  core=_ev-core
+              =^  moves  ames-state  ev-abet:core
+              (sy-emil moves)
+            %-  ~(rep by flows.per.ev-core)
+            |=  [[side state=flow-state] c=_ev-core]
+            ?:  =(%back dire)  c
+            ?.  closing.state  c
+            =+  fo-core=~(fo-core fo:c [hen bone dire=%for] state)
+            ::  sanity check on the flow state
+            ::
+            ?^  first=(pry:fo-mop:fo-core loads.snd.fo-core)  c
+            ::  XX  if nothing outstansing, the cork has been nacked; resend it
+            ::
+            fo-abet:(fo-call:fo-core %pump %plea %$ /flow %cork ~)
+          --
         ::
         +|  %internals
         ::
@@ -11709,7 +11725,7 @@
   ?-    -.task
     ::  %ames-only tasks
     ::
-      ?(%kroc %deep %mate %stir)
+      ?(%kroc %deep %mate)
     ::  XX can we call the wrong core? still check if ship has migrated?
     ::
     (call:am-core sample)
