@@ -3,6 +3,7 @@
   ::                                                    ::
 =<  ride
 =>  %138  =>
+!:
 ::                                                      ::
 ::::    0: version stub                                 ::
   ::                                                    ::
@@ -226,6 +227,20 @@
     %3  +((mul a 2))
     *   (add (mod b 2) (mul $(b (div b 2)) 2))
   ==
+::
+++  hub
+  ~/  %hub
+  ::    axis after axis
+  ::
+  ::  computes the remainder of axis {b} when navigating to {a}.
+  ::  (crashes if not `(pin a b)`)
+  |=  [a=@ b=@]
+  ?<  =(0 a)
+  ?<  =(0 b)
+  |-  ^-  @
+  ?:  =(a 1)  b
+  ?>  =((cap a) (cap b))
+  $(a (mas a), b (mas b))
 ::
 ::  #  %containers
 ::
@@ -1788,6 +1803,7 @@
     ?>  ?=(^ a)
     ?:  =(~ l.a)  r.a
     =+  b=get(a l.a)
+    ~!  a
     bal(n.a p.b, l.a q.b)
   ::
   ++  put                                               ::  insert new tail
@@ -3987,6 +4003,10 @@
               [%many p=(list coin)]                     ::
           ==                                            ::
 +$  dime  [p=@ta q=@]                                   ::
+::     p: parsed up to
+::     q: parse result
+::     u.q: success
+::     q.u.q: continuation
 +$  edge  [p=hair q=(unit [p=* q=nail])]                ::  parsing output
 +$  hair  [p=@ud q=@ud]                                 ::  parsing trace
 ++  like  |*  a=$-(* *)                                 ::  generic edge
@@ -4625,6 +4645,7 @@
         $(vem [[%r ' ' (cut 3 [0 1] p.s.vem) (cut 3 [1 1] p.s.vem)] c.vem])
       ::
           [s=[%r p=@ q=@ r=@] c=*]
+        ~>  %loud
         :+  %rose
           :*  p=(mesc (trip p.s.vem))
               q=(mesc (trip q.s.vem))
@@ -5976,7 +5997,7 @@
       ==
   =|  trace=(list [@ta *])
   |^  ^-  tone
-      ?+  formula  [%2 trace]
+      ?-  formula  ::[%2 trace]
           [^ *]
         =/  head  $(formula -.formula)
         ?.  ?=(%0 -.head)  head
@@ -6055,48 +6076,53 @@
           formula  u.arm
         ==
       ::
-          [%10 [axis=@ value=*] target=*]
-        ?:  =(0 axis.formula)  [%2 trace]
-        =/  target  $(formula target.formula)
-        ?.  ?=(%0 -.target)  target
-        =/  value  $(formula value.formula)
-        ?.  ?=(%0 -.value)  value
-        =/  mutant=(unit *)
-          (edit axis.formula product.target product.value)
-        ?~  mutant  [%2 trace]
-        [%0 u.mutant]
+          *
+        ~!  formula
+        ?:  ?=([%10 [axis=@ value=*] target=*] formula)
+          ?:  =(0 axis.formula)  [%2 trace]
+          ~!  formula
+          =/  target  $(formula target.formula)
+          ?.  ?=(%0 -.target)  target
+          =/  value  $(formula value.formula)
+          ?.  ?=(%0 -.value)  value
+          =/  mutant=(unit *)
+            (edit axis.formula product.target product.value)
+          ?~  mutant  [%2 trace]
+          [%0 u.mutant]
       ::
-          [%11 tag=@ next=*]
-        =/  next  $(formula next.formula)
-        ?.  ?=(%0 -.next)  next
-        :-  %0
-        .*  subject
-        [11 tag.formula 1 product.next]
+        ?:  ?=([%11 tag=@ next=*] formula)
+          =/  next  $(formula next.formula)
+          ?.  ?=(%0 -.next)  next
+          :-  %0
+          .*  subject
+          [11 tag.formula 1 product.next]
       ::
-          [%11 [tag=@ clue=*] next=*]
-        =/  clue  $(formula clue.formula)
-        ?.  ?=(%0 -.clue)  clue
-        =/  next
-          =?    trace
-              ?=(?(%hunk %hand %lose %mean %spot) tag.formula)
-            [[tag.formula product.clue] trace]
-          $(formula next.formula)
-        ?.  ?=(%0 -.next)  next
-        :-  %0
-        .*  subject
-        [11 [tag.formula 1 product.clue] 1 product.next]
+        ?:  ?=([%11 [tag=@ clue=*] next=*] formula)
+          =/  clue  $(formula clue.formula)
+          ?.  ?=(%0 -.clue)  clue
+          =/  next
+            =?    trace
+                ?=(?(%hunk %hand %lose %mean %spot) tag.formula)
+              [[tag.formula product.clue] trace]
+            $(formula next.formula)
+          ?.  ?=(%0 -.next)  next
+          :-  %0
+          .*  subject
+          [11 [tag.formula 1 product.clue] 1 product.next]
       ::
-          [%12 ref=* path=*]
-        =/  ref  $(formula ref.formula)
-        ?.  ?=(%0 -.ref)  ref
-        =/  path  $(formula path.formula)
-        ?.  ?=(%0 -.path)  path
-        =/  result  (scry product.ref product.path)
-        ?~  result
-          [%1 product.path]
-        ?~  u.result
-          [%2 [%hunk product.ref product.path] trace]
-        [%0 u.u.result]
+        ?:  ?=([%12 ref=* path=*] formula)
+          =/  ref  $(formula ref.formula)
+          ?.  ?=(%0 -.ref)  ref
+          =/  path  $(formula path.formula)
+          ?.  ?=(%0 -.path)  path
+          =/  result  (scry product.ref product.path)
+          ?~  result
+            [%1 product.path]
+          ?~  u.result
+            [%2 [%hunk product.ref product.path] trace]
+          [%0 u.u.result]
+        ::
+        [%2 trace]
       ==
   ::
   ++  frag
@@ -6671,13 +6697,14 @@
 --
 ::
 ~%    %pen
-    +
+    +>
   ==
     %ap    ap
     %ut    ut
   ==
 ::    layer-5
 ::
+=|  bug=term
 |%
 ::
 ::    5aa: new partial nock interpreter
@@ -8194,7 +8221,7 @@
 ::
 ++  ap                                                  ::  hoon engine
   ~%    %ap
-      +>+
+      +>+>
     ==
       %open  open
       %rake  rake
@@ -8769,9 +8796,9 @@
       %toss   toss
       %wrap   wrap
     ==
-  =+  :*  fan=*(set [type hoon])
-          rib=*(set [type type hoon])
-          vet=`?`&
+  =|  $:  fan=(set [type hoon])
+          rib=(set [type type hoon])
+          vet=?
       ==
   =+  sut=`type`%noun
   |%
@@ -9096,6 +9123,14 @@
     ~/  %crop
     |=  ref=type
     =+  bix=*(set [type type])
+    %-  ?.  =(%loud bug)  same
+        %-  slog
+        :~  'crop:'
+            '  sut:'
+            [%rose [~ "    " ~] duck ~]
+            '  ref:'
+            [%rose [~ "    " ~] duck(sut ref) ~]
+        ==
     =<  dext
     |%
     ++  dext
@@ -9119,7 +9154,9 @@
           [%cell *]
         ?+  ref      sint
           [%atom *]  sut
-          [%cell *]  =/  lef  dext(sut p.sut, ref p.ref)
+          [%cell *]  ::  ?.  (nest(sut p.ref) | p.sut)  sut
+                     ::  (cell p.sut dext(sut q.sut, ref q.ref))
+                     =/  lef  dext(sut p.sut, ref p.ref)
                      =/  ryt  dext(sut q.sut, ref q.ref)
                      %-  fork
                      :~  (cell lef q.sut)
@@ -9332,7 +9369,7 @@
       |=  [way=vial hyp=wing]
       ^-  port
       =+  (fond way hyp)
-      ?+  -<  !!
+      ?+  -<  ~|(-< !!)
         %pale  [%& [`axis ~] opal]
         %faux  [%| type nock]
       ==
@@ -9420,6 +9457,7 @@
             ?~  hup
               ::NOTE  we ignore our vial .way
               =+  myn=(mint %noun u.u.tyr)
+              ::TODO  see +fund on m/wip-tistar-fuse for fix
               [%faux p.myn (comb [%0 axe] q.myn)]
             =+  fyn=(fond way u.hup)  ::NOTE  re-entrant
             ?+  -.fyn  fyn
@@ -9753,6 +9791,14 @@
     |=  ref=type
     =+  bix=*(set [? type type])
     =+  rev=|
+    %-  ?.  =(%loud bug)  same
+        %-  slog
+        :~  'fuse:'
+            '  sut:'
+            [%rose [~ "    " ~] duck ~]
+            '  ref:'
+            [%rose [~ "    " ~] duck(sut ref) ~]
+        ==
     |-  ^-  type
     ?:  ?|(=(sut ref) =(%noun ref))
       ?:  &(!rev ?=([%face *] sut))  ::REVIEW
@@ -9762,7 +9808,7 @@
         [%atom *]
       ?-    ref
           [%atom *]   =+  [a b]=?:(rev [ref sut] [sut ref])
-                      =+  foc=?:((fitz p.b p.a) p.a p.b)
+                      =+  foc=?:((fitz p.b p.a) p.a p.b)  ::TODO  WRONG?
                       ?^  q.a
                         ?^  q.b
                           ?:  =(q.a q.b)
@@ -9806,6 +9852,14 @@
     =+  rev=|
     =+  axe=1
     ::
+    %-  ?.  =(%loud bug)  same
+        %-  slog
+        :~  'flux:'
+            '  sut:'
+            [%rose [~ "    " ~] duck ~]
+            '  ref:'
+            [%rose [~ "    " ~] duck(sut ref) ~]
+        ==
     |-  ^+  [*type nam]
     ?:  ?|(=(sut ref) &(!rev =(%noun ref)))
       [sut nam]
@@ -10038,18 +10092,12 @@
       ?-  -.hippo
           %wtts
         =?  zebra.hippo  lol  (unzip %both wing.hippo)
+        %-  ?.  =(%loud bug)  same
+            (slog 'gain loud' -.zebra.hippo (show %l wing.hippo) ~)
         ?.  ?=([%pale *] zebra.hippo)  sut
-        =<  q
-        %+  take  zebra.hippo
+        %+  modify-and-zip(sut typ.zebra.hippo)  zap.zebra.hippo
         |=  a=type
-        =/  [typ=type nam=(map term (pair axis type))]
-          (flux(sut a) type.hippo)
-        ?:  ?=(%void typ)  %void
-        ?:  =(~ nam)  typ  ::NOTE  tmi
-        %-  (curr face typ)
-        %-  ~(rep by nam)
-        |=  [[l=term a=axis n=type] t=tune]
-        t(p (~(put by p.t) l `[%fuse n &+a ~]))
+        (flux(sut a) type.hippo)
       ::
           %wthx
         =?  zebra.hippo  lol  (unzip %both wing.hippo)
@@ -10357,7 +10405,7 @@
     ::
         [%sgzp *]  ~_(duck(sut (play p.gen)) $(gen q.gen))
         [%sggr *]
-      =+  hum=$(gen q.gen)
+      =+  hum=$(gen q.gen, bug ?:(=(%loud p.gen) ~&(%loudening %loud) bug))
       :: ?:  &(huz !?=(%|(@ [?(%sgcn %sgls) ^]) p.gen))
       ::  hum
       :-  p.hum
@@ -10541,7 +10589,7 @@
     ::
         [%ktsg *]  $(gen p.gen)
         [%sgzp *]  ~_(duck(sut (play p.gen)) $(gen q.gen))
-        [%sggr *]  $(gen q.gen)
+        [%sggr *]  $(gen q.gen, bug ?:(=(%loud p.gen) ~&(%loudening2 %loud) bug))
         [%tsgr *]
       =+  lem=$(gen p.gen, gol %noun)
       $(gen q.gen, sut p.lem, dox q.lem)
@@ -10901,7 +10949,7 @@
       [%ktwt *]  (wrap(sut $(gen p.gen)) %lead)
       [%note *]  (hint [sut p.gen] $(gen q.gen))
       [%sgzp *]  ~_(duck(sut ^$(gen p.gen)) $(gen q.gen))
-      [%sggr *]  $(gen q.gen)
+      [%sggr *]  $(gen q.gen, bug ?:(=(%loud p.gen) ~&(%loudening3 %loud) bug))
       [%tsgr *]  $(gen q.gen, sut $(gen p.gen))
       [%tscm *]  $(gen q.gen, sut (busk p.gen))
       [%wtcl *]  =+  hip=(chyp p.gen)
@@ -11210,6 +11258,8 @@
         [%face p=$@(term tune) q=zapp]
         [%fork p=(set (pair type zapp))]
         ::NOTE  %holds have been unwrapped
+        ::  q.q: relative to position of alias, location to apply pattern
+        [%fuse p=tune q=(qual term axis zapp type) r=zapp]
     ==
   ::
   +$  zebra
@@ -11218,11 +11268,12 @@
         :: XX: add axe if we want it to work w forks
         [%miss skip=@ud]
         [%faux ~]
+        ::TODO  [%perform-the-operation ??]
     ==
   ::
   ++  unzip
     |=  [way=?(%rite %both) hyp=wing]
-    =.  hyp  (flop hyp)
+    =.  hyp  (flop hyp)  ::NOTE  careful when replacing it wholesale during recur!
     |-  ^-  zebra
     ?~  hyp  [%pale 1 sut ~]
     =/  heg  ?^(i.hyp i.hyp [%| p=0 q=(some i.hyp)])
@@ -11354,6 +11405,54 @@
         [%faux ~]
       ?.  =(0 p.heg)  miss+(dec p.heg)
       ?~  u.tyr  ~|(%unzip-tyr-lost !!)
+      ::TODO  handle fuse nodes
+      ?:  ?=(%fuse -.u.u.tyr)
+        ::  we are going to (potentially) resolve names in "virtual"
+        ::  namespaces.
+        ::
+        ::  get the primary/canonical type at this location:
+        ::  resolve wing where we need to fuse,
+        ::  .waf: structural type at that wing/axis
+        ::  .axe.waf: global axis
+        ::
+        ::NOTE  creates a zipper but we don't use it (rn)
+        ::xx  if we reset axe to 1 here,
+        ::    would get the same axis as in q.u.u.tyr
+        ::
+        ::TODO  maybe call +find instead, only need typ.waf
+        ::NOTE  don't need to +flop q.u.u.tyr because it's just one axis
+        =+  waf=^$(hyp q.u.u.tyr, sut q.sut)
+        ?.  ?=([%pale *] waf)
+          [%faux ~]
+        ::  merge our "virtual" namespace into .waf (through +fuse).
+        ::  destructive because it removes the names in the canonical type.
+        ::  then resolve the rest of the wing there (into .zaf).
+        ::TODO  need a node in $zapp at this point to mark the divergence,
+        ::      but where to put new alias?
+        ::TODO!  "tree-axis subtract" overall axis from axis in waf,
+        ::       to get the axis _within_ waf where we need to put the alias
+        =/  zaf
+          %_  ^$
+            hyp  t.hyp
+            sut  (fuse(sut typ.waf) p.u.u.tyr)
+          ==
+        ::NOTE  axe.zaf is axis relative to %fuse
+        ::      (iow, where we need to edit p.u.u.tyr)
+        ::      zap.waf is useless, it's the zipper in the og sut
+        ::      zap.zaf has more info than we strictly need but that's fine
+        ?.  ?=([%pale *] zaf)  zaf
+          ::TODO  return something else, reconstruct the "unsynthesized" type
+        ::TODO  put different node here (zap.waf?)
+        ::TODO  [%fuse u.q.heg [... axe] p.sut]
+        ::TODO  [%fuse tune alias=[term axis] zapp]
+        ::REVIEW  axe.waf instead, w/ axe reset there?
+        ::  can't use zap.waf because it wan'st resolve out of pattern type,
+        ::TODO  we need to edit typ.waf by axis (but might not have enough ctrl)
+        =/  laf
+          ^$(hyp [&+axe.zaf ~], sut typ.waf)
+        ?>  ?=([%pale *] laf)
+        =+  fus=[%fuse p.sut [u.q.heg axe.zaf zap.zaf typ.waf] zap.laf]
+        laf(axe (peg axe axe.zaf), zap fus)
       ?~  hup=~(reek ap u.u.tyr)
         [%faux ~]
       =+  zaf=^$(hyp (weld (flop u.hup) t.hyp), sut q.sut)
@@ -11386,27 +11485,92 @@
   ::
   ++  modify-and-zip
     ::TODO  smart constructors?
-    |=  [zap=zapp duz=$-(type type)]
-    ^-  type
-    ?~  zap  (duz sut)
+    |=  [zap=zapp duz=$-(type [type ns-map])]
+    =|  nis=(list *)  ::TODO  counter instead?
+    =<  -
+    |-  ^-  [type ns-info]
+    ?~  zap
+      =+  suz=(duz sut)
+      =*  typ  -.suz
+      =*  mif  +.suz
+      ?^  nis
+        [typ |+mif]
+      ?:  ?=(%void typ)  [%void ~]
+      ?:  =(~ mif)
+        [typ ~]
+      ::  add names given by +flux
+      ::
+      :_  ~
+      %-  (curr face typ)
+      %-  ~(rep by mif)
+      |=  [[l=term a=axis n=type] t=tune]
+      t(p (~(put by p.t) l `[%fuse n &+a ~]))
     ?-  -.zap
-      %head  (cell $(zap q.zap) p.zap)
-      %tail  (cell p.zap $(zap q.zap))
-      %core  (core $(zap q.zap) p.zap)
-      %hint  (hint p.zap $(zap q.zap))
-      %face  (face p.zap $(zap q.zap))
+      %head  =+  $(zap q.zap)
+             [(cell -< p.zap) ->]
+      %tail  =+  $(zap q.zap)
+             [(cell p.zap -<) ->]
+      %core  =+  $(zap q.zap)
+             [(core -< p.zap) ->]
+      %hint  =+  $(zap q.zap)
+             [(hint p.zap -<) ->]
+      %face  =+  $(zap q.zap)
+             [(face p.zap -<) ->]
     ::
-        %fork
+        %fork  ::TODO  ns-info
       %-  fork
       %+  turn  ~(tap in p.zap)
       |=  [tup=type zup=zapp]
       ^$(sut tup, zap zup)
+    ::
+        %fuse
+      =+  fud=$(nis [q.zap nis], zap r.zap)
+      =+  nes=(ns-merge p.zap q.zap +.fud)
+      ?^  nis
+        [-.fud nes]
+      ?~  nes  [-.fud ~]
+      ?>  ?=(%& -.nes)
+      [(face p.nes -.fud) ~]
     ==
+  ::
+  ::TODO  $ns-info: type + alias information
+  +$  ns-info
+    ::TODO  reasonable default "empty" value
+    ::TODO  introduction form (our .nam map from +flux)
+    ::TODO  iterative form, mb [type axis]
+    $@  ~           ::  xx
+    %+  each  tune  ::  xx
+    ns-map          ::  xx
+  +$  ns-map  (map term (pair axis type))
+  ::TODO  +ns-merge: handle intermediate aliases,
+  ++  ns-merge
+    ::TODO
+    |=  [=tune [=term =axis =zapp =type] nif=ns-info]
+    ^-  ns-info
+    ?:  =(~ nif)  ~
+    =;  =^type
+      ::TODO  different axis?
+      =.  p.tune  (~(put by p.tune) term `[%fuse type [&+axis]~])
+      &+tune
+    %+  modify-and-zip(sut type)  zapp
+    |=  typ=^type
+    ^-  [^type ns-map]
+    ::
+    ?:  ?=(%void typ)  [%void ~]
+    ::  add names given by +flux
+    ::
+    :_  ~
+    %-  (curr face typ)
+    ?:  ?=(%& -.nif)
+      p.nif
+    %-  ~(rep by p.nif)
+    |=  [[l=^term a=^axis n=^type] t=^tune]
+    t(p (~(put by p.t) l `[%fuse n &+a ~]))
   ::
   ++  take
     |=  [zeb=$~([%pale 1 *type *zapp] $>(%pale zebra)) duz=$-(type type)]
     ^-  (pair axis type)
-    axe.zeb^(modify-and-zip(sut typ.zeb) zap.zeb duz)
+    axe.zeb^(modify-and-zip(sut typ.zeb) zap.zeb |=(t=type [(duz t) ~]))
     :: :-  (tend vit)
     :: =.  vit  (flop vit)
     :: |-  ^-  type
@@ -11453,7 +11617,7 @@
     ?>  ?=([%pale *] zeb)
     :-  axe.zeb
     ::TODO  can't just pass +same lol
-    (modify-and-zip(sut typ.zeb) zap.zeb |=(type mur))
+    (modify-and-zip(sut typ.zeb) zap.zeb |=(type [mur ~]))
   ::
   ++  tend
     |=  vit=vein
