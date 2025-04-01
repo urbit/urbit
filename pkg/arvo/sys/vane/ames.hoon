@@ -3346,7 +3346,7 @@
                 %chum  (on-chum:event-core +.task)
                 %yawn  (on-cancel-scry:event-core | +.task)
                 %wham  (on-cancel-scry:event-core & +.task)
-                %whey  !!  :: XX
+                %whey  !!  :: XX TODO
               ::
                 %mate  ?.  dry.task  (on-mate:event-core +.task)
                        ?^  +<.task
@@ -7205,7 +7205,7 @@
             ::
             ::  metadata query; XX only pump/sink/closing/corked info supported
             ::
-              [%meta %ship ship=@ %ames bone=@ qery=*]
+              [%meta ship=@ %ames bone=@ qery=*]
             ?:  =(~ lyc)
               ~
             ^-  (unit (unit cage))
@@ -10233,7 +10233,7 @@
         ::
         --
       ::
-      +|  %aliens-comets
+      +|  %aliens-and-comets
       ::
       ++  al
         =|  moves=(list move)
@@ -10672,16 +10672,18 @@
       ::  publisher-side, flow-level
       ::
       ++  peek-flow
-        |=  tyl=(pole knot)
+        |=  [lyc=gang tyl=(pole knot)]
         ^-  (unit (unit cage))
         ?:  ?=([%flow bone=@ %cork pat=*] tyl)
-          (peek-cork tyl)
+          (peek-cork lyc tyl)
         ?>  ?=([%flow bone=@ =load =dire rcvr=@ mess=@ ~] tyl)
         =/  bone  (slaw %ud bone.tyl)
         =/  rcvr  (slaw %p rcvr.tyl)
         =/  mess  (slaw %ud mess.tyl)
         ?:  |(?=(~ bone) ?=(~ rcvr) ?=(~ mess))
           [~ ~]
+        ?.  &(?=(^ lyc) (~(has in u.lyc) u.rcvr))
+          ~
         =+  per-sat=(get-per u.rcvr)
         ?.  ?=([~ ~ %known *] per-sat)
           ~  ::  %alien or missing
@@ -10698,13 +10700,15 @@
       ::  client/server %mesa %corks, flow-level
       ::
       ++  peek-cork
-        |=  tyl=(pole knot)
+        |=  [lyc=gang tyl=(pole knot)]
         ^-  (unit (unit cage))
         ?>  ?=([%flow bone=@ %cork =dire rcvr=@ ~] tyl)
         =/  bone  (slaw %ud bone.tyl)
         =/  rcvr  (slaw %p rcvr.tyl)
         ?:  |(?=(~ bone) ?=(~ rcvr))
           [~ ~]
+        ?.  &(?=(^ lyc) (~(has in u.lyc) u.rcvr))
+          ~
         =+  per-sat=(get-per u.rcvr)
         ?.  ?=([~ ~ %known *] per-sat)
           ~  ::  %alien or missing
@@ -10734,15 +10738,19 @@
       ::  publisher-side, weight of a noun bounded at .pat, as measured by .boq
       ::
       ++  peek-whey
-        |=  tyl=(pole knot)
+        |=  [lyc=gang tyl=(pole knot)]
         ^-  (unit (unit cage))
-        ?>  ?=([%whey boq=@ pat=*] tyl)
+        ?>  ?=([%whey boq=@ her=@ pat=*] tyl)
         =/  boq  (slaw %ud boq.tyl)
-        ?~  boq  [~ ~]
+        =/  her  (slaw %p her.tyl)
+        ?:  |(?=(~ boq) ?=(~ her))
+          [~ ~]
         ?~  inn=(inner-path-to-beam our pat.tyl)
           ~
         ::
-        ?~  res=(rof [~ ~] /ames/whey vew.u.inn bem.u.inn)
+        ?.  &(?=(^ lyc) (~(has in u.lyc) u.her))
+          ~
+        ?~  res=(rof lyc /ames/whey vew.u.inn bem.u.inn)
           ~
         :^  ~  ~  %whey
         !>([boq=u.boq (met u.boq (jam ?~(u.res ~ [p q.q]:u.u.res)))])
@@ -10766,22 +10774,24 @@
       ::  metadata query; XX only flow information supported
       ::
       ++  peek-meta
-        |=  tyl=(pole knot)
+        |=  [lyc=gang tyl=(pole knot)]
         ^-  (unit (unit cage))
         ?>  ?=([%meta pat=*] tyl)
         =/  [ship=(unit ship) bone=(unit bone) =dire]
           ?+    pat.tyl  [~ ~ *dire]
-              [%ship ship=@ flow=[%flow bone=@ =dire *]]
+              [ship=@ %flow bone=@ =dire *]
             :+  (slaw %p ship.pat.tyl)
-              (slaw %ud bone.flow.pat.tyl)
-            dire.flow.pat.tyl
+              (slaw %ud bone.pat.tyl)
+            dire.pat.tyl
           ==
         ?:  |(?=(~ ship) ?=(~ bone))
           [~ ~]
+        ?.  &(?=(^ lyc) (~(has in u.lyc) u.ship))
+          ~
         =+  per-sat=(get-per u.ship)
         ?.  ?=([~ ~ %known *] per-sat)
           ~  ::  %alien or missing
-        ?>  ?=([@ @ %flow @ @ qery=*] pat.tyl)
+        ?>  ?=([ship=@ %flow bone=@ dire:ames qery=*] pat.tyl)
         =+  ev-core=(ev-foco:ev u.ship +.u.u.per-sat)
         =/  =side  [u.bone dire]
         =+  fo-core=(fo-abed:fo:ev-core ~[//scry] side)
@@ -10789,7 +10799,7 @@
           ~
         =,  state:fo-core
         ?+    qery.pat.tyl  ~
-            ~          ~ :: XX implement full meta
+            ~          ``message/!>(sate/state:fo-core)
             [%clos ~]  ``message/!>(clos/closing)
             [%cork ~]  ?~(r=(fo-peek:fo-core %cork 0) ~ ``[%message !>(u.r)])
             [%line ~]  ``message/!>(line/line)
@@ -10797,13 +10807,19 @@
             [%next ~]  ``message/!>(next/next.snd)
             [%last ~]  ``message/!>(last/last-acked.rcv)
           ::
+            [%whey boq=@ ~]  :: XX rewrite in terms of %whey namespace
+          ?~  boq=(slaw %ud boq.qery.pat.tyl)
+            ~
+          :^  ~  ~  %message  !>
+          whey/[u.boq (met u.boq (jam state:fo-core))]
+          ::
             [%mess mess=@ m-qery=*]
           =/  mess=(unit @ud)  (slaw %ud mess.qery.pat.tyl)
           ?:  ?=(~ mess)
             [~ ~]
           ?+  m-qery.qery.pat.tyl  ~
-            [%whey ~]  ~
-            [%naxp ~]  ``message/!>(naxp/(~(has by nax.rcv) u.mess))
+              [%naxp ~]
+            ``message/!>(naxp/(~(has by nax.rcv) u.mess))
           ==
         ==
       ::
@@ -10820,18 +10836,18 @@
           ?+    tyl  ~
             ::  message-level public namespaces
             ::
-              [%publ lyf=@ pat=*]                         (peek-publ bem tyl)
-              [%chum lyf=@ her=@ hyf=@ cyf=@ ~]           (peek-chum bem tyl)
-              [%shut kid=@ cyf=@ ~]                       (peek-shut bem tyl)
-              [%pawn %proof rcvr=@ life=@ ~]              (peek-pawn tyl)
+              [%publ lyf=@ pat=*]                (peek-publ bem tyl)
+              [%chum lyf=@ her=@ hyf=@ cyf=@ ~]  (peek-chum bem tyl)
+              [%shut kid=@ cyf=@ ~]              (peek-shut bem tyl)
+              [%pawn %proof rcvr=@ life=@ ~]     (peek-pawn tyl)
             ::  message-level private namespaces
             ::
-              $%([%flow *] [%pawn *] [%whey *] [%meta *])
+              $%([%flow *] [%meta *] [%whey *])
             ?:  =(~ lyc)  ~
-            ?+  tyl  ~
-              [%flow bone=@ load dire rcvr=@ *]           (peek-flow tyl)
-              [%whey boq=@ pat=*]                         (peek-whey tyl)
-              [%meta pat=*]                               (peek-meta tyl)
+            ?-  tyl
+              [%meta *]  (peek-meta lyc tyl)
+              [%flow *]  (peek-flow lyc tyl)
+              [%whey *]  (peek-whey lyc tyl)
             ==
             ::  client-side, protocol-level (authentication namespace)
             ::
@@ -11491,7 +11507,7 @@
       |=  [dud=(unit goof) spar:^ames boq=@ud]
       =/  ship-state  (pe-find-peer ship)
       ?:  ?=(%mesa -.ship-state)
-        (pe-chum ship %a %x '1' %$ %whey (scot %ud boq) path)
+        (pe-chum ship %a %x '1' %$ %whey (scot %ud boq) (scot %p our) path)
       (call:am-core hen dud %soft %whey ship^path boq)
     ::
     +|  %mesa-tasks
@@ -11628,7 +11644,7 @@
                 |=  [lyc=gang pov=path vis=view bem=beam]
                 ^-  (unit (unit cage))
                 ?:  =(s.bem (pout ack))
-                   (peek-flow:me-core (pout ack))
+                   (peek-flow:me-core lyc (pout ack))
                 (rof lyc pov vis bem)
               ::
               =<  moves
@@ -11859,23 +11875,31 @@
       ?-    -.tyl
           %fine                              (scry:am-core sample)
           ?(%mess %publ %shut %veri %pawn)   (scry:me-core sample)
-        ::
+      ::
           %chum
         ?+  +.tyl  ~
           [our=@ lyf=@ cyf=@ ~]              (scry:am-core sample)
           [lyf=@ her=@ hyf=@ cyf=@ ~]        (scry:me-core sample)
         ==
+      ::
       ==
     ?:  =(~ lyc)
       ~
     ::  private, message-level namespaces
     ::
-    ?.  ?=([%meta req=*] tyl)
-      ?.  ?=(?(%flow %cork %whey) -.tyl)  ~  (scry:me-core sample)
-    ?+  req.tyl                              ~
-      [%ship @ %ames *]                      (scry:am-core sample)
-      [%ship @ %flow *]                      (scry:me-core sample)
-    ==
+    ?:  ?=(?(%flow %cork) -.tyl)
+      (scry:me-core sample)
+    ?:  ?=([%meta req=*] tyl)
+      ?+  req.tyl                ~
+        [ship=@ %ames *]        (scry:am-core sample)
+        [ship=@ %flow *]        (scry:me-core sample)
+      ==
+    ?.  ?=([%whey boq=@ her=@ *] tyl)  ~
+    ::  XX TODO in |ames
+    =/  who  (slaw %p her.tyl)
+    ?~  who  [~ ~]
+    =/  wer  -:(pe-find-peer u.who)
+    %.(sample ?:(?=(%ames wer) scry:am-core scry:me-core))
   ::
   ?.  ?&  =(our p.bem)
           =([%da now] r.bem)

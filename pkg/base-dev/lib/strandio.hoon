@@ -455,8 +455,10 @@
   ^-  form:m
   ::  encrypted using %chum namespace
   ::
-  =.  path.spar  [%a %x '1' %$ %whey (scot %ud boq) path.spar]
-  (send-raw-card %pass wire %arvo %a %chum spar)
+  ;<  our=@p  bind:m  get-our
+  =.  path.spar
+    [%a %x '1' %$ %whey (scot %ud boq) (scot %p our) path.spar]
+  (chum wire spar)
 ::
 ++  meta
   |=  [=wire =spar:ames]
@@ -466,15 +468,17 @@
       $%  [%ames bone=@ ?(%clos %cork %next %last %curr) ~]
           [%flow bone=@ =dire:ames ~]
           [%flow bone=@ =dire:ames ?(%clos %cork %line %lods %next %last) ~]
-          [%flow bone=@ =dire:ames %mess mess=@ %whey ~]
-          [%flow bone=@ =dire:ames %mess mess=@ %naxp ~]
+          :: XX rewrite in terms of %whey namespace
+          ::
+          [%flow bone=@ =dire:ames %whey boq=@ ~]
+          [%flow bone=@ =dire:ames seq=@ %naxp ~]
       ==
     ::  encrypted using %chum namespace
     ::
     ;<  our=@p  bind:m  get-our
     %-  send-raw-card
     :*  %pass  wire  %arvo  %a  %chum
-        spar(path [%a %x '1' %$ %meta %ship (scot %p our) path.spar])
+        spar(path [%a %x '1' %$ %meta (scot %p our) path.spar])
     ==
   ==
 ::
