@@ -10584,7 +10584,8 @@
       ++  peek-publ
         |=  [bem=beam tyl=(pole knot)]
         ^-  (unit (unit cage))
-        ?>  ?=([%publ lyf=@ pat=*] tyl)
+        ?.  ?=([%publ lyf=@ pat=*] tyl)
+          ~
         =/  lyf  (slaw %ud lyf.tyl)
         ?~  lyf  [~ ~]
         ?.  =(u.lyf life.ames-state)
@@ -10611,7 +10612,8 @@
       ++  peek-chum
         |=  [bem=beam tyl=(pole knot)]
         ^-  (unit (unit cage))
-        ?>  ?=([%chum lyf=@ her=@ hyf=@ cyf=@ ~] tyl)
+        ?.  ?=([%chum lyf=@ her=@ hyf=@ cyf=@ ~] tyl)
+          ~
         =/  lyf  (slaw %ud lyf.tyl)
         =/  her  (slaw %p her.tyl)
         =/  hyf  (slaw %ud hyf.tyl)
@@ -10643,7 +10645,8 @@
       ++  peek-shut
         |=  [bem=beam tyl=(pole knot)]
         ^-  (unit (unit cage))
-        ?>  ?=([%shut kid=@ cyf=@ ~] tyl)
+        ?.  ?=([%shut kid=@ cyf=@ ~] tyl)
+          ~
         =/  kid  (slaw %ud kid.tyl)
         =/  cyf  (slaw %uv cyf.tyl)
         ?:  |(?=(~ kid) ?=(~ cyf))
@@ -10676,7 +10679,8 @@
         ^-  (unit (unit cage))
         ?:  ?=([%flow bone=@ %cork pat=*] tyl)
           (peek-cork lyc tyl)
-        ?>  ?=([%flow bone=@ =load =dire rcvr=@ mess=@ ~] tyl)
+        ?.  ?=([%flow bone=@ =load =dire rcvr=@ mess=@ ~] tyl)
+          ~
         =/  bone  (slaw %ud bone.tyl)
         =/  rcvr  (slaw %p rcvr.tyl)
         =/  mess  (slaw %ud mess.tyl)
@@ -10702,7 +10706,8 @@
       ++  peek-cork
         |=  [lyc=gang tyl=(pole knot)]
         ^-  (unit (unit cage))
-        ?>  ?=([%flow bone=@ %cork =dire rcvr=@ ~] tyl)
+        ?.  ?=([%flow bone=@ %cork =dire rcvr=@ ~] tyl)
+          ~
         =/  bone  (slaw %ud bone.tyl)
         =/  rcvr  (slaw %p rcvr.tyl)
         ?:  |(?=(~ bone) ?=(~ rcvr))
@@ -10720,7 +10725,8 @@
       ++  peek-pawn
         |=  tyl=(pole knot)
         ^-  (unit (unit cage))
-        ?>  ?=([%pawn %proof rcvr=@ life=@ ~] tyl)
+        ?.  ?=([%pawn %proof rcvr=@ life=@ ~] tyl)
+          ~
         ::  only comets have this
         ::
         ?.  ?=(%pawn (clan:title our))
@@ -10740,7 +10746,8 @@
       ++  peek-whey
         |=  [lyc=gang tyl=(pole knot)]
         ^-  (unit (unit cage))
-        ?>  ?=([%whey boq=@ her=@ pat=*] tyl)
+        ?.  ?=([%whey boq=@ her=@ pat=*] tyl)
+          ~
         =/  boq  (slaw %ud boq.tyl)
         =/  her  (slaw %p her.tyl)
         ?:  |(?=(~ boq) ?=(~ her))
@@ -10759,7 +10766,8 @@
       ++  peek-veri
         |=  tyl=(pole knot)
         ^-  (unit (unit cage))
-        ?>  ?=([%veri typ=?(%sign %hmac) her=@ aut=@ rut=@ pat=*] tyl)
+        ?.  ?=([%veri typ=?(%sign %hmac) her=@ aut=@ rut=@ pat=*] tyl)
+          ~
         =/  her  (slaw %p her.tyl)
         =/  aut  (slaw %uv aut.tyl)
         =/  rut  (slaw %uv rut.tyl)
@@ -10776,7 +10784,8 @@
       ++  peek-meta
         |=  [lyc=gang tyl=(pole knot)]
         ^-  (unit (unit cage))
-        ?>  ?=([%meta pat=*] tyl)
+        ?.  ?=([%meta pat=*] tyl)
+          ~
         =/  [ship=(unit ship) bone=(unit bone) =dire]
           ?+    pat.tyl  [~ ~ *dire]
               [ship=@ %flow bone=@ =dire *]
