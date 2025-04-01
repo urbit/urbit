@@ -1218,6 +1218,11 @@
     ?>  ?=([%sys %way @ @ ~] wire)
     (mo-pass wire %a %plea (slav %p &3.wire) %g /ge/[&4.wire] %0 %u ~)
   ::
+  ++  mo-resend-cork
+    |=  =wire
+    ^+  mo-core
+    ?>  ?=([%sys %way @ @ ~] wire)
+    (mo-pass wire %a %cork (slav %p &3.wire))
   ::  +ap: agent engine
   ::
   ::    An inner, agent-level core.  The sample refers to the agent we're
@@ -3075,6 +3080,7 @@
         %-  %:  trace  odd.veb.bug.state  our-agent  ~
               leaf/"gall: removing stale %nacked %leave {<(spud agent.path)>}"  ~
             ==
+        =+  core=(mo-resend-cork:(mo-abed:core duct) wire)
         %_  core
           outstanding.state  (~(del by outstanding.state) [wire duct])
         ==
