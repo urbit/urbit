@@ -10440,6 +10440,9 @@
             ?+  -.space  path.spar  :: XX skip adding flow paths to the .tip?
               %none  inner:(ev-decrypt-path:ev [path ship]:spar)
             ==
+          %-  %^  co-tace  fin.veb.bug.ames-state  ship.spar
+              |.("send %peek for page={(spud path.spar)}")
+          ::
           (co-make-mess spar(path (make-space-path space path.spar)) ~)
         ::
         ++  co-make-poke
@@ -10465,6 +10468,8 @@
               ==
             (make-space-path space poke-path)
           ::
+          %-  %^  co-tace  snd.veb.bug.ames-state  ship.ack-spar
+              |.("send %poke for payload={(spud poke-path)}")
           ::  ack and poke paths are already encrypted at this point
           ::
           (co-make-mess ack-spar `poke-path)
