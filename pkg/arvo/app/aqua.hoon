@@ -5,7 +5,7 @@
 ::  /-  aquarium
 ::  :aqua &pill .^(pill:aquarium %cx %/urbit/pill)
 ::    OR
-::  :aqua &pill +solid
+::  :aqua &pill +pill/solid
 ::
 ::  XX: update these examples
 ::  Then try stuff:
@@ -898,7 +898,10 @@
       ?:  =(%earl clan)  [1 0]
       (~(got by lives.azi.piers) who)
     =/  =life  lyfe.life-rift
-    [who life sec:ex:(get-keys:aqua-azimuth who life) ~]
+    =/  =rift  rut.life-rift
+    :^  [%2 ~]  who  rift
+    ^-  (list [^life ring])
+    [life sec:ex:(get-keys:aqua-azimuth who life)]~
   :*  feed
       spon
       get-czars
