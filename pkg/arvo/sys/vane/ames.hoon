@@ -10737,7 +10737,6 @@
           =/  cyf  (slaw %uv cyf.tyl)
           ?:  |(?=(~ lyf) ?=(~ her) ?=(~ hyf) ?=(~ cyf))
             [~ ~]
-          ~&  [u.lyf life.ames-state]
           ?.  =(u.lyf life.ames-state)
             ~
           ?~  key=(get-key-for u.her u.hyf)
