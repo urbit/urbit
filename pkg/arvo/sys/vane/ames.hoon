@@ -4289,8 +4289,9 @@
             =/  state=(unit peer-state)  (get-peer-state her.u.res)
             ?~  state
               %.  event-core
+              =+  [wat=- who=her]:u.res
               %+  slog
-                leaf/"ames: got timer for strange ship: {<her.u.res>}, ignoring"
+                leaf/"ames: got {<wat>} timer for strange ship: {<who>}; skip"
               ~
             ::
             =/  peer-core  (abed-peer:pe her.u.res u.state)
@@ -5412,7 +5413,6 @@
               ^+  mesa-co-core
               %-  ~(rep by keens.per)
               |=  [[=path keen=keen-state] core=_mesa-co-core]
-              =|  req=request-state
               =>  .(path `(pole knot)`path)
               ~|  make-peeks-crashed/path
               ?.  ?=([van=@ car=@ cas=@ desk=@ pat=*] path)
@@ -5420,12 +5420,15 @@
                 ::
                 ~&  skip-weird-path/path  core
               =;  [pax=^path =space]
+                =?  core  ?=(^ next-wake.keen)
+                  =/  =wire  (welp /fine/behn/wake/(scot %p her) (pout path))
+                  (co-emit:core unix-duct %pass wire %b %rest u.next-wake.keen)
                 %-  ~(rep by listeners.keen)
                 |=  [[=^duct ints=(set ints)] core=_core]
                 ::  if the scry was created by the |fine core, %ames becomes the
                 ::  listener to the encrypted %tune (which will be transformed
                 ::  into a %near, and given to the original listener). %ames
-                ::  uses  the /ames/[?(%chum %fine %shut ...)] wire to tell arvo
+                ::  uses the /ames/[?(%chum %fine %shut ...)] wire to tell arvo
                 ::  to make it re-entrant into itself, so we neeed to remove
                 ::  that wire since co-make-peek is going to add a /mesa wire
                 ::
