@@ -7796,9 +7796,8 @@
             :: ?>  ?=(%known -.per)  :: XX wat if %alien?
             :: ?.  =(u.hyf life.per)   !!  :: XX handle?
             =*  key  `@uxI`symmetric-key.sat
-            :+  [%chum server=life.ames-state client=her life.sat key]
-              cyf
-            (open-path:crypt key u.cyf)
+            =/  =space  [%chum server=life.ames-state client=her life.sat key]
+            [space cyf (open-path:crypt key u.cyf)]
           ::
               [%shut kid=@ pat=[cyf=@ ~]]  :: encrypted with group key
             =/  kid  (slaw %ud kid.tyl)
@@ -7808,9 +7807,7 @@
             :: ?>  ?=(%known -.per)  :: XX wat if %alien?
             ?~  key=(get:key-chain client-chain.sat u.kid)
               !!  :: XX handle
-            :+  [%shut u.kid -.u.key]
-              cyf
-            (open-path:crypt -.u.key u.cyf)
+            [space=[%shut u.kid -.u.key] cyf (open-path:crypt -.u.key u.cyf)]
           ==
         ::
         +|  %request-flow
@@ -9453,6 +9450,9 @@
             ^+  sy-core
             ?:  =(our ship)  sy-core
             ::
+            %-  %+  %*(ev-tace ev her ship)  sun.veb.bug.ames-state
+                |.("hear new key at life={<life>}")
+            ::
             =/  peer  (sy-find-peer ship)
             ?.  ?=([?(%ship %chum) ~ %known *] peer)
               =|  =point:jael
@@ -9462,48 +9462,21 @@
               ::
               (on-publ-full (my [ship point]~))
             ::
-            =/  old-key       symmetric-key.+.u.peer
-            =/  =private-key  sec:ex:crypto-core
-            =/  new-key       (derive-symmetric-key public-key private-key)
-            ::  recalculate paths in the .pit using the new key
+            =/  old-key         symmetric-key.+.u.peer
+            =/  =private-key    sec:ex:crypto-core
+            =/  =symmetric-key  (derive-symmetric-key public-key private-key)
+            ::  recalculate paths in .pit/.keens using the new key
             ::
             =?  peer  ?=([%chum ~ %known *] peer)
-              =;  [pit=_pit.u.peer tip=_tip.u.peer]
-                peer(pit.u pit, tip.u tip)
-              %-  ~(rep by pit.u.peer)
-              |=  $:  [=path req=request-state]
-                      pit=(map path request-state)
-                      tip=(jug =user=path [duct =ames=path])
-                  ==
-              =/  [=space user-path=^path]
-                [space inner]:(ev-decrypt-path:ev path ship)
-              =.  space
-                ::  update life/keys in the space; for acks, update the client
-                ::
-                ?+  -.space  space
-                  %publ  space(life life)
-                  %chum  space(client-life life, key new-key)
-                ==
-              =.  path  (make-space-path space user-path)
-              ::  only recalculate poke paths if there's an associated payload
-              ::
-              =?  pay.req  ?=(^ pay.req)
-                =/  [=^space poke=^path]
-                  [space inner]:(ev-decrypt-path:ev u.pay.req ship)
-                ::  for poke paths, update the server life
-                ::
-                =.  space
-                  ?+  -.space  space  :: for %publ, our life hansn't changed
-                    %chum  space(server-life life, key new-key)
-                  ==
-                `(make-space-path space poke)
-              :-  (~(put by pit) path req(ps ~))   :: XX drop any partial state
-              %-  ~(rep by ~(key by for.req))
-              |=  [for=duct tip=_tip]
-              (~(put ju tip) user-path for path)
+              :^  %chum  ~  %known
+              (rederive-mesa-pit ship +.u.peer life symmetric-key)
+            ::
+            =?  peer  ?=([%ship ~ %known *] peer)
+              :^  %ship  ~  %known
+              (rederive-mesa-keens ship +.u.peer life symmetric-key)
             ::  update values
             ::
-            =.  symmetric-key.+.u.peer  new-key
+            =.  symmetric-key.+.u.peer  symmetric-key
             =.  life.+.u.peer           life
             =.  public-key.+.u.peer     public-key
             ::
@@ -9519,6 +9492,9 @@
           ++  on-publ-sponsor
             |=  [=ship sponsor=(unit ship)]
             ^+  sy-core
+            ::
+            %-  %+  %*(ev-tace ev her ship)  sun.veb.bug.ames-state
+                |.("hear new sponsor={<sponsor>}")
             ::
             ?:  =(our ship)
               (sy-emit unix-duct %give %saxo sy-get-sponsors)
@@ -9671,6 +9647,9 @@
           ++  on-publ-rift
             |=  [=ship =rift]
             ^+  sy-core
+            %-  %+  %*(ev-tace ev her ship)  sun.veb.bug.ames-state
+                |.("hear new rift={<life>}")
+            ::
             =?  rift.ames-state  =(our ship)
               rift
             =/  peer  (sy-find-peer ship)
@@ -9760,37 +9739,47 @@
           |=  [=life vein=(map life private-key)]
           ^+  sy-core
           ::
-          =.  priv.ames-state  (~(got by vein) life)
-          =.  life.ames-state  life
-          =/  crypto-core      (nol:nu:crub:crypto priv.ames-state)
+          %-  %+  %*(ev-tace ev her our)  sun.veb.bug.ames-state
+              |.("hear new private key for life={<life>}")
+          ::
+          =/  =private-key  (~(got by vein) life)
+          =/  crypto-core   (nol:nu:crub:crypto private-key)
           ::  recalculate each peer's symmetric key
           ::
           =.  chums.ames-state
-            %-  ~(run by chums.ames-state)
-            |=  =chum-state
+            %-  ~(urn by chums.ames-state)
+            |=  [=ship =chum-state]
             ^+  chum-state
             ::
             ?.  ?=(%known -.chum-state)
               chum-state
             =/  =fren-state  +.chum-state
-            =.  symmetric-key.fren-state
+            =/  =symmetric-key
               (derive-symmetric-key public-key.fren-state sec:ex:crypto-core)
+            ::  recalculate paths in .pit/.keens using the new key
             ::
-            known/fren-state
+            =.  fren-state
+              (rederive-mesa-pit ship fren-state life symmetric-key)
+            ::
+            known/fren-state(symmetric-key symmetric-key)
           ::
           =.  peers.ames-state
-            %-  ~(run by peers.ames-state)
-            |=  =ship-state
+            %-  ~(urn by peers.ames-state)
+            |=  [=ship =ship-state]
             ^+  ship-state
             ::
             ?.  ?=(%known -.ship-state)
               ship-state
             ::
             =/  =peer-state  +.ship-state
-            =.  symmetric-key.peer-state
+            =/  =symmetric-key
               (derive-symmetric-key public-key.+.ship-state sec:ex:crypto-core)
             ::
-            known/peer-state
+            =.  peer-state
+              (rederive-mesa-keens ship peer-state life symmetric-key)
+            known/peer-state(symmetric-key symmetric-key)
+          =.  priv.ames-state  private-key
+          =.  life.ames-state  life
           sy-core
         ::
         ++  sy-prod
@@ -11189,6 +11178,8 @@
         ?:  =(our gal)
           ~  :: XX log
         [~ `@ux`gal]
+      ::
+      +|  %keys
       ::  +get-key-for : eddh with our key
       ::
       ++  get-key-for
@@ -11254,6 +11245,101 @@
       ++  crypto-core
         =>  [priv=priv.ames-state ..crypto]
         ~>(%memo./mesa/crypto-core (nol:nu:crub:crypto priv))
+      ::
+      ++  rederive-mesa-pit
+        |=  [=ship peer=fren-state =life new-key=symmetric-key]
+        =;  [pit=_pit.peer tip=_tip.peer]
+          peer(pit pit, tip tip)
+        %-  ~(rep by pit.peer)
+        |=  $:  [=path req=request-state]
+                pit=_pit.peer
+                tip=_tip.peer
+            ==
+        =+  old-path=path
+        =/  [=space user-path=^path]
+          [space inner]:(ev-decrypt-path:ev path ship)
+        ?.  ?=(?(%publ %chum) -.space)
+          pit^tip
+        %-  %+  %*(ev-tace ev her ship)  sun.veb.bug.ames-state
+            |.("re-deriving new pit entry {<(spud path)>}")
+        ::
+        =.  space
+          ::  update life/keys in the space; for acks, update the client
+          ::
+          ?-  -.space
+            %publ  space(life life)
+            %chum  space(client-life life, key new-key)
+          ==
+        =.  path  (make-space-path space user-path)
+        ::  only recalculate poke paths if there's an associated payload
+        ::
+        =?  pay.req  ?=(^ pay.req)
+          =/  [=^space poke=^path]
+            [space inner]:(ev-decrypt-path:ev u.pay.req ship)
+          ::  for poke paths, update the server life
+          ::
+          =.  space
+            ?+  -.space  space  :: for %publ, our life hansn't changed
+              %chum  space(server-life life, key new-key)
+            ==
+          `(make-space-path space poke)
+        ::  delete previous pit entry with old path
+        ::
+        =.  pit  (~(del by pit) old-path)
+        ::  update pit entry with new-path
+        ::
+        :-  (~(put by pit) path req(ps ~))   :: XX drop any partial state
+        %-  ~(rep by ~(key by for.req))
+        |=  [for=duct tip=_tip]
+        ?.  (~(has by tip) user-path)
+          ~&  >>>  %missing-tip-entry
+          tip
+        (~(put ju tip) user-path for path)
+      ::
+      ++  rederive-mesa-keens
+        |=  [=ship peer=peer-state =life new-key=symmetric-key]
+        =;  [keens=_keens.peer tip=_tip.peer]
+          peer(keens keens, tip tip)
+        %-  ~(rep by keens.peer)
+        |=  $:  [=path keen=keen-state]
+                keens=_keens.peer  ::  init accumulator(s) with current state
+                tip=_tip.peer
+            ==
+        =>  .(path `(pole knot)`path)
+          ~|  make-peeks-crashed/path
+          ?.  ?=([van=@ car=@ cas=@ desk=@ pat=*] path)
+            :: XX validate van, car, cas, desk ?
+            ::
+            ~&  skip-weird-path/path  keens^tip
+        ?.  ?=([%chum her=@ lyf=@ cyf=@ ~] pat.path)
+          keens^tip
+        %-  %+  %*(ev-tace ev her ship)  sun.veb.bug.ames-state
+            |.("re-deriving new keens entry {<(spud path)>}")
+        ::
+        =/  [user-path=^path new-path=^path]
+          =/  cyf=@      (slav %uv cyf.pat.path)
+          =/  pax=^path  (rash `@t`(dy:crub:crypto symmetric-key.peer cyf) stap)
+          =.  cyf
+            (scot %uv (en:crub:crypto new-key (spat pax)))
+          :-  pax
+          /a/x/1//chum/[her.pat.path]/(scot %ud life)/[cyf]
+        =|  new-keen=keen-state
+        =.  new-keen
+          new-keen(listeners listeners.keen, next-wake next-wake.keen)
+        ::  delete previous %chum entry with old path
+        ::
+        =.  keens  (~(del by keens) (pout path))
+        ::  update %chum entry with new-path
+        ::
+        :-  (~(put by keens) new-path new-keen)   :: XX drop any partial state
+        %-  ~(rep by ~(key by listeners.keen))
+        |=  [for=duct tip=_tip]
+        ?.  (~(has by tip) user-path)
+          ~&  >>>  %missing-tip-entry
+          tip
+        (~(put ju tip) user-path for path)
+      ::
+      +|  %tests
       ::
       ++  regression-test
         |=  her=ship
