@@ -9471,9 +9471,13 @@
               :^  %chum  ~  %known
               (rederive-mesa-pit ship +.u.peer life symmetric-key)
             ::
-            =?  peer  ?=([%ship ~ %known *] peer)
-              :^  %ship  ~  %known
-              (rederive-mesa-keens ship +.u.peer life symmetric-key)
+            =^  keens-moves  peer
+              ?.  ?=([%ship ~ %known *] peer)
+                `peer
+              =/  [moves=(list move) peer=peer-state]
+                %-  rederive-mesa-keens
+                [ship +.u.peer our=life.ames-state her=life symmetric-key]
+              [moves %ship ~ %known peer]
             ::  update values
             ::
             =.  symmetric-key.+.u.peer  symmetric-key
@@ -9484,7 +9488,7 @@
               (~(put by chums.ames-state) ship u.peer)
             =?  peers.ames-state  ?=(%ship -.peer)
               (~(put by peers.ames-state) ship u.peer)
-            sy-core
+            (sy-emil keens-moves)
           ::  +on-publ-sponsor: handle new or lost sponsor for peer
           ::
           ::    TODO: really handle sponsor loss
@@ -9763,24 +9767,26 @@
             ::
             known/fren-state(symmetric-key symmetric-key)
           ::
-          =.  peers.ames-state
-            %-  ~(urn by peers.ames-state)
-            |=  [=ship =ship-state]
-            ^+  ship-state
-            ::
+          =/  [moves=(list move) peers=_peers.ames-state]
+            %-  ~(rep by peers.ames-state)
+            |=  [[=ship =ship-state] moves=(list move) peers=_peers.ames-state]
             ?.  ?=(%known -.ship-state)
-              ship-state
+              moves^peers
             ::
             =/  =peer-state  +.ship-state
-            =/  =symmetric-key
+            =/  new-key=symmetric-key
               (derive-symmetric-key public-key.+.ship-state sec:ex:crypto-core)
             ::
-            =.  peer-state
-              (rederive-mesa-keens ship peer-state life symmetric-key)
-            known/peer-state(symmetric-key symmetric-key)
-          =.  priv.ames-state  private-key
-          =.  life.ames-state  life
-          sy-core
+            =^  keens-moves  peer-state
+              %-  rederive-mesa-keens
+              [ship peer-state our=life life.peer-state new-key]
+            :-  (weld moves keens-moves)
+            %+  ~(put by peers)  ship
+            known/peer-state(symmetric-key new-key)
+          =.  peers.ames-state  peers
+          =.  priv.ames-state   private-key
+          =.  life.ames-state   life
+          (sy-emil moves)
         ::
         ++  sy-prod
           |=  ships=(list @p)
@@ -9920,7 +9926,6 @@
             =.  route.+.u.peer  ~
             (~(put by peers.ames-state) ship u.peer)
           (sy-emit unix-duct %give %nail ship ~)
-        ::
         ::  +sy-sift: handle request to filter debug output by ship
         ::
         ++  sy-sift
@@ -10150,7 +10155,6 @@
             ==
           ::
           --
-        ::
         ::  +sy-trim: handle request to free memory
         ::
         ::    (%ruin comets not seen for six months)
@@ -11136,6 +11140,7 @@
           ==
         ::
         --
+      ::
       +|  %helpers
       ::
       ++  push-pact  :: XX forwarding?
@@ -11312,47 +11317,54 @@
         (~(put ju tip) user-path for path)
       ::
       ++  rederive-mesa-keens
-        |=  [=ship peer=peer-state =life new-key=symmetric-key]
-        =;  [keens=_keens.peer tip=_tip.peer]
-          peer(keens keens, tip tip)
+        |=  [=ship peer=peer-state =our=life =her=life new-key=symmetric-key]
+        ^-  (quip move _peer)
+        =+  event-core=(ev:ames now^eny^rof ~[//ames] ames-state)
+        =;  core=_event-core
+          =/  [moves=(list move) state=axle]  abet:core
+          :-  moves
+          ~|  %freaky-alien-rederive-mesa-keens^ship
+          =-  ?>(?=(%known -<) ->)
+          (~(got by peers.state) ship)
         %-  ~(rep by keens.peer)
-        |=  $:  [=path keen=keen-state]
-                keens=_keens.peer  ::  init accumulator(s) with current state
-                tip=_tip.peer
-            ==
+        |=  [[=path keen=keen-state] core=_event-core]
         =>  .(path `(pole knot)`path)
           ~|  make-peeks-crashed/path
           ?.  ?=([van=@ car=@ cas=@ desk=@ pat=*] path)
             :: XX validate van, car, cas, desk ?
             ::
-            ~&  skip-weird-path/path  keens^tip
+            ~&  skip-weird-path/path
+            core
         ?.  ?=([%chum her=@ lyf=@ cyf=@ ~] pat.path)
-          keens^tip
+          core
         %-  %+  %*(ev-tace ev her ship)  sun.veb.bug.ames-state
             |.("re-deriving new keens entry {<(spud path)>}")
         ::
-        =/  [user-path=^path new-path=^path]
-          =/  cyf=@      (slav %uv cyf.pat.path)
-          =/  pax=^path  (rash `@t`(dy:crub:crypto symmetric-key.peer cyf) stap)
-          =.  cyf
-            (scot %uv (en:crub:crypto new-key (spat pax)))
-          :-  pax
-          /a/x/1//chum/[her.pat.path]/(scot %ud life)/[cyf]
-        =|  new-keen=keen-state
-        =.  new-keen
-          new-keen(listeners listeners.keen, next-wake next-wake.keen)
-        ::  delete previous %chum entry with old path
+        =/  user-path=^path
+          =/  cyf=@  (slav %uv cyf.pat.path)
+          (rash `@t`(dy:crub:crypto symmetric-key.peer cyf) stap)
+        =.  peers.ames-state.core
+          =.  life.peer           her-life
+          =.  symmetric-key.peer  new-key
+          ::  delete previous %chum entry with old path
+          ::
+          =.  keens.peer
+            (~(del by keens.peer) (pout path))
+          ::  remove previous .tip entry; will be readded
+          ::
+          =.  tip.peer
+            %-  ~(rep by ~(key by listeners.keen))
+            |=  [for=duct tip=_tip.peer]
+            (~(del ju tip) user-path for path)
+          ::
+          (~(put by peers.ames-state.core) ship known/peer)
+        =.  life.ames-state.core  our-life
         ::
-        =.  keens  (~(del by keens) (pout path))
-        ::  update %chum entry with new-path
-        ::
-        :-  (~(put by keens) new-path new-keen)   :: XX drop any partial state
         %-  ~(rep by ~(key by listeners.keen))
-        |=  [for=duct tip=_tip]
-        ?.  (~(has by tip) user-path)
-          ~&  >>>  %missing-tip-entry
-          tip
-        (~(put ju tip) user-path for path)
+        |=  [for=duct c=_core]
+        =?  for  ?=([[%ames %chum ~] *] for)
+          t.for  ::  on-chum is re-entrant; remove /chum wire will be readded
+        (on-chum:c(duct for) ship user-path)
       ::
       +|  %tests
       ::
