@@ -9469,7 +9469,8 @@
             ::
             =?  peer  ?=([%chum ~ %known *] peer)
               :^  %chum  ~  %known
-              (rederive-mesa-pit ship +.u.peer life symmetric-key)
+              %-  rederive-mesa-pit
+              [ship +.u.peer our=life.ames-state her=life symmetric-key]
             ::
             =^  keens-moves  peer
               ?.  ?=([%ship ~ %known *] peer)
@@ -9763,7 +9764,8 @@
             ::  recalculate paths in .pit/.keens using the new key
             ::
             =.  fren-state
-              (rederive-mesa-pit ship fren-state life symmetric-key)
+              %-  rederive-mesa-pit
+              [ship fren-state our=life her=life.fren-state symmetric-key]
             ::
             known/fren-state(symmetric-key symmetric-key)
           ::
@@ -11267,7 +11269,7 @@
         ~>(%memo./mesa/crypto-core (nol:nu:crub:crypto priv))
       ::
       ++  rederive-mesa-pit
-        |=  [=ship peer=fren-state =life new-key=symmetric-key]
+        |=  [=ship peer=fren-state =our=life =her=life new-key=symmetric-key]
         =;  [pit=_pit.peer tip=_tip.peer]
           peer(pit pit, tip tip)
         %-  ~(rep by pit.peer)
@@ -11284,11 +11286,14 @@
             |.("re-deriving new pit entry {<(spud path)>}")
         ::
         =.  space
-          ::  update life/keys in the space; for acks, update the client
+          ::  update life/keys in the space
           ::
-          ?-  -.space
-            %publ  space(life life)
-            %chum  space(client-life life, key new-key)
+          ?-    -.space
+              %publ
+            space(life her-life)
+          ::
+              %chum
+            space(client-life our-life, key new-key, server-life her-life)
           ==
         =.  path  (make-space-path space user-path)
         ::  only recalculate poke paths if there's an associated payload
@@ -11299,8 +11304,12 @@
           ::  for poke paths, update the server life
           ::
           =.  space
-            ?+  -.space  space  :: for %publ, our life hansn't changed
-              %chum  space(server-life life, key new-key)
+            ?+    -.space  space
+                %publ
+              space(life our-life)
+              ::
+                %chum
+             space(server-life our-life, key new-key, client-life her-life)
             ==
           `(make-space-path space poke)
         ::  delete previous pit entry with old path
@@ -11363,7 +11372,7 @@
         %-  ~(rep by ~(key by listeners.keen))
         |=  [for=duct c=_core]
         =?  for  ?=([[%ames %chum ~] *] for)
-          t.for  ::  on-chum is re-entrant; remove /chum wire will be readded
+          t.for  ::  on-chum is re-entrant; remove /chum wire, it'll  be readded
         (on-chum:c(duct for) ship user-path)
       ::
       +|  %tests
