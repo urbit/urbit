@@ -2291,7 +2291,9 @@
         ::  POST methods are used solely for deleting channels
         (on-put-request channel-id identity request)
       ::
-      ((trace 0 |.("session not a put")) `state)
+      %-  (trace 0 |.("session not a put"))
+      %^  return-static-data-on-duct  405  'text/html'
+      (error-page 405 & url.request "bad method for session endpoint")
     ::  +on-cancel-request: cancels an ongoing subscription
     ::
     ::    One of our long lived sessions just got closed. We put the associated

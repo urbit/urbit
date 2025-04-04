@@ -1915,7 +1915,11 @@
         *yaki
       (aeon-to-yaki:ze let.dom)
     =/  old-kel=(set weft)
-      ?:  =(0 let.dom)
+      ?:  ?|  =(0 let.dom)
+              =-  ~?  -  "clay: missing /sys/kelvin on {<syd>}"
+                  -
+              !(~(has by q.old-yaki) /sys/kelvin)
+          ==
         [zuse+zuse ~ ~]
       (waft-to-wefts (get-kelvin %| old-yaki))
     =/  [deletes=(set path) changes=(map path (each page lobe))]

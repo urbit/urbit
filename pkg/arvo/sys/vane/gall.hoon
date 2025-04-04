@@ -794,6 +794,9 @@
         ::
         ?~  err
           (mo-pass sys+wire %a %cork ship)
+        %-  %:  ^trace  odd.veb.bug.state  *dude  ~
+              leaf/"gall: {<ship>} got %nacked %leave {<(spud wire)>}"  ~
+            ==
         ::  if first time hearing a %nack for a %leave, after upgrade
         ::  or if all outstanding %leaves have been handled, set up timer
         ::
@@ -3062,17 +3065,20 @@
     ::  anc %ack or a %nack, so %ames is still trying to send it.
     ::
     ~?  >>>  ?&  ?=(%leave rr)
-                 =(^ stand)
+                 !=(~ stand)
                  =^(rr stand ~(get to stand) !=(%missing rr))
               ==
       "extraneous request outstanding [{<wire>} {<duct>} {<stand>} {<rr>}]"
     =?  core  ?&  ?=(%leave rr)
-                 =(^ stand)
-                 =^(rr stand ~(get to stand) &(=(%missing rr) =(~ stand)))
+                  !=(~ stand)
+                  =^(rr stand ~(get to stand) &(=(%missing rr) =(~ stand)))
               ==
       =+  core=(mo-handle-nacked-leaves:(mo-abed:core duct) wire)
       ::  make sure that only the %leave remains in the queue
       ::
+      %-  %:  trace  odd.veb.bug.state  *dude  ~
+            leaf/"gall: resending %nacked %leave {<(spud wire)>}"  ~
+          ==
       %_    core
           outstanding.state
         %+  ~(put by outstanding.state)  [wire duct]
