@@ -2113,8 +2113,9 @@
                     -
               ::  nacked pokes are not migrated
               ::
-                .=  [last-acked pending-ack]:rcv.flow
-                    [last-acked pending-ack]:rcv.back-flow
+                .=  [last-acked pending-ack nax]:rcv.flow
+                    [last-acked pending-ack nax]:rcv.back-flow
+              ::
             ==
           &(test ok)
       ==
@@ -10062,7 +10063,6 @@
             ::
             =.  last-acked.sink      last-acked.rcv.state
             =.  last-heard.sink      last-acked.rcv.state
-            =.  rcv.peer-state.core  (~(put by rcv.peer-state.core) bone sink)
             ::  naxplanations
             ::
             =/  naxp=^bone  (mix 0b10 bone)  ::  bone=%1 -> bone=%3
@@ -10070,6 +10070,11 @@
               %+  sort  ~(tap by nax.rcv.state)
               |=  [a=[@ud *] b=[@ud *]]
               (gth -.a -.b)
+            ::  add all seq.[i].keys to nax.sink
+            ::
+            =.  nax.sink  (~(gas in *(set @ud)) (turn keys |=([@ *] +<-)))
+            =.  rcv.peer-state.core  (~(put by rcv.peer-state.core) bone sink)
+            ::
             ?~  keys
               core
             ?.  =(last-acked.rcv.state seq.i.keys)
