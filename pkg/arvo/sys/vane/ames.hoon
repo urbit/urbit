@@ -7933,7 +7933,7 @@
             ?:  ?=(%none -.space)
               %-  %+  %*(ev-tace ev-core her her-pok)  odd.veb.bug.ames-state
                   |.  %+  weld  "weird poke lifes={<life.per^life.ames-state>}"
-                      " ack={<pat.ack.pact>}; skip"
+                      " ack={<pat.pok.pact>}; skip"
               ev-core
             ::
             =/  [pok=(pole iota) ack=(pole iota)]
@@ -11751,7 +11751,7 @@
             ::
             ?:  ?=(%none -.space)
               %-  %+  %*(ev-tace ev-core her her-pok)  odd.veb.bug.ames-state
-                  |.("weird poke life={<life.per>} ack={<pat.ack.pact>}; skip")
+                  |.("weird poke life={<life.per>} ack={<pat.pok.pact>}; skip")
               `ames-state
             =/  [pok=(pole iota) ack=(pole iota)]
               ::  path validation/decryption
