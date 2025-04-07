@@ -1901,7 +1901,7 @@
     ::                   .back is the regressed state, from $chums to %ships
     ::
     ++  migration-test
-      |=  [=ship ames=ship-state back=ship-state]
+      |=  [=ship rege-moves=(list move) ames=ship-state back=ship-state]
       ^-  ?
       ?>  =(-.ames -.back)     :: both %known or %alien
       ?:  ?=(%alien -.ames)
@@ -1928,9 +1928,23 @@
               -
           %+  print-check  %corked   =(corked.ames corked.back)
           %+  print-check  %chain    =(chain.ames chain.back)
-          =-  ~?  !-  [ames=keens.ames back=keens.back]
+          =-  ~?  !-  [ames=~(key by keens.ames) back=~(key by keens.back)]
               -
-          %+  print-check  %keens   =(~(key by keens.ames) ~(key by keens.back))
+          %+  print-check  %keens
+              ?|  =(~(key by keens.ames) ~(key by keens.back))
+                ::
+                  ?&  !=(~ rege-moves)
+                      %-  ~(rep in ~(key by keens.ames))
+                      |=  [=keen=path ok=?]
+                      %+  lien  rege-moves
+                      |=  [=duct card=(wind note gift)]
+                      ?.  ?=(%pass -.card)
+                        %.n
+                      ?.  ?=([%a %keen sec=* ship=@ path=*] q.card)
+                        %.n
+                      =(keen-path path.q.card)
+              ==  ==
+        ::
           %+  print-check  %nax     =(nax.ames nax.back)  :: XX ?
         ::  forward flows
         ::
@@ -2113,8 +2127,9 @@
                     -
               ::  nacked pokes are not migrated
               ::
-                .=  [last-acked pending-ack]:rcv.flow
-                    [last-acked pending-ack]:rcv.back-flow
+                .=  [last-acked pending-ack nax]:rcv.flow
+                    [last-acked pending-ack nax]:rcv.back-flow
+              ::
             ==
           &(test ok)
       ==
@@ -4472,10 +4487,10 @@
           =/  ship-state  (~(get by peers.ames-state) ship)
           ?.  ?=([~ %known *] ship-state)  %.n
           =+  peer-core=(abed-peer:pe ship +.u.ship-state)
-          =/  ahoy-state=axle
-            ~|(%migrate-crashed ames-state:on-migrate:peer-core)
-          =/  rege-state=axle
-            =<  ames-state
+          =/  [ahoy-moves=(list move) ahoy-state=axle]
+            ~|(%migrate-crashed [moves ames-state]:on-migrate:peer-core)
+          =/  [rege-moves=(list move) rege-state=axle]
+            =<  [moves ames-state]
             ~|  %regress-crashed
             %.  [`ship dry=%.n]
             %*  sy-rege  sy:(mesa now eny rof)
@@ -4483,9 +4498,11 @@
             ==
           ::  compare pre/post migrated states
           ::
-          %^  migration-test  ship
+          %:  migration-test  ship
+            rege-moves
             (~(got by peers.ames-state) ship)
-          (~(got by peers.rege-state) ship)
+            (~(got by peers.rege-state) ship)
+          ==
         ::
         ++  on-ack-ahoy
           |=  =shot
@@ -5420,6 +5437,8 @@
                 ::
                 ~&  skip-weird-path/path  core
               =;  [pax=^path =space]
+                %-  (fi-trace:fi fin.veb |.("migrating {(spud path)}"))
+                ::
                 =?  core  ?=(^ next-wake.keen)
                   =/  =wire  (welp /fine/behn/wake/(scot %p her) (pout path))
                   (co-emit:core unix-duct %pass wire %b %rest u.next-wake.keen)
@@ -10084,7 +10103,6 @@
             ::
             =.  last-acked.sink      last-acked.rcv.state
             =.  last-heard.sink      last-acked.rcv.state
-            =.  rcv.peer-state.core  (~(put by rcv.peer-state.core) bone sink)
             ::  naxplanations
             ::
             =/  naxp=^bone  (mix 0b10 bone)  ::  bone=%1 -> bone=%3
@@ -10092,6 +10110,11 @@
               %+  sort  ~(tap by nax.rcv.state)
               |=  [a=[@ud *] b=[@ud *]]
               (gth -.a -.b)
+            ::  add all seq.[i].keys to nax.sink
+            ::
+            =.  nax.sink  (~(gas in *(set @ud)) (turn keys |=([@ *] +<-)))
+            =.  rcv.peer-state.core  (~(put by rcv.peer-state.core) bone sink)
+            ::
             ?~  keys
               core
             ?.  =(last-acked.rcv.state seq.i.keys)
@@ -10128,7 +10151,6 @@
             ::
             ?:  ?=(^ pay.req)  core  :: flows are migrated separatedly
             :: ?~  for.req        core  :: XX weird; log?  TMI
-            =|  keen=keen-state
             %-  ~(rep by for.req)
             |=  [[hen=duct ints=(set ints)] c=_core]
             ::  XX  inspect the duct to find %mesa wires?
@@ -10155,6 +10177,8 @@
                 %-  %+  %*(ev-tace ev her her)  odd.veb.bug.ames-state
                     |.("weird poke life={<life.fren>} path={<path>}; skip")
                 ~
+            %-  %+  %*(ev-tace ev her her)  fin.veb.bug.ames-state
+                |.("regressing {<(spud path)>} to {<(spud pax)>}")
             ?+  -.space  !!
               %publ  (on-keen:c(duct hen) ~ her pax)
               %chum  (on-chum:c(duct hen) her pax)
