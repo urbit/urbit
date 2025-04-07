@@ -7813,7 +7813,16 @@
             =/  her=@p  ?:(=(u.her our) ship u.her) :: %poke payloads are for us
             =+  sat=(got-per her)        :: XX get-per
             :: ?>  ?=(%known -.per)  :: XX wat if %alien?
-            :: ?.  =(u.hyf life.per)   !!  :: XX handle?
+            ?:  ?&  =(u.^her our)  ::  for acks (on in general peeks)
+                    ?|  !=(u.hyf life.ames-state)
+                        !=(u.lyf life.per)
+                ==  ==
+              [*space ~ ~]
+            ?:  ?&  =(u.^her ship)  ::  for poke payloads
+                    ?|  !=(u.hyf life.per)
+                        !=(u.lyf life.ames-state)
+                ==  ==
+              [*space ~ ~]
             =*  key  `@uxI`symmetric-key.sat
             =/  =space  [%chum server=life.ames-state client=her life.sat key]
             [space cyf (open-path:crypt key u.cyf)]
@@ -7939,6 +7948,12 @@
             =/  [=space cyf=(unit @) =inner-poke=path]
               ~|  inner-path/[pat.ack^pat.pok]:pact
               (ev-decrypt-path [pat her]:pok.pact)
+            ::
+            ?:  ?=(%none -.space)
+              %-  %+  %*(ev-tace ev-core her her-pok)  odd.veb.bug.ames-state
+                  |.  %+  weld  "weird poke lifes={<life.per^life.ames-state>}"
+                      " ack={<pat.pok.pact>}; skip"
+              ev-core
             ::
             =/  [pok=(pole iota) ack=(pole iota)]
               ::  path validation/decryption
@@ -10157,12 +10172,17 @@
               c
             =/  [=space pax=^path]
               [space inner]:(ev-decrypt-path:ev path her)
+            =+  ?.  ?=(%none -.space)
+                ~
+                %-  %+  %*(ev-tace ev her her)  odd.veb.bug.ames-state
+                    |.("weird poke life={<life.fren>} path={<path>}; skip")
+                ~
             %-  %+  %*(ev-tace ev her her)  fin.veb.bug.ames-state
                 |.("regressing {<(spud path)>} to {<(spud pax)>}")
-            ?-  -.space
-              ?(%none %publ)  (on-keen:c(duct hen) ~ her pax)
-                       %chum  (on-chum:c(duct hen) her pax)
-                       %shut  (on-keen:c(duct hen) `[kid key]:space her pax)
+            ?+  -.space  !!
+              %publ  (on-keen:c(duct hen) ~ her pax)
+              %chum  (on-chum:c(duct hen) her pax)
+              %shut  (on-keen:c(duct hen) `[kid key]:space her pax)
             ==
           ::
           ++  get-route
@@ -11301,53 +11321,57 @@
                 pit=_pit.peer
                 tip=_tip.peer
             ==
-        =+  old-path=path
-        =/  [=space user-path=^path]
-          [space inner]:(ev-decrypt-path:ev path ship)
-        ?.  ?=(?(%publ %chum) -.space)
+        ?.  ?=([?(%chum %publ) *] path)
           pit^tip
+        =+  old-path=path
+        =/  [user-path=^path =space]
+          =>  .(path `(pole knot)`path)
+          ::  update lifes and keys in %publ and %chum namespaces
+          ::
+          ?+    path  ~|(path !!)
+              [%publ *]
+            [path [%publ her-life]]
+            ::
+              [%chum lyf=@ her=@ hyf=@ cyf=@ ~]
+            :: ?.  =([ship her-life] [her.path life.path])
+            ::   !!  :: XX log?
+            =/  cyf=@  (slav %uv cyf.path)
+            =*  key    symmetric-key.peer
+            :-  (open-path:crypt `@`key cyf)
+            :-  %chum  ::  XX +chum-to-our
+            [server=her-life client=our our-life new-key]
+          ==
         %-  %+  %*(ev-tace ev her ship)  sun.veb.bug.ames-state
             |.("re-deriving new pit entry {<(spud path)>}")
         ::
-        =.  space
-          ::  update life/keys in the space
-          ::
-          ?-    -.space
-              %publ
-            space(life her-life)
-          ::
-              %chum
-            space(client-life our-life, key new-key, server-life her-life)
-          ==
-        =.  path  (make-space-path space user-path)
+        =/  new-path=^path  (make-space-path space user-path)
         ::  only recalculate poke paths if there's an associated payload
         ::
         =?  pay.req  ?=(^ pay.req)
-          =/  [=^space poke=^path]
-            [space inner]:(ev-decrypt-path:ev u.pay.req ship)
-          ::  for poke paths, update the server life
-          ::
-          =.  space
-            ?+    -.space  space
-                %publ
-              space(life our-life)
-              ::
-                %chum
-             space(server-life our-life, key new-key, client-life her-life)
-            ==
-          `(make-space-path space poke)
+          =/  payload=(pole knot)  u.pay.req
+          ?.  ?=([%chum lyf=@ her=@ hyf=@ cyf=@ ~] payload)
+            ::  XX weird, log?
+            ::
+            pay.req
+          =/  cyf=@  (slav %uv cyf.payload)
+          =*  key    symmetric-key.peer
+          =;  [poke=^path =^space]
+            `(make-space-path space poke)
+          :-  (open-path:crypt `@`key cyf)
+          :-  %chum  ::  XX +chum-to-her
+          [server=our-life client=ship her-life new-key]
         ::  delete previous pit entry with old path
         ::
         =.  pit  (~(del by pit) old-path)
         ::  update pit entry with new-path
         ::
-        :-  (~(put by pit) path req(ps ~))   :: XX drop any partial state
+        :-  (~(put by pit) new-path req(ps ~))   :: XX drop any partial state
         %-  ~(rep by ~(key by for.req))
         |=  [for=duct tip=_tip]
         ?.  (~(has by tip) user-path)
           ~&  >>>  %missing-tip-entry
           tip
-        (~(put ju tip) user-path for path)
+        (~(put ju tip) user-path for new-path)
       ::
       ++  rederive-mesa-keens
         |=  [=ship peer=peer-state =our=life =her=life new-key=symmetric-key]
@@ -11742,12 +11766,17 @@
               %*  ev-core  (ev-abed:ev:(mesa now eny rof) hen)
                 chums.ames-state  (~(put by chums.ames-state) her-pok known/per)
               ==
+            =.  ev-core  (ev-foco:ev-core her-pok^per)
             ::  XX refactor; same as hear-poke:ev-pact:ev:mesa
             ::
             =/  [=space cyf=(unit @) =inner-poke=path]
               ~|  inner-path/[pat.ack^pat.pok]:pact
               (ev-decrypt-path:ev-core [pat her]:pok.pact)
             ::
+            ?:  ?=(%none -.space)
+              %-  %+  %*(ev-tace ev-core her her-pok)  odd.veb.bug.ames-state
+                  |.("weird poke life={<life.per>} ack={<pat.pok.pact>}; skip")
+              `ames-state
             =/  [pok=(pole iota) ack=(pole iota)]
               ::  path validation/decryption
               ::
