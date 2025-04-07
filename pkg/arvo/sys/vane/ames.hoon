@@ -7794,7 +7794,16 @@
             =/  her=@p  ?:(=(u.her our) ship u.her) :: %poke payloads are for us
             =+  sat=(got-per her)        :: XX get-per
             :: ?>  ?=(%known -.per)  :: XX wat if %alien?
-            :: ?.  =(u.hyf life.per)   !!  :: XX handle?
+            ?:  ?&  =(u.^her our)  ::  for acks (on in general peeks)
+                    ?|  !=(u.hyf life.ames-state)
+                        !=(u.lyf life.per)
+                ==  ==
+              [*space ~ ~]
+            ?:  ?&  =(u.^her ship)  ::  for poke payloads
+                    ?|  !=(u.hyf life.per)
+                        !=(u.lyf life.ames-state)
+                ==  ==
+              [*space ~ ~]
             =*  key  `@uxI`symmetric-key.sat
             =/  =space  [%chum server=life.ames-state client=her life.sat key]
             [space cyf (open-path:crypt key u.cyf)]
@@ -7920,6 +7929,12 @@
             =/  [=space cyf=(unit @) =inner-poke=path]
               ~|  inner-path/[pat.ack^pat.pok]:pact
               (ev-decrypt-path [pat her]:pok.pact)
+            ::
+            ?:  ?=(%none -.space)
+              %-  %+  %*(ev-tace ev-core her her-pok)  odd.veb.bug.ames-state
+                  |.  %+  weld  "weird poke lifes={<life.per^life.ames-state>}"
+                      " ack={<pat.ack.pact>}; skip"
+              ev-core
             ::
             =/  [pok=(pole iota) ack=(pole iota)]
               ::  path validation/decryption
@@ -10135,10 +10150,15 @@
               c
             =/  [=space pax=^path]
               [space inner]:(ev-decrypt-path:ev path her)
-            ?-  -.space
-              ?(%none %publ)  (on-keen:c(duct hen) ~ her pax)
-                       %chum  (on-chum:c(duct hen) her pax)
-                       %shut  (on-keen:c(duct hen) `[kid key]:space her pax)
+            =+  ?.  ?=(%none -.space)
+                ~
+                %-  %+  %*(ev-tace ev her her)  odd.veb.bug.ames-state
+                    |.("weird poke life={<life.fren>} path={<path>}; skip")
+                ~
+            ?+  -.space  !!
+              %publ  (on-keen:c(duct hen) ~ her pax)
+              %chum  (on-chum:c(duct hen) her pax)
+              %shut  (on-keen:c(duct hen) `[kid key]:space her pax)
             ==
           ::
           ++  get-route
@@ -11728,6 +11748,10 @@
               ~|  inner-path/[pat.ack^pat.pok]:pact
               (ev-decrypt-path:ev-core [pat her]:pok.pact)
             ::
+            ?:  ?=(%none -.space)
+              %-  %+  %*(ev-tace ev-core her her-pok)  odd.veb.bug.ames-state
+                  |.("weird poke life={<life.per>} ack={<pat.ack.pact>}; skip")
+              `ames-state
             =/  [pok=(pole iota) ack=(pole iota)]
               ::  path validation/decryption
               ::
