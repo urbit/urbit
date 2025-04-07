@@ -9776,15 +9776,15 @@
               moves^peers
             ::
             =/  =peer-state  +.ship-state
-            =/  new-key=symmetric-key
+            =/  =symmetric-key
               (derive-symmetric-key public-key.+.ship-state sec:ex:crypto-core)
             ::
             =^  keens-moves  peer-state
               %-  rederive-mesa-keens
-              [ship peer-state our=life life.peer-state new-key]
+              [ship peer-state our=life life.peer-state symmetric-key]
             :-  (weld moves keens-moves)
             %+  ~(put by peers)  ship
-            known/peer-state(symmetric-key new-key)
+            known/peer-state(symmetric-key symmetric-key)
           =.  peers.ames-state  peers
           =.  priv.ames-state   private-key
           =.  life.ames-state   life
@@ -10467,7 +10467,7 @@
             (make-space-path space poke-path)
           ::
           %-  %^  co-tace  snd.veb.bug.ames-state  ship.ack-spar
-              |.("send %poke for payload={(spud poke-path)}")
+              |.("send %poke for ack={(spud path.ack-spar)}")
           ::  ack and poke paths are already encrypted at this point
           ::
           (co-make-mess ack-spar `poke-path)
@@ -11338,12 +11338,12 @@
         %-  ~(rep by keens.peer)
         |=  [[=path keen=keen-state] core=_event-core]
         =>  .(path `(pole knot)`path)
-          ~|  make-peeks-crashed/path
-          ?.  ?=([van=@ car=@ cas=@ desk=@ pat=*] path)
-            :: XX validate van, car, cas, desk ?
-            ::
-            ~&  skip-weird-path/path
-            core
+        ~|  rederive-mesa-keens/path
+        ?.  ?=([van=@ car=@ cas=@ desk=@ pat=*] path)
+          :: XX validate van, car, cas, desk ?
+          ::
+          ~&  skip-weird-path/path
+          core
         ?.  ?=([%chum her=@ lyf=@ cyf=@ ~] pat.path)
           core
         %-  %+  %*(ev-tace ev her ship)  sun.veb.bug.ames-state
