@@ -11277,53 +11277,57 @@
                 pit=_pit.peer
                 tip=_tip.peer
             ==
-        =+  old-path=path
-        =/  [=space user-path=^path]
-          [space inner]:(ev-decrypt-path:ev path ship)
-        ?.  ?=(?(%publ %chum) -.space)
+        ?.  ?=([?(%chum %publ) *] path)
           pit^tip
+        =+  old-path=path
+        =/  [user-path=^path =space]
+          =>  .(path `(pole knot)`path)
+          ::  update lifes and keys in %publ and %chum namespaces
+          ::
+          ?+    path  ~|(path !!)
+              [%publ *]
+            [path [%publ her-life]]
+            ::
+              [%chum lyf=@ her=@ hyf=@ cyf=@ ~]
+            :: ?.  =([ship her-life] [her.path life.path])
+            ::   !!  :: XX log?
+            =/  cyf=@  (slav %uv cyf.path)
+            =*  key    symmetric-key.peer
+            :-  (open-path:crypt `@`key cyf)
+            :-  %chum  ::  XX +chum-to-our
+            [server=her-life client=our our-life new-key]
+          ==
         %-  %+  %*(ev-tace ev her ship)  sun.veb.bug.ames-state
             |.("re-deriving new pit entry {<(spud path)>}")
         ::
-        =.  space
-          ::  update life/keys in the space
-          ::
-          ?-    -.space
-              %publ
-            space(life her-life)
-          ::
-              %chum
-            space(client-life our-life, key new-key, server-life her-life)
-          ==
-        =.  path  (make-space-path space user-path)
+        =/  new-path=^path  (make-space-path space user-path)
         ::  only recalculate poke paths if there's an associated payload
         ::
         =?  pay.req  ?=(^ pay.req)
-          =/  [=^space poke=^path]
-            [space inner]:(ev-decrypt-path:ev u.pay.req ship)
-          ::  for poke paths, update the server life
-          ::
-          =.  space
-            ?+    -.space  space
-                %publ
-              space(life our-life)
-              ::
-                %chum
-             space(server-life our-life, key new-key, client-life her-life)
-            ==
-          `(make-space-path space poke)
+          =/  payload=(pole knot)  u.pay.req
+          ?.  ?=([%chum lyf=@ her=@ hyf=@ cyf=@ ~] payload)
+            ::  XX weird, log?
+            ::
+            pay.req
+          =/  cyf=@  (slav %uv cyf.payload)
+          =*  key    symmetric-key.peer
+          =;  [poke=^path =^space]
+            `(make-space-path space poke)
+          :-  (open-path:crypt `@`key cyf)
+          :-  %chum  ::  XX +chum-to-her
+          [server=our-life client=ship her-life new-key]
         ::  delete previous pit entry with old path
         ::
         =.  pit  (~(del by pit) old-path)
         ::  update pit entry with new-path
         ::
-        :-  (~(put by pit) path req(ps ~))   :: XX drop any partial state
+        :-  (~(put by pit) new-path req(ps ~))   :: XX drop any partial state
         %-  ~(rep by ~(key by for.req))
         |=  [for=duct tip=_tip]
         ?.  (~(has by tip) user-path)
           ~&  >>>  %missing-tip-entry
           tip
-        (~(put ju tip) user-path for path)
+        (~(put ju tip) user-path for new-path)
       ::
       ++  rederive-mesa-keens
         |=  [=ship peer=peer-state =our=life =her=life new-key=symmetric-key]
