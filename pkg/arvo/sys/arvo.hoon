@@ -3,7 +3,7 @@
 |%
 +|  %global
 ::
-++  arvo  %236
+++  arvo  %235
 ::
 ::  $arch: node identity
 ::  $axal: fundamental node, recursive (trie)
@@ -208,9 +208,9 @@
   ==
 +$  heir
   $%  $:  %grub
-          $%  [?(%240 %239 %238 %237 %236) =grub]
+          $%  [?(%240 %239 %238 %237 %236 %235) =grub]
       ==  ==
-      [?(%240 %239 %238 %237 %236) =debt =soul]
+      [?(%240 %239 %238 %237 %236 %235) =debt =soul]
   ==
 +$  plan  (pair germ (list move))
 +$  soul
@@ -1772,7 +1772,7 @@
   ::
   =.  sol
     ?-  -.hir
-      ?(%240 %239 %238 %237 %236)  soul.hir
+      ?(%240 %239 %238 %237 %236 %235)  soul.hir
     ==
   ::  clear compiler caches
   ::

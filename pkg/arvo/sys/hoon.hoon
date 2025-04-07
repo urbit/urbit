@@ -2,11 +2,11 @@
 ::::    /sys/hoon                                       ::
   ::                                                    ::
 =<  ride
-=>  %137  =>
+=>  %136  =>
 ::                                                      ::
 ::::    0: version stub                                 ::
   ::                                                    ::
-~%  %k.137  ~  ~                                        ::
+~%  %k.136  ~  ~                                        ::
 |%
 ++  hoon-version  +
 --  =>
@@ -6013,14 +6013,14 @@
 ++  mack
   |=  [sub=* fol=*]
   ^-  (unit)
-  =/  ton  (mink [sub fol] |~(^ ~))
+  =/  ton  (mink [sub fol] ~)
   ?.(?=(%0 -.ton) ~ `product.ton)
 ::  +mink: raw virtual nock
 ::
 ++  mink  !.
   ~/  %mink
   |=  $:  [subject=* formula=*]
-          scry=$-(^ (unit (unit)))
+          scry=$@(~ $-(^ (unit (unit))))
       ==
   =|  trace=(list [@ta *])
   |^  ^-  tone
@@ -6139,7 +6139,9 @@
         ?.  ?=(%0 -.ref)  ref
         =/  path  $(formula path.formula)
         ?.  ?=(%0 -.path)  path
-        =/  result  (scry product.ref product.path)
+        =/  result
+          ?~  scry  ~
+          (scry product.ref product.path)
         ?~  result
           [%1 product.path]
         ?~  u.result
