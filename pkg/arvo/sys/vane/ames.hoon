@@ -11742,6 +11742,7 @@
               %*  ev-core  (ev-abed:ev:(mesa now eny rof) hen)
                 chums.ames-state  (~(put by chums.ames-state) her-pok known/per)
               ==
+            =.  ev-core  (ev-foco:ev-core her-pok^per)
             ::  XX refactor; same as hear-poke:ev-pact:ev:mesa
             ::
             =/  [=space cyf=(unit @) =inner-poke=path]
