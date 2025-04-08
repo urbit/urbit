@@ -25,6 +25,7 @@
         ==
       ::
         prime=_|
+        ames-core=_`?(%ames %mesa)`%ames
         exc=(list spur)
     ==
 :-  %pill
@@ -46,4 +47,4 @@
   |=  =desk
   [desk /(scot %p p.bec)/[desk]/(scot %da now)]
 ::
-(brass:pill sys dez prime exc)
+(brass:pill sys dez prime ames-core exc)
