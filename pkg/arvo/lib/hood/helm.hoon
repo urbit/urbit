@@ -99,7 +99,7 @@
   |=  [hot=host:eyre dat=@]
   ?>  ?=(%& -.hot)
   =.  p.hot  (scag 2 p.hot)      :: ignore subdomain
-  =.  dat  (scot %uw (en:crub:crypto ames-secret dat))
+  =.  dat  (scot %uw (en:cyf:cryc:crypto ames-secret dat))
   =-  abet:(emit %pass /write %arvo %c %info -)
   =/  byk=path  (en-beam byk.bowl(r da+now.bowl) ~)
   =+  .^(=tube:clay cc+(welp byk /mime/atom))

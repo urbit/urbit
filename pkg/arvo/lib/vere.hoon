@@ -32,7 +32,7 @@
       $(tar t.tar, stars (~(put in stars) i.tar))
     ::
     |-  ^-  feed:jael
-    =/  cub=acru:ames  (pit:nu:crub:crypto 512 eny)
+    =/  cub  (pit:nu:cryc:crypto 512 eny)
     =/  who=ship  `@`fig:ex:cub
     ::  disallow 64-bit or smaller addresses
     ::
@@ -270,7 +270,7 @@
       ?~  kyz.feed  !!
       ?.  =(ship who.feed)  `%not-our-key
       =/  rac  (clan:title who.feed)
-      =/  cub  (nol:nu:crub:crypto key.i.kyz.feed)
+      =/  cub  (nol:nu:cryc:crypto key.i.kyz.feed)
       ?-  rac
           %pawn
         ::  a comet address is the fingerprint of the keypair

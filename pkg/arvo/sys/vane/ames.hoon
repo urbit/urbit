@@ -310,20 +310,15 @@
       `fine/[u.ship wire]
     ::  +derive-symmetric-key: $symmetric-key from $private-key and $public-key
     ::
-    ::    Assumes keys have a tag on them like the result of the |ex:crub core.
+    ::    Assumes keys have a tag on them like the result of the
+    ::    |ex:cryc core.
     ::
     ++  derive-symmetric-key
       ~/  %derive-symmetric-key
-      |=  [=public-key =private-key]
+      |=  [pub=public-keys sek=private-keys]
       ^-  symmetric-key
       ::
-      ?>  =('b' (end 3 public-key))
-      =.  public-key  (rsh 8 (rsh 3 public-key))
-      ::
-      ?>  =('B' (end 3 private-key))
-      =.  private-key  (rsh 8 (rsh 3 private-key))
-      ::
-      `@`(shar:ed:crypto public-key private-key)
+      `@`(slar:ed:crypto cry.pub cry.sek)
     ::  +encode-keys-packet: create key request $packet
     ::
     ++  encode-keys-packet
@@ -358,7 +353,7 @@
     ::  +etch-hunk: helper core to serialize a $hunk
     ::
     ++  etch-hunk
-      |=  [=ship =life =acru]
+      |=  [=ship =life saf=keypairs]
       |%
       ::
       +|  %helpers
@@ -393,7 +388,10 @@
       ::
       +|  %keys
       ::
-      ++  sign  sigh:as:acru
+      ++  sign
+        |=  msg=@
+        (sign-raw:ed:crypto msg [sgn.pub sgn.sek]:saf)
+      ::
       ++  sign-fra
         |=  [=path fra=@ud dat=@ux]
         ::~>  %bout.[1 %sign-fra]
@@ -437,14 +435,14 @@
     ::
     ++  etch-open-packet
       ~/  %etch-open-packet
-      |=  [pac=open-packet =acru]
+      |=  [pac=open-packet saf=keypairs]
       ^-  shot
       :*  [sndr rcvr]:pac
           req=&  sam=&
           (mod sndr-life.pac 16)
           (mod rcvr-life.pac 16)
           origin=~
-          content=`@`(sign:as:acru (jam pac))
+          content=`@`(sign-raw:ed:crypto (jam pac) [sgn.pub sgn.sek]:saf)
       ==
     ::  +sift-open-packet: decode comet attestation into an $open-packet
     ::
@@ -465,13 +463,13 @@
       ::  only a star can sponsor a comet
       ::
       ?>  =(%king (clan:title (^sein:title sndr.shot)))
-      =/  crub  (com:nu:crub:crypto public-key.open-packet)
+      =/  cyc  (com:nu:cryc:crypto pass.open-packet)
       ::  comet public-key must hash to its @p address
       ::
-      ?>  =(sndr.shot fig:ex:crub)
+      ?>  =(sndr.shot fig:ex:cyc)
       ::  verify signature
       ::
-      ?>  (safe:as:crub signature signed)
+      ?>  (veri:ed:crypto signature signed sgn:ded:ex:cyc)
       open-packet
     ::  +etch-shut-packet: encrypt and packetize a $shut-packet
     ::
@@ -559,7 +557,6 @@
     ::
     +|  %atomics
     ::
-    +$  private-key    @uwprivatekey
     +$  signature      @uwsignature
     ::
     +|  %kinetics
@@ -571,17 +568,12 @@
           ::  our data, common to all dyads
           ::
           $:  =our=life
-              crypto-core=acru
               =bug
           ==
           ::  her data, specific to this dyad
           ::
-          $:  =symmetric-key
-              =her=life
-              =her=rift
-              =her=public-key
-              her-sponsor=ship
-      ==  ==
+          hers=azimuth-state
+      ==
     ::  $open-packet: unencrypted packet payload, for comet self-attestation
     ::
     ::    This data structure gets signed and jammed to form the .contents
@@ -589,7 +581,7 @@
     ::
     ::
     +$  open-packet
-      $:  =public-key
+      $:  =pass
           sndr=ship
           =sndr=life
           rcvr=ship
@@ -644,7 +636,7 @@
           =unix=duct
           =life
           =rift
-          crypto-core=acru:ames
+          crypto-core=_acru-25
           =bug
           snub=[form=?(%allow %deny) ships=(set ship)]
           cong=[msg=_5 mem=_100.000]
@@ -663,7 +655,7 @@
           =unix=duct
           =life
           =rift
-          crypto-core=acru:ames
+          crypto-core=_acru-25
           =bug
           snub=[form=?(%allow %deny) ships=(set ship)]
           cong=[msg=_5 mem=_100.000]
@@ -691,7 +683,7 @@
     ==
   ::
   +$  peer-state-21
-    $:  azimuth-state
+    $:  azimuth-state-25
         route=(unit [direct=? =lane])
         =qos
         =ossuary
@@ -715,9 +707,9 @@
         metrics=pump-metrics
     ==
     ::
-    +$  dead-timer       [=duct =wire date=@da]
-    +$  azimuth-state    [=symmetric-key =life =rift =public-key sponsor=ship]
-    +$  azimuth-state-6  [=symmetric-key =life =public-key sponsor=ship]
+    +$  dead-timer        [=duct =wire date=@da]
+    +$  azimuth-state-25  [=symmetric-key =life =rift =pass sponsor=ship]
+    +$  azimuth-state-5   [=symmetric-key =life =pass sponsor=ship]
     +$  ames-state-4     ames-state-5
     +$  ames-state-5
       $+  ames-state-5
@@ -737,7 +729,7 @@
     ::
     +$  peer-state-5
       $+  peer-state-5
-      $:  azimuth-state-6
+      $:  azimuth-state-5
           route=(unit [direct=? =lane])
           =qos
           =ossuary
@@ -770,7 +762,7 @@
     ::
     +$  peer-state-6
       $+  peer-state-6
-      $:  azimuth-state
+      $:  azimuth-state-25
           route=(unit [direct=? =lane])
           =qos
           =ossuary
@@ -829,7 +821,7 @@
     ::
     +$  peer-state-7
       $+  peer-state-7
-      $:  azimuth-state
+      $:  azimuth-state-25
           route=(unit [direct=? =lane])
           =qos
           =ossuary
@@ -880,7 +872,7 @@
     ::
     +$  peer-state-12
       $+  peer-state-12
-      $:  azimuth-state
+      $:  azimuth-state-25
           route=(unit [direct=? =lane])
           =qos
           =ossuary
@@ -899,11 +891,13 @@
     ::
     ++  acru-12  $_  ^?
       |%
-      ++  as  ^?
-        |%  ++  seal  |~([a=pass b=@] *@)
-            ++  sign  |~(a=@ *@)
-            ++  sure  |~(a=@ *(unit @))
-            ++  tear  |~([a=pass b=@] *(unit @))
+      ++  as  ^?                                          ::  asym ops
+        |%  ++  seal  |~([a=pass b=@] *@)                 ::  encrypt to a
+            ++  sign  |~(a=@ *@)                          ::  certify as us
+            ++  sigh  |~(a=@ *@)                          ::  certification only
+            ++  sure  |~(a=@ *(unit @))                   ::  authenticate from us
+            ++  safe  |~([a=@ b=@] *?)                    ::  authentication only
+            ++  tear  |~([a=pass b=@] *(unit @))          ::  accept from a
         --
       ++  de  |~([a=@ b=@] *(unit @))
       ++  dy  |~([a=@ b=@] *@)
@@ -927,7 +921,7 @@
           =unix=duct
           =life
           =rift
-          crypto-core=acru
+          crypto-core=_acru-25
           bug=bug-19
           snub=[form=?(%allow %deny) ships=(set ship)]
           cong=[msg=@ud mem=@ud]
@@ -944,7 +938,7 @@
       $:  $:  =symmetric-key
               =life
               =rift
-              =public-key
+              =pass
               sponsor=ship
           ==
           route=(unit [direct=? =lane])
@@ -958,6 +952,41 @@
           corked=(set bone)
           keens=(map path keen-state-13)
       ==
+    ++  acru-25  ^?                                      ::  asym cryptosuite
+      |_  cyc=_cryc:crypto                                     ::  opaque object
+      ++  as  ^?                                          ::  asym ops
+      |%  ++  seal  |~([a=pass b=@] *@)                 ::  encrypt to a
+          ++  sign  |~(a=@ *@)                          ::  certify as us
+          ++  sigh  |~(a=@ *@)                          ::  certification only
+          ++  sure  |~(a=@ *(unit @))                   ::  authenticate from us
+          ++  safe  |~([a=@ b=@] *?)                    ::  authentication only
+          ++  tear  |~([a=pass b=@] *(unit @))          ::  accept from a
+        ::|%  ++  seal  |~([a=pass b=@] (seal:cyc +<))
+        ::    ++  sign  |~(a=@ (sign:cyc +<))
+        ::    ++  sigh  |~(a=@ (sigh:cyc +<))
+        ::    ++  sure  |~(a=@ (sure:cyc +<))
+        ::    ++  safe  |~([a=@ b=@] (safe:cyc +<))
+        ::    ++  tear  |~([a=pass b=@] (tear:cyc +<))
+        --  ::as                                          ::
+      ::++  de  |~([a=@ b=@] (de:cyf:cyc +<))
+      ::++  dy  |~([a=@ b=@] (dy:cyf:cyc +<))
+      ::++  en  |~([a=@ b=@] (en:cyf:cyc +<))
+      ++  de  |~([a=@ b=@] *(unit @))                     ::  symmetric de, soft
+      ++  dy  |~([a=@ b=@] *@)                            ::  symmetric de, hard
+      ++  en  |~([a=@ b=@] *@)                            ::  symmetric en
+      ++  ex  ^?                                          ::  export
+        |%  ++  fig  fig:ex:cyc                              ::  fingerprint
+            ++  pac  pac:ex:cyc                              ::  default passcode
+            ++  pub  pub:ex:cyc                              ::  public key
+            ++  sec  sec:ex:cyc                              ::  private key
+        --  ::ex                                          ::
+      ++  nu                                              ::  reconstructors
+        |%  ++  pit  |~([a=@ b=@] ..nu(cyc (pit:nu:cyc a b %b ~))) ::  from [width seed]
+            ++  nol  |~(a=ring ..nu(cyc (nol:nu:cyc +<)))    ::  from ring
+            ++  com  |~(a=pass ..nu(cyc (com:nu:cyc +<)))    ::  from pass
+        --  ::nu                                          ::
+      --  ::acru                                          ::
+
     ::
     ++  keen-state-13
       =<  $+  keen-state-13
@@ -1095,7 +1124,7 @@
     ::        ?.  ?=(%4 -.p.a)
     ::          %=    $
     ::              b  t.b
-    ::          ::
+    ::          h
     ::              a
     ::            ?-  -.p.a
     ::              %1  big/[[%2 i.b p.p.a ~] q.a r.a]
@@ -1227,7 +1256,7 @@
           =unix=duct
           =life
           =rift
-          crypto-core=acru
+          crypto-core=_acru-25
           bug=bug-19
           snub=[form=?(%allow %deny) ships=(set ship)]
           cong=[msg=_5 mem=_100.000]
@@ -1248,7 +1277,7 @@
       $:  $:  =symmetric-key
               =life
               =rift
-              =public-key
+              =pass
               sponsor=ship
           ==
           route=(unit [direct=? =lane])
@@ -1281,7 +1310,7 @@
           =unix=duct
           =life
           =rift
-          crypto-core=acru
+          crypto-core=_acru-25
           bug=bug-19
           snub=[form=?(%allow %deny) ships=(set ship)]
           cong=[msg=@ud mem=@ud]
@@ -1303,7 +1332,7 @@
     ::
     +$  peer-state-16
       $+  peer-state-16
-      $:  azimuth-state
+      $:  azimuth-state-25
           route=(unit [direct=? =lane])
           =qos
           =ossuary
@@ -1431,7 +1460,7 @@
           =unix=duct
           =life
           =rift
-          crypto-core=acru
+          crypto-core=_acru-25
           bug=bug-19
           snub=[form=?(%allow %deny) ships=(set ship)]
           cong=[msg=@ud mem=@ud]
@@ -1460,7 +1489,7 @@
       $:  $:  =symmetric-key
               =life
               =rift
-              =public-key
+              =pass
               sponsor=ship
           ==
           route=(unit [direct=? =lane])
@@ -1497,7 +1526,7 @@
           =unix=duct
           =life
           =rift
-          crypto-core=acru
+          crypto-core=_acru-25
           =bug
           snub=[form=?(%allow %deny) ships=(set ship)]
           cong=[msg=_5 mem=_100.000]
@@ -1675,12 +1704,12 @@
         (chacha:crypto 8 key.x nonce.x 0 msg)
       ::
       ++  sign
-        |=  [sek=@uxI =binding]
+        |=  [saf=keypairs =binding]
         ^-  @uxJ
-        (sign-octs:ed:crypto (etch-binding binding) sek)
+        (sign-octs-raw:ed:crypto (etch-binding binding) [sgn.pub sgn.sek]:saf)
       ::
       ++  verify-sig
-        |=  [pub=@uxI sig=@uxJ =binding]
+        |=  [pub=@uxpoint sig=@uxJ =binding]
         ^-  ?
         (veri-octs:ed:crypto sig (etch-binding binding) pub)
       ::
@@ -1799,8 +1828,69 @@
     ::
     +|  %state-migrations
     ::
+    +$  axle-25
+      $:  peers=(map ship ship-state-25)
+          =unix=duct  ::  [//ames/0v0 ~]
+          =life
+          =rift
+          =bug
+          snub=[form=?(%allow %deny) ships=(set ship)]
+          cong=[msg=_5 mem=_100.000]
+          $=  dead                            ::  dead-flow consolidation timers
+          $:  flow=[%flow (unit dead-timer)]  ::  ... for |ames
+              chum=[%chum (unit dead-timer)]  ::  ... for |mesa
+              cork=[%cork (unit dead-timer)]  ::  ... for %nacked corks
+              rots=[%rots (unit dead-timer)]  ::  ... fir expiring direct routes
+          ==
+          ::
+          =server=chain                       ::  for serving %shut requests
+          priv=ring
+          chums=(map ship chum-state-25)         ::  XX migrated peers
+          core=_`?(%ames %mesa)`%ames         ::  XX use migrated core by default
+          ::  TODOs
+          :: XX tmp=(map @ux page)            :: temporary hash-addressed bindings
+      ==
+    ::
+    +$  ship-state-25
+      $%  [%alien alien-agenda]
+          [%known peer-state-25]
+      ==
+    ::
+    +$  chum-state-25
+      $%  [%known fren-state-25]
+          [%alien ovni-state]
+      ==
+    ::
+    +$  peer-state-25
+      $:  azimuth-state-25
+          route=(unit [direct=? =lane])  ::  XX (list)
+          =qos
+          =ossuary
+          snd=(map bone message-pump-state)
+          rcv=(map bone message-sink-state)
+          nax=(set [=bone =message-num])
+          closing=(set bone)
+          corked=(set bone)
+          keens=(map path keen-state)
+          =chain
+          tip=(jug =user=path [duct =ames=path])
+      ==
+    ::
+    +$  fren-state-25
+      $:  azimuth-state-25
+          lane=(unit [hop=@ =lane:pact])  :: XX (list)
+          =qos
+          corked=(set side)  ::  can be +peeked in the namespace
+                             ::  XX how many flows to keep here?
+          =ossuary      ::  XX redefine ossuary in terms of bone^side
+          flows=(map side flow-state)
+          pit=(map path request-state)           :: active +peek namespace paths
+          =client=chain                          :: stores keys for %shut requests
+          tip=(jug =user=path [duct =ames=path]) :: reverse .pit lookup map
+      ==
+    ::
     +$  axle-24
-      $:  peers=(map ship ship-state)
+      $:  peers=(map ship ship-state-25)
           =unix=duct  ::  [//ames/0v0 ~]
           =life
           =rift
@@ -1815,7 +1905,7 @@
           ==
           ::
           =server=chain
-          priv=private-key
+          priv=ring
           chums=(map ship chum-state-24)
           core=?(%ames %mesa)
       ==
@@ -1827,7 +1917,7 @@
       ==
     ::
     +$  fren-state-24
-      $:  azimuth-state
+      $:  azimuth-state-25
           lane=(unit lane:pact)
           =qos
           corked=(set side)
@@ -1854,7 +1944,7 @@
           ==
           ::
           =server=chain
-          priv=private-key
+          priv=ring
           chums=(map ship chum-state-23)
           core=?(%ames %mesa)
       ==
@@ -1873,7 +1963,7 @@
       ==
     ::
     +$  fren-state-23
-      $:  azimuth-state
+      $:  azimuth-state-25
           lane=(unit lane:pact)
           =qos
           corked=(set side)
@@ -2205,7 +2295,8 @@
             [%22 ames-state-22]
             [%23 axle-23]
             [%24 axle-24]
-            [%25 axle]
+            [%25 axle-25]
+            [%26 axle]
         ==
     ::
     ::
@@ -2280,7 +2371,7 @@
       ~>  %slog.0^leaf/"ames: metamorphosis on %take"
       [:(weld molt-moves queu-moves take-moves) adult-gate]
     ::
-    ++  stay  [%25 larva/ames-state]
+    ++  stay  [%26 larva/ames-state]
     ++  scry  scry:adult-core
     ++  load
       |=  $=  old
@@ -2427,8 +2518,13 @@
               ==
               $:  %25                            :: add hop to |mesa lanes
                   ?(%adult %larva)               ::
+                  state=axle-25
+              ==
+              $:  %26                            :: crypto-suite c
+                  ?(%adult %larva)               ::
                   state=axle
           ==  ==
+
       |^  ?-  old
           [%4 %adult *]
         =.  cached-state  `[%4 state.old]
@@ -2696,6 +2792,11 @@
         larval-gate
       ::
           [%25 *]
+        =.  cached-state  `[%25 state.old]
+        ~>  %slog.1^leaf/"ames: larva %25 reload"
+        larval-gate
+      ::
+          [%26 *]
         ?-  +<.old
           %larva  larval-gate
           %adult  (load:adult-core state.old)
@@ -2774,7 +2875,7 @@
       |^  ^+  [moz larval-core]
       ?~  cached-state  [~ larval-core]
       =*  old  u.cached-state
-      ?:  ?=(%25 -.old)
+      ?:  ?=(%26 -.old)
         ::  no state migrations left; update state, clear cache, and exit
         ::
         [(flop moz) larval-core(ames-state.adult-gate +.old, cached-state ~)]
@@ -2851,8 +2952,10 @@
         ==
       ?:  ?=(%23 -.old)
         $(cached-state `24+(state-23-to-24 +.old))
-      ?>  ?=(%24 -.old)
-      $(cached-state `25+(state-24-to-25 +.old))
+      ?:  ?=(%24 -.old)
+        $(cached-state `25+(state-24-to-25 +.old))
+      ?>  ?=(%25 -.old)
+      $(cached-state `26+(state-25-to-26 +.old))
       ::
       ++  our-beam  `beam`[[our %rift %da now] /(scot %p our)]
       ++  state-4-to-5
@@ -2894,7 +2997,7 @@
         :-   -.ship-state
         :_  +.peer-state
         =,  -.peer-state
-        [symmetric-key life rift public-key sponsor]
+        [symmetric-key life rift pass sponsor]
       ::
       ++  state-6-to-7
         |=  ames-state=ames-state-6
@@ -2984,7 +3087,7 @@
             unix-duct.old
             life.old
             rift
-            ?:(=(*ring pk) *acru (nol:nu:crub:crypto pk))
+            ?:(=(*ring pk) acru-25 (nol:nu:acru-25 pk))
             %=  bug.old
               veb  [&1 &2 &3 &4 &5 &6 &7 |7 %.n]:veb.bug.old
             ==
@@ -3185,7 +3288,7 @@
             rots.dead
           ::
             server-chain=chain
-            priv=sec:ex:crypto-core
+            priv=sec:ex:crypto-core.old
             chums=~
             %ames
         ==
@@ -3198,7 +3301,7 @@
             peers
           %-  ~(run by peers.old)
           |=  s=ship-state-21
-          ^-  ship-state
+          ^-  ship-state-25
           ?:  ?=(%alien -.s)
             %=    s
                 keens
@@ -3233,12 +3336,12 @@
               =/  cyf=@      (slav %uv cyf.pat.outer-path)
               =/  key=@      key:(got:on:chain chain.s idx)
               ~|  [%shut-crash key cyf]
-              (rash `@t`(dy:crub:crypto key cyf) stap)
+              (rash `@t`(dy:cyf:cryc:crypto key cyf) stap)
               ::
                 [%chum her=@ lyf=@ cyf=@ ~]
               =+  cyf=(slav %uv cyf.pat.outer-path)
               ~|  [%chum-crash symmetric-key.s cyf]
-              (rash `@t`(dy:crub:crypto key=symmetric-key.s cyf) stap)
+              (rash `@t`(dy:cyf:cryc:crypto key=symmetric-key.s cyf) stap)
             ==
           ::
               keens
@@ -3285,7 +3388,7 @@
             %-  ~(rep by pit.c)
             |=  [[=ames=path req=request-state-23] tip=(jug path [duct path])]
             =|  tmp-per=fren-state
-            =.  tmp-per  tmp-per(- +<.c, client-chain client-chain.c)
+            =.  tmp-per  tmp-per(- (azimuth-state-25-to-26 +<.c), client-chain client-chain.c)
             =+  ev-core=ev:(mesa:adult-core now eny rof)
             =.  chums.ames-state.ev-core
               (~(put by chums.ames-state) her known/tmp-per)
@@ -3299,16 +3402,49 @@
       ::
       ++  state-24-to-25
         |=  old=axle-24
-        ^-  axle
+        ^-  axle-25
         ~>  %slog.0^leaf/"ames: migrating from state %24 to %25"
         %=    old
             chums
           %-  ~(run by chums.old)
           |=  c=chum-state-24
-          ^-  chum-state
+          ^-  chum-state-25
           ?:  ?=(%alien -.c)  c
           ?~  lane.c          c
           c(lane `[hop=1 u.lane.c])  ::  XX bigger hop?
+        ==
+      ::
+      ++  azimuth-state-25-to-26
+        |=  azimuth-state-25
+        ^-  azimuth-state
+        :*  symmetric-key
+            life  rift
+            [ded:ex:(com:nu:cryc:crypto pass) pass]
+            sponsor
+        ==
+      ::
+      ++  state-25-to-26
+        |=  old=axle-25
+        ^-  axle
+        ~>  %slog.0^leaf/"ames: migrating from state %25 to %26"
+        %=    old
+            priv
+          =/  cyc  (nol:nu:cryc:crypto priv.old) 
+          [saf:ex:cyc priv.old pub:ex:cyc]
+        ::
+            peers
+          %-  ~(run by peers.old)
+          |=  p=ship-state-25
+          ^-  ship-state
+          ?:  ?=(%alien -.p)  p
+          p(+< (azimuth-state-25-to-26 +<.p))
+        ::
+            chums
+          %-  ~(run by chums.old)
+          |=  c=chum-state-25
+          ^-  chum-state
+          ?:  ?=(%alien -.c)  c
+          c(+< (azimuth-state-25-to-26 +<.c))
         ==
       ::
       --
@@ -3439,11 +3575,7 @@
         ++  emit  |=(=move event-core(moves [move moves]))
         ++  emil  |=(mos=_moves event-core(moves (weld (flop mos) moves)))
         ::
-        ++  crypto-core
-          =>  [priv=priv.ames-state ..crypto]
-          ~>(%memo./ames/crypto-core (nol:nu:crub:crypto priv))
-        ::
-        ++  channel-state  [life.ames-state crypto-core bug.ames-state]
+        ++  channel-state  [life.ames-state bug.ames-state]
         ++  ev-trace
           |=  [verb=? =ship print=(trap tape)]
           ^+  same
@@ -3813,7 +3945,7 @@
           =.  event-core
             =/  crypto-suite=@ud  1
             =/  keys
-              (my [sndr-life.open-packet crypto-suite public-key.open-packet]~)
+              (my [sndr-life.open-packet crypto-suite pass.open-packet]~)
             =/  =point
               :*  ^=     rift  0
                   ^=     life  sndr-life.open-packet
@@ -3853,7 +3985,7 @@
           ::
           ?.  ?=([~ %known *] sndr-state)
             (enqueue-alien-todo sndr.shot sndr-state |=(alien-agenda +<))
-          ::  decrypt packet contents using symmetric-key.channel
+          ::  decrypt packet contents using symmetric-key.hers.channel
           ::
           ::    If we know them, we have a $channel with them, which we've
           ::    populated with a .symmetric-key derived from our private key
@@ -3861,11 +3993,11 @@
           ::
           =/  =peer-state   +.u.sndr-state
           =/  =channel      [[our sndr.shot] now channel-state -.peer-state]
-          =?  event-core  !=(sndr-tick.shot (mod her-life.channel 16))
+          =?  event-core  !=(sndr-tick.shot (mod life.hers.channel 16))
             %.  event-core
             %^  ev-trace  odd.veb  sndr.shot
             |.  ^-  tape
-            =/  sndr  [sndr-tick=sndr-tick.shot her-life=her-life.channel]
+            =/  sndr  [sndr-tick=sndr-tick.shot her-life=life.hers.channel]
             "sndr-tick mismatch {<sndr>}"
           =?  event-core  !=(rcvr-tick.shot (mod our-life.channel 16))
             %.  event-core
@@ -3875,7 +4007,7 @@
             "rcvr-tick mismatch {<rcvr>}"
           ~|  %ames-crash-on-packet-from^her.channel
           =/  shut-packet=(unit shut-packet)
-            (sift-shut-packet shot [symmetric-key her-life our-life]:channel)
+            (sift-shut-packet shot [symmetric-key.hers life.hers our-life]:channel)
           ?~  shut-packet
             event-core
           =/  old-route  route.peer-state
@@ -3986,7 +4118,7 @@
           %-  %^  ev-trace  msg.veb  ship
               |.  ^-  tape
               =/  sndr  [our our-life.channel.peer-core]
-              =/  rcvr  [ship her-life.channel.peer-core]
+              =/  rcvr  [ship life.hers.channel.peer-core]
               "plea {<sndr rcvr bone=bone vane.plea path.plea>}"
           abet:(on-memo:peer-core bone [%plea plea])
         ::
@@ -4007,7 +4139,7 @@
             ?>  ?=([%fine %shut kef=@ cyf=@ ~] rest.path.s)
             =/  [key=@ ,path]  (~(got by chain.u.per) (slav %ud idx.wire))
             =/  raw=@t
-              (dy:crub:crypto key (slav %uv cyf.rest.path.s))
+              (dy:cyf:cryc:crypto key (slav %uv cyf.rest.path.s))
             =/  pax=path
               (stab raw)
             =;  dat=(unit (unit page))
@@ -4022,11 +4154,11 @@
               ~  :: XX weird
             ?>  ?=([%atom @] u.q.dat.u.roar)
             =-  ``;;(page (cue -))
-            (dy:crub:crypto key q.u.q.dat.u.roar)
+            (dy:cyf:cryc:crypto key q.u.q.dat.u.roar)
           ?>  ?=([%chum *] wire)
           =/  pax
             %-  stab
-            (dy:crub:crypto symmetric-key.u.per (slav %uv cyf.rest.path.s))
+            (dy:cyf:cryc:crypto symmetric-key.u.per (slav %uv cyf.rest.path.s))
           =/  dat=(unit (unit page))
             ?:  ?|  ?=(~ roar)
                     ?=(~ q.dat.u.roar)
@@ -4034,7 +4166,7 @@
               ~  :: XX weird
             ?>  ?=([%atom @] u.q.dat.u.roar)
             =-  `?~(- ~ `(,page (cue -)))
-            (dy:crub:crypto symmetric-key.u.per q.u.q.dat.u.roar)
+            (dy:cyf:cryc:crypto symmetric-key.u.per q.u.q.dat.u.roar)
           %-  emil
           :~  [duct %give %near [ship.s pax] dat]
               :^  duct  %pass  /prune-tip
@@ -4069,7 +4201,7 @@
           %-  %^  ev-trace  msg.veb  ship
               |.  ^-  tape
               =/  sndr  [our our-life.channel.peer-core]
-              =/  rcvr  [ship her-life.channel.peer-core]
+              =/  rcvr  [ship life.hers.channel.peer-core]
               "cork plea {<sndr rcvr bone=bone vane.plea path.plea>}"
           abet:(on-memo:(on-cork-flow:peer-core bone) bone [%plea plea])
         ::  +on-kroc: cork all stale flows from failed subscriptions
@@ -4378,7 +4510,7 @@
             =.  chain.u.ship-state
               (put:on:chain chain.u.ship-state [idx key /]:u.sec)
             =/  enc
-              (scot %uv (en:crub:crypto key.u.sec (spat path)))
+              (scot %uv (en:cyf:cryc:crypto key.u.sec (spat path)))
             =/  lav  /a/x/1//fine/shut/(scot %ud idx.u.sec)/[enc]
             =/  wir  /fine/shut/(scot %ud idx.u.sec)
             =.  tip.u.ship-state
@@ -4402,7 +4534,7 @@
             |=  todos=alien-agenda
             todos(chums (~(put ju chums.todos) [path %tune] duct))
           =/  cyf
-            (scot %uv (en:crub:crypto symmetric-key.u.ship-state (spat path)))
+            (scot %uv (en:cyf:cryc:crypto symmetric-key.u.ship-state (spat path)))
           =/  lav
             /a/x/1//chum/(scot %p our)/(scot %ud life.ames-state)/[cyf]
           =.  tip.u.ship-state
@@ -4513,11 +4645,11 @@
           =/  =chum-state  (~(got by chums.ames-state) sndr.shot)
           ?>  ?=([%known *] chum-state)
           =/  =channel    [[our sndr.shot] now channel-state +<.chum-state]
-          =?  event-core  !=(sndr-tick.shot (mod her-life.channel 16))
+          =?  event-core  !=(sndr-tick.shot (mod life.hers.channel 16))
             %.  event-core
             %^  ev-trace  odd.veb  sndr.shot
             |.  ^-  tape
-            =/  sndr  [sndr-tick=sndr-tick.shot her-life=her-life.channel]
+            =/  sndr  [sndr-tick=sndr-tick.shot her-life=life.hers.channel]
             "sndr-tick mismatch {<sndr>}"
           =?  event-core  !=(rcvr-tick.shot (mod our-life.channel 16))
             %.  event-core
@@ -4526,7 +4658,7 @@
             =/  rcvr  [rcvr-tick=rcvr-tick.shot our-life=our-life.channel]
             "rcvr-tick mismatch {<rcvr>}"
           =/  shut-packet=(unit shut-packet)
-            (sift-shut-packet shot [symmetric-key her-life our-life]:channel)
+            (sift-shut-packet shot [symmetric-key.hers life.hers our-life]:channel)
           ?~  shut-packet
             %-  (ev-trace odd.veb sndr.shot |.("weird shut-packet"))
             event-core
@@ -4572,9 +4704,9 @@
             %-  etch-shot
             %:  etch-shut-packet:ames
               ack-packet
-              symmetric-key.channel
+              symmetric-key.hers.channel
               our               sndr.shot
-              our-life.channel  her-life.channel
+              our-life.channel  life.hers.channel
             ==
           ::
             ship-state=~  :: send-blob finds the migrated peer in chums
@@ -4722,8 +4854,8 @@
           ^-  blob
           %-  etch-shot
           %-  etch-open-packet
-          :_  crypto-core
-          :*  ^=  public-key  pub:ex:crypto-core
+          :_  saf.ames-state
+          :*  ^=  public-key  pass.ames-state
               ^=        sndr  our
               ^=   sndr-life  life.ames-state
               ^=        rcvr  her
@@ -4951,7 +5083,7 @@
                 ?&  ?=(%pawn (clan:title our))
                     =(1 current:(~(got by snd.peer-state) bone))
                 ==
-              =/  =blob  (attestation-packet [her her-life]:channel)
+              =/  =blob  (attestation-packet [her life.hers]:channel)
               (send-blob for=| her blob `known/peer-state)
             ?:  (is-corked bone)
               ::  no-op if the bone (or, if a naxplanation, the reference bone)
@@ -5463,13 +5595,13 @@
                 =/  idx=@ud    (slav %ud idx.pat.path)
                 =/  cyf=@      (slav %uv cyf.pat.path)
                 =/  key=@      key:(got:on:chain chain.per idx)
-                =/  pax=^path  (rash `@t`(dy:crub:crypto key cyf) stap)
+                =/  pax=^path  (rash `@t`(dy:cyf:cryc:crypto key cyf) stap)
                 [pax %shut idx key]
                 ::
                   [%chum her=@ lyf=@ cyf=@ ~]
                 =/  cyf=@      (slav %uv cyf.pat.path)
                 =*  key  symmetric-key.per
-                =/  pax=^path  (rash `@t`(dy:crub:crypto key cyf) stap)
+                =/  pax=^path  (rash `@t`(dy:cyf:cryc:crypto key cyf) stap)
                 [pax chum-to-our:mesa-ev-core]
               ==
             ::
@@ -5508,9 +5640,9 @@
                 %-  etch-shot
                 %:  etch-shut-packet
                   shut-packet(bone (mix 1 bone.shut-packet))
-                  symmetric-key.channel
+                  symmetric-key.hers.channel
                   our               her
-                  our-life.channel  her-life.channel
+                  our-life.channel  life.hers.channel
                 ==
               ::
                 ship-state=`known/peer-state
@@ -5857,7 +5989,7 @@
                 %-  %+  pe-trace  odd.veb
                     |.("trying to delete a corked bone={<bone>}")
                 peer-core
-              =/  =wire  (make-bone-wire her her-rift.channel bone)
+              =/  =wire  (make-bone-wire her rift.hers.channel bone)
               (pe-emit duct %pass wire %a %deep %kill her bone)
             ::  +pu: construct |packet-pump core
             ::
@@ -6467,7 +6599,7 @@
                 ?.  ok
                   =/  nack-bone=^bone  (mix 0b10 bone)
                   =/  =^message        [%naxplanation message-num *error]
-                  =/  =wire  (make-bone-wire her her-rift.channel nack-bone)
+                  =/  =wire  (make-bone-wire her rift.hers.channel nack-bone)
                   ::  send nack-trace with blank .error for security
                   ::
                   =.  peer-core
@@ -6476,7 +6608,7 @@
                   ::
                   (done ok=%.n)
                 ::
-                =/  =wire  (make-bone-wire her her-rift.channel bone)
+                =/  =wire  (make-bone-wire her rift.hers.channel bone)
                 =+  ;;(=plea message)
                 ?:  ?&  =(%$ vane.plea)
                         ?=(%ahoy -.payload.plea)
@@ -6574,7 +6706,7 @@
                 =.  peer-core
                   ::  will notify |message-pump that this message got naxplained
                   ::
-                  =/  =wire  (make-bone-wire her her-rift.channel target)
+                  =/  =wire  (make-bone-wire her rift.hers.channel target)
                   %^  pe-emit  duct  %pass
                   [wire %a %deep %sink her target ;;(naxplanation message)]
                 ::  ack nack-trace message (only if we don't later crash)
@@ -6620,7 +6752,9 @@
                     |=  [=ship life=@ud =path dat=$@(~ (cask))]
                     (jam +<)
                   ::
-                  ++  sign  sigh:as:crypto-core
+                  ++  sign
+                    |=  msg=@
+                    (sign-raw:ed:crypto msg [sgn.pub sgn.sek]:saf.ames-state)
                   ::
                   ++  veri-fra
                     |=  [=path fra=@ud dat=@ux sig=@]
@@ -6629,7 +6763,7 @@
                   ++  veri
                     |=  [sig=@ dat=@]
                     ^-  ?
-                    (safe:as:(com:nu:crub:crypto public-key.peer-state) sig dat)
+                    (veri:ed:crypto sig dat sgn.public-keys.peer-state)
                   ::
                   ++  meri
                     |=  [pax=path sig=@ dat=$@(~ (cask))]
@@ -7186,7 +7320,7 @@
             =/  key-idx  (slav %ud kef.tyl)
             =/  key  (got:on:chain server-chain.ames-state (slav %ud kef.tyl))
             =/  pat=(unit path)
-              (rush `@t`(dy:crub:crypto key.key (slav %uv enc.tyl)) stap)
+              (rush `@t`(dy:cyf:cryc:crypto key.key (slav %uv enc.tyl)) stap)
             ?~  pat
               [~ ~]
             ?~  blk=(de-part:balk our rift.ames-state life.ames-state u.pat)
@@ -7201,7 +7335,7 @@
             ?~  u.res
               ``atom+!>(~)
             =-  ``atom+!>(-)
-            `@uv`(en:crub:crypto key.key (jam [p q.q]:u.u.res))
+            `@uv`(en:cyf:cryc:crypto key.key (jam [p q.q]:u.u.res))
           ::
               [%chum her=@ lyf=@ cyf=@ ~]
             =/  who  (slaw %p her.tyl)
@@ -7213,7 +7347,7 @@
             ?.  &(?=([~ %known *] per) =(life.u.per u.lyf))
               ~
             =/  bal=(unit balk)
-              ?~  tex=(de:crub:crypto symmetric-key.u.per u.cyf)  ~
+              ?~  tex=(de:cyf:cryc:crypto symmetric-key.u.per u.cyf)  ~
               ?~  pax=(rush u.tex stap)                           ~
               (de-part:balk our 0 0 u.pax)
             ?~  bal
@@ -7221,7 +7355,7 @@
             ?~  res=(rof `[u.who ~ ~] /ames (as-omen:balk u.bal))
               ~
             =-  ``atom+!>(`@ux`-)
-            %+  en:crub:crypto  symmetric-key.u.per
+            %+  en:cyf:cryc:crypto  symmetric-key.u.per
             ?~(u.res ~ (jam [p q.q]:u.u.res))
             ::  private namespaces
             ::
@@ -7321,7 +7455,7 @@
             ?~  res  ~
             =/  =hunk  [(slav %ud lop.tyl) (slav %ud len.tyl)]
             ::
-            =+  hu-co=(etch-hunk our life.ames-state crypto-core:ev-core)
+            =+  hu-co=(etch-hunk our [life saf]:ames-state)
             ?-  res
               [~ ~]    ``noun+!>((etch-open:hu-co pax.tyl hunk ~))
               [~ ~ *]  ``noun+!>((etch-open:hu-co pax.tyl hunk [p q.q]:u.u.res))
@@ -9479,7 +9613,7 @@
             |=  $:  =ship
                     =life
                     crypto-suite=@ud
-                    =public-key
+                    =pass
                 ==
             ^+  sy-core
             ?:  =(our ship)  sy-core
@@ -9491,14 +9625,16 @@
             ?.  ?=([?(%ship %chum) ~ %known *] peer)
               =|  =point:jael
               =.  life.point     life
-              =.  keys.point     (my [life crypto-suite public-key]~)
+              =.  keys.point     (my [life crypto-suite pass]~)
               =.  sponsor.point  `(^^sein:title rof /ames our now ship)
               ::
               (on-publ-full (my [ship point]~))
             ::
             =/  old-key         symmetric-key.+.u.peer
-            =/  =private-key    sec:ex:crypto-core
-            =/  =symmetric-key  (derive-symmetric-key public-key private-key)
+            =/  cyc  (com:nu:cryc:crypto pass)
+            =/  =public-keys  ded:ex:(com:nu:cryc:crypto pass)
+            =/  =private-keys   sek.saf.ames-state
+            =/  =symmetric-key  (derive-symmetric-key public-keys private-keys)
             ::  recalculate paths in .pit/.keens using the new key
             ::
             =?  peer  ?=([%chum ~ %known *] peer)
@@ -9515,9 +9651,11 @@
               [moves %ship ~ %known peer]
             ::  update values
             ::
+
             =.  symmetric-key.+.u.peer  symmetric-key
             =.  life.+.u.peer           life
-            =.  public-key.+.u.peer     public-key
+            =.  pass.+.u.peer           pass
+            =.  public-keys.+.u.peer    public-keys
             ::
             =?  chums.ames-state  ?=(%chum -.peer)
               (~(put by chums.ames-state) ship u.peer)
@@ -9716,7 +9854,8 @@
                     _sy-core
                 ==
             ::
-            =/  =public-key     pass:(~(got by keys.point) life.point)
+            =/  =pass     pass:(~(got by keys.point) life.point)
+            =/  =public-keys  ded:ex:(com:nu:cryc:crypto pass)
             :: XX remove; needed when changing types in %lull (for testing)
             :: =.  priv.ames-state
             ::   ;;  @
@@ -9724,8 +9863,8 @@
             ::   =-  ~&  priv/-  -
             ::   (rof [~ ~] /ames %j `beam`[[our %vein %da now] /1])
             ::
-            =/  pk=private-key  sec:ex:crypto-core
-            =/  =symmetric-key  (derive-symmetric-key public-key pk)
+            =/  pk=private-keys  sek.saf.ames-state
+            =/  =symmetric-key  (derive-symmetric-key public-keys pk)
             ::
             =/  peer
               ::  XX if the peer doesn't previously exist we insert it
@@ -9738,7 +9877,8 @@
               ?.(?=([~ %known *] chum-state) *fren-state +.u.chum-state)
             =.  life.peer           life.point
             =.  rift.peer           rift.point
-            =.  public-key.peer     public-key
+            =.  public-keys.peer    public-keys
+            =.  pass.peer           pass
             =.  symmetric-key.peer  symmetric-key
             =.  qos.peer            [%unborn now]
             =.  sponsor.peer
@@ -9775,16 +9915,19 @@
         ::  +sy-priv:  set our private key to jael's response
         ::
         ++  sy-priv
-          |=  [=life vein=(map life private-key)]
+          |=  [=life vein=(map life ring)]
           ^+  sy-core
           ::
           %-  %+  %*(ev-tace ev her our)  sun.veb.bug.ames-state
               |.("hear new private key for life={<life>}")
           ::
-          =/  =private-key  (~(got by vein) life)
-          =/  crypto-core   (nol:nu:crub:crypto private-key)
+          =/  =ring  (~(got by vein) life)
+          =/  cyc   (nol:nu:cryc:crypto ring)
           ::  recalculate each peer's symmetric key
           ::
+          =.  ring.ames-state  ring
+          =.  saf.ames-state   saf:ex:cyc
+          =.  pass.ames-state  pub:ex:cyc
           =.  chums.ames-state
             %-  ~(urn by chums.ames-state)
             |=  [=ship =chum-state]
@@ -9794,7 +9937,7 @@
               chum-state
             =/  =fren-state  +.chum-state
             =/  =symmetric-key
-              (derive-symmetric-key public-key.fren-state sec:ex:crypto-core)
+              (derive-symmetric-key public-keys.fren-state sek.saf.ames-state)
             ::  recalculate paths in .pit/.keens using the new key
             ::
             =.  fren-state
@@ -9811,7 +9954,7 @@
             ::
             =/  =peer-state  +.ship-state
             =/  =symmetric-key
-              (derive-symmetric-key public-key.+.ship-state sec:ex:crypto-core)
+              (derive-symmetric-key public-keys.+.ship-state sek.saf.ames-state)
             ::
             =^  keens-moves  peer-state
               %-  rederive-mesa-keens
@@ -9820,7 +9963,6 @@
             %+  ~(put by peers)  ship
             known/peer-state(symmetric-key symmetric-key)
           =.  peers.ames-state  peers
-          =.  priv.ames-state   private-key
           =.  life.ames-state   life
           (sy-emil moves)
         ::
@@ -10333,10 +10475,10 @@
         ++  al-register-comet
           |=  [comet=@p open-packet signature=@ signed=@]  :: XX to %lull
           ^+  al-core
-          =/  crub  (com:nu:crub:crypto public-key)
+          =/  cyc  (com:nu:cryc:crypto pass)
           ::  verify signature
           ::
-          ?>  (safe:as:crub signature signed)
+          ?>  (veri:ed:crypto signature signed sgn:ded:ex:cyc)
           ::  assert the contents of the proof match those of a comet
           ::
           ?>  &(=(sndr comet) =(sndr-life 1))
@@ -10348,8 +10490,8 @@
           ?>  =(%king (clan:title (^sein:title comet)))
           ::  comet public-key must hash to its @p address
           ::
-          ?>  =(comet fig:ex:crub)
-          =/  keys  (~(put by *(map life [suite=@ud pass])) 1 1 public-key)
+          ?>  =(comet fig:ex:cyc)
+          =/  keys  (~(put by *(map life [suite=@ud ^pass])) 1 1 pass)
           =/  ship-state  (~(get by chums.ames-state) comet)
           ?:  ?=([~ %known *] ship-state)
             al-core
@@ -10418,9 +10560,10 @@
           ::
           =+  ;;  [signature=@ signed=@]  (cue ;;(@ +>.proof))
           =+  ;;  =open-packet            (cue signed)
+          =/  =public-keys  ded:ex:(com:nu:cryc:crypto pass.open-packet)
           ::
           ?>  %-  verify-sig:crypt
-              :^    (end 8 (rsh 3 public-key.open-packet))
+              :^    sgn.public-keys
                   p.p.aut.data
                 (en-beam [[her.name %$ ud+1] pat.name])
               (root:lss tob.data^dat.data)
@@ -10769,14 +10912,13 @@
             ~
           ?~  u.res
             [~ ~]
-          =/  priv=@uxI  (end 8 (rsh 3 priv.ames-state))  :: extract ed25519 key
           ::  XX  rift.ames-state
-          =>  [bem=bem res=res priv=priv ..crypt]
+          =>  [bem=bem res=res saf=saf.ames-state ..crypt]
           :: ~>  %memo./ames/publ
           =/  gag  [p q.q]:u.u.res  :: XX how does receiver distinguish these?
           =/  ful  (en-beam bem)
           =/  ser  (jam gag)  :: unencrypted
-          =/  sig  (sign:crypt priv ful (root:lss (met 3 ser)^ser))
+          =/  sig  (sign:crypt saf ful (root:lss (met 3 ser)^ser))
           :^  ~  ~  %message
           !>([%sign sig ser])
         ::  publisher-side, message-level (two-party encrypted namespace)
@@ -10835,14 +10977,13 @@
           ?~  u.res
             ~
           ::  XX  rift.ames-state
-          =/  prv=@uxI  (end 8 (rsh 3 priv.ames-state))  :: extract ed25519 key
-          =>  [key=key cyf=u.cyf bem=bem res=res prv=prv ..crypt]
+          =>  [key=key cyf=u.cyf bem=bem res=res saf=saf.ames-state ..crypt]
           :: ~>  %memo./ames/shut
           =/  gag  [p q.q]:u.u.res
           =/  ful  (en-beam bem)
           =/  ser  (jam gag)
           =/  cyr  (encrypt:crypt `@uxI`key iv=cyf ser)
-          =/  sig  (sign:crypt prv ful (root:lss (met 3 cyr) cyr))
+          =/  sig  (sign:crypt saf ful (root:lss (met 3 cyr) cyr))
           ``[%message !>([%sign sig cyr])]
         ::  publisher-side, flow-level
         ::
@@ -10910,9 +11051,9 @@
           ::
           =+  core=(ev:ames now^eny^rof ~[//attestation] ames-state)
           =/  =open-packet
-            [pub:ex:crypto-core our life.ames-state u.rcvr u.life]
+            [pass.ames-state our life.ames-state u.rcvr u.life]
           :+  ~  ~
-          [%message !>(proof/(sign:as:crypto-core (jam open-packet)))]
+          [%message !>(proof/(sign-raw:ed:crypto (jam open-packet) [sgn.pub sgn.sek]:saf.ames-state))]
         ::  publisher-side, weight of a noun at .pat, as measured by .boq
         ::
         ++  peek-whey
@@ -10947,10 +11088,10 @@
             [~ ~]
           =/  ful  (en-beam [[u.her %$ ud+1] pat.tyl])
           :^  ~  ~  %flag  !>  :: XX is this right?
-          %.  [(get-path-key pat.tyl u.her) u.aut ful u.rut]
+          =+  [u.aut ful u.rut]
           ?-  typ.tyl
-            %sign  verify-sig:crypt
-            %hmac  verify-mac:crypt
+            %sign  (verify-sig:crypt (get-path-pub-key pat.tyl u.her) -)
+            %hmac  (verify-mac:crypt (get-path-sym-key pat.tyl u.her) -) 
           ==
         ::  metadata query; XX only flow information supported
         ::
@@ -11263,11 +11404,16 @@
           ::
           ~
         ?.  ?=([~ %known *] chum)
-          =<  `pass  :: XX check suite?
-          ;;  [suite=@ud =pass]
-          =<  q.q  %-  need  %-  need
-          %^  rof  [~ ~]  /mesa
-          [%j `beam`[[our %puby %da now] /(scot %p ship)/(scot %ud life)]]
+          =/  puby
+            ;;  (unit (unit [p=mark q=[* (unit [suite=@ud =pass])]]))
+            %^  rof  [~ ~]  /mesa
+            [%j `beam`[[our %puby %da now] /(scot %p ship)/(scot %ud life)]]
+          ?.  ?=([~ ~ mark * ~ *] puby)  ~
+          =/  =pass  pass.u.q.u.u.puby
+          :-  ~
+          %+  slar:ed:crypto
+            cry:ded:ex:(com:nu:cryc:crypto pass)
+          cry.sek.saf.ames-state
         ?.  =(life life.+.u.chum)
           ~  :: XX  log?
         `symmetric-key.+.u.chum
@@ -11278,17 +11424,16 @@
         ?>  ?=([%& *] aut)
         =/  ful  (en-beam [[her.name %$ ud+1] pat.name])
         ?-  -.p.aut
-          %&  (verify-sig:crypt (get-path-key [pat her]:name) p.p.aut ful rut)
-          %|  (verify-mac:crypt (get-path-key [pat her]:name) p.p.aut ful rut)
+          %&  (verify-sig:crypt (get-path-pub-key [pat her]:name) p.p.aut ful rut)
+          %|  (verify-mac:crypt (get-path-sym-key [pat her]:name) p.p.aut ful rut)
         ==
       ::
-      ++  get-path-key
+      ++  get-path-pub-key
         |=  [=path =ship]
-        ^-  @uxI
+        ^-  @uxpoint
         =/  tyl=(pole knot)  path
         =+  sat=(got-per ship)
-        =+  pub=`@uxI`(end 8 (rsh 3 public-key.sat))
-        =+  sym=`@uxI`symmetric-key.sat
+        =+  pub=`@uxpoint`sgn.public-keys.sat
         ?+    tyl  !!
             [%publ lyf=@ pat=*]
           =/  lyf  (slaw %ud lyf.tyl)
@@ -11300,22 +11445,24 @@
           =/  kid  (slaw %ud kid.tyl)
           ?>  ?=(^ kid)
           ?~  key=(get:key-chain client-chain:(got-per ship) u.kid)
-            !!  :: XX handle
+            !!  :: xx handle
           ?>  (lte (met 3 -.u.key) 32)
           pub
-        ::
-            [%chum lyf=@ her=@ hyf=@ pat=[cyf=@ ~]]
-          =/  her  (slaw %p her.tyl)
-          ?>  ?=(^ her)
-          =/  her=@p  ?:(=(u.her our) ship u.her)
-          =+  sat=(got-per her)
-          ?>  (lte (met 3 symmetric-key.sat) 32)
-          `@uxI`symmetric-key.sat
         ==
       ::
-      ++  crypto-core
-        =>  [priv=priv.ames-state ..crypto]
-        ~>(%memo./mesa/crypto-core (nol:nu:crub:crypto priv))
+      ++  get-path-sym-key
+        |=  [=path =ship]
+        ^-  @uxI
+        =/  tyl=(pole knot)  path
+        =+  sat=(got-per ship)
+        =+  sym=`@uxI`symmetric-key.sat
+        ?>  ?=([%chum lyf=@ her=@ hyf=@ pat=[cyf=@ ~]] tyl)
+        =/  her  (slaw %p her.tyl)
+        ?>  ?=(^ her)
+        =/  her=@p  ?:(=(u.her our) ship u.her)
+        =+  sat=(got-per her)
+        ?>  (lte (met 3 symmetric-key.sat) 32)
+        sym
       ::
       ++  rederive-mesa-pit
         |=  [=ship peer=fren-state =our=life =her=life new-key=symmetric-key]
@@ -11404,7 +11551,7 @@
         ::
         =/  user-path=^path
           =/  cyf=@  (slav %uv cyf.pat.path)
-          (rash `@t`(dy:crub:crypto symmetric-key.peer cyf) stap)
+          (rash `@t`(dy:cyf:cryc:crypto symmetric-key.peer cyf) stap)
         =.  peers.ames-state.core
           =.  life.peer           her-life
           =.  symmetric-key.peer  new-key
@@ -12048,7 +12195,7 @@
   take:me-core
 ::  +stay: extract state before reload
 ::
-++  stay  [%25 adult/ames-state]
+++  stay  [%26 adult/ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
