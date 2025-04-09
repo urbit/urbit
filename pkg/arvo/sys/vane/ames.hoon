@@ -11336,8 +11336,8 @@
           ::  update lifes and keys in %publ and %chum namespaces
           ::
           ?+    path  ~|(path !!)
-              [%publ *]
-            [path [%publ her-life]]
+              [%publ lyf=@ pat=*]
+            [pat.path [%publ her-life]]
             ::
               [%chum lyf=@ her=@ hyf=@ cyf=@ ~]
             :: ?.  =([ship her-life] [her.path life.path])
@@ -11376,8 +11376,9 @@
         %-  ~(rep by ~(key by for.req))
         |=  [for=duct tip=_tip]
         ?.  (~(has by tip) user-path)
-          ~&  >>>  %missing-tip-entry
+          ~&  >>>  %missing-tip-entry^user-path
           tip
+        =.  tip  (~(del ju tip) user-path for old-path)
         (~(put ju tip) user-path for new-path)
       ::
       ++  rederive-mesa-keens
