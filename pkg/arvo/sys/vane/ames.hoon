@@ -1934,6 +1934,12 @@
               ?|  =(~(key by keens.ames) ~(key by keens.back))
                 ::
                   ?&  !=(~ rege-moves)
+                      =.  keens.ames
+                        ::  remove keens that will be migrated in state (%publ)
+                        ::  and look only for those that will result from the
+                        ::  process on the rege-moves (%chum, %shut)
+                        ::
+                        (~(dif by keens.ames) keens.back)
                       %-  ~(rep in ~(key by keens.ames))
                       |=  [=keen=path ok=?]
                       %+  lien  rege-moves
