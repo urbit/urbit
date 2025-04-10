@@ -7519,7 +7519,7 @@
                 %+  skim
                   ~(tap in ~(key by by-duct.ossuary))
                 |=  =duct
-                ?=([* [%gall %use %ping @ %out @ %ping %ping] *] duct)
+                ?=([* [%gall %use %ping @ %out @ %ping %ping ~] *] duct)
               ?~  ducs  ``noun+!>(~)
               =/  ping-bone
                 (~(got by by-duct.ossuary) -.ducs)
@@ -10478,9 +10478,14 @@
         ::
         ++  co-make-peek
           |=  [=space =spar]
+          =/  per  (get-per:ev ship.spar)
+          ?.  ?=([~ ~ %known *] per)
+            ::  XX log
+            co-core
+          =+  ev-core=(ev-foco:ev ship.spar +.u.u.per)
           =.  pax
             ?+  -.space  path.spar  :: XX skip adding flow paths to the .tip?
-              %none  inner:(ev-decrypt-path:ev [path ship]:spar)
+              %none  inner:(ev-decrypt-path:ev-core [path ship]:spar)
             ==
           %-  %^  co-tace  fin.veb.bug.ames-state  ship.spar
               |.("send %peek for page={(spud path.spar)}")
