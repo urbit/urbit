@@ -6217,7 +6217,13 @@
               ::  if the bone was corked, it's been removed from the state,
               ::  so we avoid adding it again.
               ::
-              =?  rcv.peer-state  !corked  (~(put by rcv.peer-state) bone state)
+              =?  rcv.peer-state  ?&  !corked
+                                      ::  if we no-op before updating the state
+                                      ::  on first contact, don't add the bone
+                                      ::
+                                      !=(*message-sink-state state)
+                                  ==
+                (~(put by rcv.peer-state) bone state)
               peer-core
             ::
             ++  closing  (~(has in closing.peer-state) bone)
