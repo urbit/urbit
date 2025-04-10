@@ -5030,6 +5030,8 @@
             |=  [=^duct =user=path =ames=path]
             =.  tip.peer-state
               ?:  &(?=(~ duct) ?=(~ ames-path))
+                ::  XX remove? not used anymore
+                ::
                 (~(del by tip.peer-state) user-path)
               (~(del ju tip.peer-state) user-path duct ames-path)
             peer-core
@@ -6724,7 +6726,7 @@
                               !?=([%chum *] pur.path)
                           ==
                   %^  fi-emit:core  duct  %pass
-                  [/prune-tip %a %deep %prun her path duct=~ ames-path=~]
+                  [/prune-tip %a %deep %prun her path duct ames-path=path]
                 core
               %-  ~(rep in ints)
               |=  [int=^ints f=_fine]
