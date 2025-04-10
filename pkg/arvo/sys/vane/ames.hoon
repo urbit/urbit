@@ -11400,18 +11400,23 @@
           ::
           ~&  skip-weird-path/path
           core
-        ?.  ?=([%chum her=@ lyf=@ cyf=@ ~] pat.path)
+        ?:  ?=([%shut *] pat.path)
           core
         %-  %+  %*(ev-tace ev her ship)  sun.veb.bug.ames-state
             |.("re-deriving new keens entry {<(spud path)>}")
         ::
         =/  user-path=^path
-          =/  cyf=@  (slav %uv cyf.pat.path)
-          (rash `@t`(dy:crub:crypto symmetric-key.peer cyf) stap)
+          ?+    pat.path   path  :: unencrypted %fine peeks
+            ::
+               [%chum her=@ lyf=@ cyf=@ ~]
+            =/  cyf=@  (slav %uv cyf.pat.path)
+            (rash `@t`(dy:crub:crypto symmetric-key.peer cyf) stap)
+          ::
+          ==
         =.  peers.ames-state.core
           =.  life.peer           her-life
           =.  symmetric-key.peer  new-key
-          ::  delete previous %chum entry with old path
+          ::  delete previous .keen entry with old path
           ::
           =.  keens.peer
             (~(del by keens.peer) (pout path))
@@ -11427,9 +11432,11 @@
         ::
         %-  ~(rep by ~(key by listeners.keen))
         |=  [for=duct c=_core]
-        =?  for  ?=([[%ames %chum ~] *] for)
-          t.for  ::  on-chum is re-entrant; remove /chum wire, it'll  be readded
-        (on-chum:c(duct for) ship user-path)
+        ?.  ?=([[%ames %chum ~] *] for)
+          (on-keen:c(duct for) ~ [ship user-path])
+        ::  on-chum is re-entrant; remove /chum wire, it'll  be readded
+        ::
+        (on-chum:c(duct t.for) ship user-path)
       ::
       +|  %tests
       ::
