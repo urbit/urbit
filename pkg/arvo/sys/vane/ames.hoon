@@ -9640,7 +9640,7 @@
             |=  [=ship =rift]
             ^+  sy-core
             %-  %+  %*(ev-tace ev her ship)  sun.veb.bug.ames-state
-                |.("hear new rift={<life>}")
+                |.("hear new rift={<rift>}")
             ::
             =?  rift.ames-state  =(our ship)
               rift
@@ -11992,6 +11992,7 @@
     =^  mesa-moves  vane-gate
       (take:me-core(ames-state ames-state.vane-gate) sample)
     [(weld ames-moves mesa-moves) vane-gate]
+  ::
   ?:  ?=([?(%turf %mesa %private-keys %public-keys) *] wire)
     ?.  ?&  ?=(?(%turf %public-keys) -.wire)
             ?=(~ unix-duct)
