@@ -4973,6 +4973,9 @@
           ++  on-hear-fine
             |=  [=lane =shot]
             ^+  peer-core
+            :: XX ?
+            :: ?.  =(sndr-tick.shot (mod life.peer-state 16))
+            ::   peer-core
             ?>  =(sndr-tick.shot (mod life.peer-state 16))
             ::  TODO what if the error happened in sift-purr?
             ::       does vere discard malformed packets?
@@ -11393,6 +11396,12 @@
           (~(got by peers.state) ship)
         %-  ~(rep by keens.peer)
         |=  [[=path keen=keen-state] core=_event-core]
+        =.  peer
+          ::  update .peer after each iteration
+          ::
+          =-  ?>(?=(%known -<) ->)
+          (~(got by peers.ames-state.core) ship)
+        =+  original-path=path
         =>  .(path `(pole knot)`path)
         ~|  rederive-mesa-keens/path
         ?.  ?=([van=@ car=@ cas=@ desk=@ pat=*] path)
@@ -11400,15 +11409,15 @@
           ::
           ~&  skip-weird-path/path
           core
-        ?:  ?=([%shut *] pat.path)
+        ?:  ?=([%a %x %'1' %$ %shut *] path)
           core
         %-  %+  %*(ev-tace ev her ship)  sun.veb.bug.ames-state
             |.("re-deriving new keens entry {<(spud path)>}")
         ::
         =/  user-path=^path
-          ?+    pat.path   path  :: unencrypted %fine peeks
+          ?+    path  path  :: unencrypted %fine peeks
             ::
-               [%chum her=@ lyf=@ cyf=@ ~]
+              [%a %x %'1' %$ %chum her=@ lyf=@ cyf=@ ~]
             =/  cyf=@  (slav %uv cyf.pat.path)
             (rash `@t`(dy:crub:crypto symmetric-key.peer cyf) stap)
           ::
@@ -11419,13 +11428,13 @@
           ::  delete previous .keen entry with old path
           ::
           =.  keens.peer
-            (~(del by keens.peer) (pout path))
+            (~(del by keens.peer) original-path)
           ::  remove previous .tip entry; will be readded
           ::
           =.  tip.peer
             %-  ~(rep by ~(key by listeners.keen))
             |=  [for=duct tip=_tip.peer]
-            (~(del ju tip) user-path for path)
+            (~(del ju tip) user-path for original-path)
           ::
           (~(put by peers.ames-state.core) ship known/peer)
         =.  life.ames-state.core  our-life
@@ -11433,7 +11442,7 @@
         %-  ~(rep by ~(key by listeners.keen))
         |=  [for=duct c=_core]
         ?.  ?=([[%ames %chum ~] *] for)
-          (on-keen:c(duct for) ~ [ship user-path])
+          (on-keen:c(duct for) ~ ship user-path)
         ::  on-chum is re-entrant; remove /chum wire, it'll  be readded
         ::
         (on-chum:c(duct t.for) ship user-path)
