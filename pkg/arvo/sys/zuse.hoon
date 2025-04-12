@@ -1487,10 +1487,10 @@
   ::::                    ++cryc:crypto                 ::  (2b4) suite C, Ed
     ::                                                  ::::
   ++  cryc  ::!:
-    |_  $%  $:  suite=%$
-                pub=[cry=@ sgn=@ ~]
-                sek=$@(~ [~ cry=@ sgn=@])
-            ==
+    |_  $%  ::$:  suite=%$
+            ::    pub=[cry=@ sgn=@ ~]
+            ::    sek=$@(~ [~ cry=@ sgn=@])
+            ::==
             $:  suite=%b
                 pub=[cry=@ sgn=@ ~]
                 sek=$@(~ [sed=@ cry=@ sgn=@])
@@ -1511,30 +1511,30 @@
       ::                                                ::  ++pac:ex:crub:crypto
       ++  pac                                           ::  private fingerprint
         ^-  @uvG
-        ?<  ?=(%$ suite)
+        ::?<  ?=(%$ suite)
         ?~  sek  ~|  %pubkey-only  !!
         ?:  ?=(%b suite)  (end 6 (shaf %bcod sed.sek))
         (end 6 (shaf %ccod (can 3 [32 sed.sek] [(met 3 dat.tw.^pub) dat.tw.^pub] ~)))
       ::                                                ::  ++pub:ex:crub:crypto
       ++  pub                                           ::  public key
         ^-  pass
-        ?:  ?=(%$ suite)  (cat 3 0 (cat 8 sgn.^pub cry.^pub))
-        ?:  ?=(%b suite)  (cat 3 'b' (cat 8 sgn.^pub cry.^pub))
-        %^  cat  3  'c'
-        %+  can  0
-        :~  [256 ugn.tw.^pub]
-            [256 cry.^pub]
+        ::?:  ?=(%$ suite)  (can 3 1^%$ 32^sgn.^pub 32^cry.^pub ~)
+        ?:  ?=(%b suite)  (can 3 1^'b' 32^sgn.^pub 32^cry.^pub ~)
+        %+  can  3
+        :~  [1 %'c']
+            [32 ugn.tw.^pub]
+            [32 cry.^pub]
             [(met 3 dat.tw.^pub) dat.tw.^pub]
         ==
       ::                                                ::  ++sec:ex:crub:crypto
       ++  sec                                           ::  private key
         ^-  ring
-        ?<  ?=(%$ suite)
+        ::?<  ?=(%$ suite)
         ?~  sek  ~|  %pubkey-only  !!
-        ?:  ?=(%b suite)  (cat 3 'B' sed.sek)
-        %^  cat  3  'C'
+        ?:  ?=(%b suite)  (can 3 1^'B' 64^sed.sek ~)
         %+  can  3
-        :~  [64 sed.sek]
+        :~  [1 %'C']
+            [64 sed.sek]
             [(met 3 dat.tw.^pub) dat.tw.^pub]
         ==
       ::
@@ -1550,6 +1550,9 @@
       ++  saf
         ^-  keypairs
         [ded ven]
+      ++  num
+        ^-  @
+        (sub suite 'a')
       --  ::ex
     ::                                                  ::  ++nu:crub:crypto
     ++  nu                                              ::
@@ -1561,7 +1564,7 @@
         =+  wid=(add (div w 8) ?:(=((mod w 8) 0) 0 1))
         =+  bits=(shal wid seed)
         %-  nol  ^-  ring
-        ?:  ?=(%b suite)  (cat 3 'B' bits)
+        ?:  ?=(%b suite)  (can 3 1^'B' 64^bits ~)
         (can 3 1^'C' 64^bits (met 3 dat)^dat ~)
       ::                                                ::  ++nol:nu:crub:crypto
       ++  nol                                           ::  activate secret
@@ -1579,7 +1582,7 @@
         %=  ..nu
           +<-   %c
           pub   [cry=pub.c sgn=pub.t tw=[ugn=pub.s dat=dat]]
-          sek   [sed=bod cry=sek.c sgn=sek.t]
+          sek   [sed=(cut 8 [0 2] bod) cry=sek.c sgn=sek.t]
         ==
       ::                                                ::  ++com:nu:crub:crypto
       ++  com                                           ::  activate public
@@ -1591,31 +1594,31 @@
         ?:  =('b' mag)
           ..nu(+<- %b, pub [cry=cry sgn=sgn ~], sek ~)
         ?>  =('c' mag)
-        =/  dat  (rsh [8 3] bod)
+        =/  dat  (rsh [8 2] bod)
         =/  mit  (shax (can 3 [32 sgn] [(met 3 dat) dat] ~))
         =/  tgn  (scap:ed sgn mit)
         ..nu(+<- %c, pub [cry=cry sgn=tgn tw=[sgn dat]], sek ~)
     ::
-      ++  ven
-        |=  private-keys
-        ^+  ..nu
-        %=    ..nu
-            +<-  %$
-            sek  [~ cry sgn]
-            pub
-          :+  cry=(scalarmult-base:ed:crypto (end 8 cry))
-          sgn=(scalarmult-base:ed:crypto (end 8 sgn))  ~
-        ==
-      ::
-      ++  ded
-        |=  public-keys
-        ^+  ..nu
-        ..nu(+<- %$, pub [cry sgn ~], sek ~)
-      ::
-      ++  saf
-        |=  keypairs
-        ^+  ..nu
-        ..nu(+<- %$, pub [cry sgn ~]:pub, sek [~ cry sgn]:sek)
+      ::++  ven
+      ::  |=  private-keys
+      ::  ^+  ..nu
+      ::  %=    ..nu
+      ::      +<-  %$
+      ::      sek  [~ cry sgn]
+      ::      pub
+      ::    :+  cry=(scalarmult-base:ed:crypto (end 8 cry))
+      ::    sgn=(scalarmult-base:ed:crypto (end 8 sgn))  ~
+      ::  ==
+      ::::
+      ::++  ded
+      ::  |=  public-keys
+      ::  ^+  ..nu
+      ::  ..nu(+<- %$, pub [cry sgn ~], sek ~)
+      ::::
+      ::++  saf
+      ::  |=  keypairs
+      ::  ^+  ..nu
+      ::  ..nu(+<- %$, pub [cry sgn ~]:pub, sek [~ cry sgn]:sek)
       --  ::nu
     ++  cyf
       |%
@@ -1639,6 +1642,7 @@
         (jam (~(en sivc:aes (shaz key) ~) msg))
       --
     --  ::crub
+  ++  crub  !!
   ::                                                    ::
   ::::                    ++crua:crypto                 ::  (2b5) suite B, RSA
     ::                                                  ::::

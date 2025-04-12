@@ -328,10 +328,13 @@
         %fake
       ::  single-homed
       ::
+      =>  ?@  +.tac  [cyc=(pit:nu:cryc:crypto 512 our %b ~) .]
+          =+  cyc=(pit:nu:cryc:crypto 512 seed.tac %c %fake) 
+          .(tac [%fake ship=`@p`fig:ex:cyc])
       ?>  =(our ship.tac)
       ::  fake keys are deterministically derived from the ship
       ::
-      =/  cyc  (pit:nu:cryc:crypto 512 our %b ~)
+
       ::  our initial public key
       ::
       =.  pos.zim.pki
@@ -826,6 +829,7 @@
           |-  ^-  (list [who=ship =pass])
           ?~  whol
             ~
+          ?:  =(%pawn (clan:title i.whol))  $(whol t.whol)
           =/  cyc  (pit:nu:cryc:crypto 512 i.whol %b ~)
           :-  [i.whol pub:ex:cyc]
           $(whol t.whol)

@@ -442,7 +442,11 @@
           (mod sndr-life.pac 16)
           (mod rcvr-life.pac 16)
           origin=~
-          content=`@`(sign-raw:ed:crypto (jam pac) [sgn.pub sgn.sek]:saf)
+          ^=  content
+          =+  (jam pac)
+          %-  jam
+          :_  -
+          (sign-raw:ed:crypto - [sgn.pub sgn.sek]:saf)
       ==
     ::  +sift-open-packet: decode comet attestation into an $open-packet
     ::
@@ -3943,7 +3947,7 @@
           ::  upgrade comet to %known via on-publ-full
           ::
           =.  event-core
-            =/  crypto-suite=@ud  1
+            =/  crypto-suite=@ud  (sub (end 3 pass.open-packet) 'a')
             =/  keys
               (my [sndr-life.open-packet crypto-suite pass.open-packet]~)
             =/  =point
@@ -7465,6 +7469,9 @@
         ::
         ?.  =([~ ~] lyc)  ~
           ?+    tyl  ~
+              [%safe ~]
+            ``noun+!>([saf ring pass]:ames-state)
+          ::
               [%$ %whey ~]
             =/  maz=(list mass)
               =/  [known=(list ship-state) alien=(list ship-state)]
@@ -9429,7 +9436,7 @@
                   (poke-ping-app hen our %kick fail=%.n)
               ==
             ==
-            sy-core(ames-state ames-state(unix-duct hen))
+            sy-core(ames-state ames-state(unix-duct hen, core %mesa))
         ::  +sy-init: first boot; subscribe to our info from jael
         ::
         ++  sy-init
@@ -9509,6 +9516,7 @@
         ::
         ++  sy-publ
           |=  [=wire =public-keys-result:jael]
+          ~&  sy-publ=+<
           |^  ^+  sy-core
           ::
           ?-    public-keys-result
@@ -9622,7 +9630,10 @@
                 |.("hear new key at life={<life>}")
             ::
             =/  peer  (sy-find-peer ship)
+            =/  cyc  (com:nu:cryc:crypto pass)
+            ?>  =(crypto-suite (sub suite:+<:cyc 'a'))
             ?.  ?=([?(%ship %chum) ~ %known *] peer)
+              =+  ~:(com:nu:cryc:crypto pass)
               =|  =point:jael
               =.  life.point     life
               =.  keys.point     (my [life crypto-suite pass]~)
@@ -9631,7 +9642,6 @@
               (on-publ-full (my [ship point]~))
             ::
             =/  old-key         symmetric-key.+.u.peer
-            =/  cyc  (com:nu:cryc:crypto pass)
             =/  =public-keys  ded:ex:(com:nu:cryc:crypto pass)
             =/  =private-keys   sek.saf.ames-state
             =/  =symmetric-key  (derive-symmetric-key public-keys private-keys)
@@ -10473,12 +10483,9 @@
           (al-emit hen %pass /public-keys %j %public-keys [n=ship ~ ~])
         ::
         ++  al-register-comet
-          |=  [comet=@p open-packet signature=@ signed=@]  :: XX to %lull
+          |=  [comet=@p open-packet]  :: XX to %lull
           ^+  al-core
           =/  cyc  (com:nu:cryc:crypto pass)
-          ::  verify signature
-          ::
-          ?>  (veri:ed:crypto signature signed sgn:ded:ex:cyc)
           ::  assert the contents of the proof match those of a comet
           ::
           ?>  &(=(sndr comet) =(sndr-life 1))
@@ -10491,7 +10498,8 @@
           ::  comet public-key must hash to its @p address
           ::
           ?>  =(comet fig:ex:cyc)
-          =/  keys  (~(put by *(map life [suite=@ud ^pass])) 1 1 pass)
+          =/  keys  (~(put by *(map life [suite=@ud ^pass])) sndr-life num:ex:cyc pass)
+
           =/  ship-state  (~(get by chums.ames-state) comet)
           ?:  ?=([~ %known *] ship-state)
             al-core
@@ -10528,6 +10536,7 @@
           ::
           ?~  pact=(co-make-pact:co `spar`comet^path ~ rift=0)
             !!
+          ~&  read-proof=pact=[comet=comet path=path pact]
           %-  %^  al-tace  fin.veb.bug.ames-state  comet
               |.("peek for attestation proof")
           (al-emit (push-pact u.pact (make-lanes comet `[0 lane] *qos)))
@@ -10551,25 +10560,18 @@
           ::
           ?>  =(1 (div (add tob.data 1.023) 1.024))
           ?>  ?=(%& -.aut.data)
-          ::
-          ~|  [name=name data=data]
-          ::
-          =+  ;;(proof=gage:mess (cue dat.data))
-          ?>  ?=([%message %proof *] proof)
-          ::  XX refactor with sift-open-packet?
-          ::
-          =+  ;;  [signature=@ signed=@]  (cue ;;(@ +>.proof))
-          =+  ;;  =open-packet            (cue signed)
+          =/  res=@       dat.data
+          =+  ;;(=gage:mess (cue res))
+          ?>  ?=(^ gage)
+          ?>  ?=(%open-packet p.gage)
+          =+  ;;(=open-packet q.gage)
+
           =/  =public-keys  ded:ex:(com:nu:cryc:crypto pass.open-packet)
-          ::
-          ?>  %-  verify-sig:crypt
-              :^    sgn.public-keys
-                  p.p.aut.data
-                (en-beam [[her.name %$ ud+1] pat.name])
-              (root:lss tob.data^dat.data)
-          ::
+          ?>  =/  ful  (en-beam [[her.name %$ ud+1] pat.name])
+              =/  rut  (root:lss tob.data^dat.data)
+              (verify-sig:crypt sgn.public-keys p.p.aut.data ful rut)
           =.  al-core
-            (al-register-comet her.name open-packet signature signed)
+            (al-register-comet her.name open-packet)
           =.  ames-state
             ::  discard moves; %nail gift is included in +sy-publ
             ::
@@ -10582,7 +10584,6 @@
               ==
             ames-state:(sy-dear:sy her.name lane)
           al-core
-        ::
         --
       ::
       +|  %message-constructors
@@ -10640,6 +10641,7 @@
           ::  XX  make all paths when the %moke task is sent?
           ::
           =.  pax  path.ack-spar  :: XX skip  adding flow paths to the .tip?
+          ~&  "send %poke for {<space=space>} {<ack=ack-spar>} {<poke=poke-path>}"
           =.  path.ack-spar   (make-space-path space path.ack-spar)
           =.  poke-path
             =?  space  ?=(?(%publ %chum) -.space)
@@ -10657,6 +10659,7 @@
                   client       ship.ack-spar
               ==
             (make-space-path space poke-path)
+          ~&  "send %poke for {<space=space>} {<ack=ack-spar>} {<poke=poke-path>}"
           ::
           %-  %^  co-tace  snd.veb.bug.ames-state  ship.ack-spar
               |.("send %poke for ack={(spud path.ack-spar)}")
@@ -10918,7 +10921,8 @@
           =/  gag  [p q.q]:u.u.res  :: XX how does receiver distinguish these?
           =/  ful  (en-beam bem)
           =/  ser  (jam gag)  :: unencrypted
-          =/  sig  (sign:crypt saf ful (root:lss (met 3 ser)^ser))
+          =/  rut  (root:lss (met 3 ser)^ser)
+          =/  sig  (sign:crypt saf ful rut)
           :^  ~  ~  %message
           !>([%sign sig ser])
         ::  publisher-side, message-level (two-party encrypted namespace)
@@ -11049,11 +11053,10 @@
           ?:  |(?=(~ life) ?=(~ rcvr))
             [~ ~]
           ::
-          =+  core=(ev:ames now^eny^rof ~[//attestation] ames-state)
           =/  =open-packet
             [pass.ames-state our life.ames-state u.rcvr u.life]
           :+  ~  ~
-          [%message !>(proof/(sign-raw:ed:crypto (jam open-packet) [sgn.pub sgn.sek]:saf.ames-state))]
+          [%open-packet !>(open-packet)]
         ::  publisher-side, weight of a noun at .pat, as measured by .boq
         ::
         ++  peek-whey
@@ -11632,11 +11635,12 @@
       ^-  $%  [%ames (unit ship-state)]
               [%mesa (unit chum-state)]
           ==
+      :: move to core if alien?
       ?^  chum-state=(~(get by chums.ames-state) ship)
         mesa/chum-state
-      ?:  ?=(%mesa core.ames-state)  :: XX revisit this
-        mesa/~
-      ames/(~(get by peers.ames-state) ship)
+      ?^  peer-state=(~(get by peers.ames-state) ship)
+        ames/peer-state
+      ?:(?=(%mesa core.ames-state) [%mesa ~] [%ames ~])
     ::
     +|  %entry-points
     ::

@@ -3972,7 +3972,7 @@
   +$  task                                            ::  in request ->$
     $~  [%vega ~]                                     ::
     $%  [%dawn dawn-event]                            ::  boot from keys
-        [%fake =ship]                                 ::  fake boot
+        [%fake $@(=ship [~ seed=@uw])]                ::  fake boot
         [%listen whos=(set ship) =source]             ::  set ethereum source
         ::TODO  %next for generating/putting new private key
         [%meet =ship =life =pass]                     ::  met after breach
