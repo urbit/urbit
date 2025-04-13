@@ -581,8 +581,8 @@
     |=  x=@rs  ^-  @rs
     ?.  (gte (abs x) .1)
       (atan (div x (sqt (abs (sub .1 (mul x x))))))
-    ?:  =(.1 x)   ^~((div pi .2))
-    ?:  =(.-1 x)  ^~((div pi .-2))
+    ?:  =(.1 x)   ^~((mul pi .0.5))
+    ?:  =(.-1 x)  ^~((mul pi .-0.5))
     ~|([%asin-out-of-bounds x] !!)
   ::  +acos:  @rs -> @rs
   ::
@@ -598,7 +598,7 @@
   ++  acos
     |=  x=@rs  ^-  @rs
     ?.  (gte (abs x) .1)
-      ?:  =(.0 x)  ^~((div pi .2))
+      ?:  =(.0 x)  ^~((mul pi .0.5))
       (atan (div (sqt (abs (sub .1 (mul x x)))) x))
     ?:  =(.1 x)   .0
     ?:  =(.-1 x)  pi
@@ -1456,8 +1456,8 @@
     |=  x=@rd  ^-  @rd
     ?.  (gte (abs x) .~1)
       (atan (div x (sqt (abs (sub .~1 (mul x x))))))
-    ?:  =(.~1 x)   ^~((div pi .~2))
-    ?:  =(.~-1 x)  ^~((div pi .~-2))
+    ?:  =(.~1 x)   ^~((mul pi .~0.5))
+    ?:  =(.~-1 x)  ^~((mul pi .~-0.5))
     ~|([%asin-out-of-bounds x] !!)
   ::  +acos:  @rd -> @rd
   ::
@@ -1473,7 +1473,7 @@
   ++  acos
     |=  x=@rd  ^-  @rd
     ?.  (gte (abs x) .~1)
-      ?:  =(.~0 x)  ^~((div pi .~2))
+      ?:  =(.~0 x)  ^~((mul pi .~0.5))
       (atan (div (sqt (abs (sub .~1 (mul x x)))) x))
     ?:  =(.~1 x)   .~0
     ?:  =(.~-1 x)  pi
@@ -2322,8 +2322,8 @@
     |=  x=@rh  ^-  @rh
     ?.  (gte (abs x) .~~1)
       (atan (div x (sqt (abs (sub .~~1 (mul x x))))))
-    ?:  =(.~~1 x)   ^~((div pi .~~2))
-    ?:  =(.~~-1 x)  ^~((div pi .~~-2))
+    ?:  =(.~~1 x)   ^~((mul pi .~~0.5))
+    ?:  =(.~~-1 x)  ^~((mul pi .~~-0.5))
     ~|([%asin-out-of-bounds x] !!)
   ::  +acos:  @rh -> @rh
   ::
@@ -2339,7 +2339,7 @@
   ++  acos
     |=  x=@rh  ^-  @rh
     ?.  (gte (abs x) .~~1)
-      ?:  =(.~~0 x)  ^~((div pi .~~2))
+      ?:  =(.~~0 x)  ^~((mul pi .~~0.5))
       (atan (div (sqt (abs (sub .~~1 (mul x x)))) x))
     ?:  =(.~~1 x)   .~~0
     ?:  =(.~~-1 x)  pi
@@ -3107,8 +3107,8 @@
     |=  x=@rq  ^-  @rq
     ?.  (gte (abs x) .~~~1)
       (atan (div x (sqt (abs (sub .~~~1 (mul x x))))))
-    ?:  =(.~~~1 x)   ^~((div pi .~~~2))
-    ?:  =(.~~~-1 x)  ^~((div pi .~~~-2))
+    ?:  =(.~~~1 x)   ^~((mul pi .~~~0.5))
+    ?:  =(.~~~-1 x)  ^~((mul pi .~~~-0.5))
     ~|([%asin-out-of-bounds x] !!)
   ::  +acos:  @rq -> @rq
   ::
@@ -3124,7 +3124,7 @@
   ++  acos
     |=  x=@rq  ^-  @rq
     ?.  (gte (abs x) .~~~1)
-      ?:  =(.~~~0 x)  ^~((div pi .~~~2))
+      ?:  =(.~~~0 x)  ^~((mul pi .~~~0.5))
       (atan (div (sqt (abs (sub .~~~1 (mul x x)))) x))
     ?:  =(.~~~1 x)   .~~~0
     ?:  =(.~~~-1 x)  pi
