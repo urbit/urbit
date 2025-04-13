@@ -566,6 +566,88 @@
   ++  tan
     |=  x=@rs  ^-  @rs
     (div (sin x) (cos x))
+  ::  +asin:  @rs -> @rs
+  ::
+  ::  Returns the inverse sine of a floating-point atom.
+  ::    Examples
+  ::      > (asin .0)
+  ::      .0
+  ::      > (asin .1)
+  ::      .1.5707964
+  ::      > (asin .0.7)
+  ::      .0.7753969
+  ::
+  ++  asin
+    |=  x=@rs  ^-  @rs
+    ?.  (gte (abs x) .1)
+      (atan (div x (sqt (abs (sub .1 (mul x x))))))
+    ?:  =(.1 x)   ^~((mul pi .0.5))
+    ?:  =(.-1 x)  ^~((mul pi .-0.5))
+    ~|([%asin-out-of-bounds x] !!)
+  ::  +acos:  @rs -> @rs
+  ::
+  ::  Returns the inverse cosine of a floating-point atom.
+  ::    Examples
+  ::      > (acos .0)
+  ::      .1.5707964
+  ::      > (acos .1)
+  ::      .0
+  ::      > (acos .0.7)
+  ::      .0.7953982
+  ::
+  ++  acos
+    |=  x=@rs  ^-  @rs
+    ?.  (gte (abs x) .1)
+      ?:  =(.0 x)  ^~((mul pi .0.5))
+      (atan (div (sqt (abs (sub .1 (mul x x)))) x))
+    ?:  =(.1 x)   .0
+    ?:  =(.-1 x)  pi
+    ~|([%acos-out-of-bounds x] !!)
+  ::  +atan:  @rs -> @rs
+  ::
+  ::  Returns the inverse tangent of a floating-point atom.
+  ::    Examples
+  ::      > (atan .1)
+  ::      .0.7853976
+  ::      > (atan .2)
+  ::      .1.1071494
+  ::      > (atan pi)
+  ::      .1.2626364
+  ::
+  ++  atan
+    |=  x=@rs  ^-  @rs
+    =/  a  (pow (add .1 (mul x x)) .-0.5)
+    =/  b  .1
+    |-
+    ?.  (gth (abs (sub a b)) rtol)
+      (div x (mul (pow (add .1 (mul x x)) .0.5) b))
+    =/  ai  (mul .0.5 (add a b))
+    =/  bi  (sqt (mul ai b))
+    $(a ai, b bi)
+  ::  +atan2:  [@rs @rs] -> @rs
+  ::
+  ::  Returns the inverse tangent of a floating-point coordinate.
+  ::    Examples
+  ::      > (atan2 .0 .1)
+  ::      .0
+  ::      > (atan2 .-1 .0)
+  ::      .-1.5707964
+  ::      > (atan2 .0.5 .-0.5)
+  ::      .2.356195
+  ::
+  ++  atan2
+    |=  [y=@rs x=@rs]  ^-  @rs
+    ?:  (gth x .0)
+      (atan (div y x))
+    ?:  &((lth x .0) (gte y .0))
+      (add (atan (div y x)) pi)
+    ?:  &((lth x .0) (lth y .0))
+      (sub (atan (div y x)) pi)
+    ?:  &(=(.0 x) (gth y .0))
+      (div pi .2)
+    ?:  &(=(.0 x) (lth y .0))
+      (mul .-1 (div pi .2))
+    .0  ::  undefined
   ::    +pow-n:  [@rs @rs] -> @rs
   ::
   ::  Returns the power of a floating-point atom to an integer exponent.
@@ -1359,6 +1441,88 @@
   ++  tan
     |=  x=@rd  ^-  @rd
     (div (sin x) (cos x))
+  ::  +asin:  @rd -> @rd
+  ::
+  ::  Returns the inverse sine of a floating-point atom.
+  ::    Examples
+  ::      > (asin .~0)
+  ::      .~0
+  ::      > (asin .~1)
+  ::      .~1.5707963267948966
+  ::      > (asin .~0.7)
+  ::      .~0.7753974965943197
+  ::
+  ++  asin
+    |=  x=@rd  ^-  @rd
+    ?.  (gte (abs x) .~1)
+      (atan (div x (sqt (abs (sub .~1 (mul x x))))))
+    ?:  =(.~1 x)   ^~((mul pi .~0.5))
+    ?:  =(.~-1 x)  ^~((mul pi .~-0.5))
+    ~|([%asin-out-of-bounds x] !!)
+  ::  +acos:  @rd -> @rd
+  ::
+  ::  Returns the inverse cosine of a floating-point atom.
+  ::    Examples
+  ::      > (acos .~0)
+  ::      .~1.5707963267948966
+  ::      > (acos .~1)
+  ::      .~0
+  ::      > (acos .~0.7)
+  ::      .~0.7953988301652518
+  ::
+  ++  acos
+    |=  x=@rd  ^-  @rd
+    ?.  (gte (abs x) .~1)
+      ?:  =(.~0 x)  ^~((mul pi .~0.5))
+      (atan (div (sqt (abs (sub .~1 (mul x x)))) x))
+    ?:  =(.~1 x)   .~0
+    ?:  =(.~-1 x)  pi
+    ~|([%acos-out-of-bounds x] !!)
+  ::  +atan:  @rd -> @rd
+  ::
+  ::  Returns the inverse tangent of a floating-point atom.
+  ::    Examples
+  ::      > (atan .~1)
+  ::      .~0.7853981633821053
+  ::      > (atan .~2)
+  ::      .~1.1071487178081938
+  ::      > (atan pi)
+  ::      .~1.2626272558398273
+  ::
+  ++  atan
+    |=  x=@rd  ^-  @rd
+    =/  a  (pow (add .~1 (mul x x)) .~-0.5)
+    =/  b  .~1
+    |-
+    ?.  (gth (abs (sub a b)) rtol)
+      (div x (mul (pow (add .~1 (mul x x)) .~0.5) b))
+    =/  ai  (mul .~0.5 (add a b))
+    =/  bi  (sqt (mul ai b))
+    $(a ai, b bi)
+  ::  +atan2:  [@rd @rd] -> @rd
+  ::
+  ::  Returns the inverse tangent of a floating-point coordinate.
+  ::    Examples
+  ::      > (atan2 .~0 .~1)
+  ::      .~0
+  ::      > (atan2 .~-1 .~0)
+  ::      .~-1.5707963267948966
+  ::      > (atan2 .~0.5 .~-0.5)
+  ::      .~2.3561944902107888
+  ::
+  ++  atan2
+    |=  [y=@rd x=@rd]  ^-  @rd
+    ?:  (gth x .~0)
+      (atan (div y x))
+    ?:  &((lth x .~0) (gte y .~0))
+      (add (atan (div y x)) pi)
+    ?:  &((lth x .~0) (lth y .~0))
+      (sub (atan (div y x)) pi)
+    ?:  &(=(.~0 x) (gth y .~0))
+      (div pi .~2)
+    ?:  &(=(.~0 x) (lth y .~0))
+      (mul .~-1 (div pi .~2))
+    .~0  ::  undefined
   ::    +pow-n:  [@rd @rd] -> @rd
   ::
   ::  Returns the power of a floating-point atom to an integer exponent.
@@ -2143,6 +2307,88 @@
   ++  tan
     |=  x=@rh  ^-  @rh
     (div (sin x) (cos x))
+  ::  +asin:  @rh -> @rh
+  ::
+  ::  Returns the inverse sine of a floating-point atom.
+  ::    Examples
+  ::      > (asin .~~0)
+  ::      .~~0
+  ::      > (asin .~~1)
+  ::      .~~1.57
+  ::      > (asin .~~0.7)
+  ::      .~~0.7773
+  ::
+  ++  asin
+    |=  x=@rh  ^-  @rh
+    ?.  (gte (abs x) .~~1)
+      (atan (div x (sqt (abs (sub .~~1 (mul x x))))))
+    ?:  =(.~~1 x)   ^~((mul pi .~~0.5))
+    ?:  =(.~~-1 x)  ^~((mul pi .~~-0.5))
+    ~|([%asin-out-of-bounds x] !!)
+  ::  +acos:  @rh -> @rh
+  ::
+  ::  Returns the inverse cosine of a floating-point atom.
+  ::    Examples
+  ::      > (acos .~~0)
+  ::      .~~1.57
+  ::      > (acos .~~1)
+  ::      .~~0
+  ::      > (acos .~~0.7)
+  ::      .~~0.7964
+  ::
+  ++  acos
+    |=  x=@rh  ^-  @rh
+    ?.  (gte (abs x) .~~1)
+      ?:  =(.~~0 x)  ^~((mul pi .~~0.5))
+      (atan (div (sqt (abs (sub .~~1 (mul x x)))) x))
+    ?:  =(.~~1 x)   .~~0
+    ?:  =(.~~-1 x)  pi
+    ~|([%acos-out-of-bounds x] !!)
+  ::  +atan:  @rh -> @rh
+  ::
+  ::  Returns the inverse tangent of a floating-point atom.
+  ::    Examples
+  ::      > (atan .~~1)
+  ::      .~~0.7866
+  ::      > (atan .~~2)
+  ::      .~~1.111
+  ::      > (atan pi)
+  ::      .~~1.281
+  ::
+  ++  atan
+    |=  x=@rh  ^-  @rh
+    =/  a  (pow (add .~~1 (mul x x)) .~~-0.5)
+    =/  b  .~~1
+    |-
+    ?.  (gth (abs (sub a b)) rtol)
+      (div x (mul (pow (add .~~1 (mul x x)) .~~0.5) b))
+    =/  ai  (mul .~~0.5 (add a b))
+    =/  bi  (sqt (mul ai b))
+    $(a ai, b bi)
+  ::  +atan2:  [@rh @rh] -> @rh
+  ::
+  ::  Returns the inverse tangent of a floating-point coordinate.
+  ::    Examples
+  ::      > (atan2 .~~0 .~~1)
+  ::      .~~0
+  ::      > (atan2 .~~-1 .~~0)
+  ::      .~~-1.57
+  ::      > (atan2 .~~0.5 .~~-0.5)
+  ::      .~~2.354
+  ::
+  ++  atan2
+    |=  [y=@rh x=@rh]  ^-  @rh
+    ?:  (gth x .~~0)
+      (atan (div y x))
+    ?:  &((lth x .~~0) (gte y .~~0))
+      (add (atan (div y x)) pi)
+    ?:  &((lth x .~~0) (lth y .~~0))
+      (sub (atan (div y x)) pi)
+    ?:  &(=(.~~0 x) (gth y .~~0))
+      (div pi .~~2)
+    ?:  &(=(.~~0 x) (lth y .~~0))
+      (mul .~~-1 (div pi .~~2))
+    .~~0  ::  undefined
   ::    +pow-n:  [@rh @rh] -> @rh
   ::
   ::  Returns the power of a floating-point atom to an integer exponent.
@@ -2846,6 +3092,88 @@
   ++  tan
     |=  x=@rq  ^-  @rq
     (div (sin x) (cos x))
+  ::  +asin:  @rq -> @rq
+  ::
+  ::  Returns the inverse sine of a floating-point atom.
+  ::    Examples
+  ::      > (asin .~~~0)
+  ::      .~~~0
+  ::      > (asin .~~~1)
+  ::      .~~~1.5707963267948966192313216916397514
+  ::      > (asin .~~~0.7)
+  ::      .~~~0.7753974966107530637394463388579305
+  ::
+  ++  asin
+    |=  x=@rq  ^-  @rq
+    ?.  (gte (abs x) .~~~1)
+      (atan (div x (sqt (abs (sub .~~~1 (mul x x))))))
+    ?:  =(.~~~1 x)   ^~((mul pi .~~~0.5))
+    ?:  =(.~~~-1 x)  ^~((mul pi .~~~-0.5))
+    ~|([%asin-out-of-bounds x] !!)
+  ::  +acos:  @rq -> @rq
+  ::
+  ::  Returns the inverse cosine of a floating-point atom.
+  ::    Examples
+  ::      > (acos .~~~0)
+  ::      .~~~1.5707963267948966192313216916397514
+  ::      > (acos .~~~1)
+  ::      .~~~0
+  ::      > (acos .~~~0.7)
+  ::      .~~~0.7953988301841435554899943710156033
+  ::
+  ++  acos
+    |=  x=@rq  ^-  @rq
+    ?.  (gte (abs x) .~~~1)
+      ?:  =(.~~~0 x)  ^~((mul pi .~~~0.5))
+      (atan (div (sqt (abs (sub .~~~1 (mul x x)))) x))
+    ?:  =(.~~~1 x)   .~~~0
+    ?:  =(.~~~-1 x)  pi
+    ~|([%acos-out-of-bounds x] !!)
+  ::  +atan:  @rq -> @rq
+  ::
+  ::  Returns the inverse tangent of a floating-point atom.
+  ::    Examples
+  ::      > (atan .~~~1)
+  ::      .~~~0.7853981633974483096146231179876219
+  ::      > (atan .~~~2)
+  ::      .~~~1.1071487177940905030161167763325275
+  ::      > (atan pi)
+  ::      .~~~1.2626272556789116834540013074115034
+  ::
+  ++  atan
+    |=  x=@rq  ^-  @rq
+    =/  a  (pow (add .~~~1 (mul x x)) .~~~-0.5)
+    =/  b  .~~~1
+    |-
+    ?.  (gth (abs (sub a b)) rtol)
+      (div x (mul (pow (add .~~~1 (mul x x)) .~~~0.5) b))
+    =/  ai  (mul .~~~0.5 (add a b))
+    =/  bi  (sqt (mul ai b))
+    $(a ai, b bi)
+  ::  +atan2:  [@rq @rq] -> @rq
+  ::
+  ::  Returns the inverse tangent of a floating-point coordinate.
+  ::    Examples
+  ::      > (atan2 .~~~0 .~~~1)
+  ::      .~~~0
+  ::      > (atan2 .~~~-1 .~~~0)
+  ::      .~~~-1.5707963267948966192313216916397514
+  ::      > (atan2 .~~~0.5 .~~~-0.5)
+  ::      .~~~2.3561944901923449288480202652918806
+  ::
+  ++  atan2
+    |=  [y=@rq x=@rq]  ^-  @rq
+    ?:  (gth x .~~~0)
+      (atan (div y x))
+    ?:  &((lth x .~~~0) (gte y .~~~0))
+      (add (atan (div y x)) pi)
+    ?:  &((lth x .~~~0) (lth y .~~~0))
+      (sub (atan (div y x)) pi)
+    ?:  &(=(.~~~0 x) (gth y .~~~0))
+      (div pi .~~~2)
+    ?:  &(=(.~~~0 x) (lth y .~~~0))
+      (mul .~~~-1 (div pi .~~~2))
+    .~~~0  ::  undefined
   ::    +pow-n:  [@rq @rq] -> @rq
   ::
   ::  Returns the power of a floating-point atom to a signed integer exponent.
