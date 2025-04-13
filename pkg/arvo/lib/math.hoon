@@ -580,7 +580,7 @@
   ++  asin
     |=  x=@rs  ^-  @rs
     ?.  (gte (abs x) .1)
-      (atan (div x (sqt (abs (sub .1 (pow-n x .2))))))
+      (atan (div x (sqt (abs (sub .1 (mul x x))))))
     ?:  =(.1 x)   ^~((div pi .2))
     ?:  =(.-1 x)  ^~((div pi .-2))
     ~|([%asin-out-of-bounds x] !!)
@@ -599,7 +599,7 @@
     |=  x=@rs  ^-  @rs
     ?.  (gte (abs x) .1)
       ?:  =(.0 x)  ^~((div pi .2))
-      (atan (div (sqt (abs (sub .1 (pow-n x .2)))) x))
+      (atan (div (sqt (abs (sub .1 (mul x x)))) x))
     ?:  =(.1 x)   .0
     ?:  =(.-1 x)  pi
     ~|([%acos-out-of-bounds x] !!)
@@ -616,11 +616,11 @@
   ::
   ++  atan
     |=  x=@rs  ^-  @rs
-    =/  a  (pow (add .1 (pow-n x .2)) .-0.5)
+    =/  a  (pow (add .1 (mul x x)) .-0.5)
     =/  b  .1
     |-
     ?.  (gth (abs (sub a b)) rtol)
-      (div x (mul (pow (add .1 (pow-n x .2)) .0.5) b))
+      (div x (mul (pow (add .1 (mul x x)) .0.5) b))
     =/  ai  (mul .0.5 (add a b))
     =/  bi  (sqt (mul ai b))
     $(a ai, b bi)
@@ -1455,7 +1455,7 @@
   ++  asin
     |=  x=@rd  ^-  @rd
     ?.  (gte (abs x) .~1)
-      (atan (div x (sqt (abs (sub .~1 (pow-n x .~2))))))
+      (atan (div x (sqt (abs (sub .~1 (mul x x))))))
     ?:  =(.~1 x)   ^~((div pi .~2))
     ?:  =(.~-1 x)  ^~((div pi .~-2))
     ~|([%asin-out-of-bounds x] !!)
@@ -1474,7 +1474,7 @@
     |=  x=@rd  ^-  @rd
     ?.  (gte (abs x) .~1)
       ?:  =(.~0 x)  ^~((div pi .~2))
-      (atan (div (sqt (abs (sub .~1 (pow-n x .~2)))) x))
+      (atan (div (sqt (abs (sub .~1 (mul x x)))) x))
     ?:  =(.~1 x)   .~0
     ?:  =(.~-1 x)  pi
     ~|([%acos-out-of-bounds x] !!)
@@ -1491,11 +1491,11 @@
   ::
   ++  atan
     |=  x=@rd  ^-  @rd
-    =/  a  (pow (add .~1 (pow-n x .~2)) .~-0.5)
+    =/  a  (pow (add .~1 (mul x x)) .~-0.5)
     =/  b  .~1
     |-
     ?.  (gth (abs (sub a b)) rtol)
-      (div x (mul (pow (add .~1 (pow-n x .~2)) .~0.5) b))
+      (div x (mul (pow (add .~1 (mul x x)) .~0.5) b))
     =/  ai  (mul .~0.5 (add a b))
     =/  bi  (sqt (mul ai b))
     $(a ai, b bi)
@@ -2321,7 +2321,7 @@
   ++  asin
     |=  x=@rh  ^-  @rh
     ?.  (gte (abs x) .~~1)
-      (atan (div x (sqt (abs (sub .~~1 (pow-n x .~~2))))))
+      (atan (div x (sqt (abs (sub .~~1 (mul x x))))))
     ?:  =(.~~1 x)   ^~((div pi .~~2))
     ?:  =(.~~-1 x)  ^~((div pi .~~-2))
     ~|([%asin-out-of-bounds x] !!)
@@ -2340,7 +2340,7 @@
     |=  x=@rh  ^-  @rh
     ?.  (gte (abs x) .~~1)
       ?:  =(.~~0 x)  ^~((div pi .~~2))
-      (atan (div (sqt (abs (sub .~~1 (pow-n x .~~2)))) x))
+      (atan (div (sqt (abs (sub .~~1 (mul x x)))) x))
     ?:  =(.~~1 x)   .~~0
     ?:  =(.~~-1 x)  pi
     ~|([%acos-out-of-bounds x] !!)
@@ -2357,11 +2357,11 @@
   ::
   ++  atan
     |=  x=@rh  ^-  @rh
-    =/  a  (pow (add .~~1 (pow-n x .~~2)) .~~-0.5)
+    =/  a  (pow (add .~~1 (mul x x)) .~~-0.5)
     =/  b  .~~1
     |-
     ?.  (gth (abs (sub a b)) rtol)
-      (div x (mul (pow (add .~~1 (pow-n x .~~2)) .~~0.5) b))
+      (div x (mul (pow (add .~~1 (mul x x)) .~~0.5) b))
     =/  ai  (mul .~~0.5 (add a b))
     =/  bi  (sqt (mul ai b))
     $(a ai, b bi)
@@ -3106,7 +3106,7 @@
   ++  asin
     |=  x=@rq  ^-  @rq
     ?.  (gte (abs x) .~~~1)
-      (atan (div x (sqt (abs (sub .~~~1 (pow-n x .~~~2))))))
+      (atan (div x (sqt (abs (sub .~~~1 (mul x x))))))
     ?:  =(.~~~1 x)   ^~((div pi .~~~2))
     ?:  =(.~~~-1 x)  ^~((div pi .~~~-2))
     ~|([%asin-out-of-bounds x] !!)
@@ -3125,7 +3125,7 @@
     |=  x=@rq  ^-  @rq
     ?.  (gte (abs x) .~~~1)
       ?:  =(.~~~0 x)  ^~((div pi .~~~2))
-      (atan (div (sqt (abs (sub .~~~1 (pow-n x .~~~2)))) x))
+      (atan (div (sqt (abs (sub .~~~1 (mul x x)))) x))
     ?:  =(.~~~1 x)   .~~~0
     ?:  =(.~~~-1 x)  pi
     ~|([%acos-out-of-bounds x] !!)
@@ -3142,11 +3142,11 @@
   ::
   ++  atan
     |=  x=@rq  ^-  @rq
-    =/  a  (pow (add .~~~1 (pow-n x .~~~2)) .~~~-0.5)
+    =/  a  (pow (add .~~~1 (mul x x)) .~~~-0.5)
     =/  b  .~~~1
     |-
     ?.  (gth (abs (sub a b)) rtol)
-      (div x (mul (pow (add .~~~1 (pow-n x .~~~2)) .~~~0.5) b))
+      (div x (mul (pow (add .~~~1 (mul x x)) .~~~0.5) b))
     =/  ai  (mul .~~~0.5 (add a b))
     =/  bi  (sqt (mul ai b))
     $(a ai, b bi)
