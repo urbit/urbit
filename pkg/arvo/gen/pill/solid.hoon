@@ -29,6 +29,7 @@
       ::
         dub=_|
         prime=_|
+        ames-core=_`?(%ames %mesa)`%ames
         exc=(list spur)
     ==
 :-  %pill
@@ -47,4 +48,4 @@
   |=  =desk
   [desk /(scot %p p.bec)/[desk]/(scot %da now)]
 ::
-(solid:pill sys dez dub now prime exc)
+(solid:pill sys dez dub now prime ames-core exc)
