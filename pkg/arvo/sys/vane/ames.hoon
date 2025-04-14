@@ -11216,7 +11216,9 @@
           ::
           ~
         ?.  ?=([~ %known *] chum)
-          =<  `pass  :: XX check suite?
+          =;  =public-key
+            `(derive-symmetric-key public-key priv.ames-state)
+          =<  pass  :: XX check suite?
           ;;  [suite=@ud =pass]
           =<  q.q  %-  need  %-  need
           %^  rof  [~ ~]  /mesa
