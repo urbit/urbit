@@ -5480,7 +5480,7 @@
                 ::
                   [%chum her=@ lyf=@ cyf=@ ~]
                 =/  cyf=@      (slav %uv cyf.pat.path)
-                =*  key  symmetric-key.per
+                =*  key        symmetric-key.per
                 =/  pax=^path  (rash `@t`(dy:crub:crypto key cyf) stap)
                 [pax chum-to-our:mesa-ev-core]
               ==
@@ -10862,7 +10862,6 @@
           ?:  |(?=(~ life) ?=(~ rcvr))
             [~ ~]
           ::
-          =+  core=(ev:ames now^eny^rof ~[//attestation] ames-state)
           =/  =open-packet
             [pub:ex:crypto-core our life.ames-state u.rcvr u.life]
           :+  ~  ~
