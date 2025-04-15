@@ -91,12 +91,42 @@
   ?<  =(0 b)
   (sub a (mul b (div a b)))
 ::
+++  pow                                                 ::  unsigned exponent
+  ~/  %pow
+  |=  [a=@ b=@]
+  ?:  =(b 0)  1
+  |-  ?:  =(b 1)  a
+  =+  c=$(b (div b 2))
+  =+  d=(mul c c)
+  ?~  (dis b 1)  d  (mul d a)
+::
+++  sqt                                                 ::  unsigned sqrt/rem
+  ~/  %sqt
+  |=  a=@  ^-  [p=@ q=@]
+  ?~  a  [0 0]
+  =+  [q=(div (dec (xeb a)) 2) r=0]
+  =-  [-.b (sub a +.b)]
+  ^=  b  |-
+  =+  s=(add r (bex q))
+  =+  t=(mul s s)
+  ?:  =(q 0)
+    ?:((lte t a) [s t] [r (mul r r)])
+  ?:  (lte t a)
+    $(r s, q (dec q))
+  $(q (dec q))
+::
 ++  bex                                                 ::  binary exponent
   ~/  %bex
   |=  a=bloq
   ^-  @
   ?:  =(0 a)  1
   (mul 2 $(a (dec a)))
+::
+++  xeb                                                 ::  binary logarithm
+  ~/  %xeb
+  |=  a=@
+  ^-  @
+  (met 0 a)
 ::
 ++  lsh                                                 ::  left-shift
   ~/  %lsh
