@@ -1550,6 +1550,7 @@
       ++  saf
         ^-  keypairs
         [ded ven]
+      ::
       ++  num
         ^-  @
         (sub suite 'a')
