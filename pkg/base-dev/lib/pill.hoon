@@ -322,12 +322,19 @@
   ::
   =/  userspace-ova
     =.  dez  (snoc dez [%base bas])
-    %+  weld
+    ;:  weld
       %+  turn  dez
       |=  [dek=desk bas=path]
       (file-ovum [dek bas exc])
-    ?.  prime  ~
-    [(prep-ovum (turn dez tail))]~
+    ::
+      ?.  prime  ~
+      [(prep-ovum (turn dez tail))]~
+    ::
+      %+  turn  dez
+      |=  [dek=desk *]
+      ^-  unix-event
+      [/c/essential/[dek] %esse dek %.y]
+    ==
   ::
   =/  =wynn  (get-wynn sys new-wynn)
   ::
@@ -345,8 +352,9 @@
           [*@da //arvo %wyrd [~.nonce /] wynn]
       ==
       `(list)`(turn kernel-ova (lead *@da))
-      `(list)`[*@da `unix-event`[/d/term/1 %boot & %fake *@p]]^~
+      `(list)`[*@da [/d/term/1 %boot & %fake *@p]]^~
       `(list)`(turn userspace-ova (lead *@da))
+      `(list)`[*@da [/c/init-zest %zeal (turn dez |=([d=desk *] [d %live]))]]^~
     ==
   ::
   ~>  %slog.[0 leaf+"brass: cache entries: {<(lent cache)>}"]
