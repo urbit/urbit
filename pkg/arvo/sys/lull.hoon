@@ -2903,6 +2903,9 @@
         [%logs =told]                                   ::  system output
         [%meme p=(list quac)]                           ::  memory report
         [%quac ~]                                       ::  memory runtime
+        [%open ses=@tas app=@tas]                       ::  session opened
+        [%shut ~]                                       ::  session closed
+        [%sess (list [tid=@ ses=@tas app=@tas])]        ::  all sessions
     ==                                                  ::
   +$  task                                              ::  in request ->$
     $~  [%vega ~]                                       ::
