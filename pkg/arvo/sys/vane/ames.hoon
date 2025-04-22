@@ -4149,7 +4149,7 @@
             |=  [=ship =bone]
             ::  XX  defer migrating the peer until we can read from their
             ::  namespace that they have migrated us?
-            ::  XX  requires a namespace for migrated peers
+            ::  XX  requires a namespace for migrated peers?
             ::
             :: %-  %^  ev-trace  sun.veb  ship.deep
             ::     |.("migrating to |mesa")
@@ -4492,7 +4492,10 @@
           |=  =ship
           ^-  ?
           =/  ship-state  (~(get by peers.ames-state) ship)
-          ?.  ?=([~ %known *] ship-state)  %.n
+          ?.  ?=([~ %known *] ship-state)
+            ::  XX only known peers can be migrated; |pass [%a %load %mesa] ?
+            ::
+            %.n
           =+  peer-core=(abed-peer:pe ship +.u.ship-state)
           =/  [ahoy-moves=(list move) ahoy-state=axle]
             ~|(%migrate-crashed [moves ames-state]:on-migrate:peer-core)
@@ -4655,7 +4658,7 @@
                 ?:  ?=(%pawn (clan:title ship))
                   (try-next-sponsor (^sein:title ship))
                 ::  by default, %aliens are saved in peer.ames-state
-                ::  XX use chums.ames-state as default
+                ::  XX use chums.ames-state as default based on core.ames-state
                 ::
                 %^  enqueue-alien-todo  ship  ship-state
                 |=  todos=alien-agenda
@@ -7247,7 +7250,7 @@
             =/  bone  (slaw %ud bone.tyl)
             ?:  |(?=(~ ship) ?=(~ bone))
               [~ ~]
-            ::  XX check that ship is in .lyc
+            ::  check that ship is in .lyc
             ::
             ?.  &(?=(^ lyc) (~(has in u.lyc) u.ship))
               [~ ~]
@@ -9035,7 +9038,7 @@
               :: fo-core(cache.state (put:fo-cac cache.state seq error))
             |-  ^+  fo-core
             ?:  error
-              ::  XX  make error=(unit error), and include the naxplanation there
+              ::  XX make error=(unit error), and include the naxplanation there
               ::
               ::  if error start +peek for naxplanation
               ::
@@ -9688,6 +9691,7 @@
             =/  peer
               ::  XX if the peer doesn't previously exist we insert it
               ::  based on the chosen core in state; see find-peer
+              ::
               ?:  ?=(%ship wer)
                 :-  %ship
                 (gut-peer-state:(ev:ames now^eny^rof hen ames-state) ship)
@@ -10059,8 +10063,8 @@
             ::      do we need to send it?
             ::  XX  better to drop any peeks for %naxplanations, %corks?
             ::
-            =.  last-acked.sink      last-acked.rcv.state
-            =.  last-heard.sink      last-acked.rcv.state
+            =.  last-acked.sink  last-acked.rcv.state
+            =.  last-heard.sink  last-acked.rcv.state
             ::  naxplanations
             ::
             =/  naxp=^bone  (mix 0b10 bone)  ::  bone=%1 -> bone=%3
@@ -10177,7 +10181,7 @@
               =?  coms  ?&  (gth (sub now ~d180) last-contact.qos.c)
                             %-  ~(any by flows.c)
                             |=  f=flow-state
-                            !=(~ loads.snd.f)  ::  XX !?=([^ ^ *] loads.snd.f)
+                            !=(~ loads.snd.f)
                         ==
                 (~(put in coms) ship)
               coms
@@ -10293,6 +10297,10 @@
           |=  [comet=@p open-packet signature=@ signed=@]  :: XX to %lull
           ^+  al-core
           =/  crub  (com:nu:crub:crypto public-key)
+          ::  XX  this verification is redundant; comet proofs use the /publ
+          ::  namespace, so the signature verification has already happened in
+          ::  +al-take-proof
+          ::
           ::  verify signature
           ::
           ?>  (safe:as:crub signature signed)
@@ -10757,7 +10765,7 @@
             ~
           ?~  u.res
             [~ ~]
-          =>  [key=u.key cyf=u.cyf bem=bem res=res ..crypt] :: XX rift.ames-state
+          =>  [key=u.key cyf=u.cyf bem=bem res=res ..crypt]
           :: ~>  %memo./ames/chum
           :: XX rift.ames-state
           =/  gag  [p q.q]:u.u.res
@@ -11147,7 +11155,7 @@
       ::
       +|  %helpers
       ::
-      ++  push-pact  :: XX forwarding?
+      ++  push-pact  :: XX forwarding stuff here instad on +make-lanes?
         |=  [=pact:pact lanes=(list lane:pact)]
         ^-  move
         ?<  =(~ unix-duct)
@@ -11702,7 +11710,7 @@
               task=$@(~ ?([%chum ~] [%keen key=(unit @ud)]))
               freq=@ud
           ==
-      ::  XX also for |ames; move to common tasks
+      ::  XX also for |ames; move to common tasks when supported
       ::
       =/  ship-state  (pe-find-peer ship.spar)
       ?:  ?=(%ames -.ship-state)
@@ -11846,7 +11854,7 @@
           ::
           =|  per=fren-state
           =.  -.per  azimuth-state=+<.u.chum-state
-          =/  mesa-core
+          =/  mesa-core  ::  XX temporary core
             ::  XX  don't put the regressed peer again in chums
             ::
             %_  me-core
@@ -12060,6 +12068,8 @@
       ::
       ~>  %slog.0^leaf/"mesa: taking weird {<[[- +<]:sign]>} for {(spud wire)}"
       take:me-core
+    ::  XX refactor defered gift handling so no timer is needed if no unix-duct
+    ::
     ::  If the unix-duct is not set, we defer applying %public-keys and %turf
     ::  gifts (which can trigger other gifts to be sent to unix) by setting up
     ::  a timer that will request them again
