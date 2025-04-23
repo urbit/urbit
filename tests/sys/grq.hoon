@@ -2,16 +2,17 @@
 ::
 /+  *test, v=test-ames-gall
 |%
-++  dbug  `?`|
+++  dbug  `?`&
 ++  test-watch
   %-  run-chain
   |.  :-  %|
-  =+  (nec-bud:v [nec=2 bud=3] nec=0 bud=0)
+  =+  (nec-bud-zod:v life=[nec=2 bud=3 zod=1] rift=[nec=0 bud=0 zod=0])
   ::  uncomment to turn on verbose debug output
-  ::=^  *  ames.nec
-  ::  (ames-call:v ames.nec ~[/none] [%spew ~[%msg %snd %rcv %odd]] *roof)
-  ::=^  *  ames.bud
-  ::  (ames-call:v ames.bud ~[/none] [%spew ~[%msg %snd %rcv %odd]] *roof)
+  :: =^  *  ames.nec
+  ::  (ames-call:v ames.nec ~[/none] [%spew ~[%msg %snd %rcv %odd %rot]] *roof)
+  :: =^  *  ames.bud
+  ::  (ames-call:v ames.bud ~[/none] [%spew ~[%msg %snd %rcv %odd %rot]] *roof)
+  ::
   ::  poke %sub to tell it to subscribe
   ~?  >  dbug  'poke %sub to tell it to subscribe'
   =/  =task:gall  [%deal [~nec ~nec /] %sub %poke watch+!>(~bud)]

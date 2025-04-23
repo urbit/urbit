@@ -1,4 +1,4 @@
-|_  err=*
+|_  err=[term tang]
 ++  grab
   |%
   ++  noun  (pair term tang)

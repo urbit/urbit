@@ -29,11 +29,15 @@ export class Ames extends Component {
   }
 
   loadPeers() {
-    api.getPeers();
+    api.getAll();
   }
 
   loadPeerDetails(who) {
     api.getPeer(who);
+  }
+
+  loadChumDetails(who) {
+    api.getChum(who);
   }
 
   renderPaths(paths) {
@@ -208,6 +212,77 @@ export class Ames extends Component {
     return 'weird flow';
   }
 
+  renderMesaFlow(flow) {
+    const summary = (<>
+      <b>{(flow.side === "for") ? "send plea" : "send boon"}</b><br/>
+
+      {flow.duct !== null ? renderDuct(flow.duct) : <></>}
+
+      <table><tbody>
+        <tr class="inter">
+          <td>bone</td>
+          <td>line</td>
+          <td>next</td>
+          <td>window (max)</td>
+          <td>total unsent</td>
+        </tr>
+        <tr>
+          <td>{flow.bone}</td>
+          <td>{flow.line}</td>
+          <td>{flow.next}</td>
+          <td>{`${flow['send-window']}-${flow['send-window-max']}`}</td>
+          <td>
+            {flow['unsent-messages'].reduce((a,b) => a+b, 0)} bytes
+            ({flow['unsent-messages'].length} messages)
+          </td>
+        </tr>
+      </tbody></table>
+    </>);
+
+    const summaryBack = (<>
+      <b>{(flow.side === "for") ? "sink boon" : "sink plea"}</b><br/>
+      <table><tbody>
+        <tr class="inter">
+          <td>bone</td>
+          <td>last acked</td>
+          <td>pending?</td>
+          <td>naxplanations</td>
+        </tr>
+        <tr>
+          <td>{flow.bone}</td>
+          <td>{flow['last-acked']}</td>
+          <td>{(flow['pending-acked'] ? 'yes' : 'no')}</td>
+          <td>XX</td>
+        </tr>
+      </tbody></table>
+    </>);
+
+    const active = ( flow['unsent-messages'].length > 0 )
+      ? 'active, '
+      : '';
+    const color = flow['closing'] ? 'lightyellow': flow['corked'] ? 'lightred' : 'transparent';
+
+    const key = (flow.side === "for") ? "plea" : "boon" +
+                + active + flow.bone + ', ' + '';
+               //(flow.duct !== null) ? renderDuct(flow.duct) : '';
+
+    const incoming = (flow['last-acked'] > 0) ?
+          <Summary summary={summaryBack} /> :
+          <></>;
+    const  outgoing= (flow.next > 1) ?
+          <Summary summary={summary} /> :
+          <></>;
+
+    const sides = (flow.side === 'for') ?
+                  <>{outgoing}{incoming}</> :
+                  <>{incoming}{outgoing}</>
+    return {key: key, jsx: (
+      <div style={{backgroundColor: color}}>
+        {sides}
+       </div>
+    )};
+  }
+
   renderScry(scry) {
 
     const m = scry['keen-state'].metrics;
@@ -286,13 +361,126 @@ export class Ames extends Component {
 
   }
 
+  //         "scry-path": "/chum/1/~fyr/1/0vf9mc.gbhbc.i4lgl.rmfgn.fnf4u.f9iqs.c2ohk.r507j.72lqf.nqdhn.ut07s.j8f5q.o645b.v3gur.gj2hl",
+  //         "keen-state": {
+  //             "listeners": [
+  //                 [
+  //                     "/ames/mesa/flow/ack/for/~nec/0/0",
+  //                     "/gall/sys/way/~nec/hood",
+  //                     "/gall/use/hood/0w1.mbXza/out/~nec/hood/helm/hi/~nec",
+  //                     "/dill",
+  //                     "//term/1"
+  //                 ]
+  //             ],
+  //             "payload": "/chum/1/~nec/1/0v3ba.pjsen.h7m6k.fa0hc.h52f9.0n6d3.epj7d.r0fka.og380.ejsql.tqsal.m4jbp.p7bsu.04es9",
+  //             "packets": null
+  //         }
+  //     }
+  // ],
+
+  renderPeek(peek){
+
+    const summary = (<>
+      <b>{peek['scry-path']}</b><br/>
+      <h5 style={{marginTop: '1em'}}>listeners:</h5>
+      {renderDuct(peek['keen-state'].listeners)}
+      <h5 style={{marginTop: '1em'}}>Payload path:</h5>
+      {peek['keen-state'].payload}
+    </>);
+
+    return {key: peek ['scry-path'], jsx: (
+      <Summary summary={summary} />
+    )};
+  }
+
   //TODO use classes for styling?
   render() {
     const { props, state } = this;
-    const { known, alien, deets } = props.peers;
+    const { known: knownPeers, alien: alienPeers, deets: deetsPeers }
+      = props.peers;
+    const { known: knownChums, alien: alienChums, deets: deetsChums }
+      = props.chums;
 
-    const renderDetails = (who) => {
-      const peer = deets[who];
+    const renderChumDetails = (who) => {
+      const peer = deetsChums[who];
+      if (!peer) {
+        return 'Loading...';
+      } else if (peer.alien) {
+        return (<>
+          Pending messages: {peer.alien.pokes}
+          Peeks: {this.renderPaths(peer.alien.peeks)}
+          Chums: {this.renderPaths(peer.alien.chums)}
+        </>);
+      } else if (peer.known) {
+        const p = peer.known;
+        console.log(p);
+        const status = (<>
+          <h4 style={{marginTop: '1em'}}>status</h4>
+          <table><tbody>
+            <tr>
+              <td class="inter">Life</td>
+              <td>{p.life}</td>
+            </tr>
+            <tr>
+              <td class="inter">Route</td>
+              <td>
+                { p.lane }
+              </td>
+            </tr>
+            <tr>
+              <td class="inter">QoS</td>
+              <td>
+                {p.qos.kind},
+                last contact {msToDa(p.qos['last-contact'])}
+              </td>
+            </tr>
+            <tr>
+              <td class="inter">Bones </td>
+              <td>
+                corked: {p.corked.length}
+              </td>
+            </tr>
+          </tbody></table>
+        </>);
+
+        const scryItems = p.scries.map(this.renderPeek);
+        const scry = (<>
+          <h4 style={{marginTop: '1em'}}>scries</h4>
+          <SearchableList placeholder="path" items={scryItems} />
+        </>);
+
+        const forwardItems = p.flows.forward.map(this.renderMesaFlow);
+        const forward = (<>
+          <h4 style={{marginTop: '1em'}}>forward</h4>
+          <SearchableList placeholder="bone, duct" items={forwardItems} />
+        </>);
+
+        const backwardItems = p.flows.backward.map(this.renderMesaFlow);
+        const backward = (<>
+          <h4 style={{marginTop: '1em'}}>backward</h4>
+          <SearchableList placeholder="bone, duct" items={backwardItems} />
+        </>);
+
+        return (<>
+          <button
+            style={{position: 'absolute', top: 0, right: 0}}
+            onClick={()=>{this.loadChumDetails(who)}}
+          >
+            refresh
+          </button>
+          {status}
+          {forward}
+          {backward}
+          {scry}
+        </>);
+      } else {
+        console.log('weird peer', peer);
+        return '???';
+      }
+    }
+
+    const renderPeerDetails = (who) => {
+      const peer = deetsPeers[who];
       if (!peer) {
         return 'Loading...';
       } else if (peer.alien) {
@@ -387,25 +575,44 @@ export class Ames extends Component {
       }
     }
 
-    const knownItems = known.map(who => {
+    const knownPeersItems = knownPeers.map(who => {
       return {key: '~'+who, jsx: (<Summary
         id={who}
         summary={'~'+who + ' (known)'}
-        details={renderDetails(who)}
+        details={renderPeerDetails(who)}
         onOpen={this.loadPeerDetails}
       />)};
     });
 
-    const alienItems = alien.map(who => {
+    const alienPeersItems = alienPeers.map(who => {
       return {key: '~'+who, jsx: (<Summary
         id={who}
         summary={'~'+who + ' (alien)'}
-        details={renderDetails(who)}
+        details={renderPeerDetails(who)}
         onOpen={this.loadPeerDetails}
       />)};
     });
 
-    const items = [...knownItems, ...alienItems];
+    const knownChumsItems = knownChums.map(who => {
+      return {key: '~'+who, jsx: (<Summary
+        id={who}
+        summary={'~'+who + ' (known)'}
+        details={renderChumDetails(who)}
+        onOpen={this.loadChumDetails}
+      />)};
+    });
+
+    const alienChumsItems = alienChums.map(who => {
+      return {key: '~'+who, jsx: (<Summary
+        id={who}
+        summary={'~'+who + ' (alien)'}
+        details={renderChumDetails(who)}
+        onOpen={this.loadChumDetails}
+      />)};
+    });
+
+    const items = [...knownPeersItems, ...alienPeersItems,
+                   ...knownChumsItems, ...alienChumsItems];
 
     return (
       <SearchableList placeholder="ship name" items={items}>

@@ -299,10 +299,18 @@
     ==
   ::
   ++  parse-thread
+    |^
+    %+  cook
+      |=([d=@tas a=(list @tas)] ?~(a [desk=d term=%$] [desk=d term=`@tas`(join-hep a)]))
     ;~  plug
       ;~(pose ;~(sfix sym zap) (easy q.dir))
-      sym
+      (most fas sym)
     ==
+    ++  join-hep
+      |=  a=(list @tas)
+      ^-  @tas
+      (crip (zing (join "-" (turn a |=(b=@tas (trip b))))))
+    --
   ::
   ++  parse-hoon    tall:hoon-parser
   ::
@@ -394,13 +402,13 @@
       ?~  pux  +>
       %.  [%txt "! cancel {<u.pux>}"]
       =<  he-diff
-      %-  he-card
-      ?:  =(/wool u.pux)
-        ::  really shoud stop the thread as well
-        ::
-        [%pass u.pux %agent [our.hid %spider] %leave ~]
-      =/  [=ship =desk =case]  he-beak
-      [%pass u.pux %arvo %c %warp ship desk ~]
+      ?.  ?=([%wool *] u.pux)
+        =/  [=ship =desk =case]  he-beak
+        (he-card %pass u.pux %arvo %c %warp ship desk ~)
+      =.  +>  (he-card %pass u.pux %agent [our.hid %spider] %leave ~)
+      ?@  t.u.pux  +>
+      =/  =cage  [%spider-stop !>([i.t.u.pux |])]
+      (he-card %pass u.pux %agent [our.hid %spider] %poke cage)
     ::
     ++  dy-errd                                         ::  reject change, abet
       |=  [rev=(unit sole-edit) err=@u]
@@ -552,7 +560,7 @@
       ?:  ?=([%show %3] -.mad)
         (dy-rash %tan (dy-show-source q.mad) ~)
       ?:  ?=(%brev -.mad)
-        ?:  ?=(?(%eny %now %our) p.mad)
+        ?:  ?=(?(%eny %now %our %help) p.mad)
           (dy-rash %tan (cat 3 p.mad ' is immutable') ~)
         =.  var  (~(del by var) p.mad)
         =<  dy-amok
@@ -970,16 +978,16 @@
       ^+  +>+>
       ?>  ?=(~ pux)
       =/  tid  (scot %ta (cat 3 'dojo_' (scot %uv (sham eny.hid))))
-      =.  poy  `+>+<.$(pux `/wool)
+      =.  poy  `+>+<.$(pux `/wool/[tid])
       =.  +>+>.$
         %-  he-card
-        [%pass /wool %agent [our.hid %spider] %watch /thread-result/[tid]]
+        [%pass /wool/[tid] %agent [our.hid %spider] %watch /thread-result/[tid]]
       %-  he-card
       =/  =cage  ::  also sub
         ::TODO  would be nice if spider supported starting from paths,
         ::      for semantics/abilities/code closer to generators.
         [%spider-start !>([~ `tid he-beak(q.dir desk) term (dy-some src)])]
-      [%pass /wool %agent [our.hid %spider] %poke cage]
+      [%pass /wool/[tid] %agent [our.hid %spider] %poke cage]
     ::
     ++  dy-make                                         ::  build step
       ^+  +>
@@ -1066,9 +1074,12 @@
       :-  %noun
       =/  vaz=(list [term vase])
         (turn ~(tap by var) |=([lal=term cag=cage] [lal q.cag]))
+      =.  vaz  (weld ~[`[term vase]`[`@tas`%help !>(dy-help-message)]] vaz)
       =/  sut  (slop !>([our=our now=now eny=eny]:hid) !>(..zuse))
       =?  sut  ?=(^ vaz)  (slop (with-faces vaz) sut)
       (slap sut hoon)
+    ::
+    ++  dy-help-message  'For more information please type +start'
     ::
     ++  dy-step                                         ::  advance project
       |=  nex=@ud
@@ -1191,7 +1202,7 @@
       ?~  p.sign
         +>.$
       =.  +>.$  (he-diff(poy ~) %tan leaf+"dojo: thread poke failed" u.p.sign)
-      (he-card %pass /wool %agent [our.hid %spider] %leave ~)
+      (he-card %pass [%wool way] %agent [our.hid %spider] %leave ~)
     ::
         %watch-ack
       ?~  p.sign

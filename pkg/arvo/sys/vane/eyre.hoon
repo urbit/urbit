@@ -43,7 +43,7 @@
 ++  axle
   $:  ::  date: date at which http-server's state was updated to this data structure
       ::
-      date=%~2023.5.15
+      date=%~2025.1.31
       ::  server-state: state of inbound requests
       ::
       =server-state
@@ -91,6 +91,10 @@
       ::  verb: verbosity
       ::
       verb=@
+      ::  check-session-timer: set to true for ships prior to ~2025.01.31,
+      ::                       who may have been affected by urbit/urbit#7103
+      ::
+      check-session-timer=_|
   ==
 ::  channel-request: an action requested on a channel
 ::
@@ -125,7 +129,11 @@
 ++  channel-timeout  ~h12
 ::  session-timeout: the delay before an idle session expires
 ::
-++  session-timeout  ~d7
+++  session-timeout
+  |%
+  ++  auth   ~d30
+  ++  guest  ~d7
+  --
 ::  eauth-timeout: max time we wait for remote scry response before serving 504
 ::  eauth-cache-rounding: scry case rounding for cache hits & clock skew aid
 ::
@@ -675,8 +683,6 @@
 ++  error-page
   |=  [code=@ud authorized=? url=@t t=tape]
   ^-  octs
-  ::
-  =/  code-as-tape=tape  (format-ud-as-integer code)
   =/  message=tape
     ?+  code  "{(scow %ud code)} Error"
       %400  "Bad Request"
@@ -691,7 +697,7 @@
   %-  en-xml:html
   ;html
     ;head
-      ;title:"{code-as-tape} {message}"
+      ;title:"{(a-co:co code)} {message}"
     ==
     ;body
       ;h1:"{message}"
@@ -703,15 +709,6 @@
           ~
     ==
   ==
-::  +format-ud-as-integer: prints a number for consumption outside urbit
-::
-++  format-ud-as-integer
-  |=  a=@ud
-  ^-  tape
-  ?:  =(0 a)  ['0' ~]
-  %-  flop
-  |-  ^-  tape
-  ?:(=(0 a) ~ [(add '0' (mod a 10)) $(a (div a 10))])
 ::  +host-matches: %.y if the site :binding should be used to handle :host
 ::
 ++  host-matches
@@ -820,8 +817,35 @@
     ::      perhaps that distinction, where userspace requests are async, but
     ::      eyre-handled requests are always synchronous, provides a fruitful
     ::      angle for refactoring...
-    =^  [suv=@uv =identity som=(list move)]  state
+    =^  ?(invalid=@uv [suv=@uv =identity som=(list move)])  state
       (session-for-request:authentication request)
+    ?@  -
+      ::  the request provided a session cookie that's not (or no longer)
+      ::  valid. to make sure they're aware, tell them 401
+      ::
+      ::NOTE  some code duplication with below, but request handling deserves
+      ::      a refactor anyway
+      =.  connections.state
+        ::NOTE  required by +handle-response.
+        ::      the session identity we provide here doesn't actually exist.
+        ::      that's fine: we call +handle-response for this connection right
+        ::      away, that no-ops for the non-existing session, and then
+        ::      deletes the connection from state.
+        %+  ~(put by connections.state)  duct
+        ^-  outstanding-connection
+        [action [| secure address request] [invalid %fake *@p] ~ 0]
+      ::  their cookie was invalid, make sure they expire it
+      ::
+      =/  bod=octs  (as-octs:mimes:html 'bad session auth')
+      %-  handle-response
+      :*  %start
+          :-  401
+          :~  ['set-cookie' (session-cookie-string:authentication invalid ~)]
+              ['content-length' (crip (a-co:co p.bod))]
+          ==
+          `bod
+          complete=%.y
+      ==
     =;  [moz=(list move) sat=server-state]
       [(weld som moz) sat]
     ::
@@ -967,7 +991,7 @@
           (delete-header:http 'content-length' headers.response-header.result)
         ::
         %^  set-header:http  'content-length'
-          (crip (format-ud-as-integer p.u.data.result))
+          (crip (a-co:co p.u.data.result))
         headers.response-header.result
       ::
       %-  handle-response
@@ -1003,10 +1027,149 @@
       %^  return-static-data-on-duct  200  'text/plain'
       (as-octs:mimes:html (scot %p our))
     ::
+        %ip
+      (handle-ip address request)
+        %boot
+      (handle-boot identity request)
+    ::
+        %sponsor
+      (handle-sponsor identity request)
+    ::
         %four-oh-four
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 authenticated url.request ~)
     ==
+  ::  +handle-ip: respond with the requester's ip
+  ::
+  ++  handle-ip
+    |=  [=address =request:http]
+    ^-  (quip move server-state)
+    ?.  =(%'GET' method.request)
+      %^  return-static-data-on-duct  405  'text/html'
+      (error-page 405 & url.request "may only GET ip")
+    %^  return-static-data-on-duct  200  'text/plain'
+    =/  ip=@t
+      ?-    address
+          [%ipv4 *]
+        (crip (tail ~(rend co [%$ %if +.address])))
+      ::
+          [%ipv6 *]
+        %-  crip
+        %+  scan  ~(rend co [%$ %is +.address])
+        ;~(pfix dot (star ;~(pose (cold ':' dot) next)))
+      ==
+    (as-octs:mimes:html ip)
+  ::  Get current sponsor of ship
+  ::
+  ++  galaxy-for
+    |=  =ship
+    ^-  @p
+    =/  next  (^^sein:title rof /eyre our now ship)
+    ?:  ?=(%czar (clan:title next))
+      next
+    $(ship next)
+  ::
+  ++  handle-sponsor
+    |=  [=identity =request:http]
+    ^-  (quip move server-state)
+    =/  crumbs  q:(rash url.request apat:de-purl:html)
+    ?.  ?=([@t @t @t ~] crumbs)
+      %^  return-static-data-on-duct  400  'text/html'
+      %:  error-page
+        400
+        &
+        url.request
+        "Invalid input: Expected /~/boot/<ship=@p>"
+      ==
+    =/  ship
+      %+  slaw
+        %p
+      i.t.t.crumbs
+    ?~  ship
+      %^  return-static-data-on-duct  400  'text/html'
+      %:  error-page
+        400
+        &
+        url.request
+        "Invalid input: Expected /~/boot/<ship=@p>"
+      ==
+    %^  return-static-data-on-duct  200  'text/plain'
+    (as-octs:mimes:html (scot %p (galaxy-for u.ship)))
+  ::  Returns peer-state data for verifying sync status between ship and network.
+  ::  Takes two path parameters - ship=@p and optional bone=@u.
+  ::
+  ::  Responds with a @uw jam of a noun containing:
+  ::  version, sponsor, rift, life, bone as a unit (null if not provided), and
+  ::  the last-acked message-num of the provided ship and bone as a unit (null if
+  ::  bone is not provided).
+  ::
+  ::  Responds with a 404 error-page if either:
+  ::  - Peer is not %known
+  ::  - Bone was not found under peer (assuming bone was provided)
+  ::
+  ++  handle-boot
+    |=  [=identity =request:http]
+    ^-  (quip move server-state)
+    ?.  =(%'GET' method.request)
+      %^  return-static-data-on-duct  405  'text/html'
+      (error-page 405 & url.request "may only GET boot data")
+    =/  crumbs  q:(rash url.request apat:de-purl:html)
+    =>  .(crumbs `(pole knot)`crumbs)
+    ?.  ?=([%'~' %boot ship=@t req=*] crumbs)
+      %^  return-static-data-on-duct  400  'text/html'
+      %:  error-page
+        400
+        &
+        url.request
+        "Invalid input: Expected /~/boot/<ship=@p> or /~/boot/<ship=@p>/<bone=@u>"
+      ==
+    =/  ship=(unit ship)  (slaw %p ship.crumbs)
+    =/  bone=(unit @ud)
+      ?.  ?=([bone=@t ~] req.crumbs)  ~
+      (slaw %ud bone.req.crumbs)
+    ?:  ?|  ?=(~ ship)
+            &(?=([bone=@ ~] req.crumbs) ?=(~ bone))
+        ==
+      %^  return-static-data-on-duct  400  'text/html'
+      %:  error-page
+        400
+        &
+        url.request
+        "Invalid input: Expected /~/boot/<ship=@p> or /~/boot/<ship=@p>/<bone=@u>"
+      ==
+    ::
+    =/  des=(unit (unit cage))
+      %:  rof
+        [~ ~]
+        /eyre
+        %ax
+        [our %$ da+now]
+        :+  %boot  (scot %p u.ship)
+        ?~(bone ~ [(scot %ud u.bone) ~])  :: XX
+      ==
+    ?.  ?=([~ ~ %noun *] des)
+      %^  return-static-data-on-duct  404  'text/html'
+      (error-page 404 & url.request "Peer {(scow %p u.ship)} not found.")
+    =+  !<  [rift=@ud life=@ud bone=(unit @ud) last-acked=(unit @ud)]  q.u.u.des
+    ?~  bone
+      %^  return-static-data-on-duct  200  'application/octet-stream'
+      %-  as-octs:mimes:html
+      %-  jam
+      ^-  boot
+      [%1 (galaxy-for u.ship) rift life ~ ~]
+    ?~  last-acked
+      %^  return-static-data-on-duct  404  'text/html'
+      %:  error-page
+        404
+        &
+        url.request
+        "Bone {(scow %u u.bone)} of peer {(scow %p u.ship)} not found."
+      ==
+    %^  return-static-data-on-duct  200  'application/octet-stream'
+    %-  as-octs:mimes:html
+    %-  jam
+    ^-  boot
+    [%1 (galaxy-for u.ship) rift life bone last-acked]
   ::  +handle-name: respond with the requester's @p
   ::
   ++  handle-name
@@ -1029,7 +1192,7 @@
       (error-response 405 "may only GET scries")
     =/  req  (parse-request-line url.request)
     =/  fqp  (fully-qualified site.req)
-    =/  mym  (scry-mime now rof ext.req site.req)
+    =/  mym  (scry-mime now rof [~ ~] ext.req site.req)
     ?:  ?=(%| -.mym)  (error-response 500 p.mym)
     =*  mime  p.mym
     %-  handle-response
@@ -1037,7 +1200,7 @@
         :-  status-code=200
         ^=  headers
           :~  ['content-type' (rsh 3 (spat p.mime))]
-              ['content-length' (crip (format-ud-as-integer p.q.mime))]
+              ['content-length' (crip (a-co:co p.q.mime))]
               ['cache-control' ?:(fqp 'max-age=31536000' 'no-cache')]
           ==
         data=[~ q.mime]
@@ -1206,7 +1369,7 @@
         %channel
       on-cancel-request:by-channel
     ::
-        ?(%scry %four-oh-four %name %host)
+        ?(%scry %four-oh-four %name %host %ip %boot %sponsor)
       ::  it should be impossible for these to be asynchronous
       ::
       !!
@@ -1222,7 +1385,7 @@
         :-  status-code=code
         ^=  headers
           :~  ['content-type' content-type]
-              ['content-length' (crip (format-ud-as-integer p.data))]
+              ['content-length' (crip (a-co:co p.data))]
           ==
         data=[~ data]
         complete=%.y
@@ -1390,7 +1553,7 @@
       ::
       =?  headers.response-header.response  =(u.sid session-id)
         :_  headers.response-header.response
-        ['set-cookie' (session-cookie-string session-id |)]
+        ['set-cookie' (session-cookie-string session-id ~)]
       ::  close the session as requested, then send the response
       ::
       =^  moz1  state  (close-session u.sid all)
@@ -1455,15 +1618,18 @@
       |=  kind=?(%local %guest [%eauth who=@p])
       ^-  [[session=@uv =identity moves=(list move)] server-state]
       =;  [key=@uv sid=identity]
+        =/  timeout=@dr
+          =,  session-timeout
+          ?:(?=(%guest kind) guest auth)
         :-  :+  key  sid
             ::  if no session existed previously, we must kick off the
             ::  session expiry timer
             ::
             ?^  sessions.auth.state  ~
-            [duct %pass /sessions/expire %b %wait (add now session-timeout)]~
+            [duct %pass /sessions/expire %b %wait (add now timeout)]~
         =-  state(sessions.auth -)
         %+  ~(put by sessions.auth.state)  key
-        [sid (add now session-timeout) ~]
+        [sid (add now timeout) ~]
       ::  create a new session with a fake identity
       ::
       =/  sik=@uv  new-session-key
@@ -1486,20 +1652,20 @@
       (~(raw og (shas %fake-name eny)) 128)
     ::  +session-for-request: get the session details for the request
     ::
-    ::    creates a guest session if the request does not have a valid session.
+    ::    returns the @ case if an invalid session is provided.
+    ::    creates a guest session if the request does not have any session.
     ::    there is no need to call +give-session-tokens after this, because
-    ::    guest session do not make valid "auth session" tokens.
+    ::    guest sessions do not make valid "auth session" tokens.
     ::
     ++  session-for-request
       |=  =request:http
-      ^-  [[session=@uv =identity moves=(list move)] server-state]
-      =*  new  (start-session %guest)
+      ^-  [$@(session=@uv [session=@uv =identity moves=(list move)]) server-state]
       ?~  sid=(session-id-from-request request)
-        new
+        (start-session %guest)
       ?~  ses=(~(get by sessions.auth.state) u.sid)
-        new
+        [u.sid state]
       ?:  (gth now expiry-time.u.ses)
-        new
+        [u.sid state]
       [[u.sid identity.u.ses ~] state]
     ::  +close-session: delete a session and its associated channels
     ::
@@ -1567,14 +1733,15 @@
     ::  +session-cookie-string: compose session cookie
     ::
     ++  session-cookie-string
-      |=  [session=@uv extend=?]
+      |=  [session=@uv extend=(unit ?(%auth %guest))]
       ^-  @t
       %-  crip
       =;  max-age=tape
         "urbauth-{(scow %p our)}={(scow %uv session)}; Path=/; Max-Age={max-age}"
-      %-  format-ud-as-integer
-      ?.  extend  0
-      (div (msec:milly session-timeout) 1.000)
+      %-  a-co:co
+      ?~  extend  0
+      =,  session-timeout
+      (div (msec:milly ?-(u.extend %auth auth, %guest guest)) 1.000)
     ::
     ::
     ++  eauth
@@ -1734,7 +1901,7 @@
           =^  moz3  state
             =;  hed  (handle-response %start 303^hed ~ &)
             :~  ['location' last]
-                ['set-cookie' (session-cookie-string sid &)]
+                ['set-cookie' (session-cookie-string sid `%auth)]
             ==
           [:(weld moz1 moz2 moz3) state]
         ::  +on-fail: we crashed or received an empty %tune, clean up
@@ -2124,7 +2291,9 @@
         ::  POST methods are used solely for deleting channels
         (on-put-request channel-id identity request)
       ::
-      ((trace 0 |.("session not a put")) `state)
+      %-  (trace 0 |.("session not a put"))
+      %^  return-static-data-on-duct  405  'text/html'
+      (error-page 405 & url.request "bad method for session endpoint")
     ::  +on-cancel-request: cancels an ongoing subscription
     ::
     ::    One of our long lived sessions just got closed. We put the associated
@@ -2339,7 +2508,14 @@
                 ['cache-control' 'no-cache']
                 ['connection' 'keep-alive']
             ==
-            (wall-to-octs wall)
+          ::
+            ::  if we wouldn't otherwise send any data, send an early heartbeat
+            ::  instead. some clients won't consider the connection established
+            ::  until they've heard some bytes come over the wire.
+            ::
+            ?.  =(~ wall)  (wall-to-octs wall)
+            (some (as-octs:mimes:html ':\0a'))
+          ::
             complete=%.n
         ==
       ::  associate this duct with this session key
@@ -2852,7 +3028,7 @@
       ~%  %eyre-tape-to-wall  ..part  ~
       |=  [event-id=@ud =tape]
       ^-  wall
-      :~  (weld "id: " (format-ud-as-integer event-id))
+      :~  (weld "id: " (a-co:co event-id))
           (weld "data: " tape)
           ""
       ==
@@ -2981,17 +3157,20 @@
             =*  inbound     inbound-request.u.connection-state
             =*  headers     headers.response-header.http-event
             ::
-            ?.  (~(has by sessions) session-id)
+            ?~  ses=(~(get by sessions) session-id)
               ::  if the session has expired since the request was opened,
               ::  tough luck, we don't create/revive sessions here
               ::
               [response-header.http-event sessions]
-            :_  %+  ~(jab by sessions)  session-id
-                |=  =session
-                session(expiry-time (add now session-timeout))
+            =/  kind  ?:(?=(%fake -.identity.u.ses) %guest %auth)
+            =/  timeout
+              =,  session-timeout
+              ?:(?=(%guest kind) guest auth)
+            :_  %+  ~(put by sessions)  session-id
+                u.ses(expiry-time (add now timeout))
             =-  response-header.http-event(headers -)
             =/  cookie=(pair @t @t)
-              ['set-cookie' (session-cookie-string session-id &)]
+              ['set-cookie' (session-cookie-string session-id `kind)]
             |-
             ?~  headers
               [cookie ~]
@@ -3317,7 +3496,7 @@
   /(scot %p ship)/[app]/(scot %p from)
 ::
 ++  scry-mime
-  |=  [now=@da rof=roof ext=(unit @ta) pax=path]
+  |=  [now=@da rof=roof =gang ext=(unit @ta) pax=path]
   |^  ^-  (each mime tape)
   ::  parse
   ::
@@ -3330,7 +3509,7 @@
   ?~  u  [%| "invalid scry path"]
   ::  perform scry
   ::
-  ?~  res=(rof [~ ~] /eyre u.u)  [%| "failed scry"]
+  ?~  res=(rof gang /eyre u.u)  [%| "failed scry"]
   ?~  u.res                  [%| "no scry result"]
   =*  mark   p.u.u.res
   =*  vase   q.u.u.res
@@ -3417,6 +3596,43 @@
           ['content-length' (crip (a-co:co p.data))]
       ==
     [duct %give %response %start 500^head `data &]~
+  ::  due to an error handling bug in earlier versions of +take,
+  ::  we may need to make sure the timeout timer for sessions still exists.
+  ::  see also urbit/urbit#7103
+  ::
+  ?:  check-session-timer.server-state.ax
+    ::  we do this cleanup exactly once
+    ::
+    =.  check-session-timer.server-state.ax  |
+    ::  if there are no sessions after running the +call,
+    ::  we don't need a timer, so we don't need to set it
+    ::
+    ::NOTE  hazard, must get state from .etc going forward
+    =/  [moz=(list move) etc=_http-server-gate]  $
+    :_  etc
+    ^-  (list move)
+    ?:  =(~ sessions.auth.server-state.ax.etc)  moz
+    ::  if .moz is already setting the timer,
+    ::  we don't need to do it here
+    ::
+    ?:  %+  lien  moz
+        |=  m=move
+        ?=([* %pass [%sessions %expire ~] *] m)
+      moz
+    ::  find out from behn if there isn't already a timer set.
+    ::  this is not ideal, but we have no other way of knowing,
+    ::  and don't want to set duplicate timers...
+    ::
+    ?:  ?~  res=(rof [~ ~] /eyre %bx [our %$ da+now] /debug/timers)  |
+        ?~  u.res  |
+        %+  lien  !<((list [@da ^duct]) q.u.u.res)
+        |=  [@da d=^duct]
+        ?=([[%eyre %sessions %expire ~] *] d)
+      moz
+    ::  we need a timer, but aren't setting one, and don't have one,
+    ::  so prepend a session expire timer to the .moz
+    ::
+    [[duct %pass /sessions/expire %b %wait now] moz]
   ::  %init: tells us what our ship name is
   ::
   ?:  ?=(%init -.task)
@@ -3432,6 +3648,9 @@
           [[~ /~/scry] duct [%scry ~]]
           [[~ /~/name] duct [%name ~]]
           [[~ /~/host] duct [%host ~]]
+          [[~ /~/ip] duct [%ip ~]]
+          [[~ /~/boot] duct [%boot ~]]
+          [[~ /~/sponsor] duct [%sponsor ~]]
       ==
     [~ http-server-gate]
   ::  %trim: in response to memory pressure
@@ -3580,10 +3799,12 @@
         %turf
       =*  domains  domains.server-state.ax
       =/  mod=(set turf)
-        ?:  ?=(%put action.http-rule.task)
-          (~(put in domains) turf.http-rule.task)
-        (~(del in domains) turf.http-rule.task)
-      ?:  =(domains mod)
+        ?-  -.action.http-rule.task
+          %put  (~(put in domains) turf.action.http-rule.task)
+          %del  (~(del in domains) turf.action.http-rule.task)
+          %new  turfs.action.http-rule.task
+        ==
+      ?:  &(!?=(%new -.action.http-rule.task) =(domains mod))
         [~ http-server-gate]
       =.  domains  mod
       :_  http-server-gate
@@ -3800,7 +4021,13 @@
     ?>  ?=([%behn %wake *] sign)
     ::
     ?^  error.sign
-      [[duct %slip %d %flog %crud %wake u.error.sign]~ http-server-gate]
+      :_  http-server-gate
+      ::  we must not drop the timer! so we kick the can down the road a day,
+      ::  and hope it will run successfully later...
+      ::
+      :~  [duct %slip %d %flog %crud %wake u.error.sign]
+          [duct %pass /sessions/expire %b %wait (add now ~d1)]
+      ==
     ::NOTE  we are not concerned with expiring channels that are still in
     ::      use. we require acks for messages, which bump their session's
     ::      timer. channels have their own expiry timer, too.
@@ -3923,7 +4150,9 @@
             [date=%~2023.2.17 server-state=server-state-1]
             [date=%~2023.3.16 server-state=server-state-2]
             [date=%~2023.4.11 server-state-3]
-            [date=%~2023.5.15 server-state]
+            [date=%~2023.5.15 server-state-4]
+            [date=%~2024.8.20 server-state-4]
+            [date=%~2025.1.31 server-state]
         ==
       ::
       +$  server-state-0
@@ -4022,6 +4251,20 @@
             subscriptions=(map @ud [ship=@p app=term =path duc=duct])
             heartbeat=(unit timer)
         ==
+      ::
+      +$  server-state-4
+        $:  bindings=(list [=binding =duct =action])
+            cache=(map url=@t [aeon=@ud val=(unit cache-entry)])
+            =cors-registry
+            connections=(map duct outstanding-connection)
+            auth=authentication-state
+            =channel-state
+            domains=(set turf)
+            =http-config
+            ports=[insecure=@ud secure=(unit @ud)]
+            outgoing-duct=duct
+            verb=@
+        ==
       --
   |=  old=axle-any
   ^+  http-server-gate
@@ -4119,8 +4362,31 @@
       bindings.old
     ==
   ::
+  ::  adds /~/boot, /~/sponsor and /~/ip
+  ::
       %~2023.5.15
+    %=  $
+        date.old  %~2024.8.20
+    ::
+        bindings.old
+      %+  insert-binding
+        [[~ /~/boot] outgoing-duct.old [%boot ~]]
+      %+  insert-binding
+        [[~ /~/sponsor] outgoing-duct.old [%sponsor ~]]
+      %+  insert-binding
+        [[~ /~/ip] outgoing-duct.old [%ip ~]]
+      bindings.old
+    ==
+  ::
+      %~2024.8.20
+    %=  $
+      date.old  %~2025.1.31
+      verb.old  [verb.old check-session-timer=&]
+    ==
+  ::
+      %~2025.1.31
     http-server-gate(ax old)
+  ::
   ==
 ::  +stay: produce current state
 ::
@@ -4165,7 +4431,7 @@
     !>  ^-  (unit @t)
     =<  eauth-url:eauth:authentication
     (per-server-event [eny *duct now rof] server-state.ax)
- ::
+  ::
   ?:  ?=([%cache @ @ ~] tyl)
     ?.  &(?=(%x ren) ?=(%$ syd))  ~
     =,  server-state.ax
@@ -4176,8 +4442,68 @@
     ?~  val=val.u.entry                ~
     ?:  &(auth.u.val !=([~ ~] lyc))    ~
     ``noun+!>(u.val)
-  :: private endpoints
+  ::
+  ?:  &(?=(%x ren) ?=([%range @ @ @ *] tyl))
+    |^
+    =/  beg=(unit @ud)  (slaw %ud i.t.tyl)
+    =/  end=(unit @ud)  (slaw %ud i.t.t.tyl)
+    =*  vew   i.t.t.t.tyl
+    =*  rest  t.t.t.t.tyl
+    =/  mym  (scry-mime now rof lyc ~ [%$ vew (en-beam -.bem rest)])
+    ?:  ?=(%| -.mym)  ~
+    =*  mime  p.mym
+    ?~  range=(get-range [beg end] p.q.mime)
+      :^  ~  ~  %noun
+      !>  ^-  cache-entry
+      :-  ?=(^ lyc)
+      :+  %payload
+        :-  416
+        ['content-range' (cat 3 'bytes */' (crip (a-co:co p.q.mime)))]^~
+      `(as-octs:mimes:html 'requested range not satisfiable')
+    ::
+    =/  =octs
+      %-  as-octs:mimes:html
+      (cut 3 [p.u.range +((sub q.u.range p.u.range))] q.q.mime)
+    :^  ~  ~  %noun
+    !>  ^-  cache-entry
+    :-  ?=(^ lyc)
+    :+  %payload
+      :-  ?:(=(p.q.mime p.octs) 200 206)
+      :~  ['accept-ranges' 'bytes']
+          ['content-type' (rsh 3 (spat p.mime))]
+          ['content-length' (crip (a-co:co p.octs))]
+          :-  'content-range'
+          %+  rap  3
+          :~  'bytes '
+              (crip (a-co:co p.u.range))  '-'
+              (crip (a-co:co q.u.range))  '/'
+              (crip (a-co:co p.q.mime))
+          ==
+      ==
+    data=[~ octs]
+    ::
+    ++  get-range
+      |=  [req=(pair (unit @ud) (unit @ud)) len=@ud]
+      ^-  (unit (pair @ud @ud))
+      ?+    req  ~
+          [^ ~]
+        ?:  (gth u.p.req (dec len))  ~
+        `[u.p.req (dec len)]
+      ::
+          [~ ^]
+        ?.  (gth u.q.req 0)  ~
+        `[(sub len (min len u.q.req)) (dec len)]
+      ::
+          [^ ^]
+        ?:  |((gth u.p.req (dec len)) (gth u.p.req u.q.req))
+          ~
+        `[u.p.req (min (dec len) u.q.req)]
+      ==
+    --
+  ::  private endpoints
+  ::
   ?.  ?=([~ ~] lyc)  ~
+  ::
   ?:  &(?=(%x ren) ?=(%$ syd))
     =,  server-state.ax
     ?+  tyl  ~
@@ -4213,7 +4539,7 @@
       %*(. *request:http header-list ['cookie' u.cookies]~)
     ::
         [%'_~_' *]
-      =/  mym  (scry-mime now rof (deft:de-purl:html tyl))
+      =/  mym  (scry-mime now rof lyc (deft:de-purl:html tyl))
       ?:  ?=(%| -.mym)  [~ ~]
       ``noun+!>(p.mym)
     ==
@@ -4224,6 +4550,8 @@
     %connections           ``noun+!>(connections.server-state.ax)
     %authentication-state  ``noun+!>(auth.server-state.ax)
     %channel-state         ``noun+!>(channel-state.server-state.ax)
+    %domains               ``noun+!>(domains.server-state.ax)
+    %ports                 ``noun+!>(ports.server-state.ax)
     ::
       %host
     %-  (lift (lift |=(a=hart:eyre [%hart !>(a)])))

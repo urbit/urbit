@@ -2,11 +2,11 @@
 ::::    /sys/hoon                                       ::
   ::                                                    ::
 =<  ride
-=>  %138  =>
+=>  %137  =>
 ::                                                      ::
 ::::    0: version stub                                 ::
   ::                                                    ::
-~%  %k.138  ~  ~                                        ::
+~%  %k.137  ~  ~                                        ::
 |%
 ++  hoon-version  +
 --  =>
@@ -201,7 +201,7 @@
   ::    axis within head/tail
   ::
   ::  computes the axis of `a` within either the head or tail of a noun
-  ::  (depends whether `a` lies within the the head or tail).
+  ::  (depends whether `a` lies within the head or tail).
   |=  a=@
   ^-  @
   ?-  a
@@ -809,6 +809,19 @@
     (rsh a d)
   $(d (add c (lsh a d)), n +(n))
 ::
+++  hew                                                 ::  cut many
+  ~/  %hew
+  |=  [a=bite c=@]
+  =/  d=[=bloq =step]  ?^(a a [a 0])
+  ~%  %fun  +>+  ~
+  |*  b=*
+  ^+  [b d]
+  ?@  b
+    [(cut bloq.d [step.d b] c) bloq.d (add step.d b)]
+  =^  f  d  $(b -.b)
+  =^  g  d  $(b +.b)
+  [[f g] d]
+::
 ++  lsh                                                 ::  left-shift
   ~/  %lsh
   |=  [a=bite b=@]
@@ -854,6 +867,19 @@
   %+  lsh
     [boz (sub len (met boz dat))]
   (swp boz dat)
+::
+++  rig                                                 ::  convert bloqs
+  ~/  %rig
+  |=  [=bite b=bloq]
+  ^-  step
+  ?@  bite  0
+  =/  [a=bloq c=step]  bite
+  ?:  =(a b)  c
+  ?:  (gth a b)
+    (lsh [0 (sub a b)] c)
+  =/  d  [0 (sub b a)]
+  =/  e  (rsh d c)
+  ?:(=(0 (end d c)) e +(e))
 ::
 ++  rip                                                 ::  disassemble
   ~/  %rip
@@ -946,6 +972,19 @@
           ==
   ==
 ::
+++  clz                                                 ::  leading zeros
+  ~/  %clz
+  |=  [a=bite b=@]
+  =/  c=[=bloq =step]  ?^(a a [a 1])
+  (sub (mul (bex bloq.c) step.c) (met 0 (end a b)))
+::
+++  ctz                                                 ::  trailing zeros
+  ~/  %ctz
+  |=  a=@
+  ?:  =(0 a)  0
+  =|  i=@ud
+  |-(?:(=(1 (cut 0 [i 1] a)) i $(i +(i))))
+::
 ++  dis                                                 ::  binary and
   ~/  %dis
   |=  [a=@ b=@]
@@ -962,6 +1001,17 @@
               =(0 (end 0 b))
           ==
   ==
+::
+++  ham                                                 ::  popcount
+  ~/  %ham
+  |=  a=@
+  ?:  =(0 a)  0
+  =|  n=@ud
+  =/  m  (dec (met 0 a))
+  |-  ^-  @ud
+  =?  n  =(1 (cut 0 [m 1] a))
+    +(n)
+  ?:(=(0 m) n $(m (dec m)))
 ::
 ++  mix                                                 ::  binary xor
   ~/  %mix
@@ -4266,9 +4316,9 @@
   ::  ?.  ((sane a) b)  !!
   b
 ::
-++  trim                                                ::  tape split
-  |=  [a=@ b=tape]
-  ^-  [p=tape q=tape]
+++  trim                                                ::  list split
+  |*  [a=@ b=(list)]
+  ^+  [p=b q=b]
   ?~  b
     [~ ~]
   ?:  =(0 a)
@@ -8606,7 +8656,7 @@
       [%cnhp ~(factory ax p.gen) q.gen]
     ::
         [%tsbr *]
-      [%tsls ~(example ax p.gen) q.gen]
+      [%tsls [%kttr p.gen] q.gen]
     ::
         [%tstr *]
       :+  %tsgl
@@ -13833,8 +13883,8 @@
         |=(a=axis [%& a])
       ;~  pose
         ;~(pfix lus dim:ag)
-        ;~(pfix pam (cook |=(a=@ ?:(=(0 a) 0 (mul 2 +($(a (dec a)))))) dim:ag))
-        ;~(pfix bar (cook |=(a=@ ?:(=(0 a) 1 +((mul 2 $(a (dec a)))))) dim:ag))
+        ;~(pfix pam (cook |=(a=@ (sub (bex +(a)) 2)) dim:ag))
+        ;~(pfix bar (cook |=(a=@ (sub (bex +(a)) 1)) dim:ag))
         ven
         (cold 1 dot)
       ==

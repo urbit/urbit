@@ -1,3 +1,5 @@
+::  Show pending update source change requests
+::
 /-  h=hood
 :-  %say
 |=  [[now=@da eny=@uvJ bec=beak] ~ ~]

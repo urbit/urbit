@@ -2,7 +2,6 @@
 ::
 /+  *test
 =,  ed:crypto
-::
 |%
 ::
 ::  Test vectors from Section 7.1 of RFC 8032:
@@ -10,16 +9,39 @@
 ::
 +$  vector  [seed=@ux pk=@ux msg=@ux sig=@ux]
 ::
+++  test-shar
+  %+  expect-eq
+    !>  (shar (puck (shax 'foo')) (shax 'bar'))
+    !>  (slar (puck (shax 'foo')) sek:(luck (shax 'bar')))
+::
 ++  test-vectors
   ^-  tang
   |^  ;:  weld
+        %+  category  "luck"
+        (zing (turn vectors check-luck))
         %+  category  "puck"
         (zing (turn vectors check-puck))
         %+  category  "sign"
         (zing (turn vectors check-sign))
+        %+  category  "sign-raw"
+        (zing (turn vectors check-sign-raw))
+        %+  category  "sign-raw-octs"
+        (zing (turn vectors check-sign-octs-raw))
+        %+  category  "sign-octs"
+        (zing (turn vectors check-sign-octs))
+        %+  category  "scad"
+        (zing (turn vectors check-scad))
         %+  category  "veri"
         (zing (turn vectors check-veri))
+        %+  category  "veri-octs"
+        (zing (turn vectors check-veri-octs))
       ==
+  ::
+  ++  check-luck
+    |=  vector
+    %+  expect-eq
+      !>  pk
+      !>  `@ux`pub:(luck seed)
   ::
   ++  check-puck
     |=  vector
@@ -33,19 +55,50 @@
       !>  sig
       !>  `@ux`(sign msg seed)
   ::
+  ++  check-sign-raw
+    |=  vector
+    %+  expect-eq
+      !>  sig
+      !>  `@ux`(sign-raw msg (luck seed))
+  ::
+  ++  check-sign-octs
+    |=  vector
+    %+  expect-eq
+      !>  sig
+      !>  `@ux`(sign-octs (met 3 msg)^msg seed)
+  ::
+  ++  check-sign-octs-raw
+    |=  vector
+    %+  expect-eq
+      !>  sig
+      !>  `@ux`(sign-octs-raw (met 3 msg)^msg (luck seed))
+  ::
+  ++  check-scad
+    |=  vector
+    =+  (luck seed)
+    =+  sca=(shax 'foo')
+    %+  expect-eq
+      !>  (scad pub sek sca)
+      !>  [(scap pub sca) (scas sek sca)]
+  ::
   ++  check-veri
     |=  vector
     %-  expect
       !>  (veri sig msg pk)
   ::
+  ++  check-veri-octs
+    |=  vector
+    %-  expect
+      !>  (veri-octs sig (met 3 msg)^msg pk)
+  ::
   ++  vectors
     ^~  (turn vectors-raw swp-vec)
   ++  swp-vec
     |=  vector
-    :^  (swp 3 seed)
-        (swp 3 pk)
-        (swp 3 msg)
-        (swp 3 sig)
+    :^  (rev 3 32 seed)
+        (rev 3 32 pk)
+        (rev 3 (met 3 msg) msg)
+        (rev 3 64 sig)
   ++  vectors-raw
     :~
       :^    0x9d61.b19d.effd.5a60.ba84.4af4.92ec.2cc4.

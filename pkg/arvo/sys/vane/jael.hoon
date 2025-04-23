@@ -236,7 +236,7 @@
     ::
     ::  boot from keys
     ::    $:  %dawn
-    ::        =seed
+    ::        =feed
     ::        spon=ship
     ::        czar=(map ship [=rift =life =pass])
     ::        turf=(list turf)
@@ -247,25 +247,26 @@
         %dawn
       ::  single-homed
       ::
-      ~|  [our who.seed.tac]
-      ?>  =(our who.seed.tac)
-      ::  save our parent signature (only for moons)
-      ::
-      =.  sig.own.pki  sig.seed.tac
+      ?>  ?=([%2 ~] -.feed.tac)
+      ~|  [our who.feed.tac]
+      ?>  =(our who.feed.tac)
       ::  load our initial public key
       ::
       =/  spon-ship=(unit ship)
         =/  flopped-spon  (flop spon.tac)
         ?~(flopped-spon ~ `ship.i.flopped-spon)
+      =/  kyz=(list [lyf=life key=ring])  kyz.feed.tac
+      ?~  kyz  !!
+      =/  ky=[lyf=life key=ring]  i.kyz
       =.  pos.zim.pki
-        =/  cub  (nol:nu:crub:crypto key.seed.tac)
+        =/  cub  (nol:nu:crub:crypto key.ky)
         %+  ~(put by pos.zim.pki)
           our
-        [0 lyf.seed.tac (my [lyf.seed.tac [1 pub:ex:cub]] ~) spon-ship]
+        [0 lyf.ky (my [lyf.ky [1 pub:ex:cub]] ~) spon-ship]
       ::  our initial private key
       ::
-      =.  lyf.own.pki  lyf.seed.tac
-      =.  jaw.own.pki  (my [lyf.seed.tac key.seed.tac] ~)
+      =.  lyf.own.pki  lyf.ky
+      =.  jaw.own.pki  (malt kyz)
       ::  XX save sponsor in .own.pki
       ::  XX reconcile with .dns.eth
       ::  set initial domains
@@ -506,11 +507,11 @@
       ::      use case for this is comets, about who nobody cares.
       =/  dus  (~(uni in nel.zim.pki) ~(key by yen.zim.pki))
       =/  sus  ~(. su hen now pki etn)
-      =/  sis  ~(tap in ships.tac)
-      |-
-      ?~  sis  (curd abet:sus)
-      =.  sus  (exec:sus dus %give %public-keys %breach i.sis)
-      $(sis t.sis)
+      =;  core=_sus
+        (curd abet:core)
+      %-  ~(rep in ships.tac)
+      |=  [=ship s=_sus]
+      (exec:s dus %give %public-keys %breach ship)
     ==
   ::
   ++  take
@@ -622,10 +623,10 @@
   ::
   ++  exec                                              ::  mass gift
     |=  [yen=(set duct) cad=card]
-    =/  noy  ~(tap in yen)
-    |-  ^+  this-su
-    ?~  noy  this-su
-    $(noy t.noy, moz [[i.noy cad] moz])
+    ^+  this-su
+    %-  ~(rep in yen)
+    |=  [=duct su=_this-su]
+    su(moz [[duct cad] moz])
   ::
   ++  emit-peer
     |=  [app=term =path]
@@ -1182,9 +1183,12 @@
     [~ ~ %noun !>(u.r)]
   ::
       %vile
-    =*   life  lyf.own.pki.lex
-    =/  =seed  [our life (~(got by jaw.own.pki.lex) life) ~]
-    [~ ~ %atom !>((jam seed))]
+    =*  life  lyf.own.pki.lex
+    =*  rift
+      ?:  fak.own.pki.lex  0  ::  fake ships always have rift=0
+      rift:(~(got by pos.zim.pki.lex) our)
+    =/  =feed  [[%2 ~] our rift [life (~(got by jaw.own.pki.lex) life)]~]
+    [~ ~ %atom !>((jam feed))]
   ::
       %deed
     ?.  ?=([@ @ ~] tyl)  [~ ~]
@@ -1240,8 +1244,8 @@
     =/  sec  (~(got by jaw.own.pki.lex) u.lyf)
     =/  moon-sec  (shaf %earl (sham our u.lyf sec u.who))
     =/  cub  (pit:nu:crub:crypto 128 moon-sec)
-    =/  =seed  [u.who 1 sec:ex:cub ~]
-    ``[%seed !>(seed)]
+    =/  =feed  [[%2 ~] u.who 0 [1 sec:ex:cub]~]
+    ``[%feed !>(feed)]
   ::
       %sein
     ?.  ?=([@ ~] tyl)  [~ ~]
@@ -1278,6 +1282,18 @@
       %turf
     ?.  ?=(~ tyl)  [~ ~]
     [~ ~ %noun !>(tuf.own.pki.lex)]
+  ::
+      %puby                                            ::  unitized public-key
+    ?.  ?=([@ @ ~] tyl)  [~ ~]
+    ?.  =([%& our] why)
+      [~ ~]
+    =/  who  (slaw %p i.tyl)
+    =/  lif  (slaw %p i.t.tyl)
+    ?~  who  [~ ~]
+    ?~  lif  [~ ~]
+    =/  pos  (~(get by pos.zim.pki.lex) u.who)
+    ?~  pos  ``[%noun !>(~)]
+    ``[%noun !>((~(get by keys.u.pos) u.lif))]
   ==
 ::                                                      ::  ++stay
 ++  stay                                                ::  preserve

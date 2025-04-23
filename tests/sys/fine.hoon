@@ -46,12 +46,12 @@
 ++  test-fine
   %-  run-chain
   |.  :-  %|
-  =+  (nec-bud:v life=[nec=1 bud=1] rift=[nec=1 bud=1])
+  =+  (nec-bud-zod:v life=[nec=1 bud=1 zod=1] rift=[nec=1 bud=1 zod=1])
   ::  uncomment to turn on verbose debug output
-  ::=^  *  ames.nec
-  ::  (ames-call:v ames.nec ~[/none] [%spew ~[%msg %snd %rcv %odd]] *roof)
-  ::=^  *  ames.bud
-  ::  (ames-call:v ames.bud ~[/none] [%spew ~[%msg %snd %rcv %odd]] *roof)
+  :: =^  *  ames.nec
+  ::  (ames-call:v ames.nec ~[/none] [%spew ~[%msg %snd %rcv %odd %fin]] *roof)
+  :: =^  *  ames.bud
+  ::  (ames-call:v ames.bud ~[/none] [%spew ~[%msg %snd %rcv %odd %fin]] *roof)
   =/  scry-path=path       /c/x/1/kids/sys/kelvin
   =/  fine-behn-wire=wire  (weld /fine/behn/wake/~bud scry-path)
   =/  future-path=path     /c/x/5/kids/sys/kelvin
@@ -89,7 +89,7 @@
   :-  t2  |.  :-  %|
   =/  peer=peer-state:ames
     (ames-scry-peer:v ames.nec [~1111.1.8 0xbeef.dead *roof] [~nec ~bud])
-  =/  listeners=(set duct)
+  =/  listeners=(jug duct ints:ames)
     ?~  keen=(~(get by keens.peer) scry-path)
       ~
     listeners:u.keen
@@ -97,7 +97,7 @@
   =/  t3=tang
     %+  expect-eq
       !>((sy ~[~[/keen-duct-1] ~[/keen-duct-2]]))
-    !>(listeners)
+    !>(~(key by listeners))
   ::
   :-  t3  |.  :-  %|
   ~?  >  dbug  'gives a remote scry response to listeners'
@@ -130,7 +130,11 @@
       ==
       :~  [~[//fine] %pass /qos %d %flog %text "; ~bud is your neighbor"]
           [~[/keen-duct-2] %give %tune [~bud scry-path] roar]
+          :^  ~[/keen-duct-2]  %pass  /prune-tip
+          [%a %deep %prun ~bud scry-path ~[/keen-duct-2] scry-path]
           [~[/keen-duct-1] %give %tune [~bud scry-path] roar]
+          :^  ~[/keen-duct-1]  %pass  /prune-tip
+          [%a %deep %prun ~bud scry-path ~[/keen-duct-1] scry-path]
           [~[//unix] %pass fine-behn-wire %b %rest ~1111.1.1..00.00.01]
       ==
     ==
@@ -160,7 +164,10 @@
     %:  ames-check-call:v  ames.nec
       [~1111.1.1 0xdead.beef *roof]
       [~[/keen-duct-3] %yawn ~bud future-path]
-      [~[//unix] %pass future-behn %b %rest ~1111.1.1..00.00.01]~
+      :~  :^  ~[/keen-duct-3]  %pass  /prune-tip
+          [%a %deep %prun ~bud future-path [i=/keen-duct-3 t=~] future-path]
+          [~[//unix] %pass future-behn %b %rest ~1111.1.1..00.00.01]
+      ==
     ==
   ::
   :-  t6  |.  :-  %|
@@ -189,24 +196,28 @@
       [~1111.1.1 0xdead.beef *roof]
       [~[/wham-duct] %wham ~bud future-path]
       :~  [~[/keen-duct-4] [%give %tune [~bud future-path] ~]]
+          :^  ~[/keen-duct-4]  %pass  /prune-tip
+          [%a %deep %prun ~bud future-path ~[/keen-duct-4] future-path]
           [~[/keen-duct-5] [%give %tune [~bud future-path] ~]]
+          :^  ~[/keen-duct-5]  %pass  /prune-tip
+          [%a %deep %prun ~bud future-path ~[/keen-duct-5] future-path]
           [~[//unix] %pass future-behn %b %rest ~1111.1.1..00.00.01]
       ==
     ==
   :-  t9  |.  :-  %&
   =/  peer=peer-state:ames
     (ames-scry-peer:v ames.nec [~1111.1.8 0xbeef.dead *roof] [~nec ~bud])
-  =/  listeners=(set duct)
+  =/  listeners=(jug duct ints:ames)
     ?~  keen=(~(get by keens.peer) scry-path)
       ~
     listeners:u.keen
   ~?  >  dbug  'checks no more listeners'
-  (expect-eq !>(~) !>(listeners))
+  (expect-eq !>(~) !>(~(key by listeners)))
 ::
 ++  test-fine-misordered
   %-  run-chain
   |.  :-  %|
-  =+  (nec-bud:v life=[nec=1 bud=1] rift=[nec=1 bud=1])
+  =+  (nec-bud-zod:v life=[nec=1 bud=1 zod=1] rift=[nec=1 bud=1 zod=1])
   ::  uncomment to turn on verbose debug output
   ::=^  *  ames.nec
   ::  (ames-call:v ames.nec ~[/none] [%spew ~[%msg %snd %rcv %odd]] *roof)
@@ -304,6 +315,8 @@
           (etch-shot:ames resp2)
       ==
       :~  [~[/keen-duct-1] %give %tune [~bud scry-path] roar]
+          :^  ~[/keen-duct-1]  %pass  /prune-tip
+          [%a %deep %prun ~bud scry-path ~[/keen-duct-1] scry-path]
           [~[//unix] %pass fine-behn-wire %b %rest ~1111.1.2..00.02.00]
       ==
     ==
