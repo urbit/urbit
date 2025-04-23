@@ -1139,6 +1139,7 @@
     ::  fake ships always have life=1
     ::
     ?:  fak.own.pki.lex
+      ?:  ?=(%pawn (clan:title u.who))  ``[%noun !>(~)]
       ``[%noun !>((some 1))]
     ?:  =(u.who p.why)
       ``[%noun !>((some lyf.own.pki.lex))]
