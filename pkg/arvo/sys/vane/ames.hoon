@@ -3293,6 +3293,24 @@
 =>  ::  network protocol core handlers
     ::
     |%
+    ::
+    +|  %routes
+    ::
+    ++  is-route-dead
+      |=  [peer=ship =peer-state]
+      ^-  ?
+      ?&  ?=(^ route.peer-state)
+          direct.u.route.peer-state  ::  XX what about indirect routes?
+          !=(%czar (clan:title peer))
+          ::  if we haven't tried to contact the peer, there hasn't been any
+          ::  /pump or /fine timers that could have turned the peer to %dead
+          ::  and we haven't received any packets from the peer, check if
+          ::  the peer is actually dead
+          ::
+          ?|  ?=(%dead -.qos.peer-state)
+              (gte now (add ~s30 last-contact.qos.peer-state))
+      ==  ==
+
     ++  find-peer
       |=  =ship
       ^-  $%  [%ames (unit ship-state)]
@@ -3303,48 +3321,114 @@
       ?^  ship-state=(~(get by peers.ames-state) ship)
         ames/ship-state
       ?:(?=(%mesa core.ames-state) [%mesa ~] [%ames ~])
+    ::
+    ++  get-route-from-lane
+      |=  lane=(unit [hop=@ =lane:pact])
+      ^-  (unit [direct=? =^lane])
+      ?~  lane  ~
+      =+  hop=hop.u.lane
+      =+  lane=lane.u.lane
+      :-  ~
+      ?@  lane
+        [direct=%.y %.y `@p`lane]
+      :+  direct=?:(=(0 hop) %.y %.n)   %.n
+      %+  can  3
+      :~  4^p.lane
+          2^q.lane
+      ==
+    ::
+    ++  update-peer-route
+      |=  [peer=ship =peer-state]
+      ^+  peer-state
+      ::   If the peer is not responding, mark the .lane.route as
+      ::   indirect.  The next packets we emit will be sent to the
+      ::   receiver's sponsorship chain in case the receiver's
+      ::   transport address has changed and this lane is no longer
+      ::   valid.
+      ::
+      ::   If .peer is a galaxy, the lane will always remain direct.
+      ::
+      ?.  (is-route-dead peer peer-state)
+        peer-state
+      ?.  ?=(^ route.peer-state)
+        peer-state
+      peer-state(direct.u.route %.n, -.qos %dead)
     :: +get-forward-lanes: get all lanes to send to when forwarding to peer
     ::
     ++  get-forward-lanes
-      |=  [our=@p peer=peer-state peers=(map ship ship-state)]
-      ^-  (list lane)
+      |=  [her=@p peer=$@(~ peer-state)]
+      =>  %=  .
+              peer
+            ^+  $:find-peer
+            ?~  peer  (find-peer her)
+            [%ames ~ %known peer]
+          ==
+      |-  ^-  (list lane)
       =;  zar=(trap (list lane))
-        ?~  route.peer  $:zar
-        =*  rot  u.route.peer
-        ?:(direct.rot [lane.rot ~] [lane.rot $:zar])
+        ?.  ?=([* ~ %known *] peer)  $:zar
+        |-  ^-  (list lane)
+        ?:  ?=(%ames -.peer)
+          ?~  route.u.peer  $:zar
+          =*  rot  u.route.u.peer
+          ?:(direct.rot [lane.rot ~] [lane.rot $:zar])
+        ?~  lane.u.peer  $:zar
+        =|  reg=peer-state
+        =:  route.reg  (get-route-from-lane lane.u.peer)
+            qos.reg  qos.u.peer
+        ==
+        =.  reg  (update-peer-route her reg)
+        $(peer ames/`known/reg)
       ::
       |.  ^-  (list lane)
-      ?:  ?=(%czar (clan:title sponsor.peer))
-        ?:  =(our sponsor.peer)
+      =/  sponsor=@p
+        ?:  ?=([* ~ %known *] peer)  sponsor.u.peer
+        (^^sein:title rof /ames our now her)
+      ?:  ?=(%czar (clan:title sponsor))
+        ?:  =(our sponsor)
           ~
-        [%& sponsor.peer]~
-      =/  next  (~(get by peers.ames-state) sponsor.peer)
-      ?.  ?=([~ %known *] next)
-        ~
+        [%& sponsor]~
     ::
-      $(peer +.u.next)
+      $(peer (find-peer sponsor), her sponsor)
     ::
     ++  get-forward-lanes-mesa
-      |=  [our=@p fren=fren-state chums=(map ship chum-state)]
-      ^-  (list lane:pact)
+      |=  [her=@p peer=$@(~ fren-state)]
+      =>  %=  .
+              peer
+            ^+  $:find-peer
+            ?~  peer  (find-peer her)
+            [%mesa ~ %known peer]
+          ==
+      |-  ^-  (list lane:pact)
       =;  zar=(trap (list lane:pact))
-        ?~  lane.fren  $:zar
-        [+.u.lane.fren $:zar]
+        ?.  ?=([* ~ %known *] peer)  $:zar
+        ~!  peer
+        ?:  ?=(%mesa -.peer)
+          ?~  lane.u.peer  $:zar
+          [+.u.lane.u.peer $:zar]
+        ~!  peer
+        ?~  route.u.peer  $:zar
+        =*  lane  lane.u.route.u.peer
+        ?:  ?=(%& -.lane)  [`@ux`p.lane $:zar]
+        :_  $:zar
+        :+  %if
+          (end [0 32] p.lane)
+        (cut 0 [32 16] p.lane)
       |.  ^-  (list lane:pact)
-      ?:  ?=(%czar (clan:title sponsor.fren))
-        ?:  =(our sponsor.fren)
+      =/  sponsor=@p
+        ?:  ?=([* ~ %known *] peer)  sponsor.u.peer
+        (^^sein:title rof /ames our now her)
+      ?:  ?=(%czar (clan:title sponsor))
+        ?:  =(our sponsor)
           ~
-        [`@ux`sponsor.fren]~
-      =/  next  (~(get by chums.ames-state) sponsor.fren)
-      ?.  ?=([~ %known *] next)
-        ~
-      $(fren +.u.next)
+        [`@ux`sponsor]~
+      $(peer (find-peer sponsor), her sponsor)
     ::
     ++  ames
       ::
       =<  ::  adult |ames formal interface, after metamorphosis from larva
           ::
           |=  [now=@da eny=@uvJ rof=roof]
+          =.  vane-gate  vane-gate(now now, eny eny, rof rof)
           =*  veb  veb.bug.ames-state
           |%
           ::  +call: handle request $task
@@ -3498,40 +3582,6 @@
           ;;  (list ship)
           =<  q.q  %-  need  %-  need
           (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p our)])
-        ::
-        +|  %routes
-        ::
-        ++  is-route-dead
-          |=  [peer=ship =peer-state]
-          ^-  ?
-          ?&  ?=(^ route.peer-state)
-              direct.u.route.peer-state  ::  XX what about indirect routes?
-              !=(%czar (clan:title peer))
-              ::  if we haven't tried to contact the peer, there hasn't been any
-              ::  /pump or /fine timers that could have turned the peer to %dead
-              ::  and we haven't received any packets from the peer, check if
-              ::  the peer is actually dead
-              ::
-              ?|  ?=(%dead -.qos.peer-state)
-                  (gte now (add ~s30 last-contact.qos.peer-state))
-          ==  ==
-        ::
-        ++  update-peer-route
-          |=  [peer=ship =peer-state]
-          ^+  peer-state
-          ::   If the peer is not responding, mark the .lane.route as
-          ::   indirect.  The next packets we emit will be sent to the
-          ::   receiver's sponsorship chain in case the receiver's
-          ::   transport address has changed and this lane is no longer
-          ::   valid.
-          ::
-          ::   If .peer is a galaxy, the lane will always remain direct.
-          ::
-          ?.  (is-route-dead peer peer-state)
-            peer-state
-          ?.  ?=(^ route.peer-state)
-            peer-state
-          peer-state(direct.u.route %.n, -.qos %dead)
         ::
         +|  %tasks
         ::  +on-take-flub: vane not ready to process message, pretend it
@@ -3854,7 +3904,7 @@
           =.  event-core
             %-  emit
             :*  unix-duct  %give  %nail  sndr.shot
-                (get-forward-lanes our peer-state peers.ames-state)
+                (get-forward-lanes sndr.shot peer-state)
             ==
           ::
           event-core
@@ -3931,7 +3981,7 @@
           =?  event-core  !=(old-route route.peer-state)
             %-  emit
             :*  unix-duct  %give  %nail  sndr.shot
-                (get-forward-lanes our peer-state peers.ames-state)
+                (get-forward-lanes sndr.shot peer-state)
             ==
           ::  perform peer-specific handling of packet
           ::
@@ -4271,7 +4321,7 @@
             =.  core
               %-  emit:core
               :*  unix-duct.ames-state  %give  %nail  ship
-                  (get-forward-lanes our peer peers.ames-state)
+                  (get-forward-lanes ship peer)
               ==
             abet:(abed-peer:pe:core ship peer)
           ::
@@ -4955,7 +5005,7 @@
             =?  peer-core   !=(old-route route.peer-state)
               %-  pe-emit
               :*  unix-duct  %give  %nail  her
-                  (get-forward-lanes our peer-state peers.ames-state)
+                  (get-forward-lanes her peer-state)
               ==
             ::  resend comet attestation packet if first message times out
             ::
@@ -7031,7 +7081,7 @@
               =?  peer-core   !=(old-route route.peer-state)
                 %-  pe-emit
                 :*  unix-duct  %give  %nail  her
-                    (get-forward-lanes our peer-state peers.ames-state)
+                    (get-forward-lanes her peer-state)
                 ==
               =^  want=(unit want)  wan.keen
                 ?~  res=(pry:fi-mop wan.keen)  `wan.keen
@@ -7415,23 +7465,8 @@
               !>  ^-  (list lane)
               ?:  =(our u.who)
                 ~
-              =/  sax
-                %+  rof  [~ ~]
-                [/ames %j `beam`[[our %saxo %da now] /(scot %p u.who)]]
-              =/  gal=(unit @p)
-                ?.  ?=([~ ~ *] sax)
-                  ~
-                `(rear ;;((list ship) q.q.u.u.sax))
-              ?:  ?=([~ %known *] peer)
-                (get-forward-lanes our +.u.peer peers.ames-state)
-              ?.  ?=([~ %known *] chum)
-                ?~  gal
-                  ~
-                ::  if the peer is %alien or missing, send to the sponsor galaxy
-                ::
-                ?:(=(our u.gal) ~ [%& u.gal]~)
-              %-  mesa-to-ames-lanes
-              (get-forward-lanes-mesa our +.u.chum chums.ames-state)
+              %+  get-forward-lanes  u.who
+              ?.(?=([~ %known *] peer) ~ +.u.peer)
             ==
           ::
               [%bones her=@ ~]
@@ -7591,6 +7626,7 @@
     ::
     ++  mesa
       |=  [now=@da eny=@uvJ rof=roof]
+      =.  vane-gate  vane-gate(now now, eny eny, rof rof)
       ::
       =<  ::  adult |mesa formal interface, after metamorphosis from larva
           ::
@@ -7963,7 +7999,7 @@
               %-  ev-emit
               :*  unix-duct  %give  %nail  her
                   %-  mesa-to-ames-lanes
-                  (get-forward-lanes-mesa our per chums.ames-state)
+                  (get-forward-lanes-mesa her per)
               ==
             ::  update and print connection status
             ::
@@ -8036,7 +8072,7 @@
               %-  ev-emit
               :*  unix-duct  %give  %nail  her
                   %-  mesa-to-ames-lanes
-                  (get-forward-lanes-mesa our per chums.ames-state)
+                  (get-forward-lanes-mesa her per)
               ==
             ::  update and print connection status
             ::
@@ -9430,9 +9466,9 @@
               %-  sy-emit
               :*  unix-duct  %give  %nail  ship
                   ?.  ?=(%mesa -.peer)
-                    (get-forward-lanes our +.u.peer peers.ames-state)
+                    (get-forward-lanes ship +.u.peer)
                   %-  mesa-to-ames-lanes
-                  (get-forward-lanes-mesa our +.u.peer chums.ames-state)
+                  (get-forward-lanes-mesa ship +.u.peer)
               ==
             ::  if one of our sponsors breached, give the updated list to vere
             ::
@@ -9523,9 +9559,9 @@
             %-  sy-emit
             :*  unix-duct  %give  %nail  ship
                 ?.  ?=(%mesa -.peer)
-                  (get-forward-lanes our +.u.peer peers.ames-state)
+                  (get-forward-lanes ship +.u.peer)
                 %-  mesa-to-ames-lanes
-                (get-forward-lanes-mesa our +.u.peer chums.ames-state)
+                (get-forward-lanes-mesa ship +.u.peer)
             ==
           ::  +on-publ-full: handle new pki data for peer(s)
           ::
@@ -9720,9 +9756,9 @@
               %-  sy-emit
               :*  unix-duct  %give  %nail  ship
                   ?.  ?=(%mesa -.peer)
-                    (get-forward-lanes our +.peer peers.ames-state)
+                    (get-forward-lanes ship +.peer)
                   %-  mesa-to-ames-lanes
-                  (get-forward-lanes-mesa our +.peer chums.ames-state)
+                  (get-forward-lanes-mesa ship +.peer)
               ==
             ::
             ::  automatically set galaxy route, since unix handles lookup
@@ -9986,7 +10022,7 @@
             =+  fren=+.state
             =|  peer=peer-state
             =:      -.peer  azimuth-state=-.fren
-                route.peer  (get-route lane.fren)
+                route.peer  (get-route-from-lane lane.fren)
                   qos.peer  qos.fren
                corked.peer  (divide-bones corked.fren)
               ossuary.peer  ossuary.fren
@@ -10154,21 +10190,6 @@
               %publ  (on-keen:c(duct hen) ~ her pax)
               %chum  (on-chum:c(duct hen) her pax)
               %shut  (on-keen:c(duct hen) `[kid key]:space her pax)
-            ==
-          ::
-          ++  get-route
-            |=  lane=(unit [hop=@ =lane:pact])
-            ^-  (unit [direct=? =^lane])
-            ?~  lane  ~
-            =+  hop=hop.u.lane
-            =+  lane=lane.u.lane
-            :-  ~
-            ?@  lane
-              [direct=%.y %.y `@p`lane]
-            :+  direct=?:(=(0 hop) %.y %.n)   %.n
-            %+  can  3
-            :~  4^p.lane
-                2^q.lane
             ==
           ::
           --
@@ -11116,24 +11137,8 @@
                 :^  ~  ~  %noun
                 !>  ^-  [sponsor=@p (list lane:pact)]
                 :-  u.gal
-                ?:  ?=([~ %known *] chum)
-                  (get-forward-lanes-mesa our +.u.chum chums.ames-state)
-                ?.  ?=([~ %known *] peer)
-                  %-  %+  %*(ev-tace ev-core:ev her u.who)
-                        odd.veb.bug.ames-state
-                      |.("alien peek for lanes")
-                  ::
-                  ?:(=(our u.gal) ~ [`@ux`u.gal]~)
-                %+  turn  (get-forward-lanes our +.u.peer peers.ames-state)
-                |=  lane=(each @p address)
-                ?-    -.lane
-                    %&  `@ux`p.lane
-                ::
-                    %|
-                  :+    %if
-                    ip=`@if`(end [0 32] p.lane)
-                  pt=`@ud`(cut 0 [32 16] p.lane)
-                ==
+                %+  get-forward-lanes-mesa  u.who
+                ?.(?=([~ %known *] chum) ~ +.u.chum)
               ::
               ==
             ==
