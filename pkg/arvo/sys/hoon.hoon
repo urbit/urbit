@@ -5986,7 +5986,7 @@
         :-  '$'      (cold %$ buc)
         :-  '0'^'9'  bisk:so
         :-  '-'      tash:so
-        :-  '.'      zust:so
+        :-  '.'      ;~(pfix dot zust:so)
         :-  '~'      ;~(pfix sig ;~(pose crub:so (easy [%n ~])))
         :-  '\''     (stag %t qut)
     ==
