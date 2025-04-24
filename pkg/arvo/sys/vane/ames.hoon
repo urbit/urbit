@@ -3356,11 +3356,12 @@
     :: +get-forward-lanes: get all lanes to send to when forwarding to peer
     ::
     ++  get-forward-lanes
-      |=  [her=@p peer=$@(~ peer-state)]
+      |=  [her=@p peer=$@(~ $^(peer-state _$:find-peer))]
       =>  %=  .
               peer
             ^+  $:find-peer
             ?~  peer  (find-peer her)
+            ?@  -.peer  peer
             [%ames ~ %known peer]
           ==
       |-  ^-  (list lane)
@@ -3391,11 +3392,12 @@
       $(peer (find-peer sponsor), her sponsor)
     ::
     ++  get-forward-lanes-mesa
-      |=  [her=@p peer=$@(~ fren-state)]
+      |=  [her=@p peer=$@(~ $^(fren-state _$:find-peer))]
       =>  %=  .
               peer
             ^+  $:find-peer
             ?~  peer  (find-peer her)
+            ?@  -.peer  peer
             [%mesa ~ %known peer]
           ==
       |-  ^-  (list lane:pact)
@@ -7432,19 +7434,16 @@
               [%peers her=@ req=*]
             =/  who  (slaw %p her.tyl)
             ?~  who  [~ ~]
-            =/  peer  (~(get by peers.ames-state) u.who)
-            =/  chum  (~(get by chums.ames-state) u.who)
             ?+    req.tyl  [~ ~]
                 ~
-              ?~  peer
-                [~ ~]
+              ?~  peer=(~(get by peers.ames-state) u.who)  [~ ~]
               ``noun+!>(u.peer)
             ::
                 [%last-contact ~]
               :^  ~  ~  %noun
               !>  ^-  (unit @da)
-              ?.  ?=([~ %known *] peer)
-                ~
+              =/  peer  (~(get by peers.ames-state) u.who)
+              ?.  ?=([~ %known *] peer)  ~
               `last-contact.qos.u.peer
             ::
                 [%forward-lane ~]
@@ -7463,8 +7462,7 @@
               !>  ^-  (list lane)
               ?:  =(our u.who)
                 ~
-              %+  get-forward-lanes  u.who
-              ?.(?=([~ %known *] peer) ~ +.u.peer)
+              (get-forward-lanes u.who ~)
             ==
           ::
               [%bones her=@ ~]
@@ -11105,7 +11103,7 @@
               ?+    req.req.tyl  ~
                   ~
                 ?~  chum
-                  ~&  (~(get by peers.ames-state) u.who)
+                  ~&  scry-for-chum-has-peers=(~(has by peers.ames-state) u.who)
                   ::
                   [~ ~]
                 ``noun+!>(u.chum)
@@ -11135,8 +11133,7 @@
                 :^  ~  ~  %noun
                 !>  ^-  [sponsor=@p (list lane:pact)]
                 :-  u.gal
-                %+  get-forward-lanes-mesa  u.who
-                ?.(?=([~ %known *] chum) ~ +.u.chum)
+                (get-forward-lanes-mesa u.who ~)
               ::
               ==
             ==
