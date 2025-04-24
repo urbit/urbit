@@ -3310,7 +3310,7 @@
           ?|  ?=(%dead -.qos.peer-state)
               (gte now (add ~s30 last-contact.qos.peer-state))
       ==  ==
-
+    ::
     ++  find-peer
       |=  =ship
       ^-  $%  [%ames (unit ship-state)]
@@ -3357,30 +3357,27 @@
     ::
     ++  get-forward-lanes
       |=  [her=@p peer=$@(~ $^(peer-state _$:find-peer))]
-      =>  %=  .
-              peer
-            ^+  $:find-peer
-            ?~  peer  (find-peer her)
-            ?@  -.peer  peer
-            [%ames ~ %known peer]
-          ==
+      ^-  (list lane)
+      =>  =-  +(peer -)
+          ^+  $:find-peer
+          ?~  peer  (find-peer her)
+          ?@  -.peer  peer
+          [%ames ~ %known peer]
+      |^  ^-  (list lane)
+      ?.  ?=([* ~ %known *] peer)  zar
       |-  ^-  (list lane)
-      =;  zar=(trap (list lane))
-        ?.  ?=([* ~ %known *] peer)  $:zar
-        |-  ^-  (list lane)
-        ?:  ?=(%ames -.peer)
-          ?~  route.u.peer  $:zar
-          =*  rot  u.route.u.peer
-          ?:(direct.rot [lane.rot ~] [lane.rot $:zar])
-        ?~  lane.u.peer  $:zar
-        =|  reg=peer-state
-        =:  route.reg  (get-route-from-lane lane.u.peer)
-            qos.reg  qos.u.peer
-        ==
-        =.  reg  (update-peer-route her reg)
-        $(peer ames/`known/reg)
-      ::
-      |.  ^-  (list lane)
+      ?:  ?=(%ames -.peer)
+        ?~  route.u.peer  zar
+        =*  rot  u.route.u.peer
+        [lane.rot ?:(direct.rot ~ zar)]
+      ?~  lane.u.peer  zar
+      =-  $(peer ames/`known/-)
+      =|  reg=peer-state
+      %+  update-peer-route  her
+      reg(qos qos.u.peer, route (get-route-from-lane lane.u.peer))
+    ::
+    ++  zar
+      ^-  (list lane)
       =/  sponsor=@p
         ?:  ?=([* ~ %known *] peer)  sponsor.u.peer
         (^^sein:title rof /ames our now her)
@@ -3388,40 +3385,41 @@
         ?:  =(our sponsor)
           ~
         [%& sponsor]~
-    ::
-      $(peer (find-peer sponsor), her sponsor)
+      zar(peer (find-peer sponsor), her sponsor)
+    --
     ::
     ++  get-forward-lanes-mesa
       |=  [her=@p peer=$@(~ $^(fren-state _$:find-peer))]
-      =>  %=  .
-              peer
-            ^+  $:find-peer
-            ?~  peer  (find-peer her)
-            ?@  -.peer  peer
-            [%mesa ~ %known peer]
-          ==
-      |-  ^-  (list lane:pact)
-      =;  zar=(trap (list lane:pact))
-        ?.  ?=([* ~ %known *] peer)  $:zar
-        ?:  ?=(%mesa -.peer)
-          ?~  lane.u.peer  $:zar
-          [+.u.lane.u.peer $:zar]
-        ?~  route.u.peer  $:zar
-        =*  lane  lane.u.route.u.peer
-        ?:  ?=(%& -.lane)  [`@ux`p.lane $:zar]
-        :_  $:zar
-        :+  %if
-          (end [0 32] p.lane)
-        (cut 0 [32 16] p.lane)
-      |.  ^-  (list lane:pact)
-      =/  sponsor=@p
-        ?:  ?=([* ~ %known *] peer)  sponsor.u.peer
-        (^^sein:title rof /ames our now her)
-      ?:  ?=(%czar (clan:title sponsor))
-        ?:  =(our sponsor)
-          ~
-        [`@ux`sponsor]~
-      $(peer (find-peer sponsor), her sponsor)
+      ^-  (list lane:pact)
+      =>  =-  +(peer -)
+          ^+  $:find-peer
+          ?~  peer  (find-peer her)
+          ?@  -.peer  peer
+          [%mesa ~ %known peer]
+      |^  ^-  (list lane:pact)
+      ?.  ?=([* ~ %known *] peer)  zar
+      ?:  ?=(%mesa -.peer)
+        ?~  lane.u.peer  zar
+        [+.u.lane.u.peer zar]
+      ?~  route.u.peer  zar
+      =*  lane  lane.u.route.u.peer
+      ?:  ?=(%& -.lane)  [`@ux`p.lane zar]
+      :_  zar
+      :+  %if
+        (end [0 32] p.lane)
+      (cut 0 [32 16] p.lane)
+      ::
+      ++  zar
+        ^-  (list lane:pact)
+        =/  sponsor=@p
+          ?:  ?=([* ~ %known *] peer)  sponsor.u.peer
+          (^^sein:title rof /ames our now her)
+        ?:  ?=(%czar (clan:title sponsor))
+          ?:  =(our sponsor)
+            ~
+          [`@ux`sponsor]~
+        zar(peer (find-peer sponsor), her sponsor)
+      --
     ::
     ++  ames
       ::
