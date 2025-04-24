@@ -3401,11 +3401,9 @@
       |-  ^-  (list lane:pact)
       =;  zar=(trap (list lane:pact))
         ?.  ?=([* ~ %known *] peer)  $:zar
-        ~!  peer
         ?:  ?=(%mesa -.peer)
           ?~  lane.u.peer  $:zar
           [+.u.lane.u.peer $:zar]
-        ~!  peer
         ?~  route.u.peer  $:zar
         =*  lane  lane.u.route.u.peer
         ?:  ?=(%& -.lane)  [`@ux`p.lane $:zar]
