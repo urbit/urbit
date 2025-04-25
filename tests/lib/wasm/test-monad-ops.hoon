@@ -7,7 +7,6 @@
 =/  import  import:lia-sur:wasm-lib
 =/  script  script:lia-sur:wasm-lib
 =/  arr  ^?((arrows:wasm-lib *))
-
 =/  wasm  ^?(wasm-lib)
 =>  |%
     ++  i8neg   ^~((cury sub (bex 8)))
