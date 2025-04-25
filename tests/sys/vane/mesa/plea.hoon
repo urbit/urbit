@@ -165,7 +165,7 @@
     !>  plea/poke-plea
     !>  !<  page
         =<  ?>  ?=(%message p)  q
-        (ames-scry-payload:v nec ~nec %a %x '1' %$ poke-path)
+        (ames-scry-payload:v nec ~bud ~nec %a %x '1' %$ poke-path)
   ::
   :-  moves-7  |.  :-  %|
   ~?  >  dbug  '~nec hears %ack from ~bud, gives to gall'

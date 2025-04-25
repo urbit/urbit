@@ -88,18 +88,17 @@
   ::  start
   ::
   ~?  >  dbug  'naxplanation payload is accesible at /flow/0/nax/bak/~nec/1'
+  =/  naxplanation=*  *error:ames
+  =/  nax-roof        (make-roof nax-path message+!>(nax/naxplanation))
   =/  moves-1
     %+  expect-eq
     !>  nax/*goof
     !>  !<  page
         =<  ?>  ?=(%message p)  q
-        (ames-scry-payload:v bud ~bud %a %x '1' %$ nax-path)
+        (ames-scry-payload:v bud ~nec ~bud %a %x '1' %$ nax-path)
   ::
   :-  moves-1  |.  :-  %|
   ~?  >  dbug  '~nec starts %peeking for the naxplanation on ~bud'
-  ::
-  =/  naxplanation=*  *error:ames
-  =/  nax-roof        (make-roof nax-path message+!>(nax/naxplanation))
   ::
   =^  moves-x  nec
     (ames-call:v nec [~[nax-wire /poke] meek nax-roof])

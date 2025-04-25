@@ -130,9 +130,11 @@
       ==
       :~  [~[//fine] %pass /qos %d %flog %text "; ~bud is your neighbor"]
           [~[/keen-duct-2] %give %tune [~bud scry-path] roar]
-          [~[/keen-duct-2] %pass /prune-tip %a %deep %prun ~bud scry-path ~ ~]
+          :^  ~[/keen-duct-2]  %pass  /prune-tip
+          [%a %deep %prun ~bud scry-path ~[/keen-duct-2] scry-path]
           [~[/keen-duct-1] %give %tune [~bud scry-path] roar]
-          [~[/keen-duct-1] %pass /prune-tip %a %deep %prun ~bud scry-path ~ ~]
+          :^  ~[/keen-duct-1]  %pass  /prune-tip
+          [%a %deep %prun ~bud scry-path ~[/keen-duct-1] scry-path]
           [~[//unix] %pass fine-behn-wire %b %rest ~1111.1.1..00.00.01]
       ==
     ==
@@ -162,7 +164,8 @@
     %:  ames-check-call:v  ames.nec
       [~1111.1.1 0xdead.beef *roof]
       [~[/keen-duct-3] %yawn ~bud future-path]
-      :~  [~[/keen-duct-3] %pass /prune-tip %a %deep %prun ~bud future-path [i=/keen-duct-3 t=~] future-path]
+      :~  :^  ~[/keen-duct-3]  %pass  /prune-tip
+          [%a %deep %prun ~bud future-path [i=/keen-duct-3 t=~] future-path]
           [~[//unix] %pass future-behn %b %rest ~1111.1.1..00.00.01]
       ==
     ==
@@ -193,9 +196,11 @@
       [~1111.1.1 0xdead.beef *roof]
       [~[/wham-duct] %wham ~bud future-path]
       :~  [~[/keen-duct-4] [%give %tune [~bud future-path] ~]]
-          [~[/keen-duct-4] %pass /prune-tip %a %deep %prun ~bud future-path ~ ~]
+          :^  ~[/keen-duct-4]  %pass  /prune-tip
+          [%a %deep %prun ~bud future-path ~[/keen-duct-4] future-path]
           [~[/keen-duct-5] [%give %tune [~bud future-path] ~]]
-          [~[/keen-duct-5] %pass /prune-tip %a %deep %prun ~bud future-path ~ ~]
+          :^  ~[/keen-duct-5]  %pass  /prune-tip
+          [%a %deep %prun ~bud future-path ~[/keen-duct-5] future-path]
           [~[//unix] %pass future-behn %b %rest ~1111.1.1..00.00.01]
       ==
     ==
@@ -310,7 +315,8 @@
           (etch-shot:ames resp2)
       ==
       :~  [~[/keen-duct-1] %give %tune [~bud scry-path] roar]
-          [~[/keen-duct-1] %pass /prune-tip %a %deep %prun ~bud scry-path ~ ~]
+          :^  ~[/keen-duct-1]  %pass  /prune-tip
+          [%a %deep %prun ~bud scry-path ~[/keen-duct-1] scry-path]
           [~[//unix] %pass fine-behn-wire %b %rest ~1111.1.2..00.02.00]
       ==
     ==

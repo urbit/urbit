@@ -174,15 +174,15 @@
   p:(fax:plot (en:pact:ames u.pact))
 ::
 ++  ames-scry-payload
-  |=  [=ames-gate =ship =path]
+  |=  [=ames-gate her=ship our=ship =path]
   ^-  cage
   =/  ames-core  (ames-gate now=~1111.1.1 eny=`@`0xdead.beef *roof)
   %-  need   %-  need
   %-  scry:(ames-gate ~1111.1.10 `@`0xdead.beef *roof)
   =;  [care=@tas =beam]
-    [[~ ~] / care beam]
+    [`[her ~ ~] / care beam]
   =<  [?>(?=(^ vew) car.vew) bem]
-  (need (inner-path-to-beam:ames-core ship path))
+  (need (inner-path-to-beam:ames-core our path))
 ::  +ames-check-call: run gall task, assert produces expected-moves
 ::
 ++  ames-check-call
