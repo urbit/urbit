@@ -4564,8 +4564,8 @@
           =+  ev-core=(ev-foco:ev:(mesa now eny rof) sndr.shot +.chum-state)
           =+  fo-core=(fo-abed:fo:ev-core ~[//scry] side=[(mix 1 bone) %bak])
           ?~  res=(fo-peek:fo-core %ack message-num)
-            %-  (ev-trace odd.veb sndr.shot |.("ack missing seq={<message-num>}"))
-            event-core
+            %.  event-core
+            (ev-trace odd.veb sndr.shot |.("ack missing seq={<message-num>}"))
           ?.  ?=([%ack error=@] u.res)
             %-  (ev-trace odd.veb sndr.shot |.("weird ack"))
             event-core
@@ -11672,7 +11672,7 @@
       ::
       =^  moves  ames-state
         =<  abet
-        %.(shot on-ack-ahoy:(ev:(ames now eny rof) now^eny^rof hen ames-state))
+        %.(shot on-ack-ahoy:(ev:am-core now^eny^rof hen ames-state))
       [moves vane-gate]
     ::
     ++  pe-rate
@@ -11773,8 +11773,40 @@
             `ames-state
           =/  chum-state  (pe-find-peer her-pok)
           ?.  ?=([%ames ~ %known *] chum-state)
+            ::  [%mesa ~]
+            ::    only if %mesa core enabled (not by default)
+            ::
+            ::  [%ames ~]
+            ::    a peer sends us a mesa packet, but %ames is our default core
+            ::
+            ::  [%mesa ~ %alien *]
+            ::    %mesa is our default network core. we had outstanding
+            ::    poke/peeks, but the keys are missing and the peer sends up a
+            ::    %mesa packet
+            ::
+            ::  [%ames ~ %alien *]
+            ::    %ames is our default network core. we had outstanding
+            ::    poke/peeks, but the keys are missing and the peer sends up a
+            ::    %mesa packet
+            ::
             =?  chum-state  ?=([%ames *] chum-state)
-              [%mesa *(unit ^chum-state)]
+              ?-    +.chum-state
+                  ~
+                chum-state(- %mesa)
+              ::
+                  [~ %alien *]
+                ::  move alien state from %ames into %mesa
+                ::
+                :-  %mesa
+                :+  ~  %alien  ^-  ovni-state
+                ::    packets are discarded since messages will be sent up to
+                ::    the sponsorship chain anyway
+                ::
+                :_  :-  peeks=keens.u.+.chum-state
+                    chums=chums.u.+.chum-state
+                (turn messages.u.+.chum-state |=([=duct =plea] duct^plea/plea))
+              ==
+            ::
             ?>  ?=([%mesa *] chum-state)
             ?.  ?&  ?=(%pawn (clan:title her-pok))
                     |(?=(~ +.chum-state) ?=([~ %alien *] +.chum-state))
