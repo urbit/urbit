@@ -196,31 +196,36 @@
       ^-  form:m
       =,  arr
       ;<  res=(list lv)  try:m  (call-ext %resolve-me ~)
+      ;<  res=(list lv)  try:m  (call-ext %resolve-me ~)
       (return:m res)
     ::
     =/  =seed  [bin-empty (return:runnable:wasm ~) ~ `~]
     =/  hint=@tas  %omit
     =/  res-1
-      =^  *  seed  (run:wasm &+script seed hint)
+      =^  res  seed  (run:wasm &+script seed hint)
       =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)
+      =^  res  seed  (run:wasm |+~[i32+11 i64+555] seed hint)
       [res seed]
     ::
     =.  hint  %rand
     =/  res-2
-      =^  *  seed  (run:wasm &+script seed hint)
+      =^  res  seed  (run:wasm &+script seed hint)
       =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)
+      =^  res  seed  (run:wasm |+~[i32+11 i64+555] seed hint)
       [res seed]
     ::
     =.  hint  %gent
     =/  res-3
       =^  *  seed  (run:wasm &+script seed hint)
       =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)
+      =^  res  seed  (run:wasm |+~[i32+11 i64+555] seed hint)
       [res seed]
     ::
     =.  hint  %oust
     =/  res-4
       =^  *  seed  (run:wasm &+script seed hint)
       =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)
+      =^  res  seed  (run:wasm |+~[i32+11 i64+555] seed hint)
       [res seed]
     ::
     ::  repeat
@@ -228,30 +233,35 @@
     =/  res-5
       =^  *  seed  (run:wasm &+script seed hint)
       =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)
+      =^  res  seed  (run:wasm |+~[i32+11 i64+555] seed hint)
       [res seed]
     ::
     =.  hint  %rand
     =/  res-6
       =^  *  seed  (run:wasm &+script seed hint)
       =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)
+      =^  res  seed  (run:wasm |+~[i32+11 i64+555] seed hint)
       [res seed]
     ::
     =.  hint  %gent
     =/  res-7
       =^  *  seed  (run:wasm &+script seed hint)
       =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)
+      =^  res  seed  (run:wasm |+~[i32+11 i64+555] seed hint)
       [res seed]
     ::
     =.  hint  %oust
     =/  res-8
       =^  *  seed  (run:wasm &+script seed hint)
       =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)
+      =^  res  seed  (run:wasm |+~[i32+11 i64+555] seed hint)
       [res seed]
     ::
     =.  hint  %none
     =/  res-9
       =^  *  seed  (run:wasm &+script seed hint)
       =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)
+      =^  res  seed  (run:wasm |+~[i32+11 i64+555] seed hint)
       [res seed]
     ::
     ?&  =(res-1 res-2)
@@ -547,4 +557,167 @@
         =(res-3 res-7)
         =(res-4 res-8)
     ==
+::
+++  test-simple
+  %+  expect-eq
+    !>  &
+    !>
+    =/  =seed  [bin-import-ext2 (return:runnable:wasm ~) ~ `~]
+    =/  script
+      =/  m  runnable:wasm
+      ^-  form:m
+      =,  arr
+      (call-ext %read-from-world ~)
+    ::
+    =/  hint=@tas  %omit
+    =/  res-1
+      =^  *  seed  (run:wasm &+script seed hint)
+      =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)
+      [res seed]
+    ::
+    =.  hint  %rand
+    =/  res-2
+      =^  *  seed  (run:wasm &+script seed hint)
+      =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)
+      [res seed]
+    ::
+    =.  hint  %gent
+    =/  res-3
+      =^  *  seed  (run:wasm &+script seed hint)
+      =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)
+      [res seed]
+    ::
+    =.  hint  %oust
+    =/  res-4
+      =^  *  seed  (run:wasm &+script seed hint)
+      =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)
+      [res seed]
+    ::
+    ::  repeat
+    =.  hint  %omit
+    =/  res-5
+      =^  *  seed  (run:wasm &+script seed hint)
+      =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)
+      [res seed]
+    ::
+    =.  hint  %rand
+    =/  res-6
+      =^  *  seed  (run:wasm &+script seed hint)
+      =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)
+      [res seed]
+    ::
+    =.  hint  %gent
+    =/  res-7
+      =^  *  seed  (run:wasm &+script seed hint)
+      =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)
+      [res seed]
+    ::
+    =.  hint  %oust
+    =/  res-8
+      =^  *  seed  (run:wasm &+script seed hint)
+      =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)
+      [res seed]
+    ::
+    =.  hint  %none
+    =/  res-9
+      =^  *  seed  (run:wasm &+script seed hint)
+      =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)
+      [res seed]
+    ::
+    ?&  =(res-1 res-2)
+        =(res-1 res-3)
+        =(res-1 res-4)
+        =(res-1 res-5)
+        =(res-1 res-6)
+        =(res-1 res-7)
+        =(res-1 res-8)
+        =(res-1 res-9)
+    ==
+++  test-ext-order
+  %+  expect-eq
+    !>  &
+    !>
+    =/  script
+      =/  m  runnable:wasm
+      ^-  form:m
+      =,  arr
+      ;<  res=(list lv)  try:m  (call-ext %resolve-me ~)
+      ;<  res=(list lv)  try:m  (call-ext %resolve-me ~)
+      (return:m res)
+    ::
+    =/  =seed  [bin-empty (return:runnable:wasm ~) ~ `~]
+    =/  hint=@tas  %omit
+    =/  res-1
+      =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)
+      =^  res  seed  (run:wasm &+script seed hint)
+      =^  res  seed  (run:wasm |+~[i32+11 i64+555] seed hint)
+      [res seed]
+    ::
+    =.  hint  %rand
+    =/  res-2
+      =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)
+      =^  res  seed  (run:wasm &+script seed hint)
+      =^  res  seed  (run:wasm |+~[i32+11 i64+555] seed hint)
+      [res seed]
+    ::
+    =.  hint  %gent
+    =/  res-3
+      =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)
+      =^  *  seed  (run:wasm &+script seed hint)
+      =^  res  seed  (run:wasm |+~[i32+11 i64+555] seed hint)
+      [res seed]
+    ::
+    =.  hint  %oust
+    =/  res-4
+      =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)
+      =^  *  seed  (run:wasm &+script seed hint)
+      =^  res  seed  (run:wasm |+~[i32+11 i64+555] seed hint)
+      [res seed]
+    ::
+    ::  repeat
+    =.  hint  %omit
+    =/  res-5
+      =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)
+      =^  *  seed  (run:wasm &+script seed hint)
+      =^  res  seed  (run:wasm |+~[i32+11 i64+555] seed hint)
+      [res seed]
+    ::
+    =.  hint  %rand
+    =/  res-6
+      =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)
+      =^  *  seed  (run:wasm &+script seed hint)
+      =^  res  seed  (run:wasm |+~[i32+11 i64+555] seed hint)
+      [res seed]
+    ::
+    =.  hint  %gent
+    =/  res-7
+      =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)
+      =^  *  seed  (run:wasm &+script seed hint)
+      =^  res  seed  (run:wasm |+~[i32+11 i64+555] seed hint)
+      [res seed]
+    ::
+    =.  hint  %oust
+    =/  res-8
+      =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)
+      =^  *  seed  (run:wasm &+script seed hint)
+      =^  res  seed  (run:wasm |+~[i32+11 i64+555] seed hint)
+      [res seed]
+    ::
+    =.  hint  %none
+    =/  res-9
+      =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)
+      =^  *  seed  (run:wasm &+script seed hint)
+      =^  res  seed  (run:wasm |+~[i32+11 i64+555] seed hint)
+      [res seed]
+    ::
+    ?&  =(res-1 res-2)
+        =(res-1 res-3)
+        =(res-1 res-4)
+        =(res-1 res-5)
+        =(res-1 res-6)
+        =(res-1 res-7)
+        =(res-1 res-8)
+        =(res-1 res-9)
+    ==
+::
 --

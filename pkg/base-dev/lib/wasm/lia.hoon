@@ -93,12 +93,12 @@
       seed(past ((try:m) past.seed =>(p.input |=(* +>))))
     ::
         %|
-      seed(shop (snoc shop.seed p.input))
+      seed(shop [p.input shop.seed])
     ==
   =/  ast  (main:parser module.seed)
   =/  valid  (validate-module:validator ast)
   ?>  ?=(%& -.valid)
-  =/  sat=(lia-state)  [(conv:engine ast ~) shop.seed import.seed]
+  =/  sat=(lia-state)  [(conv:engine ast ~) (flop shop.seed) import.seed]
   |^  ^-  [[yield:m *] _seed]
   =^  yil=yield:m  sat  (;<(* try:m init past.seed) sat)  ::  ((init >> past.seed) sat)
   [[yil p.r.sat] seed]
