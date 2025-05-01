@@ -8761,16 +8761,35 @@
                     |.("no op; weird %message gage {<-.gage>}")
                 fo-core
               ::
-              ?:  |(closing.state (~(has in corked.per) side))
-                %-  %+  ev-tace  odd.veb.bug.ames-state
-                    =+  ;;(mess=@tas +<.gage)
-                    ?:  closing.state
-                      |.("skip {<mess>}; flow in closing flow={<bone>}")
-                    |.("skip {<mess>}; flow is corked flow={<bone>} ")
-                fo-core
               ::  check that the message can be acked
               ::
               =+  flow-state=[bone=bone seq=seq last=last-acked.rcv]
+              ::
+              ?:  |(closing.state (~(has in corked.per) side))
+                =+  ;;(mess=@tas +<.gage)
+                ?.  closing.state
+                  %-  %+  ev-tace  odd.veb.bug.ames-state
+                      |.("skip {<mess>}; flow is corked flow={<bone>} ")
+                  fo-core
+                ::  if the flow is in closing, ack a resend of the %cork $plea
+                ::
+                =+  ;;([%plea =plea] +.gage)
+                ?.  &(?=([%cork ~] payload) ?=([%flow ~] path)):plea
+                  %-  %+  ev-tace  odd.veb.bug.ames-state
+                      |.("skip {<mess>}; flow in closing flow={<bone>}")
+                  fo-core
+                ::  if this is a %cork $plea, we need to have acked it already
+                ::
+                ?.  =(seq last-acked.rcv)
+                  %-  %+  ev-tace  odd.veb.bug.ames-state
+                      |.("skip %cork {<seq>}; flow in closing flow={<bone>}")
+                  fo-core
+                ::  send dupe ack
+                ::
+                %-  %+  ev-tace  snd.veb.bug.ames-state
+                    |.("cork [bon, seq]={<[bone seq]>} already acked")
+                ::
+                (fo-send-ack seq)
               ?:  (gth seq +(last-acked.rcv))
                 ::  no-op if future message
                 ::
