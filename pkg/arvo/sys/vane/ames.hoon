@@ -9408,20 +9408,32 @@
               (sy-emit hen %pass /qos %d %flog %text u.text)
             ::  a peer breached; drop all peer state other than pki data
             ::
-            =?  chums.ames-state  ?=(%chum -.peer)
+            =?  ames-state  ?=(%chum -.peer)
               =.  +>.u.peer  +:*fren-state
               ::  XX  reinitialize galaxy route if applicable
               ::
               =?  lane.+.u.peer  =(%czar (clan:title ship))
                 (some [hop=0 `@ux`ship])
-              (~(put by chums.ames-state) ship u.peer)
-            =?  peers.ames-state  ?=(%ship -.peer)
+              ::  if %ames is the default core, remove the ship from .chums
+              ::  and add it to .peers
+              ::
+              =?  peers.ames-state  ?=(%ames core.ames-state)
+                =|  =peer-state
+                (~(put by peers.ames-state) ship known/peer-state(- +<.u.peer))
+              =?  chums.ames-state  ?=(%ames core.ames-state)
+                (~(del by chums.ames-state) ship)
+              ::  XX TODO %mesa as default core
+              ::
+              ames-state
+            =?  ames-state  ?=(%ship -.peer)
               =.  +>.u.peer  +:*peer-state
               ::  XX  reinitialize galaxy route if applicable
               ::
               =?  route.+.u.peer  =(%czar (clan:title ship))
                 `[direct=%.y %& ship]
-              (~(put by peers.ames-state) ship u.peer)
+              ::  XX TODO %mesa as default core; if a peer is regressed back
+              ::
+              ames-state(peers (~(put by peers.ames-state) ship u.peer))
             ::  cancel all timers related to .ship
             ::
             =?  sy-core    ?=(%ship -.peer)
