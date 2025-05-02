@@ -2092,10 +2092,10 @@
                                              =(u.lane.mesa u.lane.back)
                                      ==  ==
           %+  print-check  %ossuary  =(ossuary.mesa ossuary.back)
-          :: %+  print-check  %closing  =(closing.mesa closing.back)
-          =-  ~?  !-  [mesa=corked.mesa back=corked.back]
-              -
-          %+  print-check  %corked   =(corked.mesa corked.back)
+          ::  corked.mesa could contain more bones if any %bak flow was in
+          ::  closing, which deletes it automatically
+          ::
+          %+  print-check  %corked   ?=(~ (~(dif in corked.mesa) corked.back))
           %+  print-check  %chain    =(client-chain.mesa client-chain.back)
           :: %+  print-check  %pit      =(pit.mesa pit.back)  :: XX
         ::  flows
@@ -2112,9 +2112,11 @@
           =/  test=?
             ?&  :: XX lines don't match for the ahoy flow
                 :: =(line.flow line.back-flow)
-                =-  ~?  !-  closing/[closing.flow closing.back-flow]
+                =-  ~?  !-  closing/[bone=bone closing.flow closing.back-flow]
                     -
-                =(closing.flow closing.back-flow)
+                ?|  =(%bak dire)
+                    =(closing.flow closing.back-flow)
+                ==
             ::
                 =-  ~?  !-  snd/[bone=bone mesa=snd.flow back=snd.back-flow]
                     -
@@ -10018,10 +10020,10 @@
             =.  peers.ames-state.core
               (~(put by peers.ames-state.core) ship %known peer)
             ::
-            =^  peek-moves  ames-state.core
-              (regress-peeks ship fren ames-state.core)
             =^  flow-moves  ames-state.core
               (regress-flows ship fren ames-state.core)
+            =^  peek-moves  ames-state.core
+              (regress-peeks ship fren ames-state.core)
             ::  delete ship from .chums
             ::
             =.  chums.ames-state.core  (~(del by chums.ames-state.core) ship)
@@ -10052,11 +10054,7 @@
             ::
             =.  core
               =;  [cor=_core loads=_loads.snd.state]
-                =?  closing.peer-state.cor  &(?=(%for dire) closing.state)
-                  ::  only a forward flow that is in closing gets migrated;
-                  ::  if this was a backward flow, the flow (and its peek for a
-                  ::  cork will get automatically removed in -regress-peeks)
-                  ::
+                =?  closing.peer-state.cor  closing.state
                   (~(put in closing.peer-state.cor) bone)
                 cor
               ::  init message-pump with highest acked message number
@@ -10162,7 +10160,7 @@
                 =+  flow=(~(got by flows.fren) bone %bak)
                 ?.  closing.flow  c
                 =+  pe-core=(abed-got:pe:c ship)
-                abet:(handle-cork:pe-core bone)
+                abet:(handle-cork:pe-core (mix 0b1 bone))
               c
             =/  [=space pax=^path]
               [space inner]:(decrypt-path:mesa-core path her)
