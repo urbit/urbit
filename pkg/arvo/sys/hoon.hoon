@@ -10116,13 +10116,14 @@
         %_    $
             gol  %noun
             gen
-          :^    %wtcl
-              :+  %cncl  [%limb %levi]
-              :~  [%tsgr [%zpgr [%kttr p.gen]] [%$ 2]]
-                  [%tsgr q.gen [%$ 2]]
-              ==
-            [%tsgr q.gen [%$ 3]]
-          [%zpzp ~]
+          :+  %tsls  q.gen                                            ::  =+  q  ::  vase
+          :^    %wtcl                                                 ::  ?:
+              :+  %cncl  [%tsgr $+3 [%limb %levi]]                    ::      %:  levi:+  
+              :~  [%tsgr $+3 %tsgr [%zpgr [%kttr p.gen]] $+2]         ::        -:!>(*p):+
+                  $+4                                                 ::        p.q
+              ==                                                      ::      ==
+            $+5                                                       ::    q.q
+          [%zpzp ~]                                                   ::  !!
         ==
       [typ val]
     ::
