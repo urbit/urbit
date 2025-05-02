@@ -11709,10 +11709,27 @@
       %-  %+  %*(ev-tace ev-core her sndr.shot)  odd.veb.bug.ames-state
           |.("hear ames packet for migrated peer")
       ::
-      =^  moves  ames-state
+      =^  moves-ahoy  ames-state
         =<  abet
         %.(shot on-ack-ahoy:(ev:am-core now^eny^rof hen ames-state))
-      [moves vane-gate]
+      =^  moves-peer  vane-gate
+        ?.  ?=(~ moves-ahoy)  `vane-gate
+        ::  this was not an %ahoy plea, check if we can move the ship back to
+        ::  .peers, if this is a first contact (e.g after a breach)
+        ::
+        =/  fren=fren-state  +.u.+.ship-state
+        ?.  =(+:*fren-state +.fren)
+          `vane-gate
+        ::  if %ames is the default core, remove the ship from .chums
+        ::  and add it to .peers
+        ::
+        =?  peers.ames-state  ?=(%ames core.ames-state)
+          =|  =peer-state
+          (~(put by peers.ames-state) sndr.shot known/peer-state(- -.fren))
+        =?  chums.ames-state  ?=(%ames core.ames-state)
+          (~(del by chums.ames-state) sndr.shot)
+        (call:am-core hen dud %soft %hear lane blob)
+      [(weld moves-ahoy moves-peer) vane-gate]
     ::
     ++  pe-rate
       |=  [dud=(unit goof) =spar =rate]
