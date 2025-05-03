@@ -12,8 +12,19 @@
   =?  result  !=(q.expected q.actual)
     %+  weld  result
     ^-  tang
-    :~  [%palm [": " ~ ~ ~] [leaf+"expected" (sell expected) ~]]
-        [%palm [": " ~ ~ ~] [leaf+"actual  " (sell actual) ~]]
+    =/  face-printer  ::  modify face printer to hide all faces
+        |=  [inp=tase:us eta=meta:us bas=base:us]
+        ^-  (unit [meta:us tank:us])
+        =+  typ=?-(-.inp %& p.inp, %| p.p.inp)
+        ?>  ?=([%face *] typ)
+        =+  ?-(-.inp %& inp(p q.typ), %| inp(p.p q.typ))
+        (bas - eta)
+    =/  custom-printers=(map term ppin:us)  (my [[%face face-printer] ~])
+    :~
+      :+  %palm  [": " ~ ~ ~]
+      [leaf+"expected" (draw:us [%| expected] [20 %most custom-printers]) ~]
+      :+  %palm  [": " ~ ~ ~]
+      [leaf+"actual" (draw:us [%| actual] [20 %most custom-printers]) ~]
     ==
   ::
   =?  result  !(~(nest ut p.actual) | p.expected)
