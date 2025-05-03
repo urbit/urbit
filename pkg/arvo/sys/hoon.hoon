@@ -99,7 +99,7 @@
   ~/  %lte
   ::    unsigned less than or equals
   ::
-  ::  returns whether {a >= b}.
+  ::  returns whether {a <= b}.
   ::
   ::  a: left hand operand (todo: name)
   ::  b: right hand operand
