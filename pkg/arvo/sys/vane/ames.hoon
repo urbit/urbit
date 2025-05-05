@@ -4566,7 +4566,7 @@
           ::  check that chums has in fact the flow in chums for the
           ::  corresponding bone in the shut-packet
           ::
-          =+  ev-core=(ev-foco:ev:(mesa now eny rof) sndr.shot +.chum-state)
+          =+  ev-core=(ev-abed:ev:(mesa now eny rof) ~ sndr.shot +.chum-state)
           =+  fo-core=(fo-abed:fo:ev-core ~[//scry] side=[(mix 1 bone) %bak])
           ?~  res=(fo-peek:fo-core %ack message-num)
             %.  event-core
@@ -5439,7 +5439,7 @@
               ^-  (quip move axle)
               =+  mesa-core=(mesa now eny rof)
               =/  mesa-ev-core
-               (%*(ev-foco ev:mesa-core ames-state ames-state) her fren)
+               (%*(ev-abed ev:mesa-core ames-state ames-state) ~ her fren)
               =.  chums.ames-state  (~(put by chums.ames-state) her known/fren)
               =+  mesa-co-core=%*(co-core co:mesa-core ames-state ames-state)
               =*  per  peer-state
@@ -7592,7 +7592,6 @@
             |=  [hen=duct dud=(unit goof) wrapped-task=(hobo task)]
             ^-  [(list move) _vane-gate]
             =/  =task  ((harden task) wrapped-task)
-            =+  ev-core=(ev-abed:ev hen)
             =+  sy-core=~(sy-core sy hen)
             =+  co-core=(co-abed:co hen)
             ::
@@ -7690,7 +7689,6 @@
             ?^  dud
               ~|(%mesa-take-dud (mean tang.u.dud))
             ::
-            =+  ev-core=(ev-abed:ev hen)
             =^  moves  ames-state
               ?:  ?=([%gall %unto *] sign)  :: XX from poking %ping app
                 `ames-state
@@ -7709,19 +7707,26 @@
               ::  vane gifts
               ::
                   ?([%gall %flub ~] [@ %done *] [@ %boon *] [@ %noon *])
-                ev-abet:(ev-take:ev-core wire +.sign)
+                =+  ev-core=ev-core:ev
+                =^  side  ev-core  (ev-peel:ev wire +.sign)
+                =+  side
+                ?~  side  `ames-state
+                ev-abet:(ev-take:ev-core bone.u.side +.sign)
               ::
               ::  remote responses: acks/poke/cork/naxplanation payloads
               ::    reentrant from %ames (from either message or packet layer)
               ::
                 [%ames %sage *]
+                =+  ev-core=ev-core:ev
+                =^  side-were  ev-core  (ev-peel:ev wire +.sign)
+                =+  side-were
+                ?~  side  `ames-state
+                ?~  were  `ames-state
                 =<  ev-abet
                 =/  response-pith  `(pole iota)`(mesa-pave:ev-core wire)
-                %.  [wire +.sign]
                 ?+    response-pith   ~|  %mesa-evil-response-wire^wire  !!
-                    ?([%keen ~] ev-flow-wire:ev-core)
-                  ::ev-take-sage:ev-core
-                  ev-take:ev-core
+                    ?([%keen ~] ev-flow-wire:ev-core:ev)
+                  (ev-take-sage:ev-core u.were u.side +>.sign)
                 ==
               ::
               ==
@@ -7744,13 +7749,12 @@
         +|  %helpers
         ::
         ++  ev-core  .
+        ++  ev-abed  |=([d=duct h=ship p=_per] ev-core(hen d, her h, per p))
         ++  ev-abet
           :-  moves
           ?:  skip-abet  ames-state
           ames-state(chums (~(put by chums.ames-state) her %known per))
         ::
-        ++  ev-abed  |=(=duct ev-core(hen duct))
-        ++  ev-foco  |=([her=ship per=_per] ev-core(her her, per per))
         ++  ev-emit  |=(=move ev-core(moves [move moves]))
         ++  ev-emil  |=(mos=(list move) ev-core(moves (weld mos moves)))
         ++  ev-tace
@@ -8214,27 +8218,28 @@
           --
         ::
         +|  %take-responses
+        ::  +ev-peel: abed the ev-core based on the wire; skip=& if bad wire
         ::
-        ++  ev-take
+        ++  ev-peel
           |=  $:  =wire
                   $=  sign
                   $~  flub/~
                   $%([%flub ~] $>(?(%noon %boon %done %sage) gift))
               ==
-          ^+  ev-core
+          ^-  [[side=(unit side) were=(unit were)] _ev-core]
           ?^  flow-wire=(ev-parse-flow-wire wire)
             =.  her  her.u.flow-wire
             =.  per  (got-per her)
-            ?:  (lth rift.u.flow-wire rift.per)
-              %-  %+  ev-tace  odd.veb.bug.ames-state
-                    |.("ignore {<(trip -.sign)>} for old rift")
-              ev-core
-            ?>  ?=(%sage -.sign)
-             (ev-take-sage +.sign [were bone dire]:u.flow-wire)
+            ?.  (lth rift.u.flow-wire rift.per)
+              :_  ev-core
+              [`[bone dire]:u.flow-wire `were.u.flow-wire]
+            %-  %+  ev-tace  odd.veb.bug.ames-state
+                  |.("ignore {<(trip -.sign)>} for old rift")
+            [~ ~]^ev-core
           ?~  bone-wire=(parse-bone-wire wire)
             %-  %+  ev-tace  odd.veb.bug.ames-state
                   |.("weird wire on {<(trip -.sign)>} {(spud wire)}")
-            ev-core(skip-abet %.y)
+            [~ ~]^ev-core
           ?>  ?=([@ her=ship *] u.bone-wire)
           =.  her  her.u.bone-wire
           =.  per  (got-per her)
@@ -8243,23 +8248,33 @@
               ==
             %-  %+  ev-tace  odd.veb.bug.ames-state
                   |.("ignore {<(trip -.sign)>} for old rift")
-            ev-core
+            [~ ~]^ev-core
           =+  ?.  =(%old -.u.bone-wire)  ~
               %-  %+  ev-tace  odd.veb.bug.ames-state
                   |.("parsing old wire: {(spud wire)}")
               ~
           =/  =bone
             ?-(u.bone-wire [%new *] bone.u.bone-wire, [%old *] bone.u.bone-wire)
-          ::  after %sage, all signs happen on backward flows
-          ::
           =?  bone  =(%1 (mod bone 2))
             (mix 0b1 bone)
+          ::  after %sage, all signs happen on backward flows
+          ::
+          [[`[bone %bak] ~] ev-core]
+        ::
+        ++  ev-take
+          |=  $:  =bone
+                  $=  sign
+                  $~  flub/~
+                  $%([%flub ~] $>(?(%noon %boon %done) gift))
+              ==
+          ^+  ev-core
           =+  fo-core=(fo-abed:fo hen bone dire=%bak)
-          ?+  -.sign  !!  :: %sage shouldn't use bone wires
+          ?-  -.sign
             ::  XX for %done, we ack one message at at time, seq is not needed?
             ::  XX use it as an assurance check?
             ::
-            ?(%flub %done)  fo-abet:(fo-take:fo-core %van sign)
+              ?(%flub %done)
+            fo-abet:(fo-take:fo-core %van sign)
           ::
               ?(%boon %noon)
             %+  ev-req-boon  bone
@@ -8269,7 +8284,7 @@
         ::  +ev-take-sage: receive remote responses
         ::
         ++  ev-take-sage
-          |=  [=sage:mess =were =side]
+          |=  [=were =side =sage:mess]
           ^+  ev-core
           ::
           =/  message-path=(pole iota)  (validate-path path.p.sage)
@@ -9635,7 +9650,7 @@
               ::  init ev-core with provided chum-state
               ::
               =+  per=ship^+.chum-state
-              =+  ev-core=(ev-foco:ev-core:ev per)
+              =+  ev-core=(ev-abed:ev ~[//meet-chum] per)
               ::
               =.  ev-core
                 ::  apply outgoing messages
@@ -9644,7 +9659,7 @@
                 |=  [[=duct mess=mesa-message] c=_ev-core]
                 ?+    -.mess  !!  :: XX log alien peer %boon?
                     %plea
-                  (ev-req-plea:(ev-abed:c duct) +.mess)
+                  (ev-req-plea:c(hen duct) +.mess)
                 ==
               ::
               =.  ev-core
@@ -9654,7 +9669,7 @@
                 |=  [[[=path =ints] ducts=(set duct)] core=_ev-core]
                 %-  ~(rep in ducts)
                 |=  [=duct c=_core]
-                (ev-req-peek:(ev-abed:c duct) publ/life.+.per path)
+                (ev-req-peek:c(hen duct) publ/life.+.per path)
               ::
               =.  ev-core
                 ::  apply (two-party) remote scry requests
@@ -9663,7 +9678,7 @@
                 |=  [[[=path =ints] ducts=(set duct)] core=_ev-core]
                 %-  ~(rep in ducts)
                 |=  [=duct c=_core]
-                (ev-req-peek:(ev-abed:c duct) space=chum-to-our:c path)
+                (ev-req-peek:c(hen duct) space=chum-to-our:c path)
               ::
               =^  moves  ames-state  ev-abet:ev-core
               (sy-emil moves)
@@ -9841,7 +9856,7 @@
                 moves:(~(al-read-proof al ~[/ames]) ship `@ux`spon)
               ~&  retrieving-keys-again/ship
               :_  moves
-              [[//keys]~ %pass /public-keys %j %public-keys ship ~ ~]
+              [~[//keys] %pass /public-keys %j %public-keys ship ~ ~]
             ::
             =+  core=~(ev-core ev(ames-state state) hen ship +.per-sat)
             ::
@@ -10039,7 +10054,7 @@
             =+  peer-core=(abed-peer:pe:event-core her peer)
             =;  core=_peer-core
               abet:abet:core
-            =+  ev-core=(ev-foco:ev her fren)
+            =+  ev-core=(ev-abed:ev ~[//regress] her fren)
             %-  ~(rep by flows.fren)
             |=  [[side state=flow-state] core=_peer-core]
             =+  fo-core=~(. fo:ev-core hen^bone^dire state)
@@ -10848,7 +10863,7 @@
           =+  per-sat=(get-per u.rcvr)
           ?.  ?=([~ ~ %known *] per-sat)
             ~  ::  %alien or missing
-          =+  ev-core=(ev-foco:ev u.rcvr +.u.u.per-sat)
+          =+  ev-core=(ev-abed:ev ~[//scry] u.rcvr +.u.u.per-sat)
           =+  fo-core=(fo-abed:fo:ev-core ~[//scry] side=[u.bone dire.tyl])
           ?:  &(?=(%ack load.tyl) fo-corked:fo-core)
               :: ~&  >>>  corked-flow-dropping/load^corked.per  :: XX remove
@@ -10874,7 +10889,7 @@
           =+  per-sat=(get-per u.rcvr)
           ?.  ?=([~ ~ %known *] per-sat)
             ~  ::  %alien or missing
-          =+  ev-core=(ev-foco:ev u.rcvr +.u.u.per-sat)
+          =+  ev-core=(ev-abed:ev ~[//scry] u.rcvr +.u.u.per-sat)
           =+  fo-core=(fo-abed:fo:ev-core ~[//scry] side=[u.bone dire.tyl])
           ?~(res=(fo-peek:fo-core %cork 0) ~ ``[%message !>(u.res)])
         ::  comet attestations
@@ -10958,7 +10973,7 @@
           ?.  ?=([~ ~ %known *] per-sat)
             ~  ::  %alien or missing
           ?>  ?=([ship=@ %flow bone=@ dire:ames qery=*] pat.tyl)
-          =+  ev-core=(ev-foco:ev u.ship +.u.u.per-sat)
+          =+  ev-core=(ev-abed:ev ~[//scry] u.ship +.u.u.per-sat)
           =/  =side  [u.bone dire]
           =+  fo-core=(fo-abed:fo:ev-core ~[//scry] side)
           ?.  (~(has by flows.per.fo-core) side)
@@ -11084,7 +11099,7 @@
                 [bone=@ ~]
               ?~  bone=(slaw %ud bone.req.tyl)
                 [~ ~]
-              =+  ev-core=(ev-foco:ev u.who +.u.per)
+              =+  ev-core=(ev-abed:ev ~[//scry] u.who +.u.per)
               =+  fo-core=(fo-abed:fo:ev-core ~[//scry] u.bone dire.tyl)
               ``atom+!>(closing.state.fo-core)
             ==
@@ -11530,7 +11545,7 @@
     ++  pe-core  .
     ++  me-core  (mesa now eny rof)
     ++  am-core  (ames now eny rof)
-    ++  ev-core  (ev-abed:ev:me-core hen)
+    ++  ev-core  ev-core:ev:me-core
     ++  al-core  (al-abed:al:me-core hen)
     ++  pe-abed  |=(=duct pe-core(hen duct))
     ++  pe-find-peer
@@ -11581,7 +11596,7 @@
         ?:  ?=([~ %known *] +.ship-state)
           =<  ev-abet
           %.  plea
-          ev-req-plea:(ev-foco:ev-core ship +.u.ship-state)
+          ev-req-plea:(ev-abed:ev-core hen ship +.u.ship-state)
         ::
         =<  al-abet
         %^  al-enqueue-alien-todo:al-core  ship  +.ship-state
@@ -11600,7 +11615,7 @@
         ?:  ?=([~ %known *] +.ship-state)
           =<  ev-abet
           %.  plea
-          ev-req-plea:(ev-foco:ev-core ship +.u.ship-state)
+          ev-req-plea:(ev-abed:ev-core hen ship +.u.ship-state)
         ::
         =<  al-abet
         %^  al-enqueue-alien-todo:al-core  ship  +.ship-state
@@ -11619,7 +11634,7 @@
           =*  sat     +.u.ship-state
           =/  =space  ?~(sec publ/life.sat shut/[idx key]:u.sec)
           %.  [space path]
-          ev-req-peek:(ev-foco:ev-core ship sat)
+          ev-req-peek:(ev-abed:ev-core hen ship sat)
         ::
         =<  al-abet
         :: XX: key exchange over ames forces all encrypted scries to be
@@ -11637,7 +11652,7 @@
         (call:am-core hen ~ soft+chum/ship^path)
       =^  moves  ames-state
         ?:  ?=([~ %known *] +.ship-state)
-          =+  ev-core=(ev-foco:ev-core ship +.u.ship-state)
+          =+  ev-core=(ev-abed:ev-core hen ship +.u.ship-state)
           =<  ev-abet
           (ev-req-peek:ev-core chum-to-our:ev-core path)
         ::
@@ -11659,7 +11674,7 @@
           ::  XX delete from alien agenda?
           ~&("peer still alien, skip peek cancel" ev-core)
         %.  [all path.spar]
-       ev-cancel-peek:(ev-foco:ev-core ship.spar +.u.ship-state)
+       ev-cancel-peek:(ev-abed:ev-core hen ship.spar +.u.ship-state)
       moves^vane-gate
     ::
     ++  pe-hear
@@ -11732,7 +11747,7 @@
       =^  moves  ames-state
         ?.  ?=([~ %known *] +.ship-state)
           !!  :: no %aliens allowed
-        =+  ev-core=(ev-foco:ev-core ship.spar +.u.ship-state)
+        =+  ev-core=(ev-abed:ev-core hen ship.spar +.u.ship-state)
         ?^  ms=(~(get by pit.per.ev-core) path.spar)
           ::  XX  call decrypt-path path.spar?
           ::
@@ -11762,7 +11777,7 @@
           !!  :: no %aliens allowed
         =<  ev-abet
         %.  [path.spar task freq]
-        ev-add-rate:(ev-foco:ev-core ship.spar +.u.ship-state)
+        ev-add-rate:(ev-abed:ev-core hen ship.spar +.u.ship-state)
       moves^vane-gate
     ::
     ++  pe-whey
@@ -11802,7 +11817,7 @@
           =/  =fren-state  +.u.+.chum-state
           =<  ev-abet
           %.  [dud lane hop.pact %page +>.pact]
-          hear-page:ev-pact:(ev-foco:ev-core her.name.pact fren-state)
+          hear-page:ev-pact:(ev-abed:ev-core hen her.name.pact fren-state)
         ::
             %peek
           ?~  dud
@@ -11868,7 +11883,7 @@
               =/  fren=fren-state  +.u.+.chum-state
               =<  ev-abet
               %.  [dud lane hop.pact %poke +>.pact]
-              hear-poke:ev-pact:(ev-foco:ev-core her-pok fren)
+              hear-poke:ev-pact:(ev-abed:ev-core hen her-pok fren)
             =?  chums.ames-state  ?=(~ +.chum-state)
               ::  first time: upgrade to %alien and +peek attestation proof
               ::
@@ -11901,7 +11916,7 @@
                 chums.ames-state.me-core
               (~(put by chums.ames-state.me-core) her-pok known/per)
             ==
-          =+  ev-core=(ev-foco:ev:mesa-core her-pok^per)
+          =+  ev-core=(ev-abed:ev:mesa-core hen her-pok^per)
           ::  XX refactor; same as hear-poke:ev-pact:ev:mesa
           ::
           =/  [=space cyf=(unit @) =inner-poke=path]
@@ -11998,7 +12013,7 @@
           ::  XX  this assumes that %aliens are checked in the packet layer
           ?>  ?=([~ %known *] chum)  ::  XX alien agenda?
           %.  [dud +.mess]
-          hear-poke:ev-mess:(ev-foco:ev-core ship.p.q.mess +.u.chum)
+          hear-poke:ev-mess:(ev-abed:ev-core hen ship.p.q.mess +.u.chum)
         ::
             %peek
           ?~  chum=(~(get by chums.ames-state) ship.mess)
@@ -12006,7 +12021,7 @@
           ::  XX  this assumes that %aliens are checked in the packet layer
           ?>  ?=([~ %known *] chum)  ::  XX alien agenda?
           %.  +.mess
-          hear-peek:ev-mess:(ev-foco:ev-core ship.mess +.u.chum)
+          hear-peek:ev-mess:(ev-abed:ev-core hen ship.mess +.u.chum)
         ::
             %page
           ?~  chum=(~(get by chums.ames-state) ship.p.mess)
@@ -12014,7 +12029,7 @@
           ::  XX  this assumes that %aliens are checked in the packet layer
           ?>  ?=([~ %known *] chum)  ::  XX alien agenda?
           %.  +.mess
-          hear-page:ev-mess:(ev-foco:ev-core ship.p.mess +.u.chum)
+          hear-page:ev-mess:(ev-abed:ev-core hen ship.p.mess +.u.chum)
         ::
         ==
       moves^vane-gate
