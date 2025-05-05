@@ -21,7 +21,7 @@
     (most ;~(plug com gaw) taut-rule)
   ::
     %+  rune  tis
-    ;~(plug sym ;~(pfix gap stap))
+    ;~(plug ;~(pose (cold ~ tar) (stag ~ sym)) ;~(pfix gap stap))
   ::
     %+  rune  sig
     ;~((glue gap) sym wyde:vast stap)

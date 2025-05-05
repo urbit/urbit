@@ -2805,7 +2805,7 @@
   +$  pile
     $:  sur=(list taut)
         lib=(list taut)
-        raw=(list [face=term =path])
+        raw=(list [face=(unit term) =path])
         raz=(list [face=term =spec =path])
         maz=(list [face=term =mark])
         caz=(list [face=term =mars])

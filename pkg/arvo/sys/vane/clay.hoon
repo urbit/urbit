@@ -988,7 +988,7 @@
         (most ;~(plug com gaw) taut-rule)
       ::
         %+  rune  tis
-        ;~(plug sym ;~(pfix gap stap))
+        ;~(plug ;~(pose (cold ~ tar) (stag ~ sym)) ;~(pfix gap stap))
       ::
         %+  rune  sig
         ;~((glue gap) sym wyde:vast stap)
@@ -1046,11 +1046,11 @@
       $(sut (slop pin sut), taz t.taz)
     ::
     ++  run-raw
-      |=  [sut=vase raw=(list [face=term =path])]
+      |=  [sut=vase raw=(list [face=(unit term) =path])]
       ^-  [vase state]
       ?~  raw  [sut nub]
       =^  pin=vase  nub  (build-file (snoc path.i.raw %hoon))
-      =.  p.pin  [%face face.i.raw p.pin]
+      =?  p.pin  ?=(^ face.i.raw)  [%face u.face.i.raw p.pin]
       $(sut (slop pin sut), raw t.raw)
     ::
     ++  run-raz
