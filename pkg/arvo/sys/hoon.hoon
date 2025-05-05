@@ -5981,11 +5981,11 @@
     %+  sear  (soft iota)
     %-  stew
     ^.  stet  ^.  limo
-    :~  :-  'a'^'z'  (stag %tas sym)
+    :~  :-  'a'^'z'  sym
         :-  '$'      (cold [%tas %$] buc)
         :-  '0'^'9'  bisk:so
         :-  '-'      tash:so
-        :-  '.'      zust:so
+        :-  '.'      ;~(pfix dot zust:so)
         :-  '~'      ;~(pfix sig ;~(pose crub:so (easy [%n ~])))
         :-  '\''     (stag %t qut)
     ==
