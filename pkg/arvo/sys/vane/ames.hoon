@@ -7711,7 +7711,7 @@
                 =^  side  ev-core  (ev-peel:ev wire +.sign)
                 =+  side
                 ?~  side  `ames-state
-                ev-abet:(ev-take:ev-core bone.u.side +.sign)
+                ev-abet:(ev-take:ev-core(hen hen) bone.u.side +.sign)
               ::
               ::  remote responses: acks/poke/cork/naxplanation payloads
               ::    reentrant from %ames (from either message or packet layer)
@@ -7726,7 +7726,7 @@
                 =/  response-pith  `(pole iota)`(mesa-pave:ev-core wire)
                 ?+    response-pith   ~|  %mesa-evil-response-wire^wire  !!
                     ?([%keen ~] ev-flow-wire:ev-core:ev)
-                  (ev-take-sage:ev-core u.were u.side +>.sign)
+                  (ev-take-sage:ev-core(hen hen) u.were u.side +>.sign)
                 ==
               ::
               ==
