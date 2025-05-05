@@ -4567,7 +4567,7 @@
           ::  corresponding bone in the shut-packet
           ::
           =+  ev-core=(ev-abed:ev:(mesa now eny rof) ~ sndr.shot +.chum-state)
-          =+  fo-core=(fo-abed:fo:ev-core ~[//scry] side=[(mix 1 bone) %bak])
+          =+  fo-core=(fo-abed:fo:ev-core side=[(mix 1 bone) %bak])
           ?~  res=(fo-peek:fo-core %ack message-num)
             %.  event-core
             (ev-trace odd.veb sndr.shot |.("ack missing seq={<message-num>}"))
@@ -5146,8 +5146,8 @@
                   =?  flow  (~(has by flows) bone^dire)
                     (~(got by flows) bone^dire)
                   =.  flows.fren  (~(put by flows.fren) bone^dire flow)
-                  %.  [duct bone dire]
-                  fo-abed:fo:~(ev-core ev:mesa-core [duct her^fren])
+                  %.  side=bone^dire
+                  fo-abed:fo:~(ev-core ev:mesa-core [duct her fren])
                 ::
                 ?:  ?&  =(%for dire)
                         (~(has in closing.peer-state) original-bone)
@@ -7809,7 +7809,7 @@
               (~(put by by-duct) hen next-bone)
             (~(put by by-bone) next-bone hen)
           ::
-          =+  fo-core=(fo-abed:fo hen bone dire=%for)
+          =+  fo-core=(fo-abed:fo bone dire=%for)
           ::
           %-  %+  ev-tace  msg.veb.bug.ames-state
               =+  msg=?:(cork %cork %plea)
@@ -7835,7 +7835,7 @@
           |=  [=bone id=(unit *) load=*]
           ^+  ev-core
           ::
-          =+  fo-core=(fo-abed:fo hen bone dire=%bak)
+          =+  fo-core=(fo-abed:fo bone dire=%bak)
           %-  %+  ev-tace  msg.veb.bug.ames-state
               =*  next  next.snd.fo-core
               |.("send %boon {<[bone=bone seq=next]>}")
@@ -7958,7 +7958,7 @@
               %-  %+  ev-tace  msg.veb.bug.ames-state
                   |.("hear incomplete message")
               :: XX assert load is plea/boon?
-              =+  fo-core=(fo-abed:fo hen [bone dire]:ack)
+              =+  fo-core=(fo-abed:fo [bone dire]:ack)
               ?:  (fo-message-is-acked:fo-core mess.pok)
                 ::  don't peek if the message havs been already acked
                 ::
@@ -8200,7 +8200,7 @@
             :: XX assert load is plea/boon
             =/  fo-core
               %.  [%sink mess.pok gage ?=(~ dud)]
-              fo-call:(fo-abed:fo hen [bone dire]:ack)
+              fo-call:(fo-abed:fo [bone dire]:ack)
             =.  ev-core  fo-abet:fo-core
             ev-core(skip-abet delete-per.fo-core)
           ::
@@ -8268,7 +8268,7 @@
                   $%([%flub ~] $>(?(%noon %boon %done) gift))
               ==
           ^+  ev-core
-          =+  fo-core=(fo-abed:fo hen bone dire=%bak)
+          =+  fo-core=(fo-abed:fo bone dire=%bak)
           ?-  -.sign
             ::  XX for %done, we ack one message at at time, seq is not needed?
             ::  XX use it as an assurance check?
@@ -8288,7 +8288,7 @@
           ^+  ev-core
           ::
           =/  message-path=(pole iota)  (validate-path path.p.sage)
-          =+  fo-core=(fo-abed:fo hen side)
+          =+  fo-core=(fo-abed:fo side)
           ::
           ?:  =(%cor were)
             ::  validate %cork path and wire
@@ -8552,7 +8552,7 @@
           =|  can-be-corked=?(%.y %.n)
           =|  delete-per=?(%.y %.n)
           ::
-          |_  [[hen=duct =side] state=flow-state]
+          |_  [=side state=flow-state]
           +*  bone  bone.side
               dire  dire.side
               snd   snd.state
@@ -8562,10 +8562,9 @@
           ::
           ++  fo-core  .
           ++  fo-abed
-            |=  [=duct =^side]
+            |=  =^side
             ::  XX use +got in another arm to assert when the flow should exist
-            =.  state  (~(gut by flows.per) side *flow-state)
-            fo-core(hen duct, side side)
+            fo-core(side side, state (~(gut by flows.per) side *flow-state))
           ::
           ++  fo-abet
             ^+  ev-core
@@ -10057,7 +10056,7 @@
             =+  ev-core=(ev-abed:ev ~[//regress] her fren)
             %-  ~(rep by flows.fren)
             |=  [[side state=flow-state] core=_peer-core]
-            =+  fo-core=~(. fo:ev-core hen^bone^dire state)
+            =+  fo-core=~(. fo:ev-core bone^dire state)
             ::
             =?  bone  ?=(%bak dire)  (mix 0b1 bone) :: [bone=%0 %bak] -> bone=%1
             ::
@@ -10247,7 +10246,7 @@
             |=  [[side state=flow-state] c=_ev-core]
             ?:  =(%back dire)  c
             ?.  closing.state  c
-            =+  fo-core=~(fo-core fo:c [hen bone dire=%for] state)
+            =+  fo-core=~(fo-core fo:c [bone dire=%for] state)
             ::  sanity check on the flow state
             ::
             ?^  first=(pry:fo-mop:fo-core loads.snd.fo-core)  c
@@ -10864,7 +10863,7 @@
           ?.  ?=([~ ~ %known *] per-sat)
             ~  ::  %alien or missing
           =+  ev-core=(ev-abed:ev ~[//scry] u.rcvr +.u.u.per-sat)
-          =+  fo-core=(fo-abed:fo:ev-core ~[//scry] side=[u.bone dire.tyl])
+          =+  fo-core=(fo-abed:fo:ev-core side=[u.bone dire.tyl])
           ?:  &(?=(%ack load.tyl) fo-corked:fo-core)
               :: ~&  >>>  corked-flow-dropping/load^corked.per  :: XX remove
               ::  if the flow is corked, block
@@ -10890,7 +10889,7 @@
           ?.  ?=([~ ~ %known *] per-sat)
             ~  ::  %alien or missing
           =+  ev-core=(ev-abed:ev ~[//scry] u.rcvr +.u.u.per-sat)
-          =+  fo-core=(fo-abed:fo:ev-core ~[//scry] side=[u.bone dire.tyl])
+          =+  fo-core=(fo-abed:fo:ev-core side=[u.bone dire.tyl])
           ?~(res=(fo-peek:fo-core %cork 0) ~ ``[%message !>(u.res)])
         ::  comet attestations
         ::
@@ -10975,7 +10974,7 @@
           ?>  ?=([ship=@ %flow bone=@ dire:ames qery=*] pat.tyl)
           =+  ev-core=(ev-abed:ev ~[//scry] u.ship +.u.u.per-sat)
           =/  =side  [u.bone dire]
-          =+  fo-core=(fo-abed:fo:ev-core ~[//scry] side)
+          =+  fo-core=(fo-abed:fo:ev-core side)
           ?.  (~(has by flows.per.fo-core) side)
             ~
           =,  state:fo-core
@@ -11100,7 +11099,7 @@
               ?~  bone=(slaw %ud bone.req.tyl)
                 [~ ~]
               =+  ev-core=(ev-abed:ev ~[//scry] u.who +.u.per)
-              =+  fo-core=(fo-abed:fo:ev-core ~[//scry] u.bone dire.tyl)
+              =+  fo-core=(fo-abed:fo:ev-core u.bone dire.tyl)
               ``atom+!>(closing.state.fo-core)
             ==
           ::
