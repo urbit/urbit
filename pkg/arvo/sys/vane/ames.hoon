@@ -11724,10 +11724,16 @@
         ::  if %ames is the default core, remove the ship from .chums
         ::  and add it to .peers
         ::
-        =?  peers.ames-state  ?=(%ames core.ames-state)
+        ?:  ?=(%mesa core.ames-state)
+          ::  if %mesa is the default core (i.e. after everybody switches to
+          ::  directed messaging) ames packet should be dropped until the sender
+          ::  migrates all its outstanding packets to |mesa
+          ::
+          `vane-gate
+        =.  peers.ames-state
           =|  =peer-state
           (~(put by peers.ames-state) sndr.shot known/peer-state(- -.fren))
-        =?  chums.ames-state  ?=(%ames core.ames-state)
+        =.  chums.ames-state
           (~(del by chums.ames-state) sndr.shot)
         (call:am-core hen dud %soft %hear lane blob)
       [(weld moves-ahoy moves-peer) vane-gate]
