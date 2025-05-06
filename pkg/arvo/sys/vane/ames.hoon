@@ -2216,6 +2216,7 @@
     ::
     ::
     |=  [now=@da eny=@ rof=roof]
+    ~>  %spin.[%ames]
     =*  larval-gate  .
     =*  adult-core   (adult-gate +<)
     ::  formal interface with no extra arms
@@ -11945,6 +11946,7 @@
 ++  call
   |=  [hen=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _vane-gate]
+  ~>  %spin.[%call]
   =*  sample  +<
   =+  me-core=(mesa now eny rof)
   =+  am-core=(ames now eny rof)
@@ -12000,6 +12002,7 @@
 ++  take
   |=  [=wire =duct dud=(unit goof) =sign]
   ^-  [(list move) _vane-gate]
+  ~>  %spin.[%take]
   =*  sample  +<
   =+  me-core=(mesa now eny rof)
   =+  am-core=(ames now eny rof)
@@ -12075,11 +12078,13 @@
 ::
 ++  load
   |=  state=axle
+  ~>  %spin.[%load]
   vane-gate(ames-state state)
 ::  +scry: dereference namespace
 ::
 ++  scry
   ^-  roon
+  ~>  %spin.[%scry]
   |=  [lyc=gang pov=path car=term bem=beam]
   =*  sample  +<
   =+  me-core=(mesa now eny rof)

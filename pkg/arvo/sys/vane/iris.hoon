@@ -298,6 +298,7 @@
 ::  a vane is activated with current date, entropy, and a namespace function
 ::
 |=  [now=@da eny=@uvJ rof=roof]
+~>  %spin.[%iris]
 ::  allow jets to be registered within this core
 ::
 ~%  %http-client  ..part  ~
@@ -305,6 +306,7 @@
 ++  call
   |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _light-gate]
+  ~>  %spin.[%call]
   ::
   =/  task=task  ((harden task) wrapped-task)
   ::
@@ -366,6 +368,7 @@
 ++  take
   |=  [=wire =duct dud=(unit goof) sign=*]
   ^-  [(list move) _light-gate]
+  ~>  %spin.[%take]
   ?<  ?=(^ dud)
   !!
 ::
@@ -375,6 +378,7 @@
 ++  load
   |=  old=axle
   ^+  ..^$
+  ~>  %spin.[%load]
   ::
   ~!  %loading
   ..^$(ax old)
@@ -387,6 +391,7 @@
   ^-  roon
   |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
+  ~>  %spin.[%scry]
   =*  ren  car
   =*  why=shop  &/p.bem
   =*  syd  q.bem
