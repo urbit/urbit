@@ -3574,7 +3574,6 @@
         %shut  (decrypt:crypt key.space (need cyf) ser)
         %chum  (decrypt:crypt key.space (need cyf) ser)
       ==
-    ::  XX move to utility core chapter since we use got-per?
     ::
     ++  decrypt-path
       |=  [=path =ship]
@@ -4090,7 +4089,7 @@
                   ^=     keys  keys
                   ^=  sponsor  `(^sein:title sndr.shot)
               ==
-            =+  sy-core=~(. sy:(mesa now^eny^rof) duct)
+            =+  sy-core=~(. sy:mesa duct)
             =^  moves  ames-state
               sy-abet:(sy-publ:sy-core / [%full (my [sndr.shot point]~)])
             (emil moves)
@@ -4766,7 +4765,7 @@
             =<  [moves ames-state]
             ~|  %regress-crashed
             %.  [`ship dry=%.n]
-            %*  sy-rege  sy:(mesa now eny rof)
+            %*  sy-rege  sy:mesa
               ames-state  ahoy-state
             ==
           ::  compare pre/post migrated states
@@ -4827,7 +4826,7 @@
           ::  check that chums has in fact the flow in chums for the
           ::  corresponding bone in the shut-packet
           ::
-          =+  ev-core=(ev-abed:ev:(mesa now eny rof) ~ sndr.shot +.chum-state)
+          =+  ev-core=(ev-abed:ev:mesa ~ sndr.shot +.chum-state)
           =+  fo-core=(fo-abed:fo:ev-core side=[(mix 1 bone) %bak])
           ?~  res=(fo-peek:fo-core %ack message-num)
             %.  event-core
@@ -5401,7 +5400,7 @@
                 =/  fo-core
                   =/  =^duct
                     (~(gut by by-bone.ossuary.peer-state) bone [/ames]~)
-                  =+  mesa-core=(mesa now eny rof)
+                  =+  mesa-core=mesa
                   :: XX check that we don't add a naxplanation .bone here?
                   ::
                   =?  flow  (~(has by flows) bone^dire)
@@ -5698,7 +5697,7 @@
             ++  make-peeks
               |=  fren=fren-state
               ^-  (quip move axle)
-              =+  mesa-core=(mesa now eny rof)
+              =+  mesa-core=mesa
               =/  mesa-ev-core
                (%*(ev-abed ev:mesa-core ames-state ames-state) ~ her fren)
               =.  chums.ames-state  (~(put by chums.ames-state) her known/fren)
@@ -7825,8 +7824,6 @@
     ::  directed M E S s A ging
     ::
     ++  mesa
-      |=  [now=@da eny=@uvJ rof=roof]
-      =.  vane-gate  vane-gate(now now, eny eny, rof rof)
       ::
       =<  ::  adult |mesa formal interface, after metamorphosis from larva
           ::
@@ -7919,9 +7916,11 @@
               ~?  >     test  %mass-rege-worked
               ~?  >>>  !test  %mass-rege-failed
               `ames-state
-            ::  from internal %ames request
+              ::  from internal %ames request; XX check -.duct?
               ::
-                ?(%meek %moke %mage)  co-abet:(co-call:co-core task)
+                ?(%meek %moke %mage)
+                ~&  duct/hen
+                co-abet:(co-call:co-core task)
               ==
               ::
             [moves vane-gate]
@@ -10384,7 +10383,7 @@
             |=  [her=^ship fren=fren-state state=axle]
             ^-  (quip move axle)
             =+  event-core=(ev:ames now^eny^rof hen state)
-            =/  mesa-core  %*(. (mesa now eny rof) ames-state state)
+            =/  mesa-core  mesa(ames-state state)
             =;  core=_event-core
               abet:core
             %-  ~(rep by pit.fren)
@@ -11547,7 +11546,7 @@
     +|  %helpers
     ::
     ++  pe-core  .
-    ++  me-core  (mesa now eny rof)
+    ++  me-core  mesa
     ++  am-core  (ames now eny rof)
     ++  ev-core  ev-core:ev:me-core
     ++  al-core  (al-abed:al:me-core hen)
@@ -12035,7 +12034,7 @@
   |=  [hen=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _vane-gate]
   =*  sample  +<
-  =+  me-core=(mesa now eny rof)
+  =+  me-core=mesa
   =+  am-core=(ames now eny rof)
   =/  =task  ((harden task) wrapped-task)
   ?:  &(?=(~ unix-duct) ?=(?(%hear %heer %mess) -.task))
@@ -12090,7 +12089,7 @@
   |=  [=wire =duct dud=(unit goof) =sign]
   ^-  [(list move) _vane-gate]
   =*  sample  +<
-  =+  me-core=(mesa now eny rof)
+  =+  me-core=mesa
   =+  am-core=(ames now eny rof)
   ?^  dud
     ~|(%ames-take-dud (mean tang.u.dud))
@@ -12173,7 +12172,7 @@
   ^-  roon
   |=  [lyc=gang pov=path car=term bem=beam]
   =*  sample  +<
-  =+  me-core=(mesa now eny rof)
+  =+  me-core=mesa
   =+  am-core=(ames now eny rof)
   ?:  ?&  =(our p.bem)
           =(%$ q.bem)
