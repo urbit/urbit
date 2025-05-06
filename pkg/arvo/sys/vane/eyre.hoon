@@ -1151,20 +1151,6 @@
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 & url.request "Peer {(scow %p u.ship)} not found.")
     =+  !<  [rift=@ud life=@ud bone=(unit @ud) last-acked=(unit @ud)]  q.u.u.des
-    ?~  bone
-      %^  return-static-data-on-duct  200  'application/octet-stream'
-      %-  as-octs:mimes:html
-      %-  jam
-      ^-  boot
-      [%1 (galaxy-for u.ship) rift life ~ ~]
-    ?~  last-acked
-      %^  return-static-data-on-duct  404  'text/html'
-      %:  error-page
-        404
-        &
-        url.request
-        "Bone {(scow %u u.bone)} of peer {(scow %p u.ship)} not found."
-      ==
     %^  return-static-data-on-duct  200  'application/octet-stream'
     %-  as-octs:mimes:html
     %-  jam
