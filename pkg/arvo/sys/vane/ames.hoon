@@ -11734,7 +11734,13 @@
         ?:  ?=(%mesa core.ames-state)
           ::  if %mesa is the default core (i.e. after everybody switches to
           ::  directed messaging) ames packet should be dropped until the sender
-          ::  migrates all its outstanding packets to |mesa
+          ::  migrates all its outstanding packets to |mesa.
+          ::
+          ::  XX what if the sender boots with an old pill after breaching that
+          ::  loads %ames as the default core?
+          ::
+          ::  XX move the peer from .chums to .peers, and enqueue an %ahoy $plea
+          ::  to migrate the peer?
           ::
           `vane-gate
         =.  peers.ames-state
@@ -11860,6 +11866,8 @@
             ::    %mesa packet
             ::
             =?  chum-state  ?=([%ames *] chum-state)
+              %-  %+  %*(ev-tace ev-core her her-pok)  odd.veb.bug.ames-state
+                  |.("hear mesa packet for regressed (alien/missing) peer")
               ?-    +.chum-state
                   ~
                 chum-state(- %mesa)
