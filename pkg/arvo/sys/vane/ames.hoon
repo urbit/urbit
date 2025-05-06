@@ -7919,8 +7919,9 @@
               ::  from internal %ames request; XX check -.duct?
               ::
                 ?(%meek %moke %mage)
-                ~&  duct/hen
-                co-abet:(co-call:co-core task)
+              ?.  ?=([[%ames *] *] hen)
+                `ames-state ::  XX log
+              co-abet:(co-call:co-core task)
               ==
               ::
             [moves vane-gate]
