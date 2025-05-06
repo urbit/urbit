@@ -287,7 +287,7 @@
 ::
 ++  scry
   |=  [vane=_dep-gall care=term bem=beam]
-  =/  res  (scry:(vane) ~ care bem)
+  =/  res  (scry:(vane) ~ / care bem)
   res
 ::
 ++  take
@@ -341,9 +341,9 @@
   ^-  [moves=(list move) _dep-gall]
   ::
   =;  =task:gall  (call vane ~[/perm] task)
-  =/  =sock  [~dep ~dep]
+  =/  =sack  [~dep ~dep /]
   =/  =term  %buster
-  [%deal sock term taz]
+  [%deal sack term taz]
 ::
 ++  scry-test-dummy-bowl
   |=  vane=_dep-gall

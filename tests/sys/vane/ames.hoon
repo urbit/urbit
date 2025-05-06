@@ -205,7 +205,7 @@
     ::  custom scry handler for +test-fine-response.
     ::  could be refined further...
     ::
-    |=  [lyc=gang vis=view bem=beam]
+    |=  [lyc=gang pov=path vis=view bem=beam]
     ^-  (unit (unit cage))
     ?+  vis  ~
         %cp
@@ -222,7 +222,7 @@
       ``hoon+!>(dojo)
     ==
   =/  vane-core  (vane(rof roof))
-  (scry:vane-core ~ car bem)
+  (scry:vane-core ~ / car bem)
 ::
 ++  call
   |=  [vane=_nec =duct =task:ames]

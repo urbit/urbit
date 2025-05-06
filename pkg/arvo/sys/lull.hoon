@@ -462,7 +462,8 @@
 +$  rift  @ud                                           ::  ship continuity
 +$  mime  (pair mite octs)                              ::  mimetyped data
 +$  octs  (pair @ud @)                                  ::  octet-stream
-+$  sock  (pair ship ship)                              ::  outgoing [our his]
++$  sock  (pair ship ship)                              ::  outgoing [src dest]
++$  sack  (trel ship ship path)                         ::  $sock /w provenance
 +$  stub  (list (pair stye (list @c)))                  ::  styled unicode
 +$  stye  (pair (set deco) (pair tint tint))            ::  decos/bg/fg
 +$  styl  %+  pair  (unit deco)                         ::  cascading style
@@ -2621,8 +2622,10 @@
     ==                                                  ::
   +$  task                                              ::  incoming request
     $~  [%vega ~]                                       ::
-    $%  [%deal p=sock q=term r=deal]                    ::  full transmission
+    $%  [%deal p=sack q=term r=deal]                    ::  full transmission
         [%sear =ship]                                   ::  clear pending queues
+        [%jolt =desk =dude]                             ::  (re)start agent
+        [%idle =dude]                                   ::  suspend agent
         [%load =load]                                   ::  load agent
         [%nuke =dude]                                   ::  delete agent
         ::TODO  %ward & %wink in clay now y/n?
@@ -2644,6 +2647,7 @@
     $:  $:  our=ship                                    ::  host
             src=ship                                    ::  guest
             dap=term                                    ::  agent
+            sap=path                                    ::  provenance
         ==                                              ::
         $:  wex=boat                                    ::  outgoing subs
             sup=bitt                                    ::  incoming subs
@@ -3508,14 +3512,17 @@
     $~  [%vega ~]                                       ::
     $%  $>(%born vane-task)                             ::  new unix process
         [%done ~]                                       ::  socket closed
-        ::  TODO  mark ignored                          ::
-        ::                                              ::
-        [%fard p=(fyrd cage)]                           ::  in-arvo thread
-        [%fyrd p=(fyrd cast)]                           ::  external thread
-        [%lard =bear =shed]                             ::  inline thread
+        [%home =path task=runner]                       ::  provenance wrapper
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
-    ==                                                  ::
+        runner                                          ::  thread starter
+    ==
+  +$  runner                                            ::  thread starter
+        ::  TODO  mark ignored                          ::
+    $%  [%fard p=(fyrd cage)]                           ::  in-arvo thread
+        [%fyrd p=(fyrd cast)]                           ::  external thread
+        [%lard =bear =shed]                             ::  inline thread
+    ==
   ::                                                    ::
   ++  avow  |$  [a]  (each a goof)                      ::  $fyrd result
   +$  bear  $@(desk beak)                               ::  partial $beak
@@ -3539,6 +3546,7 @@
   +$  bowl
     $:  our=ship
         src=ship
+        sap=path
         tid=tid
         mom=(unit tid)
         wex=boat:gall
@@ -3546,6 +3554,7 @@
         eny=@uvJ
         now=@da
         byk=beak
+        pes=pers:gall
     ==
   ::
   ::  cards:  cards to send immediately.  These will go out even if a

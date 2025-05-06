@@ -104,7 +104,7 @@
         ::
             %seat
           %^  pass  /seat  %g
-          :+  %deal   [our our]
+          :+  %deal   [our our /dill]
           [%hood %poke %kiln-install !>([desk.kyz our desk.kyz])]
         ==
       ::
@@ -129,7 +129,7 @@
       ::
       ++  deal                                          ::  pass to %gall
         |=  [=wire =deal:gall]
-        (pass wire [%g %deal [our our] ram deal])
+        (pass wire [%g %deal [our our /dill] ram deal])
       ::
       ++  pass                                          ::  pass note
         |=  [=wire =note]
@@ -146,7 +146,7 @@
       ++  sponsor
         ^-  ship
         =/  dat=(unit (unit cage))
-          (rof `[our ~ ~] j/[[our sein/da/now] /(scot %p our)])
+          (rof `[our ~ ~] /dill j/[[our sein/da/now] /(scot %p our)])
         ;;(ship q.q:(need (need dat)))
       ::
       ++  init                                          ::  initialize
@@ -479,7 +479,7 @@
 ::
 ++  scry
   ^-  roon
-  |=  [lyc=gang car=term bem=beam]
+  |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
   =*  ren  car
   =*  why=shop  &/p.bem
@@ -525,9 +525,10 @@
       ::  only the new-style subscription.
       ::
       =/  hey  (need hey.all.lax)
-      :*  [hey %pass / %g %deal [our our] %hood %leave ~]
-          [hey %pass [%peer %$ ~] %g %deal [our our] %hood %leave ~]
-          [hey %pass [%peer %$ ~] %g %deal [our our] %hood %watch [%dill %$ ~]]
+      =/  =sack  [our our /dill]
+      :*  [hey %pass / %g %deal sack %hood %leave ~]
+          [hey %pass [%peer %$ ~] %g %deal sack %hood %leave ~]
+          [hey %pass [%peer %$ ~] %g %deal sack %hood %watch [%dill %$ ~]]
           moz
       ==
     =.  egg.all.lax  |

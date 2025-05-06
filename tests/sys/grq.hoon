@@ -13,7 +13,7 @@
   ::  (ames-call:v ames.bud ~[/none] [%spew ~[%msg %snd %rcv %odd]] *roof)
   ::  poke %sub to tell it to subscribe
   ~&  >  'poke %sub to tell it to subscribe'
-  =/  =task:gall  [%deal [~nec ~nec] %sub %poke watch+!>(~bud)]
+  =/  =task:gall  [%deal [~nec ~nec /] %sub %poke watch+!>(~bud)]
   =^  t1  gall.nec
     %:  gall-check-call:v  gall.nec
       [~1111.1.1 0xdead.beef *roof]
@@ -21,7 +21,7 @@
       :~  :-  ~[/foo]  [%give %unto %poke-ack ~]
           :-  ~[/init]
           :*  %pass  /use/sub/0w1.d6Isf/out/~bud/pub/1/sub-foo/~bud
-              [%g %deal [~nec ~bud] %pub %watch /foo]
+              [%g %deal [~nec ~bud /gall/sub] %pub %watch /foo]
       ==  ==
     ==
   :-  t1  |.  :-  %|
@@ -31,7 +31,7 @@
     %:  gall-check-call:v  gall.nec
       [~1111.1.1 0xdead.beef *roof]
       :-  ~[/use/sub/0w1.d6Isf/out/~bud/pub/1/sub-foo/~bud /init]
-      [%deal [~nec ~bud] %pub %watch /foo]
+      [%deal [~nec ~bud /] %pub %watch /foo]
       :~  :-  ~[/init]  [%pass /sys/lag %a %heed ~bud]
           :-  ~[/init]  [%pass /sys/era %j %public-keys (sy ~bud ~)]
           :-  ~[/use/sub/0w1.d6Isf/out/~bud/pub/1/sub-foo/~bud /init]
@@ -86,7 +86,7 @@
       :~  :-  ~[/init]  [%pass /sys/lag %a %heed ~nec]
           :-  ~[/init]  [%pass /sys/era %j %public-keys (sy ~nec ~)]
           :-  ~[/bone/~nec/0/1 //unix]
-          [%pass /sys/req/~nec/pub %g %deal [~nec ~bud] %pub %watch /foo]
+          [%pass /sys/req/~nec/pub %g %deal [~nec ~bud /] %pub %watch /foo]
       ==
     ==
   :-  t5  |.  :-  %|
@@ -96,7 +96,7 @@
     %:  gall-check-call:v  gall.bud
       [~1111.1.2 0xbeef.dead *roof]
       :-  ~[/sys/req/~nec/pub /bone/~nec/0/1 //unix]
-      [%deal [~nec ~bud] %pub %watch /foo]
+      [%deal [~nec ~bud /] %pub %watch /foo]
       :~  :-  ~[/sys/req/~nec/pub /bone/~nec/0/1 //unix]
           [%give %unto %watch-ack ~]
       ==
@@ -256,7 +256,7 @@
       [%gall %unto %kick ~]
       :~  :-  ~[/init]
           :*  %pass  /use/sub/0w1.d6Isf/out/~bud/pub/2/sub-foo/~bud
-              [%g %deal [~nec ~bud] %pub %watch /foo]
+              [%g %deal [~nec ~bud /gall/sub] %pub %watch /foo]
       ==  ==
     ==
   :-  t17  |.  :-  %|
@@ -266,7 +266,7 @@
     %:  gall-check-call:v  gall.nec
       [~1111.1.5 0xdead.beef *roof]
       :-  ~[/use/sub/0w1.d6Isf/out/~bud/pub/2/sub-foo/~bud /init]
-      [%deal [~nec ~bud] %pub %watch /foo]
+      [%deal [~nec ~bud /] %pub %watch /foo]
       :~  :-  ~[/use/sub/0w1.d6Isf/out/~bud/pub/2/sub-foo/~bud /init]
           [%pass /sys/way/~bud/pub %a %plea ~bud %g /ge/pub [%0 %s /foo]]
       ==
@@ -347,7 +347,7 @@
       :-  ~[/bone/~nec/0/5 //unix]
       [%plea ~nec %g /ge/pub [%0 %s /foo]]
       :~  :-  ~[/bone/~nec/0/5 //unix]
-          [%pass /sys/req/~nec/pub %g %deal [~nec ~bud] %pub %watch /foo]
+          [%pass /sys/req/~nec/pub %g %deal [~nec ~bud /] %pub %watch /foo]
       ==
     ==
   ::  publisher gall runs :pub's +on-watch, gives ack to self
@@ -357,7 +357,7 @@
     %:  gall-check-call:v  gall.bud
       [~1111.1.7 0xbeef.dead *roof]
       :-  ~[/sys/req/~nec/pub /bone/~nec/0/5 //unix]
-      [%deal [~nec ~bud] %pub %watch /foo]
+      [%deal [~nec ~bud /] %pub %watch /foo]
       :~  :-  ~[/sys/req/~nec/pub /bone/~nec/0/5 //unix]
           [%give %unto %watch-ack ~]
       ==

@@ -43,12 +43,12 @@
 =>  |%                                                  ::  %khan types
     +$  move  [p=duct q=(wite note gift)]               ::
     +$  note                                            ::    out request $->
-      $~  [%g %deal *sock *term *deal:gall]             ::
+      $~  [%g %deal *sack *term *deal:gall]             ::
       $%  $:  %g                                        ::    to %gall
               $>(%deal task:gall)                       ::  full transmission
           ==                                            ::
           $:  %k                                        ::    to self
-              $>(%fard task)                            ::  internal thread
+              $>(%home task)                            ::  internal thread
       ==  ==                                            ::
     +$  sign                                            ::    in response $<-
       $%  $:  %gall                                     ::    from %gall
@@ -72,7 +72,7 @@
 ++  get-dais
   |=  [=beak =mark rof=roof]
   ^-  dais:clay
-  ?~  ret=(rof ~ %cb beak /[mark])
+  ?~  ret=(rof ~ /khan %cb beak /[mark])
     ~|(mark-unknown+mark !!)
   ?~  u.ret
     ~|(mark-invalid+mark !!)
@@ -82,7 +82,7 @@
 ++  get-tube
   |=  [=beak =mark =out=mark rof=roof]
   ^-  tube:clay
-  ?~  ret=(rof ~ %cc beak /[mark]/[out-mark])
+  ?~  ret=(rof ~ /khan %cc beak /[mark]/[out-mark])
     ~|(tube-unknown+[mark out-mark] !!)
   ?~  u.ret
     ~|(tube-invalid+[mark out-mark] !!)
@@ -103,14 +103,14 @@
   ?>(?=([@ ~] s.beam) beam(s i.s.beam))
 ::
 ++  poke-spider
-  |=  [hen=duct =cage]
+  |=  [hen=duct prov=path =cage]
   ^-  move
-  [hen %pass //g %g %deal [our our] %spider %poke cage]
+  [hen %pass //g %g %deal [our our prov] %spider %poke cage]
 ::
 ++  watch-spider
   |=  [hen=duct =path]
   ^-  move
-  [hen %pass //g %g %deal [our our] %spider %watch path]
+  [hen %pass //g %g %deal [our our /khan] %spider %watch path]
 --
 =|  khan-state
 =*  state  -
@@ -125,30 +125,41 @@
           dud=(unit goof)
           wrapped-task=(hobo task)
       ==
-  ^-  [(list move) _khan-gate]
+  |^  ^-  [(list move) _khan-gate]
   ::
   =/  =task  ((harden task) wrapped-task)
   ?^  dud
     ~|(%khan-call-dud (mean tang.u.dud))
   ?+    -.task  [~ khan-gate]
-      %born
-    [~ khan-gate(hey hen, tic 0)]
-  ::
-      %fard  (bard hen 'khan-fyrd--' bear.p.task %| [name args]:p.task)
-      %lard  (bard hen 'khan-lard--' bear.task %& shed.task)
-      %fyrd
-    =*  fyd         p.task
-    =/  =beak       (get-beak bear.fyd now)
-    =/  =wire       (make-wire beak p.args.fyd)
-    =/  =dais:clay  (get-dais beak p.q.args.fyd rof)
-    =/  =vase
-      (slap (vale.dais q.q.args.fyd) !,(*hoon [~ u=.]))
-    =-  [[hen %pass wire -]~ khan-gate]
-    [%k %fard bear.fyd name.fyd p.q.args.fyd vase]
+      %born                 [~ khan-gate(hey hen, tic 0)]
+      ?(%fard %lard %fyrd)  (handle-runner / task)
+      %home                 (handle-runner path.task task.task)
   ==
+  ++  handle-runner
+    |=  [prov=path task=runner:khan]
+    ^-  [(list move) _khan-gate]
+    ?-    -.task
+        %fard  (bard hen prov 'khan-fyrd--' bear.p.task %| [name args]:p.task)
+        %lard  (bard hen prov 'khan-lard--' bear.task %& shed.task)
+        %fyrd
+      =*  fyd         p.task
+      =/  =beak       (get-beak bear.fyd now)
+      =/  =wire       (make-wire beak p.args.fyd)
+      =/  =dais:clay  (get-dais beak p.q.args.fyd rof)
+      =/  =vase
+        (slap (vale.dais q.q.args.fyd) !,(*hoon [~ u=.]))
+      =-  [[hen %pass wire -]~ khan-gate]
+      [%k %home prov %fard bear.fyd name.fyd p.q.args.fyd vase]
+    ==
+  --
 ::
 ++  bard
-  |=  [hen=duct prefix=@ta =bear payload=(each shed [name=term args=cage])]
+  |=  $:  hen=duct
+          prov=path
+          prefix=@ta
+          =bear
+          payload=(each shed [name=term args=cage])
+      ==
   ^-  [(list move) _khan-gate]
   =/  =tid:rand  (cat 3 prefix (scot %uv (sham (mix tic eny))))
   =/  =beak      (get-beak bear now)
@@ -160,7 +171,7 @@
   =.  tic  +(tic)
   :_  khan-gate
   :~  (watch-spider hen /thread-result/[tid])
-      (poke-spider hen cage)
+      (poke-spider hen [%khan prov] cage)
   ==
 ::
 ::  +load: migrate an old state to a new khan version
@@ -173,7 +184,7 @@
 ::
 ++  scry
   ^-  roon
-  |=  [lyc=gang car=term bem=beam]
+  |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
   ~
 ++  stay  state

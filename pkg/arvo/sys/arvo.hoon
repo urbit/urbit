@@ -3,7 +3,7 @@
 |%
 +|  %global
 ::
-++  arvo  %238
+++  arvo  %237
 ::
 ::  $arch: node identity
 ::  $axal: fundamental node, recursive (trie)
@@ -111,6 +111,7 @@
   |$  [a]
   $~  =>(~ |~(* ~))
   $-  $:  lyc=gang                                      ::  leakset
+          pov=path                                      ::  provenance
           omen                                          ::  perspective, path
       ==                                                ::
   %-  unit                                              ::  ~: unknown
@@ -118,7 +119,7 @@
   (cask a)                                              ::
 +$  roon                                                ::  partial namespace
   $~  =>(~ |~(* ~))
-  $-  [lyc=gang car=term bem=beam]
+  $-  [lyc=gang pov=path car=term bem=beam]
   (unit (unit cage))
 +$  root  $-(^ (unit (unit)))
 +$  view  $@(term [way=term car=term])                  ::  perspective
@@ -207,9 +208,9 @@
   ==
 +$  heir
   $%  $:  %grub
-          $%  [?(%240 %239 %238) =grub]
+          $%  [?(%240 %239 %238 %237) =grub]
       ==  ==
-      [?(%240 %239 %238) =debt =soul]
+      [?(%240 %239 %238 %237) =debt =soul]
   ==
 +$  plan  (pair germ (list move))
 +$  soul
@@ -342,13 +343,13 @@
 ::
 ++  look
   ~/  %look
-  |=  [rof=roof lyc=gang]
+  |=  [rof=roof lyc=gang pov=path]
   ^-  root
   ~/  %in
   |=  [ref=* raw=*]
   ?~  pax=((soft path) raw)  ~
   ?~  mon=(de-omen u.pax)  ~
-  ?~  dat=(rof lyc u.mon)  ~
+  ?~  dat=(rof lyc pov u.mon)  ~
   ?~  u.dat  [~ ~]
   =*  vax  q.u.u.dat
   ?.  ?&  ?=(^ ref)
@@ -1101,7 +1102,7 @@
       ++  peek
         ~/  %peek
         ^-  rook
-        |=  [lyc=gang omen]
+        |=  [lyc=gang pov=path omen]
         ^-  (unit (unit (cask meta)))
         ::  namespace reads receive no entropy
         ::
@@ -1113,7 +1114,7 @@
           ~>  %mean.'peek: pull failed'
           (~(slap wa sac) rig [%limb %scry])
         ::
-        =/  mas=[gang view beam]  [lyc vis bem]
+        =/  mas=[gang path view beam]  [lyc pov vis bem]
         ::
         =^  pro  sac
           ~>  %mean.'peek: call failed'
@@ -1373,7 +1374,7 @@
       |=  [nam=term =vane]
       =;  mas=(list mass)
         nam^|+(welp mas [dot+&+q.vase typ+&+p.vase sac+&+worm ~]:vane)
-      ?~  met=(peek [~ ~] [nam %x] bem)  ~
+      ?~  met=(peek [~ ~] / [nam %x] bem)  ~
       ?~  u.met  ~
       ~|  mass+nam
       ;;((list mass) q.q.u.u.met)
@@ -1381,7 +1382,7 @@
     ::
     ++  peek
       ^-  rook
-      |=  [lyc=gang omen]
+      |=  [lyc=gang pov=path omen]
       ^-  (unit (unit (cask meta)))
       ::  vane and care may be concatenated
       ::
@@ -1392,12 +1393,12 @@
         [(end 3 vis) (rsh 3 vis)]
       ::
       ?:  ?=(%$ way)
-        (peek:pith lyc car bem)
+        (peek:pith lyc pov car bem)
       ::
       =.  way  (grow way)
       ?~  van=(~(get by van.mod) way)
         ~
-      %.  [lyc car bem]
+      %.  [lyc pov car bem]
       peek:spin:(~(plow va [vil u.van]) now peek)
     ::  +call: advance to target
     ::
@@ -1552,7 +1553,7 @@
       ::
       ++  peek
         ^-  roon
-        |=  [lyc=gang car=term bem=beam]
+        |=  [lyc=gang pov=path car=term bem=beam]
         ^-  (unit (unit cage))
         ?.  ?|  =(our p.bem)
                 ?=(%$ q.bem)
@@ -1764,7 +1765,7 @@
   ::
   =.  sol
     ?-  -.hir
-      ?(%240 %239 %238)  soul.hir
+      ?(%240 %239 %238 %237)  soul.hir
     ==
   ::  clear compiler caches
   ::
@@ -1805,7 +1806,7 @@
     ==
   ::
   ?~  hap  ~
-  =/  pro  (~(peek le:part [pit vil] sol) lyc [vis bem]:u.hap)
+  =/  pro  (~(peek le:part [pit vil] sol) lyc / [vis bem]:u.hap)
   ?:  |(?=(~ pro) ?=(~ u.pro))  ~
   =/  dat=(cask)  [p q.q]:u.u.pro
   ?.  pat.u.hap  `dat

@@ -39,8 +39,9 @@
       !>  /fyrd/~nul/base/~1162.1.1..00.00.01/noun
       !>  wire.q.mev
   =/  results-4  (expect-eq !>(%k) !>(-.note.q.mev))
-  ?>  ?=(%fard +<.note.q.mev)
-  =/  fad  p.note.q.mev
+  ?>  ?=(%home +<.note.q.mev)
+  ?>  ?=(%fard -.task.note.q.mev)
+  =/  fad  p.task.note.q.mev
   ;:  weld
     results-0  results-1  results-2
     results-3  results-4
@@ -76,7 +77,7 @@
     %+  expect-eq
       !>  :*  ~[//khan/1/0vthat.ductt]
               %pass  //g  %g  %deal
-              [~nul ~nul]  %spider  %watch
+              [~nul ~nul /khan]  %spider  %watch
               /thread-result/[expected-tid]
           ==
       !>  (head start-moves)
@@ -87,7 +88,7 @@
   =*  not  note.q.mev
   =/  results-4  (expect-eq !>(%g) !>(-.not))
   ?>  ?=(%deal +<.not)
-  =/  results-5  (expect-eq !>([~nul ~nul]) !>(p.not))
+  =/  results-5  (expect-eq !>([~nul ~nul /khan]) !>(p.not))
   =/  results-6  (expect-eq !>(%spider) !>(q.not))
   ?>  ?=(%poke -.r.not)
   =*  cag  cage.r.not
@@ -462,7 +463,7 @@
   |=  =vase
   !>(!<(noun vase))
 ++  scry-provides-mark  ^-  roof
-  |=  [gang =view =beam]
+  |=  [gang pov=path =view =beam]
   ^-  (unit (unit cage))
   ?:  &(=(%cb view) =(/noun s.beam))
     :^  ~  ~  %dais

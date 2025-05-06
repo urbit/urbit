@@ -190,14 +190,14 @@
         %+  weld
           %+  expect-gall-deal
             :+  /watch-response/[eyre-id]
-              [~nul ~nul]
+              [~nul ~nul /eyre]
             :*  %app1  %watch
                 /http-response/[eyre-id]
             ==
           card.move-1
         ::
         %+  expect-gall-deal
-          :+  /run-app-request/[eyre-id]  [~nul ~nul]
+          :+  /run-app-request/[eyre-id]  [~nul ~nul /eyre]
               :*  %app1  %poke  %handle-http-request
                   !>([eyre-id %.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
               ==
@@ -276,7 +276,7 @@
         %+  weld
           %+  expect-gall-deal
             :+  /watch-response/[eyre-id]
-              [~nul ~nul]
+              [~nul ~nul /eyre]
             :*  %app1  %watch
                 /http-response/[eyre-id]
             ==
@@ -284,7 +284,7 @@
         ::
         %+  expect-gall-deal
           :+  /run-app-request/[eyre-id]
-            [~nul ~nul]
+            [~nul ~nul /eyre]
           :*  %app1  %poke  %handle-http-request
               !>([eyre-id %.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
           ==
@@ -307,7 +307,7 @@
       ^=  expected-move
         :~  :*  duct=~[/http-blah]  %pass
                 /watch-response/[eyre-id]
-                %g  %deal  [~nul ~nul]  %app1  %leave  ~
+                %g  %deal  [~nul ~nul /eyre]  %app1  %leave  ~
             ==
           ::
             :*  duct=~[/http-blah]  %give  %response
@@ -372,14 +372,14 @@
         %+  weld
           %+  expect-gall-deal
             :+  /watch-response/[eyre-id]
-              [~nul ~nul]
+              [~nul ~nul /eyre]
             :*  %app1  %watch
                 /http-response/[eyre-id]
             ==
           card.move-1
         ::
         %+  expect-gall-deal
-          :+  /run-app-request/[eyre-id]  [~nul ~nul]
+          :+  /run-app-request/[eyre-id]  [~nul ~nul /eyre]
               :*  %app1  %poke  %handle-http-request
                   !>([eyre-id %.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
               ==
@@ -481,14 +481,14 @@
         %+  weld
           %+  expect-gall-deal
             :+  /watch-response/[eyre-id]
-              [~nul ~nul]
+              [~nul ~nul /eyre]
             :*  %app1  %watch
                 /http-response/[eyre-id]
             ==
           card.move-1
         ::
         %+  expect-gall-deal
-          :+  /run-app-request/[eyre-id]  [~nul ~nul]
+          :+  /run-app-request/[eyre-id]  [~nul ~nul /eyre]
               :*  %app1  %poke  %handle-http-request
                   !>([eyre-id %.n %.n [%ipv4 .192.168.1.1] [%'GET' '/~landscape/inner-path' ~ ~]])
               ==
@@ -558,7 +558,7 @@
         %+  weld
           %+  expect-gall-deal
             :+  /watch-response/[eyre-id]
-              [~nul ~nul]
+              [~nul ~nul /eyre]
             :*  %app1  %watch
                 /http-response/[eyre-id]
             ==
@@ -567,7 +567,7 @@
         ::  expect authenticated=%.y in the handle below
         ::
         %+  expect-gall-deal
-          :+  /run-app-request/[eyre-id]  [~nul ~nul]
+          :+  /run-app-request/[eyre-id]  [~nul ~nul /eyre]
               :*  %app1  %poke  %handle-http-request
                   !>  :*
                     eyre-id
@@ -798,7 +798,7 @@
         ::
         %+  expect-gall-deal
           :*  /channel/subscription/'0123456789abcdef'/1/~nul/two
-              [~nul ~nul]  %two  %leave  ~
+              [~nul ~nul /eyre]  %two  %leave  ~
           ==
           card.i.moves
     ==
@@ -994,7 +994,7 @@
         ;:  weld
           %+  expect-gall-deal
             :*  /channel/poke/'0123456789abcdef'/'2'
-                [~nul ~nul]  %eight
+                [~nul ~nul /eyre]  %eight
                 %poke-as  %a  %json  !>([%n '9'])
             ==
             card.i.moves
@@ -1093,7 +1093,7 @@
           ::
           %+  expect-gall-deal
             :*  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
-                [~nul ~nul]  %two  %leave  ~
+                [~nul ~nul /eyre]  %two  %leave  ~
             ==
             card.i.moves
         ::
@@ -1193,7 +1193,7 @@
         ;:  weld
           %+  expect-gall-deal
             :*  /channel/subscription/'0123456789abcdef'/'2'/~nul/two
-                [~nul ~nul]  %two
+                [~nul ~nul /eyre]  %two
                 %watch  /one/two/three
             ==
             card.i.moves
@@ -1342,7 +1342,7 @@
         ;:  weld
           %+  expect-gall-deal
             :*  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
-                [~nul ~nul]  %two  %leave  ~
+                [~nul ~nul /eyre]  %two  %leave  ~
             ==
             card.i.moves
         ::
@@ -1780,7 +1780,7 @@
             ==
             :*  duct=~[/http-put-request]  %pass
               /channel/subscription/'0123456789abcdef'/'1'/~nul/two
-              %g  %deal  [~nul ~nul]  %two  %leave  ~
+              %g  %deal  [~nul ~nul /eyre]  %two  %leave  ~
             ==
             :*  duct=~[/http-get-open]
                 %give
@@ -1864,14 +1864,14 @@
         %+  weld
           %+  expect-gall-deal
             :+  /watch-response/[eyre-id]
-              [~nul ~nul]
+              [~nul ~nul /eyre]
             :*  %app1  %watch
                 /http-response/[eyre-id]
             ==
           card.move-1
         ::
         %+  expect-gall-deal
-          :+  /run-app-request/[eyre-id]  [~nul ~nul]
+          :+  /run-app-request/[eyre-id]  [~nul ~nul /eyre]
               :*  %app1  %poke  %handle-http-request
                   !>([eyre-id %.n %.n [%ipv4 .192.168.1.1] [%'GET' '/' ~ ~]])
               ==
@@ -1904,7 +1904,7 @@
           (expect-eq !>(~[/http-blah]) !>(duct))
         ::
         %+  expect-gall-deal
-          :+  /watch-response/[eyre-id]  [~nul ~nul]
+          :+  /watch-response/[eyre-id]  [~nul ~nul /eyre]
             [%app1 %leave ~]
           card
     ==
@@ -1993,7 +1993,7 @@
   [output eyre-gate]
 ::
 ++  expect-gall-deal
-  |=  $:  expected=[wire=path id=sock app=term =deal:gall]
+  |=  $:  expected=[wire=path id=sack app=term =deal:gall]
           actual=(wind note:eyre-gate gift:eyre-gate)
       ==
   ^-  tang
@@ -2228,14 +2228,14 @@
         ;:  weld
           %+  expect-gall-deal
             :*  /channel/poke/'0123456789abcdef'/'0'
-                [~nul ~nul]  %one
+                [~nul ~nul /eyre]  %one
                 %poke-as  %a  %json  !>([%n '5'])
             ==
             card.i.moves
         ::
           %+  expect-gall-deal
             :*  /channel/subscription/'0123456789abcdef'/'1'/~nul/two
-                [~nul ~nul]  %two
+                [~nul ~nul /eyre]  %two
                 %watch  /one/two/three
             ==
             card.i.t.moves
@@ -2256,7 +2256,7 @@
   :(weld results1 results2 results3 results4)
 ::
 ++  scry-provides-code  ^-  roof
-  |=  [gang =view =beam]
+  |=  [gang pov=path =view =beam]
   ^-  (unit (unit cage))
   ?:  =(%gd view)  ``noun+!>(%base)
   ?:  &(=(%ca view) =(/gen/handler/hoon s.beam))
