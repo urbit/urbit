@@ -9685,9 +9685,16 @@
               ::
               =?  route.+.u.peer  =(%czar (clan:title ship))
                 `[direct=%.y %& ship]
-              ::  XX TODO %mesa as default core; if a peer is regressed back
+              ::  if %mesa is the default core, remove the ship from .peers
+              ::  and add it to .chums
               ::
-              ames-state(peers (~(put by peers.ames-state) ship u.peer))
+              =?  chums.ames-state  ?=(%mesa core.ames-state)
+                =|  =fren-state
+                (~(put by chums.ames-state) ship known/fren-state(- +<.u.peer))
+              =?  peers.ames-state  ?=(%mesa core.ames-state)
+                (~(del by peers.ames-state) ship)
+              ::
+              ames-state
             ::  cancel all timers related to .ship
             ::
             =?  sy-core    ?=(%ames -.peer)
