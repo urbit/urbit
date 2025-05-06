@@ -7559,15 +7559,19 @@
               (slaw %ud ping-bone.bon.req.tyl)
             ?:   ?=([~ %known *] per)
               :-  ~
+              ?~  ping-bone
+                =+  fake-bone=~(wyt by rcv.u.per)
+                [rift.u.per life.u.per ?:(=(0 fake-bone) ~ `fake-bone) ~]
               :^  rift.u.per  life.u.per  ping-bone
-              ?~  ping-bone  ~
               ?~  rcv=(~(get by rcv.u.per) (mix 0b1 u.ping-bone))
                 ~
               `last-acked.u.rcv
             ?.   ?=([~ %known *] chu)  ~
             :-  ~
+            ?~  ping-bone
+              =+  fake-bone=~(wyt by flows.u.chu)
+              [rift.u.chu life.u.chu ?:(=(0 fake-bone) ~ `fake-bone) ~]
             :^  rift.u.chu  life.u.chu  ping-bone
-            ?~  ping-bone  ~
             ?~  flow=(~(get by flows.u.chu) u.ping-bone %bak)
               ~
             `last-acked.rcv.u.flow
