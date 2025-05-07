@@ -8,8 +8,8 @@
 --                                                      ::
 =>  |%                                                  ::  console protocol
 +$  axle                                                ::
-  $:  %8                                                ::
-      hey=(unit duct)                                   ::  default duct
+  $:  %9                                                ::
+      hey=(map @tas duct)                               ::  unix ducts
       dug=(map @tas axon)                               ::  conversations
       eye=(jug @tas duct)                               ::  outside observers
       ear=(set duct)                                    ::  syslog listeners
@@ -123,8 +123,8 @@
       ::
       ++  dump                                          ::  pass down to hey
         |=  git=gift
-        ?>  ?=(^ hey.all)
-        +>(moz [[u.hey.all %give git] moz])
+        =+  duc=(~(got by hey.all) ses)
+        +>+(moz [[duc %give git] moz])
       ::
       ++  done                                          ::  gift to viewers
         |=  git=gift
@@ -174,11 +174,24 @@
         =.  tem  `(turn gyl |=(a=gill [%yow a]))
         (pass / [%c %warp our %base `[%sing %y [%ud 1] /]])
       ::
+      ++  form                                          ::  create duct
+        ?^  duc=(~(get by hey.all) ses)
+          u.duc
+        =+  tid=1
+        =+  ids=~(val by hey.all)
+        |-  ^-  duct
+        =/  duc=duct  ~[/$/term/(scot %ud tid)]
+        ?~  (find [duc]~ ids)
+          duc
+        $(tid +(tid))
+      ::
       ++  open
         |=  gyl=(list gill)
         ::TODO  should allow handlers from non-base desks
         ::TODO  maybe ensure :ram is running?
+        =.  hey.all  (~(put by hey.all) ses form)
         =.  +>  peer
+        =.  +>  (dump %open ses ram)
         %+  roll  gyl
         |=  [g=gill _..open]
         (send [%yow g])
@@ -273,17 +286,24 @@
   ::
   ::
   ?:  ?=(%born -.task)
-    ?~  hey.all
-      [~ ..^$]
-    ?:  ?=(~ mem.all)
-      [~ ..^$]
-    [[u.hey.all %give %quac ~]~ ..^$]
+    =+  duc=(~(got by hey.all) ses)
+    =/  moz=(list move)  ~
+    =/  lis=(list [@ @tas @tas])
+      %+  turn  ~(tap by dug.all)
+      |=  [ses=@tas =axon]
+      =+  tid=(slav %ud (rear (rear (~(got by hey.all) ses))))
+      [tid ses ram.axon]
+    =.  moz
+      [[duc %give [%sess lis]] moz]
+    =?  moz  ?=(~ mem.all)
+      [[duc %give %quac ~] moz]
+    [moz ..^$]
   ::  the boot event passes thru %dill for initial duct distribution
   ::
   ?:  ?=(%boot -.task)
     ?>  ?=(?(%dawn %fake) -.p.task)
     ?>  =(~ hey.all)
-    =.  hey.all  `hen
+    =.  hey.all  (~(put by hey.all) %$ hen)
     =/  boot
       ((soft $>($?(%dawn %fake) task:jael)) p.task)
     ?~  boot
@@ -298,7 +318,7 @@
     ?>  =(~ dug.all)
     ::  configure new terminal, setup :hood and %clay
     ::
-    =*  duc  (need hey.all)
+    =*  duc  (~(got by hey.all) %$)
     =/  app  %hood
     =/  say  (tuba "<awaiting {(trip app)}, this may take a minute>")
     =/  zon=axon  [app input=[~ ~] width=80]
@@ -309,13 +329,13 @@
   ::  %flog tasks are unwrapped and sent back to us on our default duct
   ::
   ?:  ?=(%flog -.task)
-    ?~  hey.all
+    ?~  duc=(~(get by hey.all) %$)
       [~ ..^$]
     ::  this lets lib/helm send %heft a la |mass
     ::
     =?  p.task  ?=([%crud %hax-heft ~] p.task)  [%heft ~]
     ::
-    $(hen u.hey.all, wrapped-task p.task)
+    $(hen u.duc, wrapped-task p.task)
   ::  %vega and %trim notifications come in on an unfamiliar duct
   ::
   ?:  ?=(?(%trim %vega) -.task)
@@ -337,7 +357,9 @@
       !!
     =/  zon=axon  [p.task ~ width=80]
     =^  moz  all  abet:(~(open as hen ses zon) q.task)
+    =+  duc=(~(got by hey.all) ses)
     =.  eye.all  (~(put ju eye.all) ses hen)
+    =.  eye.all  (~(put ju eye.all) ses duc)
     [moz ..^$]
   ::  %shut closes an existing dill session
   ::
@@ -352,8 +374,10 @@
     ::      because +abet would re-insert.
     ::TODO  send a %bye blit? xx
     =^  moz  all  abet:pull:nus
+    =^  moz  all  abet:(dump:nus [%shut ~])
     =.  dug.all   (~(del by dug.all) ses)
     =.  eye.all   (~(del by eye.all) ses)
+    =.  hey.all   (~(del by hey.all) ses)
     [moz ..^$]
   ::  %view opens a subscription to the target session, on the current duct
   ::
@@ -384,10 +408,9 @@
   ::  %mass runs a memory report
   ::
   ?:  ?=(%mass -.task)
-    ?>  ?=(^ hey.all)
     ?:  =(~ mem.all)
       =.  mem.all  (~(put in mem.all) hen)
-      [[u.hey.all %give %quac ~]~ ..^$]
+      [[(~(got by hey.all) ses) %give %quac ~]~ ..^$]
     =.  mem.all  (~(put in mem.all) hen)
     [~ ..^$]
   ::  %quac is a memory report from the runtime
@@ -418,14 +441,38 @@
 ++  load                                                ::  import old state
   =<  |=  old=any-axle
       ?-  -.old
-        %8  ..^$(all old)
+        %9  ..^$(all old)
+        %8  $(old (axle-8-to-9 old))
         %7  $(old (axle-7-to-8 old))
         %6  $(old (axle-6-to-7 old))
         %5  $(old (axle-5-to-6 old))
         %4  $(old (axle-4-to-5 old))
       ==
   |%
-  +$  any-axle  $%(axle axle-7 axle-6 axle-5 axle-4)
+  +$  any-axle  $%(axle axle-8 axle-7 axle-6 axle-5 axle-4)
+  ::
+  +$  axle-8
+    $:  %8
+      hey=(unit duct)
+      dug=(map @tas axon)
+      eye=(jug @tas duct)
+      ear=(set duct)
+      mem=(set duct)
+      lit=?
+      egg=_|
+  ==
+  ::
+  ++  axle-8-to-9
+    |=  a=axle-8
+    ^-  axle
+    =/  hey=(map @tas duct)
+      %-  malt
+      %+  turn  ~(tap by dug.a)
+      |=  [ses=term *]
+      ?.  ?=(%$ ses)  [ses `duct`~(form as *duct ses *axon)]
+      ?~  hey.a       [%$ `duct`~(form as *duct %$ *axon)]
+      [%$ u.hey.a]
+    [%9 hey dug.a eye.a ear.a mem.a lit.a egg.a]
   ::
   +$  axle-7
     $:  %7
@@ -439,7 +486,7 @@
   ::
   ++  axle-7-to-8
     |=  a=axle-7
-    ^-  axle
+    ^-  axle-8
     [%8 hey dug eye ear ~ lit egg]:a
   ::
   +$  axle-6
@@ -570,7 +617,7 @@
       ::  for the default session. here, we obliterate both and establish
       ::  only the new-style subscription.
       ::
-      =/  hey  (need hey.all.lax)
+      =/  hey  (~(got by hey.all.lax) %$)
       =/  =sack  [our our /dill]
       :*  [hey %pass / %g %deal sack %hood %leave ~]
           [hey %pass [%peer %$ ~] %g %deal sack %hood %leave ~]
