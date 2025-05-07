@@ -4834,7 +4834,7 @@
           ?.  ?=([%ack error=@] u.res)
             %-  (ev-trace odd.veb sndr.shot |.("weird ack"))
             event-core
-          %-  (ev-trace snd.veb sndr.shot |.("send migrated ack"))
+          %-  (ev-trace snd.veb sndr.shot |.("send migrated ahoy ack"))
           ::
           =/  ok=?  ;;(? +.u.res)
           =/  ack-packet=^shut-packet
@@ -11764,7 +11764,7 @@
           ::    - the peer breached, we had communicated previously but our
           ::    default core was %mesa, so it stayed in .chums
           ::    - the peer booted after breaching with an old pill that has
-          ::    %mesa as the default core, or doesn't support zuse 410k or the  
+          ::    %mesa as the default core, or doesn't support zuse 410k or the
           ::    default core was manually changed
           ::
           ::  for all these causes we try to establish communication, moving
@@ -11889,26 +11889,28 @@
             ::    a peer sends us a mesa packet, but %ames is our default core
             ::
             ::  [%mesa ~ %alien *]
-            ::    %mesa is our default network core. we had outstanding
+            ::    %mesa is our default network core. we could have outstanding
             ::    poke/peeks, but the keys are missing and the peer sends up a
             ::    %mesa packet
             ::
             ::  [%ames ~ %alien *]
-            ::    %ames is our default network core. we had outstanding
+            ::    %ames is our default network core. we could have outstanding
             ::    poke/peeks, but the keys are missing and the peer sends up a
-            ::    %mesa packet
+            ::    %mesa packet — if notthing outstanding, the peer has first
+            ::    sent an %ames packet, we dropped it and asked for the key,
+            ::    then the peer sent a %mesa packet
+            ::    XX log as missbeheaving peer?
             ::
-            =?  chum-state  ?=([%ames *] chum-state)
+            =^  delete  chum-state
+              ?.  ?=([%ames *] chum-state)  [| chum-state]
               %-  %+  %*(ev-tace ev-core her her-pok)  odd.veb.bug.ames-state
                   |.("hear mesa packet for regressed (alien/missing) peer")
               ?-    +.chum-state
                   ~
-                chum-state(- %mesa)
+                [delete=| chum-state(- %mesa)]
               ::
                   [~ %alien *]
-                ::  move alien state from %ames into %mesa
-                ::
-                :-  %mesa
+                :+  delete=&  %mesa
                 :+  ~  %alien  ^-  ovni-state
                 ::    packets are discarded since messages will be sent up to
                 ::    the sponsorship chain anyway
@@ -11917,6 +11919,14 @@
                     chums=chums.u.+.chum-state
                 (turn messages.u.+.chum-state |=([=duct =plea] duct^plea/plea))
               ==
+            ::
+            =?  ames-state  delete
+              ?.  ?=([%mesa ~ %alien *] chum-state)  ames-state  :: XX log
+              ::  move %alien peer into %mesa
+              ::
+              =.  chums.ames-state
+                (~(put by chums.ames-state) her-pok u.+.chum-state)
+              ames-state(peers (~(del by peers.ames-state) her-pok))
             ::
             ?>  ?=([%mesa *] chum-state)
             ?.  ?&  ?=(%pawn (clan:title her-pok))
