@@ -538,6 +538,12 @@
       ^-  move
       [duct %pass /ping %g %deal [our our /ames] %ping %poke noun+!>(poke)]
     ::
+    ++  poke-send-ahoy
+      |=  [=duct our=ship who=ship]
+      ^-  move
+      :+  duct  %pass
+      [/ahoy %g %deal [our our /ames] %hood %poke helm-send-ahoy+!>(who^test=|)]
+    ::
     +|  %atomics
     ::
     +$  private-key    @uwprivatekey
@@ -11704,7 +11710,8 @@
             |.("hear ames packet; %mesa default core")
         ::  handle %ames packet; keys will be asked and packet dropped
         ::
-        (call:am-core hen dud %soft %hear lane blob)
+        =^  moves  vane-gate  (call:am-core hen dud %soft %hear lane blob)
+        [(poke-send-ahoy hen our sndr.shot) moves]^vane-gate
           ::  [%mesa ~ %alien *]
           ::    %mesa is our default network core. we might have outstanding
           ::    poke/peeks, but the keys are missing and the peer sends an %ames
@@ -11730,9 +11737,9 @@
         ::  XX no need to call the ames-core again; +enqueue-alien-todo will say
         ::  that the publick-keys gift is still pending
         ::
-        ::  XX enqueue %ahoy $plea; poke /app/hood?
+        ::  enqueue %ahoy $plea; poke /app/hood
         ::
-        `vane-gate
+        ~[(poke-send-ahoy hen our sndr.shot)]^vane-gate
         ::  [%mesa ~ %known *]
         ::    if we can find the peer in chums, it means that they sent an %ahoy
         ::    $plea, we migrated them, but they haven't heard our %ack, and have
@@ -11749,8 +11756,9 @@
         =^  moves-ahoy  ames-state
           =<  abet
           %.(shot on-ack-ahoy:(ev:am-core now^eny^rof hen ames-state))
+        ?:  ?=(^ moves-ahoy)
+          [moves-ahoy vane-gate]
         =^  moves-peer  vane-gate
-          ?.  ?=(~ moves-ahoy)  `vane-gate
           ::  this was not an %ahoy plea, check if we can move the ship back to
           ::  .peers, if this is a first contact (e.g after a breach)
           ::
@@ -11764,7 +11772,7 @@
           ::    - the peer breached, we had communicated previously but our
           ::    default core was %mesa, so it stayed in .chums
           ::    - the peer booted after breaching with an old pill that has
-          ::    %mesa as the default core, or doesn't support zuse 410k or the
+          ::    %mesa as the default core, or doesn't support zuse 410k, or the
           ::    default core was manually changed
           ::
           ::  for all these causes we try to establish communication, moving
@@ -11778,10 +11786,11 @@
             (~(put by peers.ames-state) sndr.shot known/peer-state(- -.fren))
           =.  chums.ames-state
             (~(del by chums.ames-state) sndr.shot)
-          ::  XX enqueue %ahoy $plea; poke /app/hood?
+          ::  enqueue %ahoy $plea; poke /app/hood
           ::
-          (call:am-core hen dud %soft %hear lane blob)
-        [(weld moves-ahoy moves-peer) vane-gate]
+          =^  moves  vane-gate  (call:am-core hen dud %soft %hear lane blob)
+          [(poke-send-ahoy hen our sndr.shot)^moves vane-gate]
+        [moves-peer vane-gate]
       ==
     ::
     ++  pe-rate
