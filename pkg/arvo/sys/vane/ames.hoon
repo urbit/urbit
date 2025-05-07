@@ -11694,62 +11694,95 @@
         ::  both for %ames and %fine
         ::
         (call:am-core hen dud %soft %hear lane blob)
-      ?.  ?=([~ %known *] +.ship-state)
-        ::
+      ?-    +.ship-state
+          ::  [%mesa ~]
+          ::    a peer sends us an %ames packet, but %mesa is our default core
+          ::    and have not communicated previously
+          ::
+          ~
         %-  %+  %*(ev-tace ev-core her sndr.shot)  odd.veb.bug.ames-state
-            |.("hear ames packet for migrated (alien) peer; ignore")
+            |.("hear ames packet; %mesa default core")
+        ::  handle %ames packet; keys will be asked and packet dropped
+        ::
+        (call:am-core hen dud %soft %hear lane blob)
+          ::  [%mesa ~ %alien *]
+          ::    %mesa is our default network core. we might have outstanding
+          ::    poke/peeks, but the keys are missing and the peer sends an %ames
+          ::    packet — if notthing outstanding, the peerhas first sent an
+          ::    %ames packet, we dropped it and asked for the key, then the peer
+          ::    sent a %mesa packet
+          ::    XX log as missbeheaving peer?
+          ::
+          [~ %alien *]
+        %-  %+  %*(ev-tace ev-core her sndr.shot)  odd.veb.bug.ames-state
+            |.("hear ames packet for %alien |mesa peer")
+        ::
+        =/  alien=alien-agenda
+          :_  [packets=~ keens=peeks.u.+.ship-state chums=chums.u.+.ship-state]
+          %+  turn  pokes.u.+.ship-state
+          |=  [=duct =mesa-message]
+          ?>  ?=(%plea -.mesa-message)
+          duct^+.mesa-message
+        ::  move %alien peer into %ames
+        ::
+        =.  peers.ames-state  (~(put by peers.ames-state) sndr.shot alien/alien)
+        =.  chums.ames-state  (~(del by chums.ames-state) sndr.shot)
+        ::  XX no need to call the ames-core again; +enqueue-alien-todo will say
+        ::  that the publick-keys gift is still pending
+        ::
+        ::  XX enqueue %ahoy $plea; poke /app/hood?
         ::
         `vane-gate
-      ::  old response, no-op. If we can find the peer in chums, it means that
-      ::  they sent an %ahoy plea, we migrated them, but they haven't heard our
-      ::  %ack, and have not migrated us.
-      ::
-      ::  XX  TODO: check if we are in fact tracking this path
-      ::  XX  (necessary?)
-      ::
-      :: =/  [=peep =meow]  (sift-purr `@ux`content.shot)
-      :: =/  =path  (slag 3 path.peep)
-      ::
-      ::  any %fine requests should have been migrated and responses should
-      ::  only come via %heer or %mess. if %ames, we no-op and the %sender will
-      ::  resend the message as soon as they migrate us.
-      ::
-      %-  %+  %*(ev-tace ev-core her sndr.shot)  odd.veb.bug.ames-state
-          |.("hear ames packet for migrated peer")
-      ::
-      =^  moves-ahoy  ames-state
-        =<  abet
-        %.(shot on-ack-ahoy:(ev:am-core now^eny^rof hen ames-state))
-      =^  moves-peer  vane-gate
-        ?.  ?=(~ moves-ahoy)  `vane-gate
-        ::  this was not an %ahoy plea, check if we can move the ship back to
-        ::  .peers, if this is a first contact (e.g after a breach)
+        ::  [%mesa ~ %known *]
+        ::    if we can find the peer in chums, it means that they sent an %ahoy
+        ::    $plea, we migrated them, but they haven't heard our %ack, and have
+        ::    not migrated us, so they could still be resending the $plea.
+        ::    in this case we just ack the plea
         ::
-        =/  fren=fren-state  +.u.+.ship-state
-        ?.  =(+:*fren-state +.fren)
-          `vane-gate
-        ::  if %ames is the default core, remove the ship from .chums
-        ::  and add it to .peers
+        ::    if this was not an %ahoy plea, check if we can move the ship back
+        ::    to .peers, if this is a first contact (e.g after a breach)
         ::
-        ?:  ?=(%mesa core.ames-state)
-          ::  if %mesa is the default core (i.e. after everybody switches to
-          ::  directed messaging) ames packet should be dropped until the sender
-          ::  migrates all its outstanding packets to |mesa.
+        ::    (any %fine requests should have been migrated and responses should
+        ::    only come via %heer or %mess)
+        ::
+          [~ %known *]
+        =^  moves-ahoy  ames-state
+          =<  abet
+          %.(shot on-ack-ahoy:(ev:am-core now^eny^rof hen ames-state))
+        =^  moves-peer  vane-gate
+          ?.  ?=(~ moves-ahoy)  `vane-gate
+          ::  this was not an %ahoy plea, check if we can move the ship back to
+          ::  .peers, if this is a first contact (e.g after a breach)
           ::
-          ::  XX what if the sender boots with an old pill after breaching that
-          ::  loads %ames as the default core?
+          =/  fren=fren-state  +.u.+.ship-state
+          ?.  =(+:*fren-state +.fren)
+            %-  %+  %*(ev-tace ev-core her sndr.shot)  odd.veb.bug.ames-state
+                |.("hear ames packet for migrated %known peer")
+            `vane-gate
+          ::  if the peer sends us an %ames packets, but we have %known state in
+          ::  .chums. this could be caused by:
+          ::    - the peer breached, we had communicated previously but our
+          ::    default core was %mesa, so it stayed in .chums
+          ::    - the peer booted after breaching with an old pill that has
+          ::    %mesa as the default core, or doesn't support zuse 410k or the  
+          ::    default core was manually changed
           ::
-          ::  XX move the peer from .chums to .peers, and enqueue an %ahoy $plea
-          ::  to migrate the peer?
+          ::  for all these causes we try to establish communication, moving
+          ::  back the peer into .peers, and enqueue an %ahoy $plea to migrate
+          ::  the peer as soon as it can handle %mesa packets.
           ::
-          `vane-gate
-        =.  peers.ames-state
-          =|  =peer-state
-          (~(put by peers.ames-state) sndr.shot known/peer-state(- -.fren))
-        =.  chums.ames-state
-          (~(del by chums.ames-state) sndr.shot)
-        (call:am-core hen dud %soft %hear lane blob)
-      [(weld moves-ahoy moves-peer) vane-gate]
+          ::  remove the ship from .chums and add it to .peers
+          ::
+          =.  peers.ames-state
+            =|  =peer-state
+            (~(put by peers.ames-state) sndr.shot known/peer-state(- -.fren))
+          =.  chums.ames-state
+            (~(del by chums.ames-state) sndr.shot)
+          ::  XX enqueue %ahoy $plea; poke /app/hood?
+          ::
+          (call:am-core hen dud %soft %hear lane blob)
+        [(weld moves-ahoy moves-peer) vane-gate]
+      ==
     ::
     ++  pe-rate
       |=  [dud=(unit goof) =spar =rate]
