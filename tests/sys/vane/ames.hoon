@@ -96,7 +96,7 @@
         public-key=marbud-pub
         sponsor=~bud
     ==
-  =.  route.peer-state  `[direct=%.y `lane:ames`[%| `@`%lane-bar]]
+  =.  route.peer-state  `[direct=%.y `lane:ames`[%| `@`0xffff.7f00.0001]]
   [%known peer-state]
 ::
 =.  peers.ames-state.bud
@@ -109,7 +109,7 @@
         public-key=nec-pub
         sponsor=~nec
     ==
-  =.  route.peer-state  `[direct=%.y `lane:ames`[%| `@`%lane-bar]]
+  =.  route.peer-state  `[direct=%.y `lane:ames`[%| `@`0xffff.7f00.0001]]
   [%known peer-state]
 ::
 =.  peers.ames-state.comet
@@ -122,7 +122,7 @@
         public-key=marbud-pub
         sponsor=~bud
     ==
-  =.  route.peer-state  `[direct=%.y `lane:ames`[%| `@`%lane-bar]]
+  =.  route.peer-state  `[direct=%.y `lane:ames`[%| `@`0xffff.7f00.0001]]
   [%known peer-state]
 =.  peers.ames-state.comet
   %+  ~(put by peers.ames-state.comet)  ~bud
@@ -134,7 +134,7 @@
         public-key=bud-pub
         sponsor=~bud
     ==
-  =.  route.peer-state  `[direct=%.y `lane:ames`[%| `@`%lane-bar]]
+  =.  route.peer-state  `[direct=%.y `lane:ames`[%| `@`0xffff.7f00.0001]]
   [%known peer-state]
 =.  peers.ames-state.comet2
   %+  ~(put by peers.ames-state.comet2)  ~marbud
@@ -146,7 +146,7 @@
         public-key=marbud-pub
         sponsor=~bud
     ==
-  =.  route.peer-state  `[direct=%.y `lane:ames`[%| `@`%lane-bar]]
+  =.  route.peer-state  `[direct=%.y `lane:ames`[%| `@`0xffff.7f00.0001]]
   [%known peer-state]
 =.  peers.ames-state.comet2
   %+  ~(put by peers.ames-state.comet2)  ~bud
@@ -177,10 +177,38 @@
   ?>  ?=([%give %send *] +.move)
   [lane blob]:+>+.move
 ::
+++  move-to-push
+  |=  =move:ames
+  ^-  [lane:pact:ames =blob:ames]
+  ::
+  =;  [l=(list lane:pact:ames) =blob:ames]
+    (snag 0 l)^blob
+  ?>  ?=([%give %push *] +.move)
+  [p q]:+>+.move
+::
+++  move-to-moke
+  |=  =move:ames
+  ^-  [space:ames spar:ames path]
+  ::
+  ?>  ?=([%pass wire=^ %a %moke *] +.move)
+  =/  =space:ames  &6:move
+  =/  =spar:ames   &7:move
+  [space spar |7:move]
+::
 ++  is-move-send
   |=  =move:ames
   ^-  ?
   ?=([%give %send *] card.move)
+::
+++  is-move-push
+  |=  =move:ames
+  ^-  ?
+  ?=([%give %push *] card.move)
+::
+++  is-move-moke
+  |=  =move:ames
+  ^-  ?
+  ?=([%pass wire=^ %a %moke *] card.move)
 ::
 ++  snag-packet
   |=  [index=@ud moves=(list move:ames)]
@@ -190,6 +218,30 @@
   %+  snag  index
   (skim moves is-move-send)
 ::
+++  snag-moke
+  |=  [index=@ud moves=(list move:ames)]
+  ^-  [space:ames spar:ames path]
+  ::
+  %-  move-to-moke
+  %+  snag  index
+  (skim moves is-move-moke)
+::
+++  snag-push
+  |=  [index=@ud moves=(list move:ames)]
+  ^-  [=lane:pact:ames =blob:ames]
+  ::
+  %-  move-to-push
+  %+  snag  index
+  (skim moves is-move-push)
+::
+++  make-roof
+  |=  [pax=path val=cage]
+  ^-  roof
+  |=  [lyc=gang pov=path vis=view bem=beam]
+  ^-  (unit (unit cage))
+  ?.  &(=(s.bem pax) |(=(vis %x) =(vis [%$ %x]) =(vis [%g %x]) =(vis [%a %x])))
+    [~ ~]
+  ``val
 ++  n-frags
   |=  n=@
   ^-  @ux
@@ -724,5 +776,38 @@
         ship=~nec
       path=/a/x/1//fine/shut/1/0v1.vvaek.7boon.0tp04.21q1h.be1i0.494an.qimof.e2fku.ern01
   ==
+::
+::  %ahoy tests
+::
+++  test-old-ames-wire-mesa  ^-  tang
+  ::  turn on for verbosity
+  :: =^  moves0  bud
+  ::   (call bud ~[/g/hood] %spew ~[%fin %for %ges %kay %msg %odd %rcv %rot %snd %sun])
+  =/  poke-plea    [%g /talk [%get %post]]
+  =^  moves1       nec  (call nec ~[/g/talk] %plea ~bud poke-plea)
+  =^  move-ahoy-1  nec  (call nec ~[/g/ahoy] %plea ~bud %$ /mesa %ahoy ~)
+  =^  move-ahoy-2  bud  (call bud ~[//unix] %hear (snag-packet 0 move-ahoy-1))
+  ?>  ?=([* [^ %pass *] *] move-ahoy-2)
+  =^  ack-ahoy  bud
+    (call bud `duct`[/bone/~nec/0/5 //unix ~] %deep %ahoy ship=~nec bone=5)
+  =^  move-ahoy-4  nec  (call nec ~[//unix] %hear (snag-packet 0 ack-ahoy))
+  ::  XX assert move-ahoy-4 == [duct=[i=/g/ahoy t=~] %give p=[%done error=~]]
+  ::
+  =^  move-ahoy-5  nec  (call nec ~[/g/hood] %mate `~bud dry=|)
+  =/  poke-roof
+    (make-roof /flow/0/poke/for/~bud/1 message+!>(plea/poke-plea))
+  =^  move-ahoy-6  nec
+    %+  call  nec(rof poke-roof)
+    :+  :+  :-  %ames  ::  added by %arvo when passing a move to %a
+            /mesa/flow/ack/for/~bud/0/0
+          //unix
+        ~
+      %moke
+    (snag-moke 0 move-ahoy-5)
+  =^  moves2  bud  (call bud ~[//unix] %heer (snag-push 0 move-ahoy-6))
+  =^  moves3  bud  (take bud /bone/~nec/1 ~[//unix] %g %done ~)
+  %+  expect-eq
+    !>  1
+    !>  (lent `(list move:ames)`moves3)  :: %pass %mage for the ack
 ::
 --
