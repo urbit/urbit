@@ -5991,6 +5991,10 @@
                 ::  tell congestion control a packet timed out
                 ::
                 =.  metrics.state  on-timeout:gauge
+                =?  metrics.state  (lth 100.000 tries:-:+:-:(pop:packet-queue live.state))
+                  =/  jitter=@da  (mul ~s1 (~(rad og eny) 43.200))
+                  metrics.state(rto (add ~d1 jitter))
+                ::
                 =|  acc=(unit static-fragment)
                 ::  re-send first packet and update its state in-place
                 ::
