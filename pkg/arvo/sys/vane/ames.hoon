@@ -3814,6 +3814,8 @@
             event-core
           =/  =bone
             ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
+          %-  %^  ev-trace  odd.veb  her
+              |.("dropping %flub: bone={<bone>} {(spud wire)}")
           abet:(on-flub:peer-core bone)
         ::  +on-take-done: handle notice from vane that it processed a message
         ::
@@ -6625,6 +6627,42 @@
                             la=last-acked.state  lh=last-heard.state
                         ==
                       "hear last in-progress {<data>}"
+                  =+  ?.  odd.veb  ~
+                      ?.  ?=(%plea (received bone.shut-packet))   ~
+                      =/  fragments=(map @ @uwfragment)
+                        ::  create default if first fragment
+                        ::
+                        ?~  existing=(~(get by live-messages.state) seq)
+                          ?.  =(0 fragment-num)
+                            ~
+                          %+  ~(put by *(map @ @uwfragment))
+                            fragment-num
+                          fragment
+                        ?>  (gth num-fragments.u.existing fragment-num)
+                        ?>  =(num-fragments.u.existing num-fragments)
+                        ::
+                        %+  ~(put by fragments.u.existing)
+                          fragment-num
+                        fragment
+                      ?~  fragments
+                        %-  %+  pe-trace  &
+                            |.  ^-  tape
+                            =/  data
+                              :*  her  seq=seq  bone=bone.shut-packet
+                                  fragment-num  num-fragments
+                                  la=last-acked.state  lh=last-heard.state
+                                  pending=~(key by pending-vane-ack.state)
+                              ==
+                            "last in-progress miss live {<data>}"
+                        ~
+                      =/  message=*
+                        (assemble-fragments num-fragments fragments)
+                      =+  ;;((soft [vane=@tas =path payload=*]) message)
+                      ?~  m=;;((soft [vane=@tas =path payload=*]) message)  ~
+                      %-  %+  pe-trace  &
+                          |.  ^-  tape  =,  u.m
+                          "last in-progress {<vane=vane>} path={<(spud path)>}"
+                      ~
                   sink
                 ::  ack all other packets
                 ::
