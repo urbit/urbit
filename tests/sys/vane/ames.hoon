@@ -214,6 +214,14 @@
   =/  =spar:ames   &7:move
   [space spar |7:move]
 ::
+++  move-to-ahoy
+  |=  =move:ames
+  ^-  cage
+  ::
+  ?>  ?=([%pass [%ahoy ~] %g %deal ^ %hood %poke %helm-send-ahoy *] +.move)
+  ~!  |8:move
+  |8:move
+::
 ++  is-move-send
   |=  =move:ames
   ^-  ?
@@ -228,6 +236,11 @@
   |=  =move:ames
   ^-  ?
   ?=([%pass wire=^ %a %moke *] card.move)
+::
+++  is-move-ahoy
+  |=  =move:ames
+  ^-  ?
+  ?=([%pass [%ahoy ~] %g %deal ^ %hood %poke %helm-send-ahoy *] card.move)
 ::
 ++  snag-packet
   |=  [index=@ud moves=(list move:ames)]
@@ -244,6 +257,14 @@
   %-  move-to-moke
   %+  snag  index
   (skim moves is-move-moke)
+::
+++  snag-ahoy
+  |=  [index=@ud moves=(list move:ames)]
+  ^-  cage
+  ::
+  %-  move-to-ahoy
+  %+  snag  index
+  (skim moves is-move-ahoy)
 ::
 ++  snag-push
   |=  [index=@ud moves=(list move:ames)]
@@ -873,5 +894,46 @@
   %+  expect-eq
     !>  pact
     !>  (parse-packet:bud blob)  :: %pass %peek for the attestation
+::
+::
+++  test-comet-sends-ames
+  ::  turn on for verbosity
+  ::
+  =^  moves0  bud
+    (call bud ~[/g/hood] %spew ~[%fin %for %ges %kay %msg %odd %rcv %rot %snd %sun])
+  ::  load %mesa core into the comet
+  ::
+  =^  moves1  bud  (call bud ~[/hood] %load %mesa)
+  =.  chums.ames-state.bud
+    %+  ~(put by chums.ames-state.bud)  our-comet
+    [%alien *ovni-state:ames]
+  =.  chums.ames-state.comet  (~(del by chums.ames-state.comet) ~bud)
+  =.  peers.ames-state.comet
+    %+  ~(put by peers.ames-state.comet)  ~bud
+    =|  =peer-state:ames
+    =.  -.peer-state
+      :*  symmetric-key=bud-comet-sym
+          life=3
+          rift=0
+          public-key=bud-pub
+          sponsor=~bud
+      ==
+    =.  route.peer-state  `[direct=%.y `lane:ames`[%& `@`~bud]]
+    [%known peer-state]
+  ::  send a %ames packet to bud that has %mesa as the default core
+  ::
+  =/  poke-plea  [%g /talk [%get %post]]
+  =^  moves1  comet  (call comet ~[/g/talk] %plea ~bud poke-plea)
+  ::  drop packet, move .chum to .peer, and enqueue %ahoy $plea
+  ::
+  =^  moves2  bud    (call bud ~[//unix] %hear (snag-packet 0 moves1))
+  =/  ahoy-plea  helm-send-ahoy/!>(our-comet^test=|)
+  %+  weld
+    %+  expect-eq
+      +:ahoy-plea
+    +:(snag-ahoy 0 moves2)
+  %+  expect-eq
+    !>  &
+    !>  (~(has by peers.ames-state.bud) our-comet)
 ::
 --
