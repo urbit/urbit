@@ -70,6 +70,7 @@
 =/  marbud-sym  (derive-symmetric-key:ames marbud-pub priv.ames-state.comet)
 =/  marbud2-sym  (derive-symmetric-key:ames marbud-pub priv.ames-state.comet2)
 =/  bud-marbud-sym  (derive-symmetric-key:ames bud-pub priv.ames-state.marbud)
+=/  bud-comet-sym  (derive-symmetric-key:ames nec-pub priv.ames-state.comet)
 ::
 =/  comet-sym  (derive-symmetric-key:ames bud-pub priv.ames-state.comet)
 ::
@@ -160,6 +161,24 @@
     ==
   =.  route.peer-state  `[direct=%.y `lane:ames`[%| `@`%lane-bar]]
   [%known peer-state]
+::  alien peers
+::
+=.  peers.ames-state.bud
+  %+  ~(put by peers.ames-state.bud)  our-comet
+  [%alien *alien-agenda:ames]
+::
+=.  chums.ames-state.comet
+  %+  ~(put by chums.ames-state.comet)  ~bud
+  =|  =fren-state:ames
+  =.  -.fren-state
+    :*  symmetric-key=bud-comet-sym
+        life=3
+        rift=0
+        public-key=bud-pub
+        sponsor=~bud
+    ==
+  =.  lane.fren-state  `[hop=0 `lane:pact:ames``@`~bud]
+  [%known fren-state]
 ::  metamorphose
 ::
 =>  .(nec +:(call:(nec) ~[//unix] ~ %born ~))
@@ -239,9 +258,17 @@
   ^-  roof
   |=  [lyc=gang pov=path vis=view bem=beam]
   ^-  (unit (unit cage))
-  ?.  &(=(s.bem pax) |(=(vis %x) =(vis [%$ %x]) =(vis [%g %x]) =(vis [%a %x])))
+  ?.  ?&  =(s.bem pax)
+          ?|  =(vis %x)
+              =(vis [%$ %x])
+              =(vis [%g %x])
+              =(vis [%a %x])
+              ?&  =(vis %j)
+                  =(%saxo q.bem)
+      ==  ==  ==
     [~ ~]
   ``val
+::
 ++  n-frags
   |=  n=@
   ^-  @ux
@@ -809,5 +836,42 @@
   %+  expect-eq
     !>  1
     !>  (lent `(list move:ames)`moves3)  :: %pass %mage for the ack
+::
+++  test-comet-sends-mesa
+  ::  turn on for verbosity
+  ::
+  :: =^  moves0  bud
+  ::   (call bud ~[/g/hood] %spew ~[%fin %for %ges %kay %msg %odd %rcv %rot %snd %sun])
+  ::  load %mesa core into the comet
+  ::
+  =^  moves1  comet  (call comet ~[/hood] %load %mesa)
+  ::  send a %mesa packet to bud that has %ames as the default core
+  ::
+  =/  poke-plea  [%g /talk [%get %post]]
+  =^  moves1  comet  (call comet ~[/g/talk] %plea ~bud poke-plea)
+  =/  poke-roof
+    (make-roof /flow/0/poke/for/~bud/1 message+!>(plea/poke-plea))
+  =^  moves2  comet
+    %+  call  comet(rof poke-roof)
+    :+  :+  :-  %ames  ::  added by %arvo when passing a move to %a
+            /mesa/flow/ack/for/~bud/0/0
+          //unix
+        ~
+      %moke
+    (snag-moke 0 moves1)
+  =/  comet-roof
+    (make-roof /(scot %p our-comet) noun+!>(~[0]))
+  =^  moves2  bud
+    (call bud(rof comet-roof) ~[//unix] %heer (snag-push 0 moves2))
+  =/  [=lane:pact:ames blob=@]  (snag-push 0 moves2)
+  =/  =pact:pact:ames
+    :-  hop=0
+    :-  %peek
+    :+  [her=~bosrym-podwyl-magnes-dacrys--pander-hablep-masrym-marbud rif=0]
+      [boq=13 wan=~]
+    pat=/publ/1/a/x/1//pawn/proof/~bud/3
+  %+  expect-eq
+    !>  pact
+    !>  (parse-packet:bud blob)  :: %pass %peek for the attestation
 ::
 --
