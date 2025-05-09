@@ -3930,7 +3930,7 @@
         ++  bone-ok
           |=  [parsed=parsed-bone-wire =wire =rift]
           ^-  (unit bone)
-          =*  her        her.parsed
+          =*  her  her.parsed
           ::
           ?:  ?&  ?=([%new *] parsed)
                   (lth rift.parsed rift)
@@ -7559,15 +7559,19 @@
               (slaw %ud ping-bone.bon.req.tyl)
             ?:   ?=([~ %known *] per)
               :-  ~
+              ?~  ping-bone
+                =+  fake-bone=~(wyt by rcv.u.per)
+                [rift.u.per life.u.per ?:(=(0 fake-bone) ~ `fake-bone) ~]
               :^  rift.u.per  life.u.per  ping-bone
-              ?~  ping-bone  ~
               ?~  rcv=(~(get by rcv.u.per) (mix 0b1 u.ping-bone))
                 ~
               `last-acked.u.rcv
             ?.   ?=([~ %known *] chu)  ~
             :-  ~
+            ?~  ping-bone
+              =+  fake-bone=~(wyt by flows.u.chu)
+              [rift.u.chu life.u.chu ?:(=(0 fake-bone) ~ `fake-bone) ~]
             :^  rift.u.chu  life.u.chu  ping-bone
-            ?~  ping-bone  ~
             ?~  flow=(~(get by flows.u.chu) u.ping-bone %bak)
               ~
             `last-acked.rcv.u.flow
@@ -7732,7 +7736,7 @@
       ++  ev
         ::
         =|  moves=(list move)
-        =|  delete-per=?(%.y %.n)
+        =|  skip-abet=?(%.y %.n)
         ::
         |_  [hen=duct her=ship per=fren-state]
         ::
@@ -7741,7 +7745,7 @@
         ++  ev-core  .
         ++  ev-abet
           :-  moves
-          ?:  delete-per  ames-state
+          ?:  skip-abet  ames-state
           ames-state(chums (~(put by chums.ames-state) her %known per))
         ::
         ++  ev-abed  |=(=duct ev-core(hen duct))
@@ -7773,14 +7777,6 @@
               ~
           ==
         ::
-        +$  ev-bone-wire
-          $:  %bone
-              [%p her=@p]
-              [%ud rift=@ud]
-              [%ud bone=@ud]
-              ~
-          ==
-        ::
         +|  %validation
         ::
         ++  ev-parse-flow-wire
@@ -7788,13 +7784,6 @@
           ^-  (unit ev-flow-wire)
           =>  .(wire `(pole iota)`(mesa-pave wire))
           ?.  ?=(ev-flow-wire wire)  ~
-          `wire
-        ::
-        ++  ev-parse-bone-wire
-          |=  =wire
-          ^-  (unit ev-bone-wire)
-          =>  .(wire `(pole iota)`(mesa-pave wire))
-          ?.  ?=(ev-bone-wire wire)  ~
           `wire
         ::
         +|  %request-flow
@@ -8208,7 +8197,7 @@
               %.  [%sink mess.pok gage ?=(~ dud)]
               fo-call:(fo-abed:fo hen [bone dire]:ack)
             =.  ev-core  fo-abet:fo-core
-            ev-core(delete-per delete-per.fo-core)
+            ev-core(skip-abet delete-per.fo-core)
           ::
           ++  hear-peek
             |=  =spar
@@ -8241,21 +8230,30 @@
               ev-core
             ?>  ?=(%sage -.sign)
              (ev-take-sage +.sign [were bone dire]:u.flow-wire)
-          ?~  bone-wire=(ev-parse-bone-wire wire)
+          ?~  bone-wire=(parse-bone-wire wire)
             %-  %+  ev-tace  odd.veb.bug.ames-state
                   |.("weird wire on {<(trip -.sign)>} {(spud wire)}")
-            ev-core
+            ev-core(skip-abet %.y)
+          ?>  ?=([@ her=ship *] u.bone-wire)
           =.  her  her.u.bone-wire
           =.  per  (got-per her)
-          ?:  (lth rift.u.bone-wire rift.per)
+          ?:  ?&  ?=([%new *] u.bone-wire)
+                  (lth rift.u.bone-wire rift.per)
+              ==
             %-  %+  ev-tace  odd.veb.bug.ames-state
                   |.("ignore {<(trip -.sign)>} for old rift")
             ev-core
+          =+  ?.  =(%old -.u.bone-wire)  ~
+              %-  %+  ev-tace  odd.veb.bug.ames-state
+                  |.("parsing old wire: {(spud wire)}")
+              ~
+          =/  =bone
+            ?-(u.bone-wire [%new *] bone.u.bone-wire, [%old *] bone.u.bone-wire)
           ::  after %sage, all signs happen on backward flows
           ::
-          =?  bone.u.bone-wire  =(%1 (mod bone.u.bone-wire 2))
-            (mix 0b1 bone.u.bone-wire)
-          =+  fo-core=(fo-abed:fo hen bone.u.bone-wire dire=%bak)
+          =?  bone  =(%1 (mod bone 2))
+            (mix 0b1 bone)
+          =+  fo-core=(fo-abed:fo hen bone dire=%bak)
           ?+  -.sign  !!  :: %sage shouldn't use bone wires
             ::  XX for %done, we ack one message at at time, seq is not needed?
             ::  XX use it as an assurance check?
@@ -8263,7 +8261,7 @@
             ?(%flub %done)  fo-abet:(fo-take:fo-core %van sign)
           ::
               ?(%boon %noon)
-            %+  ev-req-boon  bone.u.bone-wire
+            %+  ev-req-boon  bone
             ?-(-.sign %boon [id=~ payload.sign], %noon [`id payload]:sign)
           ==
         ::
@@ -8556,7 +8554,7 @@
           ++  fo-abet
             ^+  ev-core
             ?:  delete-per
-              ev-core(delete-per delete-per)
+              ev-core(skip-abet delete-per)
             =?  flows.per  !fo-corked
               (~(put by flows.per) bone^dire state)
             %_    ev-core
