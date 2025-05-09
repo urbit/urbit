@@ -32,7 +32,7 @@
   (pure:m !>([leaf+"... empty response ..." ~]))
 ?>  ?=(%message p.q.sage)
 %-  pure:m  !>
-?+  -.q.q.sage  !!
+?+  -.q.q.sage  ~|(q.q.sage !!)
   %clos  ["flow in closing? " "{<;;(? +.q.q.sage)>}"]
   %gone  ["flow is corked?" "%.y"]
   %line  ["migration line: " "{<;;(@ud +.q.q.sage)>}"]
@@ -41,4 +41,5 @@
   %last  ["last acked: " "{<;;(@ud +.q.q.sage)>}"]
   %naxp  ["message nacked? " "{<;;(? +.q.q.sage)>}"]
   %curr  ["current message: " "{<;;(@ud +.q.q.sage)>}"]
+  %whey  ["flow size: " "{<;;([boq=@ud siz=@ud] +.q.q.sage)>}"]
 ==

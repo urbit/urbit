@@ -2,11 +2,11 @@
 ::::    /sys/hoon                                       ::
   ::                                                    ::
 =<  ride
-=>  %137  =>
+=>  %136  =>
 ::                                                      ::
 ::::    0: version stub                                 ::
   ::                                                    ::
-~%  %k.137  ~  ~                                        ::
+~%  %k.136  ~  ~                                        ::
 |%
 ++  hoon-version  +
 --  =>
@@ -99,7 +99,7 @@
   ~/  %lte
   ::    unsigned less than or equals
   ::
-  ::  returns whether {a >= b}.
+  ::  returns whether {a <= b}.
   ::
   ::  a: left hand operand (todo: name)
   ::  b: right hand operand
@@ -6013,14 +6013,14 @@
 ++  mack
   |=  [sub=* fol=*]
   ^-  (unit)
-  =/  ton  (mink [sub fol] |~(^ ~))
+  =/  ton  (mink [sub fol] ~)
   ?.(?=(%0 -.ton) ~ `product.ton)
 ::  +mink: raw virtual nock
 ::
 ++  mink  !.
   ~/  %mink
   |=  $:  [subject=* formula=*]
-          scry=$-(^ (unit (unit)))
+          scry=$@(~ $-(^ (unit (unit))))
       ==
   =|  trace=(list [@ta *])
   |^  ^-  tone
@@ -6139,7 +6139,9 @@
         ?.  ?=(%0 -.ref)  ref
         =/  path  $(formula path.formula)
         ?.  ?=(%0 -.path)  path
-        =/  result  (scry product.ref product.path)
+        =/  result
+          ?~  scry  ~
+          (scry product.ref product.path)
         ?~  result
           [%1 product.path]
         ?~  u.result
@@ -10114,13 +10116,14 @@
         %_    $
             gol  %noun
             gen
-          :^    %wtcl
-              :+  %cncl  [%limb %levi]
-              :~  [%tsgr [%zpgr [%kttr p.gen]] [%$ 2]]
-                  [%tsgr q.gen [%$ 2]]
-              ==
-            [%tsgr q.gen [%$ 3]]
-          [%zpzp ~]
+          :+  %tsls  q.gen                                            ::  =+  q  ::  vase
+          :^    %wtcl                                                 ::  ?:
+              :+  %cncl  [%tsgr $+3 [%limb %levi]]                    ::      %:  levi:+  
+              :~  [%tsgr $+3 %tsgr [%zpgr [%kttr p.gen]] $+2]         ::        -:!>(*p):+
+                  $+4                                                 ::        p.q
+              ==                                                      ::      ==
+            $+5                                                       ::    q.q
+          [%zpzp ~]                                                   ::  !!
         ==
       [typ val]
     ::
@@ -11449,6 +11452,14 @@
 ++  slap
   |=  [vax=vase gen=hoon]  ^-  vase                     ::  untyped vase .*
   =+  gun=(~(mint ut p.vax) %noun gen)
+  [p.gun .*(q.vax q.gun)]
+::
+++  slub
+  |=  [vax=vase gen=hoon]  ^-  vase                     ::  memoized slap
+  =/  gun
+    =>  [vax=p=p.vax gen=gen ut=ut]
+    ~>  %memo./hoon/mint
+    (~(mint ut p.vax) %noun gen)
   [p.gun .*(q.vax q.gun)]
 ::
 ++  slog                                                ::  deify printf

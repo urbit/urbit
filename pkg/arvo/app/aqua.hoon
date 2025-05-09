@@ -2,8 +2,8 @@
 ::
 ::  usage:
 ::  |start %aqua
-::  /-  aquarium
-::  :aqua &pill .^(pill:aquarium %cx %/urbit/pill)
+::  /+  pill
+::  :aqua &pill .^(pill:pill %cx %/urbit/pill)
 ::    OR
 ::  :aqua &pill +pill/solid
 ::
@@ -18,11 +18,10 @@
 ::  :aqua [%file ~[~bud ~dev] %/sys/vane]
 ::  :aqua [%pause-events ~[~bud ~dev]]
 ::
-::  We get ++unix-event and ++pill from /-aquarium
+::  We get ++unix-event from /-aquarium
 ::
 /-  aquarium
 /+  pill, azimuth, naive, default-agent, aqua-azimuth, dbug, verb
-=,  pill-lib=pill
 =,  aquarium
 =>  $~  |%
     +$  versioned-state
@@ -30,16 +29,23 @@
       ==
     +$  state-0
       $:  %0
-          pil=$>(%pill pill)
+          pil=$>(%pill pill-0)
           assembled=*
           tym=@da
           fresh-piers=(map [=ship fake=?] [=pier boths=(list unix-both)])
           fleet-snaps=(map term fleet)
           piers=fleet
       ==
-    ::  XX temporarily shadowed, fix and remove
     ::
-    +$  pill  pill:pill-lib
+    +$  pill-0
+      $%  [%ivory p=(list)]
+          $:  %pill
+              nam=term
+              boot-ova=(list)
+              kernel-ova=(list unix-event:pill)
+              userspace-ova=(list unix-event:pill)
+          ==
+      ==
     ::
     +$  fleet  [ships=(map ship pier) azi=az-state]
     +$  pier
@@ -85,7 +91,7 @@
     =^  cards  state
       ?+  mark  ~|([%aqua-bad-mark mark] !!)
           %aqua-events     (poke-aqua-events:ac !<((list aqua-event) vase))
-          %pill            (poke-pill:ac !<(pill vase))
+          %pill            (poke-pill:ac !<(pill:pill vase))
           %noun            (poke-noun:ac !<(* vase))
           %azimuth-action  (poke-azimuth-action:ac !<(azimuth-action vase))
       ==
@@ -408,16 +414,19 @@
 ::  events.
 ::
 ++  poke-pill
-  |=  p=pill
+  |=  p=pill:pill
   ^-  (quip card:agent:gall _state)
-  ?<  ?=(%ivory -.p)
+  =?  p  ?=(%cash -.p)
+    ^-  $>(%pill pill:pill)
+    [%pill +<.p]
+  ?>  ?=(%pill -.p)
   =.  userspace-ova.p
     ::  if there is an azimuth-snapshot in the pill, we stub it out,
     ::  since it would interfere with aqua's azimuth simulation.
     ::
     ^+  userspace-ova.p
     %+  turn  userspace-ova.p
-    |=  e=unix-event:pill-lib
+    |=  e=unix-event:pill
     ^+  e
     ?.  ?=(%park -.q.e)   e
     ?.  ?=(%& -.yok.q.e)  e
@@ -498,8 +507,8 @@
     =.  userspace-ova.pil
       ::  take all files from a userspace desk
       :_  ~
-      %-  unix-event:pill-lib
-      %-  file-ovum:pill-lib
+      %-  unix-event:pill
+      %-  file-ovum:pill
       [desk /(scot %p our.hid)/[desk]/(scot %da now.hid) ~]
     =^  ms  state  (poke-pill pil)
     (emit-cards ms)

@@ -32,7 +32,7 @@
     --
 |%
 ++  test-parse-pile  ^-  tang
-  =/  src  "."
+  =/  src  '.'
   %+  expect-eq
     !>  ^-  pile:fusion
         :*  ~  ~  ~  ~  ~  ~  ~
@@ -41,7 +41,7 @@
     !>  (parse-pile:(ford):fusion /sur/foo/hoon src)
 ::
 ++  test-parse-fascen  ^-  tang
-  =/  src  "/%  moo  %mime\0a."
+  =/  src  '/%  moo  %mime\0a.'
   %+  expect-eq
     !>  ^-  pile:fusion
         :*  sur=~  lib=~  raw=~  raz=~
@@ -52,7 +52,7 @@
     !>  (parse-pile:(ford):fusion /sur/foo/hoon src)
 ::
 ++  test-parse-fasbuc  ^-  tang
-  =/  src  "/$  goo  %mime  %txt\0a."
+  =/  src  '/$  goo  %mime  %txt\0a.'
   %+  expect-eq
     !>  ^-  pile:fusion
         :*  sur=~  lib=~  raw=~  raz=~  maz=~
@@ -64,7 +64,7 @@
 ::
 ++  test-parse-multiline-faslus  ^-  tang
   =/  src
-    """
+    '''
     ::
     /?    310                                               ::  zuse version
     ::
@@ -75,7 +75,7 @@
     /+  hood-helm, hood-kiln, hood-drum, hood-write
     ::
     .
-    """
+    '''
   %+  expect-eq
     !>  ^-  pile:fusion
         :*  sur=`(list taut:fusion)`[~ %sole]~
@@ -107,7 +107,7 @@
 ::
 ++  test-parse-fail  ^-  tang
   %-  expect-fail
-  |.  (parse-pile:(ford):fusion /sur/foo/hoon "[")
+  |.  (parse-pile:(ford):fusion /sur/foo/hoon '[')
 ::
 ++  test-mar-mime  ^-  tang
   =/  ford
