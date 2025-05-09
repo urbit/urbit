@@ -124,7 +124,7 @@
     %:    ames-check-call:v  bud
         [~1111.1.1 0xdead.beef bon-roof]
     ::
-      [~[ack-wire /poke] moke]
+      [~[[%ames ack-wire] /poke] moke]
     ::
       =/  blob=@
         %:   ames-make-pact:v  bud
