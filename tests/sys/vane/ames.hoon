@@ -214,6 +214,13 @@
   =/  =spar:ames   &7:move
   [space spar |7:move]
 ::
+++  move-to-plea
+  |=  =move:ames
+  ^-  [ship plea:ames]
+  ::
+  ?>  ?=([%pass ^ %g %plea *] card.move)
+  |5:move
+::
 ++  move-to-ahoy
   |=  =move:ames
   ^-  cage
@@ -242,6 +249,11 @@
   ^-  ?
   ?=([%pass [%ahoy ~] %g %deal ^ %hood %poke %helm-send-ahoy *] card.move)
 ::
+++  is-move-plea
+  |=  =move:ames
+  ^-  ?
+  ?=([%pass ^ %g %plea *] card.move)
+::
 ++  snag-packet
   |=  [index=@ud moves=(list move:ames)]
   ^-  [=lane:ames =blob:ames]
@@ -265,6 +277,14 @@
   %-  move-to-ahoy
   %+  snag  index
   (skim moves is-move-ahoy)
+::
+++  snag-plea
+  |=  [index=@ud moves=(list move:ames)]
+  ^-  [ship plea:ames]
+  ::
+  %-  move-to-plea
+  %+  snag  index
+  (skim moves is-move-plea)
 ::
 ++  snag-push
   |=  [index=@ud moves=(list move:ames)]
@@ -904,6 +924,7 @@
   ::  load %mesa core into the comet
   ::
   =^  moves1  bud  (call bud ~[/hood] %load %mesa)
+  =.  peers.ames-state.comet  (~(del by peers.ames-state.bud) our-comet)
   =.  chums.ames-state.bud
     %+  ~(put by chums.ames-state.bud)  our-comet
     [%alien *ovni-state:ames]
@@ -935,5 +956,66 @@
   %+  expect-eq
     !>  &
     !>  (~(has by peers.ames-state.bud) our-comet)
+::  XX this wouldn't happen for comets since they don't breach
 ::
+++  test-comet-bunt-sends-ames
+  ::  turn on for verbosity
+  ::
+  =^  moves0  bud
+    (call bud ~[/g/hood] %spew ~[%fin %for %ges %kay %msg %odd %rcv %rot %snd %sun])
+  ::  load %mesa core into the comet
+  ::
+  =^  moves1  bud  (call bud ~[/hood] %load %mesa)
+  =.  peers.ames-state.comet  (~(del by peers.ames-state.bud) our-comet)
+  =/  crypto-core
+    %-  nol:nu:crub:crypto
+    0w9N.5uIvA.Jg0cx.NCD2R.o~MtZ.uEQOB.9uTbp.6LHvg.0yYTP.
+    3q3td.T4UF0.d5sDL.JGpZq.S3A92.QUuWg.IHdw7.izyny.j9W92
+  =/  comet-pub   pub:ex:crypto-core
+  =.  chums.ames-state.bud
+    %+  ~(put by chums.ames-state.bud)  our-comet
+    :+  %known
+      :*  symmetric-key=bud-comet-sym
+          life=1
+          rift=0
+          public-key=comet-pub
+          sponsor=~bud
+      ==
+    +:*fren-state:ames
+  =.  chums.ames-state.comet  (~(del by chums.ames-state.comet) ~bud)
+  =.  peers.ames-state.comet
+    %+  ~(put by peers.ames-state.comet)  ~bud
+    =|  =peer-state:ames
+    =.  -.peer-state
+      :*  symmetric-key=bud-comet-sym
+          life=3
+          rift=0
+          public-key=bud-pub
+          sponsor=~bud
+      ==
+    =.  route.peer-state  `[direct=%.y `lane:ames`[%& `@`~bud]]
+    [%known peer-state]
+  ::  send a %ames packet to bud that has %mesa as the default core
+  ::
+  =/  poke-plea  [%g /talk [%get %post]]
+  =^  moves1  comet  (call comet ~[/g/talk] %plea ~bud poke-plea)
+  ::  inject plea packet, move .chum to .peer, and enqueue %ahoy $plea
+  ::
+  =^  moves2  bud    (call bud ~[//unix] %hear (snag-packet 0 moves1))
+  =/  ahoy-plea  helm-send-ahoy/!>(our-comet^test=|)
+  =/  gall-plea  [our-comet poke-plea]
+  ;:  weld
+    %+  expect-eq
+      +:ahoy-plea
+    +:(snag-ahoy 0 moves2)
+  ::
+    %+  expect-eq
+      !>  gall-plea
+    !>  (snag-plea 0 moves2)
+  ::
+    %+  expect-eq
+      !>  &
+      !>  (~(has by peers.ames-state.bud) our-comet)
+  ::
+  ==
 --
