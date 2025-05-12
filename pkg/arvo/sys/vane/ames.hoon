@@ -11927,7 +11927,9 @@
             %poke
           =*  data     data.pact
           =*  our-ack  her.ack.pact
+          =*  rif-ack  rif.ack.pact
           =*  her-pok  her.pok.pact
+          =*  rif-pok  rif.pok.pact
           ::
           ?:  .=  =(%deny form.snub.ames-state)
               (~(has in ships.snub.ames-state) her-pok)
@@ -12018,6 +12020,7 @@
           ::
           %-  %+  %*(ev-tace ev-core her her-pok)  odd.veb.bug.ames-state
               |.("hear poke for regressed")
+          ::  XX  call hear-poke:ev-pact:ev:mesa-core instead?
           ::
           =|  per=fren-state
           =.  -.per  azimuth-state=+<.u.chum-state
@@ -12047,13 +12050,19 @@
             inner:(decrypt-path:mesa-core [pat.ack her.pok]:pact)
           ::
           ?>  &(?=(flow-pith ack) ?=(flow-pith pok))
-          ?.  =(our-ack our)  ::  do we need to respond to this ack?
+          ?.  ?&  =(our our-ack)       ::  do we need to respond to this ack?
+                  =(our-rift rif-ack)  ::  at the current rift
+              ==
             %-  %+  ev-tace:ev-core  odd.veb.bug.ames-state
-                |.("not our ack rcvr={<our-ack>}; skip")
+                =+  rifs=[our=our-rift pac=rif-ack]
+                |.("not our ack rcvr={<our-ack>} rifs={<rifs>}; skip")
             `ames-state
-          ?.  =(rcvr.pok our)  ::  are we the receiver of the poke?
+          ?.  ?&  =(our rcvr.pok)      ::  are we the receiver of the poke?
+                  =(rift.per rif-pok)  ::  at their current rift
+              ==
+            =+  rifs=[her=rift.per pac=rif-pok]
             %-  %+  ev-tace:ev-core  odd.veb.bug.ames-state
-                |.("poke for {<rcvr.pok>} not us  ; skip")
+                |.("poke for {<rcvr.pok>} at rifts={<rifs>}; skip")
             `ames-state
           ?.  =(her-pok rcvr.ack)  ::  do ack and pokes match?
             %-  %+  ev-tace:ev-core  odd.veb.bug.ames-state
@@ -12098,7 +12107,7 @@
               |=  [lyc=gang pov=path vis=view bem=beam]
               ^-  (unit (unit cage))
               ?:  =(s.bem (pout ack))
-                  (peek-flow:na:me-core lyc (pout ack))
+                (peek-flow:na:me-core lyc (pout ack))
               (rof lyc pov vis bem)
             ::
             =<  moves
