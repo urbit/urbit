@@ -5377,11 +5377,15 @@
                 =:         closing.flow  (~(has in closing.peer-state) bone)
                               line.flow  last-acked.sink
                     last-acked.rcv.flow  last-acked.sink
-                    ::  XX if there's a pending-vane ack it should have
-                    ::  been sent to the vane already?
-                    ::  drop any pending ack
+                    ::  don't drop pending acks given to the vane. if a retry
+                    ::  we will no-op on fo-sink:fo -- these situations happened
+                    ::  prior to the introduction of %flubs. the message should
+                    ::  have been enqueued in the gall queue, but dropped if
+                    ::  e.g. the app is not installed. as soon as that happens
+                    ::  %gall will give the %done to %ames, which in turn will
+                    ::  send the %ack to the peer.
                     ::
-                    pending-ack.rcv.flow  %.n  ::  ?=(^ pending-vane-ack.sink)
+                    pending-ack.rcv.flow  ?=(^ pending-vane-ack.sink)
                   ::
                       nax.rcv.flow
                     ::  carry over live naxplanations we have just migrated
