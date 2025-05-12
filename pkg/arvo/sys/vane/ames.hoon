@@ -4844,10 +4844,16 @@
             event-core
           %-  (ev-trace snd.veb sndr.shot |.("send migrated ahoy ack"))
           ::
-          =/  ok=?  ;;(? +.u.res)
+          =+  ;;(error=? +.u.res)
+          ?:  error
+            ::  XX don't nack, otherwise the peer will wait for the naxplanation
+            ::
+            %-  %+  ev-trace  snd.veb sndr.shot
+                |.("ahoy got nacked {<bone.u.shut-packet>} seq={<message-num>}")
+            ev-core
           =/  ack-packet=^shut-packet
-            :-  (mix 1 bone.u.shut-packet)
-            [message-num.u.shut-packet %| %| ok lag=*@dr]
+            :-  (mix 0b1 bone.u.shut-packet)
+            [message-num.u.shut-packet %| %| !error lag=*@dr]
           %:  send-blob  for=|  sndr.shot
             %-  etch-shot
             %:  etch-shut-packet:ames
