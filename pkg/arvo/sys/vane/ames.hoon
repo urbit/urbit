@@ -4842,15 +4842,15 @@
           ?.  ?=([%ack error=@] u.res)
             %-  (ev-trace odd.veb sndr.shot |.("weird ack"))
             event-core
-          %-  (ev-trace snd.veb sndr.shot |.("send migrated ahoy ack"))
           ::
           =+  ;;(error=? +.u.res)
           ?:  error
             ::  XX don't nack, otherwise the peer will wait for the naxplanation
             ::
-            %-  %+  ev-trace  snd.veb sndr.shot
+            %-  %^  ev-trace  snd.veb  sndr.shot
                 |.("ahoy got nacked {<bone.u.shut-packet>} seq={<message-num>}")
-            ev-core
+            event-core
+          %-  (ev-trace snd.veb sndr.shot |.("send migrated ahoy ack"))
           =/  ack-packet=^shut-packet
             :-  (mix 0b1 bone.u.shut-packet)
             [message-num.u.shut-packet %| %| !error lag=*@dr]
@@ -12093,12 +12093,17 @@
             %-  %+  ev-tace:ev-core  odd.veb.bug.ames-state
                 |.("no op; ignore {(spud path.plea)} plea")
             `ames-state  :: XX ignore non %rege plea
-          ::  produce mesa ack
+          ::  check that we have the ack in peers.ames-state
           ::
-          %-  %+  ev-tace:ev-core  snd.veb.bug.ames-state
-              |.("ack %rege plea")
-          ::  XX check that we have the ack in peers.ames-state?
-          ::
+          ?~  sink=(~(get by rcv.+.u.chum-state) (mix 0b1 bone.ack))
+            %-  %+  ev-tace:ev-core  snd.veb.bug.ames-state
+                |.("missing %rege bone={<bone.ack>} from sink")
+            `ames-state
+          ?.  =(last-acked.u.sink mess.pok)
+            %-  %+  ev-tace:ev-core  snd.veb.bug.ames-state
+                |.
+                "%rege $plea is not last acked ({<mess.pok>}) bone={<bone.ack>}"
+            `ames-state
           =/  moves=(list move)
             ::  create temporary flow for ack payload
             ::
@@ -12106,7 +12111,7 @@
               =.  flows.per
                 =|  state=flow-state
                 %-  ~(put by flows.per)
-                [[bone dire]:ack state(last-acked.rcv mess.pok)]
+                [[bone dire]:ack state(last-acked.rcv last-acked.u.sink)]
               (~(put by chums.ames-state.me-core) her-pok known/per)
             =/  flow-roof
               ^-  roof
@@ -12119,6 +12124,10 @@
             =<  moves
             %.  [space=[%none ~] spar=[her-pok pat.ack.pact]]
             co-make-page:co:me-core(rof flow-roof)
+          ::  produce mesa ack
+          ::
+          %-  %+  ev-tace:ev-core  &(?=(^ moves) snd.veb.bug.ames-state)
+              |.("ack %rege plea")
           [moves ames-state]
         ::
         ==
