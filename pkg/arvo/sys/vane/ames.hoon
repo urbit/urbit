@@ -1799,6 +1799,51 @@
     ::
     +|  %state-migrations
     ::
+    +$  axle-25
+      $:  peers=(map ship ship-state)
+          =unix=duct  ::  [//ames/0v0 ~]
+          =life
+          =rift
+          =bug
+          snub=[form=?(%allow %deny) ships=(set ship)]
+          cong=[msg=_5 mem=_100.000]
+          $=  dead
+          $:  flow=[%flow (unit dead-timer)]
+              chum=[%chum (unit dead-timer)]
+              cork=[%cork (unit dead-timer)]
+              rots=[%rots (unit dead-timer)]
+          ==
+          ::
+          =server=chain
+          priv=private-key
+          chums=(map ship chum-state-25)
+          core=?(%ames %mesa)
+      ==
+    ::
+    +$  chum-state-25
+      $+  chum-state-25
+      $%  [%alien ovni-state]
+          [%known fren-state-25]
+      ==
+    ::
+    +$  fren-state-25
+      $:  azimuth-state
+          lane=(unit [hop=@ =lane:pact])
+          =qos
+          corked=(set side)
+          =ossuary
+          flows=(map side flow-state-25)
+          pit=(map path request-state)
+          =client=chain
+          tip=(jug =user=path [duct =ames=path])
+      ==
+  +$  flow-state-25
+    $:  closing=?(%.y %.n)
+        line=@ud
+        snd=[%outbound loads=((mop ,@ud mesa-message) lte) @ @ send-window=@]
+        rcv=[%incoming acked=@ud pending-ack=_`?`%.n nax=(map seq=@ud error)]
+    ==
+    ::
     +$  axle-24
       $:  peers=(map ship ship-state)
           =unix=duct  ::  [//ames/0v0 ~]
@@ -1832,7 +1877,7 @@
           =qos
           corked=(set side)
           =ossuary
-          flows=(map side flow-state)
+          flows=(map side flow-state-25)
           pit=(map path request-state)
           =client=chain
           tip=(jug =user=path [duct =ames=path])
@@ -1878,7 +1923,7 @@
           =qos
           corked=(set side)
           =ossuary
-          flows=(map side flow-state)
+          flows=(map side flow-state-25)
           pit=(map path request-state-23)
           =client=chain
       ==
@@ -2211,7 +2256,8 @@
             [%22 ames-state-22]
             [%23 axle-23]
             [%24 axle-24]
-            [%25 axle]
+            [%25 axle-25]
+            [%26 axle]
         ==
     ::
     ::
@@ -2286,7 +2332,7 @@
       ~>  %slog.0^leaf/"ames: metamorphosis on %take"
       [:(weld molt-moves queu-moves take-moves) adult-gate]
     ::
-    ++  stay  [%25 larva/ames-state]
+    ++  stay  [%26 larva/ames-state]
     ++  scry  scry:adult-core
     ++  load
       |=  $=  old
@@ -2432,6 +2478,10 @@
                   state=axle-24
               ==
               $:  %25                            :: add hop to |mesa lanes
+                  ?(%adult %larva)               ::
+                  state=axle-25
+              ==
+              $:  %26                            :: add cached acks
                   ?(%adult %larva)               ::
                   state=axle
           ==  ==
@@ -2702,6 +2752,11 @@
         larval-gate
       ::
           [%25 *]
+        =.  cached-state  `[%25 state.old]
+        ~>  %slog.1^leaf/"ames: larva %25 reload"
+        larval-gate
+      ::
+          [%26 *]
         ?-  +<.old
           %larva  larval-gate
           %adult  (load:adult-core state.old)
@@ -2780,7 +2835,7 @@
       |^  ^+  [moz larval-core]
       ?~  cached-state  [~ larval-core]
       =*  old  u.cached-state
-      ?:  ?=(%25 -.old)
+      ?:  ?=(%26 -.old)
         ::  no state migrations left; update state, clear cache, and exit
         ::
         [(flop moz) larval-core(ames-state.adult-gate +.old, cached-state ~)]
@@ -2857,8 +2912,10 @@
         ==
       ?:  ?=(%23 -.old)
         $(cached-state `24+(state-23-to-24 +.old))
-      ?>  ?=(%24 -.old)
-      $(cached-state `25+(state-24-to-25 +.old))
+      ?:  ?=(%24 -.old)
+        $(cached-state `25+(state-24-to-25 +.old))
+      ?>  ?=(%25 -.old)
+      $(cached-state `26+(state-25-to-26 +.old))
       ::
       ++  our-beam  `beam`[[our %rift %da now] /(scot %p our)]
       ++  state-4-to-5
@@ -3306,16 +3363,34 @@
       ::
       ++  state-24-to-25
         |=  old=axle-24
-        ^-  axle
+        ^-  axle-25
         ~>  %slog.0^leaf/"ames: migrating from state %24 to %25"
         %=    old
             chums
           %-  ~(run by chums.old)
           |=  c=chum-state-24
-          ^-  chum-state
+          ^-  chum-state-25
           ?:  ?=(%alien -.c)  c
           ?~  lane.c          c
-          c(lane `[hop=1 u.lane.c])  ::  XX bigger hop?
+          c(lane `[hop=1 u.lane.c])
+        ==
+      ::
+      ++  state-25-to-26
+        |=  old=axle-25
+        ^-  axle
+        ~>  %slog.0^leaf/"ames: migrating from state %25 to %26"
+        %=    old
+            chums
+          %-  ~(run by chums.old)
+          |=  c=chum-state-25
+          ^-  chum-state
+          ?:  ?=(%alien -.c)  c
+          %=  c
+              flows
+            %-  ~(run by flows.c)
+            |=  flow=flow-state-25
+            flow(send-window.snd [send-window.snd.flow ~])
+          ==
         ==
       ::
       --
@@ -12076,7 +12151,7 @@
   take:me-core
 ::  +stay: extract state before reload
 ::
-++  stay  [%25 adult/ames-state]
+++  stay  [%26 adult/ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load

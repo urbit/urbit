@@ -1729,7 +1729,7 @@
           ::
           send-window-max=_1                          :: how many pleas to send
           send-window=_1                              :: XX
-          :: cache=((mop ,@ud ?) lte)  :: out-of-order acks XX TODO
+          acks=((mop ,@ud ack) lte)                   :: out-of-order acks
         ==
         ::  incoming %pokes, pending their ack from the vane
         ::
