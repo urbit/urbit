@@ -6657,7 +6657,6 @@
                         ~
                       =/  message=*
                         (assemble-fragments num-fragments fragments)
-                      =+  ;;((soft [vane=@tas =path payload=*]) message)
                       ?~  m=;;((soft [vane=@tas =path payload=*]) message)  ~
                       %-  %+  pe-trace  &
                           |.  ^-  tape  =,  u.m
