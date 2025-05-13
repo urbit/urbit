@@ -8627,6 +8627,7 @@
           |_  [[hen=duct =side] state=flow-state]
           +*  bone  bone.side
               dire  dire.side
+              acks  acks.snd.state
               snd   snd.state
               rcv   rcv.state
           ::
@@ -8774,9 +8775,8 @@
           ::
           +|  %builders
           ::
-          ++  fo-mop       ((on ,@ud mesa-message) lte)
-          ++  fo-nax       ((on ,@ud [?(%wait %done) error]) lte)
-          ++  fo-cac       ((on ,@ud ?) lte)
+          ++  fo-mop  ((on ,@ud mesa-message) lte)
+          ++  fo-cac  ((on ,@ud ack) lte)
           ::  all path builders refers to payloads on the other side from ours
           ::  so the direction is always flipped
           ::
@@ -9106,22 +9106,22 @@
               %-  %+  ev-tace  odd.veb.bug.ames-state
                   |.("old %ack {<[bone=bone seq=seq]>}")
               fo-core
-            ?>  ?=([%message *] gage)
-            =+  ;;([%ack error=?] +.gage)  ::  XX
+            =+  ;;([%message %ack nack=?] +.gage)  ::  XX
             ?.  =(key.u.first seq)
-              ::  XX we shouldn't see this since send-window is always 1
+              ::  XX we shouldn't see this since send-window is always 1,
+              ::  XX only for migrated queued-message-acks
               ::
               %-  %+  ev-tace  odd.veb.bug.ames-state
                   |.("hear out of order ack {<[seq=seq first=key.u.first]>}")
-              :: if the ack we receive is not for the first, save it
-              ::  XX if error, start +peeking right away?
+              ::  if the ack we receive is not for the first, save it
+              ::  if nack, start +peeking right away
               ::
-              fo-core
-              ::  XX TODO
-              :: fo-core(cache.state (put:fo-cac cache.state seq error))
+              =?  fo-core  nack  (fo-peek-naxplanation seq)
+              fo-core(acks.snd.state (put:fo-cac acks seq ?:(nack nack/~ ok/~)))
+            =|  error=(unit error:ames)
             |-  ^+  fo-core
-            ?:  error
-              ::  XX  make error=(unit error), and include the naxplanation there
+            ?:  nack
+              ::  XX make nack=(unit error), and include the naxplanation there
               ::
               ::  if error start +peek for naxplanation
               ::
@@ -9129,7 +9129,7 @@
             %-  %+  ev-tace  msg.veb.bug.ames-state
                 |.("hear ack for {<[bone=bone seq=seq]>}")
             ::  ack is for the first, oldest pending-ack sent message;
-            ::  remove it and XX start processing cached acks
+            ::  remove it and start processing cached acks
             ::
             =^  *  loads.snd  (del:fo-mop loads.snd seq)
             ::  increase the send-window so we can send the next message
@@ -9139,26 +9139,31 @@
               ?&  closing.state    ::  we sent a %cork %plea
                   ?=(~ loads.snd)  ::  nothing else is pending
               ==
-            =~  ::  send next messages
-                ::
-                fo-send
-                ::  don't give %done for %boon and %cork; implicit %ack
-                ::
-                ?:  ?|  ?=(%bak dire)
-                        can-be-corked
-                    ==
-                  fo-core
-                (fo-emit (ev-got-duct bone) %give %done ~)
-            ==
-            :: XX TODO
-            :: ::  are there any cached acks?
-            :: ::
-            :: :: ?~  cack=(pry:fo-cac cache.state)  fo-core
-            :: ?.  =(key.u.cack +(seq))           fo-core
-            :: ::  first ack in the cache is the next sent %poke; process
-            :: ::
-            :: :: =^  *  cache.state  (del:fo-cac cache.state key.u.cack)
-            :: $(error val.u.cack, seq key.u.cack)
+            ::  send next messages
+            ::
+            =.  fo-core  fo-send
+            ::  don't give %done for %boon and %cork; implicit %ack
+            ::
+            =?  fo-core  ?|  ?=(%bak dire)
+                            can-be-corked
+                         ==
+              (fo-emit (ev-got-duct bone) %give %done error)
+            ::  are there any cached acks?
+            ::
+            ?~  cack=(pry:fo-cac acks)       fo-core
+            ?.  =(key.u.cack +(seq))         fo-core
+            ?~  next=(pry:fo-mop loads.snd)  fo-core
+            ?.  (lth seq next.snd)           fo-core
+            ?.  =(key.u.next +(seq))         fo-core
+            ::  if next cached is a %nack, no-op; we are still waiting for the
+            ::  naxplanation
+            ::
+            ?:  ?=([%nack ~] val.u.cack)     fo-core
+            ::  next ack in the cache is for the next sent %poke; process
+            ::
+            =^  *  acks  (del:fo-cac acks key.u.cack)
+            =.  error  ?:(?=(%ok -.val.u.cack) ~ `+.val.u.cack)
+            $(seq key.u.cack)
           ::
           ++  fo-take-nax
             |=  [seq=@ud =spar =gage:mess]
@@ -9172,14 +9177,31 @@
               %-  %+  ev-tace  odd.veb.bug.ames-state
                   |.("no message to %naxplain {<[bone=bone seq=seq]>}")
               fo-core
+            =+  ;;([%message %nax =error] +.gage)  ::  XX
             :: XX  if the ack we receive is not for the first, no-op
             :: XX  as currently implemented we only hear the naxplanation of
             ::     the oldest message
             ::
             =?  fo-core  miss-nax
+              ::  this messsaged should have been nacked
+              ::
+              ?~  n=(get:fo-cac acks seq)
+                %-  %+  ev-tace  odd.veb.bug.ames-state
+                    |.("missordered %naxp miss nack {<[bone=bone seq=seq]>}")
+                fo-core
+              ::  we have a missordered (n)ack for this message; check %nack
+              ::
+              ?.  ?=([%nack ~] u.n)
+                =/  out  ?-(-.u.n %ok %ack, %naxplanation %naxp)
+                %-  %+  ev-tace  odd.veb.bug.ames-state
+                    |.("missordered %naxp, got {<out>} {<[bone=bone seq=seq]>}")
+                fo-core
               %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("missordered %naxplanation {<[bone=bone seq=seq]>}")
-              fo-core
+                  |.("hear missordered %naxplanation {<[bone=bone seq=seq]>}")
+              ::  remove %nack, replace with %naxplanation
+              ::
+              =^  *  acks  (del:fo-cac acks seq)
+              fo-core(acks.snd.state (put:fo-cac acks seq naxplanation/error))
             ::  XX  use .nax.snd to confirm that we are waiting for this %naxp
             ::
             ::  naxplanation should be for the first, oldest pending message
@@ -9190,12 +9212,10 @@
             ::
             =?  send-window.snd  (lth send-window.snd send-window-max.snd)
               +(send-window.snd)
-            =.  fo-core          fo-send  ::  send next messages
             ::  XX check path.spar
             ::  XX path.spar will be the full namespace path, peel off before?
             ::
-            ?>  ?=([%message *] gage)
-            =+  ;;([%nax =error] +.gage)  ::  XX
+            =.  fo-core  fo-send  ::  send next messages
             ::  if the bone belongs to a closing flow and we got a
             ::  naxplanation, don't relay ack to the client vane
             ::
@@ -9211,16 +9231,20 @@
             ::  should be from migrating a nacked flow.
             ::  XX check what happens if the naxplanation comes in again
             ::
-            ?.  ?|  !no-pokes  ::  there were unacked messages
-                    &(no-pokes =(seq (dec next-msg)))  :: nacked, migrated msg
-                ==
-              %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("weird %naxp {<[bone=bone seq=seq next=next-msg]>}; skip")
-              fo-core
-            %-  %+  ev-tace  msg.veb.bug.ames-state
-                |.("take %naxplanation {<[bone=bone seq=seq]>}")
+            =.  fo-core
+              ?.  ?|  !no-pokes  ::  there were unacked messages
+                      &(no-pokes =(seq (dec next-msg)))  :: nacked, migrated msg
+                  ==
+                %-  %+  ev-tace  odd.veb.bug.ames-state
+                    |.("weird %naxp {<[bone=bone seq=seq next=next-msg]>}; skip")
+                fo-core
+              %-  %+  ev-tace  msg.veb.bug.ames-state
+                  |.("take %naxplanation {<[bone=bone seq=seq]>}")
+              ::
+              (fo-emit (ev-got-duct bone) %give %done `error)
+            ::  XX handle cached (n)acks
             ::
-            (fo-emit (ev-got-duct bone) %give %done `error)
+            fo-core
           ::
           ++  fo-take-cor
             |=  [=spar =gage:mess]
