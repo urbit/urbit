@@ -9166,10 +9166,10 @@
                   |.("no message to %naxplain {<[bone=bone seq=seq]>}")
               fo-core
             =+  ;;([%message %nax =error] +.gage)  ::  XX
-            |-  ^+  fo-core
+            =/  error=(unit error:ames)  `error
             :: XX  if the ack we receive is not for the first, no-op
             :: XX  as currently implemented we only hear the naxplanation of
-            ::     the oldest message
+            ::     the oldest message, unless this is a migrated naxplanation
             ::
             =?  fo-core  miss-nax
               ::  this messsaged should have been nacked
@@ -9190,9 +9190,11 @@
               ::  remove %nack, replace with %naxplanation
               ::
               =^  *  acks  (del:fo-cac acks seq)
-              fo-core(acks.snd.state (put:fo-cac acks seq naxplanation/error))
+              ?>  ?=(^ error)
+              fo-core(acks.snd.state (put:fo-cac acks seq naxplanation/u.error))
             ::  XX  use .nax.snd to confirm that we are waiting for this %naxp
             ::
+            |-  ^+  fo-core
             ::  naxplanation should be for the first, oldest pending message
             ::
             =?  loads.snd  &(!no-pokes !miss-nax)  +:(del:fo-mop loads.snd seq)
@@ -9230,13 +9232,15 @@
               %-  %+  ev-tace  msg.veb.bug.ames-state
                   |.("take %naxplanation {<[bone=bone seq=seq]>}")
               ::
-              (fo-emit (ev-got-duct bone) %give %done `error)
+              (fo-emit (ev-got-duct bone) %give %done error)
             ::  are there any cached acks?
             ::
-            ::  XX refactor
-            :: =^  next  fo-core  (fo-handle-miss-ack seq)
-            :: ?:(=(seq ack.next) fo-core $(seq ack.next, error error.next))
-            fo-core
+            =^  next  fo-core  (fo-handle-miss-ack seq)
+            ?:  =(seq ack.next)
+              fo-core
+            ::  reset assurance checks; this is an ack for the next message
+            ::
+            $(seq ack.next, error error.next, no-pokes |, miss-nax |)
           ::
           ++  fo-take-cor
             |=  [=spar =gage:mess]
