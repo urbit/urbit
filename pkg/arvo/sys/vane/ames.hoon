@@ -9106,7 +9106,8 @@
               %-  %+  ev-tace  odd.veb.bug.ames-state
                   |.("old %ack {<[bone=bone seq=seq]>}")
               fo-core
-            =+  ;;([%message %ack nack=?] +.gage)  ::  XX
+            ~|  gage
+            =+  ;;([%message %ack nack=?] gage)  ::  XX
             ?.  =(key.u.first seq)
               ::  XX we shouldn't see this since send-window is always 1,
               ::  XX only for migrated queued-message-acks
@@ -9144,8 +9145,8 @@
             =.  fo-core  fo-send
             ::  don't give %done for %boon and %cork; implicit %ack
             ::
-            =?  fo-core  ?|  ?=(%bak dire)
-                            can-be-corked
+            =?  fo-core  ?&  ?=(%for dire)
+                             !can-be-corked
                          ==
               (fo-emit (ev-got-duct bone) %give %done error)
             ::  are there any cached acks?
@@ -9165,7 +9166,7 @@
               %-  %+  ev-tace  odd.veb.bug.ames-state
                   |.("no message to %naxplain {<[bone=bone seq=seq]>}")
               fo-core
-            =+  ;;([%message %nax =error] +.gage)  ::  XX
+            =+  ;;([%message %nax =error] gage)  ::  XX
             =/  error=(unit error:ames)  `error
             :: XX  if the ack we receive is not for the first, no-op
             :: XX  as currently implemented we only hear the naxplanation of
