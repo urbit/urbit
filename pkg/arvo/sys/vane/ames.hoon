@@ -9150,20 +9150,8 @@
               (fo-emit (ev-got-duct bone) %give %done error)
             ::  are there any cached acks?
             ::
-            ?~  cack=(pry:fo-cac acks)       fo-core
-            ?.  =(key.u.cack +(seq))         fo-core
-            ?~  next=(pry:fo-mop loads.snd)  fo-core
-            ?.  (lth seq next.snd)           fo-core
-            ?.  =(key.u.next +(seq))         fo-core
-            ::  if next cached is a %nack, no-op; we are still waiting for the
-            ::  naxplanation
-            ::
-            ?:  ?=([%nack ~] val.u.cack)     fo-core
-            ::  next ack in the cache is for the next sent %poke; process
-            ::
-            =^  *  acks  (del:fo-cac acks key.u.cack)
-            =.  error  ?:(?=(%ok -.val.u.cack) ~ `+.val.u.cack)
-            $(seq key.u.cack)
+            =^  next  fo-core  (fo-handle-miss-ack seq)
+            ?:(=(seq ack.next) fo-core $(seq ack.next, error error.next))
           ::
           ++  fo-take-nax
             |=  [seq=@ud =spar =gage:mess]
@@ -9178,6 +9166,7 @@
                   |.("no message to %naxplain {<[bone=bone seq=seq]>}")
               fo-core
             =+  ;;([%message %nax =error] +.gage)  ::  XX
+            |-  ^+  fo-core
             :: XX  if the ack we receive is not for the first, no-op
             :: XX  as currently implemented we only hear the naxplanation of
             ::     the oldest message
@@ -9242,8 +9231,11 @@
                   |.("take %naxplanation {<[bone=bone seq=seq]>}")
               ::
               (fo-emit (ev-got-duct bone) %give %done `error)
-            ::  XX handle cached (n)acks
+            ::  are there any cached acks?
             ::
+            ::  XX refactor
+            :: =^  next  fo-core  (fo-handle-miss-ack seq)
+            :: ?:(=(seq ack.next) fo-core $(seq ack.next, error error.next))
             fo-core
           ::
           ++  fo-take-cor
@@ -9294,6 +9286,32 @@
             ::  for-cor-path will produce a path for the %cork on the other side
             ::
             [(fo-wire %cor) %a meek/[chum-to-our her (fo-cor-path seq=0 our)]]
+          ::
+          ++  fo-handle-miss-ack
+            |=  seq=message-num
+            :: ^-  [[ack=@ud error=(unit error)] _fo-core]
+            ^-  [[ack=@ud error=(unit error)] _fo-core]
+            ::  are there any cached acks?
+            ::
+            ?~  cack=(pry:fo-cac acks.snd.state)
+              [seq ~]^fo-core
+            ?.  =(key.u.cack +(seq))
+              [seq ~]^fo-core
+            ?~  next=(pry:fo-mop loads.snd)
+              [seq ~]^fo-core
+            ?.  (lth seq next.snd)
+              [seq ~]^fo-core
+            ?.  =(key.u.next +(seq))
+              [seq ~]^fo-core
+            ::  if next cached is a %nack, no-op; we are still waiting for the
+            ::  naxplanation
+            ::
+            ?:  ?=([%nack ~] val.u.cack)     [seq ~]^fo-core
+            ::  next ack in the cache is for the next sent %poke; process
+            ::
+            =^  *  acks.snd.state  (del:fo-cac acks.snd.state key.u.cack)
+            :_  fo-core
+            [key.u.cack ?:(?=(%ok -.val.u.cack) ~ `+.val.u.cack)]
           ::
           --
         ::
