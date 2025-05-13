@@ -5412,6 +5412,11 @@
                 ::     nax.rcv  (~(put by nax.rcv.state.core) current.pump *error)
                 ::   ==
                 ::
+                ::  queued-message-acks
+                ::
+                =+  ack-mop=((on ,@ud ack) lte)
+                =.  acks.snd.flow
+                  (gas:ack-mop acks.snd.flow ~(tap by queued-message-acks.pump))
                 :_  (~(put by flows) [bone dire] flow)
                 =.  moves  (weld forward-moves moves)
                 =?  moves  ?=(^ next-wake.packet-pump-state.pump)
