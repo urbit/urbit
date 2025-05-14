@@ -10505,6 +10505,7 @@
                 =|  pump=message-pump-state
                 %+  ~(put by snd.peer-state.core)  bone
                 =+  next=next.snd.state
+                =.  queued-message-acks.pump  acks.snd.state
                 ?~  fist=(pry:fo-mop:fo-core loads.snd.state)
                   pump(current next, next next)
                 %_  pump
