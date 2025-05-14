@@ -9294,20 +9294,14 @@
           ::
           ++  fo-handle-miss-ack
             |=  seq=message-num
-            :: ^-  [[ack=@ud error=(unit error)] _fo-core]
             ^-  [[ack=@ud error=(unit error)] _fo-core]
             ::  are there any cached acks?
             ::
-            ?~  cack=(pry:fo-cac acks.snd.state)
-              [seq ~]^fo-core
-            ?.  =(key.u.cack +(seq))
-              [seq ~]^fo-core
-            ?~  next=(pry:fo-mop loads.snd)
-              [seq ~]^fo-core
-            ?.  (lth seq next.snd)
-              [seq ~]^fo-core
-            ?.  =(key.u.next +(seq))
-              [seq ~]^fo-core
+            ?~  cack=(pry:fo-cac acks.snd.state)  [seq ~]^fo-core
+            ?.  =(key.u.cack +(seq))              [seq ~]^fo-core
+            ?~  next=(pry:fo-mop loads.snd)       [seq ~]^fo-core
+            ?.  (lth seq next.snd)                [seq ~]^fo-core
+            ?.  =(key.u.next +(seq))              [seq ~]^fo-core
             ::  if next cached is a %nack, no-op; we are still waiting for the
             ::  naxplanation
             ::
