@@ -9450,13 +9450,13 @@
               =?  fo-core  nack  (fo-peek-naxplanation seq)
               fo-core(acks.snd.state (put:fo-cac acks seq ?:(nack nack/~ ok/~)))
             =|  error=(unit error:ames)
-            |-  ^+  fo-core
             ?:  nack
               ::  XX make nack=(unit error), and include the naxplanation there?
               ::
               ::  if error start +peek for naxplanation
               ::
               (fo-peek-naxplanation seq)
+            |-  ^+  fo-core
             %-  %+  ev-tace  msg.veb.bug.ames-state
                 |.("hear ack for {<[bone=bone seq=seq]>}")
             ::  ack is for the first, oldest pending-ack sent message;
@@ -9558,7 +9558,7 @@
                       &(no-pokes =(seq (dec next-msg)))  :: nacked, migrated msg
                   ==
                 %-  %+  ev-tace  odd.veb.bug.ames-state
-                    |.("weird %naxp {<[bone=bone seq=seq next=next-msg]>}; skip")
+                    |.("weird %naxp {<[bone=bone seq=seq next=next-msg]>} skip")
                 fo-core
               %-  %+  ev-tace  msg.veb.bug.ames-state
                   |.("take %naxplanation {<[bone=bone seq=seq]>}")
