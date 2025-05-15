@@ -5580,7 +5580,11 @@
                     (~(has in closing.peer-state) bone)
                   :-  (weld moves cork-moves)
                   (~(put by flows) [bone dire] flow)
-                =?  moves  !=(current.pump next.pump)
+                =?  moves  ?&  !=(current.pump next.pump)
+                               ::  only forward flows; %boons are not nacked
+                               ::
+                               ?=(%for dire)
+                          ==
                   ::  we are waiting for an %ack, or have heard a %nack and
                   ::  so we defer processing it until we receive the
                   ::  naxplanation
