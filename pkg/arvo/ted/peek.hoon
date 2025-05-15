@@ -39,7 +39,7 @@
 =+  .^  =dais:clay  %cb
         /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[p.q.sage]
     ==
-=/  res  (mule |.((vale.dais q.q.sage)))
+=/  res  (mule:vi |.((vale.dais q.q.sage)))
 ?.  ?=(%| -.res)
   (pure:m p.res)
 ~|(%keen-mark-fail (mean leaf+"-peek: ames vale fail {<mark>}" p.res))

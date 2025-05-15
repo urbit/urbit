@@ -353,7 +353,7 @@
   ^-  (unit update:graph)
   =/  res=(each update:graph tang)
     ::TODO  doesn't actually contain the crash?
-    %-  mule  |.
+    %-  mule:vi  |.
     (get-graph:libgraph resource)
   ?-  -.res
     %&  `p.res

@@ -11,7 +11,7 @@
     ==
 ^-  (sole-result [%dns-authority authority])
 =*  our  p.bec
-::  XX must be evaluated outside tapp core due to +mule
+::  XX must be evaluated outside tapp core due to +mule:vi
 ::
 =/  =hart:eyre  .^(hart:eyre %e /(scot %p our)/host/real)
 ::  XX terrible

@@ -540,7 +540,7 @@
       ?:  |(?=(^ per) ?=(^ pux) ?=(~ pro))
         ~&  %dy-no-prompt
         (dy-diff %bel ~)
-      =/  res  (mule |.((slam u.pro !>(txt))))
+      =/  res  (mule:vi |.((slam u.pro !>(txt))))
       ?:  ?=(%| -.res)
         %-  (slog >%dy-done< p.res)
         (dy-rash %bel ~)  ::  TODO: or +dy-abet(per ~)  ?
@@ -688,12 +688,12 @@
     ++  dy-inspect
       |=  [topics=(list term) sut=type]
       %+  dy-rash  %mor
-      =+  to-display=(mule |.((find-item-in-type:dprint (flop topics) sut)))
+      =+  to-display=(mule:vi |.((find-item-in-type:dprint (flop topics) sut)))
       ?:  ?=(%| -.to-display)
         [%tan [%leaf "Could not find help A"] p.to-display]~
       ?~  p.to-display
         [%tan [%leaf "Could not find help B"]~]~
-      =/  item  (mule |.((print-item:dprint u.p.to-display)))
+      =/  item  (mule:vi |.((print-item:dprint u.p.to-display)))
       ?:  ?=(%| -.item)
         [%tan [%leaf "Could not find help C"] p.item]~
       p.item
@@ -779,7 +779,7 @@
         =/  tip=@t  'dojo: busy (press backspace to abort)'
         (dy-diff %mor [%det lic] [%bel ~] [%tan [tip ~]] ~)
       =>  .(per `dat)
-      =/  res  (mule |.((slam u.pro !>((tufa buf.say)))))
+      =/  res  (mule:vi |.((slam u.pro !>((tufa buf.say)))))
       ?:  ?=(%| -.res)
         %-  (slog >%dy-edit< p.res)
         (dy-rash %bel ~)  ::  TODO: or +dy-abet(per ~)  ?
@@ -822,7 +822,7 @@
         ::
         ?.  &(?=([* ~] p.cig) ?=(~ q.cig))
           ~|(%one-argument !!)
-        =/  res  (mule |.((slam q.cay (dy-vase p.i.p.cig))))
+        =/  res  (mule:vi |.((slam q.cay (dy-vase p.i.p.cig))))
         ?:  ?=(%| -.res)
           ::  TODO: or +dy-rash  ?
           (he-diff(poy ~) %tan leaf+"dojo: naked generator failure" p.res)
@@ -837,10 +837,10 @@
       ::    The generator is a pair of a result mark and a gate.
       ::    TODO: test %ask generators
       ::
-      =/  wat  (mule |.(!<(?(%ask %say) (slot 2 q.cay))))
+      =/  wat  (mule:vi |.(!<(?(%ask %say) (slot 2 q.cay))))
       ?:  ?=(%| -.wat)
         (he-diff(poy ~) %tan leaf+"dojo: generator neither %ask nor %say" p.wat)
-      =-  =/  res  (mule -)
+      =-  =/  res  (mule:vi -)
           ?:  ?=(%| -.res)
             (he-diff(poy ~) %tan leaf+"dojo: generator failure" p.res)
           ?-  p.wat
@@ -1013,7 +1013,7 @@
           (dy-hand p.bil q.cag)
         =/  res
           =+  .^(=tube:clay cc+(en-beam he-beak /[p.cag]/[p.bil]))
-          (mule |.((tube q.cag)))
+          (mule:vi |.((tube q.cag)))
         ?:  ?=(%| -.res)
           (he-diff(poy ~) %tan leaf+"dojo: %as %{(trip p.bil)} failed" p.res)
         (dy-hand p.bil p.res)
@@ -1022,7 +1022,7 @@
         =/  gat  (dy-eval p.bil)
         ?:  ?=(%| -.gat)
           (he-diff(poy ~) %tan leaf+"dojo: %do create gate failed" p.gat)
-        =/  res  (mule |.((slam q.p.gat (dy-vase p.q.bil))))
+        =/  res  (mule:vi |.((slam q.p.gat (dy-vase p.q.bil))))
         ?:  ?=(%| -.res)
           (he-diff(poy ~) %tan leaf+"dojo: %do execute failed" p.res)
         (dy-hand %noun p.res)
@@ -1070,7 +1070,7 @@
       ?^  val=(dy-hoon-var hoon)
         &+u.val
       !.
-      %-  mule  |.
+      %-  mule:vi  |.
       :-  %noun
       =/  vaz=(list [term vase])
         (turn ~(tap by var) |=([lal=term cag=cage] [lal q.cag]))

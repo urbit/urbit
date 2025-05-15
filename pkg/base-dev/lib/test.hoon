@@ -35,7 +35,7 @@
 ++  expect-fail
   |=  a=(trap)
   ^-  tang
-  =/  b  (mule a)
+  =/  b  (mule:vi a)
   ?-  -.b
     %|  ~
     %&  ['expected failure - succeeded' ~]
@@ -45,7 +45,7 @@
 ++  expect-success
   |=  a=(trap)
   ^-  tang
-  =/  b  (mule a)
+  =/  b  (mule:vi a)
   ?-  -.b
     %&  ~
     %|  ['expected success - failed' p.b]
@@ -55,7 +55,7 @@
 ++  expect-fail-message
   |=  [msg=@t a=(trap)]
   ^-  tang
-  =/  b  (mule a)
+  =/  b  (mule:vi a)
   ?-  -.b
     %|  |^
         =/  =tang  (flatten +.b)

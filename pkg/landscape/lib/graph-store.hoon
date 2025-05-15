@@ -101,7 +101,7 @@
       ::  virtualize output rendering, +tank:enjs:format might crash
       ::
       =/  result=(each (list json) tang)
-        (mule |.((turn output.c tank)))
+        (mule:vi |.((turn output.c tank)))
       ?-  -.result
         %&  a+p.result
         %|  a+[a+[%s '[[output rendering error]]']~]~

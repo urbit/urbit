@@ -844,7 +844,7 @@
       ::
       =^  new=vase  nub  (build-fit %mar b)
       =/  arm=?  (has-arm %grab a new)
-      =/  rab  (mule |.((slub new tsgl/[limb/a limb/%grab])))
+      =/  rab  (mule:vi |.((slub new tsgl/[limb/a limb/%grab])))
       ?:  &(arm ?=(%& -.rab) ?=(^ q.p.rab))
         %+  gain-leak  cast+a^b
         |=  nob=state
@@ -853,7 +853,7 @@
         :_(nub vase+p.rab)
       ::  try +jump
       ::
-      =/  jum  (mule |.((slub old tsgl/[limb/b limb/%jump])))
+      =/  jum  (mule:vi |.((slub old tsgl/[limb/b limb/%jump])))
       ?:  &((has-arm %jump a old) ?=(%& -.jum))
         =/  via  !<(mark p.jum)
         %-  (trace 4 |.("{<a>} -> {<b>}: via {<via>} per +jump:{(trip a)}"))
@@ -886,9 +886,9 @@
     ++  has-arm
       |=  [arm=@tas =mark core=vase]
       ^-  ?
-      =/  rib  (mule |.((slub core [%wing ~[arm]])))
+      =/  rib  (mule:vi |.((slub core [%wing ~[arm]])))
       ?:  ?=(%| -.rib)  %.n
-      =/  lab  (mule |.((slob mark p.p.rib)))
+      =/  lab  (mule:vi |.((slob mark p.p.rib)))
       ?:  ?=(%| -.lab)  %.n
       p.lab
     ::  +build-tube: produce a $tube mark conversion gate from .a to .b
@@ -2537,7 +2537,7 @@
           ~
         (~(get by hut.ran) (~(got by hit.dom) let.dom))
       next-yaki
-    =/  res  (mule |.((merge-by-germ ali-yaki bob-yaki)))
+    =/  res  (mule:vi |.((merge-by-germ ali-yaki bob-yaki)))
     ?-  -.res
       %&  &+p.res
       %|  |+merge-failed+p.res
@@ -3234,7 +3234,7 @@
     =/  kel=(set weft)
       %-  waft-to-wefts
       %+  fall
-        (mole |.((get-kelvin %| (aeon-to-yaki:ze let.dom))))
+        (mole:vi |.((get-kelvin %| (aeon-to-yaki:ze let.dom))))
       [[%1 ~] ~]
     ?.  (~(has in kel) zuse+zuse)
       =/  msg  "clay: can't set {<syd>} live, it doesn't support zuse {<zuse>}"
@@ -3463,7 +3463,7 @@
       |=  [car=care cas=case pax=path peg=page]
       ^-  (unit cage)
       =/  vale-result
-        %-  mule  |.
+        %-  mule:vi  |.
         %-  wrap:fusion
         ::  Use %base's marks to validate, so we don't have to build the
         ::  foreign marks
@@ -4613,7 +4613,7 @@
         [~ ..park]
       ::  virtualize to catch and produce deterministic failures
       ::
-      |^  =/  res  (mule |.(read))
+      |^  =/  res  (mule:vi |.(read))
           ?:  ?=(%& -.res)  p.res
           %.  [[~ ~] ..park]
           (slog leaf+"clay: read-at-tako fail {<[desk=syd mun]>}" (flop p.res))
@@ -6059,7 +6059,7 @@
   ?.  aut  ~
   =/  for=(unit ship)  ?~(lyc ~ ?~(u.lyc ~ `n.u.lyc))
   =/  den  ((de now rof [/scryduct ~] ruf) his syd)
-  =/  result  (mule |.(-:(aver:den for u.run u.luk tyl)))
+  =/  result  (mule:vi |.(-:(aver:den for u.run u.luk tyl)))
   ?:  ?=(%| -.result)
     %-  (slog >%clay-scry-fail< p.result)
     ~

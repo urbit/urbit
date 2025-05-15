@@ -10,7 +10,7 @@
 :-  %noun
 ?.  ?=([%known *] chum-state)  %alien-not-supported
 =/  result=(each vase tang)
-  %-  mule  |.
+  %-  mule:vi  |.
   %+  slap
     (slop !>(+.chum-state) !>(..zuse))
   (ream face.arg)

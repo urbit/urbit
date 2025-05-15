@@ -375,7 +375,7 @@
   ++  tim
     |=  t=@
     ^-  json
-    (numb (fall (mole |.((unm:chrono:userlib t))) 0))
+    (numb (fall (mole:vi |.((unm:chrono:userlib t))) 0))
   ::
   ++  cass
     |=  c=^cass

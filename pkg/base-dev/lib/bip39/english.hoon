@@ -1163,7 +1163,7 @@
   "movie"
   "much"
   "muffin"
-  "mule"
+  "mule:vi"
   "multiply"
   "muscle"
   "museum"

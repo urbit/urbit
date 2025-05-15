@@ -12,7 +12,7 @@
   =/  n  (strand ,(unit glob:glob))
   ;<  =cord  bind:n  (fetch-cord:strandio url)
   %-  pure:n
-  %-  mole
+  %-  mole:vi
   |.
   ;;(=glob:glob (cue cord))
 (pure:m !>(glob))

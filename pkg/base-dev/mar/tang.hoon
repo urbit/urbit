@@ -11,7 +11,7 @@
   ++  noun  tan
   ++  json
     =/  result=(each (list ^json) tang)
-      (mule |.((turn tan tank:enjs:format)))
+      (mule:vi |.((turn tan tank:enjs:format)))
     ?-  -.result
       %&  a+p.result
       %|  a+[a+[%s '[[output rendering error]]']~]~

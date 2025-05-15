@@ -219,7 +219,7 @@
     ?>  ?=(%0 -.poke-arm)
     =/  poke  p.poke-arm
     =.  tym  (max +(tym) now.hid)
-    =/  poke-result  (mule |.((slum poke tym ue)))
+    =/  poke-result  (mule:vi |.((slum poke tym ue)))
     ?:  ?=(%| -.poke-result)
       %-  (slog >%aqua-crash< >guest=who< p.poke-result)
       $

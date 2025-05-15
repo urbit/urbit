@@ -50,7 +50,7 @@
                  6e1b.e8ec.c7dd.9557
   =/  r   %+  turn  (gulf 0 3)
           |=  v=@
-          (mule |.((ecdsa-raw-recover.ecc msg32 v r s)))
+          (mule:vi |.((ecdsa-raw-recover.ecc msg32 v r s)))
   =/  t1  %+  expect-eq
             !>  %.n
             !>  -.&1.r
@@ -77,7 +77,7 @@
   %-  expect-eq  :_
     !>  %+  turn  (gulf 0 3)
         |=  v=@
-        (mule |.((ecdsa-raw-recover.ecc msg32 v 4 4)))
+        (mule:vi |.((ecdsa-raw-recover.ecc msg32 v 4 4)))
     !>
     :~  :+  %.y
            0x8a3d.70c0.4104.68e4.

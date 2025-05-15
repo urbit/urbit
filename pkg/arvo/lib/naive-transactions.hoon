@@ -14,7 +14,7 @@
   |=  [dat=octs v=@ r=@ s=@]
   ?:  (gth v 3)  ~  ::  TODO: move to jet
   =/  result
-    %-  mule
+    %-  mule:vi
     |.
     =,  secp256k1:secp:crypto
     %-  address-from-pub:key:ethereum

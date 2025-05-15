@@ -14,12 +14,12 @@
   ~>  %hela.[1 leaf+"test-hint-hela ~"]
   ~
 ++  test-hilt-nara
-  %-  need  %-  mole  |.
+  %-  need  %-  mole:vi  |.
   ~|  %hilt-nara
   ~>  %nara
   ~
 ++  test-hint-nara
-  %-  need  %-  mole  |.
+  %-  need  %-  mole:vi  |.
   ~|  %hint-nara
   ~>  %nara.[1 leaf+"test-hint-nara ~"]
   ~
