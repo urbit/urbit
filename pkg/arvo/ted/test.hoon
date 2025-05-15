@@ -20,7 +20,7 @@
   |=  [pax=path test=test-func]
   ^-  [ok=? =tang]
   =+  name=(spud pax)
-  =+  run=(mule test)
+  =+  run=(mule:vi test)
   ?-  -.run
     %|  |+(welp p.run leaf+"CRASHED {name}" ~)
     %&  ?:  =(~ p.run)

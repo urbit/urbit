@@ -48,7 +48,7 @@
         ::  use that vase in place of +on-save's.
         ::
         =/  result=(each ^vase tang)
-          (mule |.(q:(need (need (on-peek:ag /x/dbug/state)))))
+          (mule:vi |.(q:(need (need (on-peek:ag /x/dbug/state)))))
         ?:(?=(%& -.result) p.result on-save:ag)
       %+  slap
         (slop state !>([bowl=bowl ..zuse]))

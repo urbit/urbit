@@ -117,7 +117,7 @@
 ++  find-type-mule
   |=  [sut=type gen=hoon]
   ^-  (unit [term type])
-  =/  res  (mule |.((find-type sut gen)))
+  =/  res  (mule:vi |.((find-type sut gen)))
   ?-  -.res
     %&  p.res
     %|  ((slog (flop (scag 10 p.res))) ~)

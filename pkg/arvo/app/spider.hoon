@@ -463,7 +463,7 @@
     (thread-fail-not-running tid %build-thread-error *tang)
   ?.  ?=(%vase p.r.u.riot)
     (thread-fail-not-running tid %build-thread-strange >[p q]:u.riot< ~)
-  =/  maybe-thread  (mule |.(!<(thread !<(vase q.r.u.riot))))
+  =/  maybe-thread  (mule:vi |.(!<(thread !<(vase q.r.u.riot))))
   ?:  ?=(%| -.maybe-thread)
     (thread-fail-not-running tid %thread-not-thread ~)
   (slam-thread yarn p.maybe-thread)
@@ -473,7 +473,7 @@
   |=  [=yarn =thread]
   ^-  (quip card ^state)
   =/  =vase  vase:(~(got by starting.state) yarn)
-  =/  res  (mule |.((thread vase)))
+  =/  res  (mule:vi |.((thread vase)))
   ?:  ?=(%| -.res)
     (thread-fail-not-running (yarn-to-tid yarn) %false-start p.res)
   =.  starting.state  (~(del by starting.state) yarn)
@@ -520,7 +520,7 @@
   |-  ^-  (quip card ^state)
   =^  r=[cards=(list card) =eval-result:eval:m]  eval-form
     =/  out
-      %-  mule  |.
+      %-  mule:vi  |.
       (take:eval:m eval-form (convert-bowl yarn bowl) input)
     ?-  -.out
       %&  p.out

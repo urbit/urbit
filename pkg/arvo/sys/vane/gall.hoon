@@ -1075,7 +1075,7 @@
       ::
           [~ ~ *]
         =+  !<(=dais:clay q.u.u.sky)
-        =/  res  (mule |.((vale:dais noun.deal)))
+        =/  res  (mule:vi |.((vale:dais noun.deal)))
         ?:  ?=(%| -.res)
           =/  ror  "gall: raw-poke vale fail :{(trip dap)} {<mark.deal>}"
           (mo-give %unto %poke-ack `[leaf+ror p.res])
@@ -1099,7 +1099,7 @@
       ::
           [~ ~ *]
         =+  !<(=tube:clay q.u.u.sky)
-        =/  res  (mule |.((tube q.cage.deal)))
+        =/  res  (mule:vi |.((tube q.cage.deal)))
         ?:  ?=(%| -.res)
           =/  ror  "gall: poke-as cast fail :{(trip dap)} {<mars>}"
           (mo-give %unto %poke-ack `[leaf+ror p.res])
@@ -1587,7 +1587,7 @@
         ::
             [~ ~ *]
           =+  !<(=tube:clay q.u.u.sky)
-          =/  res  (mule |.((tube q.cage)))
+          =/  res  (mule:vi |.((tube q.cage)))
           ?:  ?=(%| -.res)
             %-  (slog leaf+"watch-as fact conversion failure" p.res)
             (ap-kill-up-slip duct)
@@ -1760,7 +1760,7 @@
         =/  msg  "%{(trip agent-name)}: ".
                  "peek no tube from {(trip have)} to {(trip want)}"
         ((slog leaf+msg ~) ~)
-      =/  res  (mule |.((u.tub vase)))
+      =/  res  (mule:vi |.((u.tub vase)))
       ?:  ?=(%& -.res)
         ``want^p.res
       =/  msg  "%{(trip agent-name)}: ".
@@ -1911,7 +1911,7 @@
           (mean leaf+"gall: ames mark fail {<mark.unto>}" ~)
         ::
         =+  !<(=dais:clay q.u.u.sky)
-        =/  res  (mule |.((vale:dais noun.unto)))
+        =/  res  (mule:vi |.((vale:dais noun.unto)))
         ?:  ?=(%| -.res)
           (mean leaf+"gall: ames vale fail {<mark.unto>}" p.res)
         :-  [%fact mark.unto p.res]
@@ -2179,7 +2179,7 @@
       ap-load-delete(agent-duct duct)
     ::  +ap-mule: run virtualized with intercepted scry, preserving type
     ::
-    ::    Compare +mute and +mule.  Those pass through scry, which
+    ::    Compare +mute and +mule:vi.  Those pass through scry, which
     ::    doesn't allow us to catch crashes due to blocking scry.  If
     ::    you intercept scry, you can't preserve the type
     ::    polymorphically.  By monomorphizing, we are able to do so

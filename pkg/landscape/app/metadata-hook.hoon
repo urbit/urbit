@@ -40,7 +40,7 @@
 ++  on-load
   |=  =vase
   =/  m-old=(unit versioned-state)
-     (mole |.(!<(versioned-state vase)))
+     (mole:vi |.(!<(versioned-state vase)))
   ?~  m-old  `this
   =*  old  u.m-old
   |^

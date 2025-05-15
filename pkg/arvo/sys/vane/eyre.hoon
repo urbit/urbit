@@ -1278,7 +1278,7 @@
     ::  attempt conversion, then send results
     ::
     =/  mym=(each mime tang)
-      (mule |.(!<(mime (tub.u.tub vase))))
+      (mule:vi |.(!<(mime (tub.u.tub vase))))
     =^  cards  state
       ?-  -.mym
         %|  (error-response 500 "failed tube from {(trip mark)} to mime")
@@ -3552,7 +3552,7 @@
     ?.  ?=([~ ~ %tube *] tub)
       [%| "no tube from {(trip from)} to {(trip to)}"]
     =/  tube  !<(tube:clay q.u.u.tub)
-    =/  res  (mule |.((tube vase)))
+    =/  res  (mule:vi |.((tube vase)))
     ?:  ?=(%| -.res)
       [%| "failed tube from {(trip from)} to {(trip to)}"]
     [%& +.res]

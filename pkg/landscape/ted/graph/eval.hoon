@@ -20,7 +20,7 @@
 ::
 =/  subject  [fowl ..zuse]
 =/  minted=(each [=type =nock] (list tank))
-  %-  mule  |.
+  %-  mule:vi  |.
   (~(mint ut -:!>(subject)) %noun u.ast)
 ?:  ?=(%| -.minted)  (pure:m !>(p.minted))
 =/  =toon

@@ -6,7 +6,7 @@
       $:  %gcloud
           project=@ta
           zone=@ta
-          ::  XX passed as params since we can't scry in +mule
+          ::  XX passed as params since we can't scry in +mule:vi
           ::
           scry=[code=@t =hart:eyre secrets=@t]
           auth=(unit [access=@t refresh=@t])

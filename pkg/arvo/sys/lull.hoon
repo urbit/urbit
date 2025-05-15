@@ -4400,7 +4400,7 @@
         =+  .^  =dais:clay  %cb
                 /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[mark]
             ==
-        =/  res  (mule |.((vale.dais in)))
+        =/  res  (mule:vi |.((vale.dais in)))
         ?:  ?=(%| -.res)
           ~|  %spider-mark-fail
           (mean leaf+"spider: ames vale fail {<mark>}" p.res)

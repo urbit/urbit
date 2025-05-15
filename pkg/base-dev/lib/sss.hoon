@@ -231,7 +231,7 @@
     ^-  pubs
     :-  %1
     %-  fall  :_  (~(put by pub) path %*(. *$<(aeon buoy) rul.tid rule))
-    %-  mole  |.
+    %-  mole:vi  |.
     %+  ~(jab by pub)  path
     |=  =buoy
     ?@  tid.buoy  buoy
@@ -438,7 +438,7 @@
         (gas:rok ~ (murn ~[(ram:rok rok.tide) (pry:rok rok.tide)] same))
       %^  lot:rok  rok.tide               ::  Delete beyond horizon.
         ~
-      (mole |.((sub max-wave (max [u.horizon frequency]:rul.tide))))
+      (mole:vi |.((sub max-wave (max [u.horizon frequency]:rul.tide))))
     ~|  %rock-zero
     tide(wav (lot:wav wav.tide (bind (ram:rok rok.tide) |=([r=@ *] (dec r))) ~))
   --

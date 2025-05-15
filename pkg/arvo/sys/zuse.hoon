@@ -1266,7 +1266,7 @@
       ~/  %veri-octs
       |=  [s=@ m=octs pub=@]  ^-  ?
       =-  (fall - |)
-      %-  mole  |.  ^-  ?
+      %-  mole:vi  |.  ^-  ?
       ?:  (gth (met 3 s) (div b 4))  |
       ?:  (gth (met 3 pub) (div b 8))  |
       =+  rr=(cut 0 [0 b] s)

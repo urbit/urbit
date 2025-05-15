@@ -85,7 +85,7 @@
           ["" ""]
         ["(" ")"]
       :+  ?~(sam leaf+"_" u.sam)
-        =/  res  (mule |.((~(play ut q.q.ham) p.q.ham)))
+        =/  res  (mule:vi |.((~(play ut q.q.ham) p.q.ham)))
         ?-  -.res
           %&  duck(sut p.res)
           %|  leaf+"###"

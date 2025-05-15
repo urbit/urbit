@@ -565,7 +565,7 @@
     =/  state=vase  (state app)
     ?~  what  (sell state)
     =/  result=(each vase tang)
-      %-  mule  |.
+      %-  mule:vi  |.
       %+  slap
         (slop state !>([bowl=bowl ..zuse]))
       (ream u.what)
