@@ -6272,10 +6272,9 @@
 ::  +vi: virtualization engine
 ::
 ++  vi
-  =/  gul=$@(~ $-(^ (unit (unit))))
-    =-  -  ::  core-nice
-    |=(a=^ ``.*(a 12+[0+2 0+3]))
+  ::  forward namespace?
   ::
+  =/  for=?  &
   ~%  %vi  +>
     ==
       %mure  mure
@@ -6305,6 +6304,11 @@
   ++  mure
     |=  tap=(trap)
     ^-  (unit)
+    =/  gul
+      ?.  for  ~
+      =>  ~
+      |=(a=^ ``.*(a 12+[0+2 0+3]))
+    ::
     =/  ton  (mink [tap %9 2 %0 1] gul)
     ?.(?=(%0 -.ton) ~ `product.ton)
   ::  +mute: untyped virtual
@@ -6312,6 +6316,11 @@
   ++  mute
     |=  tap=(trap)
     ^-  (each * (list tank))
+    =/  gul
+      ?.  for  ~
+      =>  ~
+      |=(a=^ ``.*(a 12+[0+2 0+3]))
+    ::
     =/  ton  (mock [tap %9 2 %0 1] gul)
     ?-  -.ton
       %0  [%& p.ton]
