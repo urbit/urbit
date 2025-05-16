@@ -838,13 +838,21 @@
         %+  slub  (with-faces cor+old ~)
         ^-  hoon
         :+  %brcl  !,(*hoon v=+<.cor)
+        :+  %sggr  
+          [%spin %cltr [%sand %t (crip "grow-{<a>}->{<b>}")] ~]
         :+  %tsgl  limb/b
         !,(*hoon ~(grow cor v))
       ::  try direct +grab
       ::
       =^  new=vase  nub  (build-fit %mar b)
       =/  arm=?  (has-arm %grab a new)
-      =/  rab  (mule |.((slub new tsgl/[limb/a limb/%grab])))
+      =/  rab 
+        %-  mule  |.
+        %+  slap  new 
+        ^-  hoon
+        :+  %sggr  
+          [%spin %cltr [%sand %t (crip "grab-{<a>}->{<b>}")] ~]
+        tsgl/[limb/a limb/%grab]
       ?:  &(arm ?=(%& -.rab) ?=(^ q.p.rab))
         %+  gain-leak  cast+a^b
         |=  nob=state
@@ -896,6 +904,7 @@
     ++  build-tube
       |=  [a=mark b=mark]
       ^-  [tube state]
+      ~>  %spin.[%build-tube]  ~>  %spin.[a]  ~>  %spin.[b]
       ~|  error-building-tube+[a b]
       %-  soak-tube
       %+  gain-sprig  tube+a^b  |.
@@ -4895,6 +4904,7 @@
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
+~>  %spin.[%clay]
 ~%  %clay-top  ..part  ~
 |%                                                    ::
 ++  call                                              ::  handle request
@@ -4904,6 +4914,7 @@
           wrapped-task=(hobo task)
       ==
   ^-  [(list move) _..^$]
+  ~>  %spin.[%call]
   ::
   =/  req=task  ((harden task) wrapped-task)
   ::
@@ -5678,6 +5689,7 @@
       --
   |=  old=raft-any
   |^
+  ~>  %spin.[%load]
   =?  old  ?=(%6 -.old)   7+(raft-6-to-7 +.old)
   =?  old  ?=(%7 -.old)   8+(raft-7-to-8 +.old)
   =?  old  ?=(%8 -.old)   9+(raft-8-to-9 +.old)
@@ -6017,6 +6029,7 @@
   ^-  roon
   |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
+  ~>  %spin.[%scry]
   =*  scry-loop  $
   |^
   =*  ren  car
@@ -6237,6 +6250,7 @@
   ~/  %clay-take
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^+  [*(list move) ..^$]
+  ~>  %spin.[%take]
   ?^  dud
     ?+    tea
       ~|(%clay-take-dud (mean tang.u.dud))

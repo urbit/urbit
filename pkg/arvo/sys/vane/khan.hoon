@@ -115,6 +115,7 @@
 =|  khan-state
 =*  state  -
 |=  [now=@da eny=@uvJ rof=roof]
+~>  %spin.[%khan]
 =*  khan-gate  .
 ^?
 |%
@@ -126,6 +127,7 @@
           wrapped-task=(hobo task)
       ==
   ^-  [(list move) _khan-gate]
+  ~>  %spin.[%call]
   ::
   =/  =task  ((harden task) wrapped-task)
   ?^  dud
@@ -168,6 +170,7 @@
 ++  load
   |=  old=khan-state
   ^+  khan-gate
+  ~>  %spin.[%load]
   khan-gate(state old)
 ::  +scry: nothing to see as yet
 ::
@@ -175,6 +178,7 @@
   ^-  roon
   |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
+  ~>  %spin.[%scry]
   ~
 ++  stay  state
 ::  +take: handle responses.
@@ -183,6 +187,7 @@
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^-  [(list move) _khan-gate]
   ?^  dud
+  ~>  %spin.[%take]
     ~|(%khan-take-dud (mean tang.u.dud))
   :_  khan-gate
   ?-    -.hin
