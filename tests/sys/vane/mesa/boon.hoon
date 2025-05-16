@@ -137,14 +137,14 @@
       ==
     ==
   ::
-  ~?  >  dbug  'boon payload is accesible at /flow/0/poke/bak/~nec/1'
+  ~?  >  dbug  'boon payload accesible at /flow/0/poke/bak/~nec/1'
   :-  moves-2  |.  :-  %|
   =/  moves-3
     %+  expect-eq
     !>  boon/poke-boon
     !>  !<  page
         =<  ?>  ?=(%message p)  q
-        (ames-scry-payload:v bud ~bud %a %x '1' %$ boon-path)
+        (ames-scry-payload:v bud ~nec ~bud %a %x '1' %$ boon-path)
   ::
   :-  moves-3  |.  :-  %|
   ~?  >  dbug  '~nec hears %poke-boon from ~bud'
