@@ -9,6 +9,7 @@
   ++  lia-value
     $~  [%i32 0]
     $%  [%octs octs]
+        [%noun *]
         $<(%ref coin-wasm)
     ==
   ::
