@@ -1985,10 +1985,7 @@
             ?&  =-  ~?  !-  [bone=bone ames=current.pump back=current.back-pump]
                     -
                 %+  print-check  %forward-flows-current
-                ?|  =(current.pump current.back-pump)
-                    :: got nack, but waiting for naxplanation, or
-                    ::
-                    ?&  =(~ queued-message-acks.pump)
+                ?|  ?&  !=(~ queued-message-acks.pump)
                         ::  ahoy moves will have a +peek for the %naxplanation
                         ::  at current
                         ::
@@ -2002,23 +1999,23 @@
                          (validate-path path.spar.q.card)
                         ?.  ?=(flow-pith nax-path)
                           %.n
+                        =-  ~?  >>  -  nax-path/nax-path^current.pump^next.pump
+                            -
                         ?&  =(ship rcvr.nax-path)
                             =(bone bone.nax-path)
                             =(%nax load.nax-path)
                             =(%bak dire.nax-path)
                             =(current.pump mess.nax-path)
                         ==
-                    ==
-                    ::  got naxplanation for current, with wrong reference
-                    ::  message, so +(current) should be in the queue,
-                    ::  which only happens if we are still waiting for the
-                    ::  naxplanation of this message to increase current,
-                    ::
-                    ?&  %-  ~(has by queued-message-acks.pump)
-                            +(current.pump)
-                        ::  and a naxplanation flow should exist, although
-                        ::  that doesn't tell us what message got nacked
-                        ::
+                      ::  got naxplanation for current, with wrong reference
+                      ::  message, so +(current) should be in the queue,
+                      ::  which only happens if we are still waiting for the
+                      ::  naxplanation of this message to increase current,
+                      ::
+                        (~(has by queued-message-acks.pump) +(current.pump))
+                      ::  and a naxplanation flow should exist, although
+                      ::  that doesn't tell us what message got nacked
+                      ::
                         (~(has by rcv.ames) (mix 0b10 bone))
                       ::  XX and at least we have nacked one message
                       ::
@@ -2026,7 +2023,11 @@
                           =<  last-acked
                           (~(got by rcv.ames) (mix 0b10 bone))
                         0 :: XX
-                ==  ==
+                    ==
+                ::  if no queued-message-acks, current should still match
+                ::
+                  =(current.pump current.back-pump)
+                ==
               ::
                 =-  ~?  !-  [bone=bone ames=next.pump back=next.back-pump]
                     -
@@ -5605,7 +5606,7 @@
                     ::  sanity check that this is not a naxplanation bone
                     ::
                     ~?  >>>  odd.veb.bug.ames-state
-                    weird-naxp-flow-got-nacked/bone=bone
+                        weird-naxp-flow-got-nacked/bone=bone
                     moves
                   ::  if the packet-pump has no state about current.pump,
                   ::  it means that we have heard the %nack, and clear
@@ -5629,29 +5630,46 @@
                   ::  and confirm that we have acked naxplanations by finding
                   ::  it's naxplanation flow
                   ::
-                  ?>  ?|  :: got nack, but waiting for naxplanation, or
+                  :: got nack, but waiting for naxplanation, or
+                  ::
+                  ?:  =(~ queued-message-acks.pump)
+                    %+  weld  moves
+                    moves:(fo-peek-naxplanation:fo-core current.pump)
+                  ::  got naxplanation for current, with wrong reference
+                  ::  message, so +(current) should be in the queue,
+                  ::  which only happens if we are still waiting for the
+                  ::  naxplanation of this message to increase current,
+                  ::
+                  ?>  ?&  (~(has by queued-message-acks.pump) +(current.pump))
+                          ::  and a naxplanation flow should exist, although
+                          ::  that doesn't tell us what message got nacked
                           ::
-                          =(~ queued-message-acks.pump)
-                          ::  got naxplanation for current, with wrong reference
-                          ::  message, so +(current) should be in the queue,
-                          ::  which only happens if we are still waiting for the
-                          ::  naxplanation of this message to increase current,
+                          (~(has by rcv.peer-state) (mix 0b10 bone))
+                          ::  XX and at least we have nacked one message
                           ::
-                          ?&  %-  ~(has by queued-message-acks.pump)
-                                  +(current.pump)
-                              ::  and a naxplanation flow should exist, although
-                              ::  that doesn't tell us what message got nacked
-                              ::
-                              (~(has by rcv.peer-state) (mix 0b10 bone))
-                            ::  XX and at least we have nacked one message
-                            ::
-                              %+  gth
-                                =<  last-acked
-                                (~(got by rcv.peer-state) (mix 0b10 bone))
-                              0 :: XX
-                      ==  ==
-                  %+  weld  moves
-                  moves:(fo-peek-naxplanation:fo-core current.pump)
+                            %+  gth
+                              =<  last-acked
+                              (~(got by rcv.peer-state) (mix 0b10 bone))
+                            0 :: XX
+                      ==
+                  ?:  &
+                    %+  weld  moves
+                    moves:(fo-peek-naxplanation:fo-core current.pump)
+                  ::  XX don't do this right away. because we are migrating
+                  ::  queued message acks, we have all state explicit to assert
+                  ::  (current != next; +peek for naxplanations in the .pit)
+                  ::  that we need to trigger this manually
+                  ::
+                  :_  moves
+                  ::  enqueue the %naxplanation %page as if it got sent by
+                  ::  the peer using the %mess layer
+                  ::
+                  ^-  move
+                  :-  duct=[//unix]~
+                  :*  %pass  (fo-wire:fo-core %nax)  %a  %mess
+                      %page  her^(fo-nax-path:fo-core current.pump our)
+                      *auth:mess  (jam [%message %nax *error])
+                  ==
                 ::
                 ::  live packets in packet-pump-state are reconstructed; the
                 ::  receiver will droppped any partially received fragments
