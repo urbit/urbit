@@ -5652,23 +5652,22 @@
                               (~(got by rcv.peer-state) (mix 0b10 bone))
                             0 :: XX
                       ==
-                  ?:  &
+                  ?:  &  :: XX change to | to test local %mate
                     %+  weld  moves
                     moves:(fo-peek-naxplanation:fo-core current.pump)
                   ::  XX don't do this right away. because we are migrating
                   ::  queued message acks, we have all state explicit to assert
                   ::  (current != next; +peek for naxplanations in the .pit)
-                  ::  that we need to trigger this manually
+                  ::  if we need to trigger this manually
                   ::
                   :_  moves
                   ::  enqueue the %naxplanation %page as if it got sent by
-                  ::  the peer using the %mess layer
+                  ::  the peer through the %mess layer
                   ::
                   ^-  move
-                  :-  duct=[//unix]~
-                  :*  %pass  (fo-wire:fo-core %nax)  %a  %mess
-                      %page  her^(fo-nax-path:fo-core current.pump our)
-                      *auth:mess  (jam [%message %nax *error])
+                  :*  duct=[[%ames (fo-wire:fo-core %nax)] //unix ~]
+                      %give  %sage  her^(fo-nax-path:fo-core current.pump our)
+                      [%message %nax *error]
                   ==
                 ::
                 ::  live packets in packet-pump-state are reconstructed; the
@@ -9658,12 +9657,13 @@
             ::  XX check what happens if the naxplanation comes in again
             ::
             =.  fo-core
-              ?.  ?|  !no-pokes  ::  there were unacked messages
-                      &(no-pokes =(seq (dec next-msg)))  :: nacked, migrated msg
-                  ==
-                %-  %+  ev-tace  odd.veb.bug.ames-state
-                    |.("weird %naxp {<[bone=bone seq=seq next=next-msg]>} skip")
-                fo-core
+              :: XX don't give naxplanations to the client vane?
+              :: ?.  ?|  !no-pokes  ::  there were unacked messages
+              ::         &(no-pokes =(seq (dec next-msg)))  :: nacked, migrated msg
+              ::     ==
+              ::   %-  %+  ev-tace  odd.veb.bug.ames-state
+              ::       |.("weird %naxp {<[bone=bone seq=seq next=next-msg]>} skip")
+              ::   fo-core
               %-  %+  ev-tace  msg.veb.bug.ames-state
                   |.("take %naxplanation {<[bone=bone seq=seq]>}")
               ::
@@ -9673,7 +9673,7 @@
             =^  next  fo-core  (fo-handle-miss-ack seq)
             ?:  =(seq ack.next)
               fo-core
-            ::  reset assurance checks; this is an ack for the next message
+            ::  reset assurance checks; this is an ack/naxplanation for next
             ::
             $(seq ack.next, error error.next, no-pokes |, miss-nax |)
           ::
@@ -9733,17 +9733,41 @@
             ::
             ?~  cack=(pry:fo-cac acks.snd.state)  [seq ~]^fo-core
             ?.  =(key.u.cack +(seq))              [seq ~]^fo-core
-            ?~  next=(pry:fo-mop loads.snd)       [seq ~]^fo-core
-            ?.  (lth seq next.snd)                [seq ~]^fo-core
-            ?.  =(key.u.next +(seq))              [seq ~]^fo-core
+            =+  next-load=(pry:fo-mop loads.snd)
             ::  if next cached is a %nack, no-op; we are still waiting for the
             ::  naxplanation
             ::
-            ?:  ?=([%nack ~] val.u.cack)     [seq ~]^fo-core
-            ::  next ack in the cache is for the next sent %poke; process
+            ?:  ?=([%nack ~] val.u.cack)
+              :-  [seq ~]
+              ?.  ?=(~ next-load)  fo-core
+                ::  if there is no payload outstanding but we still have queued
+                ::  nacks, the naxplanation got processed incorrectly
+                ::  and queued messages have been migrated from .peers; start
+                ::  peeking for the naxplanation
+                ::
+              %-  %+  ev-tace  odd.veb.bug.ames-state
+                  |.("queued %nack; %naxplanation missing {<[b=bone n=seq]>}")
+              (fo-peek-naxplanation key.u.cack)
+            ?:  ?&  ?=(^ next-load)
+                    (lth seq next.snd)
+                    !=(key.u.next-load +(seq))
+                ==
+              %-  %+  ev-tace  odd.veb.bug.ames-state
+                  |.("outstanding %loads doesn't match next {<[b=bone n=seq]>}")
+              ::  if there are outstanding payloads, no-op if the oldest one
+              ::  doesn't match the next sequence in order
+              ::
+              [seq ~]^fo-core
+            ::  either there is no payloads outstanding, but next queued message
+            ::  ack is the next one in order, or ext ack in the cache is for the
+            ::  next sent %poke; process
             ::
+            %-  %+  ev-tace  msg.veb.bug.ames-state
+                |.("process next queued ack {<[bone=bone seq=key.u.cack]>}")
             =^  *  acks.snd.state  (del:fo-cac acks.snd.state key.u.cack)
             :_  fo-core
+            ::  produce ack or naxplanation
+            ::
             [key.u.cack ?:(?=(%ok -.val.u.cack) ~ `+.val.u.cack)]
           ::
           --
