@@ -10679,7 +10679,7 @@
                   pump(current ?:(=(0 current) next current))
                 ::  if there are queued message acks, current has been nacked
                 ::  and we are waiting for the naxplanation, so there should be
-                ::  a live %peek in the .pit, for it and
+                ::  a live %peek in the .pit for it
                 ::
                 =/  queued-acks=(list @ud)
                   (sort ~(tap in ~(key by queued-message-acks.pump)) lth)
@@ -10691,6 +10691,9 @@
                 core
               |=  [cor=_core seq=@ud req=mesa-message]
               ^-  [(unit mesa-message) stop=? cor=_core]
+              =.  snd.peer-state.cor
+                %+  ~(jab by snd.peer-state.cor)  bone
+                |=(pump=message-pump-state pump(next seq))
               `[| (on-memo:cor bone req)]
             ::  message-sink
             ::
