@@ -10693,7 +10693,9 @@
               ^-  [(unit mesa-message) stop=? cor=_core]
               =.  snd.peer-state.cor
                 %+  ~(jab by snd.peer-state.cor)  bone
-                |=(pump=message-pump-state pump(next seq))
+                |=  pump=message-pump-state
+                ?^  unsent-messages.pump  pump
+                pump(next seq)
               `[| (on-memo:cor bone req)]
             ::  message-sink
             ::
