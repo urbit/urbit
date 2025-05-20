@@ -54,7 +54,7 @@
     (ames-call:v nec [~[/poke] [%plea ~bud poke-plea] *roof])
   ::
   =^  *  nec
-    (ames-call:v nec ~[ack-wire /poke] moke poke-roof)
+    (ames-call:v nec ~[[%ames ack-wire] /poke] moke poke-roof)
   ::
   =/  message=mess:ames
     [%poke [~bud ack-path] [~nec poke-path] page=[%message plea/poke-plea]]
@@ -88,21 +88,20 @@
   ::  start
   ::
   ~?  >  dbug  'naxplanation payload is accesible at /flow/0/nax/bak/~nec/1'
+  =/  naxplanation=*  *error:ames
+  =/  nax-roof        (make-roof nax-path message+!>(nax/naxplanation))
   =/  moves-1
     %+  expect-eq
     !>  nax/*goof
     !>  !<  page
         =<  ?>  ?=(%message p)  q
-        (ames-scry-payload:v bud ~bud %a %x '1' %$ nax-path)
+        (ames-scry-payload:v bud ~nec ~bud %a %x '1' %$ nax-path)
   ::
   :-  moves-1  |.  :-  %|
   ~?  >  dbug  '~nec starts %peeking for the naxplanation on ~bud'
   ::
-  =/  naxplanation=*  *error:ames
-  =/  nax-roof        (make-roof nax-path message+!>(nax/naxplanation))
-  ::
   =^  moves-x  nec
-    (ames-call:v nec [~[nax-wire /poke] meek nax-roof])
+    (ames-call:v nec [~[[%ames nax-wire] /poke] meek nax-roof])
   ~?  >  dbug  '~bud gives ~nec the first fragment'
   =^  moves-y  bud     (ames-reply:v bud ~[/unix-pact] moves-x nax-roof)
   ~?  >  dbug  '~nec hears complete message'
@@ -113,8 +112,11 @@
   =^  moves-3  nec
     %:    ames-check-take:v  nec
         [~1111.1.1 0xdead.beef *roof]
-      ?>  ?=([[^ [%give %sage *]] *] moves-page)
-      [wire=i.duct duct=t.duct %ames p.card]:i.moves-page
+      ?>  ?=([[[[%ames *] *] [%give %sage *]] *] moves-page)
+      ::  remove reentrant %ames wire; this would be done by %arvo to route it
+      ::  to the %ames vane
+      ::
+      [wire=t.i.duct duct=t.duct %ames p.card]:i.moves-page
     ::
       :~  :-  ~[/poke]
           [%give %done `*error:ames]

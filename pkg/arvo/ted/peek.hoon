@@ -42,4 +42,4 @@
 =/  res  (mule |.((vale.dais q.q.sage)))
 ?.  ?=(%| -.res)
   (pure:m p.res)
-~|(%keen-mark-fail (mean leaf+"-keen: ames vale fail {<mark>}" p.res))
+~|(%keen-mark-fail (mean leaf+"-peek: ames vale fail {<mark>}" p.res))

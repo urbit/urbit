@@ -66,7 +66,7 @@
           public-key=bud-pub
           sponsor=~bud
       ==
-    =.  lane.fren-state  `*lane:pact:ames
+    =.  lane.fren-state  `[0 *lane:pact:ames]
     [%known fren-state]
   ::  tell ~bud about ~nec
   ::
@@ -80,7 +80,7 @@
           public-key=nec-pub
           sponsor=~nec
       ==
-    =.  lane.fren-state  `*lane:pact:ames
+    =.  lane.fren-state  `[0 *lane:pact:ames]
     [%known fren-state]
   ::  metamorphose
   ::
@@ -168,21 +168,20 @@
   ^-  @
   =/  sample     [now=~1111.1.1 eny=`@`0xdead.beef poke-roof]
   =/  ames-core  (ames-gate sample)
-  =/  mesa-core  (mesa:ames-core sample)
-  ?~  pact=(co-make-pact:co:mesa-core spar `path per-rift)
+  ?~  pact=(co-make-pact:co:mesa:ames-core spar `path per-rift)
     !!
   p:(fax:plot (en:pact:ames u.pact))
 ::
 ++  ames-scry-payload
-  |=  [=ames-gate =ship =path]
+  |=  [=ames-gate her=ship our=ship =path]
   ^-  cage
   =/  ames-core  (ames-gate now=~1111.1.1 eny=`@`0xdead.beef *roof)
   %-  need   %-  need
   %-  scry:(ames-gate ~1111.1.10 `@`0xdead.beef *roof)
   =;  [care=@tas =beam]
-    [[~ ~] / care beam]
+    [`[her ~ ~] / care beam]
   =<  [?>(?=(^ vew) car.vew) bem]
-  (need (inner-path-to-beam:ames-core ship path))
+  (need (inner-path-to-beam:ames-core our path))
 ::  +ames-check-call: run gall task, assert produces expected-moves
 ::
 ++  ames-check-call
