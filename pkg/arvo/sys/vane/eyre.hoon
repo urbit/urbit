@@ -1482,10 +1482,17 @@
         out(moves [give-session-tokens :(weld moz moves.fex moves.out)])
       ::NOTE  that we don't provide a 'set-cookie' header here.
       ::      +handle-response does that for us.
+      ::TODO  that should really also handle the content-length header for us,
+      ::      somewhat surprising that it doesn't...
+      %-  handle-response
+      =/  bod=octs
+        (as-octs:mimes:html (scot %uv session.fex))
+      =/  col=[key=@t value=@t]
+        ['content-length' (crip (a-co:co p.bod))]
       ?~  redirect
-        (handle-response %start 204^~ ~ &)
+        [%start 200^~[col] `bod &]
       =/  actual-redirect  ?:(=(u.redirect '') '/' u.redirect)
-      (handle-response %start 303^['location' actual-redirect]~ ~ &)
+      [%start 303^~['location'^actual-redirect col] `bod &]
     ::  +handle-logout: handles an http request for logging out
     ::
     ++  handle-logout
@@ -1545,11 +1552,18 @@
       =^  moz1  state  (close-session u.sid all)
       =^  moz2  state  (handle-response response)
       [[give-session-tokens (weld moz1 moz2)] state]
-    ::  +session-id-from-request: attempt to find a session cookie
+    ::  +session-id-from-request: attempt to find a session token
+    ::
+    ::    looks in the authorization header first. if there is no such header,
+    ::    looks in the cookie header(s) instead.
     ::
     ++  session-id-from-request
       |=  =request:http
       ^-  (unit @uv)
+      ::  is there an authorization header?
+      ::
+      ?^  auth=(get-header:http 'authorization' header-list.request)
+        (rush u.auth ;~(pfix (jest 'Bearer 0v') viz:ag))
       ::  are there cookies passed with this request?
       ::
       =/  cookie-header=@t
