@@ -3558,7 +3558,9 @@
         ?>  ?=(^ kid)
         ?~  key=(get:key-chain client-chain:(got-per ship) u.kid)
           !!  :: XX handle
-        ?>  (lte (met 3 -.u.key) 32)
+        ?>  ?|  (lte (met 3 -.u.key) 64)  :: XX support old key reservation
+                (lte (met 3 -.u.key) 32)
+            ==
         pub
       ::
           [%chum lyf=@ her=@ hyf=@ pat=[cyf=@ ~]]

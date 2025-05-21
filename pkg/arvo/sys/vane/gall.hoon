@@ -1437,6 +1437,9 @@
       =?  gem.yoke  &(!exists ?=(~ pen))
         (~(put by gem.yoke) coop ~)
       =/  =wire  (welp /key/[agent-name]/[run-nonce.yoke]/pug coop)
+      ::  XX %plug reserves keys in %ames using (shaz eny) of length 64
+      :: use %gulp that reserves keys og length 32?
+      ::
       (ap-move [hen %pass wire %a %plug [%g %x agent-name %$ '1' coop]]~)
     ::
     ++  ap-stub
