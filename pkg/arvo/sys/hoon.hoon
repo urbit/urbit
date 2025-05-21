@@ -6272,15 +6272,14 @@
 ::  +vi: virtualization engine
 ::
 ++  vi
-  ::  forward namespace?
-  ::
   ~%  %vi  ..vi
     ==
       %mure  mure
       %mute  mute
     ==
+  ::  forward namespace?
+  ::
   |_  for=?
-  |%
   ::  +mole: typed unitary virtual
   ::
   ++  mole
