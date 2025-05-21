@@ -394,6 +394,7 @@
         =/  sig=@  (full path data)
         ?~  data  sig
         (mix sig (lsh 9 (jam data)))
+      ::
       ++  etch-open
         |=  [=path =hunk data=$@(~ (cask))]
         (etch path hunk (etch-data path data))
@@ -413,6 +414,7 @@
           =-  (flop - res)
           (etch-meow (make-meow path mes num))
         $(num +(num), res :_(res (etch-meow (make-meow path mes num))))
+      ::
       --
     ::  +etch-open-packet: convert $open-packet attestation to $shot
     ::

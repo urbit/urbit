@@ -835,6 +835,7 @@
       =.  mo-core  (mo-give %unto %kick ~)
       mo-core
     ==
+  ::
   ++  mo-handle-key
     ~/  %mo-handle-stub
     |=  [=(pole knot) syn=sign-arvo]
@@ -1296,8 +1297,9 @@
         [leaf+"gall: {<agent-name>}: brood request {<pole>} invalid, dropping"]~
       =.  pen.yoke  (~(put ju pen.yoke) [ship pole] wire)
       =/  =fine-request  [%0 rest.pole]
-      =/  =plea:ames  [%g /gk/[app.pole] fine-request]
-      =/  out=^wire   (welp /key/[agent-name]/[run-nonce.yoke]/bod/(scot %p ship) pole)
+      =/  =plea:ames     [%g /gk/[app.pole] fine-request]
+      =/  out=^wire
+        (welp /key/[agent-name]/[run-nonce.yoke]/bod/(scot %p ship) pole)
       (ap-move [hen %pass out %a %plea ship plea]~)
     ::
     ++  ap-take-brood
@@ -1317,7 +1319,8 @@
         ?~  bod.bud
           =.  ap-core  (ap-generic-take i.wis %ames %near [ship t.wire] ~)
           $(wis t.wis)
-        =.  ap-core  (ap-pass i.wis %arvo %a %keen `[idx key]:hutch.u.bod.bud ship t.wire)
+        =.  ap-core
+          (ap-pass i.wis %arvo %a %keen `[idx key]:hutch.u.bod.bud ship t.wire)
         $(wis t.wis)
       ::
           [%ames %done *]
@@ -1881,8 +1884,11 @@
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
         (on-arvo:ap-agent-core wire sign-arvo)
-      =?  ken.yoke  ?=([%ames %tune spar=* *] sign-arvo)
-        (~(del ju ken.yoke) spar.sign-arvo wire)
+      =.  ken.yoke
+        ?+  sign-arvo  ken.yoke
+          [%ames %tune spar=* *]  (~(del ju ken.yoke) spar.sign-arvo wire)
+          [%ames %sage spar=* *]  (~(del ju ken.yoke) p.sage.sign-arvo wire)
+        ==
       ?^  maybe-tang
         (ap-error %arvo-response u.maybe-tang)
       ap-core
