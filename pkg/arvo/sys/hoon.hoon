@@ -6274,8 +6274,8 @@
 ++  vi
   ::  forward namespace?
   ::
-  |_  for=?
   ~%  %vi  ..vi
+  |_  for=?
     ==
       %mure  mure
       %mute  mute
