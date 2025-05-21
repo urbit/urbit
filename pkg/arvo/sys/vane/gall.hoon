@@ -1438,7 +1438,7 @@
         (~(put by gem.yoke) coop ~)
       =/  =wire  (welp /key/[agent-name]/[run-nonce.yoke]/pug coop)
       ::  XX %plug reserves keys in %ames using (shaz eny) of length 64
-      :: use %gulp that reserves keys og length 32?
+      :: use %gulp that reserves keys of length 32?
       ::
       (ap-move [hen %pass wire %a %plug [%g %x agent-name %$ '1' coop]]~)
     ::
@@ -1891,6 +1891,7 @@
         ?+  sign-arvo  ken.yoke
           [%ames %tune spar=* *]  (~(del ju ken.yoke) spar.sign-arvo wire)
           [%ames %sage spar=* *]  (~(del ju ken.yoke) p.sage.sign-arvo wire)
+          [%ames %near spar=* *]  (~(del ju ken.yoke) spar.sign-arvo wire)
         ==
       ?^  maybe-tang
         (ap-error %arvo-response u.maybe-tang)
