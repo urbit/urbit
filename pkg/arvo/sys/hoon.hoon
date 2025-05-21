@@ -6275,11 +6275,11 @@
   ::  forward namespace?
   ::
   ~%  %vi  ..vi
-  |_  for=?
     ==
       %mure  mure
       %mute  mute
     ==
+  |_  for=?
   |%
   ::  +mole: typed unitary virtual
   ::
