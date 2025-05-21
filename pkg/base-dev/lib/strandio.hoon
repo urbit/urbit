@@ -232,7 +232,7 @@
 ::
 ++  take-message
   =>  |%  +$  out  $%  [%sage sage:mess:ames]
-                       [%tune spar:ames (unit roar:ames)]
+                       [%roar spar:ames (unit roar:ames)]
                        [%page spar:ames (unit (unit page))]
                    ==
       --
@@ -251,7 +251,7 @@
       [~ %sign * %ames %tune ^ *]
     ?.  =(wire wire.u.in.tin)
       `[%skip ~]
-    `[%done %tune +>.sign-arvo.u.in.tin]
+    `[%done %roar +>.sign-arvo.u.in.tin]
     ::
       [~ %sign * %ames %near ^ *]
     ?.  =(wire wire.u.in.tin)

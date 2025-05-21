@@ -3,7 +3,7 @@
 =,  strand=strand:spider
 ^-  thread:spider
 =>  |%  +$  out  $%  [%sage =sage:mess:ames]
-                     [%tune (pair spar:ames (unit roar:ames))]
+                     [%roar (pair spar:ames (unit roar:ames))]
                      [%page (pair spar:ames (unit (unit page)))]
                  ==
     --
@@ -23,7 +23,7 @@
 =/  =sage:mess:ames
   ?-  -.out
     %sage  sage.out
-    %tune  :-  p.+.out
+    %roar  :-  p.+.out
            ?~  q.+.out  ~
            ?~  q.dat.u.q.+.out  ~
            u.q.dat.u.q.+.out
