@@ -182,6 +182,7 @@
       `[%done ~]
     `[%fail %timer-error u.error.sign-arvo.u.in.tin]
   ==
+::  XX deprecated
 ::
 ++  take-tune
   |=  =wire
@@ -243,6 +244,7 @@
       `[%skip ~]
     `[%done %sage sage.sign-arvo.u.in.tin]
   ==
+::  XX deprecated
 ::
 ++  take-near
   |=  =wire
