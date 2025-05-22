@@ -365,8 +365,7 @@
           $>  $?  %boon                                 ::  response
                   %done                                 ::  (n)ack
                   %lost                                 ::  lost boon
-                  %tune                                 ::  |fine response
-                  %sage                                 ::  |mesa response
+                  %sage                                 ::  %keen response
               ==                                        ::
           gift:ames                                     ::
       ==                                                ::
@@ -6347,17 +6346,13 @@
       %-  (slog leaf+"clay: lost backfill from {<tea>}" ~)
       [~ ..^$]
     ::
-        ?(%boon %tune %sage)
+        ?(%boon %sage)
       =/  her=ship   (slav %p i.t.tea)
       =/  =desk      (slav %tas i.t.t.tea)
       =/  index=@ud  (slav %ud i.t.t.t.tea)
       ::
       =/  fell=(unit fell)
         ?:  ?=(%boon +<.hin)  `;;(fell payload.hin)
-        ?:  ?=(%tune +<.hin)
-          ?~  roar.hin  ~
-          ?~  q.dat.u.roar.hin  ~
-          `[%1 `u.q.dat.u.roar.hin]
         =/  =spar:ames  p.sage.hin
         ?~  q.sage.hin  ~
         `[%1 `q.sage.hin]
@@ -6370,7 +6365,7 @@
           ::
           %-  (slog leaf+"clay: got null from {<her>}, falling back to ames" ~)
           abet:(retry-with-ames:den %back-index index)
-        =?  den  ?=(?(%tune %sage) +<.hin)
+        =?  den  ?=(%sage +<.hin)
           (cancel-scry-timeout:den index)
         abet:abet:(take-backfill:(foreign-update:den index) u.fell)
       [mos ..^$]
@@ -6476,7 +6471,6 @@
       ::  handled in the wire dispatcher
       ::
       %boon  !!
-      %tune  !!
       %sage  !!
       %lost  !!
       %unto  !!

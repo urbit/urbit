@@ -182,6 +182,7 @@
       `[%done ~]
     `[%fail %timer-error u.error.sign-arvo.u.in.tin]
   ==
+::  XX deprecated
 ::
 ++  take-tune
   |=  =wire
@@ -231,13 +232,8 @@
   ==
 ::
 ++  take-message
-  =>  |%  +$  out  $%  [%sage sage:mess:ames]
-                       [%tune spar:ames (unit roar:ames)]
-                       [%page spar:ames (unit (unit page))]
-                   ==
-      --
   |=  =wire
-  =/  m  (strand ,out)
+  =/  m  (strand ,[%sage sage:mess:ames])
   ^-  form:m
   |=  tin=strand-input:strand
   ?+    in.tin  `[%skip ~]
@@ -247,17 +243,8 @@
     ?.  =(wire wire.u.in.tin)
       `[%skip ~]
     `[%done %sage sage.sign-arvo.u.in.tin]
-    ::
-      [~ %sign * %ames %tune ^ *]
-    ?.  =(wire wire.u.in.tin)
-      `[%skip ~]
-    `[%done %tune +>.sign-arvo.u.in.tin]
-    ::
-      [~ %sign * %ames %near ^ *]
-    ?.  =(wire wire.u.in.tin)
-      `[%skip ~]
-    `[%done %page +>.sign-arvo.u.in.tin]
   ==
+::  XX deprecated
 ::
 ++  take-near
   |=  =wire
