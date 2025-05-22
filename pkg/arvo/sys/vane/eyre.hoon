@@ -31,7 +31,7 @@
 ::  +sign: private response from another vane to eyre
 ::
 +$  sign
-  $%  [%ames $>(?(%done %boon %lost %tune %sage) gift:ames)]
+  $%  [%ames $>(?(%done %boon %lost %sage) gift:ames)]
       [%behn $>(%wake gift:behn)]
       [%gall gift:gall]
       [%clay gift:clay]
@@ -4096,23 +4096,12 @@
           on-fail:server:eauth:authentication:(per-server-event args)
         [moz http-server-gate]
       ::
-      ?>  ?|  ?&  ?=([%ames %tune *] sign)
-                  =(client ship.sign)
-              ==
-              ?&  ?=([%ames %sage *] sign)
-                  =(client ship.p.sage.sign)
-          ==  ==
+      ?>  ?&  ?=([%ames %sage *] sign)
+              =(client ship.p.sage.sign)
+          ==
       =/  url=(unit @t)
-        ?+    +<.sign  ~
-            %tune
-          ?~  roar.sign  ~
-          ?~  q.dat.u.roar.sign  ~
-          ;;((unit @t) q.u.q.dat.u.roar.sign)
-        ::
-            %sage
-          ?~  q.sage.sign  ~
-          ;;((unit @t) q.q.sage.sign)
-        ==
+        ?~  q.sage.sign  ~
+        ;;((unit @t) q.q.sage.sign)
       =^  moz  server-state.ax
         ?~  url
           %.  [client nonce]

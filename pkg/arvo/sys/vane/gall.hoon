@@ -1317,7 +1317,7 @@
           =.  pen.yoke  (~(del by pen.yoke) [ship t.wire])
           ap-core
         ?~  bod.bud
-          =.  ap-core  (ap-generic-take i.wis %ames %near [ship t.wire] ~)
+          =.  ap-core  (ap-generic-take i.wis %ames %sage [ship t.wire] ~)
           $(wis t.wis)
         =.  ap-core
           (ap-pass i.wis %arvo %a %keen `[idx key]:hutch.u.bod.bud ship t.wire)
@@ -1331,7 +1331,7 @@
           =.  pen.yoke  (~(del by pen.yoke) [ship t.wire])
           ap-core
         =.  ap-core
-          %.  (ap-generic-take i.wis %ames %near [ship t.wire] ~)
+          %.  (ap-generic-take i.wis %ames %sage [ship t.wire] ~)
           %+  trace  odd.veb.bug.state
           [leaf/"gall: {<agent-name>} bad brood res {<ship>} {<t.wire>}"]~
         $(wis t.wis)
@@ -1887,12 +1887,8 @@
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
         (on-arvo:ap-agent-core wire sign-arvo)
-      =.  ken.yoke
-        ?+  sign-arvo  ken.yoke
-          [%ames %tune spar=* *]  (~(del ju ken.yoke) spar.sign-arvo wire)
-          [%ames %sage spar=* *]  (~(del ju ken.yoke) p.sage.sign-arvo wire)
-          [%ames %near spar=* *]  (~(del ju ken.yoke) spar.sign-arvo wire)
-        ==
+      =?  ken.yoke   ?=([%ames %sage *] sign-arvo)
+        (~(del ju ken.yoke) p.sage.sign-arvo wire)
       ?^  maybe-tang
         (ap-error %arvo-response u.maybe-tang)
       ap-core
