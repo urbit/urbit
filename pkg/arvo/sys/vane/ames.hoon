@@ -7224,9 +7224,9 @@
             ::
             ++  fi-done
               |=  [sig=@ =gage:mess]
-              =+  ?.  (meri:keys fi-full-path sig gage)  ~
-                  %.  ~
-                  (fi-trace fin.veb |.("veri sig failed {(spud fi-full-path)}"))
+              =?  gage  !(meri:keys fi-full-path sig gage)
+                %.  ~
+                (fi-trace fin.veb |.("veri sig failed {(spud fi-full-path)}"))
               %-  (fi-trace fin.veb |.("done {(spud fi-full-path)}"))
               ::
               %-  ~(rep by listeners.keen)
