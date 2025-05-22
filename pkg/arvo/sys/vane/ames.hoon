@@ -2069,6 +2069,8 @@
           ::  closing, which deletes it automatically
           ::
           %+  print-check  %corked   ?=(~ (~(dif in corked.mesa) corked.back))
+          =-  ~?  !-  chain/[mesa=client-chain.mesa back=client-chain.back]
+              -
           %+  print-check  %chain    =(client-chain.mesa client-chain.back)
           :: %+  print-check  %pit      =(pit.mesa pit.back)  :: XX
         ::  flows
@@ -8154,7 +8156,10 @@
           ::  in their peer state
           ::
           =?  client-chain.per  ?=(%shut -.space)
-            (put:key-chain client-chain.per kid.space key.space path)
+            ::  only the server chain needs to take care of storing the path
+            ::  that has the security context prefix
+            ::
+            (put:key-chain client-chain.per kid.space key.space path=/)
           ::  XX  early abet; antipattern
           ::
           ::  we should just emit the %meek task, but instead we punch
