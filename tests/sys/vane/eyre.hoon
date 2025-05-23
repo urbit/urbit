@@ -1511,11 +1511,11 @@
       =/  body  'eauth&name=~sampel&redirect=/final'
       (post '/~/login' ~ body)
     ::
-    ++  tune
+    ++  sage
       %^  take  /eauth/keen/(scot %p ~sampel)/(scot %uv nonce)
         ~[/http-blah]
       ::NOTE  path and signature don't matter here, eyre doesn't look at them
-      [%ames %tune [~sampel *path] ~ [*path ~ %noun `'http://sampel.com/~/eauth'] ~]
+      [%ames %sage [~sampel *path] %noun `'http://sampel.com/~/eauth']
     ::
     ++  grant
       %+  call  ~[/http-blah]
@@ -1594,7 +1594,7 @@
         'http://sampel.com/~/eauth?server=~nul&nonce='
       (scot %uv nonce)
     (make-ex-resp 303 ['location' loc]~ ~)
-  ;<  mos=(list move)  bind:m  tune
+  ;<  mos=(list move)  bind:m  sage
   ;<  ~  bind:m
     (expect-moves mos ex-rs ~)
   ::  requester approves, we get an %open plea, must give an %okay boon
@@ -1632,7 +1632,7 @@
   =,  server:eauth
   ;<  ~  bind:m  (setup-for-eauth 'http://hoster.com')
   ;<  *  bind:m  start
-  ;<  *  bind:m  tune
+  ;<  *  bind:m  sage
   ;<  *  bind:m  grant
   ::  requester GETs a url with a non-matching token
   ::
@@ -1674,7 +1674,7 @@
   =,  server:eauth
   ;<  ~  bind:m  (setup-for-eauth 'http://hoster.com')
   ;<  *  bind:m  start
-  ;<  *  bind:m  tune
+  ;<  *  bind:m  sage
   ::  visitor returns, saying the attempt was aborted. we delete it
   ::
   ;<  ex-rs=$-(move tang)  bind:m
@@ -1693,7 +1693,7 @@
   =,  server:eauth
   ;<  ~  bind:m  (setup-for-eauth 'http://hoster.com')
   ;<  *  bind:m  start
-  ;<  *  bind:m  tune
+  ;<  *  bind:m  sage
   ;<  *  bind:m  grant
   ::  visitor returns, saying the attempt was aborted. we delete it
   ::
@@ -1713,7 +1713,7 @@
   =,  server:eauth
   ;<  ~  bind:m  (setup-for-eauth 'http://hoster.com')
   ;<  *  bind:m  start
-  ;<  *  bind:m  tune
+  ;<  *  bind:m  sage
   ;<  *  bind:m  grant
   ;<  *  bind:m  final
   ::  visitor tells us they want the session deleted

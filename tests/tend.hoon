@@ -42,7 +42,7 @@
      path.action
     [%pass /keen %keen & ?:(=(our.bowl ~met) ~hex ~met) path]~
   [%pass /foo action]~
-++  on-peek   
+++  on-peek
   |=  =path
   ^-  (unit (unit cage))
   ~&  peek-path/path
@@ -51,16 +51,16 @@
     [~ ~]
   ``noun+!>(&)
 ++  on-watch  on-watch:def
-++  on-arvo   
+++  on-arvo
   |=  [=wire syn=sign-arvo]
   ^-  (quip card _this)
   ~&  syn
   ?:  =(/keen wire)
-    ?:  ?=([%ames %near *] syn)
-      ?.  ?=([~ ~ *] dat.syn)
-        ~&  no-item/dat.syn
+    ?:  ?=([%ames %sage *] syn)
+      ?~  q.sage.syn
+        ~&  no-item/sage.syn
         `this
-      ~&  ;;([@tas @tas] q.u.u.dat.syn)
+      ~&  ;;([@tas @tas] q.sage.syn)
       `this
     `this
   `this
