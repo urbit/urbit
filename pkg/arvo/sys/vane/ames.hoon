@@ -5313,6 +5313,7 @@
                 ::  XX remove? not used anymore
                 ::
                 (~(del by tip.peer-state) user-path)
+              %-  (fi-trace:fi fin.veb |.("remove tip {(spud user-path)}"))
               (~(del ju tip.peer-state) user-path duct ames-path)
             peer-core
           ::

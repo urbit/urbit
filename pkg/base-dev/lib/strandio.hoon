@@ -182,7 +182,7 @@
       `[%done ~]
     `[%fail %timer-error u.error.sign-arvo.u.in.tin]
   ==
-::  XX deprecated
+::  XX deprecate in 409k
 ::
 ++  take-tune
   |=  =wire
@@ -230,21 +230,7 @@
       `[%skip ~]
     `[%done sage.sign-arvo.u.in.tin]
   ==
-::
-++  take-message
-  |=  =wire
-  =/  m  (strand ,[%sage sage:mess:ames])
-  ^-  form:m
-  |=  tin=strand-input:strand
-  ?+    in.tin  `[%skip ~]
-      ~  `[%wait ~]
-    ::
-      [~ %sign * %ames %sage sage=*]
-    ?.  =(wire wire.u.in.tin)
-      `[%skip ~]
-    `[%done %sage sage.sign-arvo.u.in.tin]
-  ==
-::  XX deprecated
+::  XX deprecate in 409k
 ::
 ++  take-near
   |=  =wire
