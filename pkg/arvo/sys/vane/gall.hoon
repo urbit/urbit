@@ -835,6 +835,7 @@
       =.  mo-core  (mo-give %unto %kick ~)
       mo-core
     ==
+  ::
   ++  mo-handle-key
     ~/  %mo-handle-stub
     |=  [=(pole knot) syn=sign-arvo]
@@ -1296,8 +1297,9 @@
         [leaf+"gall: {<agent-name>}: brood request {<pole>} invalid, dropping"]~
       =.  pen.yoke  (~(put ju pen.yoke) [ship pole] wire)
       =/  =fine-request  [%0 rest.pole]
-      =/  =plea:ames  [%g /gk/[app.pole] fine-request]
-      =/  out=^wire   (welp /key/[agent-name]/[run-nonce.yoke]/bod/(scot %p ship) pole)
+      =/  =plea:ames     [%g /gk/[app.pole] fine-request]
+      =/  out=^wire
+        (welp /key/[agent-name]/[run-nonce.yoke]/bod/(scot %p ship) pole)
       (ap-move [hen %pass out %a %plea ship plea]~)
     ::
     ++  ap-take-brood
@@ -1315,9 +1317,11 @@
           =.  pen.yoke  (~(del by pen.yoke) [ship t.wire])
           ap-core
         ?~  bod.bud
-          =.  ap-core  (ap-generic-take i.wis %ames %near [ship t.wire] ~)
+          =.  ap-core  ::  (ap-generic-take i.wis %ames %sage [ship t.wire] ~)
+            (ap-generic-take i.wis %ames %tune [ship t.wire] ~)
           $(wis t.wis)
-        =.  ap-core  (ap-pass i.wis %arvo %a %keen `[idx key]:hutch.u.bod.bud ship t.wire)
+        =.  ap-core
+          (ap-pass i.wis %arvo %a %keen `[idx key]:hutch.u.bod.bud ship t.wire)
         $(wis t.wis)
       ::
           [%ames %done *]
@@ -1328,7 +1332,8 @@
           =.  pen.yoke  (~(del by pen.yoke) [ship t.wire])
           ap-core
         =.  ap-core
-          %.  (ap-generic-take i.wis %ames %near [ship t.wire] ~)
+          %.  ::  (ap-generic-take i.wis %ames %sage [ship t.wire] ~)
+              (ap-generic-take i.wis %ames %tune [ship t.wire] ~)
           %+  trace  odd.veb.bug.state
           [leaf/"gall: {<agent-name>} bad brood res {<ship>} {<t.wire>}"]~
         $(wis t.wis)
@@ -1434,6 +1439,9 @@
       =?  gem.yoke  &(!exists ?=(~ pen))
         (~(put by gem.yoke) coop ~)
       =/  =wire  (welp /key/[agent-name]/[run-nonce.yoke]/pug coop)
+      ::  XX %plug reserves keys in %ames using (shaz eny) of length 64
+      :: use %gulp that reserves keys of length 32?
+      ::
       (ap-move [hen %pass wire %a %plug [%g %x agent-name %$ '1' coop]]~)
     ::
     ++  ap-stub
@@ -1879,10 +1887,17 @@
           t.name.sign-arvo
         ==
       =^  maybe-tang  ap-core
+        =?  sign-arvo   ?=([%ames %sage *] sign-arvo)
+          ::  XX if %sage rewrite sign-arvo as %tune; remove in 409k
+          ::
+          =/  =roar:ames
+            :_  sigs=~ :: XX unsused
+            [path.p.sage.sign-arvo ?~(q.sage.sign-arvo ~ `q.sage.sign-arvo)]
+          sign-arvo(+ [%tune spar=p.sage.sign-arvo `roar])
         %+  ap-ingest  ~  |.
         (on-arvo:ap-agent-core wire sign-arvo)
-      =?  ken.yoke  ?=([%ames %tune spar=* *] sign-arvo)
-        (~(del ju ken.yoke) spar.sign-arvo wire)
+      =?  ken.yoke   ?=([%ames %sage *] sign-arvo)
+        (~(del ju ken.yoke) p.sage.sign-arvo wire)
       ?^  maybe-tang
         (ap-error %arvo-response u.maybe-tang)
       ap-core
