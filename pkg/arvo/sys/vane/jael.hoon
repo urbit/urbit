@@ -528,10 +528,12 @@
       %-  (slog tang.u.error.hin)
       ::  if first time hearing an error, start timer to retry sending the $plea
       ::
+      ::    XX  allow to change the rate via a %jael task in 409
+      ::
       =?  moz  ?=([%plea ~] tim)
-        [hen %pass /public-keys %b %wait `@da`(add now ~s10)]^moz
+        [hen %pass /public-keys %b %wait `@da`(add now ~d1)]^moz
       =?  tim  ?=([%plea ~] tim)
-        plea/`[hen /public-keys `@da`(add now ~s10)]
+        plea/`[hen /public-keys `@da`(add now ~d1)]
       +>.$
     ::
         [%ames %boon *]
