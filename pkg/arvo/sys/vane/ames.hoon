@@ -9734,8 +9734,10 @@
                 (~(put by peers.ames-state) ship known/peer-state(- +<.u.peer))
               =?  chums.ames-state  ?=(%ames core.ames-state)
                 (~(del by chums.ames-state) ship)
-              ::  XX TODO %mesa as default core
+              ::  if %mesa is the default core update it
               ::
+              =?  chums.ames-state  ?=(%mesa core.ames-state)
+                (~(put by chums.ames-state) ship u.peer)
               ames-state
             =?  ames-state  ?=(%ames -.peer)
               =.  +>.u.peer  +:*peer-state
@@ -9751,7 +9753,10 @@
                 (~(put by chums.ames-state) ship known/fren-state(- +<.u.peer))
               =?  peers.ames-state  ?=(%mesa core.ames-state)
                 (~(del by peers.ames-state) ship)
+              ::  if %ames is the default core update it
               ::
+              =?  peers.ames-state  ?=(%ames core.ames-state)
+                (~(put by peers.ames-state) ship u.peer)
               ames-state
             ::  cancel all timers related to .ship
             ::
