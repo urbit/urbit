@@ -605,12 +605,6 @@
 ++  fusion
   ~%  %fusion  ..fusion  ~
   |%
-  ::  +wrap: external wrapper
-  ::
-  ++  wrap
-    |*  [* state:ford]
-    [+<- +<+< +<+>-]  ::  [result cache.state flue]
-  ::
   ++  with-face  |=([face=@tas =vase] vase(p [%face face p.vase]))
   ++  with-faces
     =|  res=(unit vase)
@@ -644,9 +638,9 @@
     ::  nub: internal mutable state for this computation
     ::
     =|  nub=state
-    =.  cache.nub  cache
-    =.  spill.nub  spill
-    =.  sprig.nub  sprig
+    =.  cache.nub  ~
+    =.  spill.nub  ~
+    =.  sprig.nub  ~
     ~%  %ford-core  ..$  ~
     |%
     ::  +read-file: retrieve marked, validated file contents at path
@@ -1189,11 +1183,7 @@
     ++  gain-sprig
       |=  [=mist next=(trap [soak state])]
       ^-  [soak state]
-      ?~  got=(~(get by sprig.nub) mist)
-        $:next
-      =?  stack.nub  ?=(^ stack.nub)
-        stack.nub(i (~(put in i.stack.nub) leak.u.got))
-      [soak.u.got nub]
+      $:next
     ::
     ++  gain-leak
       |=  [=mist next=$-(state [soak state])]
@@ -1203,69 +1193,10 @@
       =.  cycle.nub  (~(del in cycle.nub) mist)
       =?  stack.nub  ?=(^ stack.nub)
         stack.nub(i (~(put in i.stack.nub) leak))
-      =/  spilt  (~(has in spill.nub) leak)
       =^  =soak  nub
-        ?^  got=(~(get by cache.nub) leak)
-          %-  %+  trace  3  |.
-              =/  refs    ?:(spilt 0 1)
-              %+  welp  "cache {<pour.leak>}: adding {<refs>}, "
-              "giving {<(add refs refs.u.got)>}"
-          =?  cache.nub  !spilt
-            (~(put by cache.nub) leak [+(refs.u.got) soak.u.got])
-          [soak.u.got nub]
-        %-  (trace 2 |.("cache {<pour.leak>}: creating"))
-        =^  =soak  nub  (next nub)
-        =.  cache.nub  (~(put by cache.nub) leak [1 soak])
-        ::  If we're creating a cache entry, add refs to our dependencies
-        ::
-        =/  deps  ~(tap in deps.leak)
-        |-
-        ?~  deps
-          [soak nub]
-        =/  got  (~(got by cache.nub) i.deps)
-        %-  %+  trace  3  |.
-            %+  welp  "cache {<pour.leak>} for {<pour.i.deps>}"
-            ": bumping to ref {<refs.got>}"
-        =.  cache.nub  (~(put by cache.nub) i.deps got(refs +(refs.got)))
-        $(deps t.deps)
-      ?:  spilt
-        [soak nub]
-      %-  (trace 3 |.("spilt {<mist>}"))
-      =:  spill.nub  (~(put in spill.nub) leak)
-          sprig.nub  (~(put by sprig.nub) mist leak soak)
-        ==
+        (next nub)
       [soak nub]
     --
-  ::
-  ++  lose-leak
-    |=  [verb=@ fad=flow =leak]
-    ^-  flow
-    ?~  got=(~(get by fad) leak)
-      %-  (trace verb 0 |.("lose missing leak {<leak>}"))
-      fad
-    ?:  (lth 1 refs.u.got)
-      %-  (trace verb 3 |.("cache {<pour.leak>}: decrementing from {<refs.u.got>}"))
-      =.  fad  (~(put by fad) leak u.got(refs (dec refs.u.got)))
-      fad
-    =+  ?.  =(0 refs.u.got)  ~
-        ((trace verb 0 |.("lose zero leak {<leak>}")) ~)
-    %-  (trace verb 2 |.("cache {<pour.leak>}: freeing"))
-    =.  fad  (~(del by fad) leak)
-    =/  leaks  ~(tap in deps.leak)
-    |-  ^-  flow
-    ?~  leaks
-      fad
-    =.  fad  ^$(leak i.leaks)
-    $(leaks t.leaks)
-  ::
-  ++  lose-leaks
-    |=  [verb=@ fad=flow leaks=(set leak)]
-    ^-  flow
-    =/  leaks  ~(tap in leaks)
-    |-
-    ?~  leaks
-      fad
-    $(fad (lose-leak verb fad i.leaks), leaks t.leaks)
   ::
   ++  trace
     |=  [verb=@ pri=@ print=(trap tape)]
@@ -1967,8 +1898,6 @@
     =.  fod.dom
       ?:  updated  [~ ~]
       (promote-ford fod.dom invalid)
-    =.  fad
-      (lose-leaks:fusion veb.bug fad (~(dif in spill.old-fod) spill.fod.dom))
     =?  changes  updated  (changes-for-upgrade q.old-yaki deletes changes)
     ::
     =/  files
@@ -2184,13 +2113,9 @@
           ==
       ^+  [built ford-args]
       =.  ford-args  cache
-      =/  [=cage fud=flow fod=flue]
+      =/  [=cage *]
         ::  ~>  %slog.[0 leaf/"clay: validating {(spud path)}"]
-        %-  wrap:fusion
         (read-file:(ford:fusion ford-args) path)
-      =.  cache.ford-args  fud
-      =.  spill.ford-args  spill.fod
-      =.  sprig.ford-args  sprig.fod
       =/  =lobe
         ?-  -.change
           %|  p.change
@@ -2831,7 +2756,6 @@
         ?~  peg
           ~
         =/  [=cage *]
-          %-  wrap:fusion
           (page-to-cage:(tako-ford (~(got by hit.dom) let.dom)) u.peg)
         `cage
       ::
@@ -2839,7 +2763,6 @@
         |=  =mark
         ^-  dais
         =/  [=dais *]
-          %-  wrap:fusion
           (build-dais:(tako-ford (~(got by hit.dom) let.dom)) mark)
         dais
       ::
@@ -3066,12 +2989,9 @@
     |-  ^-  [(map path (unit mime)) args:ford:fusion]
     ?~  cans
       [mim ford-args]
-    =/  [=cage fud=flow fod=flue]
+    =/  [=cage *]
       ~|  mime-cast-fail+i.cans
-      (wrap:fusion (cast-path:(ford:fusion ford-args) i.cans %mime))
-    =.  cache.ford-args  fud
-    =.  spill.ford-args  spill.fod
-    =.  sprig.ford-args  sprig.fod
+      (cast-path:(ford:fusion ford-args) i.cans %mime)
     =^  mim  ford-args  $(cans t.cans)
     [(~(put by mim) i.cans `!<(mime q.cage)) ford-args]
   ::
@@ -3464,7 +3384,6 @@
       ^-  (unit cage)
       =/  vale-result
         %-  mule  |.
-        %-  wrap:fusion
         ::  Use %base's marks to validate, so we don't have to build the
         ::  foreign marks
         ::
@@ -4165,10 +4084,8 @@
       !.
       |=  [=tako =path]
       ^-  [(unit (unit cage)) _..park]
-      =^  =vase  ..park
+      =/  [=vase *]
         ~_  leaf/"clay: %a build failed {<[syd tako path]>}"
-        %+  tako-flow  tako
-        %-  wrap:fusion
         (build-file:(tako-ford tako) path)
       :_(..park [~ ~ %vase !>(vase)])
     ::
@@ -4178,9 +4095,7 @@
       ^-  [(unit (unit cage)) _..park]
       ?.  ?=([@ ~] path)
         [[~ ~] ..park]
-      =^  =dais  ..park
-        %+  tako-flow  tako
-        %-  wrap:fusion
+      =/  [=dais *]
         (build-dais:(tako-ford tako) i.path)
       :_(..park [~ ~ %dais !>(dais)])
     ::
@@ -4190,9 +4105,7 @@
       ^-  [(unit (unit cage)) _..park]
       ?.  ?=([@ @ ~] path)
         [[~ ~] ..park]
-      =^  =tube  ..park
-        %+  tako-flow  tako
-        %-  wrap:fusion
+      =/  [=tube *]
         (build-tube:(tako-ford tako) [i i.t]:path)
       :_(..park [~ ~ %tube !>(tube)])
     ::
@@ -4202,9 +4115,7 @@
       ^-  [(unit (unit cage)) _..park]
       ?.  ?=([@ ~] path)
         [[~ ~] ..park]
-      =^  =vase  ..park
-        %+  tako-flow  tako
-        %-  wrap:fusion
+      =/  [=vase *]
         (build-nave:(tako-ford tako) i.path)
       :_(..park [~ ~ %nave vase])
     ::
@@ -4214,9 +4125,7 @@
       ^-  [(unit (unit cage)) _..park]
       ?.  ?=([@ @ ~] path)
         [[~ ~] ..park]
-      =^  =vase  ..park
-        %+  tako-flow  tako
-        %-  wrap:fusion
+      =/  [=vase *]
         (build-cast:(tako-ford tako) [i i.t]:path)
       :_(..park [~ ~ %cast vase])
     ::
@@ -4415,14 +4324,11 @@
         ``uvi+[-:!>(*@uvI) (content-hash u.yak /)]
       ::
           %cage
-        ::  should save ford cache
-        ::
         =/  =lobe  (slav %uv i.t.pax)
         =/  peg=(unit page)  (~(get by lat.ran) lobe)
         ?~  peg
           ~
         =/  [=cage *]
-          %-  wrap:fusion
           (page-to-cage:(tako-ford tak) u.peg)
         ``cage+[-:!>(*^cage) cage]
       ::
@@ -4546,9 +4452,7 @@
       ?~  u.q  [[~ ~] ..park]
       ::  should convert any lobe to cage
       ::
-      =^  =cage  ..park
-        %+  tako-flow  tak
-        %-  wrap:fusion
+      =/  [=cage *]
         (page-to-cage:(tako-ford tak) p.u.u.q q.q.u.u.q)
       [``cage ..park]
     ::
