@@ -6,7 +6,7 @@
 =/  cw  coin-wasm:wasm-sur:wasm-lib
 =/  import  import:lia-sur:wasm-lib
 =/  script  script:lia-sur:wasm-lib
-=/  arr  ^?((arrows:wasm-lib *))
+=/  arr  ^?((arrows:wasm-lib vase))
 =/  seed  seed:lia-sur:wasm-lib
 =/  wasm  ^?(wasm-lib)
 ::
@@ -24,7 +24,7 @@
     ?>  ?=([[%octs *] ~] out)
     +.i.out
   %-  yield-need:wasm  =<  -
-  %^  (run-once:wasm (list lv) *)  [parser-bin `~]  %$
+  %^  (run-once:wasm (list lv) vase)  [parser-bin *vase^~]  %$
   =,  arr
   =/  m  runnable:wasm
   ;<  retptr=@  try:m  (call-1 '__wbindgen_add_to_stack_pointer' (i32neg 16) ~)
@@ -89,9 +89,9 @@
       ;<  *  try:m  (call 'print' a ~)
       (return:m ~)
     ::
-    =/  =(import)
-      :-  ~
-      =/  m  (script (list cw) *)
+    =/  =(import vase)
+      :-  *vase
+      =/  m  (script (list cw) vase)
       %-  malt
       :~
         :-  'env'^'print-i32'
@@ -199,7 +199,7 @@
       ;<  res=(list lv)  try:m  (call-ext %resolve-me ~)
       (return:m res)
     ::
-    =/  =seed  [bin-empty (return:runnable:wasm ~) ~ `~]
+    =/  =seed  [bin-empty (return:runnable:wasm ~) ~ *vase^~]
     =/  hint=@tas  %omit
     =/  res-1
       =^  res  seed  (run:wasm &+script seed hint)
@@ -278,9 +278,9 @@
    %+  expect-eq
     !>  &
     !>
-    =/  =(import)
-      :-  ~
-      =/  m  (script (list cw) *)
+    =/  =(import vase)
+      :-  *vase
+      =/  m  (script (list cw) vase)
       %-  malt
       :~
         :-  'env'^'read-from-world'
@@ -368,9 +368,9 @@
    %+  expect-eq
     !>  &
     !>
-    =/  =(import)
-      :-  ~
-      =/  m  (script (list cw) *)
+    =/  =(import vase)
+      :-  *vase
+      =/  m  (script (list cw) vase)
       %-  malt
       :~
         :-  'env'^'read-from-world'
@@ -465,9 +465,9 @@
   %+  expect-eq
     !>  &
     !>
-    =/  =(import)
-      :-  ~
-      =/  m  (script (list cw) *)
+    =/  =(import vase)
+      :-  *vase
+      =/  m  (script (list cw) vase)
       %-  malt
       :~
         :-  'env'^'read-from-world'
@@ -562,7 +562,7 @@
   %+  expect-eq
     !>  &
     !>
-    =/  =seed  [bin-import-ext2 (return:runnable:wasm ~) ~ `~]
+    =/  =seed  [bin-import-ext2 (return:runnable:wasm ~) ~ *vase^~]
     =/  script
       =/  m  runnable:wasm
       ^-  form:m
@@ -645,7 +645,7 @@
       ;<  res=(list lv)  try:m  (call-ext %resolve-me ~)
       (return:m res)
     ::
-    =/  =seed  [bin-empty (return:runnable:wasm ~) ~ `~]
+    =/  =seed  [bin-empty (return:runnable:wasm ~) ~ *vase^~]
     =/  hint=@tas  %omit
     =/  res-1
       =^  res  seed  (run:wasm |+~[i32+42 i64+121] seed hint)

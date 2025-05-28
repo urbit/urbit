@@ -6,7 +6,7 @@
 =/  cw  coin-wasm:wasm-sur:wasm-lib
 =/  import  import:lia-sur:wasm-lib
 =/  script  script:lia-sur:wasm-lib
-=/  arr  ^?((arrows:wasm-lib *))
+=/  arr  ^?((arrows:wasm-lib vase))
 =/  wasm  ^?(wasm-lib)
 =>  |%
     ++  i8neg   ^~((cury sub (bex 8)))
@@ -22,7 +22,7 @@
     ?>  ?=([[%octs *] ~] out)
     +.i.out
   %-  yield-need:wasm  =<  -
-  %^  (run-once:wasm (list lv) *)  [parser-bin `~]  %$
+  %^  (run-once:wasm (list lv) vase)  [parser-bin *vase^~]  %$
   =,  arr
   =/  m  runnable:wasm
   ;<  retptr=@  try:m  (call-1 '__wbindgen_add_to_stack_pointer' (i32neg 16) ~)
@@ -40,29 +40,29 @@
   ::
   ++  run-once-comp
     =/  m  runnable:wasm
-    |=  [sed=[module=octs =(import *)] script=form:m]
+    |=  [sed=[module=octs =(import vase)] script=form:m]
     ^-  (each ~ [[%nock yield:m] [%fast yield:m]])
     ?.  print-time
-      =/  nock  -:((run-once:wasm (list lv) *) sed %none script)
-      =/  fast  -:((run-once:wasm (list lv) *) sed %$ script)
+      =/  nock  -:((run-once:wasm (list lv) vase) sed %none script)
+      =/  fast  -:((run-once:wasm (list lv) vase) sed %$ script)
       ?:  =(nock fast)  &+~
       [%| nock+nock fast+fast]
     =/  nock
       ~&  %nock
       ~>  %bout
-      -:((run-once:wasm (list lv) *) sed %none script)
+      -:((run-once:wasm (list lv) vase) sed %none script)
     =/  fast
       ~&  %fast
       ~>  %bout
-      -:((run-once:wasm (list lv) *) sed %$ script)
+      -:((run-once:wasm (list lv) vase) sed %$ script)
     ?:  =(nock fast)  &+~
     [%| nock+nock fast+fast]
   ::
   ++  run-once-comp-list
     =/  m  runnable:wasm
-    |=  [sed=[module=octs =(import *)] scripts=(list form:m)]
+    |=  [sed=[module=octs =(import vase)] scripts=(list form:m)]
     =/  script
-      =/  m  (script:lia-sur:wasm-lib (list (list lv)) *)
+      =/  m  (script:lia-sur:wasm-lib (list (list lv)) vase)
       =|  out=(list (list lv))
       |-  ^-  form:m
       ?~  scripts  (return:m out)
@@ -70,8 +70,8 @@
       $(out [res out], scripts t.scripts)
     ^-  (each ~ [[%nock yield:m] [%fast yield:m]])
     ?.  print-time
-      =/  nock  -:((run-once:wasm (list (list lv)) *) sed %none script)
-      =/  fast  -:((run-once:wasm (list (list lv)) *) sed %$ script)
+      =/  nock  -:((run-once:wasm (list (list lv)) vase) sed %none script)
+      =/  fast  -:((run-once:wasm (list (list lv)) vase) sed %$ script)
       ?>  ?=(%0 -.nock)
       ?>  ?=(%0 -.fast)
       |-
@@ -81,11 +81,11 @@
     =/  nock
       ~&  %nock
       ~>  %bout
-      -:((run-once:wasm (list (list lv)) *) sed %none script)
+      -:((run-once:wasm (list (list lv)) vase) sed %none script)
     =/  fast
       ~&  %fast
       ~>  %bout
-      -:((run-once:wasm (list (list lv)) *) sed %$ script)
+      -:((run-once:wasm (list (list lv)) vase) sed %$ script)
     ?>  ?=(%0 -.nock)
     ?>  ?=(%0 -.fast)
     |-
@@ -293,7 +293,7 @@
     =;  res=(each ~ [[%nock yield:m] [%fast yield:m]])
       ?:  ?=(%| -.res)  res
       input-loop(input t.input)
-    %+  run-once-comp  [binary `~]
+    %+  run-once-comp  [binary *vase^~]
     =/  m  runnable:wasm
     =,  arr
     ;<  a=@  try:m  (call-1 'test' i.input ~)
@@ -336,7 +336,7 @@
     =;  res=(each ~ [[%nock yield:m] [%fast yield:m]])
       ?:  ?=(%| -.res)  res
       input-loop(input t.input)
-    %+  run-once-comp  [binary `~]
+    %+  run-once-comp  [binary *vase^~]
     =/  m  runnable:wasm
     =,  arr
     ;<  a=@  try:m  (call-1 'test' i.input ~)
@@ -369,7 +369,7 @@
     =;  res=(each ~ [[%nock yield:m] [%fast yield:m]])
       ?:  ?=(%| -.res)  res
       input-loop(input t.input)
-    %+  run-once-comp  [bin `~]
+    %+  run-once-comp  [bin *vase^~]
     =/  m  runnable:wasm
     =,  arr
     ;<  a=@  try:m  (call-1 'test' i.input ~)
@@ -401,7 +401,7 @@
     =;  res=(each ~ [[%nock yield:m] [%fast yield:m]])
       ?:  ?=(%| -.res)  res
       input-loop(input t.input)
-    %+  run-once-comp  [bin `~]
+    %+  run-once-comp  [bin *vase^~]
     =/  m  runnable:wasm
     =,  arr
     ;<  a=@  try:m  (call-1 'test' i.input ~)
@@ -443,7 +443,7 @@
     =;  res=(each ~ [[%nock yield:m] [%fast yield:m]])
       ?:  ?=(%| -.res)  res
       input-loop(input t.input)
-    %+  run-once-comp  [binary `~]
+    %+  run-once-comp  [binary *vase^~]
     =,  arr
     =/  m  runnable:wasm
     ;<  a=@  try:m  (call-1 'test' i.input ~)
@@ -483,7 +483,7 @@
     =;  res=(each ~ [[%nock yield:m] [%fast yield:m]])
       ?:  ?=(%| -.res)  res
       input-loop(input t.input)
-    %+  run-once-comp  [binary `~]
+    %+  run-once-comp  [binary *vase^~]
     =,  arr
     =/  m  runnable:wasm
     ;<  a=@  try:m  (call-1 'test' i.input ~)
@@ -522,7 +522,7 @@
     =;  res=(each ~ [[%nock yield:m] [%fast yield:m]])
       ?:  ?=(%| -.res)  res
       input-loop(input t.input)
-    %+  run-once-comp  [binary `~]
+    %+  run-once-comp  [binary *vase^~]
     =,  arr
     =/  m  runnable:wasm
     ;<  a=@  try:m  (call-1 'test' i.input ~)
@@ -558,7 +558,7 @@
     =;  res=(each ~ [[%nock yield:m] [%fast yield:m]])
       ?:  ?=(%| -.res)  res
       input-loop(input t.input)
-    %+  run-once-comp  [binary `~]
+    %+  run-once-comp  [binary *vase^~]
     =,  arr
     =/  m  runnable:wasm
     ;<  a=@  try:m  (call-1 'test' i.input ~)
@@ -599,7 +599,7 @@
     =;  res=(each ~ [[%nock yield:m] [%fast yield:m]])
       ?:  ?=(%| -.res)  res
       input-loop(input t.input)
-    %+  run-once-comp  [binary `~]
+    %+  run-once-comp  [binary *vase^~]
     =,  arr
     =/  m  runnable:wasm
     ;<  a=@  try:m  (call-1 'test' i.input ~)
@@ -636,7 +636,7 @@
     =;  res=(each ~ [[%nock yield:m] [%fast yield:m]])
       ?:  ?=(%| -.res)  res
       input-loop(input t.input)
-    %+  run-once-comp  [binary `~]
+    %+  run-once-comp  [binary *vase^~]
     =,  arr
     =/  m  runnable:wasm
     ;<  a=@  try:m  (call-1 'test' i.input ~)
@@ -682,7 +682,7 @@
     =;  res=(each ~ [[%nock yield:m] [%fast yield:m]])
       ?:  ?=(%| -.res)  res
       input1-loop(input1 t.input1)
-    %+  run-once-comp  [binary `~]
+    %+  run-once-comp  [binary *vase^~]
     =,  arr
     =/  m  runnable:wasm
     ;<  a=@  try:m  (call-1 'test' i.input0 i.input1 ~)
@@ -718,7 +718,7 @@
     =/  input0=(list @)  (~(got by m-inputs) i.types)
     =/  input1=(list @)  (~(got by m-inputs) i.types)
     =;  scripts=(list form:m)
-      (run-once-comp-list [binary `~] scripts)
+      (run-once-comp-list [binary *vase^~] scripts)
     =|  scripts=(list form:m)
     |-
     ?~  input0  scripts
@@ -761,7 +761,7 @@
     =/  input0=(list @)  (~(got by m-inputs) i.types)
     =/  input1=(list @)  (~(got by m-inputs) i.types)
     =;  scripts=(list form:m)
-      (run-once-comp-list [binary `~] scripts)
+      (run-once-comp-list [binary *vase^~] scripts)
     =|  scripts=(list form:m)
     |-
     ?~  input0  scripts
@@ -804,7 +804,7 @@
     =/  input0=(list @)  (~(got by m-inputs) i.types)
     =/  input1=(list @)  (~(got by m-inputs) i.types)
     =;  scripts=(list form:m)
-      (run-once-comp-list [binary `~] scripts)
+      (run-once-comp-list [binary *vase^~] scripts)
     =|  scripts=(list form:m)
     |-
     ?~  input0  scripts
@@ -838,7 +838,7 @@
     :: =.  print-time  & 
     =/  m  runnable:wasm
     |^  ^-  (each ~ [[%nock yield:m] [%fast yield:m]])
-    %+  run-once-comp  [binary `~]
+    %+  run-once-comp  [binary *vase^~]
     =,  arr
     =/  m  runnable:wasm
     ;<  *  try:m  (call-ext %foo i32+42 octs+3^'foo' ~)
@@ -858,7 +858,7 @@
     =/  binary
       (parser "(module (global (export \"foo\") (mut i32) i32.const 42))")
     ^-  (each ~ [[%nock yield:m] [%fast yield:m]])
-    %+  run-once-comp  [binary `~]
+    %+  run-once-comp  [binary *vase^~]
     =,  arr
     =/  m  runnable:wasm
     ;<  a=@  try:m  (global-get 'foo')
@@ -876,7 +876,7 @@
     =/  binary=octs
       (parser "(module (memory 3 16))")
     ^-  (each ~ [[%nock yield:m] [%fast yield:m]])
-    %+  run-once-comp  [binary `~]
+    %+  run-once-comp  [binary *vase^~]
     =,  arr
     =/  m  runnable:wasm
     ;<  a=@  try:m  memory-size
@@ -905,13 +905,13 @@
       )
       """
     ^-  (each ~ [[%nock yield:m] [%fast yield:m]])
-    %+  run-once-comp  [binary `~]
+    %+  run-once-comp  [binary *vase^~]
     =,  arr
     =/  m  runnable:wasm
     ^-  form:m
     =/  ptr0=@  65.499
     ;<  ptr1=@  try:m
-      =/  m  (script @ *)
+      =/  m  (script @ vase)
       |-  ^-  form:m
       ;<  res=@  catch:m
         :-  ;<  *  try:m  (call 'write_i32' ptr0 ~)
@@ -939,13 +939,13 @@
       )
       """
     ^-  (each ~ [[%nock yield:m] [%fast yield:m]])
-    %+  run-once-comp  [binary `~]
+    %+  run-once-comp  [binary *vase^~]
     =,  arr
     =/  m  runnable:wasm
     ^-  form:m
     =/  ptr0=@  65.499
     ;<  ptr1=@  try:m
-      =/  m  (script @ *)
+      =/  m  (script @ vase)
       |-  ^-  form:m
       ;<  res=@  catch:m
         :-  ;<  *  try:m  (call 'write_i64' ptr0 ~)
@@ -974,13 +974,13 @@
       )
       """
     ^-  (each ~ [[%nock yield:m] [%fast yield:m]])
-    %+  run-once-comp  [binary `~]
+    %+  run-once-comp  [binary *vase^~]
     =,  arr
     =/  m  runnable:wasm
     ^-  form:m
     =/  ptr0=@  65.499
     ;<  ptr1=@  try:m
-      =/  m  (script @ *)
+      =/  m  (script @ vase)
       |-  ^-  form:m
       ;<  res=@  catch:m
         :-  ;<  *  try:m  (call 'read_i32' ptr0 ~)
@@ -1009,13 +1009,13 @@
       )
       """
     ^-  (each ~ [[%nock yield:m] [%fast yield:m]])
-    %+  run-once-comp  [binary `~]
+    %+  run-once-comp  [binary *vase^~]
     =,  arr
     =/  m  runnable:wasm
     ^-  form:m
     =/  ptr0=@  65.499
     ;<  ptr1=@  try:m
-      =/  m  (script @ *)
+      =/  m  (script @ vase)
       |-  ^-  form:m
       ;<  res=@  catch:m
         :-  ;<  *  try:m  (call 'read_i64' ptr0 ~)
@@ -1039,7 +1039,7 @@
       )
       """
     ^-  (each ~ [[%nock yield:m] [%fast yield:m]])
-    %+  run-once-comp  [binary `~]
+    %+  run-once-comp  [binary *vase^~]
     =,  arr
     =/  m  runnable:wasm
     ^-  form:m
