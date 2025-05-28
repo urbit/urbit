@@ -4063,8 +4063,6 @@
 ~%    %qua
     +
   ==
-    %mure  mure
-    %mute  mute
     %show  show
   ==
 ::    layer-4
@@ -6182,7 +6180,7 @@
 ::  +mock: virtual nock
 ::
 ++  mock
-  |=  [[sub=* fol=*] gul=$-(^ (unit (unit)))]
+  |=  [[sub=* fol=*] gul=$@(~ $-(^ (unit (unit))))]
   (mook (mink [sub fol] gul))
 ::  +mook: convert %tone to %toon, rendering stack frames
 ::
@@ -6253,14 +6251,6 @@
       ==
     ==
   --
-::  +mole: typed unitary virtual
-::
-++  mole
-  ~/  %mole
-  |*  tap=(trap)
-  ^-  (unit _$:tap)
-  =/  mur  (mure tap)
-  ?~(mur ~ `$:tap)
 ::  +mong: virtual slam
 ::
 ++  mong
@@ -6268,37 +6258,6 @@
   ^-  toon
   ?.  ?=([* ^] gat)  [%2 ~]
   (mock [gat(+< sam) %9 2 %0 1] gul)
-::  +mule: typed virtual
-::
-++  mule
-  ~/  %mule
-  |*  tap=(trap)
-  =/  mud  (mute tap)
-  ?-  -.mud
-    %&  [%& p=$:tap]
-    %|  [%| p=p.mud]
-  ==
-::  +mure: untyped unitary virtual
-::
-++  mure
-  |=  tap=(trap)
-  ^-  (unit)
-  =/  ton  (mink [tap %9 2 %0 1] |=(a=^ ``.*(a [%12 [%0 2] %0 3])))
-  ?.(?=(%0 -.ton) ~ `product.ton)
-::  +mute: untyped virtual
-::
-++  mute
-  |=  tap=(trap)
-  ^-  (each * (list tank))
-  =/  ton  (mock [tap %9 2 %0 1] |=(a=^ ``.*(a [%12 [%0 2] %0 3])))
-  ?-  -.ton
-    %0  [%& p.ton]
-  ::
-    %1  =/  sof=(unit path)  ((soft path) p.ton)
-        [%| ?~(sof leaf+"mute.hunk" (smyt u.sof)) ~]
-  ::
-    %2  [%| p.ton]
-  ==
 ::  +slum: slam a gate on a sample using raw nock, untyped
 ::
 ++  slum
@@ -6310,6 +6269,71 @@
 ++  soft
   |*  han=$-(* *)
   |=(fud=* (mole |.((han fud))))
+::  +vi: virtualization engine
+::
+++  vi
+  ~%  %vi  ..vi
+    ==
+      %mure  mure
+      %mute  mute
+    ==
+  ::  forward namespace?
+  ::
+  |_  for=?
+  ::  +mole: typed unitary virtual
+  ::
+  ++  mole
+    ~/  %mole
+    |*  tap=(trap)
+    ^-  (unit _$:tap)
+    =/  mur  (mure tap)
+    ?~(mur ~ `$:tap)
+  ::  +mule: typed virtual
+  ::
+  ++  mule
+    ~/  %mule
+    |*  tap=(trap)
+    =/  mud  (mute tap)
+    ?-  -.mud
+      %&  [%& p=$:tap]
+      %|  [%| p=p.mud]
+    ==
+  ::  +mure: untyped unitary virtual
+  ::
+  ++  mure
+    |=  tap=(trap)
+    ^-  (unit)
+    =/  gul
+      ?.  for  ~
+      =>  ~
+      |=(a=^ ``.*(a 12+[0+2 0+3]))
+    ::
+    =/  ton  (mink [tap %9 2 %0 1] gul)
+    ?.(?=(%0 -.ton) ~ `product.ton)
+  ::  +mute: untyped virtual
+  ::
+  ++  mute
+    |=  tap=(trap)
+    ^-  (each * (list tank))
+    =/  gul
+      ?.  for  ~
+      =>  ~
+      |=(a=^ ``.*(a 12+[0+2 0+3]))
+    ::
+    =/  ton  (mock [tap %9 2 %0 1] gul)
+    ?-  -.ton
+      %0  [%& p.ton]
+    ::
+      %1  =/  sof=(unit path)  ((soft path) p.ton)
+          [%| ?~(sof leaf+"mute.hunk" (smyt u.sof)) ~]
+    ::
+      %2  [%| p.ton]
+    ==
+  --
+::  aliases
+::
+++  mole  mole:vi
+++  mule  mule:vi
 ::
 ::    4o: molds and mold builders
 +|  %molds-and-mold-builders
