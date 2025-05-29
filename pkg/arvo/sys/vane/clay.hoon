@@ -629,8 +629,6 @@
           $:  files=(map path (each page lobe))
               file-store=(map lobe page)
               verb=@
-              cache=flow
-              flue
           ==
         --
     ~%  %ford-gate  ..ford  ~
@@ -1473,8 +1471,8 @@
   ++  tako-ford
     |=  tak=tako
     %-  ford:fusion
-    :-  (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
-    [lat.ran veb.bug fad ?:(=(tak (aeon-to-tako:ze let.dom)) fod.dom [~ ~])]
+    :_  [lat.ran veb.bug]
+    (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
   ::  Produce ford cache appropriate for the aeon
   ::
   ++  tako-flow
@@ -1482,7 +1480,7 @@
     :-  res
     ^+  ..park
     ?:  &(?=(~ ref) =((aeon-to-tako:ze let.dom) tak))
-      ..park(fad fud, fod.dom fod)
+      ..park(fad ~, fod.dom [~ ~])
     :: if in the past, don't update ford cache, since any results have
     :: no roots
     ::
@@ -1894,10 +1892,7 @@
         ~>(%slog.0^leaf/"clay: rebuilding {<syd>} after kernel update" .)
     ::  clear caches if zuse reloaded
     ::
-    =/  old-fod  fod.dom
-    =.  fod.dom
-      ?:  updated  [~ ~]
-      (promote-ford fod.dom invalid)
+    =.  fod.dom  [~ ~]
     =?  changes  updated  (changes-for-upgrade q.old-yaki deletes changes)
     ::
     =/  files
@@ -1906,7 +1901,7 @@
       %-  ~(dif by (~(uni by original) changes))
       %-  ~(gas by *(map path (each page lobe)))
       (turn ~(tap in deletes) |=(=path [path |+*lobe]))
-    =/  =args:ford:fusion  [files lat.ran veb.bug fad fod.dom]
+    =/  =args:ford:fusion  [files lat.ran veb.bug]
     ::
     =^  change-cages  args  (checkout-changes args changes)
     =/  sane-continuation  (sane-changes changes change-cages)
@@ -1952,8 +1947,7 @@
     =.  mim.dom  mim.res
     =.  args     args.res
     ::
-    =.  fod.dom  [spill sprig]:args
-    =.  fad      cache.args
+    =.  fod.dom  [~ ~]
     =.  ..park   (emil (print q.old-yaki data))
     ::  if upgrading kelvin and there's a commit-in-waiting, use that
     ::
@@ -2047,44 +2041,6 @@
         (~(del by old) pax)
       =/  pre=_changes  (~(run by old) |=(lob=lobe |+lob))
       (~(uni by pre) changes)
-    ::
-    ++  promote-ford
-      |=  [fod=flue invalid=(set path)]
-      ^-  flue
-      =/  old=(list leak)  ~(tap in spill.fod)
-      =|  new=flue
-      |-  ^-  flue
-      ?~  old
-        new
-      =/  invalid
-        |-  ^-  ?
-        ?|  ?+    -.pour.i.old  %|
-                %vale  (~(has in invalid) path.pour.i.old)
-                %arch
-              ::  TODO: overly conservative, should be only direct hoon
-              ::  children
-              ::
-              =/  len  (lent path.pour.i.old)
-              %-  ~(any in invalid)
-              |=  =path
-              =(path.pour.i.old (scag len path))
-            ==
-          ::
-            =/  deps  ~(tap in deps.i.old)
-            |-  ^-  ?
-            ?~  deps
-              %|
-            ?|  ^$(i.old i.deps)
-                $(deps t.deps)
-            ==
-        ==
-      =?  new  !invalid
-        :-  (~(put in spill.new) i.old)
-        =/  =mist  (pour-to-mist pour.i.old)
-        ?~  got=(~(get by sprig.fod) mist)
-          sprig.new
-        (~(put by sprig.new) mist u.got)
-      $(old t.old)
     ::
     ++  page-to-cord
       |=  =page
@@ -2197,7 +2153,7 @@
         =/  original=(map path (each page lobe))
           (~(run by q.yaki) |=(=lobe |+lobe))
         (~(uni by original) changes)
-      =/  =args:ford:fusion  [all-changes lat.ran veb.bug ~ ~ ~]
+      =/  =args:ford:fusion  [all-changes lat.ran veb.bug]
       =^  all-change-cages  args  (checkout-changes args all-changes)
       =/  ccs=(list [=path =lobe =cage])  ~(tap by change-cages)
       |-  ^+  *sane-changes
@@ -3061,8 +3017,7 @@
       (~(put by mon) pot [her syd ud+for-yon] spur)
     =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) u.yon))
     =/  files  (~(run by q.yaki) |=(=lobe |+lobe))
-    =/  =args:ford:fusion
-      [files lat.ran veb.bug fad ?:(=(yon let.dom) fod.dom [~ ~])]
+    =/  =args:ford:fusion  [files lat.ran veb.bug]
     =^  mim  args
       (checkout-mime args ~ ~(key by files))
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
