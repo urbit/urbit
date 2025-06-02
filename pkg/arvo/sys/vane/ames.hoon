@@ -127,7 +127,7 @@
     |%
     +$  sign
       $~  [%behn %wake ~]
-      $%  [%ames $>(%sage gift)]
+      $%  [%ames $>(?(%tune %sage) gift)]
           [%behn $>(%wake gift:behn)]
           [%gall $>(?(%flub %unto) gift:gall)]
           [%jael $>(?(%private-keys %public-keys %turf) gift:jael)]
@@ -7991,7 +7991,7 @@
               ?:  ?=([%gall %unto *] sign)  :: XX from poking %ping app
                 `ames-state
               ::
-              ?-  sign
+              ?+  sign  `ames-state  :: XX %tune; not used
                 [%behn %wake *]  sy-abet:(~(sy-wake sy hen) wire error.sign)
               ::
                   [%jael %private-keys *]
