@@ -42,9 +42,9 @@
 ::  $move: Arvo-level move
 ::
 +$  move  [=duct move=(wind note-arvo gift-arvo)]
-::  $state-16: overall gall state, versioned
+::  $state-17: overall gall state, versioned
 ::
-+$  state-16  [%16 state]
++$  state-17  [%17 state]
 ::  $state: overall gall state
 ::
 ::    system-duct: TODO document
@@ -53,7 +53,8 @@
 ::    yokes: running agents
 ::    blocked: moves to agents that haven't been started yet
 ::    bug: debug printing configuration
-::    leaves: retry nacked %leaves timer, if set
+::    leaves: retry nacked %leaves timer, if set\
+::    flubs: list of flubs apps, per ship
 ::
 +$  state
   $+  state
@@ -64,6 +65,8 @@
       blocked=(map term (qeu blocked-move))
       =bug
       leaves=(unit [=duct =wire date=@da])
+      flub-ducts=(map ship duct)
+      flubs=(jug ship app=term)
   ==
 ::  $routes: new cuff; TODO: document
 ::
@@ -389,12 +392,14 @@
       blocked=(map term (qeu blocked-move))
       =bug
       leaves=(unit [=duct =wire date=@da])
+      flub-ducts=(map ship duct)
+      flubs=(jug ship app=term)
   ==
-+$  spore-16  [%16 spore]
++$  spore-17  [%17 spore]
 --
 ::  adult gall vane interface, for type compatibility with pupa
 ::
-=|  state=state-16
+=|  state=state-17
 |=  [now=@da eny=@uvJ rof=roof]
 =*  gall-payload  .
 ~%  %gall-top  ..part  ~
@@ -488,6 +493,13 @@
       =/  ap-core  (ap-yoke:ap dude.i.subs [~ ship.i.subs prov] u.yoke)
       ap-abet:(ap-lave:ap-core [v duct]:i.subs)
     $(subs t.subs)
+  ::
+  ++  mo-flub
+    |=  [prov=path =ship agent=term =bone]
+    ^+  mo-core
+    ?~  duct=(~(get by flub-ducts.state) ship)
+      mo-core  :: XX log
+    (mo-emit u.duct %give %boon %d %flub agent bone)
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
@@ -610,9 +622,7 @@
     ::  ask jael to track .ship's breaches
     ::
     =/  =note-arvo  [%j %public-keys (silt ship ~)]
-    =.  moves
-      [[system-duct.state %pass /sys/era note-arvo] moves]
-    mo-core
+    mo-core(moves [[system-duct.state %pass /sys/era note-arvo] moves])
   ::  +mo-untrack-ship: cancel subscriptions to ames and jael for .ship
   ::
   ++  mo-untrack-ship
@@ -627,9 +637,7 @@
     =.  contacts.state  (~(del in contacts.state) ship)
     ::
     =/  =note-arvo  [%j %nuke (silt ship ~)]
-    =.  moves
-      [[system-duct.state %pass /sys/era note-arvo] moves]
-    mo-core
+    mo-core(moves [[system-duct.state %pass /sys/era note-arvo] moves])
   ::  +mo-breach: ship breached, so forget about them
   ::
   ++  mo-breach
@@ -652,6 +660,24 @@
       =/  app  (ap-abed:ap name.i.agents routes)
       ap-abet:(ap-breach:app ship)
     $(agents t.agents)
+  ::  +mo-track-flubs: open system flow to handle %boon %flubs
+  ::
+  ++  mo-track-flubs
+    |=  =ship
+    ^+  mo-core
+    ::  if already opened, no-op
+    ::
+    ?:  (~(has by flubs.state) ship)
+      mo-core
+    ::  first contact; update state and subscribe to notifications
+    ::
+    =.  flubs.state  (~(put by flubs.state) ship ~)
+    ::  ask foreign %gall to notify us about %flubs
+    ::
+    =/  =note-arvo  [%a %plea ship %g /gf %0 ~]  :: XX add info to payload?
+    =.  moves
+      [[system-duct.state %pass /sys/flu/(scot %p ship) note-arvo] moves]
+    mo-core
   ::  +mo-handle-sys: handle a +sign incoming over /sys.
   ::
   ::    (Note that /sys implies the +sign should be routed to a vane.)
@@ -667,6 +693,7 @@
       %era  (mo-handle-sys-era wire sign-arvo)
       %req  (mo-handle-sys-req wire sign-arvo)
       %way  (mo-handle-sys-way wire sign-arvo)
+      %flu  (mo-handle-sys-flu wire sign-arvo)
     ==
   ::  +mo-handle-sys-era: receive update about contact
   ::
@@ -834,6 +861,32 @@
       =.  mo-core  (mo-send-foreign-request ship foreign-agent %leave ~)
       =.  mo-core  (mo-give %unto %kick ~)
       mo-core
+    ==
+  ::  +mo-handle-sys-flu
+  ::
+  ++  mo-handle-sys-flu
+    |=  [=wire =sign-arvo]
+    ^+  mo-core
+    ?>  ?=([%flu @ ~] wire)
+    ?~  ship=(slaw %p +<.wire)
+      mo-core
+    ?+    sign-arvo  !!
+        [%ames %done *]  mo-core  :: XX record in state that we get the ack?
+      ::
+        [%ames %boon *]
+      =/  =ames-response  ;;(ames-response payload.sign-arvo)
+      ?+    -.ames-response  !!  :: XX log
+          %d
+        ?.  ?=(%flub mark.ames-response)
+          mo-core  :: XX log
+        =+  ;;  [agent=term bone=@ud]  noun.ames-response
+        ::  add agent to list of suspended/not running agents
+        ::
+        =.  flubs.state  (~(put ju flubs.state) u.ship agent)
+        ::  send %rock to %ames, to delete the flow
+        ::
+        (mo-pass /rock %a %rock u.ship bone)
+      ==
     ==
   ::
   ++  mo-handle-key
@@ -1160,6 +1213,14 @@
     =/  =fine-response  [%0 p.bod]
     =.  mo-core  (mo-give %boon fine-response)
     (mo-give %done ~)
+  ::
+  ++  mo-handle-flub-request
+    |=  =ship
+    ^+  mo-core
+    =.  mo-core  (mo-track-ship ship)
+    =.  mo-core  (mo-give %done error=~)
+    ::  XX save duct in state
+    mo-core
   ::  +mo-handle-ames-request: handle %ames request message.
   ::
   ++  mo-handle-ames-request
@@ -1169,12 +1230,16 @@
     =.  mo-core  (mo-track-ship ship)
     ::
     =/  yok=(unit yoke)  (~(get by yokes.state) agent-name)
-    ?~  yok
-      (mo-give %flub ~)
-    ?:  ?=(%nuke -.u.yok)
-      (mo-give %flub ~)
-    ?:  ?=(%.n -.agent.u.yok)
-      (mo-give %flub ~)
+    ?:  ?|   ?=(~ yok)
+             ?=(%nuke -.u.yok)
+             ?=(%.n -.agent.u.yok)
+        ==
+      ::  %ames wil pass a $deep task to itself to cork the flow, deleting and
+      ::  adding it to the corked set, at the same time, on the /flub flow, we
+      ::  send a %boon with the bone that the sender needs to cork to drop any
+      ::  outstanding $pleas
+      ::
+      (mo-give %flub agent-name)
   ::
     ::  %u/%leave gets automatically acked
     ::
@@ -2421,12 +2486,15 @@
     =/  =path  path.plea.task
     =/  =noun  payload.plea.task
     ::
+    ?:  ?=([%gf *] path)
+      ?>  ?=([%0 ~] noun)
+      mo-abet:(mo-handle-flub-request:mo-core ship)
     ?:  ?=([%gk @ ~] path)
       =/  agent-name  i.t.path
       =+  ;;(=fine-request noun)
       =<  mo-abet
       (mo-handle-key-request:mo-core ship agent-name path.fine-request)
-    ?>  ?=([?(%ge %gm) @ ~] path)
+    ?>  ?=([?(%ge %gm) @ ~] path)  :: XX remove %gm
     =/  agent-name  i.t.path
     ::
     =+  ;;(=ames-request-all noun)
@@ -2442,6 +2510,7 @@
       %doff  mo-abet:(mo-doff:mo-core prov +.task)
       %rake  mo-abet:(mo-rake:mo-core prov +.task)
       %lave  mo-abet:(mo-lave:mo-core prov +.task)
+      %flub  mo-abet:(mo-flub:mo-core prov +.task)
       %spew  mo-abet:(mo-spew:mo-core veb.task)
       %sift  mo-abet:(mo-sift:mo-core dudes.task)
       %trim  [~ gall-payload]
@@ -2460,11 +2529,12 @@
       =?  old  ?=(%13 -.old)  (spore-13-to-14 +.old)
       =?  old  ?=(%14 -.old)  (spore-14-to-15 +.old)
       =?  old  ?=(%15 -.old)  (spore-15-to-16 +.old)
-      ?>  ?=(%16 -.old)
+      =?  old  ?=(%16 -.old)  (spore-16-to-17 +.old)
+      ?>  ?=(%17 -.old)
       gall-payload(state old)
   ::
   +$  spore-any
-    $%  [%16 spore]
+    $%  [%17 spore]
         [%7 spore-7]
         [%8 spore-8]
         [%9 spore-9]
@@ -2474,6 +2544,16 @@
         [%13 spore-13]
         [%14 spore-14]
         [%15 spore-15]
+        [%16 spore-16]
+    ==
+  +$  spore-16
+    $:  system-duct=duct
+        outstanding=(map [wire duct] (qeu remote-request))
+        contacts=(set ship)
+        eggs=(map term egg)
+        blocked=(map term (qeu blocked-move))
+        =bug
+        leaves=(unit [=duct =wire date=@da])
     ==
   +$  spore-15
     $+  spore-15
@@ -2736,8 +2816,8 @@
   ::
   ++  spore-15-to-16
     |=  old=spore-15
-    ^-  spore-16
     :-  %16
+    ^-  spore-16
     %=    old
         eggs
       %-  ~(urn by eggs.old)
@@ -2772,6 +2852,14 @@
         [a (snag (dec a) m)]
       ==
     ==
+  ::  add flubbed agents
+  ::
+  ++  spore-16-to-17
+    |=  old=spore-16
+    ^-  spore-17
+    :-  %17
+    old(leaves [leaves.old flub-ducts=~ flubs=~])
+  ::
   --
 ::  +scry: standard scry
 ::
@@ -2885,7 +2973,7 @@
           p.agent.u.yok
         on-save:p.agent.u.yok
       ==
-    ``noun+!>(`egg-any`[-:*spore-16 egg])
+    ``noun+!>(`egg-any`[-:*spore-17 egg])
   ::
   ?:  ?&  =(%w care)
           =([%$ %da now] coin)
@@ -3017,7 +3105,7 @@
 ::    TODO: superfluous? see +molt
 ::
 ++  stay
-  ^-  spore-16
+  ^-  spore-17
   =;  eggs=(map term egg)  state(yokes eggs)
   %-  ~(run by yokes.state)
   |=  =yoke

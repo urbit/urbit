@@ -898,6 +898,7 @@
         [%whey =spar boq=@ud]       :: weight of noun bounded at .path.spar
                                     :: as measured by .boq
         [%gulp path]                :: like %plug, but for |mesa
+        [%rock =ship =bone]         :: inmediately cork a forward flow
     ==
   ::
   ::  $gift: effect from ames
@@ -1044,6 +1045,7 @@
         [%kill =ship =bone]
         [%ahoy =ship =bone]  :: XX remove bone; it's just next-bone.ossuary
         [%prun =ship =user=path =duct =ames=path]
+        [%flub =ship agent=term =bone]
     ==
   ::  $stun: STUN notifications, from unix
   ::
@@ -3656,7 +3658,7 @@
     $%  [%boon payload=*]                               ::  ames response
         [%noon id=* payload=*]
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
-        [%flub ~]                                       ::  not ready to handle plea
+        [%flub agent=term]                              ::  refuse to take plea
         [%unto p=unto]                                  ::
     ==                                                  ::
   +$  task                                              ::  incoming request
@@ -3671,6 +3673,7 @@
         [%doff dude=(unit dude) ship=(unit ship)]       ::  kill subscriptions
         [%rake dude=(unit dude) all=?]                  ::  reclaim old subs
         [%lave subs=(list [?(%g %a) ship dude duct])]   ::  delete stale bitt(s)
+        $>(%flub deep:ames)                             ::  send remote flub
         $>(%init vane-task)                             ::  set owner
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
@@ -3701,9 +3704,9 @@
         [%plot p=(unit plot) q=(map @ta farm)]
     ==
   ::
-  +$  egg                                               ::  migratory agent state
-    $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)] ::  see /sys/gall $yoke
-        $:  %live
+  +$  egg                                               ::  migratory agent
+    $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)] ::  state; see /sys/gall
+        $:  %live                                       ::  $yoke
             control-duct=duct
             run-nonce=@t
             sub-nonce=@
@@ -3720,7 +3723,7 @@
             pen=(jug spar:ames wire)
             gem=(jug coop [path page])
     ==  ==
-  +$  egg-any  $%([%15 egg-15] [%16 egg])
+  +$  egg-any  $%([%15 egg-15] [%16 egg] [%17 egg])
   +$  egg-15
     $%  [%nuke sky=(map spur @ud)]
     $:  %live
