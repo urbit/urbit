@@ -3820,7 +3820,7 @@
           =/  =bone
             ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
           %-  %^  ev-trace  odd.veb  her
-              |.("dropping %flub: bone={<bone>} {(spud wire)}")
+              |.("%flubbing: agent={<agent>} bone={<bone>} {(spud wire)}")
           abet:(on-flub:peer-core bone agent)
         ::  +on-take-done: handle notice from vane that it processed a message
         ::
@@ -4374,6 +4374,8 @@
           ^+  event-core
           =/  ship-state  (~(get by peers.ames-state) ship)
           ?>  ?=([~ %known *] ship-state)
+          %-  %^  ev-trace  sun.veb  ship
+              |.("hear remote %flub; delete {<b>}")
           =+  pe-core=(abed-peer:pe ship +.u.ship-state)
           =.  peer-state.pe-core
             =,  peer-state.pe-core
@@ -4471,8 +4473,9 @@
             |=  [=ship agent=term =bone]
             =.  closing.peer-state.peer-core
               (~(put in closing.peer-state.peer-core) bone)
-            =.  peer-core  (handle-cork:peer-core bone)
-            abet:(pe-emit:peer-core duct %pass /flub %g %flub ship agent bone)
+            =<  abet
+            %-  pe-emit:(handle-cork:peer-core bone)
+            [duct %pass /flub %g %flub ship agent (mix 0b1 bone)]
           ::
           --
         ::  +on-stun: poke %ping app when hearing a STUN response
@@ -6567,12 +6570,11 @@
                 ::
                 =.  peer-core
                   %+  pe-emit  duct
-                  [%pass /flub %a %deep %flub her agent.task (mix 0b1 bone)]
-                sink
-                :: %=  sink
-                ::   last-heard.state        (dec last-heard.state)
-                ::   pending-vane-ack.state  ~(nap to pending-vane-ack.state)
-                :: ==
+                  [%pass /flub %a %deep %flub her agent.task bone]
+                %=  sink
+                  last-heard.state        (dec last-heard.state)
+                  pending-vane-ack.state  ~(nap to pending-vane-ack.state)
+                ==
               ::
                   %hear
                 |^  ?:  ?|  corked
@@ -11773,6 +11775,8 @@
       ?:  ?=(%ames -.ship-state)
         (call:am-core hen ~ soft+rock/ship^bone)
       ?>  ?=([~ %known *] +.ship-state)
+      %-  %+  %*(ev-tace ev-core her ship)  sun.veb.bug.ames-state
+          |.("hear remote %flub; delete {<bone>}")
       =^  moves  ames-state
         =/  fo-core
           (fo-abed:fo:(ev-abed:ev-core hen ship +.u.ship-state) bone %for)
