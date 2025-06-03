@@ -1,6 +1,6 @@
 /-  wasm-engine
 =>  wasm-engine
-~%  %monad-sur-v0  +  ~
+~%  %monad-sur-v1  +  ~
 |%
 ++  lia-sur
   =,  wasm-sur
@@ -54,6 +54,11 @@
       |=  s=m-sat
       :: ~&  !.(ret-sam+!=(sam))
       [0+arg s]
+    ::
+    ++  fail
+      ^-  form
+      |=  s=m-sat
+      [2+~ s]
     ::
     ++  try  ::  monadic bind
       |*  m-mond=mold
