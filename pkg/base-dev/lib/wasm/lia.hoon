@@ -36,6 +36,7 @@
   :: ~&  !.(try-m+!=(try):runnable)                ::  [9 43 0 1]  kick x2
   :: ~&  !.(catch-m+!=(catch):runnable)            ::  [9 4 0 1]   kick x2
   :: ~&  !.(return-m+!=(return):runnable)          ::  [9 20 0 1]  kick
+  :: ~&  !.(fail-m+!=(fail):runnable)              ::  [9 47 0 1]  kick
   ::
   ^-  [yield:m type-acc]
   =,  engine-sur
