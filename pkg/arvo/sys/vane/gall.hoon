@@ -644,6 +644,7 @@
     |=  [prov=path =ship]
     ^+  mo-core
     =.  mo-core  (mo-untrack-ship ship)
+    =.  mo-core  (mo-untrack-flub ship)
     =.  mo-core  (mo-filter-queue ship)
     =/  agents=(list [name=term =yoke])  ~(tap by yokes.state)
     =.  outstanding.state
@@ -678,6 +679,17 @@
     =.  moves
       [[system-duct.state %pass /sys/flu/(scot %p ship) note-arvo] moves]
     mo-core
+  ::
+  ++  mo-untrack-flub
+    |=  =ship
+    ^+  mo-core
+    ::  if already canceled, no-op
+    ::
+    ?.  (~(has by flubs.state) ship)
+      mo-core
+    ::  delete .ship from state
+    ::
+    mo-core(flubs.state (~(del by flubs.state) ship))
   ::  +mo-handle-sys: handle a +sign incoming over /sys.
   ::
   ::    (Note that /sys implies the +sign should be routed to a vane.)
