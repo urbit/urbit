@@ -612,6 +612,7 @@
   ++  mo-track-ship
     |=  =ship
     ^+  mo-core
+    =.  mo-core  (mo-track-flubs ship)
     ::  if already contacted, no-op
     ::
     ?:  (~(has in contacts.state) ship)
@@ -666,7 +667,7 @@
   ++  mo-track-flubs
     |=  =ship
     ^+  mo-core
-    ::  if already opened, no-op
+    ::  if already sent, no-op
     ::
     ?:  (~(has by flubs.state) ship)
       mo-core
@@ -1211,6 +1212,7 @@
       blocked.state  (~(put by blocked.state) agent blocked)
     ==
   ::  +mo-handle-key-request: handle request for keys
+  ::
   ++  mo-handle-key-request
     |=  [=ship agent-name=term =path]
     ^+  mo-core
@@ -1225,14 +1227,6 @@
     =/  =fine-response  [%0 p.bod]
     =.  mo-core  (mo-give %boon fine-response)
     (mo-give %done ~)
-  ::
-  ++  mo-handle-flub-request
-    |=  =ship
-    ^+  mo-core
-    =.  mo-core  (mo-track-ship ship)
-    =.  mo-core  (mo-give %done error=~)
-    ::  XX save duct in state
-    mo-core
   ::  +mo-handle-ames-request: handle %ames request message.
   ::
   ++  mo-handle-ames-request
@@ -1252,7 +1246,6 @@
       ::  outstanding $pleas
       ::
       (mo-give %flub agent-name)
-  ::
     ::  %u/%leave gets automatically acked
     ::
     =?  mo-core  ?=(%u -.ames-request)
@@ -1267,6 +1260,11 @@
         %u  [%leave ~]
       ==
     (mo-pass wire %g %deal [ship our /] agent-name deal)
+  ::
+  ++  mo-handle-flub-plea
+    |=  =ship
+    =.  flub-ducts.state  (~(put by flub-ducts.state) ship hen)
+    (mo-give %done error=~)
   ::  +mo-spew: handle request to set verbosity toggles on debug output
   ::
   ++  mo-spew
@@ -2500,7 +2498,7 @@
     ::
     ?:  ?=([%gf *] path)
       ?>  ?=([%0 ~] noun)
-      mo-abet:(mo-handle-flub-request:mo-core ship)
+      mo-abet:(mo-handle-flub-plea:mo-core ship)
     ?:  ?=([%gk @ ~] path)
       =/  agent-name  i.t.path
       =+  ;;(=fine-request noun)
