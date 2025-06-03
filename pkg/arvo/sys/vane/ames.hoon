@@ -11728,6 +11728,32 @@
         todos(pokes [[hen^plea/plea] pokes.todos])
       moves^vane-gate
     ::
+    ++  pe-rock
+      |=  [=ship =bone]
+      =/  ship-state  (find-peer ship)
+      ::
+      ?:  ?=(%ames -.ship-state)
+        (call:am-core hen ~ soft+rock/ship^bone)
+      ?>  ?=([~ %known *] +.ship-state)
+      =^  moves  ames-state
+        =/  fo-core
+          (fo-abed:fo:(ev-abed:ev-core hen ship +.u.ship-state) bone %for)
+        ev-abet:fo-abel:fo-core
+      moves^vane-gate
+    ::
+    ++  pe-rock
+      |=  [=ship =bone]
+      =/  ship-state  (find-peer ship)
+      ::
+      ?:  ?=(%ames -.ship-state)
+        (call:am-core hen ~ soft+rock/ship^bone)
+      ?>  ?=([~ %known *] +.ship-state)
+      =^  moves  ames-state
+        =/  fo-core
+          (fo-abed:fo:(ev-abed:ev-core hen ship +.u.ship-state) bone %for)
+        ev-abet:fo-abel:fo-core
+      moves^vane-gate
+    ::
     ++  pe-keen
       |=  [sec=(unit [idx=@ key=@]) spar:^ames]
       =/  ship-state  (find-peer ship)
