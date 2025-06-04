@@ -154,7 +154,7 @@
               $>(%flog task:dill)
           ==
           $:  %g
-              $>(?(%clog %deal) task:gall)
+              $>(?(%clog %deal %flub) task:gall)
           ==
           $:  %j
               $>  $?  %private-keys
@@ -1545,7 +1545,7 @@
     ::
     +$  message-sink-task
       $%  [%done ok=?]
-          [%flub ~]
+          [%flub agent=term =agent=path]
           [%drop =message-num]
           [%hear =lane =shut-packet ok=?]
       ==
@@ -3668,6 +3668,7 @@
                 %plea  (on-plea:event-core [ship plea]:task)
                 %cork  (on-cork:event-core ship.task)
                 %kroc  (on-kroc:event-core bones.task)
+                %rock  (on-rock:event-core [ship bone]:task)
                 %deep  (on-deep:event-core deep.task)
               ::
                 %keen  (on-keen:event-core +.task)
@@ -3724,7 +3725,7 @@
               ::
                 [%behn %wake *]  (on-take-wake:event-core wire error.sign)
               ::
-                [%gall %flub ~]  (on-take-flub:event-core wire)
+                [%gall %flub *]  (on-take-flub:event-core wire +.sign)
               ==
             ::
             [moves vane-gate]
@@ -3798,7 +3799,7 @@
         ::                 was never delivered
         ::
         ++  on-take-flub
-          |=  =wire
+          |=  [=wire agent=term =agent=path]
           ^+  event-core
           ?~  parsed=(parse-bone-wire wire)
             ::  no-op
@@ -3819,8 +3820,8 @@
           =/  =bone
             ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
           %-  %^  ev-trace  odd.veb  her
-              |.("dropping %flub: bone={<bone>} {(spud wire)}")
-          abet:(on-flub:peer-core bone)
+              |.("%flubbing: agent={<agent>} bone={<bone>} {(spud wire)}")
+          abet:(on-flub:peer-core bone agent agent-path)
         ::  +on-take-done: handle notice from vane that it processed a message
         ::
         ++  on-take-done
@@ -4366,6 +4367,29 @@
           %+  roll  bones
           |=  [[=ship =bone] co=_event-core]
           (%*(on-cork co cork-bone `bone) ship)
+        ::  +on-rock: cork forward flow locally
+        ::
+        ++  on-rock
+          |=  [=ship b=bone]
+          ^+  event-core
+          =/  ship-state  (~(get by peers.ames-state) ship)
+          ?>  ?=([~ %known *] ship-state)
+          %-  %^  ev-trace  sun.veb  ship
+              |.("hear remote %flub; delete {<b>}")
+          =+  pe-core=(abed-peer:pe ship +.u.ship-state)
+          =.  peer-state.pe-core
+            =,  peer-state.pe-core
+            %_  peer-state.pe-core
+              ::  if the publisher was behind, preemptively remove any nacks
+              ::
+              rcv              (~(del by (~(del by rcv) b)) (mix 0b10 b))
+              snd              (~(del by snd) b)
+              corked           (~(put in corked) b)
+              closing          (~(del in closing) b)
+              by-duct.ossuary  (~(del by by-duct.ossuary) (got-duct:pe-core b))
+              by-bone.ossuary  (~(del by by-bone.ossuary) b)
+            ==
+          abet:pe-core
         ::  +on-deep: deferred %ames calls from itself
         ::
         ++  on-deep
@@ -4385,7 +4409,8 @@
             %cork  (cork-bone bone.deep)
             %kill  (kill-bone bone.deep)
             %ahoy  (migrate-peer [ship bone]:deep) :: XX remove bone
-            %prun  abet:(prune-tip [duct user-path ames-path]:deep)
+            %prun  (prune-tip [duct user-path ames-path]:deep)
+            %flub  (flub-flow [ship agent bone agent-path]:deep)
           ==
           ::
           ++  send-nack-trace
@@ -4441,7 +4466,16 @@
             ==
           ::
           ++  prune-tip
-            |=([=^duct =user=path =ames=path] (on-prune-tip:peer-core +<))
+            |=([=^duct =user=path =ames=path] abet:(on-prune-tip:peer-core +<))
+          ::  +flub-flow: delete flow on backward side unconditionally
+          ::
+          ++  flub-flow
+            |=  [=ship agent=term =bone =agent=path]
+            =.  closing.peer-state.peer-core
+              (~(put in closing.peer-state.peer-core) bone)
+            =<  abet
+            %-  pe-emit:(handle-cork:peer-core bone)
+            [duct %pass /flub %g %flub ship agent (mix 0b1 bone) agent-path]
           ::
           --
         ::  +on-stun: poke %ping app when hearing a STUN response
@@ -5150,9 +5184,9 @@
             abet:(call:(abed:mu bone) %hear [message-num +.meat]:shut-packet)
           ::
           ++  on-flub
-            |=  =bone
+            |=  [=bone agent=term =agent=path]
             ^+  peer-core
-            abet:(call:(abed:mi:peer-core bone) %flub ~)
+            abet:(call:(abed:mi:peer-core bone) %flub agent agent-path)
           ::
           ++  check-clog
             |=  [=bone id=*]
@@ -5442,7 +5476,7 @@
                   ::  corked it.
                   ::
                   ::  XX this case is not considered in the migration-test
-                  ::  checks. if this peer dosn't support %corks, it shouldn't
+                  ::  checks. if this peer doesn't support %corks, it shouldn't
                   ::  support |mesa either, unless we manage to send the $ahoy
                   ::  $plea right after the %ames vane is updated, but before
                   ::  the recork timer fires
@@ -6532,6 +6566,11 @@
                   %drop  sink(nax.state (~(del in nax.state) message-num.task))
                   %done  (done ok.task)
                   %flub
+                ::  emit %deep %flub to delete the flow
+                ::
+                =.  peer-core
+                  %^  pe-emit  duct  %pass
+                  [/flub %a %deep %flub her agent.task bone agent-path.task]
                 %=  sink
                   last-heard.state        (dec last-heard.state)
                   pending-vane-ack.state  ~(nap to pending-vane-ack.state)
@@ -8004,7 +8043,7 @@
                 sy-abet:(~(sy-emit sy hen) unix-duct %give %turf +>.sign)
               ::  vane gifts
               ::
-                  ?([%gall %flub ~] [@ %done *] [@ %boon *] [@ %noon *])
+                  ?([%gall %flub *] [@ %done *] [@ %boon *] [@ %noon *])
                 =+  ev-core=ev-core:ev
                 =^  side  ev-core  (ev-peel:ev wire +.sign)
                 =+  side
@@ -8067,8 +8106,9 @@
         ::      to/from-vane=%van
         ::      for-corks=%cor
         ::      for-poke-payloads=%pok
+        ::      for-flubs=%fub
         ::  ==
-        +$  were  ?(%van %nax %ack %cor %pok)
+        +$  were  ?(%van %nax %ack %cor %pok %fub)
         +$  ev-flow-wire
           $:  %mesa
               %flow
@@ -8524,8 +8564,8 @@
         ++  ev-peel
           |=  $:  =wire
                   $=  sign
-                  $~  flub/~
-                  $%([%flub ~] $>(?(%noon %boon %done %sage) gift))
+                  $~  done/~
+                  $%($>(%flub gift:gall) $>(?(%noon %boon %done %sage) gift))
               ==
           ^-  [[side=(unit side) were=(unit were)] _ev-core]
           ?^  flow-wire=(ev-parse-flow-wire wire)
@@ -8565,8 +8605,8 @@
         ++  ev-take
           |=  $:  =bone
                   $=  sign
-                  $~  flub/~
-                  $%([%flub ~] $>(?(%noon %boon %done) gift))
+                  $~  done/~
+                  $%($>(%flub gift:gall) $>(?(%noon %boon %done) gift))
               ==
           ^+  ev-core
           =+  fo-core=(fo-abed:fo bone dire=%bak)
@@ -8581,7 +8621,6 @@
             %+  ev-req-boon  bone
             ?-(-.sign %boon [id=~ payload.sign], %noon [`id payload]:sign)
           ==
-        ::
         ::  +ev-take-sage: receive remote responses
         ::
         ++  ev-take-sage
@@ -8591,17 +8630,22 @@
           =/  message-path=(pole iota)  (validate-path path.p.sage)
           =+  fo-core=(fo-abed:fo side)
           ::
-          ?:  =(%cor were)
+          ?:  ?|  =(%cor were)
+                  =(%fub were)
+              ==
             ::  validate %cork path and wire
             ::
             ?>  ?&  ?=(cork-pith message-path)
                     ?|  &(=(%for dire.message-path) =(%bak dire.side))
                         &(=(%bak dire.message-path) =(%for dire.side))
                 ==  ==
+            ?:  =(%fub were)
+              %-  %+  ev-tace  msg.veb.bug.ames-state
+                  |.("%cork %flub received; delete {<side>}")
+              fo-abel:(fo-take-fub:fo-core sage)
             ::  the server is reading corks on the forward side, the one
             ::  that sent the %cork, on the original flow (coming on a %watch)
             ::
-
             ?:  (~(has in corked.per) side)
               %-  %+  ev-tace  odd.veb.bug.ames-state
                   |.("unexpected %gone $page; ignore")
@@ -9128,18 +9172,32 @@
           ++  fo-take
             |=  [=were sign=flow-sign]
             ^+  fo-core
-            ?+    were  !!  :: %pok is handle outside, in the message layer
+            ?+    were  !!  :: %pok is handled outside, in the message layer
                 %nax  ?>(?=(%sage -.sign) (fo-take-nax +.sign))
                 %ack  ?>(?=(%sage -.sign) (fo-take-ack +.sign))
                 %cor  ?>(?=(%sage -.sign) (fo-take-cor +>.sign))
+                %fub  ?>(?=(%sage -.sign) (fo-take-fub +>.sign))
               ::
                 %van
-              ?+  -.sign  !!  :: %sage doesn't come from vanes
-                %flub  =.(pending-ack.rcv %.n fo-core)
-                %done  :: ack from client vane
-                       ::
-                       ?>  =(%.y pending-ack.rcv)
-                       (fo-take-done +.sign)
+              ?+    -.sign  !!  :: %sage doesn't come from vanes
+                :: ack from client vane
+                ::
+                  %done
+                ?>  =(%.y pending-ack.rcv)
+                (fo-take-done +.sign)
+                ::  put the flow in closing, start peeking for corked flow
+                ::
+                  %flub
+                =.  fo-core
+                  =~  %+  fo-emit  hen
+                      [%pass /flub %g %flub her agent.sign bone agent-path.sign]
+                  ::
+                      fo-peek-flub
+                  ==
+                =:  closing.state    %.y
+                    pending-ack.rcv  %.n  :: XX  tack.pending-ack.rcv
+                ==
+                fo-core
               ==
             ==
           ::
@@ -9469,6 +9527,8 @@
             ::
             (fo-emit (ev-got-duct bone) %give %done `error)
           ::
+          ::  +fo-take-cor: take %cork $page; started by receiving a $cork $plea
+          ::
           ++  fo-take-cor
             |=  [=spar =gage:mess]
             ^+  fo-core
@@ -9486,6 +9546,18 @@
             ?~  first=(pry:fo-mop loads.snd)  !!
             ?>  ?&  =(1 (wyt:fo-mop loads.snd))         ::  %cork is unacked
                     ?=([%plea %$ [%flow ~] %cork ~] val.u.first)
+                ==
+            fo-core
+          ::  +fo-take-fub: take %cork $page; started by flubbing a flow
+          ::
+          ++  fo-take-fub
+            |=  [=spar =gage:mess]
+            ^+  fo-core
+            ::  sanity checks on the state of the flow
+            ::
+            ?>  ?&  ?=([%message %gone ~] gage)         ::  corked page received
+                    closing.state                       ::  flow is in closing
+                    !pending-ack.rcv                    ::  no pending acks
                 ==
             fo-core
           ::
@@ -9517,6 +9589,12 @@
             ::  for-cor-path will produce a path for the %cork on the other side
             ::
             [(fo-wire %cor) %a meek/[chum-to-our her (fo-cor-path seq=0 our)]]
+          ::
+          ++  fo-peek-flub
+            %^  fo-emit  hen  %pass
+            ::  for-cor-path will produce a path for the %cork on the other side
+            ::
+            [(fo-wire %fub) %a meek/[chum-to-our her (fo-cor-path seq=0 our)]]
           ::
           --
         ::
@@ -11644,6 +11722,7 @@
         %rate  (pe-rate dud +.task)
         %prog  (pe-prog dud +.task)
         %whey  (pe-whey dud +.task)
+        %rock  (pe-rock +.task)
       ::  |mesa only tasks
       ::
         %heer  (pe-heer dud +.task)
@@ -11689,6 +11768,21 @@
         %^  al-enqueue-alien-todo:al-core  ship  +.ship-state
         |=  todos=ovni-state:ev-core
         todos(pokes [[hen^plea/plea] pokes.todos])
+      moves^vane-gate
+    ::
+    ++  pe-rock
+      |=  [=ship =bone]
+      =/  ship-state  (find-peer ship)
+      ::
+      ?:  ?=(%ames -.ship-state)
+        (call:am-core hen ~ soft+rock/ship^bone)
+      ?>  ?=([~ %known *] +.ship-state)
+      %-  %+  %*(ev-tace ev-core her ship)  sun.veb.bug.ames-state
+          |.("hear remote %flub; delete side=[{<bone>} %for]")
+      =^  moves  ames-state
+        =/  fo-core
+          (fo-abed:fo:(ev-abed:ev-core hen ship +.u.ship-state) bone %for)
+        ev-abet:fo-abel:fo-core
       moves^vane-gate
     ::
     ++  pe-keen
@@ -12224,7 +12318,7 @@
     (call:me-core sample)
     ::  common tasks
     ::
-      ?(%plea %cork %keen %chum %yawn %wham %load %rate %prog %whey)
+      ?(%plea %cork %keen %chum %yawn %wham %load %rate %prog %whey %rock)
     (~(call pe-core hen) dud task)
     ::  core-dependent tasks
     ::
