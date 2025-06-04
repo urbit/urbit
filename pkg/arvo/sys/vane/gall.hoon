@@ -498,7 +498,9 @@
     |=  [prov=path =ship agent=term =bone]
     ^+  mo-core
     ?~  duct=(~(get by flub-ducts.state) ship)
+      ~&  no-duct/ship^agent^bone^flub-ducts.state
       mo-core  :: XX log
+    ~&  give-boon/ship^agent^bone
     (mo-emit u.duct %give %boon %d %flub agent bone)
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
@@ -884,7 +886,9 @@
     ?~  ship=(slaw %p +<.wire)
       mo-core
     ?+    sign-arvo  !!
-        [%ames %done *]  mo-core  :: XX record in state that we get the ack?
+        [%ames %done *]
+      ~&  >  %hear-flub-plea-ack
+      mo-core  :: XX record in state that we get the ack?
       ::
         [%ames %boon *]
       =/  =ames-response  ;;(ames-response payload.sign-arvo)
@@ -892,13 +896,37 @@
           %d
         ?.  ?=(%flub mark.ames-response)
           mo-core  :: XX log
-        =+  ;;  [agent=term bone=@ud]  noun.ames-response
+        =+  ;;  [agent=term bone=@ud =app=path]  noun.ames-response
+        ~&  >  hear-flub-boon/agent^bone
         ::  add agent to list of suspended/not running agents
         ::
         =.  flubs.state  (~(put ju flubs.state) u.ship agent)
         ::  send %rock to %ames, to delete the flow
         ::
-        (mo-pass /rock %a %rock u.ship bone)
+        =.  mo-core  (mo-pass /rock %a %rock u.ship bone)
+        ::  we need to kill any outgoing subscription to this ship
+        ::
+        =/  agents=(list [name=term =yoke])  ~(tap by yokes.state)
+        =.  outstanding.state
+          %-  malt
+          %+  skip  ~(tap by outstanding.state)
+          |=  [[=^wire =duct] (qeu remote-request)]
+          ?&  =(/sys/way/(scot %p u.ship)/[agent] wire)
+              ?|  ?=([^ *] duct)
+                  =+  pax=-.duct
+                  =>  .(pax `(pole knot)`pax)
+                  ?.  ?=([%gall %use agent=@ @ %out ship=@ app=@ path=*] pax)
+                    %.n
+                  ?|  =(path.pax app-path) :: search for both %poke/%watch paths
+                      ?|  ?=(^ path.pax)
+                          =(+.path.pax app-path)
+          ==  ==  ==  ==
+        ?~  yoke=(~(get by yokes.state) agent)
+          mo-core
+        ?.  ?=(%live -.u.yoke)
+          mo-core
+        =/  app  (ap-abed:ap agent [~ u.ship /flub])
+        ap-abet:(ap-flub:app u.ship)
       ==
     ==
   ::
@@ -2267,6 +2295,11 @@
       ?:  ?=(%a v)
         ap-kill-up(agent-duct duct)
       ap-load-delete(agent-duct duct)
+    ::
+    ++  ap-flub
+      |=  =ship
+      ^+  ap-core
+      ap-core
     ::  +ap-mule: run virtualized with intercepted scry, preserving type
     ::
     ::    Compare +mute and +mule.  Those pass through scry, which
