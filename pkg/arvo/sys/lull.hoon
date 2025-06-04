@@ -1045,7 +1045,7 @@
         [%kill =ship =bone]
         [%ahoy =ship =bone]  :: XX remove bone; it's just next-bone.ossuary
         [%prun =ship =user=path =duct =ames=path]
-        [%flub =ship agent=term =bone]
+        [%flub =ship agent=term =bone =agent=path]
     ==
   ::  $stun: STUN notifications, from unix
   ::
@@ -3658,7 +3658,7 @@
     $%  [%boon payload=*]                               ::  ames response
         [%noon id=* payload=*]
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
-        [%flub agent=term]                              ::  refuse to take plea
+        [%flub agent=term =agent=path]                  ::  refuse to take plea
         [%unto p=unto]                                  ::
     ==                                                  ::
   +$  task                                              ::  incoming request

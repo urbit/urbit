@@ -1545,7 +1545,7 @@
     ::
     +$  message-sink-task
       $%  [%done ok=?]
-          [%flub agent=term]
+          [%flub agent=term =agent=path]
           [%drop =message-num]
           [%hear =lane =shut-packet ok=?]
       ==
@@ -3725,7 +3725,7 @@
               ::
                 [%behn %wake *]  (on-take-wake:event-core wire error.sign)
               ::
-                [%gall %flub *]  (on-take-flub:event-core wire agent.sign)
+                [%gall %flub *]  (on-take-flub:event-core wire +.sign)
               ==
             ::
             [moves vane-gate]
@@ -3799,7 +3799,7 @@
         ::                 was never delivered
         ::
         ++  on-take-flub
-          |=  [=wire agent=term]
+          |=  [=wire agent=term =agent=path]
           ^+  event-core
           ?~  parsed=(parse-bone-wire wire)
             ::  no-op
@@ -3821,7 +3821,7 @@
             ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
           %-  %^  ev-trace  odd.veb  her
               |.("%flubbing: agent={<agent>} bone={<bone>} {(spud wire)}")
-          abet:(on-flub:peer-core bone agent)
+          abet:(on-flub:peer-core bone agent agent-path)
         ::  +on-take-done: handle notice from vane that it processed a message
         ::
         ++  on-take-done
@@ -4410,7 +4410,7 @@
             %kill  (kill-bone bone.deep)
             %ahoy  (migrate-peer [ship bone]:deep) :: XX remove bone
             %prun  (prune-tip [duct user-path ames-path]:deep)
-            %flub  (flub-flow [ship agent bone]:deep)
+            %flub  (flub-flow [ship agent bone agent-path]:deep)
           ==
           ::
           ++  send-nack-trace
@@ -4470,12 +4470,12 @@
           ::  +flub-flow: delete flow on backward side unconditionally
           ::
           ++  flub-flow
-            |=  [=ship agent=term =bone]
+            |=  [=ship agent=term =bone =agent=path]
             =.  closing.peer-state.peer-core
               (~(put in closing.peer-state.peer-core) bone)
             =<  abet
             %-  pe-emit:(handle-cork:peer-core bone)
-            [duct %pass /flub %g %flub ship agent (mix 0b1 bone)]
+            [duct %pass /flub %g %flub ship agent (mix 0b1 bone) agent-path]
           ::
           --
         ::  +on-stun: poke %ping app when hearing a STUN response
@@ -5184,9 +5184,9 @@
             abet:(call:(abed:mu bone) %hear [message-num +.meat]:shut-packet)
           ::
           ++  on-flub
-            |=  [=bone agent=term]
+            |=  [=bone agent=term =agent=path]
             ^+  peer-core
-            abet:(call:(abed:mi:peer-core bone) %flub agent)
+            abet:(call:(abed:mi:peer-core bone) %flub agent agent-path)
           ::
           ++  check-clog
             |=  [=bone id=*]
@@ -6569,8 +6569,8 @@
                 ::  emit %deep %flub to delete the flow
                 ::
                 =.  peer-core
-                  %+  pe-emit  duct
-                  [%pass /flub %a %deep %flub her agent.task bone]
+                  %^  pe-emit  duct  %pass
+                  [/flub %a %deep %flub her agent.task bone agent-path.task]
                 %=  sink
                   last-heard.state        (dec last-heard.state)
                   pending-vane-ack.state  ~(nap to pending-vane-ack.state)
@@ -8565,7 +8565,7 @@
           |=  $:  =wire
                   $=  sign
                   $~  done/~
-                  $%([%flub term] $>(?(%noon %boon %done %sage) gift))
+                  $%($>(%flub gift:gall) $>(?(%noon %boon %done %sage) gift))
               ==
           ^-  [[side=(unit side) were=(unit were)] _ev-core]
           ?^  flow-wire=(ev-parse-flow-wire wire)
@@ -8606,7 +8606,7 @@
           |=  $:  =bone
                   $=  sign
                   $~  done/~
-                  $%([%flub term] $>(?(%noon %boon %done) gift))
+                  $%($>(%flub gift:gall) $>(?(%noon %boon %done) gift))
               ==
           ^+  ev-core
           =+  fo-core=(fo-abed:fo bone dire=%bak)
@@ -9189,7 +9189,9 @@
                 ::
                   %flub
                 =.  fo-core
-                  =~  (fo-emit hen %pass /flub %g %flub her agent.sign bone)
+                  =~  %+  fo-emit  hen
+                      [%pass /flub %g %flub her agent.sign bone agent-path.sign]
+                  ::
                       fo-peek-flub
                   ==
                 =:  closing.state    %.y

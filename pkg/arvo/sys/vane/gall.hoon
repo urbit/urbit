@@ -495,13 +495,11 @@
     $(subs t.subs)
   ::
   ++  mo-flub
-    |=  [prov=path =ship agent=term =bone]
+    |=  [prov=path =ship agent=term =bone =agent=path]
     ^+  mo-core
     ?~  duct=(~(get by flub-ducts.state) ship)
-      ~&  no-duct/ship^agent^bone^flub-ducts.state
       mo-core  :: XX log
-    ~&  give-boon/ship^agent^bone
-    (mo-emit u.duct %give %boon %d %flub agent bone)
+    (mo-emit u.duct %give %boon %d %flub agent bone agent-path)
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
@@ -886,9 +884,7 @@
     ?~  ship=(slaw %p +<.wire)
       mo-core
     ?+    sign-arvo  !!
-        [%ames %done *]
-      ~&  >  %hear-flub-plea-ack
-      mo-core  :: XX record in state that we get the ack?
+        [%ames %done *]  mo-core  :: XX record in state that we get the ack?
       ::
         [%ames %boon *]
       =/  =ames-response  ;;(ames-response payload.sign-arvo)
@@ -896,8 +892,11 @@
           %d
         ?.  ?=(%flub mark.ames-response)
           mo-core  :: XX log
+        ::  XX  ignore bone?
+        ::  retrieve duct from .outstanding.state and %pass onto /sys/way wire
+        ::  when passing the %rock
+        ::
         =+  ;;  [agent=term bone=@ud =app=path]  noun.ames-response
-        ~&  >  hear-flub-boon/agent^bone
         ::  add agent to list of suspended/not running agents
         ::
         =.  flubs.state  (~(put ju flubs.state) u.ship agent)
@@ -1273,7 +1272,8 @@
       ::  send a %boon with the bone that the sender needs to cork to drop any
       ::  outstanding $pleas
       ::
-      (mo-give %flub agent-name)
+      =/  =path  ?+(-.ames-request ~ %s path.ames-request)
+      (mo-give %flub agent-name path)
     ::  %u/%leave gets automatically acked
     ::
     =?  mo-core  ?=(%u -.ames-request)
@@ -2550,8 +2550,8 @@
     ::
     =+  ;;(=ames-request-all noun)
     ?>  ?=(%0 -.ames-request-all)
-    =>  (mo-handle-ames-request:mo-core ship agent-name +.ames-request-all)
-    mo-abet
+    =<  mo-abet
+    (mo-handle-ames-request:mo-core ship agent-name +.ames-request-all)
   ::
       %sear  mo-abet:(mo-filter-queue:mo-core ship.task)
       %jolt  mo-abet:(mo-jolt:mo-core dude.task our desk.task)
