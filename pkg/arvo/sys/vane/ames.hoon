@@ -11776,7 +11776,7 @@
         (call:am-core hen ~ soft+rock/ship^bone)
       ?>  ?=([~ %known *] +.ship-state)
       %-  %+  %*(ev-tace ev-core her ship)  sun.veb.bug.ames-state
-          |.("hear remote %flub; delete {<bone>}")
+          |.("hear remote %flub; delete side=[{<bone>} %for]")
       =^  moves  ames-state
         =/  fo-core
           (fo-abed:fo:(ev-abed:ev-core hen ship +.u.ship-state) bone %for)
