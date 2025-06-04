@@ -2295,11 +2295,19 @@
       ?:  ?=(%a v)
         ap-kill-up(agent-duct duct)
       ap-load-delete(agent-duct duct)
+    ::  +ap-flub: leave all subscriptions to .ship after hearing a %flub
     ::
     ++  ap-flub
       |=  =ship
       ^+  ap-core
-      ap-core
+      =/  subs  ~(tap in ~(key by boat.yoke))
+      |-  ^+  ap-core
+      ?~  subs  ap-core
+      =+  [wyr dok]=i.subs
+      ?.  =(ship ship.dok)
+        $(subs t.subs)
+      =.  ap-core  (ap-pass wyr %agent dok %leave ~)  ::  XX pass a %flub task
+      $(subs t.subs)
     ::  +ap-mule: run virtualized with intercepted scry, preserving type
     ::
     ::    Compare +mute and +mule.  Those pass through scry, which
