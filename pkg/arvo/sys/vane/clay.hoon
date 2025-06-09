@@ -619,8 +619,7 @@
     !.
     =>  |%
         +$  state
-          $:  flue
-              cycle=(set mist)
+          $:  cycle=(set mist)
           ==
         +$  args
           $:  files=(map path (each page lobe))
