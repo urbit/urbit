@@ -629,8 +629,6 @@
           $:  files=(map path (each page lobe))
               file-store=(map lobe page)
               verb=@
-              cache=flow
-              flue
           ==
         --
     ~%  %ford-gate  ..ford  ~
@@ -1524,8 +1522,8 @@
   ++  tako-ford
     |=  tak=tako
     %-  ford:fusion
-    :-  (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
-    [lat.ran veb.bug fad ?:(=(tak (aeon-to-tako:ze let.dom)) fod.dom [~ ~])]
+    :_  [lat.ran veb.bug]
+    (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
   ::  Produce ford cache appropriate for the aeon
   ::
   ++  tako-flow
@@ -1957,7 +1955,7 @@
       %-  ~(dif by (~(uni by original) changes))
       %-  ~(gas by *(map path (each page lobe)))
       (turn ~(tap in deletes) |=(=path [path |+*lobe]))
-    =/  =args:ford:fusion  [files lat.ran veb.bug fad fod.dom]
+    =/  =args:ford:fusion  [files lat.ran veb.bug]
     ::
     =^  change-cages  args  (checkout-changes args changes)
     =/  sane-continuation  (sane-changes changes change-cages)
@@ -2003,8 +2001,6 @@
     =.  mim.dom  mim.res
     =.  args     args.res
     ::
-    =.  fod.dom  [spill sprig]:args
-    =.  fad      cache.args
     =.  ..park   (emil (print q.old-yaki data))
     ::  if upgrading kelvin and there's a commit-in-waiting, use that
     ::
@@ -2209,7 +2205,7 @@
         =/  original=(map path (each page lobe))
           (~(run by q.yaki) |=(=lobe |+lobe))
         (~(uni by original) changes)
-      =/  =args:ford:fusion  [all-changes lat.ran veb.bug ~ ~ ~]
+      =/  =args:ford:fusion  [all-changes lat.ran veb.bug]
       =^  all-change-cages  args  (checkout-changes args all-changes)
       =/  ccs=(list [=path =lobe =cage])  ~(tap by change-cages)
       |-  ^+  *sane-changes
@@ -3073,8 +3069,7 @@
       (~(put by mon) pot [her syd ud+for-yon] spur)
     =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) u.yon))
     =/  files  (~(run by q.yaki) |=(=lobe |+lobe))
-    =/  =args:ford:fusion
-      [files lat.ran veb.bug fad ?:(=(yon let.dom) fod.dom [~ ~])]
+    =/  =args:ford:fusion  [files lat.ran veb.bug]
     =^  mim  args
       (checkout-mime args ~ ~(key by files))
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
