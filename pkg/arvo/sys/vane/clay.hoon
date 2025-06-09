@@ -619,8 +619,7 @@
     !.
     =>  |%
         +$  state
-          $:  cache=flow
-              flue
+          $:  flue
               cycle=(set mist)
           ==
         +$  args
@@ -1456,11 +1455,11 @@
   ::  Produce ford cache appropriate for the aeon
   ::
   ++  tako-flow
-    |*  [tak=tako res=* fud=flow fod=flue]
+    |*  [tak=tako res=*]
     :-  res
     ^+  ..park
     ?:  &(?=(~ ref) =((aeon-to-tako:ze let.dom) tak))
-      ..park(fad fud, fod.dom fod)
+      ..park
     :: if in the past, don't update ford cache, since any results have
     :: no roots
     ::
@@ -4512,7 +4511,7 @@
     =^  moves  ruf
       =/  den  ((de now rof hen ruf) her syd)
       =/  tak  (aeon-to-tako:ze:den ?~(yon let.dom:den u.yon))
-      abet:+:(tako-flow:den tak res cache.state &2.state)
+      abet:+:(tako-flow:den tak res)
     [res (emil moves)]
   ::
   ++  trace
