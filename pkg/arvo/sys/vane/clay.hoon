@@ -1215,9 +1215,7 @@
       ?:  spilt
         [soak nub]
       %-  (trace 3 |.("spilt {<mist>}"))
-      =:  spill.nub  (~(put in spill.nub) leak)
-          sprig.nub  (~(put by sprig.nub) mist leak soak)
-        ==
+      =.  spill.nub  (~(put in spill.nub) leak)
       [soak nub]
     --
   ::
@@ -1948,9 +1946,7 @@
     ::  clear caches if zuse reloaded
     ::
     =/  old-fod  fod.dom
-    =.  fod.dom
-      ?:  updated  [~ ~]
-      (promote-ford fod.dom invalid)
+    =.  fod.dom  [~ ~]
     =.  fad
       (lose-leaks:fusion veb.bug fad (~(dif in spill.old-fod) spill.fod.dom))
     =?  changes  updated  (changes-for-upgrade q.old-yaki deletes changes)
@@ -2102,44 +2098,6 @@
         (~(del by old) pax)
       =/  pre=_changes  (~(run by old) |=(lob=lobe |+lob))
       (~(uni by pre) changes)
-    ::
-    ++  promote-ford
-      |=  [fod=flue invalid=(set path)]
-      ^-  flue
-      =/  old=(list leak)  ~(tap in spill.fod)
-      =|  new=flue
-      |-  ^-  flue
-      ?~  old
-        new
-      =/  invalid
-        |-  ^-  ?
-        ?|  ?+    -.pour.i.old  %|
-                %vale  (~(has in invalid) path.pour.i.old)
-                %arch
-              ::  TODO: overly conservative, should be only direct hoon
-              ::  children
-              ::
-              =/  len  (lent path.pour.i.old)
-              %-  ~(any in invalid)
-              |=  =path
-              =(path.pour.i.old (scag len path))
-            ==
-          ::
-            =/  deps  ~(tap in deps.i.old)
-            |-  ^-  ?
-            ?~  deps
-              %|
-            ?|  ^$(i.old i.deps)
-                $(deps t.deps)
-            ==
-        ==
-      =?  new  !invalid
-        :-  (~(put in spill.new) i.old)
-        =/  =mist  (pour-to-mist pour.i.old)
-        ?~  got=(~(get by sprig.fod) mist)
-          sprig.new
-        (~(put by sprig.new) mist u.got)
-      $(old t.old)
     ::
     ++  page-to-cord
       |=  =page
