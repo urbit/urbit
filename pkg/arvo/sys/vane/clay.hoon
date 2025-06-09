@@ -622,7 +622,6 @@
           $:  cache=flow
               flue
               cycle=(set mist)
-              drain=(map mist leak)
               stack=(list (set leak))
           ==
         +$  args
