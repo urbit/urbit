@@ -638,9 +638,6 @@
     ::  nub: internal mutable state for this computation
     ::
     =|  nub=state
-    =.  cache.nub  cache
-    =.  spill.nub  spill
-    =.  sprig.nub  sprig
     ~%  %ford-core  ..$  ~
     |%
     ::  +read-file: retrieve marked, validated file contents at path
@@ -651,7 +648,6 @@
       ^-  [cage state]
       ~|  %error-validating^path
       %-  soak-cage
-      %+  gain-sprig  vale+path  |.
       =.  stack.nub  [~ stack.nub]
       ?:  (~(has in cycle.nub) vale+path)
         ~|(cycle+vale+path^cycle.nub !!)
@@ -679,7 +675,6 @@
       ^-  [vase state]
       ~|  %error-building-mark^mak
       %-  soak-vase
-      %+  gain-sprig  nave+mak  |.
       =.  stack.nub  [~ stack.nub]
       ?:  (~(has in cycle.nub) nave+mak)
         ~|(cycle+nave+mak^cycle.nub !!)
@@ -689,7 +684,7 @@
       =/  gad=vase  (slub cor limb/%grad)
       ?@  q.gad
         =+  !<(mok=mark gad)
-        =^  deg=vase  nub  ^$(mak mok)
+        =^  deg=vase  nub  $(mak mok)
         =^  tub=vase  nub  (build-cast mak mok)
         =^  but=vase  nub  (build-cast mok mak)
         %+  gain-leak  nave+mak
@@ -753,7 +748,6 @@
       ^-  [dais state]
       ~|  %error-building-dais^mak
       %-  soak-dais
-      %+  gain-sprig  dais+mak  |.
       =.  stack.nub  [~ stack.nub]
       ?:  (~(has in cycle.nub) dais+mak)
         ~|(cycle+dais+mak^cycle.nub !!)
@@ -804,7 +798,6 @@
       ^-  [vase state]
       ~|  error-building-cast+[a b]
       %-  soak-vase
-      %+  gain-sprig  cast+a^b  |.
       =.  stack.nub  [~ stack.nub]
       ?:  (~(has in cycle.nub) cast+[a b])
         ~|(cycle+cast+[a b]^cycle.nub !!)
@@ -901,7 +894,6 @@
       ~>  %spin.[%build-tube]  ~>  %spin.[a]  ~>  %spin.[b]
       ~|  error-building-tube+[a b]
       %-  soak-tube
-      %+  gain-sprig  tube+a^b  |.
       =.  stack.nub  [~ stack.nub]
       ?:  (~(has in cycle.nub) tube+[a b])
         ~|(cycle+tube+[a b]^cycle.nub !!)
@@ -976,7 +968,6 @@
         ?:(?=(%| -.dep) p.dep fil.p.dep)
       ~|  %error-building^path
       %-  soak-vase
-      %+  gain-sprig  file+path  |.
       =.  stack.nub  [~ stack.nub]
       %-  (trace 1 |.("make file {(spud path)}"))
       ?:  (~(has in cycle.nub) file+path)
@@ -1006,7 +997,6 @@
       |=  =path
       ^-  [(map @ta vase) state]
       %-  soak-arch
-      %+  gain-sprig  arch+path  |.
       =.  stack.nub  [~ stack.nub]
       %+  gain-leak  arch+path
       |=  nob=state
@@ -1188,15 +1178,6 @@
     ++  soak-dais  |=([s=soak n=state] ?>(?=(%dais -.s) [dais.s n]))
     ++  soak-tube  |=([s=soak n=state] ?>(?=(%tube -.s) [tube.s n]))
     ++  soak-arch  |=([s=soak n=state] ?>(?=(%arch -.s) [dir.s n]))
-    ::
-    ++  gain-sprig
-      |=  [=mist next=(trap [soak state])]
-      ^-  [soak state]
-      ?~  got=(~(get by sprig.nub) mist)
-        $:next
-      =?  stack.nub  ?=(^ stack.nub)
-        stack.nub(i (~(put in i.stack.nub) leak.u.got))
-      [soak.u.got nub]
     ::
     ++  gain-leak
       |=  [=mist next=$-(state [soak state])]
