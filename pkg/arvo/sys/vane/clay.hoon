@@ -622,7 +622,6 @@
           $:  cache=flow
               flue
               cycle=(set mist)
-              stack=(list (set leak))
           ==
         +$  args
           $:  files=(map path (each page lobe))
@@ -645,7 +644,6 @@
       ^-  [cage state]
       ~|  %error-validating^path
       %-  soak-cage
-      =.  stack.nub  [~ stack.nub]
       ?:  (~(has in cycle.nub) vale+path)
         ~|(cycle+vale+path^cycle.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) vale+path)
@@ -672,7 +670,6 @@
       ^-  [vase state]
       ~|  %error-building-mark^mak
       %-  soak-vase
-      =.  stack.nub  [~ stack.nub]
       ?:  (~(has in cycle.nub) nave+mak)
         ~|(cycle+nave+mak^cycle.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) nave+mak)
@@ -745,7 +742,6 @@
       ^-  [dais state]
       ~|  %error-building-dais^mak
       %-  soak-dais
-      =.  stack.nub  [~ stack.nub]
       ?:  (~(has in cycle.nub) dais+mak)
         ~|(cycle+dais+mak^cycle.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) dais+mak)
@@ -795,7 +791,6 @@
       ^-  [vase state]
       ~|  error-building-cast+[a b]
       %-  soak-vase
-      =.  stack.nub  [~ stack.nub]
       ?:  (~(has in cycle.nub) cast+[a b])
         ~|(cycle+cast+[a b]^cycle.nub !!)
       ?:  =(a b)
@@ -891,7 +886,6 @@
       ~>  %spin.[%build-tube]  ~>  %spin.[a]  ~>  %spin.[b]
       ~|  error-building-tube+[a b]
       %-  soak-tube
-      =.  stack.nub  [~ stack.nub]
       ?:  (~(has in cycle.nub) tube+[a b])
         ~|(cycle+tube+[a b]^cycle.nub !!)
       =^  gat=vase  nub  (build-cast a b)
@@ -965,7 +959,6 @@
         ?:(?=(%| -.dep) p.dep fil.p.dep)
       ~|  %error-building^path
       %-  soak-vase
-      =.  stack.nub  [~ stack.nub]
       %-  (trace 1 |.("make file {(spud path)}"))
       ?:  (~(has in cycle.nub) file+path)
         ~|(cycle+file+path^cycle.nub !!)
@@ -994,7 +987,6 @@
       |=  =path
       ^-  [(map @ta vase) state]
       %-  soak-arch
-      =.  stack.nub  [~ stack.nub]
       %+  gain-leak  arch+path
       |=  nob=state
       =.  nub  nob
@@ -1179,40 +1171,8 @@
     ++  gain-leak
       |=  [=mist next=$-(state [soak state])]
       ^-  [soak state]
-      =^  top=(set leak)  stack.nub  stack.nub
-      =/  =leak  [(mist-to-pour mist) top]
       =.  cycle.nub  (~(del in cycle.nub) mist)
-      =?  stack.nub  ?=(^ stack.nub)
-        stack.nub(i (~(put in i.stack.nub) leak))
-      =/  spilt  (~(has in spill.nub) leak)
-      =^  =soak  nub
-        ?^  got=(~(get by cache.nub) leak)
-          %-  %+  trace  3  |.
-              =/  refs    ?:(spilt 0 1)
-              %+  welp  "cache {<pour.leak>}: adding {<refs>}, "
-              "giving {<(add refs refs.u.got)>}"
-          =?  cache.nub  !spilt
-            (~(put by cache.nub) leak [+(refs.u.got) soak.u.got])
-          [soak.u.got nub]
-        %-  (trace 2 |.("cache {<pour.leak>}: creating"))
-        =^  =soak  nub  (next nub)
-        =.  cache.nub  (~(put by cache.nub) leak [1 soak])
-        ::  If we're creating a cache entry, add refs to our dependencies
-        ::
-        =/  deps  ~(tap in deps.leak)
-        |-
-        ?~  deps
-          [soak nub]
-        =/  got  (~(got by cache.nub) i.deps)
-        %-  %+  trace  3  |.
-            %+  welp  "cache {<pour.leak>} for {<pour.i.deps>}"
-            ": bumping to ref {<refs.got>}"
-        =.  cache.nub  (~(put by cache.nub) i.deps got(refs +(refs.got)))
-        $(deps t.deps)
-      ?:  spilt
-        [soak nub]
-      %-  (trace 3 |.("spilt {<mist>}"))
-      =.  spill.nub  (~(put in spill.nub) leak)
+      =^  =soak  nub  (next nub)
       [soak nub]
     --
   ::
