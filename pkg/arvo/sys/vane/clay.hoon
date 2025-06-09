@@ -605,12 +605,6 @@
 ++  fusion
   ~%  %fusion  ..fusion  ~
   |%
-  ::  +wrap: external wrapper
-  ::
-  ++  wrap
-    |*  [* state:ford]
-    [+<- +<+< +<+>-]  ::  [result cache.state flue]
-  ::
   ++  with-face  |=([face=@tas =vase] vase(p [%face face p.vase]))
   ++  with-faces
     =|  res=(unit vase)
@@ -2192,14 +2186,9 @@
               [built=(map path [lobe cage]) cache=_ford-args]
           ==
       ^+  [built ford-args]
-      =.  ford-args  cache
-      =/  [=cage fud=flow fod=flue]
+      =/  [=cage *]
         ::  ~>  %slog.[0 leaf/"clay: validating {(spud path)}"]
-        %-  wrap:fusion
         (read-file:(ford:fusion ford-args) path)
-      =.  cache.ford-args  fud
-      =.  spill.ford-args  spill.fod
-      =.  sprig.ford-args  sprig.fod
       =/  =lobe
         ?-  -.change
           %|  p.change
@@ -2840,7 +2829,6 @@
         ?~  peg
           ~
         =/  [=cage *]
-          %-  wrap:fusion
           (page-to-cage:(tako-ford (~(got by hit.dom) let.dom)) u.peg)
         `cage
       ::
@@ -2848,7 +2836,6 @@
         |=  =mark
         ^-  dais
         =/  [=dais *]
-          %-  wrap:fusion
           (build-dais:(tako-ford (~(got by hit.dom) let.dom)) mark)
         dais
       ::
@@ -3075,12 +3062,9 @@
     |-  ^-  [(map path (unit mime)) args:ford:fusion]
     ?~  cans
       [mim ford-args]
-    =/  [=cage fud=flow fod=flue]
+    =/  [=cage *]
       ~|  mime-cast-fail+i.cans
-      (wrap:fusion (cast-path:(ford:fusion ford-args) i.cans %mime))
-    =.  cache.ford-args  fud
-    =.  spill.ford-args  spill.fod
-    =.  sprig.ford-args  sprig.fod
+      (cast-path:(ford:fusion ford-args) i.cans %mime)
     =^  mim  ford-args  $(cans t.cans)
     [(~(put by mim) i.cans `!<(mime q.cage)) ford-args]
   ::
@@ -3473,7 +3457,6 @@
       ^-  (unit cage)
       =/  vale-result
         %-  mule  |.
-        %-  wrap:fusion
         ::  Use %base's marks to validate, so we don't have to build the
         ::  foreign marks
         ::
@@ -4174,10 +4157,8 @@
       !.
       |=  [=tako =path]
       ^-  [(unit (unit cage)) _..park]
-      =^  =vase  ..park
+      =/  [=vase *]
         ~_  leaf/"clay: %a build failed {<[syd tako path]>}"
-        %+  tako-flow  tako
-        %-  wrap:fusion
         (build-file:(tako-ford tako) path)
       :_(..park [~ ~ %vase !>(vase)])
     ::
@@ -4187,9 +4168,7 @@
       ^-  [(unit (unit cage)) _..park]
       ?.  ?=([@ ~] path)
         [[~ ~] ..park]
-      =^  =dais  ..park
-        %+  tako-flow  tako
-        %-  wrap:fusion
+      =/  [=dais *]
         (build-dais:(tako-ford tako) i.path)
       :_(..park [~ ~ %dais !>(dais)])
     ::
@@ -4199,9 +4178,7 @@
       ^-  [(unit (unit cage)) _..park]
       ?.  ?=([@ @ ~] path)
         [[~ ~] ..park]
-      =^  =tube  ..park
-        %+  tako-flow  tako
-        %-  wrap:fusion
+      =/  [=tube *]
         (build-tube:(tako-ford tako) [i i.t]:path)
       :_(..park [~ ~ %tube !>(tube)])
     ::
@@ -4211,9 +4188,7 @@
       ^-  [(unit (unit cage)) _..park]
       ?.  ?=([@ ~] path)
         [[~ ~] ..park]
-      =^  =vase  ..park
-        %+  tako-flow  tako
-        %-  wrap:fusion
+      =/  [=vase *]
         (build-nave:(tako-ford tako) i.path)
       :_(..park [~ ~ %nave vase])
     ::
@@ -4223,9 +4198,7 @@
       ^-  [(unit (unit cage)) _..park]
       ?.  ?=([@ @ ~] path)
         [[~ ~] ..park]
-      =^  =vase  ..park
-        %+  tako-flow  tako
-        %-  wrap:fusion
+      =/  [=vase *]
         (build-cast:(tako-ford tako) [i i.t]:path)
       :_(..park [~ ~ %cast vase])
     ::
@@ -4424,14 +4397,11 @@
         ``uvi+[-:!>(*@uvI) (content-hash u.yak /)]
       ::
           %cage
-        ::  should save ford cache
-        ::
         =/  =lobe  (slav %uv i.t.pax)
         =/  peg=(unit page)  (~(get by lat.ran) lobe)
         ?~  peg
           ~
         =/  [=cage *]
-          %-  wrap:fusion
           (page-to-cage:(tako-ford tak) u.peg)
         ``cage+[-:!>(*^cage) cage]
       ::
@@ -4555,9 +4525,7 @@
       ?~  u.q  [[~ ~] ..park]
       ::  should convert any lobe to cage
       ::
-      =^  =cage  ..park
-        %+  tako-flow  tak
-        %-  wrap:fusion
+      =/  [=cage *]
         (page-to-cage:(tako-ford tak) p.u.u.q q.q.u.u.q)
       [``cage ..park]
     ::
