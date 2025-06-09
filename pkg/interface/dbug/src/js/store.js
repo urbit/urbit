@@ -10,6 +10,7 @@ class Store {
       logsRange: { oldest: null, newest: null },
       threads: {},
       peers: { known: [], alien: [], deets: {}},
+      chums: { known: [], alien: [], deets: {}},
       timers: [],
       commits: [],
       bindings: [],

@@ -475,6 +475,19 @@
     ?:  ?=(%nuke -.q.i.apps)  $(apps t.apps)
     =/  ap-core  (ap-yoke:ap p.i.apps [~ our prov] q.i.apps)
     $(apps t.apps, mo-core ap-abet:(ap-rake:ap-core all))
+  ::  +mo-lave: delete all incoming stale subscriptions
+  ::
+  ++  mo-lave
+    |=  [prov=path subs=(list [v=?(%g %a) =ship =dude =duct])]
+    ^+  mo-core
+    |-  ^+  mo-core
+    ?~  subs  mo-core
+    ?~  yoke=(~(get by yokes.state) dude.i.subs)
+      $(subs t.subs)
+    =?  mo-core  ?=(%live -.u.yoke)
+      =/  ap-core  (ap-yoke:ap dude.i.subs [~ ship.i.subs prov] u.yoke)
+      ap-abet:(ap-lave:ap-core [v duct]:i.subs)
+    $(subs t.subs)
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
@@ -763,6 +776,9 @@
       ::
       =?  mo-core
           &(?=(^ err) |(?=(%watch-as remote-request) ?=(%watch remote-request)))
+          ::  XX TODO maybe also send a %cork if we get a %nack for a %poke?
+          ::  &(?=(^ err) ?+(remote-request %.y %leave %.n, %missing %.n))
+          ::
         (mo-pass sys+wire %a %cork ship)
       ::
       ?-  remote-request
@@ -777,6 +793,9 @@
         ::
         ?~  err
           (mo-pass sys+wire %a %cork ship)
+        %-  %:  ^trace  odd.veb.bug.state  *dude  ~
+              leaf/"gall: {<ship>} got %nacked %leave {<(spud wire)>}"  ~
+            ==
         ::  if first time hearing a %nack for a %leave, after upgrade
         ::  or if all outstanding %leaves have been handled, set up timer
         ::
@@ -803,7 +822,7 @@
             =/  key  [[%sys wire] hen]
             =?  outstanding.state  =(~ (~(gut by outstanding.state) key ~))
               (~(del by outstanding.state) key)
-            (mo-pass [%sys wire] %a %cork ship)
+            (mo-pass sys+wire a/cork+ship)
       ==
     ::
         [%ames %lost *]
@@ -816,6 +835,7 @@
       =.  mo-core  (mo-give %unto %kick ~)
       mo-core
     ==
+  ::
   ++  mo-handle-key
     ~/  %mo-handle-stub
     |=  [=(pole knot) syn=sign-arvo]
@@ -957,6 +977,10 @@
   ++  mo-nuke
     |=  [prov=path dap=dude]
     ^+  mo-core
+    =?  mo-core  (~(has by blocked.state) dap)
+      =/  num-movs=@  ~(wyt by (~(got by blocked.state) dap))
+      ~>  %slog.0^leaf/"gall: deleted {<num-movs>} blocked moves for {<dap>}"
+      mo-core(blocked.state (~(del by blocked.state) dap))
     =/  yoke=(unit yoke)  (~(get by yokes.state) dap)
     ?:  |(?=(~ yoke) ?=(%nuke -.u.yoke))
       ~>  %slog.0^leaf/"gall: ignoring %nuke for {<dap>}, not running"
@@ -1166,7 +1190,6 @@
         %u  [%leave ~]
       ==
     (mo-pass wire %g %deal [ship our /] agent-name deal)
-
   ::  +mo-spew: handle request to set verbosity toggles on debug output
   ::
   ++  mo-spew
@@ -1274,8 +1297,9 @@
         [leaf+"gall: {<agent-name>}: brood request {<pole>} invalid, dropping"]~
       =.  pen.yoke  (~(put ju pen.yoke) [ship pole] wire)
       =/  =fine-request  [%0 rest.pole]
-      =/  =plea:ames  [%g /gk/[app.pole] fine-request]
-      =/  out=^wire   (welp /key/[agent-name]/[run-nonce.yoke]/bod/(scot %p ship) pole)
+      =/  =plea:ames     [%g /gk/[app.pole] fine-request]
+      =/  out=^wire
+        (welp /key/[agent-name]/[run-nonce.yoke]/bod/(scot %p ship) pole)
       (ap-move [hen %pass out %a %plea ship plea]~)
     ::
     ++  ap-take-brood
@@ -1293,9 +1317,11 @@
           =.  pen.yoke  (~(del by pen.yoke) [ship t.wire])
           ap-core
         ?~  bod.bud
-          =.  ap-core  (ap-generic-take i.wis %ames %near [ship t.wire] ~)
+          =.  ap-core  ::  (ap-generic-take i.wis %ames %sage [ship t.wire] ~)
+            (ap-generic-take i.wis %ames %tune [ship t.wire] ~)
           $(wis t.wis)
-        =.  ap-core  (ap-pass i.wis %arvo %a %keen `[idx key]:hutch.u.bod.bud ship t.wire)
+        =.  ap-core
+          (ap-pass i.wis %arvo %a %keen `[idx key]:hutch.u.bod.bud ship t.wire)
         $(wis t.wis)
       ::
           [%ames %done *]
@@ -1306,7 +1332,8 @@
           =.  pen.yoke  (~(del by pen.yoke) [ship t.wire])
           ap-core
         =.  ap-core
-          %.  (ap-generic-take i.wis %ames %near [ship t.wire] ~)
+          %.  ::  (ap-generic-take i.wis %ames %sage [ship t.wire] ~)
+              (ap-generic-take i.wis %ames %tune [ship t.wire] ~)
           %+  trace  odd.veb.bug.state
           [leaf/"gall: {<agent-name>} bad brood res {<ship>} {<t.wire>}"]~
         $(wis t.wis)
@@ -1378,6 +1405,7 @@
         ==
       =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent]))
       ap-core
+    ::
     ++  ap-match-coop
       |=  =path
       ^-  (unit coop)
@@ -1390,9 +1418,8 @@
         (ap-request-brood wire spar)
       =.  ken.yoke  (~(put ju ken.yoke) spar wire)
       (ap-pass wire %arvo %a %keen ~ spar)
-    ::
-    ::
     ::  +ap-tend: bind path in namespace, encrypted
+    ::
     ++  ap-tend
       |=  [=coop =path =page]
       ?~  cop=(~(get-hutch of-farm sky.yoke) coop)
@@ -1412,6 +1439,9 @@
       =?  gem.yoke  &(!exists ?=(~ pen))
         (~(put by gem.yoke) coop ~)
       =/  =wire  (welp /key/[agent-name]/[run-nonce.yoke]/pug coop)
+      ::  XX %plug reserves keys in %ames using (shaz eny) of length 64
+      :: use %gulp that reserves keys of length 32?
+      ::
       (ap-move [hen %pass wire %a %plug [%g %x agent-name %$ '1' coop]]~)
     ::
     ++  ap-stub
@@ -1735,11 +1765,15 @@
         ?.  ?=([~ ~ *] tuc)  ~
         `!<(tube:clay q.u.u.tuc)
       ?~  tub
-        ((slog leaf+"peek no tube from {(trip have)} to {(trip want)}" ~) ~)
+        =/  msg  "%{(trip agent-name)}: ".
+                 "peek no tube from {(trip have)} to {(trip want)}"
+        ((slog leaf+msg ~) ~)
       =/  res  (mule |.((u.tub vase)))
       ?:  ?=(%& -.res)
         ``want^p.res
-      ((slog leaf+"peek failed tube from {(trip have)} to {(trip want)}" ~) ~)
+      =/  msg  "%{(trip agent-name)}: ".
+               "peek failed tube from {(trip have)} to {(trip want)}"
+      ((slog leaf+msg ~) ~)
     ::  +ap-move: send move
     ::
     ++  ap-move
@@ -1853,10 +1887,17 @@
           t.name.sign-arvo
         ==
       =^  maybe-tang  ap-core
+        =?  sign-arvo   ?=([%ames %sage *] sign-arvo)
+          ::  XX if %sage rewrite sign-arvo as %tune; remove in 409k
+          ::
+          =/  =roar:ames
+            :_  sigs=~ :: XX unsused
+            [path.p.sage.sign-arvo ?~(q.sage.sign-arvo ~ `q.sage.sign-arvo)]
+          sign-arvo(+ [%tune spar=p.sage.sign-arvo `roar])
         %+  ap-ingest  ~  |.
         (on-arvo:ap-agent-core wire sign-arvo)
-      =?  ken.yoke  ?=([%ames %tune spar=* *] sign-arvo)
-        (~(del ju ken.yoke) spar.sign-arvo wire)
+      =?  ken.yoke   ?=([%ames %sage *] sign-arvo)
+        (~(del ju ken.yoke) p.sage.sign-arvo wire)
       ?^  maybe-tang
         (ap-error %arvo-response u.maybe-tang)
       ap-core
@@ -2141,6 +2182,16 @@
         =/  sat  !<(ship-state:ames q.u.u.sky)
         ?>(?=(%known -.sat) (some +.sat))
       --
+    ::  +ap-lave: delete stale incoming subscriptions in %gall
+    ::
+    ++  ap-lave
+      |=  [v=?(%a %g) =duct]
+      ^+  ap-core
+      =;  core=_ap-core
+        core(agent-duct agent-duct)
+      ?:  ?=(%a v)
+        ap-kill-up(agent-duct duct)
+      ap-load-delete(agent-duct duct)
     ::  +ap-mule: run virtualized with intercepted scry, preserving type
     ::
     ::    Compare +mute and +mule.  Those pass through scry, which
@@ -2375,7 +2426,7 @@
       =+  ;;(=fine-request noun)
       =<  mo-abet
       (mo-handle-key-request:mo-core ship agent-name path.fine-request)
-    ?>  ?=([%ge @ ~] path)
+    ?>  ?=([?(%ge %gm) @ ~] path)
     =/  agent-name  i.t.path
     ::
     =+  ;;(=ames-request-all noun)
@@ -2390,6 +2441,7 @@
       %nuke  mo-abet:(mo-nuke:mo-core prov dude.task)
       %doff  mo-abet:(mo-doff:mo-core prov +.task)
       %rake  mo-abet:(mo-rake:mo-core prov +.task)
+      %lave  mo-abet:(mo-lave:mo-core prov +.task)
       %spew  mo-abet:(mo-spew:mo-core veb.task)
       %sift  mo-abet:(mo-sift:mo-core dudes.task)
       %trim  [~ gall-payload]
@@ -2929,6 +2981,17 @@
         !=(path spur)
     ==
   ::
+  ?:  ?&  =(%y care)
+          =(~ path)
+          =([%$ %da now] coin)
+          =(our ship)
+      ==
+    :+  ~  ~
+    :-  %yokes  !>  ^+  yokes.state
+    %-  ~(rep by yokes.state)
+    |=  [[=dude =yoke] acc=_yokes.state]
+    ?:(?=(%live -.yoke) acc (~(del by acc) dude))
+  ::
   ?:  ?&  =(%z care)
           =(our ship)
           ?=([%'1' *] path)
@@ -3001,17 +3064,20 @@
     ::  anc %ack or a %nack, so %ames is still trying to send it.
     ::
     ~?  >>>  ?&  ?=(%leave rr)
-                 =(^ stand)
+                 !=(~ stand)
                  =^(rr stand ~(get to stand) !=(%missing rr))
               ==
       "extraneous request outstanding [{<wire>} {<duct>} {<stand>} {<rr>}]"
     =?  core  ?&  ?=(%leave rr)
-                 =(^ stand)
-                 =^(rr stand ~(get to stand) &(=(%missing rr) =(~ stand)))
+                  !=(~ stand)
+                  =^(rr stand ~(get to stand) &(=(%missing rr) =(~ stand)))
               ==
       =+  core=(mo-handle-nacked-leaves:(mo-abed:core duct) wire)
       ::  make sure that only the %leave remains in the queue
       ::
+      %-  %:  trace  odd.veb.bug.state  *dude  ~
+            leaf/"gall: resending %nacked %leave {<(spud wire)>}"  ~
+          ==
       %_    core
           outstanding.state
         %+  ~(put by outstanding.state)  [wire duct]
