@@ -1273,7 +1273,9 @@
       ::  outstanding $pleas
       ::
       =/  =path  ?+(-.ames-request ~ %s path.ames-request)
-      (mo-give %flub agent-name path)
+      ::  ?=(%u -.ames-request) cork the flow; other wise, freeze it
+      ::
+      (mo-give %flub agent-name path)  :: XX add cork=?
     ::  %u/%leave gets automatically acked
     ::
     =?  mo-core  ?=(%u -.ames-request)
