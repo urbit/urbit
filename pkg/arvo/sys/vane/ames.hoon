@@ -9292,7 +9292,7 @@
             ::
             ++  pump
               |=  load=mesa-message
-              ?:  |((fo-to-close load) fo-corked)
+              ?:  |((fo-to-close load) fo-corked halt.state)
                 %-  %+  ev-tace  odd.veb.bug.ames-state
                     ?:  (fo-to-close load)
                       |.("skip $plea; flow {<bone>} is closing")
@@ -9302,7 +9302,11 @@
               =:   next.snd   +(next.snd)
                   loads.snd   (put:fo-mop loads.snd next.snd load)
                 ==
-              fo-send
+              ?.  halt.state
+                fo-send
+              %-  %+  ev-tace  odd.veb.bug.ames-state
+                  |.("queue {<mess>}; flow is halted flow={<bone>} ")
+              fo-core
             ::
             ++  sink
               |=  [seq=@ud =gage:mess ok=?]
@@ -9315,8 +9319,12 @@
               ::
               =+  flow-state=[bone=bone seq=seq last=last-acked.rcv]
               ::
-              ?:  |(closing.state (~(has in corked.per) side))
+              ?:  |(halt.state closing.state (~(has in corked.per) side))
                 =+  ;;(mess=@tas +<.gage)
+                ?:  halt.state
+                  %-  %+  ev-tace  odd.veb.bug.ames-state
+                      |.("skip {<mess>}; flow is halted flow={<bone>} ")
+                  fo-core
                 ?.  closing.state
                   %-  %+  ev-tace  odd.veb.bug.ames-state
                       |.("skip {<mess>}; flow is corked flow={<bone>} ")
