@@ -3261,7 +3261,7 @@
   ++  ms
     |=  t=@ud
     ^-  @dr
-    (mul t (div ~s1 1.000))
+    (mul t ~+((div ~s1 1.000)))
   ::  +us
   ::
   ::  Convert from a value in microseconds to Urbit relative time, @dr.
@@ -3274,7 +3274,7 @@
   ++  us
     |=  t=@ud
     ^-  @dr
-    (mul t (div ~s1 1.000.000))
+    (mul t ~+((div ~s1 1.000.000)))
   ::  +ns
   ::
   ::  Convert from a value in nanoseconds to Urbit relative time, @dr.
@@ -3287,7 +3287,7 @@
   ++  ns
     |=  t=@ud
     ^-  @dr
-    (mul t (div ~s1 1.000.000.000))
+    (mul t ~+((div ~s1 1.000.000.000)))
   ::  +ps
   ::
   ::  Convert from a value in picoseconds to Urbit relative time, @dr.
@@ -3300,7 +3300,7 @@
   ++  ps
     |=  t=@ud
     ^-  @dr
-    (mul t (div ~s1 1.000.000.000.000))
+    (mul t ~+((div ~s1 1.000.000.000.000)))
   ::  +fs
   ::
   ::  Convert from a value in femtoseconds to Urbit relative time, @dr.
@@ -3313,7 +3313,7 @@
   ++  fs
     |=  t=@ud
     ^-  @dr
-    (mul t (div ~s1 1.000.000.000.000.000))
+    (mul t ~+((div ~s1 1.000.000.000.000.000)))
   ::  +as
   ::
   ::  Convert from a value in attoseconds to Urbit relative time, @dr.
@@ -3326,7 +3326,7 @@
   ++  as
     |=  t=@ud
     ^-  @dr
-    (mul t (div ~s1 1.000.000.000.000.000.000))
+    (mul t ~+((div ~s1 1.000.000.000.000.000.000)))
   ::  +mis
   ::
   ::  Convert from a value in mikiseconds to Urbit relative time, @dr.
@@ -3340,7 +3340,7 @@
   ++  mis
     |=  t=@ud
     ^-  @dr
-    (mul t (div ~s1 (bex 10)))
+    (mul t ~+((div ~s1 (bex 10))))
   ::  +uis
   ::
   ::  Convert from a value in mukiseconds to Urbit relative time, @dr.
@@ -3354,7 +3354,7 @@
   ++  uis
     |=  t=@ud
     ^-  @dr
-    (mul t (div ~s1 (bex 20)))
+    (mul t ~+((div ~s1 (bex 20))))
   ::  +nis
   ::
   ::  Convert from a value in nakiseconds to Urbit relative time, @dr.
@@ -3368,7 +3368,7 @@
   ++  nis
     |=  t=@ud
     ^-  @dr
-    (mul t (div ~s1 (bex 30)))
+    (mul t ~+((div ~s1 (bex 30))))
   ::  +pis
   ::
   ::  Convert from a value in pikiseconds to Urbit relative time, @dr.
@@ -3382,7 +3382,7 @@
   ++  pis
     |=  t=@ud
     ^-  @dr
-    (mul t (div ~s1 (bex 40)))
+    (mul t ~+((div ~s1 (bex 40))))
   ::  +fis
   ::
   ::  Convert from a value in fekiseconds to Urbit relative time, @dr.
@@ -3396,7 +3396,7 @@
   ++  fis
     |=  t=@ud
     ^-  @dr
-    (mul t (div ~s1 (bex 50)))
+    (mul t ~+((div ~s1 (bex 50))))
   ::  +ais
   ::
   ::  Convert from a value in akkiseconds to Urbit relative time, @dr.
@@ -3410,7 +3410,7 @@
   ++  ais
     |=  t=@ud
     ^-  @dr
-    (mul t (div ~s1 (bex 60)))
+    (mul t ~+((div ~s1 (bex 60))))
   --
 ::
 ::    3d: SHA hash family
