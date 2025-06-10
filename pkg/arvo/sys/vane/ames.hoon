@@ -1811,12 +1811,13 @@
           =client=chain
           tip=(jug =user=path [duct =ames=path])
       ==
-  +$  flow-state-25
-    $:  closing=?(%.y %.n)
-        line=@ud
-        snd=[%outbound loads=((mop ,@ud mesa-message) lte) @ @ send-window=@]
-        rcv=[%incoming acked=@ud pending-ack=_`?`%.n nax=(map seq=@ud error)]
-    ==
+    ::
+    +$  flow-state-25
+      $:  closing=?(%.y %.n)
+          line=@ud
+          snd=[%outbound loads=((mop ,@ud mesa-message) lte) @ @ send-window=@]
+          rcv=[%incoming acked=@ud pending-ack=_`?`%.n nax=(map seq=@ud error)]
+      ==
     ::
     +$  axle-24
       $:  peers=(map ship ship-state)
@@ -1934,20 +1935,20 @@
       ?&  ?=(%known -.back)
           %+  print-check  %keys     =(+<.ames +<.back)
           %+  print-check  %route    ?|  ?&  ?=(~ route.ames)
-                                             =(route.ames route.back)
-                                         ==
-                                         ?&  ?=(^ route.ames)  ?=(^ route.back)
-                                             .=  lane.u.route.ames
-                                                 lane.u.route.back
-                                     ==  ==
+                                            =(route.ames route.back)
+                                        ==
+                                        ?&  ?=(^ route.ames)  ?=(^ route.back)
+                                            .=  lane.u.route.ames
+                                                lane.u.route.back
+                                    ==  ==
           %+  print-check  %ossuary  =(ossuary.ames ossuary.back)
           =-  ~?  !-  :+  ames=~(wyt in closing.ames)
-                         back=~(wyt in closing.back)
+                        back=~(wyt in closing.back)
                       (~(dif in closing.back) closing.ames)
               -
           %+  print-check  %closing  =(closing.ames closing.back)
           =-  ~?  !-  :+  ames=~(wyt in corked.ames)
-                         back=~(wyt in corked.back)
+                        back=~(wyt in corked.back)
                       (~(dif in corked.back) corked.ames)
               -
           %+  print-check  %corked   =(corked.ames corked.back)
@@ -1999,7 +2000,7 @@
                         ?.  ?=([%a %meek *] q.card)
                           %.n
                         =/  nax-path=(pole iota)
-                         (validate-path path.spar.q.card)
+                        (validate-path path.spar.q.card)
                         ?.  ?=(flow-pith nax-path)
                           %.n
                         =-  ~?  >>  -  nax-path/nax-path^current.pump^next.pump
@@ -2152,11 +2153,11 @@
           %+  print-check  %lane    =-  ~?  !-  [back=lane.back mesa=lane.mesa]
                                         -
                                     ?|  ?&  ?=(~ lane.mesa)
-                                             =(lane.mesa lane.back)
-                                         ==
-                                         ?&  ?=(^ lane.mesa)  ?=(^ lane.back)
-                                             =(u.lane.mesa u.lane.back)
-                                     ==  ==
+                                            =(lane.mesa lane.back)
+                                        ==
+                                        ?&  ?=(^ lane.mesa)  ?=(^ lane.back)
+                                            =(u.lane.mesa u.lane.back)
+                                    ==  ==
           %+  print-check  %ossuary  =(ossuary.mesa ossuary.back)
           ::  corked.mesa could contain more bones if any %bak flow was in
           ::  closing, which deletes it automatically
@@ -3413,8 +3414,14 @@
           %=  c
               flows
             %-  ~(run by flows.c)
-            |=  flow=flow-state-25
-            flow(send-window.snd [send-window.snd.flow ~])
+            |=  =flow-state-25
+            =|  flow=flow-state
+            %_  flow
+              closing  closing.flow-state-25
+                 line  line.flow-state-25
+                  snd  snd.flow-state-25(send-window [send-window.snd.flow acks=~])
+                  rcv  rcv.flow-state-25
+            ==
           ==
         ==
       ::

@@ -1707,6 +1707,13 @@
         ::  line: high-water mark for the last-acked message before migration
         ::
         line=@ud
+        ::  a flow halts when:
+        ::    - forward: %gall passes a %rock to %ames that automatically corks
+        ::      the flow
+        ::    - backward: a %plea gets %flubbed; if the plea is a %leave the
+        ::      flow turns into closing and then starts peekikng for the %cork
+        ::
+        halt=?(%.y %.n)
         ::  outbound %poke payloads, bounded in the ship's namespace
         ::  always and only for requests
         ::
