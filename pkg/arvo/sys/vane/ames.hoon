@@ -1773,6 +1773,51 @@
     ::
     +|  %state-migrations
     ::
+    +$  axle-25
+      $:  peers=(map ship ship-state)
+          =unix=duct  ::  [//ames/0v0 ~]
+          =life
+          =rift
+          =bug
+          snub=[form=?(%allow %deny) ships=(set ship)]
+          cong=[msg=_5 mem=_100.000]
+          $=  dead
+          $:  flow=[%flow (unit dead-timer)]
+              chum=[%chum (unit dead-timer)]
+              cork=[%cork (unit dead-timer)]
+              rots=[%rots (unit dead-timer)]
+          ==
+          ::
+          =server=chain
+          priv=private-key
+          chums=(map ship chum-state-25)
+          core=?(%ames %mesa)
+      ==
+    ::
+    +$  chum-state-25
+      $+  chum-state-25
+      $%  [%alien ovni-state]
+          [%known fren-state-25]
+      ==
+    ::
+    +$  fren-state-25
+      $:  azimuth-state
+          lane=(unit [hop=@ =lane:pact])
+          =qos
+          corked=(set side)
+          =ossuary
+          flows=(map side flow-state-25)
+          pit=(map path request-state)
+          =client=chain
+          tip=(jug =user=path [duct =ames=path])
+      ==
+  +$  flow-state-25
+    $:  closing=?(%.y %.n)
+        line=@ud
+        snd=[%outbound loads=((mop ,@ud mesa-message) lte) @ @ send-window=@]
+        rcv=[%incoming acked=@ud pending-ack=_`?`%.n nax=(map seq=@ud error)]
+    ==
+    ::
     +$  axle-24
       $:  peers=(map ship ship-state)
           =unix=duct  ::  [//ames/0v0 ~]
@@ -1806,7 +1851,7 @@
           =qos
           corked=(set side)
           =ossuary
-          flows=(map side flow-state)
+          flows=(map side flow-state-25)
           pit=(map path request-state)
           =client=chain
           tip=(jug =user=path [duct =ames=path])
@@ -1852,7 +1897,7 @@
           =qos
           corked=(set side)
           =ossuary
-          flows=(map side flow-state)
+          flows=(map side flow-state-25)
           pit=(map path request-state-23)
           =client=chain
       ==
@@ -1875,7 +1920,12 @@
     ::                   .back is the regressed state, from $chums to %ships
     ::
     ++  migration-test
-      |=  [=ship rege-moves=(list move) ames=ship-state back=ship-state]
+      |=  $:  =ship
+              ahoy-moves=(list move)
+              rege-moves=(list move)
+              ames=ship-state
+              back=ship-state
+          ==
       ^-  ?
       ?>  =(-.ames -.back)     :: both %known or %alien
       ?:  ?=(%alien -.ames)
@@ -1938,7 +1988,49 @@
             ?&  =-  ~?  !-  [bone=bone ames=current.pump back=current.back-pump]
                     -
                 %+  print-check  %forward-flows-current
-                =(current.pump current.back-pump)
+                ?|  ?&  !=(~ queued-message-acks.pump)
+                        ::  ahoy moves will have a +peek for the %naxplanation
+                        ::  at current
+                        ::
+                        %+  lien  ahoy-moves
+                        |=  [=duct card=(wind note gift)]
+                        ?.  ?=(%pass -.card)
+                          %.n
+                        ?.  ?=([%a %meek *] q.card)
+                          %.n
+                        =/  nax-path=(pole iota)
+                         (validate-path path.spar.q.card)
+                        ?.  ?=(flow-pith nax-path)
+                          %.n
+                        =-  ~?  >>  -  nax-path/nax-path^current.pump^next.pump
+                            -
+                        ?&  =(ship rcvr.nax-path)
+                            =(bone bone.nax-path)
+                            =(%nax load.nax-path)
+                            =(%bak dire.nax-path)
+                            =(current.pump mess.nax-path)
+                        ==
+                      ::  got naxplanation for current, with wrong reference
+                      ::  message, so +(current) should be in the queue,
+                      ::  which only happens if we are still waiting for the
+                      ::  naxplanation of this message to increase current,
+                      ::
+                        (~(has by queued-message-acks.pump) +(current.pump))
+                      ::  and a naxplanation flow should exist, although
+                      ::  that doesn't tell us what message got nacked
+                      ::
+                        (~(has by rcv.ames) (mix 0b10 bone))
+                      ::  XX and at least we have nacked one message
+                      ::
+                        %+  gth
+                          =<  last-acked
+                          (~(got by rcv.ames) (mix 0b10 bone))
+                        0 :: XX
+                    ==
+                ::  if no queued-message-acks, current should still match
+                ::
+                  =(current.pump current.back-pump)
+                ==
               ::
                 =-  ~?  !-  [bone=bone ames=next.pump back=next.back-pump]
                     -
@@ -2189,7 +2281,8 @@
             [%22 ames-state-22]
             [%23 axle-23]
             [%24 axle-24]
-            [%25 axle]
+            [%25 axle-25]
+            [%26 axle]
         ==
     ::
     ::
@@ -2264,7 +2357,7 @@
       ~>  %slog.0^leaf/"ames: metamorphosis on %take"
       [:(weld molt-moves queu-moves take-moves) adult-gate]
     ::
-    ++  stay  [%25 larva/ames-state]
+    ++  stay  [%26 larva/ames-state]
     ++  scry  scry:adult-core
     ++  load
       |=  $=  old
@@ -2410,6 +2503,10 @@
                   state=axle-24
               ==
               $:  %25                            :: add hop to |mesa lanes
+                  ?(%adult %larva)               ::
+                  state=axle-25
+              ==
+              $:  %26                            :: add cached acks
                   ?(%adult %larva)               ::
                   state=axle
           ==  ==
@@ -2680,6 +2777,11 @@
         larval-gate
       ::
           [%25 *]
+        =.  cached-state  `[%25 state.old]
+        ~>  %slog.1^leaf/"ames: larva %25 reload"
+        larval-gate
+      ::
+          [%26 *]
         ?-  +<.old
           %larva  larval-gate
           %adult  (load:adult-core state.old)
@@ -2758,7 +2860,7 @@
       |^  ^+  [moz larval-core]
       ?~  cached-state  [~ larval-core]
       =*  old  u.cached-state
-      ?:  ?=(%25 -.old)
+      ?:  ?=(%26 -.old)
         ::  no state migrations left; update state, clear cache, and exit
         ::
         [(flop moz) larval-core(ames-state.adult-gate +.old, cached-state ~)]
@@ -2835,8 +2937,10 @@
         ==
       ?:  ?=(%23 -.old)
         $(cached-state `24+(state-23-to-24 +.old))
-      ?>  ?=(%24 -.old)
-      $(cached-state `25+(state-24-to-25 +.old))
+      ?:  ?=(%24 -.old)
+        $(cached-state `25+(state-24-to-25 +.old))
+      ?>  ?=(%25 -.old)
+      $(cached-state `26+(state-25-to-26 +.old))
       ::
       ++  our-beam  `beam`[[our %rift %da now] /(scot %p our)]
       ++  state-4-to-5
@@ -3284,16 +3388,34 @@
       ::
       ++  state-24-to-25
         |=  old=axle-24
-        ^-  axle
+        ^-  axle-25
         ~>  %slog.0^leaf/"ames: migrating from state %24 to %25"
         %=    old
             chums
           %-  ~(run by chums.old)
           |=  c=chum-state-24
-          ^-  chum-state
+          ^-  chum-state-25
           ?:  ?=(%alien -.c)  c
           ?~  lane.c          c
-          c(lane `[hop=1 u.lane.c])  ::  XX bigger hop?
+          c(lane `[hop=1 u.lane.c])
+        ==
+      ::
+      ++  state-25-to-26
+        |=  old=axle-25
+        ^-  axle
+        ~>  %slog.0^leaf/"ames: migrating from state %25 to %26"
+        %=    old
+            chums
+          %-  ~(run by chums.old)
+          |=  c=chum-state-25
+          ^-  chum-state
+          ?:  ?=(%alien -.c)  c
+          %=  c
+              flows
+            %-  ~(run by flows.c)
+            |=  flow=flow-state-25
+            flow(send-window.snd [send-window.snd.flow ~])
+          ==
         ==
       ::
       --
@@ -4815,6 +4937,7 @@
           ::  compare pre/post migrated states
           ::
           %:  migration-test  ship
+            ahoy-moves
             rege-moves
             (~(got by peers.ames-state) ship)
             (~(got by peers.rege-state) ship)
@@ -5495,7 +5618,11 @@
                     (~(has in closing.peer-state) bone)
                   :-  (weld moves cork-moves)
                   (~(put by flows) [bone dire] flow)
-                =?  moves  !=(current.pump next.pump)
+                =?  moves  ?&  !=(current.pump next.pump)
+                               ::  only forward flows; %boons are not nacked
+                               ::
+                               ?=(%for dire)
+                          ==
                   ::  we are waiting for an %ack, or have heard a %nack and
                   ::  so we defer processing it until we receive the
                   ::  naxplanation
@@ -5516,7 +5643,7 @@
                     ::  sanity check that this is not a naxplanation bone
                     ::
                     ~?  >>>  odd.veb.bug.ames-state
-                    weird-naxp-flow-got-nacked/bone=bone
+                        weird-naxp-flow-got-nacked/bone=bone
                     moves
                   ::  if the packet-pump has no state about current.pump,
                   ::  it means that we have heard the %nack, and clear
@@ -5526,8 +5653,59 @@
                   ::  the sender of the naxplanation will have bind it in
                   ::  their namespace, so we start +peeking it
                   ::
-                  %+  weld  moves
-                  moves:(fo-peek-naxplanation:fo-core current.pump)
+                  ::  a bug was found (https://github.com/urbit/urbit/pull/6998)
+                  ::  that misshandled naxplanations, if any %plea got nacked
+                  ::  in a series of rapid handling of many mesages (e.g. if the
+                  ::  ship comes back online after a while). this meant that
+                  ::  we could have heard the naxplanation for current, acked it
+                  ::  on its naxplanation flow, but the naxplnation had
+                  ::  the wrong reference message number, so we never cleared it
+                  ::  increased current , and any subsequent (n)ack got queued.
+                  ::
+                  ::  as an assurance check, if there are queued-message-acks
+                  ::  we find the oldest, assert that it's =(+(current) ack))
+                  ::  and confirm that we have acked naxplanations by finding
+                  ::  it's naxplanation flow
+                  ::
+                  :: got nack, but waiting for naxplanation, or
+                  ::
+                  ?:  =(~ queued-message-acks.pump)
+                    %+  weld  moves
+                    moves:(fo-peek-naxplanation:fo-core current.pump)
+                  ::  got naxplanation for current, with wrong reference
+                  ::  message, so +(current) should be in the queue,
+                  ::  which only happens if we are still waiting for the
+                  ::  naxplanation of this message to increase current,
+                  ::
+                  ?>  ?&  (~(has by queued-message-acks.pump) +(current.pump))
+                          ::  and a naxplanation flow should exist, although
+                          ::  that doesn't tell us what message got nacked
+                          ::
+                          (~(has by rcv.peer-state) (mix 0b10 bone))
+                          ::  XX and at least we have nacked one message
+                          ::
+                            %+  gth
+                              =<  last-acked
+                              (~(got by rcv.peer-state) (mix 0b10 bone))
+                            0 :: XX
+                      ==
+                  ?:  &  :: XX change to | to test local %mate
+                    %+  weld  moves
+                    moves:(fo-peek-naxplanation:fo-core current.pump)
+                  ::  XX don't do this right away. because we are migrating
+                  ::  queued message acks, we have all state explicit to assert
+                  ::  (current != next; +peek for naxplanations in the .pit)
+                  ::  if we need to trigger this manually
+                  ::
+                  :_  moves
+                  ::  enqueue the %naxplanation %page as if it got sent by
+                  ::  the peer through the %mess layer
+                  ::
+                  ^-  move
+                  :*  duct=[[%ames (fo-wire:fo-core %nax)] //unix ~]
+                      %give  %sage  her^(fo-nax-path:fo-core current.pump our)
+                      [%message %nax *error]
+                  ==
                 ::
                 ::  live packets in packet-pump-state are reconstructed; the
                 ::  receiver will droppped any partially received fragments
@@ -5653,6 +5831,11 @@
                 ::     nax.rcv  (~(put by nax.rcv.state.core) current.pump *error)
                 ::   ==
                 ::
+                ::  queued-message-acks
+                ::
+                =+  ack-mop=((on ,@ud ack) lte)
+                =.  acks.snd.flow
+                  (gas:ack-mop acks.snd.flow ~(tap by queued-message-acks.pump))
                 :_  (~(put by flows) [bone dire] flow)
                 =.  moves  (weld forward-moves moves)
                 =?  moves  ?=(^ next-wake.packet-pump-state.pump)
@@ -5693,11 +5876,15 @@
                 =:         closing.flow  (~(has in closing.peer-state) bone)
                               line.flow  last-acked.sink
                     last-acked.rcv.flow  last-acked.sink
-                    ::  XX if there's a pending-vane ack it should have
-                    ::  been sent to the vane already?
-                    ::  drop any pending ack
+                    ::  don't drop pending acks given to the vane. if a retry
+                    ::  we will no-op on fo-sink:fo -- these situations happened
+                    ::  prior to the introduction of %flubs. the message should
+                    ::  have been enqueued in the gall queue, but dropped if
+                    ::  e.g. the app is not installed. as soon as that happens
+                    ::  %gall will give the %done to %ames, which in turn will
+                    ::  send the %ack to the peer.
                     ::
-                    pending-ack.rcv.flow  %.n  ::  ?=(^ pending-vane-ack.sink)
+                    pending-ack.rcv.flow  ?=(^ pending-vane-ack.sink)
                   ::
                       nax.rcv.flow
                     ::  carry over live naxplanations we have just migrated
@@ -8901,6 +9088,7 @@
           |_  [=side state=flow-state]
           +*  bone  bone.side
               dire  dire.side
+              acks  acks.snd.state
               snd   snd.state
               rcv   rcv.state
           ::
@@ -9047,9 +9235,8 @@
           ::
           +|  %builders
           ::
-          ++  fo-mop       ((on ,@ud mesa-message) lte)
-          ++  fo-nax       ((on ,@ud [?(%wait %done) error]) lte)
-          ++  fo-cac       ((on ,@ud ?) lte)
+          ++  fo-mop  ((on ,@ud mesa-message) lte)
+          ++  fo-cac  ((on ,@ud ack) lte)
           ::  all path builders refers to payloads on the other side from ours
           ::  so the direction is always flipped
           ::
@@ -9412,30 +9599,31 @@
               %-  %+  ev-tace  odd.veb.bug.ames-state
                   |.("old %ack {<[bone=bone seq=seq]>}")
               fo-core
-            ?>  ?=([%message *] gage)
-            =+  ;;([%ack error=?] +.gage)  ::  XX
+            ~|  gage
+            =+  ;;([%message %ack nack=?] gage)  ::  XX
             ?.  =(key.u.first seq)
-              ::  XX we shouldn't see this since send-window is always 1
+              ::  XX we shouldn't see this since send-window is always 1,
+              ::  XX only for migrated queued-message-acks
               ::
               %-  %+  ev-tace  odd.veb.bug.ames-state
                   |.("hear out of order ack {<[seq=seq first=key.u.first]>}")
-              :: if the ack we receive is not for the first, save it
-              ::  XX if error, start +peeking right away?
+              ::  if the ack we receive is not for the first, save it
+              ::  if nack, start +peeking right away
               ::
-              fo-core
-              ::  XX TODO
-              :: fo-core(cache.state (put:fo-cac cache.state seq error))
-            |-  ^+  fo-core
-            ?:  error
-              ::  XX make error=(unit error), and include the naxplanation there
+              =?  fo-core  nack  (fo-peek-naxplanation seq)
+              fo-core(acks.snd.state (put:fo-cac acks seq ?:(nack nack/~ ok/~)))
+            =|  error=(unit error:ames)
+            ?:  nack
+              ::  XX make nack=(unit error), and include the naxplanation there?
               ::
               ::  if error start +peek for naxplanation
               ::
               (fo-peek-naxplanation seq)
+            |-  ^+  fo-core
             %-  %+  ev-tace  msg.veb.bug.ames-state
                 |.("hear ack for {<[bone=bone seq=seq]>}")
             ::  ack is for the first, oldest pending-ack sent message;
-            ::  remove it and XX start processing cached acks
+            ::  remove it and start processing cached acks
             ::
             =^  *  loads.snd  (del:fo-mop loads.snd seq)
             ::  increase the send-window so we can send the next message
@@ -9445,26 +9633,19 @@
               ?&  closing.state    ::  we sent a %cork %plea
                   ?=(~ loads.snd)  ::  nothing else is pending
               ==
-            =~  ::  send next messages
-                ::
-                fo-send
-                ::  don't give %done for %boon and %cork; implicit %ack
-                ::
-                ?:  ?|  ?=(%bak dire)
-                        can-be-corked
-                    ==
-                  fo-core
-                (fo-emit (ev-got-duct bone) %give %done ~)
-            ==
-            :: XX TODO
-            :: ::  are there any cached acks?
-            :: ::
-            :: :: ?~  cack=(pry:fo-cac cache.state)  fo-core
-            :: ?.  =(key.u.cack +(seq))           fo-core
-            :: ::  first ack in the cache is the next sent %poke; process
-            :: ::
-            :: :: =^  *  cache.state  (del:fo-cac cache.state key.u.cack)
-            :: $(error val.u.cack, seq key.u.cack)
+            ::  send next messages
+            ::
+            =.  fo-core  fo-send
+            ::  don't give %done for %boon and %cork; implicit %ack
+            ::
+            =?  fo-core  ?&  ?=(%for dire)
+                             !can-be-corked
+                         ==
+              (fo-emit (ev-got-duct bone) %give %done error)
+            ::  are there any cached acks?
+            ::
+            =^  next  fo-core  (fo-handle-miss-ack seq)
+            ?:(=(seq ack.next) fo-core $(seq ack.next, error error.next))
           ::
           ++  fo-take-nax
             |=  [seq=@ud =spar =gage:mess]
@@ -9478,16 +9659,36 @@
               %-  %+  ev-tace  odd.veb.bug.ames-state
                   |.("no message to %naxplain {<[bone=bone seq=seq]>}")
               fo-core
+            =+  ;;([%message %nax =error] gage)  ::  XX
+            =/  error=(unit error:ames)  `error
             :: XX  if the ack we receive is not for the first, no-op
             :: XX  as currently implemented we only hear the naxplanation of
-            ::     the oldest message
+            ::     the oldest message, unless this is a migrated naxplanation
             ::
             =?  fo-core  miss-nax
+              ::  this messsaged should have been nacked
+              ::
+              ?~  n=(get:fo-cac acks seq)
+                %-  %+  ev-tace  odd.veb.bug.ames-state
+                    |.("missordered %naxp miss nack {<[bone=bone seq=seq]>}")
+                fo-core
+              ::  we have a missordered (n)ack for this message; check %nack
+              ::
+              ?.  ?=([%nack ~] u.n)
+                =/  out  ?-(-.u.n %ok %ack, %naxplanation %naxp)
+                %-  %+  ev-tace  odd.veb.bug.ames-state
+                    |.("missordered %naxp, got {<out>} {<[bone=bone seq=seq]>}")
+                fo-core
               %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("missordered %naxplanation {<[bone=bone seq=seq]>}")
-              fo-core
+                  |.("hear missordered %naxplanation {<[bone=bone seq=seq]>}")
+              ::  remove %nack, replace with %naxplanation
+              ::
+              =^  *  acks  (del:fo-cac acks seq)
+              ?>  ?=(^ error)
+              fo-core(acks.snd.state (put:fo-cac acks seq naxplanation/u.error))
             ::  XX  use .nax.snd to confirm that we are waiting for this %naxp
             ::
+            |-  ^+  fo-core
             ::  naxplanation should be for the first, oldest pending message
             ::
             =?  loads.snd  &(!no-pokes !miss-nax)  +:(del:fo-mop loads.snd seq)
@@ -9496,12 +9697,10 @@
             ::
             =?  send-window.snd  (lth send-window.snd send-window-max.snd)
               +(send-window.snd)
-            =.  fo-core          fo-send  ::  send next messages
             ::  XX check path.spar
             ::  XX path.spar will be the full namespace path, peel off before?
             ::
-            ?>  ?=([%message *] gage)
-            =+  ;;([%nax =error] +.gage)  ::  XX
+            =.  fo-core  fo-send  ::  send next messages
             ::  if the bone belongs to a closing flow and we got a
             ::  naxplanation, don't relay ack to the client vane
             ::
@@ -9517,16 +9716,26 @@
             ::  should be from migrating a nacked flow.
             ::  XX check what happens if the naxplanation comes in again
             ::
-            ?.  ?|  !no-pokes  ::  there were unacked messages
-                    &(no-pokes =(seq (dec next-msg)))  :: nacked, migrated msg
-                ==
-              %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("weird %naxp {<[bone=bone seq=seq next=next-msg]>}; skip")
-              fo-core
-            %-  %+  ev-tace  msg.veb.bug.ames-state
-                |.("take %naxplanation {<[bone=bone seq=seq]>}")
+            =.  fo-core
+              :: XX don't give naxplanations to the client vane?
+              :: ?.  ?|  !no-pokes  ::  there were unacked messages
+              ::         &(no-pokes =(seq (dec next-msg)))  :: nacked, migrated msg
+              ::     ==
+              ::   %-  %+  ev-tace  odd.veb.bug.ames-state
+              ::       |.("weird %naxp {<[bone=bone seq=seq next=next-msg]>} skip")
+              ::   fo-core
+              %-  %+  ev-tace  msg.veb.bug.ames-state
+                  |.("take %naxplanation {<[bone=bone seq=seq]>}")
+              ::
+              (fo-emit (ev-got-duct bone) %give %done error)
+            ::  are there any cached acks?
             ::
-            (fo-emit (ev-got-duct bone) %give %done `error)
+            =^  next  fo-core  (fo-handle-miss-ack seq)
+            ?:  =(seq ack.next)
+              fo-core
+            ::  reset assurance checks; this is an ack/naxplanation for next
+            ::
+            $(seq ack.next, error error.next, no-pokes |, miss-nax |)
           ::
           ::  +fo-take-cor: take %cork $page; started by receiving a $cork $plea
           ::
@@ -9596,6 +9805,50 @@
             ::  for-cor-path will produce a path for the %cork on the other side
             ::
             [(fo-wire %fub) %a meek/[chum-to-our her (fo-cor-path seq=0 our)]]
+          ::
+          ++  fo-handle-miss-ack
+            |=  seq=message-num
+            ^-  [[ack=@ud error=(unit error)] _fo-core]
+            ::  are there any cached acks?
+            ::
+            ?~  cack=(pry:fo-cac acks.snd.state)  [seq ~]^fo-core
+            ?.  =(key.u.cack +(seq))              [seq ~]^fo-core
+            =+  next-load=(pry:fo-mop loads.snd)
+            ::  if next cached is a %nack, no-op; we are still waiting for the
+            ::  naxplanation
+            ::
+            ?:  ?=([%nack ~] val.u.cack)
+              :-  [seq ~]
+              ?.  ?=(~ next-load)  fo-core
+                ::  if there is no payload outstanding but we still have queued
+                ::  nacks, the naxplanation got processed incorrectly
+                ::  and queued messages have been migrated from .peers; start
+                ::  peeking for the naxplanation
+                ::
+              %-  %+  ev-tace  odd.veb.bug.ames-state
+                  |.("queued %nack; %naxplanation missing {<[b=bone n=seq]>}")
+              (fo-peek-naxplanation key.u.cack)
+            ?:  ?&  ?=(^ next-load)
+                    (lth seq next.snd)
+                    !=(key.u.next-load +(seq))
+                ==
+              %-  %+  ev-tace  odd.veb.bug.ames-state
+                  |.("outstanding %loads doesn't match next {<[b=bone n=seq]>}")
+              ::  if there are outstanding payloads, no-op if the oldest one
+              ::  doesn't match the next sequence in order
+              ::
+              [seq ~]^fo-core
+            ::  either there is no payloads outstanding, but next queued message
+            ::  ack is the next one in order, or ext ack in the cache is for the
+            ::  next sent %poke; process
+            ::
+            %-  %+  ev-tace  msg.veb.bug.ames-state
+                |.("process next queued ack {<[bone=bone seq=key.u.cack]>}")
+            =^  *  acks.snd.state  (del:fo-cac acks.snd.state key.u.cack)
+            :_  fo-core
+            ::  produce ack or naxplanation
+            ::
+            [key.u.cack ?:(?=(%ok -.val.u.cack) ~ `+.val.u.cack)]
           ::
           --
         ::
@@ -10469,18 +10722,69 @@
                 =|  pump=message-pump-state
                 %+  ~(put by snd.peer-state.core)  bone
                 =+  next=next.snd.state
-                ?~  fist=(pry:fo-mop:fo-core loads.snd.state)
-                  pump(current next, next next)
-                %_  pump
-                  current  key.u.fist
-                  next     key.u.fist
-                ==
+                =.  queued-message-acks.pump  acks.snd.state
+                  ?^  fist=(pry:fo-mop:fo-core loads.snd.state)
+                  %_  pump
+                    current  key.u.fist
+                    next     key.u.fist
+                  ==
+                =.  next.pump  next
+                ?~  acks.snd.state
+                  ::  if coming straight from ahoying the peer, we could still
+                  ::  be peeking for the naxplanation, and that would have
+                  ::  the current message sequence number;
+                  ::  XX  if this is a test local migration we won't find the
+                  ::  %peek in the .pit since the %meek has not updated the
+                  ::  state yet -- this would be captured in the +migration-test
+                  ::
+                  =/  current=message-num
+                    %-  ~(rep by pit.fren)
+                    |=  [[=path req=request-state] current=message-num]
+                    ?:  ?=(^ pay.req)
+                      current  :: %poke; skip
+                    %-  ~(rep by for.req)
+                    |=  [[hen=duct ints=(set ints)] c=_current]
+                    ::  inspect the duct to find %mesa wires for %naxplanations
+                    ::
+                    ?.  ?=([[%ames %mesa %flow *] *] hen)
+                      c
+                    =>  .(i.hen `(pole knot)`i.hen)
+                    ::  if the flow is in closing we need to stop +peeking for the
+                    ::  %cork (in +regress-peek) and remove the flow on our side
+                    ::
+                    ?.  ?=([@ @ @ %nax ?(%for %bak) h=@ r=@ bone=@ ~] i.hen)
+                      c
+                    =+  bone-peek=(slav %ud bone.i.hen)
+                    ?.  =(bone bone-peek)
+                      c
+                    ::  sequence number is in the path; get it from the tip
+                    ::
+                    =/  [=space pax=^path]
+                      [space inner]:(decrypt-path path her)
+                    ?>  ?=(%chum -.space)
+                    =/  nax-path=(pole iota)  (validate-path pax)
+                    ?>  ?=(flow-pith nax-path)
+                    mess.nax-path
+                  pump(current ?:(=(0 current) next current))
+                ::  if there are queued message acks, current has been nacked
+                ::  and we are waiting for the naxplanation, so there should be
+                ::  a live %peek in the .pit for it
+                ::
+                =/  queued-acks=(list @ud)
+                  (sort ~(tap in ~(key by queued-message-acks.pump)) lth)
+                ?>  ?=(^ queued-acks)
+                pump(current (dec i.queued-acks))
               ::  message-pump for %pleas and %boons
               ::
               %^  (dip:fo-mop:fo-core ,cor=_core)  loads.snd.state
                 core
               |=  [cor=_core seq=@ud req=mesa-message]
               ^-  [(unit mesa-message) stop=? cor=_core]
+              =.  snd.peer-state.cor
+                %+  ~(jab by snd.peer-state.cor)  bone
+                |=  pump=message-pump-state
+                ?^  unsent-messages.pump  pump
+                pump(next seq)
               `[| (on-memo:cor bone req)]
             ::  message-sink
             ::
@@ -12408,7 +12712,7 @@
   take:me-core
 ::  +stay: extract state before reload
 ::
-++  stay  [%25 adult/ames-state]
+++  stay  [%26 adult/ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
