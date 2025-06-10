@@ -61,6 +61,11 @@
       ::    the :binding into a (map (unit @t) (trie knot =action)).
       ::
       bindings=(list [=binding =duct =action])
+      :: ::  xx: bound paths, to the desks that bound them
+      :: ::  yy: bound paths by desk
+      :: ::
+      :: path-to-desk=(map path desk)
+      :: desk-paths=(jug desk path)
       ::  cache: mapping from url to versioned entry
       ::
       cache=(map url=@t [aeon=@ud val=(unit cache-entry)])
@@ -485,7 +490,7 @@
       ;div#local
         ;p:"Urbit ID"
         ;input(value "{(scow %p our)}", disabled "true", class "mono");
-        ;+  ?:  =(%ours -.identity)
+        ;+  ?:  =(%ours -.who.identity)
               ;div
                 ;p:"Already authenticated"
                 ;a.button/"{(trip (fall redirect-url '/'))}":"Continue"
@@ -534,8 +539,8 @@
           ;button(name "eauth", type "submit"):"Continue"
         ==
       ==
-      ;*  ?:  ?=(%ours -.identity)  ~
-          =+  as="proceed as{?:(?=(%fake -.identity) " guest" "")}"
+      ;*  ?:  ?=(%ours -.who.identity)  ~
+          =+  as="proceed as{?:(?=(%fake -.who.identity) " guest" "")}"
           ;+  ;span.guest.mono
                 ; Or try to
                 ;a/"{(trip (fall redirect-url '/'))}":"{as}"
@@ -785,31 +790,120 @@
     =/  act  [%app app=%lens]
     ::
     =/  connection=outstanding-connection
-      [act [& secure address request] [*@uv [%ours ~]] ~ 0]
+      [act [& secure address request] [*@uv [[%ours ~] ~]] ~ 0]
     ::
     =.  connections.state
       %.  (~(put by connections.state) duct connection)
       (trace 2 |.("{<duct>} creating local"))
     ::
-    (request-to-app [%ours ~] app.act inbound-request.connection)
+    (request-to-app identity.connection app.act inbound-request.connection)
   ::  +request: starts handling an inbound http request
   ::
   ++  request
     |=  [secure=? =address =request:http]
     ^-  [(list move) server-state]
     =*  headers  header-list.request
-    ::  for requests from localhost, respect the "forwarded" header
-    ::
     =/  [secure=? host=(unit @t) =^address]
       =/  host=(unit @t)  (get-header:http 'host' headers)
       =*  same  [secure host address]
       ?.  =([%ipv4 .127.0.0.1] address)        same
+      ::  for requests from localhost, respect the "forwarded" header
+      ::
       ?~  forwards=(forwarded-params headers)  same
       :+  (fall (forwarded-secure u.forwards) secure)
         (clap (forwarded-host u.forwards) host head)
       (fall (forwarded-for u.forwards) address)
+    ::  parse the hostname from the request, then
+    ::  find the domain that we _know_ (.domains.state) that is the
+    ::  longest prefix for the requested hostname and take its smallest
+    ::  subdomain as the candidate request-target desk
+    ::
+    ::    example 1: request to mopfel.np.io:
+    ::               `[domain=~['io' 'np' 'mopfel'] candidate=~]
+    ::    example 2: request to pals.mopfel.np.io:
+    ::               `[domain=~['io' 'np' 'mopfel'] candidate=`%pals]
+    ::
+    ?>  ?=(^ host)  ::TODOxx  review
+    =/  out=(unit [[domain=turf port=(unit @ud)] candidate=(unit desk)])
+      ::REVIEW  should just parse earlier?
+      =/  doom=(unit [port=(unit @ud) doom=(each turf @if)])
+        ::TODOxx  review client differences?
+        (rush u.host thor:de-purl:html)
+      ~&  doom=doom
+      ?.  ?=([~ * %& *] doom)  ~  ::  only proper hostnames supported
+      =.  domains.state  (~(put in domains.state) ~['localhost'])  ::TODOxx tmp
+      =-  ~&  next=-
+          ?:  =(hit *turf)  ~
+          %-  some
+          :-  [hit port.u.doom]
+          ?:  =(/ suffix)  ~
+          `(rear suffix)
+      %-  ~(rep in domains.state)
+      |=  [ours=turf [hit=turf suffix=path]]
+      =*  nop  [hit suffix]
+      ^+  nop
+      ::  doom: might be /network/tlon/mopfel/rumors
+      ::  ours: might be /network/tlon/mopfel
+      ::              or /network/tlon
+      ::              or /network/tlon/mopfel/rumors
+      =+  res=(find-suffix ours p.doom.u.doom)  ::  `/rumors or `/mopfel/rumors or `/
+      ?~  res  nop
+      ?:  (gte (lent u.res) (lent suffix))
+        [ours u.res]
+      nop
+    ~&  [host=host out=out]
+    ::
+    =/  pathowner=(unit desk)
+      ::TODOxx  review
+      =/  [=action @t]
+        (get-action-for-binding host url.request)
+      ?.  ?=(%app -.action)  ~
+      ::  we need to look this up by scry every time,
+      ::  storing the result in state could get stale.
+      ::  we need to look this up before the +get-action-for-binding call,
+      ::  because ... shenanigans?
+      ::
+      ~|  app=app.action
+      =/  res=(unit (unit (cask vase)))
+        (rof [~ ~] /eyre %gd [our app.action da+now] /$)
+      :: ?:  ?=([~ ~] res)  ~  ::TODOxx  review
+      ?>  ?=([~ ~ %desk *] res)
+      `!<(desk q.u.u.res)
     ::
     =/  [=action suburl=@t]
+      ::  if the domain is not known to us, we can't serve on it.
+      ::
+      ?~  out
+        :_  url.request
+        ~&  [%for-oh-ofr-a url=url.request]
+        [%four-oh-four ~]
+      ::  if there is no pathowner (aka the pathowner is eyre)
+      ::  then we _always resolve the route_,
+      ::  because eyre handles the request itself.
+      ::
+      ?~  pathowner
+        ::TODOxx  also handle '/', homepage case
+        ?>  =('/~/' (end 3^3 url.request))  ::NOTE  always eyre endpoint
+        (get-action-for-binding host url.request)
+      ::  if the domain is known, but has no desk in the subdomain,
+      ::  this is the "homepage" case.
+      ::  even if the requested path isn't bound, serve the iframe.
+      ::  the iframe will then contain the 404 (or real route if present).
+      ::
+      ?~  candidate.u.out
+        :_  url.request
+        [%iframe ~]  ::url.request]  ::TODO  superfluous?
+      ::  if the subdomain points to a desk that does not own the request path,
+      ::  (a desk that did not bind that path,) we cannot resolve the request.
+      ::
+      ?.  =(u.candidate.u.out u.pathowner)
+        :_  url.request
+        ~&  [%for-oh-ofr-b url=url.request]
+        [%four-oh-four ~]
+      ::  finally, if we are serving under a known domain, whose subdomain
+      ::  maps to a desk that owns the request path, resolve to the configured
+      ::  binding.
+      ::
       (get-action-for-binding host url.request)
     ::
     ::TODO  we might want to mint new identities only for requests that end
@@ -818,7 +912,14 @@
     ::      eyre-handled requests are always synchronous, provides a fruitful
     ::      angle for refactoring...
     =^  ?(invalid=@uv [suv=@uv =identity som=(list move)])  state
-      (session-for-request:authentication request)
+      %-  session-for-request:authentication
+        request
+      ::TODOxx  re-review, we don't think this is right anymore... 20250513
+      :: ::  scope passed here is used for new guest sessions.
+      :: ::  guests should get the smallest appropriate scope
+      :: ::  for the specific request.
+      :: ::
+      :: ?~(out ~ candidate.u.out)
     ?@  -
       ::  the request provided a session cookie that's not (or no longer)
       ::  valid. to make sure they're aware, tell them 401
@@ -833,7 +934,8 @@
         ::      deletes the connection from state.
         %+  ~(put by connections.state)  duct
         ^-  outstanding-connection
-        [action [| secure address request] [invalid %fake *@p] ~ 0]
+        ?<  ?=(%iframe -.action)  ::TODOxx removeme
+        [action [| secure address request] [invalid [[%fake *@p] ~]] ~ 0]
       ::  their cookie was invalid, make sure they expire it
       ::
       =/  bod=octs  (as-octs:mimes:html 'bad session auth')
@@ -849,13 +951,12 @@
     =;  [moz=(list move) sat=server-state]
       [(weld som moz) sat]
     ::
-    =/  authenticated  ?=(%ours -.identity)
+    =/  authenticated  ?=(%ours -.who.identity)
     ::  if we have no eauth endpoint yet, and the request is authenticated,
     ::  deduce it from the hostname
     ::
     =?  endpoint.auth.state
         ?&  authenticated
-            ?=(^ host)
             ?=(~ auth.endpoint.auth.state)
         ==
       %-  (trace 2 |.("eauth: storing endpoint at {(trip u.host)}"))
@@ -865,7 +966,8 @@
     ::  record that we started an asynchronous response
     ::
     =/  connection=outstanding-connection
-      [action [authenticated secure address request] [suv identity] ~ 0]
+      :: ?<  ?=(%iframe -.action)  ::TODOxx removeme
+      [[%boot ~] [authenticated secure address request] [suv identity] ~ 0]
     =.  connections.state
       ::  NB: required by +handle-response and +handle-request:authentication.
       ::  XX optimize, not all requests are asynchronous
@@ -935,6 +1037,7 @@
     ::  ?^  p=(parse-http-scry url.request)
     ::    (handle-http-scry authenticated p request)
     ::
+    ::TODO  deprecate!
     ?:  =('/_~_/' (end [3 5] url.request))
       (handle-http-scry authenticated request)
     ::  handle requests to the cache, if a non-empty entry exists
@@ -945,6 +1048,44 @@
       (handle-cache-req authenticated request u.val.u.cached)
     ::
     ?-    -.action
+        %iframe
+      ::TODOxx  factor out into arm/core
+      ?~  pathowner
+        ::  nobody has bound this path, the iframe would just contain a 404,
+        ::  so serve the 404 directly
+        ::
+        %^  return-static-data-on-duct  404  'text/html'
+        (error-page 404 authenticated url.request "no such route??")
+      ::  generate a page that contains an iframe which points to the requested
+      ::  path _under the appropriate subdomain_
+      ::
+      =/  iframe-src=tape
+        %-  trip
+        %+  rap  3
+        =/  out  (need out)
+        :~  '//'         ::  same protocol
+            u.pathowner  ::  appropriate subdomain
+            '.'          ::  dot
+            (en-turf:html domain.out)  ::  our hostname (shorted found match)
+            ?~(port.out '' (cat 3 ':' (crip (a-co:co u.port.out))))
+            url.request  ::  original request target
+        ==
+      %^  return-static-data-on-duct  200  'text/html'
+      %-  as-octs:mimes:html
+      %-  crip
+      %-  en-xml:html
+      ;html
+        ;head
+          ;title:"eyre outer frame"
+          ;style:"iframe \{ height: 100%; width: 100%; }"
+          ::TODOxx  appropriate meta etc
+        ==
+        ;body
+          ;script:"TODOxx? for injecting cookies, sharing cmds etc"
+          ;iframe#portal@"{iframe-src}";
+        ==
+      ==
+    ::
         %gen
       =/  bek=beak  [our desk.generator.action da+now]
       =/  sup=spur  path.generator.action
@@ -1036,6 +1177,7 @@
       (handle-sponsor identity request)
     ::
         %four-oh-four
+      ::TODOxx  return 403 if unauthenticated?
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 authenticated url.request ~)
     ==
@@ -1180,7 +1322,7 @@
       (error-page 405 & url.request "may only GET name")
     %^  return-static-data-on-duct  200  'text/plain'
     =/  nom=@p
-      ?+(-.identity who.identity %ours our)
+      ?+(-.who.identity who.who.identity %ours our)
     (as-octs:mimes:html (scot %p nom))
   ::  +handle-http-scry: respond with scry result
   ::
@@ -1324,20 +1466,22 @@
       %^  return-static-data-on-duct  503  'text/html'
       %:  error-page
         503
-        ?=(%ours -.identity)
+        ?=(%ours -.who.identity)
         url.request.inbound-request
         "%{(trip app)} not running"
       ==
     ::  otherwise, subscribe to the agent and poke it with the request
     ::
+    =/  src=@p
+      ?+(-.who.identity who.who.identity %ours our)
     :_  state
     :~  %+  deal-as
           /watch-response/[eyre-id]
-        [identity our app %watch /http-response/[eyre-id]]
+        [src our app %watch /http-response/[eyre-id]]
       ::
         %+  deal-as
           /run-app-request/[eyre-id]
-        :^  identity  our  app
+        :^  src  our  app
         :+  %poke  %handle-http-request
         !>(`[@ta inbound-request:eyre]`[eyre-id inbound-request])
     ==
@@ -1369,7 +1513,7 @@
         %channel
       on-cancel-request:by-channel
     ::
-        ?(%scry %four-oh-four %name %host %ip %boot %sponsor)
+        ?(%scry %four-oh-four %name %host %ip %boot %sponsor %iframe)
       ::  it should be impossible for these to be asynchronous
       ::
       !!
@@ -1462,7 +1606,8 @@
         (close-session session-id |)
       ::  initialize the new session
       ::
-      =^  fex  state  (start-session %local)
+      ::TODOxx  get scope from auth params, not yet implemented
+      =^  fex  state  (start-session %local ~)
       ::  associate the new session with the request that caused the login
       ::
       ::    if we don't do this here, +handle-response will include the old
@@ -1527,7 +1672,7 @@
       =/  all=?
         ?=(^ (get-header:http 'all' arg))
       =/  sid=(unit @uv)
-        ?.  ?=(%ours -.identity)  `session-id
+        ?.  ?=(%ours -.who.identity)  `session-id
         ?~  sid=(get-header:http 'sid' arg)  `session-id
         ::  if you provided the parameter, but it doesn't parse, we just
         ::  no-op. otherwise, a poorly-implemented frontend might result in
@@ -1535,7 +1680,7 @@
         ::
         (slaw %uv u.sid)
       =/  hos=(unit @p)
-        ?.  ?=(%ours -.identity)  ~
+        ?.  ?=(%ours -.who.identity)  ~
         (biff (get-header:http 'host' arg) (cury slaw %p))
       ?~  sid
         (handle-response response)
@@ -1592,7 +1737,7 @@
         |
       ?~  session=(~(get by sessions.auth.state) u.session-id)
         |
-      &(!?=(%fake -.identity.u.session) (lte now expiry-time.u.session))
+      &(!?=(%fake -.who.identity.u.session) (lte now expiry-time.u.session))
     ::  +request-is-authenticated: checks to see if the request is "us"
     ::
     ::    We are considered authenticated if this request has an urbauth
@@ -1611,11 +1756,16 @@
         %.n
       ::  does this session have our id, and is it still valid?
       ::
-      &(?=(%ours -.identity.u.session) (lte now expiry-time.u.session))
+      &(?=(%ours -.who.identity.u.session) (lte now expiry-time.u.session))
     ::  +start-session: create a new session with %local or %guest identity
     ::
+    ::    note that only sessions with the local identity have "scope",
+    ::    foreign & fake identities are always just themselves, "foreigners",
+    ::    but "us" needs to differentiate between "us as root", "us as app",
+    ::    etc.
+    ::
     ++  start-session
-      |=  kind=?(%local %guest [%eauth who=@p])
+      |=  kind=?([%local scope=(unit desk)] %guest [%eauth who=@p])
       ^-  [[session=@uv =identity moves=(list move)] server-state]
       =;  [key=@uv sid=identity]
         =/  timeout=@dr
@@ -1634,7 +1784,10 @@
       ::
       =/  sik=@uv  new-session-key
       :-  sik
-      ?:  ?=(%local kind)      [%ours ~]
+      ?:  ?=([%local *] kind)  [[%ours ~] scope.kind]
+      ::NOTE  non-local identities always have broadest possible provenance
+      ::TODOxx  revisit, probably. interactions need to be scoped always, right?
+      :_  ~
       ?:  ?=([%eauth @] kind)  [%real who.kind]
       :-  %fake
       ::  pre-scramble our ship name into its displayed value, and
@@ -1659,7 +1812,7 @@
     ::
     ++  session-for-request
       |=  =request:http
-      ^-  [$@(session=@uv [session=@uv =identity moves=(list move)]) server-state]
+      ^-  [$@(invalid-session=@uv [session=@uv =identity moves=(list move)]) server-state]
       ?~  sid=(session-id-from-request request)
         (start-session %guest)
       ?~  ses=(~(get by sessions.auth.state) u.sid)
@@ -1713,7 +1866,7 @@
         $(moves1 (weld moves1 moz), channels t.channels)
       ::  lastly, %real sessions require additional cleanup
       ::
-      ?.  ?=(%real -.identity.u.ses)  [moves1 state]
+      ?.  ?=(%real -.who.identity.u.ses)  [moves1 state]
       =^  moves2  visitors.auth.state
         %+  roll  ~(tap by visitors.auth.state)
         |=  [[nonce=@uv visa=visitor] [moz=(list move) viz=(map @uv visitor)]]
@@ -2178,7 +2331,7 @@
           ?^  server
             ::  request for confirmation page
             ::
-            ?.  ?=(%ours -.identity)  login
+            ?.  ?=(%ours -.who.identity)  login
             =/  book  (~(gut by visiting.auth) u.server *logbook)
             =/  door  (~(get by map.book) u.nonce)
             ?~  door
@@ -2223,7 +2376,7 @@
         ?.  ?=(%'POST' method.request)
           %^  return-static-data-on-duct  405  'text/html'
           (eauth-error-page ~)
-        ?.  =(%ours -.identity)  login
+        ?.  =(%ours -.who.identity)  login
         ::  POST requests are always submissions of the confirmation page
         ::
         =/  args=(map @t @t)
@@ -2254,7 +2407,7 @@
     --
   ::  +channel: per-event handling of requests to the channel system
   ::
-  ::    Eyre offers a remote interface to your Urbit through channels, which
+  ::    Eyre offers a remote interface to gall through channels, which
   ::    are persistent connections on the server which can be disconnected and
   ::    reconnected on the client.
   ::
@@ -2612,7 +2765,7 @@
       =|  errors=(map @ud @t)
       =/  og-state  state
       =/  from=ship
-        ?+(-.identity who.identity %ours our)
+        ?+(-.who.identity who.who.identity %ours our)
       |-
       ::
       ?~  requests
@@ -2663,7 +2816,7 @@
           ^-  move
           %+  deal-as
             /channel/poke/[channel-id]/(scot %ud request-id)
-          :^  from  ship  app
+          :^  from  ship  app  ::TODOxx  could pass identity
           ^-  task:agent:gall
           :+  %poke-as  mark
           ?-  -.i.requests
@@ -2687,7 +2840,7 @@
           %-  (trace 1 |.("subscribing to {<app>} on {<path>}"))
           %+  deal-as
             (subscription-wire channel-id request-id from ship app)
-          [from ship app %watch path]
+          [identity ship app %watch path]
         ::
         =.  session.channel-state.state
           %+  ~(jab by session.channel-state.state)  channel-id
@@ -2726,7 +2879,7 @@
           %-  (trace 1 |.("leaving subscription to {<app>}"))
           %+  deal-as
             (subscription-wire channel-id subscription-id from ship app)
-          [from ship app %leave ~]
+          [identity ship app %leave ~]
         ::
         =.  session.channel-state.state
           %+  ~(jab by session.channel-state.state)  channel-id
@@ -3162,7 +3315,7 @@
               ::  tough luck, we don't create/revive sessions here
               ::
               [response-header.http-event sessions]
-            =/  kind  ?:(?=(%fake -.identity.u.ses) %guest %auth)
+            =/  kind  ?:(?=(%fake -.who.identity.u.ses) %guest %auth)
             =/  timeout
               =,  session-timeout
               ?:(?=(%guest kind) guest auth)
@@ -3285,12 +3438,41 @@
     =^  success  bindings.state
       ::  prevent binding in reserved namespaces
       ::
-      ?:  ?|  ?=([%'~' *] path.binding)    ::  eyre
+      ?:  ?|  ?=(~ path.binding)           ::  wrapper page  ::TODOxx  naming
+              ?=([%'~' *] path.binding)    ::  eyre
               ?=([%'~_~' *] path.binding)  ::  runtime
               ?=([%'_~_' *] path.binding)  ::  scries
           ==
         [| bindings.state]
       [& (insert-binding [binding duct action] bindings.state)]
+    :: ::  if we (re)bound a desk binding, update path provenance lookups
+    :: ::
+    :: =?  server-state  success
+    ::   ::  remove old binding from lookup, if it was a desk binding
+    ::   ::
+    ::   =/  prev  (~(get by path-to-desk.state) path.binding)
+    ::   =?  desk-paths.state  ?=(^ prev)
+    ::     (~(del ju desk-paths.state) u.prev path.binding)
+    ::   =?  path-to-desk.state  ?=(^ prev)
+    ::     (~(del by path-to-desk.state) path.binding)
+    ::   ::  add new binding to lookup, if it is a desk binding
+    ::   ::
+    ::   ?.  ?=(%app -.action)  server-state
+    ::   =/  target-desk=desk
+    ::     =/  res=(unit (unit (cask vase)))
+    ::       ::TODOxx  what if agent starts running on a different desk? (^:
+    ::       (rof [~ ~] /eyre %gd our app.action da+now /)
+    ::     ::TODOxx  gall might give [~ ~] if not running. should handle gracefully,
+    ::     ::        at the very least reject binding, but mb gall should be more
+    ::     ::        "optimistic"
+    ::     ?>  ?=([~ ~ %desk *] res)
+    ::     !<(desk q.u.u.res)
+    ::   =.  desk-paths.state
+    ::     (~(put ju desk-paths.state) target-desk path.binding)
+    ::   =.  path-to-desk.state
+    ::     (~(put by path-to-desk.state) path.binding target-desk)
+    ::   server-state
+    ::
     :_  state
     [duct %give %bound & binding]~
   ::  +remove-binding: removes a binding if it exists and is owned by this duct
@@ -3384,7 +3566,7 @@
     %-  sy
     %+  murn  ~(tap by sessions.auth.state)
     |=  [sid=@uv session]
-    ?.  ?=(%ours -.identity)  ~
+    ?.  ?=(%ours -.who.identity)  ~
     (some (scot %uv sid))
   ::  +new-session-key
   ::
@@ -3394,14 +3576,30 @@
     ?.  (~(has by sessions.auth.state) candidate)
       candidate
     $(eny (shas %try-again candidate))
+  ::  +deal-as: interact with gall agent as .identity
+  ::
+  ::    importantly, .identity specifies _both_ the src.bowl
+  ::    _and_ the provenance path (which ends up in sap.bowl).
+  ::    passing a @p .identity means eyre does the task on behalf of
+  ::    itself: the resulting provenance path is /eyre, and
+  ::    gall _does not_ check permissions on the task.
+  ::    passing a full-fledged $identity means eyre does the task on
+  ::    behalf of the desk inside of the provenance.identity: the
+  ::    resulting path is /eyre/[desk] (or still /eyre for "root"), and
+  ::    gall _does_ check permission on that task.
   ::
   ++  deal-as
     |=  [=wire identity=$@(@p identity) =ship =dude:gall =task:agent:gall]
     ^-  move
     =/  from=@p
       ?@  identity  identity
-      ?+(-.identity who.identity %ours our)
-    [duct %pass wire %g %deal [from ship /eyre] dude task]
+      ?+(-.who.identity who.who.identity %ours our)
+    =/  sap=path
+      ?@  identity  /eyre
+      /eyre  ::TODOxx uncomment once we have new types
+      :: ?~  provenance.identity  /eyre
+      :: /eyre/[u.provenance.identity]
+    [duct %pass wire %g %deal [from ship sap] dude task]
   ::
   ++  trace
     |=  [pri=@ print=(trap tape)]
@@ -3487,7 +3685,7 @@
   ^-  wire
   =/  from=@p
     ?@  as  as
-    ?+(-.as who.as %ours our)
+    ?+(-.who.as who.who.as %ours our)
   %+  weld  (channel-wire channel-id request-id)
   ::NOTE  including the originating identity is important for the band-aid
   ::      solution currently present in +on-gall-response, where we may
@@ -3742,7 +3940,7 @@
     =/  siz=(list @uv)
       %+  murn  ~(tap by sessions.auth.server-state.ax)
       |=  [sid=@uv session]
-      ?:(?=(%ours -.identity) (some sid) ~)
+      ?:(?=(%ours -.who.identity) (some sid) ~)
     =|  moves=(list (list move))
     |-  ^-  [(list move) _http-server-gate]
     ?~  siz
@@ -4142,6 +4340,7 @@
 ++  http-server-gate  ..$
 ::  +load: migrate old state to new state (called on vane reload)
 ::
+::TODOxx  migrations
 ++  load
   =>  |%
       +$  axle-any
@@ -4267,7 +4466,6 @@
         ==
       --
   |=  old=axle-any
-  ^+  http-server-gate
   ?-    -.old
   ::
   ::  adds /~/name
@@ -4334,33 +4532,35 @@
   ::  each session and channel
   ::
       %~2023.4.11
-    %=  $
-      date.old  %~2023.5.15
-    ::
-        connections.old
-      %-  ~(run by connections.old)
-      |=  outstanding-connection-3
-      ^-  outstanding-connection
-      [action inbound-request [*@uv [%ours ~]] response-header bytes-sent]
-    ::
-        auth.old
-      :_  [~ ~ [~ ~ now]]
-      %-  ~(run by sessions.auth.old)
-      |=  s=session-3
-      ^-  session
-      [[%ours ~] s]
-    ::
-        session.channel-state.old
-      %-  ~(run by session.channel-state.old)
-      |=  c=channel-3
-      ^-  channel
-      [-.c [%ours ~] +.c]
-    ::
-        bindings.old
-      %+  insert-binding  [[~ /~/host] outgoing-duct.old [%host ~]]
-      %+  insert-binding  [[~ /~/eauth] outgoing-duct.old [%eauth ~]]
-      bindings.old
-    ==
+    !!  ::TODOxx
+    :: %=  $
+    ::   date.old  %~2023.5.15
+    :: ::
+    ::     connections.old
+    ::   %-  ~(run by connections.old)
+    ::   |=  outstanding-connection-3
+    ::   ^-  outstanding-connection
+    ::   !!  ::TODOxx
+    ::   :: [action inbound-request [*@uv [%ours ~]] response-header bytes-sent]
+    :: ::
+    ::     auth.old
+    ::   :_  [~ ~ [~ ~ now]]
+    ::   %-  ~(run by sessions.auth.old)
+    ::   |=  s=session-3
+    ::   ^-  session
+    ::   [[%ours ~] s]
+    :: ::
+    ::     session.channel-state.old
+    ::   %-  ~(run by session.channel-state.old)
+    ::   |=  c=channel-3
+    ::   ^-  channel
+    ::   [-.c [%ours ~] +.c]
+    :: ::
+    ::     bindings.old
+    ::   %+  insert-binding  [[~ /~/host] outgoing-duct.old [%host ~]]
+    ::   %+  insert-binding  [[~ /~/eauth] outgoing-duct.old [%eauth ~]]
+    ::   bindings.old
+    :: ==
   ::
   ::  adds /~/boot, /~/sponsor and /~/ip
   ::

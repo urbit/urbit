@@ -3240,13 +3240,17 @@
         [%okay nonce=@uv url=@t]
         [%shut nonce=@uv]
     ==  ==
-  ::  $identity: authentication method & @p
+  ::  $identity: authentication method & @p, w/ desk
   ::
   +$  identity
-    $~  [%ours ~]
-    $%  [%ours ~]                                       ::  local, root
-        [%fake who=@p]                                  ::  guest id
-        [%real who=@p]                                  ::  authed cross-ship
+    $:  $=  who
+        $~  [%ours ~]
+        $%  [%ours ~]                                   ::  local, root
+            [%fake who=@p]                              ::  guest id
+            [%real who=@p]                              ::  authed cross-ship
+        ==
+      ::
+        provenance=(unit desk)
     ==
   ::  channel-state: state used in the channel system
   ::
@@ -3395,6 +3399,9 @@
         ::  respond with the default file not found page
         ::
         [%four-oh-four ~]
+        ::  xx
+        ::
+        [%iframe ~]
     ==
   ::  +generator: a generator on the local ship that handles requests
   ::

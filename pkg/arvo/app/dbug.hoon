@@ -1343,10 +1343,10 @@
     |=  =identity
     ^-  json
     %-  ship:enjs:format
-    ?-  -.identity
+    ?-  -.who.identity
       %ours  our.bowl
-      %fake  who.identity
-      %real  who.identity
+      %fake  who.who.identity
+      %real  who.who.identity
     ==
   ::
   ++  render-action
