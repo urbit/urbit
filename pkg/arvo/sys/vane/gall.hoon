@@ -2545,7 +2545,7 @@
       =+  ;;(=fine-request noun)
       =<  mo-abet
       (mo-handle-key-request:mo-core ship agent-name path.fine-request)
-    ?>  ?=([?(%ge %gm) @ ~] path)  :: XX remove %gm
+    ?>  ?=([%ge @ ~] path)
     =/  agent-name  i.t.path
     ::
     =+  ;;(=ames-request-all noun)
