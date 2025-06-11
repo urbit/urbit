@@ -2315,21 +2315,21 @@
         (emit hen %pass /what %$ what/fil)
       ::
       ++  suspend-non-essentials
-        =/  lit=(list [desk zest])
-          %+  turn
-            ~(tap by dos.rom.ruf)
-          |=  [=desk =dojo]
-          [desk ?:(ese.dojo %live %held)]
-        =/  sus=(list [desk zest])
-          %+  skim
-            lit
-          |=  [=desk =zest]  ?=(%held zest)
-        :*  hen
-            %pass
-            /kiln/bump/zeal
-            %c
-            %zeal
-            sus
+        =/  sys-kel=weft
+          =/  w=waft  (get-kelvin yoki)
+          ?@  -.w  w  !!
+        :*  hen  %pass  /kiln/bump/zeal  %c  %zeal
+        %+  roll  ~(tap by dos.rom.ruf)
+        |=  [[=desk =dojo] l=(list [desk zest])]
+        ?:  ese.dojo  l
+        =/  kel=(set weft)
+          ?:  (~(has by wic.dom.dojo) sys-kel)
+            [sys-kel ~ ~]
+          %-  waft-to-wefts
+          %+  get-kelvin  %|
+          (tako-to-yaki:ze (~(got by hit.dom.dojo) let.dom.dojo))
+        ?:  (~(has in kel) sys-kel)  l
+        [[desk %held] l]
         ==
       --
     --
