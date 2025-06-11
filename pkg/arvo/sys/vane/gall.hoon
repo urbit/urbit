@@ -54,7 +54,8 @@
 ::    blocked: moves to agents that haven't been started yet
 ::    bug: debug printing configuration
 ::    leaves: retry nacked %leaves timer, if set\
-::    flubs: list of flubs apps, per ship
+::    flubs: list of flubed apps, per ship
+::    halts: list of missing/suspended apps, per ship
 ::
 +$  state
   $+  state
@@ -67,6 +68,7 @@
       leaves=(unit [=duct =wire date=@da])
       flub-ducts=(map ship duct)
       flubs=(jug ship app=term)
+      halts=(jug ship app=term)
   ==
 ::  $routes: new cuff; TODO: document
 ::
@@ -394,6 +396,7 @@
       leaves=(unit [=duct =wire date=@da])
       flub-ducts=(map ship duct)
       flubs=(jug ship app=term)
+      halts=(jug ship app=term)
   ==
 +$  spore-17  [%17 spore]
 --
@@ -542,6 +545,7 @@
       =.  mo-core  ap-abet:ap-core
       (mo-clear-queue dap)
     ::
+
     =.  yokes.state
       %+  ~(put by yokes.state)  dap
       %*    .  *$>(%live yoke)
@@ -1251,6 +1255,7 @@
       ::  XX if %leave, cork the flow; otherwise, halt it?
       ::  currently we always halt it
       ::
+      =.  halts.state  (~(put ju halts.state) ship agent-name)
       (mo-give %flub agent-name)
     ::  %u/%leave gets automatically acked
     ::
@@ -2868,13 +2873,13 @@
         [a (snag (dec a) m)]
       ==
     ==
-  ::  add flubbed agents
+  ::  add flubbed/halted agents
   ::
   ++  spore-16-to-17
     |=  old=spore-16
     ^-  spore-17
     :-  %17
-    old(leaves [leaves.old flub-ducts=~ flubs=~])
+    old(leaves [leaves.old flub-ducts=~ flubs=~ halts=~])
   ::
   --
 ::  +scry: standard scry
