@@ -3816,6 +3816,7 @@
                 %cork  (on-cork:event-core ship.task)
                 %kroc  (on-kroc:event-core bones.task)
                 %deep  (on-deep:event-core deep.task)
+                %flub  (on-flub:event-core [ship bone]:task)
               ::
                 %keen  (on-keen:event-core +.task)
                 %chum  (on-chum:event-core +.task)
@@ -3967,7 +3968,7 @@
             ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
           %-  %^  ev-trace  odd.veb  her
               |.("%flubbing: agent={<agent>} bone={<bone>} {(spud wire)}")
-          abet:(on-flub:peer-core bone agent)
+          abet:(on-take-flub:peer-core bone agent)
         ::  +on-take-done: handle notice from vane that it processed a message
         ::
         ++  on-take-done
@@ -4607,6 +4608,16 @@
             :: [duct %pass /flub %g %flub ship agent (mix 0b1 bone) agent-path]
           ::
           --
+        ::
+        ++  on-flub
+          |=  [=ship =bone]
+          ^+  event-core
+          =/  ship-state  (~(get by peers.ames-state) ship)
+          ?>  ?=([~ %known *] ship-state)
+          =+  peer-core=(abed-peer:pe ship +.u.ship-state)
+          =.  halt.peer-state.peer-core
+            (~(put in halt.peer-state.peer-core) bone)
+          abet:peer-core
         ::  +on-stun: poke %ping app when hearing a STUN response
         ::
         ++  on-stun
@@ -5321,7 +5332,7 @@
                 tang.u.dud
             abet:(call:(abed:mu bone) %hear [message-num +.meat]:shut-packet)
           ::
-          ++  on-flub
+          ++  on-take-flub
             |=  [=bone agent=term]
             ^+  peer-core
             abet:(call:(abed:mi:peer-core bone) %flub agent)
@@ -12055,6 +12066,7 @@
         %rate  (pe-rate dud +.task)
         %prog  (pe-prog dud +.task)
         %whey  (pe-whey dud +.task)
+        %flub  (pe-flub dud +.task)
       ::  |mesa only tasks
       ::
         %heer  (pe-heer dud +.task)
@@ -12313,6 +12325,21 @@
       ?:  ?=(%mesa -.ship-state)
         (pe-chum ship %a %x '1' %$ %whey (scot %ud boq) (scot %p our) path)
       (call:am-core hen dud %soft %whey ship^path boq)
+    ::
+    ++  pe-flub
+      |=  [dud=(unit goof) =ship * =bone]  :: ignore agent
+      =/  ship-state  (find-peer ship)
+      ::
+      ?:  ?=(%ames -.ship-state)
+        (call:am-core hen ~ soft+flub/ship^bone)
+      ?>  ?=([~ %known *] +.ship-state)
+      %-  %+  %*(ev-tace ev-core her ship)  sun.veb.bug.ames-state
+          |.("hear local %flub; halt side=[{<bone>} %for]")
+      =^  moves  ames-state
+        =<  ev-abet:fo-abet(halt.state %.y)
+        (fo-abed:fo:(ev-abed:ev-core hen ship +.u.ship-state) bone %for)
+      moves^vane-gate
+    ::
     ::
     +|  %mesa-tasks
     ::
@@ -12635,7 +12662,7 @@
     (call:me-core sample)
     ::  common tasks
     ::
-      ?(%plea %cork %keen %chum %yawn %wham %load %rate %prog %whey)
+      ?(%plea %cork %keen %chum %yawn %wham %load %rate %prog %whey %flub)
     (~(call pe-core hen) dud task)
     ::  core-dependent tasks
     ::

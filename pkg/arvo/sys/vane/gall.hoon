@@ -499,7 +499,7 @@
     ^+  mo-core
     ?~  duct=(~(get by flub-ducts.state) ship)
       mo-core  :: XX log
-    (mo-emit u.duct %give %boon %d %flub agent)
+    (mo-emit u.duct %give %boon %d %flub agent bone)
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
@@ -898,11 +898,11 @@
           %d
         ?.  ?=(%flub mark.ames-response)
           mo-core  :: XX log
-        =+  ;;  agent=term  noun.ames-response
+        =+  ;;  [agent=term =bone:ames]  noun.ames-response
         ::  add agent to list of suspended/not running agents
         ::
         =.  flubs.state  (~(put ju flubs.state) u.ship agent)
-        mo-core
+        (mo-pass /remote-flub %a %flub u.ship agent bone)
       ==
     ==
   ::
