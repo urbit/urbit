@@ -671,7 +671,7 @@
     ::
     ?:  (~(has by flubs.state) ship)
       mo-core
-    ::  first contact; update state and subscribe to notifications
+    ::  first contact; update state and subscribe to /flub notifications
     ::
     =.  flubs.state  (~(put by flubs.state) ship ~)
     ::  ask foreign %gall to notify us about %flubs
@@ -884,7 +884,13 @@
     ?~  ship=(slaw %p +<.wire)
       mo-core
     ?+    sign-arvo  !!
-        [%ames %done *]  mo-core  :: XX record in state that we get the ack?
+        [%ames %done *]
+      ?~  error.sign-arvo
+        mo-core
+      ::  if error, delete the ship from .flubs; on next contact we will retry
+      ::
+      =.  flubs.state  (~(del by flubs.state) u.ship)
+      mo-core
       ::
         [%ames %boon *]
       =/  =ames-response  ;;(ames-response payload.sign-arvo)
