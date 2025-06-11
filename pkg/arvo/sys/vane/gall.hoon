@@ -495,11 +495,11 @@
     $(subs t.subs)
   ::
   ++  mo-flub
-    |=  [prov=path =ship agent=term =bone =agent=path]
+    |=  [prov=path =ship agent=term =bone:ames]
     ^+  mo-core
     ?~  duct=(~(get by flub-ducts.state) ship)
       mo-core  :: XX log
-    (mo-emit u.duct %give %boon %d %flub agent bone agent-path)
+    (mo-emit u.duct %give %boon %d %flub agent)
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
@@ -892,40 +892,11 @@
           %d
         ?.  ?=(%flub mark.ames-response)
           mo-core  :: XX log
-        ::  XX  ignore bone?
-        ::  retrieve duct from .outstanding.state and %pass onto /sys/way wire
-        ::  when passing the %rock
-        ::
-        =+  ;;  [agent=term bone=@ud =app=path]  noun.ames-response
+        =+  ;;  agent=term  noun.ames-response
         ::  add agent to list of suspended/not running agents
         ::
         =.  flubs.state  (~(put ju flubs.state) u.ship agent)
-        ::  send %rock to %ames, to delete the flow
-        ::
-        =.  mo-core  (mo-pass /rock %a %rock u.ship bone)
-        ::  we need to kill any outgoing subscription to this ship
-        ::
-        =/  agents=(list [name=term =yoke])  ~(tap by yokes.state)
-        =.  outstanding.state
-          %-  malt
-          %+  skip  ~(tap by outstanding.state)
-          |=  [[=^wire =duct] (qeu remote-request)]
-          ?&  =(/sys/way/(scot %p u.ship)/[agent] wire)
-              ?|  ?=([^ *] duct)
-                  =+  pax=-.duct
-                  =>  .(pax `(pole knot)`pax)
-                  ?.  ?=([%gall %use agent=@ @ %out ship=@ app=@ path=*] pax)
-                    %.n
-                  ?|  =(path.pax app-path) :: search for both %poke/%watch paths
-                      ?|  ?=(^ path.pax)
-                          =(+.path.pax app-path)
-          ==  ==  ==  ==
-        ?~  yoke=(~(get by yokes.state) agent)
-          mo-core
-        ?.  ?=(%live -.u.yoke)
-          mo-core
-        =/  app  (ap-abed:ap agent [~ u.ship /flub])
-        ap-abet:(ap-flub:app u.ship)
+        mo-core
       ==
     ==
   ::
@@ -1267,15 +1238,14 @@
              ?=(%nuke -.u.yok)
              ?=(%.n -.agent.u.yok)
         ==
-      ::  %ames wil pass a $deep task to itself to cork the flow, deleting and
-      ::  adding it to the corked set, at the same time, on the /flub flow, we
-      ::  send a %boon with the bone that the sender needs to cork to drop any
-      ::  outstanding $pleas
+      ::  %ames wil pass a $deep task to itself to halt the flow, at the same
+      ::  time, on the /flub flow, we send a %boon with the bone that the sender
+      ::  needs to halt as well to stop sending any outstanding $pleas
       ::
-      =/  =path  ?+(-.ames-request ~ %s path.ames-request)
-      ::  ?=(%u -.ames-request) cork the flow; other wise, freeze it
+      ::  XX if %leave, cork the flow; otherwise, halt it?
+      ::  currently we always halt it
       ::
-      (mo-give %flub agent-name path)  :: XX add cork=?
+      (mo-give %flub agent-name)
     ::  %u/%leave gets automatically acked
     ::
     =?  mo-core  ?=(%u -.ames-request)
@@ -2297,19 +2267,6 @@
       ?:  ?=(%a v)
         ap-kill-up(agent-duct duct)
       ap-load-delete(agent-duct duct)
-    ::  +ap-flub: leave all subscriptions to .ship after hearing a %flub
-    ::
-    ++  ap-flub
-      |=  =ship
-      ^+  ap-core
-      =/  subs  ~(tap in ~(key by boat.yoke))
-      |-  ^+  ap-core
-      ?~  subs  ap-core
-      =+  [wyr dok]=i.subs
-      ?.  =(ship ship.dok)
-        $(subs t.subs)
-      =.  ap-core  (ap-pass wyr %agent dok %leave ~)  ::  XX pass a %flub task
-      $(subs t.subs)
     ::  +ap-mule: run virtualized with intercepted scry, preserving type
     ::
     ::    Compare +mute and +mule.  Those pass through scry, which

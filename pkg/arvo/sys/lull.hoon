@@ -898,7 +898,6 @@
         [%whey =spar boq=@ud]       :: weight of noun bounded at .path.spar
                                     :: as measured by .boq
         [%gulp path]                :: like %plug, but for |mesa
-        [%rock =ship =bone]         :: inmediately cork a forward flow
     ==
   ::
   ::  $gift: effect from ames
@@ -1045,7 +1044,7 @@
         [%kill =ship =bone]
         [%ahoy =ship =bone]  :: XX remove bone; it's just next-bone.ossuary
         [%prun =ship =user=path =duct =ames=path]
-        [%flub =ship agent=term =bone =agent=path]
+        [%flub =ship agent=term =bone] :: XX add [=agent=path cork=?]
     ==
   ::  $stun: STUN notifications, from unix
   ::
@@ -1173,6 +1172,7 @@
         keens=(map path keen-state)
         =chain
         tip=(jug =user=path [duct =ames=path])
+        halt=(set bone)
     ==
   +$  keen-state
     $+  keen-state
@@ -1588,6 +1588,17 @@
     ?:  (lte size 8)  [8 %0b10]
     [16 %0b11]
   ::
+  ::  $axle: state for entire vane
+  ::
+  ::    peers:       states of connections to other ships
+  ::    unix-duct:   handle to give moves to unix
+  ::    life:        our $life; how many times we've rekeyed
+  ::    rift:        our $rift
+  ::    bug:         debug printing configuration
+  ::    snub:        blocklist for incoming packets
+  ::    cong:        parameters for marking a flow as clogged
+  ::    dead:        dead flow consolidation timer and recork timer, if set
+  ::
   +$  axle
     $:  peers=(map ship ship-state)
         =unix=duct  ::  [//ames/0v0 ~]
@@ -1600,7 +1611,7 @@
         $:  flow=[%flow (unit dead-timer)]  ::  ... for |ames
             chum=[%chum (unit dead-timer)]  ::  ... for |mesa
             cork=[%cork (unit dead-timer)]  ::  ... for %nacked corks
-            rots=[%rots (unit dead-timer)]  ::  ... fir expiring direct routes
+            rots=[%rots (unit dead-timer)]  ::  ... for expiring direct routes
         ==
         ::
         =server=chain                       ::  for serving %shut requests
@@ -1708,10 +1719,8 @@
         ::
         line=@ud
         ::  a flow halts when:
-        ::    - forward: %gall passes a %rock to %ames that automatically corks
-        ::      the flow
-        ::    - backward: a %plea gets %flubbed; if the plea is a %leave the
-        ::      flow turns into closing and then starts peekikng for the %cork
+        ::    - forward: %gall passes a %flub to %ames
+        ::    - backward: a %plea gets %flubbed over the wire
         ::
         halt=?(%.y %.n)
         ::  outbound %poke payloads, bounded in the ship's namespace
@@ -3665,7 +3674,7 @@
     $%  [%boon payload=*]                               ::  ames response
         [%noon id=* payload=*]
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
-        [%flub agent=term =agent=path]                  ::  refuse to take plea
+        [%flub agent=term]                              ::  refuse to take plea
         [%unto p=unto]                                  ::
     ==                                                  ::
   +$  task                                              ::  incoming request
