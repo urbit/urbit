@@ -68,7 +68,7 @@
       leaves=(unit [=duct =wire date=@da])
       flub-ducts=(map ship duct)
       flubs=(jug ship app=term)
-      halts=(jug ship app=term)
+      halts=(jug app=term ship app=term)
   ==
 ::  $routes: new cuff; TODO: document
 ::
@@ -396,7 +396,7 @@
       leaves=(unit [=duct =wire date=@da])
       flub-ducts=(map ship duct)
       flubs=(jug ship app=term)
-      halts=(jug ship app=term)
+      halts=(jug app=term ship)
   ==
 +$  spore-17  [%17 spore]
 --
@@ -579,6 +579,7 @@
     ::
     =.  mo-core  ap-abet:ap-core
     =.  mo-core  (mo-clear-queue dap)
+    :: =.  mo-core  (mo-handle-flub dap)
     =/  =suss  [dap %boot now]
     (mo-pass (mo-talk %.y suss))
   ::  +mo-send-foreign-request: handle local request to .ship
@@ -1255,7 +1256,7 @@
       ::  XX if %leave, cork the flow; otherwise, halt it?
       ::  currently we always halt it
       ::
-      =.  halts.state  (~(put ju halts.state) ship agent-name)
+      =.  halts.state  (~(put ju halts.state) agent-name ship)
       (mo-give %flub agent-name)
     ::  %u/%leave gets automatically acked
     ::
