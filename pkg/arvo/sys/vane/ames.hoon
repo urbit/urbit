@@ -621,21 +621,21 @@
           [%known peer-state-25]
       ==
     ::
-  +$  peer-state-25
-    $+  peer-state-25
-    $:  [=symmetric-key =life =rift =public-key sponsor=ship]
-        route=(unit [direct=? =lane])
-        =qos
-        =ossuary
-        snd=(map bone message-pump-state)
-        rcv=(map bone message-sink-state)
-        nax=(set [=bone =message-num])
-        closing=(set bone)
-        corked=(set bone)
-        keens=(map path keen-state)
-        =chain
-        tip=(jug =user=path [duct =ames=path])
-    ==
+    +$  peer-state-25
+      $+  peer-state-25
+      $:  [=symmetric-key =life =rift =public-key sponsor=ship]
+          route=(unit [direct=? =lane])
+          =qos
+          =ossuary
+          snd=(map bone message-pump-state)
+          rcv=(map bone message-sink-state)
+          nax=(set [=bone =message-num])
+          closing=(set bone)
+          corked=(set bone)
+          keens=(map path keen-state)
+          =chain
+          tip=(jug =user=path [duct =ames=path])
+      ==
     ::
     +$  ames-state-22
       $+  ames-state-22
