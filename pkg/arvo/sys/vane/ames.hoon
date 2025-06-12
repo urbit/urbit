@@ -10558,13 +10558,31 @@
             =+  core=~(ev-core ev(ames-state state) hen ship +.per-sat)
             ::
             =^  resend-moves  state
-              =;  c=_core  ev-abet:c
+              =;  c=_core
+                ev-abet:c
               %-  ~(rep by pit.per.core)
               |=  [[=path req=request-state] core=_core]
               ::  update and print connection status
               ::
               =?  core  (is-peer-dead:core now [her qos.per]:core)
                 (ev-update-qos:core qos.per.core(- %dead))
+              ::  XX find the bone for the flow inspecting the duct and checking
+              ::  if the flow is halted; add state to .req to track halt?
+              ::
+              ?:  ?|  ?=(^ pay.req)
+                      %-  ~(rep by for.req)
+                      |=  [[hen=duct *] found=?(%.y %.n)]
+                      ?.  ?=([[%ames %mesa %flow *] *] hen)
+                        found
+                      =>  .(i.hen `(pole knot)`i.hen)
+                      ?.  ?=([@ @ @ %ack %for ship=@ rift=@ bone=@ ~] i.hen)
+                        found
+                      =+  bone=(slav %ud bone.i.hen)
+                      ?~  flow=(~(get by flows.per.core) bone %for)
+                        found
+                      halt.u.flow
+                  ==
+                core
               ::  if =(~ pay.req); %naxplanation, %cork or external (i.e. not
               ::  coming from %ames) $peek request
               ::
@@ -10798,7 +10816,7 @@
                     ?.  ?=([[%ames %mesa %flow *] *] hen)
                       c
                     =>  .(i.hen `(pole knot)`i.hen)
-                    ::  if the flow is in closing we need to stop +peeking for the
+                    ::  if the flow is in closing we need to stop +peeking for
                     ::  %cork (in +regress-peek) and remove the flow on our side
                     ::
                     ?.  ?=([@ @ @ %nax ?(%for %bak) h=@ r=@ bone=@ ~] i.hen)
