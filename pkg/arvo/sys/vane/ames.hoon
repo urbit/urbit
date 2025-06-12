@@ -5423,7 +5423,9 @@
                 ==
               =/  =blob  (attestation-packet [her her-life]:channel)
               (send-blob for=| her blob `known/peer-state)
-            ?:  (is-corked bone)
+            ?:  ?|  (is-corked bone)
+                    (is-halted bone)
+                ==
               ::  no-op if the bone (or, if a naxplanation, the reference bone)
               ::  was corked, because the flow doesn't exist anymore
               ::  TODO: clean up corked bones?
