@@ -8848,6 +8848,7 @@
           rib=*(set [type type hoon])
           vet=`?`&
       ==
+  =|  ros=(map term $-((list hoon) hoon))
   =+  sut=`type`%noun
   |%
   ++  clip
@@ -10010,12 +10011,6 @@
   ++  mint
     ~/  %mint
     |=  [gol=type gen=hoon]
-    ^-  [p=type q=nock]
-    (mimt gol gen ~)
-  ::
-  ++  mimt
-    ~/  %mimt
-    |=  [gol=type gen=hoon ros=(map term $-((list hoon) hoon))]
     ^-  [p=type q=nock]
     ::~&  %pure-mint
     |^  ^-  [p=type q=nock]
