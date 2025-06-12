@@ -13033,7 +13033,12 @@
       :-  '\''
         (stag %sand (stag %t qut))
       :-  '('
-        (stag %cncl (ifix [pal par] (most ace wide)))
+        ;~  pose
+          (stag %cncl (ifix [pal par] (most ace wide)))
+        ::
+          %+  stag  %hxcn
+          (ifix [pal par] ;~(plug ;~(sfix sym zap ace) (most ace wide)))
+        ==
       :-  '*'
         ;~  pose
           (stag %kttr ;~(pfix tar wyde))
