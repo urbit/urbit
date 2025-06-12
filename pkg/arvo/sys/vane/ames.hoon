@@ -12786,16 +12786,13 @@
     (take:am-core sample)
   =/  ship-state  (find-peer her.u.parsed-wire)
   %.  sample
-  ?:  ?=(%ames -.ship-state)
-    ?:  ?|  ?=([%jael %private-keys *] sign)
-            ?=([%jael %public-keys *] sign)
-            ?=([%jael %turf *] sign)
-        ==
-      ::  key/turf %jael gifts are captured in the |sy:mesa core
-      ::
-      take:me-core
-    take:am-core
-  take:me-core
+  ?:  ?|  ?=(%mesa -.ship-state)
+          ?=(%jael -.sign)
+      ==
+    ::  %jael gifts are captured in the |sy:mesa core
+    ::
+    take:me-core
+  take:am-core
 ::  +stay: extract state before reload
 ::
 ++  stay  [%26 adult/ames-state]
