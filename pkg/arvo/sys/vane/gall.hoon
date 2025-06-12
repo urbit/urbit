@@ -1037,7 +1037,9 @@
     ?~  yok=(~(get by yokes.state) dap)
       mo-core
     ?>  ?=([~ %live *] yok)
-    %-  ~(rep in (~(got by halts.state) dap))
+    ?~  halts=(~(get by halts.state) dap)
+      mo-core
+    %-  ~(rep in u.halts)
     |=  [=ship m=_mo-core]
     =.  halts.state.m  (~(del ju halts.state.m) dap ship)
     (mo-emit:m (~(got by flub-ducts.state) ship) %give %boon %d %goad dap)
