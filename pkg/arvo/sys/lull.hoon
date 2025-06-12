@@ -898,7 +898,8 @@
         [%whey =spar boq=@ud]       :: weight of noun bounded at .path.spar
                                     :: as measured by .boq
         [%gulp path]                :: like %plug, but for |mesa
-        $>(%flub deep)              :: halt flow after we hear remote %flub
+        $>(%flub deep)              :: halt flow after we hear a remote %flub
+        [%goad ship]                :: re-start flow after remote agent is %live
     ==
   ::
   ::  $gift: effect from ames

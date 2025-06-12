@@ -579,7 +579,7 @@
     ::
     =.  mo-core  ap-abet:ap-core
     =.  mo-core  (mo-clear-queue dap)
-    :: =.  mo-core  (mo-handle-flub dap)
+    =.  mo-core  (mo-give-halts dap)
     =/  =suss  [dap %boot now]
     (mo-pass (mo-talk %.y suss))
   ::  +mo-send-foreign-request: handle local request to .ship
@@ -901,13 +901,29 @@
       =/  =ames-response  ;;(ames-response payload.sign-arvo)
       ?+    -.ames-response  !!  :: XX log
           %d
-        ?.  ?=(%flub mark.ames-response)
-          mo-core  :: XX log
-        =+  ;;  [agent=term =bone:ames]  noun.ames-response
-        ::  add agent to list of suspended/not running agents
+        ?+    mark.ames-response  mo-core
+            %flub
+          =+  ;;  [foreign-agent=term =bone:ames]  noun.ames-response
+          ::  add agent to list of suspended/not running agents
+          ::
+          =.  flubs.state  (~(put ju flubs.state) u.ship foreign-agent)
+          (mo-pass /remote-flub %a %flub u.ship foreign-agent bone)
         ::
-        =.  flubs.state  (~(put ju flubs.state) u.ship agent)
-        (mo-pass /remote-flub %a %flub u.ship agent bone)
+            %goad
+          =+  ;;  foreign-agent=term  noun.ames-response
+          =.  flubs.state
+            =-  ::  if we have deleted all flubbed apps, re-add the ship
+                ::  with an empty list of apps
+                ::
+                %+  ~(put by flubs.state)  u.ship
+                (~(gut by flubs.state) u.ship ~)
+            (~(del ju flubs.state) u.ship foreign-agent)
+          %-  ~(rep by outstanding.state)
+          |=  [[[=^wire =duct] queue=*] m=_mo-core]
+          ?.  =(/sys/way/(scot %p u.ship)/[foreign-agent] wire)
+            m
+          (mo-pass(hen duct) wire %a %goad u.ship)
+        ==
       ==
     ==
   ::
@@ -1014,6 +1030,17 @@
       =/  card   [%slip %g %deal sack dap p.blocker]
       [duct card]
     $(moves [move moves])
+  ::
+  ++  mo-give-halts
+    |=  dap=term
+    ^+  mo-core
+    ?~  yok=(~(get by yokes.state) dap)
+      mo-core
+    ?>  ?=([~ %live *] yok)
+    %-  ~(rep in (~(got by halts.state) dap))
+    |=  [=ship m=_mo-core]
+    =.  halts.state.m  (~(del ju halts.state.m) dap ship)
+    (mo-emit:m (~(got by flub-ducts.state) ship) %give %boon %d %goad dap)
   ::  +mo-filter-queue: remove all blocked tasks from ship.
   ::
   ++  mo-filter-queue

@@ -9108,6 +9108,16 @@
           ^-  duct
           ~|  %dangling-bone^her^bone
           (~(got by by-bone.ossuary.per) bone)
+        ::  +ev-goad-flow: try to send any queued messages if sen-window is open
+        ::
+        ++  ev-goad-flow
+          =/  =bone
+            ~|  goad-flow-missing/hen
+            (~(got by by-duct.ossuary.per) hen)
+          =+  fo-core=(fo-abed:fo bone %for)
+          ::  if the ack/payload is already in the .pit, it will assert it
+          ::
+          fo-abet:fo-send:fo-core(halt.state %.n)
         ::
         +|  %flows
         ::
@@ -12340,6 +12350,23 @@
         (fo-abed:fo:(ev-abed:ev-core hen ship +.u.ship-state) bone %for)
       moves^vane-gate
     ::
+    ++  pe-goad
+      |=  [dud=(unit goof) =ship]
+      =/  ship-state  (find-peer ship)
+      ::
+      ?:  ?=(%ames -.ship-state)
+        (call:am-core hen ~ soft+goad/ship^bone)
+      ?>  ?=([~ %known *] +.ship-state)
+      %-  %+  %*(ev-tace ev-core her ship)  sun.veb.bug.ames-state
+          |.("hear %goad; wake side=[{<bone>} %for]")
+      =^  moves  ames-state
+        =<  ev-abet
+        ev-goad-flow:(ev-abed:ev-core hen ship +.u.ship-state)
+      ::
+      :: =^  moves-prod  vane-gate
+      ::   (call:me-core hen dud %soft %prod ship ~)
+      :: (weld moves moves-prod)^vane-gate
+      moves^vane-gate
     ::
     +|  %mesa-tasks
     ::
@@ -12662,7 +12689,7 @@
     (call:me-core sample)
     ::  common tasks
     ::
-      ?(%plea %cork %keen %chum %yawn %wham %load %rate %prog %whey %flub)
+      ?(%plea %cork %keen %chum %yawn %wham %load %rate %prog %whey %flub %goad)
     (~(call pe-core hen) dud task)
     ::  core-dependent tasks
     ::
