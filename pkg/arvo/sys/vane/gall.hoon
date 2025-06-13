@@ -906,7 +906,7 @@
       =/  blocked=(qeu blocked-move)
         =/  waiting  (~(get by blocked.state) dap)
         =/  deals  (fall waiting *(qeu blocked-move))
-        =/  deal  [hen routes |+unto]
+        =/  deal  [[[%gall %use wire] hen] routes |+unto]
         (~(put to deals) deal)
       ::
       %-  (slog leaf+"gall: {<dap>} dozing, got {<-.unto>}" ~)
@@ -933,11 +933,13 @@
       mo-core
     =^  [=duct =routes blocker=(each deal unto)]  blocked
       ~(get to blocked)
-    ?:  ?=(%| -.blocker)  $
+    ?.  ?=([[%gall %use @ @ %out @ @ *] *] duct)
+      $
     =/  =move
       =/  =sack  [ship.attributing.routes our path.attributing.routes]
-      =/  card   [%slip %g %deal sack dap p.blocker]
-      [duct card]
+      ?:  ?=(%& -.blocker)
+        [duct %slip %g %deal sack dap p.blocker]
+      [duct %give %unto p.blocker]
     $(moves [move moves])
   ::  +mo-filter-queue: remove all blocked tasks from ship.
   ::
