@@ -1126,7 +1126,7 @@
     =/  ship=(unit ship)  (slaw %p ship.crumbs)
     =/  bone=(unit @ud)
       ?.  ?=([bone=@t ~] req.crumbs)  ~
-      (slaw %ud bone.req.crumbs)
+      (rush bone.req.crumbs dem)
     ?:  ?|  ?=(~ ship)
             &(?=([bone=@ ~] req.crumbs) ?=(~ bone))
         ==
