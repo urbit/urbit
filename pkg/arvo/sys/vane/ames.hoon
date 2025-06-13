@@ -5754,7 +5754,7 @@
                   ::  in a series of rapid handling of many mesages (e.g. if the
                   ::  ship comes back online after a while). this meant that
                   ::  we could have heard the naxplanation for current, acked it
-                  ::  on its naxplanation flow, but the naxplnation had
+                  ::  on its naxplanation flow, but the naxplanation had
                   ::  the wrong reference message number, so we never cleared it
                   ::  increased current , and any subsequent (n)ack got queued.
                   ::
@@ -9767,6 +9767,10 @@
             =/  next-msg=@  next.snd  ::  cache
             ::
             =?  fo-core  no-pokes
+              ::  XX this only happens for migrated flows, for |mesa: if this is
+              ::  a duplicate the no-op happens in the packet layer when
+              ::  checking entries in the .pit
+              ::
               %-  %+  ev-tace  odd.veb.bug.ames-state
                   |.("no message to %naxplain {<[bone=bone seq=seq]>}")
               fo-core
@@ -9774,7 +9778,10 @@
             =/  error=(unit error:ames)  `error
             :: XX  if the ack we receive is not for the first, no-op
             :: XX  as currently implemented we only hear the naxplanation of
-            ::     the oldest message, unless this is a migrated naxplanation
+            ::     the oldest message, unless this is a migrated flow where we
+            ::     could have queued %nacks, but no outstanding payloads. in the
+            ::     handling of queued acks, we are going to, in-order, peek for
+            ::     the naxplanations referenced by these %nacks
             ::
             =?  fo-core  miss-nax
               ::  this messsaged should have been nacked
@@ -9807,6 +9814,12 @@
             ::  XX
             ::
             =?  send-window.snd  (lth send-window.snd send-window-max.snd)
+              ::  XX  send-window-max.snd is always 1, so we are only to have
+              ::  one mesage in flight at any time. is that value changes we
+              ::  would need to only increase the window if we have actually
+              ::  deleted anything from loads (if this is an outstanding
+              ::  in-order message)
+              ::
               +(send-window.snd)
             ::  XX check path.spar
             ::  XX path.spar will be the full namespace path, peel off before?
@@ -9955,8 +9968,8 @@
               ::
               [seq ~]^fo-core
             ::  either there is no payloads outstanding, but next queued message
-            ::  ack is the next one in order, or ext ack in the cache is for the
-            ::  next sent %poke; process
+            ::  ack is the next one in order, or next cached ack is for the next
+            ::  sent %poke; process
             ::
             %-  %+  ev-tace  msg.veb.bug.ames-state
                 |.("process next queued ack {<[bone=bone seq=key.u.cack]>}")
