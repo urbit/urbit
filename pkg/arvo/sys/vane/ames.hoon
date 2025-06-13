@@ -3861,6 +3861,7 @@
                 %kroc  (on-kroc:event-core bones.task)
                 %deep  (on-deep:event-core deep.task)
                 %flub  (on-flub:event-core [ship bone]:task)
+                %goad  (on-goad:event-core ship.task)
               ::
                 %keen  (on-keen:event-core +.task)
                 %chum  (on-chum:event-core +.task)
@@ -4658,10 +4659,18 @@
           ^+  event-core
           =/  ship-state  (~(get by peers.ames-state) ship)
           ?>  ?=([~ %known *] ship-state)
+          abet:(on-halt-flow:(abed-peer:pe ship +.u.ship-state) bone)
+        ::
+        ++  on-goad
+          |=  =ship
+          ^+  event-core
+          =/  ship-state  (~(get by peers.ames-state) ship)
+          ?>  ?=([~ %known *] ship-state)
           =+  peer-core=(abed-peer:pe ship +.u.ship-state)
-          =.  halt.peer-state.peer-core
-            (~(put in halt.peer-state.peer-core) bone)
-          abet:peer-core
+          =/  =bone
+            ~|  goad-flow-missing/duct
+            (~(got by by-duct.ossuary.peer-state.peer-core) duct)
+          abet:(on-goad-flow:peer-core bone)
         ::  +on-stun: poke %ping app when hearing a STUN response
         ::
         ++  on-stun
@@ -5473,6 +5482,7 @@
               ::  no-op if the bone (or, if a naxplanation, the reference bone)
               ::  was corked, because the flow doesn't exist anymore
               ::  TODO: clean up corked bones?
+              ::  for halted flows, this won't start new timers; %wake on %goad
               ::
               peer-core
             ::  maybe resend some timed out packets
@@ -5511,12 +5521,21 @@
             |=  =bone
             ^+  peer-core
             peer-core(closing.peer-state (~(put in closing.peer-state) bone))
-          ::  +on-halt-flow: mark .bone as halt
+          ::  +on-halt-flow: mark .bone as halt; timer will %rest on-wake
           ::
           ++  on-halt-flow
             |=  =bone
             ^+  peer-core
             peer-core(halt.peer-state (~(put in halt.peer-state) bone))
+          ::  +on-goad-flow: delete .bone from halted flows; %wake timers
+          ::
+          ++  on-goad-flow
+            |=  =bone
+            ^+  peer-core
+            ?.  (~(has in halt.peer-state) bone)
+              peer-core
+            =.  halt.peer-state  (~(del in halt.peer-state) bone)
+            abet:(call:(abed:mu bone) %wake ~)
           ::  +on-kill-flow: delete flow on cork sender side
           ::
           ++  on-kill-flow
@@ -6571,7 +6590,9 @@
                 ::  tell congestion control a packet timed out
                 ::
                 =.  metrics.state  on-timeout:gauge
-                =?  metrics.state  (lth 100.000 tries:-:+:-:(pop:packet-queue live.state))
+                =?  metrics.state  %+  lth
+                                     100.000
+                                   tries:-:+:-:(pop:packet-queue live.state)
                   =/  jitter=@da  (mul ~s1 (~(rad og eny) 43.200))
                   metrics.state(rto (add ~d1 jitter))
                 ::
@@ -12426,6 +12447,7 @@
       =^  moves  ames-state
         =<  ev-abet
         ev-goad-flow:(ev-abed:ev-core hen ship +.u.ship-state)
+      ::  XX don't prod; wait for the ~m2 /retry timer
       ::
       :: =^  moves-prod  vane-gate
       ::   (call:me-core hen dud %soft %prod ship ~)
