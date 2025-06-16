@@ -1010,7 +1010,7 @@
       =/  blocked=(qeu blocked-move)
         =/  waiting  (~(get by blocked.state) dap)
         =/  deals  (fall waiting *(qeu blocked-move))
-        =/  deal  [hen routes |+unto]
+        =/  deal  [[[%gall %use wire] hen] routes |+unto]
         (~(put to deals) deal)
       ::
       %-  (slog leaf+"gall: {<dap>} dozing, got {<-.unto>}" ~)
@@ -1037,11 +1037,13 @@
       mo-core
     =^  [=duct =routes blocker=(each deal unto)]  blocked
       ~(get to blocked)
-    ?:  ?=(%| -.blocker)  $
+    ::
     =/  =move
       =/  =sack  [ship.attributing.routes our path.attributing.routes]
-      =/  card   [%slip %g %deal sack dap p.blocker]
-      [duct card]
+      ?:  ?=(%& -.blocker)
+        ?>  ?=(^ duct)
+        [+.duct %slip %g %deal sack dap p.blocker]
+      [duct %give %unto p.blocker]
     $(moves [move moves])
   ::
   ++  mo-give-halts
@@ -2916,13 +2918,28 @@
         [a (snag (dec a) m)]
       ==
     ==
-  ::  add flubbed/halted agents
+  ::  drop unto blocked moves; add flubbed/halted agents
   ::
   ++  spore-16-to-17
     |=  old=spore-16
     ^-  spore-17
     :-  %17
-    old(leaves [leaves.old flub-ducts=~ flubs=~ halts=~])
+    %=    old
+        leaves
+      [leaves.old flub-ducts=~ flubs=~ halts=~]
+    ::
+        blocked
+      %-  ~(urn by blocked.old)
+      |=  [=term q=(qeu blocked-move)]
+      ^+  q
+      %-  ~(rep by q)
+      |=  [=blocked-move r=(qeu blocked-move)]
+      ?:  ?=(%| -.move.blocked-move)
+        r
+      ::  /gall-use-wire will be dropped in mo-clear-queu
+      ::
+      (~(put to r) blocked-move(duct [/gall-use-wire duct.blocked-move]))
+    ==
   ::
   --
 ::  +scry: standard scry
