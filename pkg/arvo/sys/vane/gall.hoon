@@ -68,7 +68,7 @@
       leaves=(unit [=duct =wire date=@da])
       flub-ducts=(map ship duct)
       flubs=(jug ship app=term)
-      halts=(jug app=term ship app=term)
+      halts=(jug app=term [ship =duct])
   ==
 ::  $routes: new cuff; TODO: document
 ::
@@ -408,7 +408,7 @@
       leaves=(unit [=duct =wire date=@da])
       flub-ducts=(map ship duct)
       flubs=(jug ship app=term)
-      halts=(jug app=term ship)
+      halts=(jug app=term [ship duct])
   ==
 +$  spore-17  [%17 spore]
 --
@@ -516,7 +516,7 @@
       mo-core  :: XX log
     ::  XX don't give bone? receiver can ignore it and halt all flows to agent
     ::
-    (mo-emit u.duct %give %boon %flub agent bone)
+    (mo-emit u.duct %give %boon %0 %flub agent bone)
   ::  +mo-receive-core: receives an app core built by %ford.
   ::
   ::    Presuming we receive a good core, we first check to see if the agent
@@ -557,6 +557,7 @@
       =/  ap-core  (ap-abed:ap dap [~ our prov])
       =.  ap-core  (ap-reinstall:ap-core agent)
       =.  mo-core  ap-abet:ap-core
+      =.  mo-core  (mo-give-halts dap)
       (mo-clear-queue dap)
     ::
 
@@ -912,31 +913,30 @@
       mo-core
       ::
         [%ames %boon *]
-      =+  ;;  =flub-response  payload.sign-arvo
-      ?>  ?=(%0 -.flub-response)
-      ?-    +<.flub-response
+      ~|  payload.sign-arvo
+      =+  ;;  response=flub-response  payload.sign-arvo
+      ?>  ?=(%0 -.response)
+      ?-    +<.response
           %flub
         ::  XX ignore bone? find all outstanding request to .foreign-agent?
         ::
-        =+  ;;  [foreign-agent=term =bone:ames]  noun.ames-response
         ::  add agent to list of suspended/not running agents
         ::
-        =.  flubs.state  (~(put ju flubs.state) u.ship foreign-agent)
-        (mo-pass /remote-flub %a %flub u.ship foreign-agent bone)
+        =.  flubs.state  (~(put ju flubs.state) u.ship foreign-agent.response)
+        (mo-pass /remote-flub %a %flub u.ship [foreign-agent bone]:response)
       ::
           %goad
-        =+  ;;  foreign-agent=term  noun.ames-response
         =.  flubs.state
           =-  ::  if we have deleted all flubbed apps, re-add the ship
               ::  with an empty list of apps to no resend the /flub $plea
               ::
               (~(put by -) u.ship (~(gut by -) u.ship ~))
-          (~(del ju flubs.state) u.ship foreign-agent)
+          (~(del ju flubs.state) u.ship foreign-agent.response)
         %-  ~(rep by outstanding.state)
         |=  [[[=^wire =duct] queue=*] m=_mo-core]
-        ?.  =(/sys/way/(scot %p u.ship)/[foreign-agent] wire)
+        ?.  =(/sys/way/(scot %p u.ship)/[foreign-agent.response] wire)
           m
-        (mo-pass(hen duct) wire %a %goad u.ship)
+        (mo-pass:m(hen duct) wire %a %goad u.ship)
       ==
     ==
   ::
@@ -1055,9 +1055,10 @@
     ?~  halts=(~(get by halts.state) dap)
       mo-core
     %-  ~(rep in u.halts)
-    |=  [=ship m=_mo-core]
-    =.  halts.state.m  (~(del ju halts.state.m) dap ship)
-    (mo-emit:m (~(got by flub-ducts.state) ship) %give %boon %goad dap)
+    |=  [[=ship =duct] m=_mo-core]
+    =.  halts.state.m  (~(del ju halts.state.m) dap ship duct)
+    =.  m  (mo-give:m(hen duct) %goad ~)  ::  local %goad
+    (mo-emit:m (~(got by flub-ducts.state) ship) %give %boon %0 %goad dap)
   ::  +mo-filter-queue: remove all blocked tasks from ship.
   ::
   ++  mo-filter-queue
@@ -1300,8 +1301,14 @@
       ::  XX if %leave, cork the flow; otherwise, halt it?
       ::  currently we always halt it
       ::
-      =.  halts.state  (~(put ju halts.state) agent-name ship)
-      (mo-give %flub agent-name)
+      =.  halts.state  (~(put ju halts.state) agent-name ship hen)
+      %+  mo-give  %flub
+      ::  if we are waiting to hear the /gf plea, only %flub the flow in %ames
+      ::  and skip sending the %flub $boon
+      ::
+      ?.  (~(has by flub-ducts.state) ship)
+        ~
+      [~ agent-name]
     ::  %u/%leave gets automatically acked
     ::
     =?  mo-core  ?=(%u -.ames-request)
