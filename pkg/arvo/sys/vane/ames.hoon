@@ -1265,13 +1265,13 @@
     +$  queued-event-4-til-8
       $+  queued-event-4-til-8
       $%  [%call =duct wrapped-task=(hobo task-4-til-8)]
-          [%take =wire =duct sign=sign-25]
+          [%take =wire =duct sign=sign]
       ==
     ::
     +$  queued-event-9-til-11
       $+  queued-event-9-til-11
       $%  [%call =duct wrapped-task=(hobo task-9-til-11)]
-          [%take =wire =duct sign=sign-25]
+          [%take =wire =duct sign=sign]
       ==
     ::
     +$  task-9-til-11
@@ -1285,7 +1285,7 @@
     +$  queued-event-12-til-16
       $+  queued-event-12-til-16
       $%  [%call =duct wrapped-task=(hobo task-12-til-16)]
-          [%take =wire =duct sign=sign-25]
+          [%take =wire =duct sign=sign]
       ==
     ::
     +$  task-12-til-16
@@ -1309,7 +1309,7 @@
     +$  queued-event-17-and-18
       $+  queued-event-17-and-18
       $%  [%call =duct wrapped-task=(hobo task-16-and-18)]
-          [%take =wire =duct sign=sign-25]
+          [%take =wire =duct sign=sign]
       ==
     ::
     +$  task-16-and-18
@@ -1352,7 +1352,7 @@
     +$  queued-event-19-and-20
       $+  queued-event-19-and-20
       $%  [%call =duct wrapped-task=(hobo task-19-and-20)]
-          [%take =wire =duct sign=sign-25]
+          [%take =wire =duct sign=sign]
       ==
     ::
     +$  peer-state-20
@@ -1508,22 +1508,6 @@
           keens=(map path keen-state)
           =chain
           tip=(jug =user=path [duct =ames=path])
-      ==
-    ::
-    +$  sign-25
-      $~  [%behn %wake ~]
-      $%  [%ames $>(?(%tune %sage) gift)]
-          [%behn $>(%wake gift:behn)]
-          [%gall $%([%flub ~] $>(%unto gift:gall))]
-          [%jael $>(?(%private-keys %public-keys %turf) gift:jael)]
-          $:  @tas
-              $>(?(%noon %boon %done) gift)
-      ==  ==
-    ::
-    +$  queued-event-25
-      $+  queued-event-25
-      $%  [%call =duct wrapped-task=task]
-          [%take =wire =duct sign=sign-25]
       ==
     ::
     +|  %dialectics
@@ -2509,14 +2493,14 @@
               ==  ==
               $:  %21                            :: remove %heed and %jilt
               $%  $:  %larva
-                      events=(qeu queued-event-25)
+                      events=(qeu queued-event)
                       state=ames-state-21
                   ==
                   [%adult state=ames-state-21]
               ==  ==
               $:  %22                            :: start dead /routes timer
               $%  $:  %larva
-                      events=(qeu queued-event-25)
+                      events=(qeu queued-event)
                       state=ames-state-22
                   ==
                   [%adult state=ames-state-22]
@@ -2556,8 +2540,7 @@
           [%5 %larva *]
         ~>  %slog.1^leaf/"ames: larva %5 load"
         =.  cached-state   `[%5 state.old]
-        =.  queued-events   %-  event-25-to-last
-                            %-  event-20-to-25
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             %-  event-12-til-16-to-17
                             %-  event-9-til-11-to-12
@@ -2572,8 +2555,7 @@
           [%6 %larva *]
         ~>  %slog.1^leaf/"ames: larva %6 load"
         =.  cached-state   `[%6 state.old]
-        =.  queued-events   %-  event-25-to-last
-                            %-  event-20-to-25
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             %-  event-12-til-16-to-17
                             %-  event-9-til-11-to-12
@@ -2588,8 +2570,7 @@
           [%7 %larva *]
         ~>  %slog.1^leaf/"ames: larva %7 load"
         =.  cached-state   `[%7 state.old]
-        =.  queued-events   %-  event-25-to-last
-                            %-  event-20-to-25
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             %-  event-12-til-16-to-17
                             %-  event-9-til-11-to-12
@@ -2604,8 +2585,7 @@
           [%8 %larva *]
         ~>  %slog.1^leaf/"ames: larva %8 load"
         =.  cached-state   `[%8 state.old]
-        =.  queued-events   %-  event-25-to-last
-                            %-  event-20-to-25
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             %-  event-12-til-16-to-17
                             %-  event-9-til-11-to-12
@@ -2620,8 +2600,7 @@
           [%9 %larva *]
         ~>  %slog.1^leaf/"ames: larva %9 load"
         =.  cached-state   `[%9 state.old]
-        =.  queued-events   %-  event-25-to-last
-                            %-  event-20-to-25
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             %-  event-12-til-16-to-17
                             %-  event-9-til-11-to-12
@@ -2636,8 +2615,7 @@
           [%10 %larva *]
         ~>  %slog.1^leaf/"ames: larva %10 load"
         =.  cached-state   `[%10 state.old]
-        =.  queued-events   %-  event-25-to-last
-                            %-  event-20-to-25
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             %-  event-12-til-16-to-17
                             %-  event-9-til-11-to-12
@@ -2652,8 +2630,7 @@
           [%11 %larva *]
         ~>  %slog.1^leaf/"ames: larva %11 load"
         =.  cached-state   `[%11 state.old]
-        =.  queued-events   %-  event-25-to-last
-                            %-  event-20-to-25
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             %-  event-12-til-16-to-17
                             %-  event-9-til-11-to-12
@@ -2668,8 +2645,7 @@
           [%12 %larva *]
         ~>  %slog.1^leaf/"ames: larva %12 load"
         =.  cached-state   `[%12 state.old]
-        =.  queued-events   %-  event-25-to-last
-                            %-  event-20-to-25
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             %-  event-12-til-16-to-17
                             events.old
@@ -2683,8 +2659,7 @@
           [%13 %larva *]
         ~>  %slog.1^leaf/"ames: larva %13 load"
         =.  cached-state   `[%13 state.old]
-        =.  queued-events   %-  event-25-to-last
-                            %-  event-20-to-25
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             %-  event-12-til-16-to-17
                             events.old
@@ -2698,8 +2673,7 @@
           [%14 %larva *]
         ~>  %slog.1^leaf/"ames: larva %14 load"
         =.  cached-state   `[%14 state.old]
-        =.  queued-events   %-  event-25-to-last
-                            %-  event-20-to-25
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             %-  event-12-til-16-to-17
                             events.old
@@ -2713,8 +2687,7 @@
           [%15 %larva *]
         ~>  %slog.1^leaf/"ames: larva %15 load"
         =.  cached-state   `[%15 state.old]
-        =.  queued-events   %-  event-25-to-last
-                            %-  event-20-to-25
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             %-  event-12-til-16-to-17
                             events.old
@@ -2728,8 +2701,7 @@
           [%16 %larva *]
         ~>  %slog.1^leaf/"ames: larva %16 load"
         =.  cached-state   `[%16 state.old]
-        =.  queued-events   %-  event-25-to-last
-                            %-  event-20-to-25
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             %-  event-12-til-16-to-17
                             events.old
@@ -2743,8 +2715,7 @@
           [%17 %larva *]
         ~>  %slog.1^leaf/"ames: larva %17 load"
         =.  cached-state   `[%17 state.old]
-        =.  queued-events   %-  event-25-to-last
-                            %-  event-20-to-25
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             events.old
         larval-gate
@@ -2757,8 +2728,7 @@
           [%18 %larva *]
         ~>  %slog.1^leaf/"ames: larva %18 load"
         =.  cached-state   `[%18 state.old]
-        =.  queued-events   %-  event-25-to-last
-                            %-  event-20-to-25
+        =.  queued-events   %-  event-20-to-last
                             %-  event-17-and-18-to-20
                             events.old
         larval-gate
@@ -2771,8 +2741,7 @@
           [%19 %larva *]
         ~>  %slog.1^leaf/"ames: larva %19 load"
         =.  cached-state   `[%19 state.old]
-        =.  queued-events   %-  event-25-to-last
-                            %-  event-20-to-25
+        =.  queued-events   %-  event-20-to-last
                             events.old
         larval-gate
       ::
@@ -2784,8 +2753,7 @@
           [%20 %larva *]
         ~>  %slog.1^leaf/"ames: larva %20 load"
         =.  cached-state  `[%20 state.old]
-        =.  queued-events  %-  event-25-to-last
-                           %-  event-20-to-25
+        =.  queued-events  %-  event-20-to-last
                            events.old
         larval-gate
       ::
@@ -2797,7 +2765,7 @@
           [%21 %larva *]
         =.  cached-state  `[%21 state.old]
         ~>  %slog.1^leaf/"ames: larva %21 load"
-        =.  queued-events  (event-25-to-last events.old)
+        =.  queued-events  events.old
         larval-gate
       ::
           [%22 %adult *]
@@ -2808,7 +2776,7 @@
           [%22 %larva *]
         =.  cached-state  `[%22 state.old]
         ~>  %slog.1^leaf/"ames: larva %22 load"
-        =.  queued-events  (event-25-to-last events.old)
+        =.  queued-events  events.old
         larval-gate
       ::
           [%23 *]
@@ -2888,25 +2856,15 @@
           [%deep %nack ship.task nack-bone.task ;;(message [hed msg])]
         ==
       ::
-      ++  event-20-to-25
+      ++  event-20-to-last
         |=  events=(qeu queued-event-19-and-20)
-        ^-  (qeu queued-event-25)
+        ^-  (qeu queued-event)
         %-  ~(rep in events)
-        |=  [e=queued-event-19-and-20 q=(qeu queued-event-25)]
+        |=  [e=queued-event-19-and-20 q=(qeu queued-event)]
         ?.  ?=(%call -.e)  (~(put to q) e)
         =/  task=task-19-and-20  ((harden task-19-and-20) wrapped-task.e)
         ?:  ?=(?(%heed %jilt) -.task)  q
         (~(put to q) e(wrapped-task task))
-      ::
-      ++  event-25-to-last
-        |=  events=(qeu queued-event-25)
-        ^-  (qeu queued-event)
-        %-  ~(rep in events)
-        |=  [e=queued-event-25 q=(qeu queued-event)]
-        %-  ~(put to q)
-        ?.  ?=([%take *] e)             e
-        ?.  ?=([%gall %flub *] sign.e)  e
-        [%take wire.e duct.e %gall %flub ~]
       ::
       --
     ::
