@@ -813,21 +813,28 @@
       :+  (fall (forwarded-secure u.forwards) secure)
         (clap (forwarded-host u.forwards) host head)
       (fall (forwarded-for u.forwards) address)
+    ::  according to spec, all http 1.1 connections must include a host header
+    ::  (and for http 2 and 3, the same info should be in the ":authority"
+    ::  pseudo-header). if they don't, we'll send a 400.
+    ::
+    ?.  ?=(^ host)
+      ::TODO  should send a 400, but don't want to go through the song & dance
+      ::      of putting connection into state. should revisit this once
+      ::      request handling has been refactored.
+      !!
     ::  parse the hostname from the request, then
     ::  find the domain that we _know_ (.domains.state) that is the
     ::  longest prefix for the requested hostname and take its smallest
     ::  subdomain as the candidate request-target desk
     ::
     ::    example 1: request to mopfel.np.io:
-    ::               `[domain=~['io' 'np' 'mopfel'] candidate=~]
+    ::               `[domain=~['io' 'np' 'mopfel'] desk=~]
     ::    example 2: request to pals.mopfel.np.io:
-    ::               `[domain=~['io' 'np' 'mopfel'] candidate=`%pals]
+    ::               `[domain=~['io' 'np' 'mopfel'] desk=`%pals]
     ::
-    ?>  ?=(^ host)  ::TODOxx  review
-    =/  out=(unit [[domain=turf port=(unit @ud)] candidate=(unit desk)])
+    =/  inner=(unit [[domain=turf port=(unit @ud)] desk=(unit desk)])
       ::REVIEW  should just parse earlier?
       =/  doom=(unit [port=(unit @ud) doom=(each turf @if)])
-        ::TODOxx  review client differences?
         (rush u.host thor:de-purl:html)
       ~&  doom=doom
       ?.  ?=([~ * %& *] doom)  ~  ::  only proper hostnames supported
@@ -851,29 +858,36 @@
       ?:  (gte (lent u.res) (lent suffix))
         [ours u.res]
       nop
-    ~&  [host=host out=out]
+    ~&  [host=host inner=inner]
+    ::  .pathowner: desk that the target path is bound to (~ for base/eyre)
     ::
     =/  pathowner=(unit desk)
-      ::TODOxx  review
       =/  [=action @t]
         (get-action-for-binding host url.request)
-      ?.  ?=(%app -.action)  ~
-      ::  we need to look this up by scry every time,
-      ::  storing the result in state could get stale.
-      ::  we need to look this up before the +get-action-for-binding call,
-      ::  because ... shenanigans?
+      ?+  -.action  ~
+        %gen  `desk.generator.action
       ::
-      ~|  app=app.action
-      =/  res=(unit (unit (cask vase)))
-        (rof [~ ~] /eyre %gd [our app.action da+now] /$)
-      :: ?:  ?=([~ ~] res)  ~  ::TODOxx  review
-      ?>  ?=([~ ~ %desk *] res)
-      `!<(desk q.u.u.res)
+          %app
+        ::  we need to look this up by scry every time,
+        ::  storing the result in state could get stale.
+        ::  we need to look this up before the +get-action-for-binding call,
+        ::  because ... shenanigans?
+        ::
+        ~|  app=app.action
+        =/  res=(unit (unit (cask vase)))
+          (rof [~ ~] /eyre %gd [our app.action da+now] /$)
+        ::  .res could be [~ ~] if the agent has never been run.
+        ::  that will crash this assertion, and that's fine: the request would
+        ::  get a non-200 eventually anyway.
+        ::
+        ?>  ?=([~ ~ %desk *] res)
+        `!<(desk q.u.u.res)
+      ==
     ::
     =/  [=action suburl=@t]
       ::  if the domain is not known to us, we can't serve on it.
       ::
-      ?~  out
+      ?~  inner
         :_  url.request
         ~&  [%for-oh-ofr-a url=url.request]
         [%four-oh-four ~]
@@ -882,24 +896,22 @@
       ::  because eyre handles the request itself.
       ::
       ?~  pathowner
-        ::TODOxx  also handle '/', homepage case
-        ?>  =('/~/' (end 3^3 url.request))  ::NOTE  always eyre endpoint
+        ::NOTE  per .pathowner implementation, this will always be an
+        ::      "eyre endpoint", never %app or %gen
         (get-action-for-binding host url.request)
       ::  if the domain is known, but has no desk in the subdomain,
       ::  this is the "homepage" case.
       ::  even if the requested path isn't bound, serve the iframe.
       ::  the iframe will then contain the 404 (or real route if present).
       ::
-      ?~  candidate.u.out
-        :_  url.request
-        [%iframe ~]  ::url.request]  ::TODO  superfluous?
+      ?~  desk.u.inner
+        [[%iframe ~] url.request]
       ::  if the subdomain points to a desk that does not own the request path,
       ::  (a desk that did not bind that path,) we cannot resolve the request.
       ::
-      ?.  =(u.candidate.u.out u.pathowner)
-        :_  url.request
+      ?.  =(u.desk.u.inner u.pathowner)
         ~&  [%for-oh-ofr-b url=url.request]
-        [%four-oh-four ~]
+        [[%four-oh-four ~] url.request]
       ::  finally, if we are serving under a known domain, whose subdomain
       ::  maps to a desk that owns the request path, resolve to the configured
       ::  binding.
@@ -912,14 +924,15 @@
     ::      eyre-handled requests are always synchronous, provides a fruitful
     ::      angle for refactoring...
     =^  ?(invalid=@uv [suv=@uv =identity som=(list move)])  state
-      %-  session-for-request:authentication
-        request
-      ::TODOxx  re-review, we don't think this is right anymore... 20250513
-      :: ::  scope passed here is used for new guest sessions.
-      :: ::  guests should get the smallest appropriate scope
-      :: ::  for the specific request.
-      :: ::
-      :: ?~(out ~ candidate.u.out)
+      ?^  inner
+        (session-for-request:authentication desk.u.inner request)
+      ::NOTE  careful! this is wack!
+      ::      but this case always gets a %four-oh-four, which will instantly
+      ::      remove this from connection state (and not extend the non-
+      ::      existent session-id).
+      ?>  ?=(%four-oh-four -.action)
+      :_  state
+      [*@uv [[%fake ~fipfes-fipfes-fipfes-fipfes--fipfes-fipfes-fipfes-fipfes] ~] ~]
     ?@  -
       ::  the request provided a session cookie that's not (or no longer)
       ::  valid. to make sure they're aware, tell them 401
@@ -934,7 +947,6 @@
         ::      deletes the connection from state.
         %+  ~(put by connections.state)  duct
         ^-  outstanding-connection
-        ?<  ?=(%iframe -.action)  ::TODOxx removeme
         [action [| secure address request] [invalid [[%fake *@p] ~]] ~ 0]
       ::  their cookie was invalid, make sure they expire it
       ::
@@ -1062,12 +1074,12 @@
       =/  iframe-src=tape
         %-  trip
         %+  rap  3
-        =/  out  (need out)
+        =/  inner  (need inner)
         :~  '//'         ::  same protocol
             u.pathowner  ::  appropriate subdomain
             '.'          ::  dot
-            (en-turf:html domain.out)  ::  our hostname (shorted found match)
-            ?~(port.out '' (cat 3 ':' (crip (a-co:co u.port.out))))
+            (en-turf:html domain.inner)  ::  our hostname (shorted found match)
+            ?~(port.inner '' (cat 3 ':' (crip (a-co:co u.port.inner))))
             url.request  ::  original request target
         ==
       %^  return-static-data-on-duct  200  'text/html'
@@ -1805,20 +1817,28 @@
       (~(raw og (shas %fake-name eny)) 128)
     ::  +session-for-request: get the session details for the request
     ::
-    ::    returns the @ case if an invalid session is provided.
-    ::    creates a guest session if the request does not have any session.
+    ::    returns the @ case if an invalid session is provided,
+    ::    or the session's provenance doesn't match the request target.
+    ::    creates a guest session if the request does not have any session
+    ::    and is for the top-level domain. (desk subdomains don't get guest
+    ::    cookies auto-minted.)
     ::    there is no need to call +give-session-tokens after this, because
     ::    guest sessions do not make valid "auth session" tokens.
     ::
     ++  session-for-request
-      |=  =request:http
+      |=  [desk=(unit desk) =request:http]
       ^-  [$@(invalid-session=@uv [session=@uv =identity moves=(list move)]) server-state]
       ?~  sid=(session-id-from-request request)
+        ?^  desk  [*@uv state]  ::NOTE  slightly wack, but correct enough
         (start-session %guest)
       ?~  ses=(~(get by sessions.auth.state) u.sid)
         [u.sid state]
       ?:  (gth now expiry-time.u.ses)
         [u.sid state]
+      ::  provenance doesn't match request target,
+      ::  they shouldn't pass this cookie!
+      ::
+      ?.  =(desk provenance.identity.u.ses)  [u.sid state]
       [[u.sid identity.u.ses ~] state]
     ::  +close-session: delete a session and its associated channels
     ::
