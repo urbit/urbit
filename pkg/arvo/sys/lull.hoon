@@ -898,7 +898,7 @@
         [%whey =spar boq=@ud]       :: weight of noun bounded at .path.spar
                                     :: as measured by .boq
         [%gulp path]                :: like %plug, but for |mesa
-        $>(%flub deep)              :: halt flow after we hear a remote %flub
+        $>(%halt deep)              :: halt flow after we hear a remote %flub
         [%goad =ship]               :: re-start flow after remote agent is %live
     ==
   ::
@@ -1046,7 +1046,7 @@
         [%kill =ship =bone]
         [%ahoy =ship =bone]  :: XX remove bone; it's just next-bone.ossuary
         [%prun =ship =user=path =duct =ames=path]
-        [%flub =ship agent=term =bone] :: XX add [=agent=path cork=?]
+        [%halt =ship agent=term =bone] :: XX add [=agent=path cork=?]
     ==
   ::  $stun: STUN notifications, from unix
   ::
@@ -3677,7 +3677,7 @@
         [%noon id=* payload=*]
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
         [%flub agent=(unit term)]                       ::  refuse to take plea
-        [%goad ~]                                       ::  ready to take plea
+        [%spur ~]                                       ::  ready to take plea
         [%unto p=unto]                                  ::
     ==                                                  ::
   +$  task                                              ::  incoming request
@@ -3692,7 +3692,7 @@
         [%doff dude=(unit dude) ship=(unit ship)]       ::  kill subscriptions
         [%rake dude=(unit dude) all=?]                  ::  reclaim old subs
         [%lave subs=(list [?(%g %a) ship dude duct])]   ::  delete stale bitt(s)
-        $>(%flub deep:ames)                             ::  send remote flub
+        $>(%halt deep:ames)                             ::  send remote %flub
         $>(%init vane-task)                             ::  set owner
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade

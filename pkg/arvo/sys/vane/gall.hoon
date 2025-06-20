@@ -360,7 +360,7 @@
       ::  handled and dropped in %ames
       ::
       $%  [%flub foreign-agent=term =bone:ames]
-          [%goad foreign-agent=term]
+          [%spur foreign-agent=term]
   ==  ==
 ::  $ames-request: network request (%plea)
 ::
@@ -508,8 +508,9 @@
       =/  ap-core  (ap-yoke:ap dude.i.subs [~ ship.i.subs prov] u.yoke)
       ap-abet:(ap-lave:ap-core [v duct]:i.subs)
     $(subs t.subs)
+  ::  +mo-halt: give remote %flub to $plea sender
   ::
-  ++  mo-flub
+  ++  mo-halt
     |=  [prov=path =ship agent=term =bone:ames]
     ^+  mo-core
     ?~  duct=(~(get by flub-ducts.state) ship)
@@ -923,9 +924,9 @@
         ::  add agent to list of suspended/not running agents
         ::
         =.  flubs.state  (~(put ju flubs.state) u.ship foreign-agent.response)
-        (mo-pass /remote-flub %a %flub u.ship [foreign-agent bone]:response)
+        (mo-pass /remote-flub %a %halt u.ship [foreign-agent bone]:response)
       ::
-          %goad
+          %spur
         =.  flubs.state
           =-  ::  if we have deleted all flubbed apps, re-add the ship
               ::  with an empty list of apps to no resend the /flub $plea
@@ -1057,8 +1058,8 @@
     %-  ~(rep in u.halts)
     |=  [[=ship =duct] m=_mo-core]
     =.  halts.state.m  (~(del ju halts.state.m) dap ship duct)
-    =.  m  (mo-give:m(hen duct) %goad ~)  ::  local %goad
-    (mo-emit:m (~(got by flub-ducts.state) ship) %give %boon %0 %goad dap)
+    =.  m  (mo-give:m(hen duct) %spur ~)  ::  un-halt flow
+    (mo-emit:m (~(got by flub-ducts.state) ship) %give %boon %0 %spur dap)
   ::  +mo-filter-queue: remove all blocked tasks from ship.
   ::
   ++  mo-filter-queue
@@ -2583,7 +2584,7 @@
       %doff  mo-abet:(mo-doff:mo-core prov +.task)
       %rake  mo-abet:(mo-rake:mo-core prov +.task)
       %lave  mo-abet:(mo-lave:mo-core prov +.task)
-      %flub  mo-abet:(mo-flub:mo-core prov +.task)
+      %halt  mo-abet:(mo-halt:mo-core prov +.task)
       %spew  mo-abet:(mo-spew:mo-core veb.task)
       %sift  mo-abet:(mo-sift:mo-core dudes.task)
       %trim  [~ gall-payload]
