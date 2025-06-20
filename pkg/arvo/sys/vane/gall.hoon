@@ -605,6 +605,7 @@
     ^+  mo-core
     ::
     =.  mo-core  (mo-track-ship ship)
+    =.  mo-core  (mo-track-flubs ship)
     ?<  ?=(?(%raw-poke %poke-as) -.deal)
     =/  =ames-request-all
       :-  %0
@@ -632,7 +633,6 @@
   ++  mo-track-ship
     |=  =ship
     ^+  mo-core
-    =.  mo-core  (mo-track-flubs ship)
     ::  if already contacted, no-op
     ::
     ?:  (~(has in contacts.state) ship)
