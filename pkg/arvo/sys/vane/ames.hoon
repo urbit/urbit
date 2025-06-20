@@ -9488,6 +9488,8 @@
                 ::
                   %flub
                 =?  halt.state   ?=(^ agent.sign)  %.y
+                =?     fo-core   ?=(^ agent.sign)
+                  (fo-emit hen %pass /flub %g %flub her u.agent.sign bone)
                 =.  pending-ack.rcv  %.n  :: XX  tack.pending-ack.rcv
                 fo-core
                 ::  un-halt the flow
