@@ -7835,7 +7835,9 @@
               =/  flow=flow-state
                 (~(got by flows) ping-bone %for)
               =+  flow-mop=((on ,@ud mesa-message) lte)
-              =/  first=[@ud mesa-message]  (need (pry:flow-mop loads.snd.flow))
+              =/  first=[@ud mesa-message]
+                %+  fall  (pry:flow-mop loads.snd.flow)
+                [(dec next.snd.flow) *mesa-message]
               :^  ~  ~  %noun
               !>  :*  ~  who  rift.ames-state  life.ames-state
                       ping-bone  -.first  next.snd.flow
