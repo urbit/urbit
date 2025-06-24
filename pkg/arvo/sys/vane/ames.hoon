@@ -5958,6 +5958,7 @@
                 ::  sink it, also drop it. the message pump has enough
                 ::  information to know that we need to start +peeking it.
                 ::
+                =+  ori-bone=bone
                 ?:  =(%2 (mod bone 4))
                   ::  %naxplanation %ack on receiver; skip bone
                   flows
@@ -5978,7 +5979,7 @@
                   ::  or produce the bunt if we were only receiving
                   ::
                   (~(gut by flows) bone^dire *flow-state)
-                =:         closing.flow  (~(has in closing.peer-state) bone)
+                =:         closing.flow  (~(has in closing.peer-state) ori-bone)
                               line.flow  last-acked.sink
                     last-acked.rcv.flow  last-acked.sink
                     ::  don't drop pending acks given to the vane. if a retry
