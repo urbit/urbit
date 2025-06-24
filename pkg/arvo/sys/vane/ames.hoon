@@ -2056,8 +2056,14 @@
                       (sub next.pump next.back-pump)
                     ?.  &(=(0 diff) =(1 (sub next.back-pump next.pump)))
                       ::  unsent messages queue needs to have at least .diff
+                      ::  minus any possible queued-message acked for
+                      ::  wich the message has been removed
                       ::
-                      (gte ~(wyt by unsent-messages.back-pump) diff)
+                      ?|  (gte ~(wyt by unsent-messages.back-pump) diff)
+                          ~|  [diff=diff ack=~(wyt by queued-message-acks.pump)]
+                          %+  gte  ~(wyt by unsent-messages.back-pump)
+                          (sub diff ~(wyt by queued-message-acks.pump))
+                      ==
                     ::  if in closing, the extra message being sent needs to be
                     ::  a %cork $plea
                     ::
