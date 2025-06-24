@@ -5680,7 +5680,7 @@
                 ::  receiver will droppped any partially received fragments
                 ::  so the full message will need to be resent.
                 ::
-                =/  live=(list [message-num message])
+                =/  live=(list [=message-num message])
                   =+  queue=((on ,@ud message-blob) lte)
                   ::  every fragment contains the actual message as a blob
                   ::  we loop over every unsent and live fragments and save
@@ -5789,6 +5789,18 @@
                 ::
                 =?  closing.flow  !naxp-bone
                   (~(has in closing.peer-state) bone)
+                ::  add tag if the flow is in a weird state
+                ::
+                =?  tag.flow  !naxp-bone
+                  ?.  ?&  !=(current.pump next.pump)  :: current message unacked
+                          ?|  !(~(has by queued-message-acks.pump) current.pump)
+                              :: if not in queued-acks, current should be live
+                              ::
+                              ?&  ?=(^ live)
+                                  !=(current.pump message-num.i.live)
+                      ==  ==  ==
+                    ~
+                  [~ %missing-current current.pump]
                 ::
                 ::  XX  do we care about this?
                 ::
@@ -10653,14 +10665,18 @@
                 %+  ~(put by snd.peer-state.core)  bone
                 =+  next=next.snd.state
                 =.  queued-message-acks.pump  acks.snd.state
-                  ?^  fist=(pry:fo-mop:fo-core loads.snd.state)
+                =;  p=_pump
+                  ?~  tag.state      p
+                  ?>  ?=(%missing-current -.u.tag.state)
+                  p(current ;;(@ud data.u.tag.state))
+                ?^  fist=(pry:fo-mop:fo-core loads.snd.state)
                   %_  pump
                     current  key.u.fist
                     next     key.u.fist
                   ==
                 =.  next.pump  next
                 ?~  acks.snd.state
-                  ::  if coming straight from ahoying the peer, we could still
+                  ::  if coming straight from ahoying the peer, we  could still
                   ::  be peeking for the naxplanation, and that would have
                   ::  the current message sequence number;
                   ::  XX  if this is a test local migration we won't find the

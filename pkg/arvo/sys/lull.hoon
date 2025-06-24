@@ -1705,6 +1705,9 @@
         ::  line: high-water mark for the last-acked message before migration
         ::
         line=@ud
+        ::  a migrated flow in a weird state is tagged with a $term, and data
+        ::
+        tag=(unit [term data=*])
         ::  outbound %poke payloads, bounded in the ship's namespace
         ::  always and only for requests
         ::
