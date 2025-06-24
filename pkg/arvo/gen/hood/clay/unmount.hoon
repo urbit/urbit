@@ -1,4 +1,4 @@
-::  Kiln: Remove unix mount
+::  Unmount Clay path from Unix
 ::
 ::::  /hoon/unmount/hood/gen
   ::

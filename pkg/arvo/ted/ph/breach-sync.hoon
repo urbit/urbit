@@ -1,4 +1,4 @@
-::  This tests that syncs are correctly restarted after a breach
+::  Test syncs are restarted after breach for Aqua virtual ships
 ::
 ::TODO  breach tests broken by dangling bone?
 /-  spider

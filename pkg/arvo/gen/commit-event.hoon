@@ -1,4 +1,4 @@
-::  make a unix commit event
+::  Make a Unix commit event
 ::
 ::    call as > .event/jam +commit-event /path/to/file
 ::    to be used with ./urbit-binary -I event.jam pier

@@ -1,4 +1,4 @@
-::  Approve update source change request.
+::  Approve desk update source change request
 ::
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]

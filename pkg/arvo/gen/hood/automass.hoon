@@ -1,4 +1,4 @@
-::  Helm: show memory usage by vane, on a recurring timer
+::  Automatically run memory reports on a recurring timer
 ::
 ::::  /hoon/automass/hood/gen
   ::

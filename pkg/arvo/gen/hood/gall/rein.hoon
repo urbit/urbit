@@ -1,4 +1,4 @@
-::  Adjust the state of agents on a desk.
+::  Change which agents should be running on desk
 ::
 /-  hood
 :-  %say

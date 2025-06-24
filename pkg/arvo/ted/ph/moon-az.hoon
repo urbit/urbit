@@ -1,3 +1,5 @@
+::  Test connectivity (with Azimuth) for an Aqua virtual moon
+::
 /-  spider
 /+  *ph-io
 =,  strand=strand:spider

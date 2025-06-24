@@ -1,4 +1,4 @@
-::  Execute tombstone policy
+::  Execute tombstone policy in Clay
 ::
 :-  %say
 |=  [[now=@da eny=@uvJ bec=beak] ~ ~]

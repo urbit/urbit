@@ -1,4 +1,4 @@
-::  Assigns a specific quota to the given ship
+::  Assign a roller quota for the given ship
 ::  Not providing a quota allows the ship to submit any number of transactions
 ::
 :-  %say

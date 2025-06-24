@@ -1,4 +1,4 @@
-::  DNS: configure zone authority
+::  Configure zone authority for Google Cloud project
 ::
 ::::  /hoon/authority/dns/gen
   ::

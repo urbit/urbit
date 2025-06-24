@@ -1,4 +1,4 @@
-::  Helm: trim kernel state
+::  Trim kernel state
 ::
 ::::  /hoon/trim/hood/gen
   ::

@@ -1,4 +1,4 @@
-::  Kiln: Mount path to unix
+::  Mount Clay path to Unix
 ::
 ::::  /hoon/mount/hood/gen
   ::

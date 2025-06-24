@@ -1,4 +1,4 @@
-::  Helm: Set Ames Blocklist
+::  Modify Ames blocklist
 ::
 /?    310
 ::

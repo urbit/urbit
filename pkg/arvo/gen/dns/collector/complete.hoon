@@ -1,4 +1,4 @@
-::  :dns-collector: manually "complete" (fulfill) requests
+::  Manually "complete" (fulfill) DNS requests
 ::
 ::::  /hoon/complete/collector/dns/gen
   ::

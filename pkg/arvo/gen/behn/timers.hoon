@@ -1,4 +1,5 @@
-::  Find list of currently running Behn timers
+::  List currently running Behn timers
+::
 :-  %say
 |=  [[now=@da eny=@uvJ bec=beak] ~ ~]
 =;  timers

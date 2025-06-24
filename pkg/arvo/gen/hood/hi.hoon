@@ -1,4 +1,4 @@
-::  Helm: send message to an urbit
+::  Test connectivity to a ship with optional message
 ::
 ::::  /hoon/hi/hood/gen
   ::

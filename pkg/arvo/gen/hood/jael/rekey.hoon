@@ -1,4 +1,4 @@
-::  Helm: rotate private keys
+::  Rotate private keys
 ::
 ::::  /hoon/rekey/hood/gen
   ::

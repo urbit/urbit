@@ -1,4 +1,4 @@
-::  Kiln: Commit from mount
+::  Enable automatic commits to Clay from unix
 ::
 ::::  /hoon/commit/hood/gen
   ::

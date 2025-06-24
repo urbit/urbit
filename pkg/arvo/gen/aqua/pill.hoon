@@ -1,4 +1,5 @@
-::  Produce a pill for aqua
+::  Produce a pill for Aqua
+::
 /+  pill
 ::
 :-  %say

@@ -1,4 +1,4 @@
-::  Create a private key-file for a random (or specified) moon
+::  Breach (factory reset) a moon
 ::
 ::::  /hoon/moon/hood/gen
   ::

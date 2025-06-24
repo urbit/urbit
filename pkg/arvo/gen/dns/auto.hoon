@@ -1,4 +1,4 @@
-::  DNS: configure automatically
+::  Configure DNS for a Galaxy
 ::
 ::::  /hoon/auto/dns/gen
   ::

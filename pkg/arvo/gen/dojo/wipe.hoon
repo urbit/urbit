@@ -1,4 +1,4 @@
-::  wipe: poke dojo to wipe its state
+::  Wipe the Dojo's state
 ::
 /?    310
 ::

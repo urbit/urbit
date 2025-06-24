@@ -1,3 +1,5 @@
+::  Restore a fleet of virtual ships in Aqua
+::
 /-  aquarium
 =,  aquarium
 :-  %say

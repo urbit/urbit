@@ -1,4 +1,4 @@
-::  Kiln: Fuse local desk from (optionally-)foreign sources
+::  Octopus merge sync to local desk in Clay
 ::
 ::::  /hoon/fuse/hood/gen
   ::

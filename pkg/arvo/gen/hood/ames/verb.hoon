@@ -1,4 +1,4 @@
-::  Helm: Adjust Ames verbosity
+::  Adjust Ames verbosity
 ::
 ::  List of diagnostic flags is in verb:ames in zuse.hoon, documented in
 ::  ames.hoon

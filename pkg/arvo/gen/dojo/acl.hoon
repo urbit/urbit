@@ -1,4 +1,4 @@
-::  acl: list the ships that are allowed to link to dojo
+::  List the ships that are allowed to link to the Dojo
 ::
 /?    310
 ::

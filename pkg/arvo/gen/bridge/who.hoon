@@ -1,3 +1,5 @@
+::  Handles ship name requests from the web (internal)
+::
 /+  *server
 ::  @p request handler
 ::

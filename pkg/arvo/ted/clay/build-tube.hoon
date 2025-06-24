@@ -1,3 +1,5 @@
+::  Build a dynamic mark conversion gate
+::
 /-  spider
 /+  strandio
 =,  strand=strand:spider

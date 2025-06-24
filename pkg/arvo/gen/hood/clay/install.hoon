@@ -1,4 +1,4 @@
-::  |install: install the .rem desk from .her into local .lac desk
+::  Install a desk
 ::
 ::      > |install ~zod %landscape
 ::    installs ~zod's %landscape desk into our %landscape desk.

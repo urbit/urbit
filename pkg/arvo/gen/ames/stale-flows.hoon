@@ -1,4 +1,4 @@
-::  +stale-flows: prints number of ames flows that can be closed
+::  Prints number of Ames flows that can be closed
 ::
 ::    |stale-flows, =veb %1  :: all flows that got %nacked
 ::    |stale-flows, =veb %2  :: stale flows that keep (re)trying to connect

@@ -1,3 +1,5 @@
+::  Inject a raw event into Aqua virtual ship
+::
 /-  aquarium
 =,  aquarium
 :-  %say

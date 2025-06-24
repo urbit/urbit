@@ -1,3 +1,5 @@
+::  Test connectivity (with Azimuth) for the Aqua virtual ship ~marbud
+::
 /-  spider
 /+  *ph-io
 =,  strand=strand:spider

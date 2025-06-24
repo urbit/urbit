@@ -1,4 +1,4 @@
-::  Creates a snapshot of the azimuth state and its indices
+::  Create a snapshot of the Azimuth state and its indices
 ::  (owners and sposnors) from a list of ethereum logs
 ::
 /-  spider, *dice

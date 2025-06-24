@@ -1,4 +1,4 @@
-::  Mate: migrate peers locally to Directed Messaging
+::  Migrate peers locally to Directed Messaging
 ::
 ::    (used only for testing; it always runs on dry mode)
 ::    XX test individual peers

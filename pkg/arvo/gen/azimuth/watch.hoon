@@ -1,4 +1,4 @@
-::  Change node url and network for azimuth
+::  Change node URL and network for Azimuth
 ::
 :-  %say
 |=  [* [url=@ta net=?(%mainnet %goerli %local %default) ~] ~]

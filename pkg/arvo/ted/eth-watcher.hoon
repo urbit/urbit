@@ -1,4 +1,4 @@
-::  eth-watcher: ethereum event log collector
+::  Ethereum event log collector (internal)
 ::
 /-  spider, *eth-watcher
 /+  strandio, ethio, azimuth

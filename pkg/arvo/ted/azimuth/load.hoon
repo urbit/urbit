@@ -1,3 +1,5 @@
+::  Refetch Azimuth logs
+::
 /-  spider, *dice
 /+  strand, strandio, naive, dice
 =,  strand=strand:spider

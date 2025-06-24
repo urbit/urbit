@@ -1,3 +1,5 @@
+::  Build a hoon file
+::
 /-  spider
 /+  strand, strandio
 =,  strand=strand:spider

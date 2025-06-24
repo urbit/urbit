@@ -1,3 +1,5 @@
+::  Produce jam files of all desk
+::
 /-  spider
 /+  strandio, jammer=desk-jam
 =,  strand=strand:spider

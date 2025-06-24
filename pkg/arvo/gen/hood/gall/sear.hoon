@@ -1,4 +1,4 @@
-::  Clear ship from pending queues
+::  Clear blocked incoming moves in Gall for the given ship
 ::
 ::::  /hoon/gall-sear/hood/gen
   ::

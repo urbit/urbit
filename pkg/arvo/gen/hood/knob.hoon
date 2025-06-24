@@ -1,4 +1,4 @@
-::  Drum: Adjust vane error verbosity knob
+::  Adjust vane error verbosity
 ::
 /?    310
 ::

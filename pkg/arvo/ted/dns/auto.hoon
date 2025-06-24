@@ -1,3 +1,5 @@
+::  Configure DNS for a galaxy
+::
 /-  spider
 /+  strandio, dns
 =,  strand=strand:spider

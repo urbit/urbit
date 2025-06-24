@@ -1,4 +1,4 @@
-::  +desk-requests: count pending requests for a desk
+::  Count pending requests for a desk in Clay
 ::
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]

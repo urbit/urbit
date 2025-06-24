@@ -1,3 +1,5 @@
+::  Test connectivity (with Azimuth) between Aqua virtual ships under different galaxies
+::
 /-  spider
 /+  *ph-io
 =,  strand=strand:spider

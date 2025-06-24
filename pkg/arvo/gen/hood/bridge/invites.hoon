@@ -1,4 +1,4 @@
-::  |claz-invites: generate invite tickets for star's children
+::  Generate invite tickets for a Star's children
 ::
 ::    writes to .txt with lines in the format ~planet,~ticket,0xaddress
 ::

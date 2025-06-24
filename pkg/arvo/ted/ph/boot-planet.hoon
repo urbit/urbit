@@ -1,3 +1,5 @@
+::  Boot an Aqua virtual planet
+::
 /-  spider
 /+  *ph-io
 =,  strand=strand:spider

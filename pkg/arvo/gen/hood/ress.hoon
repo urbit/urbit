@@ -1,4 +1,4 @@
-::  Ress: regRESS peers locally to previous protocol
+::  Regress peers locally from Directed Messaging to Ames networking
 ::
 ::    (used only for testing; it always runs on dry mode)
 ::

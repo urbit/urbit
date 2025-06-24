@@ -1,3 +1,5 @@
+::  Test connectivity between Aqua virtual planets under different galaxies
+::
 /-  spider
 /+  *ph-io
 =,  strand=strand:spider

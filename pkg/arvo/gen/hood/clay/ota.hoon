@@ -1,4 +1,4 @@
-::  Kiln: Continuously merge local desk from (optionally-)foreign one
+::  Set or unset kernel update source
 ::
 ::::  /hoon/ota/hood/gen
   ::

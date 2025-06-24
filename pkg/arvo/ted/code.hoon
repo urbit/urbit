@@ -1,4 +1,5 @@
-::  Login code for web UI
+::  Get the web login code
+::
 /-  spider
 /+  strandio
 =,  strand=strand:spider

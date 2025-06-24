@@ -1,4 +1,4 @@
-::  REGrEss: regress peer back to Ames
+::  Regress peer on Directed Messaging back to Ames networking
 ::
 ::    (by default it runs on dry mode)
 ::

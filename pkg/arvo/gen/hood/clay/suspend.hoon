@@ -1,4 +1,4 @@
-::  Suspend the agents on a desk
+::  Suspend all agents on a desk
 ::
 :-  %say
 |=  [[now=@da eny=@uvJ bec=beak] desks=(list desk) ~]

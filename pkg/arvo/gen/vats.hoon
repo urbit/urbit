@@ -1,4 +1,4 @@
-::  Print diagnostic information about desks.
+::  Print diagnostic information about desks
 ::
 ::  Accepts an optional argument of a list of one or more desks, returns info
 ::  on all desks if no desks are specified.

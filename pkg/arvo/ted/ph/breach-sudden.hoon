@@ -1,3 +1,5 @@
+::  Test unnotified immediate sponsor breach for Aqua virtual ships
+::
 ::  This tests whether we can handle the case where our immediate
 ::  sponsor dies without telling us about its breach, so we must hear
 ::  about it from somewhere else.

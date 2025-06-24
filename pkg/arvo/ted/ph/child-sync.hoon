@@ -1,3 +1,5 @@
+::  Testing merging to %kids on an Aqua virtual ship
+::
 /-  spider
 /+  *ph-io
 =,  strand=strand:spider

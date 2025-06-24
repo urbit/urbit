@@ -1,4 +1,4 @@
-::  Kiln: Continuously merge local desk from (optionally-)foreign one
+::  Continuously merge local desk from (optionally) foreign one
 ::
 ::::  /hoon/sync/hood/gen
   ::

@@ -1,3 +1,5 @@
+::  List the Gall agents running on a desk
+::
 /-  hood
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]

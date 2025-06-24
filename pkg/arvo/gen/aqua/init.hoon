@@ -1,4 +1,4 @@
-::  Start an aqua ship
+::  Start an Aqua virtual ship
 ::
 /-  aquarium
 =,  aquarium

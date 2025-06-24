@@ -1,4 +1,4 @@
-::  Bumps the gas price for a sending transaction
+::  Bump the roller gas price for sending transactions
 ::
 :-  %say
 |=  [* [nonce=@ gas=@ud address=(unit @ux) ~] ~]

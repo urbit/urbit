@@ -1,4 +1,4 @@
-::  Helm: Set Ames Verbosity by Ship
+::  Filter Ames debug output by ship
 ::
 /?    310
 ::

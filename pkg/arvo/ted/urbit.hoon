@@ -1,4 +1,4 @@
-::  Easter egg output for (~) Urbit logo
+::  Print ASCII Urbit logo
 ::
 ::::  /hoon/urbit/ted
   ::

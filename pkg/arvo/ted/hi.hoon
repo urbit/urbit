@@ -1,3 +1,5 @@
+::  Test connectivity to ship with optional message
+::
 /-  spider
 /+  strandio
 =,  strand=strand:spider

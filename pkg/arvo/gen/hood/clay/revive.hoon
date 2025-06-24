@@ -1,4 +1,4 @@
-::  Revive the agents on an installed desk
+::  Unsuspend desk, reviving agents
 ::
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]

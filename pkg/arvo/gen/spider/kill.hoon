@@ -1,4 +1,4 @@
-::  :spider|kill  Kill a thread
+::  Kill threads
 :-  %say
 |=  *
 [%spider-kill ~]

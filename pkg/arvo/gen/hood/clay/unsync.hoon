@@ -1,4 +1,4 @@
-::  Kiln: Remove a sync
+::  Stop sync to local desk
 ::
 ::::  /hoon/unsync/hood/gen
   ::

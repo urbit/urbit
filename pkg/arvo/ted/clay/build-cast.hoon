@@ -1,3 +1,5 @@
+::  Build a static mark conversion gate
+::
 /-  spider
 /+  strandio
 =,  strand=strand:spider

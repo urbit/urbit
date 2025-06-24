@@ -1,3 +1,5 @@
+::  Take a snapshot of a fleet of virtual ships in Aqua
+::
 /-  aquarium
 =,  aquarium
 :-  %say

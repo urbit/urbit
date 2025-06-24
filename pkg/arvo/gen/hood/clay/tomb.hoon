@@ -1,4 +1,4 @@
-::  Perform minimal norm change to delete a file, use =dry & for dry run
+::  Tombstone a file, deleting old revisions
 ::
 ::  TODO: recognize when it's going to fail because it's in the head of
 ::        a desk, and maybe offer to |rm

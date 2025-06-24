@@ -1,3 +1,5 @@
+::  Evaluate a hoon expression via Khan (internal)
+::
 /-  spider, eval=ted-eval
 /+  strandio
 =,  strand=strand:spider

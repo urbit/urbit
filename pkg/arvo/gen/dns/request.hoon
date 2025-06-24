@@ -1,4 +1,4 @@
-::  DNS: configure ip address
+::  Configure DNS for a Planet or Star (deprecated, use |dns-config)
 ::
 ::::  /hoon/request/dns/gen
   ::

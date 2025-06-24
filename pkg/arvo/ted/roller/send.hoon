@@ -1,4 +1,4 @@
-::  roller/send: send rollup tx
+::  Send roller transaction
 ::
 /-  rpc=json-rpc, *dice
 /+  naive, ethereum, ethio, strandio

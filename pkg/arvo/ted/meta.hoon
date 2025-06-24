@@ -1,3 +1,5 @@
+::  Get metadata about an Ames connection
+::
 /-  spider
 /+  strandio
 =,  strand=strand:spider

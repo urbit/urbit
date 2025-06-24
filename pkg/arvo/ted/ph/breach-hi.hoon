@@ -1,3 +1,5 @@
+::  Test connectivity after breach for an Aqua virtual ship
+::
 /-  spider
 /+  *ph-io
 =,  strand=strand:spider

@@ -1,4 +1,4 @@
-::  Produce a brass pill
+::  Compile a brass pill
 ::
 ::::  /hoon/brass/gen
   ::

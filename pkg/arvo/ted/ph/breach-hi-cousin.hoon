@@ -1,3 +1,5 @@
+::  Test connectivity after breach for Aqua virtual ships under different galaxies
+::
 ::  This is useful to test that we properly hear about breaches outside
 ::  our sponsorship tree.  We usually hear about these via ship-to-ship
 ::  communication.

@@ -1,3 +1,5 @@
+::  Test connectivity (with Azimuth) between an Aqua virtual star and planet
+::
 /-  spider
 /+  *ph-io
 =,  strand=strand:spider

@@ -1,4 +1,4 @@
-::  Drum: Connect to a console-enabled app
+::  Connect a CLI app
 ::
 ::::  /hoon/link/hood/gen
   ::

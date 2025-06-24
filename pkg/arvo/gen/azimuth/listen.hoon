@@ -1,4 +1,4 @@
-::  Add a source for azimuth
+::  Add a source for Azimuth
 ::
 =>  |%
     +$  src

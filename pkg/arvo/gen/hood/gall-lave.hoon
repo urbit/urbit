@@ -1,4 +1,4 @@
-::  Deletes all stale incoming gall (re) subscriptions
+::  Deletes all stale incoming Gall (re)subscriptions
 ::
 ::    It runs in dry mode by default, printing the number of stale subscriptions
 ::    To actually delete the subscriptions, run with |gall-lave, =dry |

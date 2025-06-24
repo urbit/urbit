@@ -1,4 +1,4 @@
-::  Helm: unify memory
+::  Deduplicate memory, reducing memory usage
 ::
 ::::  /hoon/meld/hood/gen
   ::

@@ -1,4 +1,4 @@
-::  eth/read-contract: query ethereum for contract data
+::  Query Ethereum contract data
 ::
 ::    produces hex string result, for use with +decode-results:rpc:ethereum
 ::

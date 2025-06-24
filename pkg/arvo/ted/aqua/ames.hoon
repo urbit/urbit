@@ -1,3 +1,5 @@
+::  Aqua Ames handler (internal)
+::
 ::  This needs a better SDN solution.  Every ship should have an IP
 ::  address, and we should eventually test changing those IP
 ::  addresses.

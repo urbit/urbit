@@ -1,4 +1,4 @@
-::  Cancel autocommit
+::  Cancel Clay autocommit from Unix
 ::
 ::::  /hoon/cancel-autocommit/hood/gen
   ::

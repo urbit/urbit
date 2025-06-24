@@ -1,4 +1,4 @@
-::  eth/get-tx-receipts
+::  Get Ethereum transaction receipts
 ::
 ::    asks an ethereum node for transaction receipts from a list of transaction
 ::    hashes. returns a (list [@t json]), where @t is the transaction hash in

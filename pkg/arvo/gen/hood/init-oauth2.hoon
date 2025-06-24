@@ -1,4 +1,4 @@
-::  API: input oauth2 application credentials for domain
+::  Input Oauth2 application credentials for domain
 ::
 ::::  /hoon/init-oauth2/hood/gen
   ::

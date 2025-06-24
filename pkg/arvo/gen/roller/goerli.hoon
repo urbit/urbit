@@ -1,4 +1,4 @@
-::  Configures /app/roller to listen to a Goerli Infura node
+::  Configure the roller to listen to a Goerli node
 ::
 :-  %say
 |=  *
