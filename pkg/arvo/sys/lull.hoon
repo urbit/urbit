@@ -1725,6 +1725,9 @@
         ::    - backward: a %plea gets %flubbed over the wire
         ::
         halt=?(%.y %.n)
+        ::  a migrated flow in a weird state is tagged with a $term, and data
+        ::
+        tag=(unit [term data=*])
         ::  outbound %poke payloads, bounded in the ship's namespace
         ::  always and only for requests
         ::
