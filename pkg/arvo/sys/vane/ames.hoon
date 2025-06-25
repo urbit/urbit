@@ -5570,9 +5570,11 @@
                         nothing-in-flight
                         =(current.pump next.pump)
                         ::  subscription flow with associated naxplanation bone
+                        ::  XX don't look for the %boon flow because we might
+                        ::  have not received anything
                         ::
-                        (~(has by rcv.peer-state) original-bone)
-                        (~(has by rcv.peer-state) (mix 0b10 original-bone))
+                        :: (~(has by rcv.peer-state) original-bone)
+                        (~(has by rcv.peer-state) naxp=(mix 0b10 original-bone))
                     ==
                   ::  closing bone, with no live messages. this case is
                   ::  handled by +recork-one, for peers that don't support the
