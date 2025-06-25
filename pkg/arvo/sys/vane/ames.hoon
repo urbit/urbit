@@ -662,50 +662,55 @@
         ::
           =chain
         ==
-  ::
-  +$  ship-state-21
-    $+  ship-state-21
-    $%  [%alien alien-agenda-21]
-        [%known peer-state-21]
-    ==
-  ::
-  +$  alien-agenda-21
-    $+  alien-agenda-21
-    $:  messages=(list [=duct =plea])
-        packets=(set =blob)
-        keens=(jug path duct)
-        chums=(jug path duct)
-    ==
-  ::
-  +$  peer-state-21
-    $:  azimuth-state
-        route=(unit [direct=? =lane])
-        =qos
-        =ossuary
-        snd=(map bone message-pump-state)
-        rcv=(map bone message-sink-state)
-        nax=(set [=bone =message-num])
-        closing=(set bone)
-        corked=(set bone)
-        keens=(map path keen-state-21)
-        =chain
-    ==
-  +$  keen-state-21
-    $+  keen-state-21
-    $:  wan=((mop @ud want) lte)  ::  request packets, sent
-        nex=(list want)           ::  request packets, unsent
-        hav=(list have)           ::  response packets, backward
-        num-fragments=@ud
-        num-received=@ud
-        next-wake=(unit @da)
-        listeners=(set duct)
-        metrics=pump-metrics
-    ==
+    ::
+    +$  ship-state-21
+      $+  ship-state-21
+      $%  [%alien alien-agenda-21]
+          [%known peer-state-21]
+      ==
+    ::
+    +$  alien-agenda-21
+      $+  alien-agenda-21
+      $:  messages=(list [=duct =plea])
+          packets=(set =blob)
+          keens=(jug path duct)
+          chums=(jug path duct)
+      ==
+    ::
+    +$  peer-state-21
+      $:  azimuth-state
+          route=(unit [direct=? =lane])
+          =qos
+          =ossuary
+          snd=(map bone message-pump-state)
+          rcv=(map bone message-sink-state)
+          nax=(set [=bone =message-num])
+          closing=(set bone)
+          corked=(set bone)
+          keens=(map path keen-state-21)
+          =chain
+      ==
+    ::
+    +$  keen-state-21
+      $+  keen-state-21
+      $:  wan=((mop @ud want) lte)  ::  request packets, sent
+          nex=(list want)           ::  request packets, unsent
+          hav=(list have)           ::  response packets, backward
+          num-fragments=@ud
+          num-received=@ud
+          next-wake=(unit @da)
+          listeners=(set duct)
+          metrics=pump-metrics
+      ==
     ::
     +$  dead-timer       [=duct =wire date=@da]
+    ::
     +$  azimuth-state    [=symmetric-key =life =rift =public-key sponsor=ship]
+    ::
     +$  azimuth-state-6  [=symmetric-key =life =public-key sponsor=ship]
+    ::
     +$  ames-state-4     ames-state-5
+    ::
     +$  ames-state-5
       $+  ames-state-5
       $:  peers=(map ship ship-state-5)
@@ -716,6 +721,7 @@
       ==
     ::
     +$  ship-state-4  ship-state-5
+    ::
     +$  ship-state-5
       $+  ship-state-5
       $%  [%alien alien-agenda-12]
@@ -1764,7 +1770,7 @@
       $:  %pawn
           %proof
           [%p rcvr=@p]
-          [%ud life=@ud]  :: XX reddundant?
+          [%ud life=@ud]  :: XX redundant?
           ~
       ==
     ::
@@ -1808,12 +1814,13 @@
           =client=chain
           tip=(jug =user=path [duct =ames=path])
       ==
-  +$  flow-state-25
-    $:  closing=?(%.y %.n)
-        line=@ud
-        snd=[%outbound loads=((mop ,@ud mesa-message) lte) @ @ send-window=@]
-        rcv=[%incoming acked=@ud pending-ack=_`?`%.n nax=(map seq=@ud error)]
-    ==
+    ::
+    +$  flow-state-25
+      $:  closing=?(%.y %.n)
+          line=@ud
+          snd=[%outbound loads=((mop ,@ud mesa-message) lte) @ @ send-window=@]
+          rcv=[%incoming acked=@ud pending-ack=_`?`%.n nax=(map seq=@ud error)]
+      ==
     ::
     +$  axle-24
       $:  peers=(map ship ship-state)
@@ -3415,7 +3422,7 @@
               flows
             %-  ~(run by flows.c)
             |=  flow=flow-state-25
-            flow(send-window.snd [send-window.snd.flow ~])
+            flow(send-window.snd [send-window.snd.flow acks=~])
           ==
         ==
       ::
