@@ -3422,7 +3422,13 @@
               flows
             %-  ~(run by flows.c)
             |=  flow=flow-state-25
-            flow(send-window.snd [send-window.snd.flow acks=~])
+            =|  =flow-state
+            %_  flow-state
+              closing  closing.flow
+                 line  line.flow
+                  snd  snd.flow(send-window [send-window.snd.flow-state acks=~])
+                  rcv  rcv.flow
+            ==
           ==
         ==
       ::
