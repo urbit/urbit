@@ -2724,7 +2724,7 @@
           ^-  move
           =,  u.maybe-subscription
           %-  (trace 1 |.("leaving subscription to {<app>}"))
-          %+  deal-as
+          %+  deal-as(duct duc)
             (subscription-wire channel-id subscription-id from ship app)
           [from ship app %leave ~]
         ::
@@ -2812,6 +2812,7 @@
       ?:  ?&  !?=(%poke-ack -.sign)
               !(~(has by subscriptions.u.channel) request-id)
           ==
+        ~&  >>>  %out
         [~ state]
       ::  attempt to convert the sign to json.
       ::  if conversion succeeds, we *can* send it. if the client is actually
@@ -3095,7 +3096,7 @@
       |=  [request-id=@ud ship=@p app=term =path duc=^duct]
       ^-  move
       %-  (trace 1 |.("{<channel-id>} leaving subscription to {<app>}"))
-      %+  deal-as
+      %+  deal-as(duct duc)
         (subscription-wire channel-id request-id identity.session ship app)
       [identity.session ship app %leave ~]
     --
@@ -3401,6 +3402,7 @@
     =/  from=@p
       ?@  identity  identity
       ?+(-.identity who.identity %ours our)
+    ~&  >  deal-as/duct^wire
     [duct %pass wire %g %deal [from ship /eyre] dude task]
   ::
   ++  trace
