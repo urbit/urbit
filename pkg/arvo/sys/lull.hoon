@@ -3723,7 +3723,7 @@
             pen=(jug spar:ames wire)
             gem=(jug coop [path page])
     ==  ==
-  +$  egg-any  $%([%15 egg-15] [%16 egg])
+  +$  egg-any  $%([%15 egg-15] [%16 egg] [%17 egg])
   +$  egg-15
     $%  [%nuke sky=(map spur @ud)]
     $:  %live

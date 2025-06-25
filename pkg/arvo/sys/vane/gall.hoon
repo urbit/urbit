@@ -42,9 +42,9 @@
 ::  $move: Arvo-level move
 ::
 +$  move  [=duct move=(wind note-arvo gift-arvo)]
-::  $state-16: overall gall state, versioned
+::  $state-17: overall gall state, versioned
 ::
-+$  state-16  [%16 state]
++$  state-17  [%17 state]
 ::  $state: overall gall state
 ::
 ::    system-duct: TODO document
@@ -390,11 +390,11 @@
       =bug
       leaves=(unit [=duct =wire date=@da])
   ==
-+$  spore-16  [%16 spore]
++$  spore-17  [%17 spore]
 --
 ::  adult gall vane interface, for type compatibility with pupa
 ::
-=|  state=state-16
+=|  state=state-17
 |=  [now=@da eny=@uvJ rof=roof]
 =*  gall-payload  .
 ~%  %gall-top  ..part  ~
@@ -835,6 +835,7 @@
       =.  mo-core  (mo-give %unto %kick ~)
       mo-core
     ==
+  ::
   ++  mo-handle-key
     ~/  %mo-handle-stub
     |=  [=(pole knot) syn=sign-arvo]
@@ -905,7 +906,7 @@
       =/  blocked=(qeu blocked-move)
         =/  waiting  (~(get by blocked.state) dap)
         =/  deals  (fall waiting *(qeu blocked-move))
-        =/  deal  [hen routes |+unto]
+        =/  deal  [[[%gall %use wire] hen] routes |+unto]
         (~(put to deals) deal)
       ::
       %-  (slog leaf+"gall: {<dap>} dozing, got {<-.unto>}" ~)
@@ -932,11 +933,13 @@
       mo-core
     =^  [=duct =routes blocker=(each deal unto)]  blocked
       ~(get to blocked)
-    ?:  ?=(%| -.blocker)  $
+    ::
     =/  =move
       =/  =sack  [ship.attributing.routes our path.attributing.routes]
-      =/  card   [%slip %g %deal sack dap p.blocker]
-      [duct card]
+      ?:  ?=(%& -.blocker)
+        ?>  ?=(^ duct)
+        [+.duct %slip %g %deal sack dap p.blocker]
+      [duct %give %unto p.blocker]
     $(moves [move moves])
   ::  +mo-filter-queue: remove all blocked tasks from ship.
   ::
@@ -1296,8 +1299,9 @@
         [leaf+"gall: {<agent-name>}: brood request {<pole>} invalid, dropping"]~
       =.  pen.yoke  (~(put ju pen.yoke) [ship pole] wire)
       =/  =fine-request  [%0 rest.pole]
-      =/  =plea:ames  [%g /gk/[app.pole] fine-request]
-      =/  out=^wire   (welp /key/[agent-name]/[run-nonce.yoke]/bod/(scot %p ship) pole)
+      =/  =plea:ames     [%g /gk/[app.pole] fine-request]
+      =/  out=^wire
+        (welp /key/[agent-name]/[run-nonce.yoke]/bod/(scot %p ship) pole)
       (ap-move [hen %pass out %a %plea ship plea]~)
     ::
     ++  ap-take-brood
@@ -1315,9 +1319,11 @@
           =.  pen.yoke  (~(del by pen.yoke) [ship t.wire])
           ap-core
         ?~  bod.bud
-          =.  ap-core  (ap-generic-take i.wis %ames %near [ship t.wire] ~)
+          =.  ap-core  ::  (ap-generic-take i.wis %ames %sage [ship t.wire] ~)
+            (ap-generic-take i.wis %ames %tune [ship t.wire] ~)
           $(wis t.wis)
-        =.  ap-core  (ap-pass i.wis %arvo %a %keen `[idx key]:hutch.u.bod.bud ship t.wire)
+        =.  ap-core
+          (ap-pass i.wis %arvo %a %keen `[idx key]:hutch.u.bod.bud ship t.wire)
         $(wis t.wis)
       ::
           [%ames %done *]
@@ -1328,7 +1334,8 @@
           =.  pen.yoke  (~(del by pen.yoke) [ship t.wire])
           ap-core
         =.  ap-core
-          %.  (ap-generic-take i.wis %ames %near [ship t.wire] ~)
+          %.  ::  (ap-generic-take i.wis %ames %sage [ship t.wire] ~)
+              (ap-generic-take i.wis %ames %tune [ship t.wire] ~)
           %+  trace  odd.veb.bug.state
           [leaf/"gall: {<agent-name>} bad brood res {<ship>} {<t.wire>}"]~
         $(wis t.wis)
@@ -1434,6 +1441,9 @@
       =?  gem.yoke  &(!exists ?=(~ pen))
         (~(put by gem.yoke) coop ~)
       =/  =wire  (welp /key/[agent-name]/[run-nonce.yoke]/pug coop)
+      ::  XX %plug reserves keys in %ames using (shaz eny) of length 64
+      :: use %gulp that reserves keys of length 32?
+      ::
       (ap-move [hen %pass wire %a %plug [%g %x agent-name %$ '1' coop]]~)
     ::
     ++  ap-stub
@@ -1879,10 +1889,17 @@
           t.name.sign-arvo
         ==
       =^  maybe-tang  ap-core
+        =?  sign-arvo   ?=([%ames %sage *] sign-arvo)
+          ::  XX if %sage rewrite sign-arvo as %tune; remove in 409k
+          ::
+          =/  =roar:ames
+            :_  sigs=~ :: XX unsused
+            [path.p.sage.sign-arvo ?~(q.sage.sign-arvo ~ `q.sage.sign-arvo)]
+          sign-arvo(+ [%tune spar=p.sage.sign-arvo `roar])
         %+  ap-ingest  ~  |.
         (on-arvo:ap-agent-core wire sign-arvo)
-      =?  ken.yoke  ?=([%ames %tune spar=* *] sign-arvo)
-        (~(del ju ken.yoke) spar.sign-arvo wire)
+      =?  ken.yoke   ?=([%ames %sage *] sign-arvo)
+        (~(del ju ken.yoke) p.sage.sign-arvo wire)
       ?^  maybe-tang
         (ap-error %arvo-response u.maybe-tang)
       ap-core
@@ -2445,11 +2462,12 @@
       =?  old  ?=(%13 -.old)  (spore-13-to-14 +.old)
       =?  old  ?=(%14 -.old)  (spore-14-to-15 +.old)
       =?  old  ?=(%15 -.old)  (spore-15-to-16 +.old)
-      ?>  ?=(%16 -.old)
+      =?  old  ?=(%16 -.old)  (spore-16-to-17 +.old)
+      ?>  ?=(%17 -.old)
       gall-payload(state old)
   ::
   +$  spore-any
-    $%  [%16 spore]
+    $%  [%17 spore]
         [%7 spore-7]
         [%8 spore-8]
         [%9 spore-9]
@@ -2459,7 +2477,9 @@
         [%13 spore-13]
         [%14 spore-14]
         [%15 spore-15]
+        [%16 spore-16]
     ==
+  +$  spore-16  spore
   +$  spore-15
     $+  spore-15
     $:  system-duct=duct
@@ -2721,8 +2741,8 @@
   ::
   ++  spore-15-to-16
     |=  old=spore-15
-    ^-  spore-16
     :-  %16
+    ^-  spore-16
     %=    old
         eggs
       %-  ~(urn by eggs.old)
@@ -2757,6 +2777,26 @@
         [a (snag (dec a) m)]
       ==
     ==
+  ::  +spore-16-to-17: drop unto blocked moves
+  ::
+  ++  spore-16-to-17
+    |=  old=spore-16
+    ^-  spore-17
+    :-  %17
+    %=    old
+        blocked
+      %-  ~(urn by blocked.old)
+      |=  [=term q=(qeu blocked-move)]
+      ^+  q
+      %-  ~(rep by q)
+      |=  [=blocked-move r=(qeu blocked-move)]
+      ?:  ?=(%| -.move.blocked-move)
+        r
+      ::  /gall-use-wire will be dropped in mo-clear-queu
+      ::
+      (~(put to r) blocked-move(duct [/gall-use-wire duct.blocked-move]))
+    ==
+  ::
   --
 ::  +scry: standard scry
 ::
@@ -2870,7 +2910,7 @@
           p.agent.u.yok
         on-save:p.agent.u.yok
       ==
-    ``noun+!>(`egg-any`[-:*spore-16 egg])
+    ``noun+!>(`egg-any`[-:*spore-17 egg])
   ::
   ?:  ?&  =(%w care)
           =([%$ %da now] coin)
@@ -3002,7 +3042,7 @@
 ::    TODO: superfluous? see +molt
 ::
 ++  stay
-  ^-  spore-16
+  ^-  spore-17
   =;  eggs=(map term egg)  state(yokes eggs)
   %-  ~(run by yokes.state)
   |=  =yoke

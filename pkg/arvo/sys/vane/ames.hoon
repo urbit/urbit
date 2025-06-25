@@ -394,6 +394,7 @@
         =/  sig=@  (full path data)
         ?~  data  sig
         (mix sig (lsh 9 (jam data)))
+      ::
       ++  etch-open
         |=  [=path =hunk data=$@(~ (cask))]
         (etch path hunk (etch-data path data))
@@ -413,6 +414,7 @@
           =-  (flop - res)
           (etch-meow (make-meow path mes num))
         $(num +(num), res :_(res (etch-meow (make-meow path mes num))))
+      ::
       --
     ::  +etch-open-packet: convert $open-packet attestation to $shot
     ::
@@ -2172,6 +2174,8 @@
           ::  closing, which deletes it automatically
           ::
           %+  print-check  %corked   ?=(~ (~(dif in corked.mesa) corked.back))
+          =-  ~?  !-  chain/[mesa=client-chain.mesa back=client-chain.back]
+              -
           %+  print-check  %chain    =(client-chain.mesa client-chain.back)
           :: %+  print-check  %pit      =(pit.mesa pit.back)  :: XX
         ::  flows
@@ -3697,7 +3701,7 @@
         ?>  ?=(^ kid)
         ?~  key=(get:key-chain client-chain:(got-per ship) u.kid)
           !!  :: XX handle
-        ?>  (lte (met 3 -.u.key) 32)
+        ?>  (lte (met 3 -.u.key) 64) :: support %fine key reservation (shaz eny)
         pub
       ::
           [%chum lyf=@ her=@ hyf=@ pat=[cyf=@ ~]]
@@ -3857,7 +3861,7 @@
                 [@ %boon *]  (on-take-boon:event-core wire +>.sign)
                 [@ %noon *]  (on-take-noon:event-core wire +>.sign)
               ::
-                [%ames %tune *]  (on-tune:event-core wire [+>- roar]:sign)
+                [%ames %sage *]  (on-sage:event-core wire sage.sign)
               ::
                 [%behn %wake *]  (on-take-wake:event-core wire error.sign)
               ::
@@ -4408,55 +4412,51 @@
               "plea {<sndr rcvr bone=bone vane.plea path.plea>}"
           abet:(on-memo:peer-core bone [%plea plea])
         ::
-        ++  on-tune
-          |=  [=wire s=[=ship path=(pole knot)] roar=(unit roar)]
+        ++  on-sage
+          |=  [=wire =sage:mess]
           ^+  event-core
           :: XX save or decrypt path?
           :: XX crash in decryption/cue indicates misbehaving peer
           ::
-          =/  per  (~(get by peers.ames-state) ship.s)
+          =/  per  (~(get by peers.ames-state) ship.p.sage)
           ?>  ?=([~ %known *] per)
-          ?>  ?=([%a %x @ %$ rest=*] path.s)
-          ?.  ?=([%chum her=@ lyf=@ cyf=@ ~] rest.path.s)
+          =>  .(path.p.sage `(pole knot)`path.p.sage)
+          ?>  ?=([%a %x @ %$ rest=*] path.p.sage)
+          ?.  ?=([%chum her=@ lyf=@ cyf=@ ~] rest.path.p.sage)
             =>  .(wire `(pole knot)`wire)
             ~|  bad-wire/wire
             ?>  ?=([%fine %shut idx=@ ~] wire)
-            ~|  bad-path/rest.path.s
-            ?>  ?=([%fine %shut kef=@ cyf=@ ~] rest.path.s)
+            ~|  bad-path/rest.path.p.sage
+            ?>  ?=([%fine %shut kef=@ cyf=@ ~] rest.path.p.sage)
             =/  [key=@ ,path]  (~(got by chain.u.per) (slav %ud idx.wire))
             =/  raw=@t
-              (dy:crub:crypto key (slav %uv cyf.rest.path.s))
+              (dy:crub:crypto key (slav %uv cyf.rest.path.p.sage))
             =/  pax=path
               (stab raw)
-            =;  dat=(unit (unit page))
-              %-  emil
-              :~  [duct %give %near [ship.s pax] dat]
-                  :^  duct  %pass  /prune-tip
-                  [%a %deep %prun ship.s pax [ames/wire duct] path.s]
-              ==
-            ?:  ?|  ?=(~ roar)
-                    ?=(~ q.dat.u.roar)
-                ==
-              ~  :: XX weird
-            ?>  ?=([%atom @] u.q.dat.u.roar)
-            =-  ``;;(page (cue -))
-            (dy:crub:crypto key q.u.q.dat.u.roar)
+            =/  dat=gage:mess
+              ?:  ?=(~ q.sage)
+                ~  :: XX weird
+              ?>  ?=([%atom @] q.sage)
+              ;;(page (cue (dy:crub:crypto key q.q.sage)))
+            %-  emil
+            :~  [duct %give %sage [ship.p.sage pax] dat]
+                :^  duct  %pass  /prune-tip
+                [%a %deep %prun ship.p.sage pax [ames/wire duct] path.p.sage]
+            ==
           ?>  ?=([%chum *] wire)
           =/  pax
             %-  stab
-            (dy:crub:crypto symmetric-key.u.per (slav %uv cyf.rest.path.s))
-          =/  dat=(unit (unit page))
-            ?:  ?|  ?=(~ roar)
-                    ?=(~ q.dat.u.roar)
-                ==
+            (dy:crub:crypto symmetric-key.u.per (slav %uv cyf.rest.path.p.sage))
+          =/  dat=gage:mess
+            ?:  ?=(~ q.sage)
               ~  :: XX weird
-            ?>  ?=([%atom @] u.q.dat.u.roar)
-            =-  `?~(- ~ `(,page (cue -)))
-            (dy:crub:crypto symmetric-key.u.per q.u.q.dat.u.roar)
+            ?>  ?=([%atom @] q.sage)
+            =-  ?~(- ~ (,page (cue -)))
+            (dy:crub:crypto symmetric-key.u.per q.q.sage)
           %-  emil
-          :~  [duct %give %near [ship.s pax] dat]
+          :~  [duct %give %sage [ship.p.sage pax] dat]
               :^  duct  %pass  /prune-tip
-              [%a %deep %prun ship.s pax [ames/wire duct] path.s]
+              [%a %deep %prun ship.p.sage pax [ames/wire duct] path.p.sage]
           ==
         ::  +on-cork: handle request to kill a flow
         ::
@@ -4809,7 +4809,7 @@
           ?>  ?=(~ sec)
           %^  enqueue-alien-todo  ship  ship-state
           |=  todos=alien-agenda
-          todos(keens (~(put ju keens.todos) [path %tune] duct))
+          todos(keens (~(put ju keens.todos) [path %sage] duct))
         ::
         ++  on-chum
           |=  spar
@@ -4818,7 +4818,7 @@
           ?.  ?=([~ %known *] ship-state)
             %^  enqueue-alien-todo  ship  ship-state
             |=  todos=alien-agenda
-            todos(chums (~(put ju chums.todos) [path %tune] duct))
+            todos(chums (~(put ju chums.todos) [path %sage] duct))
           =/  cyf
             (scot %uv (en:crub:crypto symmetric-key.u.ship-state (spat path)))
           =/  lav
@@ -4866,9 +4866,10 @@
             ::  that path has been deleted by a previous iteration
             ::
             core
+          =/  =sage:mess  [ship^ames-path ~]
           =+  fi-core=(abed:fi:core ames-path)
           =.  fi-core
-            (~(rep by listeners.keen.fi-core) (fi-give-tune:fi-core ~))
+            (~(rep by listeners.keen.fi-core) (fi-give-sage:fi-core sage))
           =.  listeners.keen.fi-core    ~
           fi-abet:fi-core
         ::
@@ -5454,6 +5455,7 @@
                 ::  XX remove? not used anymore
                 ::
                 (~(del by tip.peer-state) user-path)
+              %-  (fi-trace:fi fin.veb |.("remove tip {(spud user-path)}"))
               (~(del ju tip.peer-state) user-path duct ames-path)
             peer-core
           ::
@@ -7254,9 +7256,8 @@
                 [for=| her blob `known/peer-state]
               fine
             ::
-            ++  fi-give-tune
-              |=  dat=(unit roar)
-              :: |=([=^duct =_fine] (fi-emit:fine duct %give %tune [her path] dat))
+            ++  fi-give-sage
+              |=  =sage:mess
               |=  [[=^duct ints=(set ints)] =_fine]
               =;  core=_fine
                 =?  core  =>  .(path `(pole knot)`path)
@@ -7270,7 +7271,8 @@
               %-  ~(rep in ints)
               |=  [int=^ints f=_fine]
               ?^  int  f
-              (fi-emit:f duct %give %tune her^path dat)
+              ::  XX this can be a %tune as well
+              (fi-emit:f duct %give %sage sage)
             ::
             ++  fi-give-rate
               |=  =rate
@@ -7349,7 +7351,7 @@
             ::
             ++  fi-sub
               |=  =^duct
-              fine(listeners.keen (~(put ju listeners.keen) duct %tune))
+              fine(listeners.keen (~(put ju listeners.keen) duct %sage))
             ::  scry is autocancelled in +abet if no more listeners
             ::
             ++  fi-unsub
@@ -7357,7 +7359,7 @@
               =+  user-path=path
               =+  ls=(~(get ju tip.peer-state) path)
               ?:  =(~ ls)  :: XX TMI
-                %-  (fi-trace fin.veb |.("path no in tip {<fi-full-path>}"))
+                %-  (fi-trace fin.veb |.("path not in tip {<path>}"))
                 :: XX check if there's something in the .pit?
                 fine
               ::
@@ -7443,19 +7445,15 @@
               [& fine]
             ::
             ++  fi-done
-              |=  [sig=@ data=$@(~ (cask))]
-              =/  ful  fi-full-path
-              =/  roar=(unit roar)
-                ?.  (meri:keys ful sig data)
-                  ~
-                :+  ~  [ful ?~(data ~ `data)]
-                [[her [life.peer-state sig]] ~ ~]
-              ::
-              %-  (fi-trace fin.veb |.("done {(spud ful)}"))
+              |=  [sig=@ =gage:mess]
+              =?  gage  !(meri:keys fi-full-path sig gage)
+                %.  ~
+                (fi-trace fin.veb |.("veri sig failed {(spud fi-full-path)}"))
+              %-  (fi-trace fin.veb |.("done {(spud fi-full-path)}"))
               ::
               %-  ~(rep by listeners.keen)
               |=  [[=^duct ints=(set ints)] =_fine]
-              =.  fine  ((fi-give-tune roar) [duct^ints fine])
+              =.  fine  ((fi-give-sage her^path gage) [duct^ints fine])
               ((fi-give-rate ~) duct^ints fine)
             ::
             ++  fi-first-rcv
@@ -8058,7 +8056,9 @@
               =/  flow=flow-state
                 (~(got by flows) ping-bone %for)
               =+  flow-mop=((on ,@ud mesa-message) lte)
-              =/  first=[@ud mesa-message]  (need (pry:flow-mop loads.snd.flow))
+              =/  first=[@ud mesa-message]
+                %+  fall  (pry:flow-mop loads.snd.flow)
+                [(dec next.snd.flow) *mesa-message]
               :^  ~  ~  %noun
               !>  :*  ~  who  rift.ames-state  life.ames-state
                       ping-bone  -.first  next.snd.flow
@@ -8214,7 +8214,7 @@
               ?:  ?=([%gall %unto *] sign)  :: XX from poking %ping app
                 `ames-state
               ::
-              ?+  sign  `ames-state  ::  ~&(mesa-take-sign/[&1^&2]:sign ev-core)
+              ?+  sign  `ames-state  :: XX %tune; not used
                 [%behn %wake *]  sy-abet:(~(sy-wake sy hen) wire error.sign)
               ::
                   [%jael %private-keys *]
@@ -8380,7 +8380,10 @@
           ::  in their peer state
           ::
           =?  client-chain.per  ?=(%shut -.space)
-            (put:key-chain client-chain.per kid.space key.space path)
+            ::  only the server chain needs to take care of storing the path
+            ::  that has the security context prefix
+            ::
+            (put:key-chain client-chain.per kid.space key.space path=/)
           ::  XX  early abet; antipattern
           ::
           ::  we should just emit the %meek task, but instead we punch
@@ -10043,8 +10046,10 @@
                 (~(put by peers.ames-state) ship known/peer-state(- +<.u.peer))
               =?  chums.ames-state  ?=(%ames core.ames-state)
                 (~(del by chums.ames-state) ship)
-              ::  XX TODO %mesa as default core
+              ::  if %mesa is the default core update it
               ::
+              =?  chums.ames-state  ?=(%mesa core.ames-state)
+                (~(put by chums.ames-state) ship u.peer)
               ames-state
             =?  ames-state  ?=(%ames -.peer)
               =.  +>.u.peer  +:*peer-state
@@ -10060,7 +10065,10 @@
                 (~(put by chums.ames-state) ship known/fren-state(- +<.u.peer))
               =?  peers.ames-state  ?=(%mesa core.ames-state)
                 (~(del by peers.ames-state) ship)
+              ::  if %ames is the default core update it
               ::
+              =?  peers.ames-state  ?=(%ames core.ames-state)
+                (~(put by peers.ames-state) ship u.peer)
               ames-state
             ::  cancel all timers related to .ship
             ::
@@ -10249,10 +10257,14 @@
                   =<  abet  ^+  peer-core
                   %-  ~(rep by keens.todos)
                   |=  [[[=path =ints] ducts=(set duct)] cor=_peer-core]
+                  ::  XX some of these ints can be %tune(s) but they are
+                  ::  treated as %sage(s)
                   (~(rep in ducts) |=([=duct c=_cor] (on-keen:c path duct)))
                 ::
                 %-  ~(rep by chums.todos)
                 |=  [[[=path =ints] ducts=(set duct)] cor=_ames-core]
+                ::  XX some of these ints can be %tune(s) but they are
+                  ::  treated as %sage(s)
                 (~(rep in ducts) |=([=duct c=_cor] (on-chum:c ship^path)))
               ::
               (sy-emil moves)
