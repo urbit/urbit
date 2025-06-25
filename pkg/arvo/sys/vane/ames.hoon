@@ -9111,6 +9111,16 @@
               ?:  =(%bak dire)  by-duct.ossuary.per
               (~(del by by-duct.ossuary.per) (ev-got-duct bone))
             ::
+                tip.per
+              =/  user-path  (fo-cor-path seq=0 our)
+              =+  ?.  (~(has by tip.per) user-path)  ~
+                  %.  ~
+                  %+  ev-tace  fin.veb.bug.ames-state
+                  |.("remove {(spud user-path)} from .tip {<side=side>} {<[%ames (fo-wire %cor) duct=hen]>} ames-path={(spud (make-space-path chum-to-our (fo-cor-path seq=0 our)))}")
+              %^  ~(del ju tip.per)  user-path
+                `duct`[`wire`[%ames (fo-wire %cor)] duct=hen]
+              (make-space-path chum-to-our (fo-cor-path seq=0 our))
+            ::
                 pit.per
                   =;  [pit=_pit.per *]
                     ::  a forward flow can be deleted when we hear an %ack for a
@@ -10898,6 +10908,7 @@
             ::  XX  if nothing outstansing, the cork has been nacked; resend it
             ::
             fo-abet:(fo-call:fo-core %pump %plea %$ /flow %cork ~)
+          ::
           --
         ::
         +|  %internals
@@ -11889,7 +11900,7 @@
               ?+    req.req.tyl  ~
                   ~
                 ?~  chum
-                  ~&  scry-for-chum-has-peers=(~(has by peers.ames-state) u.who)
+                  ~&  (~(get by peers.ames-state) u.who)
                   ::
                   [~ ~]
                 ``noun+!>(u.chum)
