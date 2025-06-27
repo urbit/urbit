@@ -1,6 +1,5 @@
 /+  default-agent
-/+  drum=hood-drum, helm=hood-helm, kiln=hood-kiln
-/=  gall-raw  /sys/vane/gall
+/+  drum=hood-drum, helm=hood-helm, kiln=hood-kiln, load=hood-load
 |%
 +$  state
   $~  [%28 *state:drum *state:helm *state:kiln]
@@ -74,34 +73,8 @@
   ^-  step:agent:gall
   =+  !<(old=any-state old-state-vase)
   ?:  ?=(%27 -.old)
-    =/  m-gall  (gall-raw our.bowl)
-    =/  yokes
-      .^((map term yoke:m-gall) %gy /(scot %p our.bowl)//(scot %da now.bowl)/$)
-    =/  channel-state
-      .^  channel-state:eyre  %e
-        /(scot %p our.bowl)/channel-state/(scot %da now.bowl)/$
-      ==
-    =;  subs=(list [%g ship term duct])
-      :_  %=  this
-            state  old(- %28)
-          ==
-      ^-  (list card:agent:gall)
-      [%pass /helm %arvo %g %lave subs]~
-    ::
-    %+  roll  ~(tap by yokes)
-    |=  [[=dude:gall =yoke:m-gall] subs=(list [%g ship term duct])]
-    ?>  ?=(%live -.yoke)
-    %+  roll  ~(tap by bitt.yoke)
-    |=  [[=duct =ship =path] s=_subs]
-    ?.  ?=([[%eyre %channel %subscription session=@ta sub=@ta * *] *] duct)
-      s
-    =*  ses-id     &4:i.duct
-    =*  sub-id     &5:i.duct
-    ?~  chan=(~(get by session.channel-state) ses-id)
-      [g/ship^dude^duct s]
-    ?^  sub=(~(get by subscriptions.u.chan) (slav %ud sub-id))
-      s
-    [g/ship^dude^duct s]
+    :_  this(state old(- %28))
+    (eyre-clean:load [our now]:bowl)
   =/  tup=any-state-tuple
     ?+    -.old  +.old
         ?(%1 %2 %3 %4 %5 %6)
