@@ -1,4 +1,4 @@
-::  Mate: migrate all peers locally to Directed Messaging
+::  Mate: migrate peers locally to Directed Messaging
 ::
 ::    (used only for testing; it always runs on dry mode)
 ::    XX test individual peers
@@ -7,4 +7,4 @@
   ::
 /?    310
 :-  %say
-|=([^ [who=(unit ship) ~] dry=_& ~] helm-mass-mate/who^dry=&)
+|=([^ [who=(unit ship) ~] dry=_& ~] helm-mass-mate/who^dry)

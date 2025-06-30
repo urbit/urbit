@@ -182,6 +182,7 @@
       `[%done ~]
     `[%fail %timer-error u.error.sign-arvo.u.in.tin]
   ==
+::  XX deprecate in 409k
 ::
 ++  take-tune
   |=  =wire
@@ -229,35 +230,7 @@
       `[%skip ~]
     `[%done sage.sign-arvo.u.in.tin]
   ==
-::
-++  take-message
-  =>  |%  +$  out  $%  [%sage sage:mess:ames]
-                       [%tune spar:ames (unit roar:ames)]
-                       [%page spar:ames (unit (unit page))]
-                   ==
-      --
-  |=  =wire
-  =/  m  (strand ,out)
-  ^-  form:m
-  |=  tin=strand-input:strand
-  ?+    in.tin  `[%skip ~]
-      ~  `[%wait ~]
-    ::
-      [~ %sign * %ames %sage sage=*]
-    ?.  =(wire wire.u.in.tin)
-      `[%skip ~]
-    `[%done %sage sage.sign-arvo.u.in.tin]
-    ::
-      [~ %sign * %ames %tune ^ *]
-    ?.  =(wire wire.u.in.tin)
-      `[%skip ~]
-    `[%done %tune +>.sign-arvo.u.in.tin]
-    ::
-      [~ %sign * %ames %near ^ *]
-    ?.  =(wire wire.u.in.tin)
-      `[%skip ~]
-    `[%done %page +>.sign-arvo.u.in.tin]
-  ==
+::  XX deprecate in 409k
 ::
 ++  take-near
   |=  =wire
@@ -455,25 +428,30 @@
   ^-  form:m
   ::  encrypted using %chum namespace
   ::
-  =.  path.spar  [%a %x '1' %$ %whey (scot %ud boq) path.spar]
-  (send-raw-card %pass wire %arvo %a %chum spar)
+  ;<  our=@p  bind:m  get-our
+  =.  path.spar
+    [%a %x '1' %$ %whey (scot %ud boq) (scot %p our) path.spar]
+  (chum wire spar)
 ::
 ++  meta
   |=  [=wire =spar:ames]
   =/  m  (strand ,~)
   ^-  form:m
-  ?+    path.spar  (pure:m ~)
-      $%  [%flow bone=@ =dire:ames ~]
+  ?+    path.spar  !!
+      $%  [%ames bone=@ ?(%clos %cork %next %last %curr) ~]
+          [%flow bone=@ =dire:ames ~]
           [%flow bone=@ =dire:ames ?(%clos %cork %line %lods %next %last) ~]
-          [%flow bone=@ =dire:ames %mess mess=@ %whey ~]
-          [%flow bone=@ =dire:ames %mess mess=@ %naxp ~]
+          :: XX rewrite in terms of %whey namespace
+          ::
+          [%flow bone=@ =dire:ames %whey boq=@ ~]
+          [%flow bone=@ =dire:ames seq=@ %naxp ~]
       ==
     ::  encrypted using %chum namespace
     ::
     ;<  our=@p  bind:m  get-our
     %-  send-raw-card
     :*  %pass  wire  %arvo  %a  %chum
-        spar(path [%a %x '1' %$ %meta %ship (scot %p our) path.spar])
+        spar(path [%a %x '1' %$ %meta (scot %p our) path.spar])
     ==
   ==
 ::

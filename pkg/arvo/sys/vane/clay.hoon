@@ -365,8 +365,7 @@
           $>  $?  %boon                                 ::  response
                   %done                                 ::  (n)ack
                   %lost                                 ::  lost boon
-                  %tune                                 ::  |fine response
-                  %sage                                 ::  |mesa response
+                  %sage                                 ::  %keen response
               ==                                        ::
           gift:ames                                     ::
       ==                                                ::
@@ -1906,7 +1905,11 @@
         *yaki
       (aeon-to-yaki:ze let.dom)
     =/  old-kel=(set weft)
-      ?:  =(0 let.dom)
+      ?:  ?|  =(0 let.dom)
+              =-  ~?  -  "clay: missing /sys/kelvin on {<syd>}"
+                  -
+              !(~(has by q.old-yaki) /sys/kelvin)
+          ==
         [zuse+zuse ~ ~]
       (waft-to-wefts (get-kelvin %| old-yaki))
     =/  [deletes=(set path) changes=(map path (each page lobe))]
@@ -2312,21 +2315,21 @@
         (emit hen %pass /what %$ what/fil)
       ::
       ++  suspend-non-essentials
-        =/  lit=(list [desk zest])
-          %+  turn
-            ~(tap by dos.rom.ruf)
-          |=  [=desk =dojo]
-          [desk ?:(ese.dojo %live %held)]
-        =/  sus=(list [desk zest])
-          %+  skim
-            lit
-          |=  [=desk =zest]  ?=(%held zest)
-        :*  hen
-            %pass
-            /kiln/bump/zeal
-            %c
-            %zeal
-            sus
+        =/  sys-kel=weft
+          =/  w=waft  (get-kelvin yoki)
+          ?@  -.w  w  !!
+        :*  hen  %pass  /kiln/bump/zeal  %c  %zeal
+        %+  roll  ~(tap by dos.rom.ruf)
+        |=  [[=desk =dojo] l=(list [desk zest])]
+        ?:  ese.dojo  l
+        =/  kel=(set weft)
+          ?:  (~(has by wic.dom.dojo) sys-kel)
+            [sys-kel ~ ~]
+          %-  waft-to-wefts
+          %+  get-kelvin  %|
+          (tako-to-yaki:ze (~(got by hit.dom.dojo) let.dom.dojo))
+        ?:  (~(has in kel) sys-kel)  l
+        [[desk %held] l]
         ==
       --
     --
@@ -6343,17 +6346,13 @@
       %-  (slog leaf+"clay: lost backfill from {<tea>}" ~)
       [~ ..^$]
     ::
-        ?(%boon %tune %sage)
+        ?(%boon %sage)
       =/  her=ship   (slav %p i.t.tea)
       =/  =desk      (slav %tas i.t.t.tea)
       =/  index=@ud  (slav %ud i.t.t.t.tea)
       ::
       =/  fell=(unit fell)
         ?:  ?=(%boon +<.hin)  `;;(fell payload.hin)
-        ?:  ?=(%tune +<.hin)
-          ?~  roar.hin  ~
-          ?~  q.dat.u.roar.hin  ~
-          `[%1 `u.q.dat.u.roar.hin]
         =/  =spar:ames  p.sage.hin
         ?~  q.sage.hin  ~
         `[%1 `q.sage.hin]
@@ -6366,7 +6365,7 @@
           ::
           %-  (slog leaf+"clay: got null from {<her>}, falling back to ames" ~)
           abet:(retry-with-ames:den %back-index index)
-        =?  den  ?=(?(%tune %sage) +<.hin)
+        =?  den  ?=(%sage +<.hin)
           (cancel-scry-timeout:den index)
         abet:abet:(take-backfill:(foreign-update:den index) u.fell)
       [mos ..^$]
@@ -6472,7 +6471,6 @@
       ::  handled in the wire dispatcher
       ::
       %boon  !!
-      %tune  !!
       %sage  !!
       %lost  !!
       %unto  !!

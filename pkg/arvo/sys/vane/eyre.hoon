@@ -31,7 +31,7 @@
 ::  +sign: private response from another vane to eyre
 ::
 +$  sign
-  $%  [%ames $>(?(%done %boon %lost %tune) gift:ames)]
+  $%  [%ames $>(?(%done %boon %lost %sage) gift:ames)]
       [%behn $>(%wake gift:behn)]
       [%gall gift:gall]
       [%clay gift:clay]
@@ -817,8 +817,35 @@
     ::      perhaps that distinction, where userspace requests are async, but
     ::      eyre-handled requests are always synchronous, provides a fruitful
     ::      angle for refactoring...
-    =^  [suv=@uv =identity som=(list move)]  state
+    =^  ?(invalid=@uv [suv=@uv =identity som=(list move)])  state
       (session-for-request:authentication request)
+    ?@  -
+      ::  the request provided a session cookie that's not (or no longer)
+      ::  valid. to make sure they're aware, tell them 401
+      ::
+      ::NOTE  some code duplication with below, but request handling deserves
+      ::      a refactor anyway
+      =.  connections.state
+        ::NOTE  required by +handle-response.
+        ::      the session identity we provide here doesn't actually exist.
+        ::      that's fine: we call +handle-response for this connection right
+        ::      away, that no-ops for the non-existing session, and then
+        ::      deletes the connection from state.
+        %+  ~(put by connections.state)  duct
+        ^-  outstanding-connection
+        [action [| secure address request] [invalid %fake *@p] ~ 0]
+      ::  their cookie was invalid, make sure they expire it
+      ::
+      =/  bod=octs  (as-octs:mimes:html 'bad session auth')
+      %-  handle-response
+      :*  %start
+          :-  401
+          :~  ['set-cookie' (session-cookie-string:authentication invalid ~)]
+              ['content-length' (crip (a-co:co p.bod))]
+          ==
+          `bod
+          complete=%.y
+      ==
     =;  [moz=(list move) sat=server-state]
       [(weld som moz) sat]
     ::
@@ -1087,7 +1114,8 @@
       %^  return-static-data-on-duct  405  'text/html'
       (error-page 405 & url.request "may only GET boot data")
     =/  crumbs  q:(rash url.request apat:de-purl:html)
-    ?.  ?=([@t @t @t *] crumbs)
+    =>  .(crumbs `(pole knot)`crumbs)
+    ?.  ?=([%'~' %boot ship=@t req=*] crumbs)
       %^  return-static-data-on-duct  400  'text/html'
       %:  error-page
         400
@@ -1095,15 +1123,12 @@
         url.request
         "Invalid input: Expected /~/boot/<ship=@p> or /~/boot/<ship=@p>/<bone=@u>"
       ==
-    =/  ship  %+(slaw %p i.t.t.crumbs)
-    =/  bone
-      %+  slaw
-        %ud
-      ?:  ?=([@t @t @t @t ~] crumbs)
-        i.t.t.t.crumbs
-      ''
+    =/  ship=(unit ship)  (slaw %p ship.crumbs)
+    =/  bone=(unit @ud)
+      ?.  ?=([bone=@t ~] req.crumbs)  ~
+      (rush bone.req.crumbs dem)
     ?:  ?|  ?=(~ ship)
-            ?&(?=([@t @t @t @t ~] crumbs) ?=(~ bone))
+            &(?=([bone=@ ~] req.crumbs) ?=(~ bone))
         ==
       %^  return-static-data-on-duct  400  'text/html'
       %:  error-page
@@ -1112,47 +1137,25 @@
         url.request
         "Invalid input: Expected /~/boot/<ship=@p> or /~/boot/<ship=@p>/<bone=@u>"
       ==
+    ::
     =/  des=(unit (unit cage))
       %:  rof
         [~ ~]
         /eyre
         %ax
         [our %$ da+now]
-        /peers/(scot %p u.ship)
+        :+  %boot  (scot %p u.ship)
+        ?~(bone ~ [(scot %ud u.bone) ~])  :: XX
       ==
     ?.  ?=([~ ~ %noun *] des)
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 & url.request "Peer {(scow %p u.ship)} not found.")
-    =/  ship-state
-      !<  ship-state:ames  q.u.u.des
-    ?>  ?=(%known -.ship-state)
-    ?~  bone
-      %^  return-static-data-on-duct  200  'application/octet-stream'
-      %-  as-octs:mimes:html
-      %-  jam
-      ^-  boot
-      [%1 (galaxy-for u.ship) rift.-.+.ship-state life.-.+.ship-state ~ ~]
-    =/  rcv=(map bone:ames message-sink-state:ames)  rcv.+.ship-state
-    =/  mss=(unit message-sink-state:ames)  (~(get by rcv) u.bone)
-    ?~  mss
-      %^  return-static-data-on-duct  404  'text/html'
-      %:  error-page
-        404
-        &
-        url.request
-        "Bone {(scow %u u.bone)} of peer {(scow %p u.ship)} not found."
-      ==
+    =+  !<  [rift=@ud life=@ud bone=(unit @ud) last-acked=(unit @ud)]  q.u.u.des
     %^  return-static-data-on-duct  200  'application/octet-stream'
     %-  as-octs:mimes:html
     %-  jam
     ^-  boot
-    :*  %1
-        (galaxy-for u.ship)
-        rift.-.+.ship-state
-        life.-.+.ship-state
-        bone
-        [~ last-acked.u.mss]
-    ==
+    [%1 (galaxy-for u.ship) rift life bone last-acked]
   ::  +handle-name: respond with the requester's @p
   ::
   ++  handle-name
@@ -1479,10 +1482,17 @@
         out(moves [give-session-tokens :(weld moz moves.fex moves.out)])
       ::NOTE  that we don't provide a 'set-cookie' header here.
       ::      +handle-response does that for us.
+      ::TODO  that should really also handle the content-length header for us,
+      ::      somewhat surprising that it doesn't...
+      %-  handle-response
+      =/  bod=octs
+        (as-octs:mimes:html (scot %uv session.fex))
+      =/  col=[key=@t value=@t]
+        ['content-length' (crip (a-co:co p.bod))]
       ?~  redirect
-        (handle-response %start 204^~ ~ &)
+        [%start 200^~[col] `bod &]
       =/  actual-redirect  ?:(=(u.redirect '') '/' u.redirect)
-      (handle-response %start 303^['location' actual-redirect]~ ~ &)
+      [%start 303^~['location'^actual-redirect col] `bod &]
     ::  +handle-logout: handles an http request for logging out
     ::
     ++  handle-logout
@@ -1542,11 +1552,18 @@
       =^  moz1  state  (close-session u.sid all)
       =^  moz2  state  (handle-response response)
       [[give-session-tokens (weld moz1 moz2)] state]
-    ::  +session-id-from-request: attempt to find a session cookie
+    ::  +session-id-from-request: attempt to find a session token
+    ::
+    ::    looks in the authorization header first. if there is no such header,
+    ::    looks in the cookie header(s) instead.
     ::
     ++  session-id-from-request
       |=  =request:http
       ^-  (unit @uv)
+      ::  is there an authorization header?
+      ::
+      ?^  auth=(get-header:http 'authorization' header-list.request)
+        (rush u.auth ;~(pfix (jest 'Bearer 0v') viz:ag))
       ::  are there cookies passed with this request?
       ::
       =/  cookie-header=@t
@@ -1635,20 +1652,20 @@
       (~(raw og (shas %fake-name eny)) 128)
     ::  +session-for-request: get the session details for the request
     ::
-    ::    creates a guest session if the request does not have a valid session.
+    ::    returns the @ case if an invalid session is provided.
+    ::    creates a guest session if the request does not have any session.
     ::    there is no need to call +give-session-tokens after this, because
-    ::    guest session do not make valid "auth session" tokens.
+    ::    guest sessions do not make valid "auth session" tokens.
     ::
     ++  session-for-request
       |=  =request:http
-      ^-  [[session=@uv =identity moves=(list move)] server-state]
-      =*  new  (start-session %guest)
+      ^-  [$@(session=@uv [session=@uv =identity moves=(list move)]) server-state]
       ?~  sid=(session-id-from-request request)
-        new
+        (start-session %guest)
       ?~  ses=(~(get by sessions.auth.state) u.sid)
-        new
+        [u.sid state]
       ?:  (gth now expiry-time.u.ses)
-        new
+        [u.sid state]
       [[u.sid identity.u.ses ~] state]
     ::  +close-session: delete a session and its associated channels
     ::
@@ -2274,7 +2291,9 @@
         ::  POST methods are used solely for deleting channels
         (on-put-request channel-id identity request)
       ::
-      ((trace 0 |.("session not a put")) `state)
+      %-  (trace 0 |.("session not a put"))
+      %^  return-static-data-on-duct  405  'text/html'
+      (error-page 405 & url.request "bad method for session endpoint")
     ::  +on-cancel-request: cancels an ongoing subscription
     ::
     ::    One of our long lived sessions just got closed. We put the associated
@@ -4077,12 +4096,12 @@
           on-fail:server:eauth:authentication:(per-server-event args)
         [moz http-server-gate]
       ::
-      ?>  ?=([%ames %tune *] sign)
-      ?>  =(client ship.sign)
+      ?>  ?&  ?=([%ames %sage *] sign)
+              =(client ship.p.sage.sign)
+          ==
       =/  url=(unit @t)
-        ?~  roar.sign  ~
-        ?~  q.dat.u.roar.sign  ~
-        ;;((unit @t) q.u.q.dat.u.roar.sign)
+        ?~  q.sage.sign  ~
+        ;;((unit @t) q.q.sage.sign)
       =^  moz  server-state.ax
         ?~  url
           %.  [client nonce]

@@ -34,12 +34,13 @@
 ::  manage subscriptions efficiently.
 ::
 =>  |%
-+$  state-2
-  $:  %2
-      pki=state-pki-2                                   ::
++$  state-3
+  $:  %3
+      pki=state-pki-3                                   ::
       etn=state-eth-node                                ::  eth connection state
+      tim=[%plea (unit resend-timer)]                   ::  nacked plea timer
   ==                                                    ::
-+$  state-pki-2                                         ::  urbit metadata
++$  state-pki-3                                         ::  urbit metadata
   $:  $=  own                                           ::  vault (vein)
         $:  yen=(set duct)                              ::  trackers
             sig=(unit oath)                             ::  for a moon
@@ -55,6 +56,7 @@
             nel=(set duct)                              ::  trackers of all
             dns=dnses                                   ::  on-chain dns state
             pos=(map ship point)                        ::  on-chain ship state
+            mon=(jug [=duct source=ship] moon=ship)     ::  moon pending state
         ==                                              ::
   ==                                                    ::
 +$  message-all
@@ -67,6 +69,8 @@
 +$  message-result
   $%  [%public-keys-result =public-keys-result]         ::  public keys boon
   ==
++$  resend-timer
+  [=duct =wire date=@da]
 +$  card                                                ::  i/o action
   (wind note gift)                                      ::
 ::                                                      ::
@@ -176,7 +180,7 @@
           ==
           ::  all vane state
           ::
-          state-2
+          state-3
       ==
   ::  lex: all durable state
   ::  moz: pending actions
@@ -507,11 +511,11 @@
       ::      use case for this is comets, about who nobody cares.
       =/  dus  (~(uni in nel.zim.pki) ~(key by yen.zim.pki))
       =/  sus  ~(. su hen now pki etn)
-      =/  sis  ~(tap in ships.tac)
-      |-
-      ?~  sis  (curd abet:sus)
-      =.  sus  (exec:sus dus %give %public-keys %breach i.sis)
-      $(sis t.sis)
+      =;  core=_sus
+        (curd abet:core)
+      %-  ~(rep in ships.tac)
+      |=  [=ship s=_sus]
+      (exec:s dus %give %public-keys %breach ship)
     ==
   ::
   ++  take
@@ -522,7 +526,14 @@
       ?~  error.hin  +>.$
       ~&  [%done-bad tag.u.error.hin]
       %-  (slog tang.u.error.hin)
-      ::TODO  fail:et
+      ::  if first time hearing an error, start timer to retry sending the $plea
+      ::
+      ::    XX  allow to change the rate via a %jael task in 409
+      ::
+      =?  moz  ?=([%plea ~] tim)
+        [hen %pass /public-keys %b %wait `@da`(add now ~d1)]^moz
+      =?  tim  ?=([%plea ~] tim)
+        plea/`[hen /public-keys `@da`(add now ~d1)]
       +>.$
     ::
         [%ames %boon *]
@@ -538,10 +549,24 @@
     ::
         [%behn %wake *]
       ?^  error.hin
-        %-  %+  slog
-              leaf+"jael unable to resubscribe, run :azimuth|listen"
-            u.error.hin
-          +>.$
+        =+  ?.  ?=([%breach @ ~] tea)  ~  :: XX log %plea timer crashed
+            %-  %+  slog
+                  leaf+"jael unable to resubscribe, run :azimuth|listen"
+                u.error.hin
+            ~
+        +>.$
+      ?:  ?=([%public-keys ~] tea)
+        ::  resend any pleas that are outstanding
+        ::
+        =/  sus  ~(. su hen now pki etn)
+        =;  core=_sus
+          =.  tim  plea/~
+          (curd abet:core)
+        =/  plea=[@tas path %0 term whos=(set @p)]
+          [%j /public-keys %0 %public-keys whos=~]
+        %-  ~(rep by mon.zim.pki)
+        |=  [[[hen=duct source=ship] whos=(set ship)] s=_sus]
+        (emit:s hen %pass /public-keys %a %plea source plea(whos whos))
       ?>  ?=([%breach @ ~] tea)
       =/  =source-id  (slav %ud i.t.tea)
       =/  =source  (~(got by sources.etn) source-id)
@@ -583,7 +608,7 @@
   ::                                                    ::  ++curd:of
   ++  curd                                              ::  relative moves
     |=  $:  moz=(list move)
-            pki=state-pki-2
+            pki=state-pki-3
             etn=state-eth-node
         ==
     +>(pki pki, etn etn, moz (weld (flop moz) ^moz))
@@ -603,7 +628,7 @@
   =|  moz=(list move)
   =|  $:  hen=duct
           now=@da
-          state-pki-2
+          state-pki-3
           state-eth-node
       ==
   ::  moz: moves in reverse order
@@ -623,10 +648,10 @@
   ::
   ++  exec                                              ::  mass gift
     |=  [yen=(set duct) cad=card]
-    =/  noy  ~(tap in yen)
-    |-  ^+  this-su
-    ?~  noy  this-su
-    $(noy t.noy, moz [[i.noy cad] moz])
+    ^+  this-su
+    %-  ~(rep in yen)
+    |=  [=duct su=_this-su]
+    su(moz [[duct cad] moz])
   ::
   ++  emit-peer
     |=  [app=term =path]
@@ -879,6 +904,14 @@
           %+  public-keys-give
             (subscribers-on-ship who.i.pointl)
           [%full (my i.pointl ~)]
+        ::  moon keys not pending; delete
+        ::
+        =?  mon.zim  ?=(%earl (clan:title who.i.pointl))
+          =/  sponsor=ship
+            ?^  sponsor.point.i.pointl
+              u.sponsor.point.i.pointl
+            (^sein:title who.i.pointl)
+          (~(del ju mon.zim) hen^sponsor who.i.pointl)
         $(pointl t.pointl)
       ::
       ?:  ?=(%breach -.public-keys-result)
@@ -973,9 +1006,13 @@
         ..feed
       ::
       ?:  ?=(%& -.source)
+        =.  mon.zim
+          %-  ~(rep in whos)
+          |=  [=ship m=_mon.zim]
+          (~(put ju m) [hen p.source] ship)
         %-  emit
-        =/  =message-all  [%0 %public-keys whos]
-        [hen %pass /public-keys %a %plea p.source %j /public-keys message-all]
+        =/  =plea:ames  [%j /public-keys %0 %public-keys whos]
+        [hen %pass /public-keys %a %plea p.source plea]
       (peer p.source whos)
     --
   ::
@@ -993,7 +1030,7 @@
 ::
 ::  lex: all durable %jael state
 ::
-=|  lex=state-2
+=|  lex=state-3
 |=  $:  ::  now: current time
         ::  eny: unique entropy
         ::  rof: namespace resolver
@@ -1025,7 +1062,21 @@
 ++  load                                                ::  upgrade
   =>  |%
       ::
-      +$  any-state  $%(state-1 state-2)
+      +$  any-state  $%(state-1 state-2 state-3)
+      +$  state-2
+        $:  %2
+            pki=state-pki-2
+            etn=state-eth-node
+        ==
+      +$  state-pki-2
+        $:  $=  own
+              $:  yen=(set duct)  sig=(unit oath)  tuf=(list turf)  fak=_|
+                  lyf=life        step=@ud         jaw=(map life ring)
+              ==
+            $=  zim
+              $:  yen=(jug duct ship)  ney=(jug ship duct)  nel=(set duct)
+                  dns=dnses            pos=(map ship point)
+        ==    ==
       +$  state-1
         $:  %1
             pki=state-pki-1
@@ -1058,7 +1109,13 @@
       -        %2
       own.pki  own.pki.old(+>+ +>.+>+.own.pki.old)
     ==
-  ?>  ?=(%2 -.old)
+  =?  old  ?=(%2 -.old)
+    %=  old
+      -        %3
+      pos.zim.pki  [pos.zim.pki.old mon=~]
+              etn  [etn.old plea/~]
+    ==
+  ?>  ?=(%3 -.old)
   ..^$(lex old)
 ::                                                      ::  ++scry
 ++  scry                                                ::  inspect
