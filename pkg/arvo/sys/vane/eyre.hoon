@@ -61,11 +61,6 @@
       ::    the :binding into a (map (unit @t) (trie knot =action)).
       ::
       bindings=(list [=binding =duct =action])
-      :: ::  xx: bound paths, to the desks that bound them
-      :: ::  yy: bound paths by desk
-      :: ::
-      :: path-to-desk=(map path desk)
-      :: desk-paths=(jug desk path)
       ::  cache: mapping from url to versioned entry
       ::
       cache=(map url=@t [aeon=@ud val=(unit cache-entry)])
@@ -978,7 +973,6 @@
     ::  record that we started an asynchronous response
     ::
     =/  connection=outstanding-connection
-      :: ?<  ?=(%iframe -.action)  ::TODOxx removeme
       [[%boot ~] [authenticated secure address request] [suv identity] ~ 0]
     =.  connections.state
       ::  NB: required by +handle-response and +handle-request:authentication.
@@ -1061,42 +1055,7 @@
     ::
     ?-    -.action
         %iframe
-      ::TODOxx  factor out into arm/core
-      ?~  pathowner
-        ::  nobody has bound this path, the iframe would just contain a 404,
-        ::  so serve the 404 directly
-        ::
-        %^  return-static-data-on-duct  404  'text/html'
-        (error-page 404 authenticated url.request "no such route??")
-      ::  generate a page that contains an iframe which points to the requested
-      ::  path _under the appropriate subdomain_
-      ::
-      =/  iframe-src=tape
-        %-  trip
-        %+  rap  3
-        =/  inner  (need inner)
-        :~  '//'         ::  same protocol
-            u.pathowner  ::  appropriate subdomain
-            '.'          ::  dot
-            (en-turf:html domain.inner)  ::  our hostname (shorted found match)
-            ?~(port.inner '' (cat 3 ':' (crip (a-co:co u.port.inner))))
-            url.request  ::  original request target
-        ==
-      %^  return-static-data-on-duct  200  'text/html'
-      %-  as-octs:mimes:html
-      %-  crip
-      %-  en-xml:html
-      ;html
-        ;head
-          ;title:"eyre outer frame"
-          ;style:"iframe \{ height: 100%; width: 100%; }"
-          ::TODOxx  appropriate meta etc
-        ==
-        ;body
-          ;script:"TODOxx? for injecting cookies, sharing cmds etc"
-          ;iframe#portal@"{iframe-src}";
-        ==
-      ==
+      (handle-iframe pathowner (bind inner head) request)
     ::
         %gen
       =/  bek=beak  [our desk.generator.action da+now]
@@ -1189,7 +1148,7 @@
       (handle-sponsor identity request)
     ::
         %four-oh-four
-      ::TODOxx  return 403 if unauthenticated?
+      ::TODO  return 403 if unauthenticated?
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 authenticated url.request ~)
     ==
@@ -1546,6 +1505,50 @@
         data=[~ data]
         complete=%.y
     ==
+  ::  +handle-iframe
+  ::
+  ++  handle-iframe
+    |=  $:  pathowner=(unit desk)
+            inner=(unit [domain=turf port=(unit @ud)])
+            =request:http
+        ==
+    ?~  pathowner
+      ::  nobody has bound this path, the iframe would just contain a 404,
+      ::  so serve the 404 directly
+      ::
+      %^  return-static-data-on-duct  404  'text/html'
+      ::TODO  consider: even w/ "real" auth flag, will leak 404.
+      ::      is eyre in the business of preventing service discovery y/n? (y!)
+      (error-page 404 & url.request "no such route")
+    ::  generate a page that contains an iframe which points to the requested
+    ::  path _under the appropriate subdomain_
+    ::
+    =/  iframe-src=tape
+      %-  trip
+      %+  rap  3
+      =/  inner  (need inner)
+      :~  '//'         ::  same protocol
+          u.pathowner  ::  appropriate subdomain
+          '.'          ::  dot
+          (en-turf:html domain.inner)  ::  our hostname (shorted found match)
+          ?~(port.inner '' (cat 3 ':' (crip (a-co:co u.port.inner))))
+          url.request  ::  original request target
+      ==
+    %^  return-static-data-on-duct  200  'text/html'
+    %-  as-octs:mimes:html
+    %-  crip
+    %-  en-xml:html
+    ;html
+      ;head
+        ;title:"eyre outer frame"
+        ;style:"iframe \{ height: 100%; width: 100%; }"
+        ::TODOxx  appropriate meta etc
+      ==
+      ;body
+        ;script:"TODOxx? for injecting cookies, sharing cmds etc"
+        ;iframe#portal@"{iframe-src}";
+      ==
+    ==
   ::  +authentication: per-event authentication as this Urbit's owner
   ::
   ::    Right now this hard codes the authentication page using the old +code
@@ -1798,8 +1801,8 @@
       :-  sik
       ?:  ?=([%local *] kind)  [[%ours ~] scope.kind]
       ::NOTE  non-local identities always have broadest possible provenance
-      ::TODOxx  revisit, probably. interactions need to be scoped always, right?
-      :_  ~
+      ::TODOxx  revisit! interactions need to be scoped always.
+      :_  provenance=~
       ?:  ?=([%eauth @] kind)  [%real who.kind]
       :-  %fake
       ::  pre-scramble our ship name into its displayed value, and
@@ -2836,7 +2839,7 @@
           ^-  move
           %+  deal-as
             /channel/poke/[channel-id]/(scot %ud request-id)
-          :^  from  ship  app  ::TODOxx  could pass identity
+          :^  identity  ship  app
           ^-  task:agent:gall
           :+  %poke-as  mark
           ?-  -.i.requests
@@ -3458,40 +3461,12 @@
     =^  success  bindings.state
       ::  prevent binding in reserved namespaces
       ::
-      ?:  ?|  ?=(~ path.binding)           ::  wrapper page  ::TODOxx  naming
-              ?=([%'~' *] path.binding)    ::  eyre
+      ?:  ?|  ?=([%'~' *] path.binding)    ::  eyre
               ?=([%'~_~' *] path.binding)  ::  runtime
               ?=([%'_~_' *] path.binding)  ::  scries
           ==
         [| bindings.state]
       [& (insert-binding [binding duct action] bindings.state)]
-    :: ::  if we (re)bound a desk binding, update path provenance lookups
-    :: ::
-    :: =?  server-state  success
-    ::   ::  remove old binding from lookup, if it was a desk binding
-    ::   ::
-    ::   =/  prev  (~(get by path-to-desk.state) path.binding)
-    ::   =?  desk-paths.state  ?=(^ prev)
-    ::     (~(del ju desk-paths.state) u.prev path.binding)
-    ::   =?  path-to-desk.state  ?=(^ prev)
-    ::     (~(del by path-to-desk.state) path.binding)
-    ::   ::  add new binding to lookup, if it is a desk binding
-    ::   ::
-    ::   ?.  ?=(%app -.action)  server-state
-    ::   =/  target-desk=desk
-    ::     =/  res=(unit (unit (cask vase)))
-    ::       ::TODOxx  what if agent starts running on a different desk? (^:
-    ::       (rof [~ ~] /eyre %gd our app.action da+now /)
-    ::     ::TODOxx  gall might give [~ ~] if not running. should handle gracefully,
-    ::     ::        at the very least reject binding, but mb gall should be more
-    ::     ::        "optimistic"
-    ::     ?>  ?=([~ ~ %desk *] res)
-    ::     !<(desk q.u.u.res)
-    ::   =.  desk-paths.state
-    ::     (~(put ju desk-paths.state) target-desk path.binding)
-    ::   =.  path-to-desk.state
-    ::     (~(put by path-to-desk.state) path.binding target-desk)
-    ::   server-state
     ::
     :_  state
     [duct %give %bound & binding]~
@@ -3616,9 +3591,8 @@
       ?+(-.who.identity who.who.identity %ours our)
     =/  sap=path
       ?@  identity  /eyre
-      /eyre  ::TODOxx uncomment once we have new types
-      :: ?~  provenance.identity  /eyre
-      :: /eyre/[u.provenance.identity]
+      ?~  provenance.identity  /eyre
+      /eyre/[u.provenance.identity]
     [duct %pass wire %g %deal [from ship sap] dude task]
   ::
   ++  trace
