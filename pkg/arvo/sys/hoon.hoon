@@ -6718,13 +6718,14 @@
 --
 ::
 ~%    %pen
-    +
+    +>
   ==
     %ap    ap
     %ut    ut
   ==
 ::    layer-5
 ::
+=|  bug=term
 |%
 ::
 ::    5aa: new partial nock interpreter
@@ -8241,7 +8242,7 @@
 ::
 ++  ap                                                  ::  hoon engine
   ~%    %ap
-      +>+
+      +>+>
     ==
       %open  open
       %rake  rake
@@ -10033,7 +10034,7 @@
     ::
         [%sgzp *]  ~_(duck(sut (play p.gen)) $(gen q.gen))
         [%sggr *]
-      =+  hum=$(gen q.gen)
+      =+  hum=$(gen q.gen, bug ?:(=(%loud p.gen) ~&(%loudening %loud) bug))
       :: ?:  &(huz !?=(%|(@ [?(%sgcn %sgls) ^]) p.gen))
       ::  hum
       :-  p.hum
@@ -10216,7 +10217,7 @@
     ::
         [%ktsg *]  $(gen p.gen)
         [%sgzp *]  ~_(duck(sut (play p.gen)) $(gen q.gen))
-        [%sggr *]  $(gen q.gen)
+        [%sggr *]  $(gen q.gen, bug ?:(=(%loud p.gen) ~&(%loudening2 %loud) bug))
         [%tsgr *]
       =+  lem=$(gen p.gen, gol %noun)
       $(gen q.gen, sut p.lem, dox q.lem)
@@ -10573,7 +10574,7 @@
       [%ktwt *]  (wrap(sut $(gen p.gen)) %lead)
       [%note *]  (hint [sut p.gen] $(gen q.gen))
       [%sgzp *]  ~_(duck(sut ^$(gen p.gen)) $(gen q.gen))
-      [%sggr *]  $(gen q.gen)
+      [%sggr *]  $(gen q.gen, bug ?:(=(%loud p.gen) ~&(%loudening3 %loud) bug))
       [%tsgr *]  $(gen q.gen, sut $(gen p.gen))
       [%tscm *]  $(gen q.gen, sut (busk p.gen))
       [%wtcl *]  =+  [fex=(gain p.gen) wux=(lose p.gen)]
