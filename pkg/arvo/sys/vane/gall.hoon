@@ -391,6 +391,7 @@
       leaves=(unit [=duct =wire date=@da])
   ==
 +$  spore-17  [%17 spore]
++$  spore-16  [%16 spore]  ::  XX avoids having to support a %17 egg-any
 --
 ::  adult gall vane interface, for type compatibility with pupa
 ::
@@ -2910,7 +2911,7 @@
           p.agent.u.yok
         on-save:p.agent.u.yok
       ==
-    ``noun+!>(`egg-any`[-:*spore-17 egg])
+    ``noun+!>(`egg-any`[-:*spore-16 egg]) :: XX spore-17 same as 16
   ::
   ?:  ?&  =(%w care)
           =([%$ %da now] coin)
