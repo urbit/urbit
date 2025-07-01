@@ -5808,15 +5808,22 @@
                   (~(has in closing.peer-state) bone)
                 ::  add tag if the flow is in a weird state
                 ::
-                =?  tag.flow  !naxp-bone
-                  ?.  ?&  !=(current.pump next.pump)  :: current message unacked
-                          ?|  !(~(has by queued-message-acks.pump) current.pump)
-                              :: if not in queued-acks, current should be live
-                              ::
-                              ?&  ?=(^ live)
-                                  !=(current.pump message-num.i.live)
-                      ==  ==  ==
-                    ~
+                =?  tag.flow  &(!naxp-bone !=(current.pump next.pump))
+                    =+  acks=queued-message-acks.pump
+                    ?:  ?&  ?=(^ live)  :: current is live
+                            =(current.pump message-num.i.live)
+                        ==
+                      ~
+                    ?.  ?&  ::  if current is not in queued-acks...
+                            ::
+                            !(~(has by acks) current.pump)
+                            ::  ... +(current) should be (see naxplanation bug)
+                            ::
+                            !(~(has by acks) +(current.pump))
+                        ==
+                      ~
+                  ~?  >>  odd.veb.bug.ames-state
+                    [%missing-current bone current.pump]
                   [~ %missing-current current.pump]
                 ::
                 ::  XX  do we care about this?
