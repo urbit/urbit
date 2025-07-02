@@ -5603,6 +5603,11 @@
                   ::  $plea right after the %ames vane is updated, but before
                   ::  the recork timer fires
                   ::
+                  =?  weir.fren  !=(current.pump next.pump)
+                    ?  >>  odd.veb.bug.ames-state
+                      [bone^dire %missing-current-closing current.pump]
+                    %-  ~(put ju weir.fren)
+                    [bone^dire %missing-current-closing current.pump]
                   =.  fo-core
                     =~  %.  [%pump %plea %$ /flow %cork ~]
                         fo-call:fo-core(next.snd.state next.pump)
