@@ -1694,8 +1694,8 @@
   ::
   +$  flow-state
     $:  ::  a flow switches to closing when:
-        ::    - forward: a %cork %plea %poke request is sent
-        ::    - backward: a %cork %plea %poke request is received
+        ::    - forward:  a %cork $plea %poke request is sent
+        ::    - backward: a %cork $plea %poke request is received
         ::
         ::  the flow is deleted first on the forward side when it can read the
         ::  %ack for the %cork, and then on the backward side when it can +peek
@@ -1726,7 +1726,9 @@
           ::  payloads can be +peek'ed via a well-formed path with the format:
           ::  e.g.  /flow/[bone=0]/[load]/?[%for %bak]/[ship]/[seq=1]
           ::
-          ::  XX option to include messages that won't be bounded into the namespace (two-layer queue)
+          ::  XX option to include messages that won't be bounded into the
+          ::  namespace (two-layer queue)
+          ::
           loads=((mop ,@ud mesa-message) lte)         :: all unacked
           next=_1                                     :: =(next +(last-acked))
           ::

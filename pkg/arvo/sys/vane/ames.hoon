@@ -5537,7 +5537,7 @@
                   ~?  >>>  odd.veb.bug.ames-state
                     weird-naxp-ack-bone/bone=bone
                   moves^flows
-                =/  naxp-bone=?  =(%3 (mod bone 4))
+                =/  naxp-bone=?    =(%3 (mod bone 4))
                 =/  original-bone  bone
                 =/  target-bone    (mix 0b10 bone)
                 =?  bone  =(%1 (mod bone 4))
@@ -5570,13 +5570,23 @@
                 ?:  ?&  =(%for dire)
                         (~(has in closing.peer-state) original-bone)
                         nothing-in-flight
-                        =(current.pump next.pump)
+                        :: XX in the case that current and next don't match, and
+                        :: nothing is in flight (possibly due to a %cork being
+                        :: %nacked but with a %naxplanation message that
+                        :: referenced the wrong sequence number) still send
+                        :: a cork, but peek for the corked flow, just in case
+                        :: the other side has corked it already. whatever
+                        :: arrives first ($page for %corked flow or %cork $plea
+                        :: %ack) will delete the flow and anything outstanding
+                        ::
+                        :: =(current.pump next.pump)
+                        ::
                         ::  subscription flow with associated naxplanation bone
+                        (~(has by rcv.peer-state) naxp=(mix 0b10 original-bone))
                         ::  XX don't look for the %boon flow because we might
                         ::  have not received anything
                         ::
                         :: (~(has by rcv.peer-state) original-bone)
-                        (~(has by rcv.peer-state) naxp=(mix 0b10 original-bone))
                     ==
                   ::  closing bone, with no live messages. this case is
                   ::  handled by +recork-one, for peers that don't support the
@@ -5586,7 +5596,7 @@
                   ::  corked it.
                   ::
                   ::  XX this case is not considered in the migration-test
-                  ::  checks. if this peer dosn't support %corks, it shouldn't
+                  ::  checks. if this peer doesn't support %corks, it shouldn't
                   ::  support |mesa either, unless we manage to send the $ahoy
                   ::  $plea right after the %ames vane is updated, but before
                   ::  the recork timer fires
@@ -5662,6 +5672,10 @@
                   ::  message, so +(current) should be in the queue,
                   ::  which only happens if we are still waiting for the
                   ::  naxplanation of this message to increase current,
+                  ::
+                  ::  XX this assertion exists to catch any possible flow in a
+                  ::  weird state that we have not found a explanation and will
+                  ::  requiere further inspecting
                   ::
                   ?>  ?&  (~(has by queued-message-acks.pump) +(current.pump))
                           ::  and a naxplanation flow should exist, although
@@ -5814,7 +5828,7 @@
                             =(current.pump message-num.i.live)
                         ==
                       ~
-                    ?.  ?&  ::  if current is not in queued-acks...
+                    ?.  ?&  ::  if current ack is not queued (would be weird...)
                             ::
                             !(~(has by acks) current.pump)
                             ::  ... +(current) should be (see naxplanation bug)
@@ -5823,9 +5837,8 @@
                         ==
                       ~
                   ~?  >>  odd.veb.bug.ames-state
-                    [%missing-current bone current.pump]
+                    missing-current/[bone seq=current.pump closing.flow dire]
                   [~ %missing-current current.pump]
-                ::
                 ::  XX  do we care about this?
                 ::
                 ::  if this was a naxplanation flow (bone=%3) we migrate the
@@ -5861,6 +5874,7 @@
                 =+  ori-bone=bone
                 ?:  =(%2 (mod bone 4))
                   ::  %naxplanation %ack on receiver; skip bone
+                  ::
                   flows
                 =/  =dire
                   ?:  =(%0 (mod bone 4))  %for  ::  receiving %boon(s)
