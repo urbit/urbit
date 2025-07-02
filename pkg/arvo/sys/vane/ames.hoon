@@ -5604,7 +5604,7 @@
                   ::  the recork timer fires
                   ::
                   =?  weir.fren  !=(current.pump next.pump)
-                    ?  >>  odd.veb.bug.ames-state
+                    ~?  >>  odd.veb.bug.ames-state
                       [bone^dire %missing-current-closing current.pump]
                     %-  ~(put ju weir.fren)
                     [bone^dire %missing-current-closing current.pump]
