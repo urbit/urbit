@@ -9332,14 +9332,20 @@
               ::
               ?:  |(closing.state (~(has in corked.per) side))
                 =+  ;;(mess=@tas +<.gage)
+                =+  ;;([%plea =plea] +.gage)
+                =/  is-cork-plea=?
+                  &(?=([%cork ~] payload) ?=([%flow ~] path)):plea
                 ?.  closing.state
+                  ?:  is-cork-plea
+                    %-  %+  ev-tace  snd.veb.bug.ames-state
+                        |.("ack %cork $plea for %corked flow")
+                    (fo-send-ack seq)
                   %-  %+  ev-tace  odd.veb.bug.ames-state
                       |.("skip {<mess>}; flow is corked flow={<bone>} ")
                   fo-core
                 ::  if the flow is in closing, ack a resend of the %cork $plea
                 ::
-                =+  ;;([%plea =plea] +.gage)
-                ?.  &(?=([%cork ~] payload) ?=([%flow ~] path)):plea
+                ?.  is-cork-plea
                   %-  %+  ev-tace  odd.veb.bug.ames-state
                       |.("skip {<mess>}; flow in closing flow={<bone>}")
                   fo-core
