@@ -9131,6 +9131,7 @@
             ::
             =:   flows.per  (~(del by flows.per) bone^dire)
                 corked.per  (~(put in corked.per) bone^dire)
+                  weir.per  (~(del by weir.per) bone^dire)
             ::
                 by-bone.ossuary.per
               ?:  =(%bak dire)  by-bone.ossuary.per
