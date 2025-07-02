@@ -5511,11 +5511,11 @@
               ^-  (quip move (map side flow-state))
               ::  forward flows
               ::
-              =^  moves  flows.fren
+              =^  moves  fren
                 %-  ~(rep by snd.peer-state)
                 |=  $:  [=bone pump=message-pump-state]
                         moves=(list move)
-                        flows=_flows.fren
+                        fren=_fren
                     ==
                 =|  flow=flow-state
                 =/  =dire
@@ -5538,7 +5538,7 @@
                   ::  XX this shouldn't exist
                   ~?  >>>  odd.veb.bug.ames-state
                     weird-naxp-ack-bone/bone=bone
-                  moves^flows
+                  moves^fren
                 =/  naxp-bone=?    =(%3 (mod bone 4))
                 =/  original-bone  bone
                 =/  target-bone    (mix 0b10 bone)
@@ -5549,7 +5549,7 @@
                 ?:  (~(has in corked.peer-state) target-bone)
                   ~?  >>  odd.veb.bug.ames-state
                     corked-naxp-flow/target=target-bone^naxp=original-bone
-                  moves^flows
+                  moves^fren
                 =/  nothing-in-flight=?
                   ?&  ?=(~ live.packet-pump-state.pump)
                       ?=(~ unsent-fragments.pump)
@@ -5563,8 +5563,8 @@
                   =+  mesa-core=mesa
                   :: XX check that we don't add a naxplanation .bone here?
                   ::
-                  =?  flow  (~(has by flows) bone^dire)
-                    (~(got by flows) bone^dire)
+                  =?  flow  (~(has by flows.fren) bone^dire)
+                    (~(got by flows.fren) bone^dire)
                   =.  flows.fren  (~(put by flows.fren) bone^dire flow)
                   %.  side=bone^dire
                   fo-abed:fo:~(ev-core ev:mesa-core [duct her fren])
@@ -5615,7 +5615,7 @@
                   =?  closing.flow  !naxp-bone
                     (~(has in closing.peer-state) bone)
                   :-  (weld moves cork-moves)
-                  (~(put by flows) [bone dire] flow)
+                  fren(flows (~(put by flows.fren) [bone dire] flow))
                 =?  moves  ?&  !=(current.pump next.pump)
                                ::  only forward flows; %boons are not nacked
                                ::
@@ -5824,23 +5824,24 @@
                   (~(has in closing.peer-state) bone)
                 ::  add tag if the flow is in a weird state
                 ::
-                :: =?  tag.flow  &(!naxp-bone !=(current.pump next.pump))
-                ::     =+  acks=queued-message-acks.pump
-                ::     ?:  ?&  ?=(^ live)  :: current is live
-                ::             =(current.pump message-num.i.live)
-                ::         ==
-                ::       ~
-                ::     ?.  ?&  ::  if current ack is not queued (would be weird...)
-                ::             ::
-                ::             !(~(has by acks) current.pump)
-                ::             ::  ... +(current) should be (see naxplanation bug)
-                ::             ::
-                ::             !(~(has by acks) +(current.pump))
-                ::         ==
-                ::       ~
-                ::   ~?  >>  odd.veb.bug.ames-state
-                ::     missing-current/[bone seq=current.pump closing.flow dire]
-                ::   [~ %missing-current current.pump]
+                =?  weir.fren  &(!naxp-bone !=(current.pump next.pump))
+                    =+  acks=queued-message-acks.pump
+                    ?:  ?&  ?=(^ live)  :: current is live
+                            =(current.pump message-num.i.live)
+                        ==
+                      weir.fren
+                    ?.  ?&  ::  if current ack is not queued (would be weird...)
+                            ::
+                            !(~(has by acks) current.pump)
+                            ::  ... +(current) should be (see naxplanation bug)
+                            ::
+                            !(~(has by acks) +(current.pump))
+                        ==
+                      weir.fren
+                  ~?  >>  odd.veb.bug.ames-state
+                    missing-current/[bone seq=current.pump closing.flow dire]
+                  %-  ~(put ju weir.fren)
+                  [bone^dire %missing-current current.pump]
                 ::  XX  do we care about this?
                 ::
                 ::  if this was a naxplanation flow (bone=%3) we migrate the
@@ -5856,7 +5857,7 @@
                 =+  ack-mop=((on ,@ud ack) lte)
                 =.  acks.snd.flow
                   (gas:ack-mop acks.snd.flow ~(tap by queued-message-acks.pump))
-                :_  (~(put by flows) [bone dire] flow)
+                :_  fren(flows (~(put by flows.fren) [bone dire] flow))
                 =.  moves  (weld forward-moves moves)
                 =?  moves  ?=(^ next-wake.packet-pump-state.pump)
                   =*  wake  u.next-wake.packet-pump-state.pump
@@ -10732,10 +10733,14 @@
                 %+  ~(put by snd.peer-state.core)  bone
                 =+  next=next.snd.state
                 =.  queued-message-acks.pump  acks.snd.state
-                =;  p=_pump  p
-                  :: ?~  tag.state      p
-                  :: ?>  ?=(%missing-current -.u.tag.state)
-                  :: p(current ;;(@ud data.u.tag.state))
+                =;  p=_pump
+                  ?~  wir=(~(get ju weir.fren) bone^dire)
+                    p
+                  %-  ~(rep in `(set [tag=term data=*])`wir)
+                  |=  [[tag=term data=*] p=_p]
+                  ?.  ?=(%missing-current tag)
+                    p
+                  p(current ;;(@ud data))
                 ?^  fist=(pry:fo-mop:fo-core loads.snd.state)
                   %_  pump
                     current  key.u.fist
