@@ -3433,6 +3433,8 @@
                   snd  snd.flow(send-window [send-window.snd.flow-state acks=~])
                   rcv  rcv.flow
             ==
+          ::
+              tip  [tip.c weir=~]
           ==
         ==
       ::
@@ -5822,23 +5824,23 @@
                   (~(has in closing.peer-state) bone)
                 ::  add tag if the flow is in a weird state
                 ::
-                =?  tag.flow  &(!naxp-bone !=(current.pump next.pump))
-                    =+  acks=queued-message-acks.pump
-                    ?:  ?&  ?=(^ live)  :: current is live
-                            =(current.pump message-num.i.live)
-                        ==
-                      ~
-                    ?.  ?&  ::  if current ack is not queued (would be weird...)
-                            ::
-                            !(~(has by acks) current.pump)
-                            ::  ... +(current) should be (see naxplanation bug)
-                            ::
-                            !(~(has by acks) +(current.pump))
-                        ==
-                      ~
-                  ~?  >>  odd.veb.bug.ames-state
-                    missing-current/[bone seq=current.pump closing.flow dire]
-                  [~ %missing-current current.pump]
+                :: =?  tag.flow  &(!naxp-bone !=(current.pump next.pump))
+                ::     =+  acks=queued-message-acks.pump
+                ::     ?:  ?&  ?=(^ live)  :: current is live
+                ::             =(current.pump message-num.i.live)
+                ::         ==
+                ::       ~
+                ::     ?.  ?&  ::  if current ack is not queued (would be weird...)
+                ::             ::
+                ::             !(~(has by acks) current.pump)
+                ::             ::  ... +(current) should be (see naxplanation bug)
+                ::             ::
+                ::             !(~(has by acks) +(current.pump))
+                ::         ==
+                ::       ~
+                ::   ~?  >>  odd.veb.bug.ames-state
+                ::     missing-current/[bone seq=current.pump closing.flow dire]
+                ::   [~ %missing-current current.pump]
                 ::  XX  do we care about this?
                 ::
                 ::  if this was a naxplanation flow (bone=%3) we migrate the
@@ -10730,10 +10732,10 @@
                 %+  ~(put by snd.peer-state.core)  bone
                 =+  next=next.snd.state
                 =.  queued-message-acks.pump  acks.snd.state
-                =;  p=_pump
-                  ?~  tag.state      p
-                  ?>  ?=(%missing-current -.u.tag.state)
-                  p(current ;;(@ud data.u.tag.state))
+                =;  p=_pump  p
+                  :: ?~  tag.state      p
+                  :: ?>  ?=(%missing-current -.u.tag.state)
+                  :: p(current ;;(@ud data.u.tag.state))
                 ?^  fist=(pry:fo-mop:fo-core loads.snd.state)
                   %_  pump
                     current  key.u.fist

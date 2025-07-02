@@ -1648,11 +1648,14 @@
         =qos
         corked=(set side)  ::  can be +peeked in the namespace
                            ::  XX how many flows to keep here?
-        =ossuary      ::  XX redefine ossuary in terms of bone^side
+        =ossuary           ::  XX redefine ossuary in terms of bone^side
         flows=(map side flow-state)
         pit=(map path request-state)           :: active +peek namespace paths
         =client=chain                          :: stores keys for %shut requests
         tip=(jug =user=path [duct =ames=path]) :: reverse .pit lookup map
+        ::  a migrated flow in a weird state is tagged with a $term, and data
+        ::
+        weir=(jug side [tag=term data=*])
     ==
   ::
   ::  interest gifts per path in the pith
@@ -1705,9 +1708,6 @@
         ::  line: high-water mark for the last-acked message before migration
         ::
         line=@ud
-        ::  a migrated flow in a weird state is tagged with a $term, and data
-        ::
-        tag=(unit [term data=*])
         ::  outbound %poke payloads, bounded in the ship's namespace
         ::  always and only for requests
         ::
