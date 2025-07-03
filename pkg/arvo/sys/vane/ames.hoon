@@ -8301,7 +8301,7 @@
         ++  ev-core  .
         ++  ev-abed  |=([d=duct h=ship p=_per] ev-core(hen d, her h, per p))
         ++  ev-abet
-          :-  moves
+          :-  (flop moves)
           ?:  skip-abet  ames-state
           ames-state(chums (~(put by chums.ames-state) her %known per))
         ::
@@ -9644,7 +9644,7 @@
               (fo-peek-naxplanation seq)
             |-  ^+  fo-core
             %-  %+  ev-tace  msg.veb.bug.ames-state
-                |.("hear ack for {<[bone=bone seq=seq]>}")
+                |.("hear {<?~(error %ack %nack)>} for {<[bone=bone seq=seq]>}")
             ::  ack is for the first, oldest pending-ack sent message;
             ::  remove it and start processing cached acks
             ::
@@ -9761,7 +9761,7 @@
               ::       |.("weird %naxp {<[bone=bone seq=seq next=next-msg]>} skip")
               ::   fo-core
               %-  %+  ev-tace  msg.veb.bug.ames-state
-                  |.("take %naxplanation {<[bone=bone seq=seq]>}")
+                  |.("take {<?~(error %ack %naxp)>} {<[bone=bone seq=seq]>}")
               ::
               (fo-emit (ev-got-duct bone) %give %done error)
             ::  are there any cached acks?
@@ -9893,7 +9893,7 @@
         +|  %helpers
         ::
         ++  sy-core  .
-        ++  sy-abet  [moves ames-state]
+        ++  sy-abet  [(flop moves) ames-state]
         ++  sy-emit  |=(=move sy-core(moves [move moves]))
         ++  sy-emil  |=(mos=(list move) sy-core(moves (weld mos moves)))
         ::
@@ -11109,7 +11109,7 @@
         +|  %helpers
         ::
         ++  al-core  .
-        ++  al-abet  [moves ames-state]
+        ++  al-abet  [(flop moves) ames-state]
         ++  al-abed  |=(=duct al-core(hen duct))
         ++  al-emit  |=(=move al-core(moves [move moves]))
         ++  al-emil  |=(mos=(list move) al-core(moves (weld mos moves)))
@@ -11280,7 +11280,7 @@
         +|  %helpers
         ::
         ++  co-core  .
-        ++  co-abet  [moves ames-state]
+        ++  co-abet  [(flop moves) ames-state]
         ++  co-abed  |=(=duct co-core(hen duct))
         ++  co-emit  |=(=move co-core(moves [move moves]))
         ++  co-emil  |=(mos=(list move) co-core(moves (weld mos moves)))
