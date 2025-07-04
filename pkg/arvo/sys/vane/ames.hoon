@@ -5473,7 +5473,7 @@
                      ossuary.fren  align-bones
                 client-chain.fren  chain.peer-state
               ==
-            =^  poke-moves  flows.fren  (make-flows fren)
+            =^  poke-moves  fren        (make-flows fren)
             =^  peek-moves  ames-state  (make-peeks fren)
             ~&  >  %migration-done^her
             ::  XX  needed?  peek/poke-moves will have %send moves already
@@ -5508,7 +5508,7 @@
             ::
             ++  make-flows
               |=  fren=fren-state
-              ^-  (quip move (map side flow-state))
+              ^-  (quip move fren-state)
               ::  forward flows
               ::
               =^  moves  fren
@@ -5958,7 +5958,7 @@
                   ==
                 (~(put by flows) bone^dire flow)
               ::
-              moves^flows.fren
+              moves^fren
             ::
             ++  make-peeks
               |=  fren=fren-state
