@@ -10302,8 +10302,10 @@
                 ::  XX some of these ints can be %tune(s) but they are
                   ::  treated as %sage(s)
                 (~(rep in ducts) |=([=duct c=_cor] (on-chum:c ship^path)))
+              ::  XX ames-core has flopped these moves, to keep that order we
+              ::  need to flop them "one more time"
               ::
-              (sy-emil moves)
+              (sy-emil (flop moves))
             ::
             ++  meet-alien-chum
               |=  [=ship =point:jael todos=ovni-state =chum-state]
@@ -10346,7 +10348,10 @@
                 (ev-req-peek:c(hen duct) space=chum-to-our:c path)
               ::
               =^  moves  ames-state  ev-abet:ev-core
-              (sy-emil moves)
+              ::  XX ev-abet has flopped these moves, to keep that order we
+              ::  need to flop them "one more time"
+              ::
+              (sy-emil (flop moves))
             ::
             --
           ::  on-publ-rift: XX
