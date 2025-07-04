@@ -10723,6 +10723,7 @@
             |=  [[side state=flow-state] core=_peer-core]
             =+  fo-core=~(. fo:ev-core bone^dire state)
             ::
+            =+  src-bone=bone
             =?  bone  ?=(%bak dire)  (mix 0b1 bone) :: [bone=%0 %bak] -> bone=%1
             ::
             =.  core
@@ -10740,7 +10741,7 @@
                 =+  next=next.snd.state
                 =.  queued-message-acks.pump  acks.snd.state
                 =;  p=_pump
-                  ?~  wir=(~(get ju weir.fren) bone^dire)
+                  ?~  wir=(~(get ju weir.fren) src-bone^dire)
                     p
                   %-  ~(rep in `(set [tag=term data=*])`wir)
                   |=  [[tag=term data=*] p=_p]
