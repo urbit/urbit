@@ -2325,9 +2325,10 @@
         =/  kel=(set weft)
           ?:  (~(has by wic.dom.dojo) sys-kel)
             [sys-kel ~ ~]
+          =/  t=(unit tako)  (~(get by hit.dom.dojo) let.dom.dojo)
+          ?~  t  [sys-kel ~ ~]
           %-  waft-to-wefts
-          %+  get-kelvin  %|
-          (tako-to-yaki:ze (~(got by hit.dom.dojo) let.dom.dojo))
+          (get-kelvin %| (tako-to-yaki:ze u.t))
         ?:  (~(has in kel) sys-kel)  l
         [[desk %held] l]
         ==
