@@ -165,11 +165,12 @@
       :-  ~[//unix]
       [%mess message]
     ::
-      :~  :-  ~[/ames]
-          [%pass /make-page %a mage]  ::  send ack for %boon
-      ::
+      :~
           :-  ~[/poke]
           [%give %boon poke-boon]     :: give %boon to vane
+      ::
+          :-  ~[/ames]
+          [%pass /make-page %a mage]  ::  send ack for %boon
       ==
     ==
   ::
