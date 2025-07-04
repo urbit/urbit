@@ -10288,7 +10288,9 @@
               ::
               =^  moves  ames-state
                 =+  peer-core=(abed:pe:ames-core ship)
-                =<  abet  ^+  ames-core
+                ::  XX skip abet, only sy-abet will flop these moves
+                ::
+                =<  moves^ames-state  ^+  ames-core
                 =.  ames-core
                   =<  abet  ^+  peer-core
                   %-  ~(rep by keens.todos)
@@ -10302,10 +10304,8 @@
                 ::  XX some of these ints can be %tune(s) but they are
                   ::  treated as %sage(s)
                 (~(rep in ducts) |=([=duct c=_cor] (on-chum:c ship^path)))
-              ::  XX ames-core has flopped these moves, to keep that order we
-              ::  need to flop them "one more time"
               ::
-              (sy-emil (flop moves))
+              (sy-emil moves)
             ::
             ++  meet-alien-chum
               |=  [=ship =point:jael todos=ovni-state =chum-state]
@@ -10347,11 +10347,10 @@
                 |=  [=duct c=_core]
                 (ev-req-peek:c(hen duct) space=chum-to-our:c path)
               ::
-              =^  moves  ames-state  ev-abet:ev-core
-              ::  XX ev-abet has flopped these moves, to keep that order we
-              ::  need to flop them "one more time"
+              ::  XX skip ev-abet, only sy-abet will flop these moves
               ::
-              (sy-emil (flop moves))
+              =^  moves  ames-state  [moves ames-state]:ev-core
+              (sy-emil moves)
             ::
             --
           ::  on-publ-rift: XX
@@ -10722,7 +10721,7 @@
             =/  peer=peer-state  (got-peer-state:event-core her)
             =+  peer-core=(abed-peer:pe:event-core her peer)
             =;  core=_peer-core
-              abet:abet:core
+              [moves ames-state]:abet:core
             =+  ev-core=(ev-abed:ev ~[//regress] her fren)
             %-  ~(rep by flows.fren)
             |=  [[side state=flow-state] core=_peer-core]
@@ -10873,7 +10872,7 @@
             =+  event-core=(ev:ames now^eny^rof hen state)
             =/  mesa-core  mesa(ames-state state)
             =;  core=_event-core
-              abet:core
+              [moves ames-state]:core
             %-  ~(rep by pit.fren)
             |=  [[=path req=request-state] core=_event-core]
             ::  if =(~ pay.req) this could be a +peek for a %naxplanation,
@@ -10955,7 +10954,7 @@
             ::  XX sort flows?
             ::
             =;  core=_ev-core
-              =^  moves  ames-state  ev-abet:core
+              =^  moves  ames-state  [moves ames-state]:core
               (sy-emil moves)
             %-  ~(rep by flows.per.ev-core)
             |=  [[side state=flow-state] c=_ev-core]
@@ -11045,7 +11044,7 @@
           ^-  (quip move ^peer-state)
           =+  event-core=(ev:ames now^eny^rof ~[//ames] ames-state)
           =;  core=_event-core
-            =/  [moves=(list move) state=axle]  abet:core
+            =/  [moves=(list move) state=axle]  [moves ames-state]:core
             :-  moves
             ~|  %freaky-alien-rederive-mesa-keens^ship
             =-  ?>(?=(%known -<) ->)
