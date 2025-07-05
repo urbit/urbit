@@ -5593,9 +5593,10 @@
                   ::  closing bone, with no live messages. this case is
                   ::  handled by +recork-one, for peers that don't support the
                   ::  new protocol that removes subscription flows, and nack
-                  ::  any %cork pleas. enqueue the %cork, and also start
-                  ::  peeking for it, just in case the other side has already
-                  ::  corked it.
+                  ::  any %cork pleas (or a %cork is %nack due to a
+                  ::  non-deterministic crash). in this case, enqueue the %cork,
+                  ::  and also start peeking for it, just in case the other side
+                  ::  has already corked it.
                   ::
                   ::  XX this case is not considered in the migration-test
                   ::  checks. if this peer doesn't support %corks, it shouldn't
@@ -5617,6 +5618,14 @@
                   ~?  >>  odd.veb.bug.ames-state
                     recork-one/her^bone
                   =^  cork-moves  flow  [moves state]:fo-core
+                  ::  queued-message-acks
+                  ::  XX ignore, the flow is is closing so we are going to cork
+                  ::  it anyway
+                  ::
+                  :: =+  ack-mop=((on ,@ud ack) lte)
+                  :: =.  acks.snd.flow
+                  ::   %+  gas:ack-mop  acks.snd.flow
+                  ::   ~(tap by queued-message-acks.pump)
                   =?  closing.flow  !naxp-bone
                     (~(has in closing.peer-state) bone)
                   :-  (weld moves cork-moves)
@@ -10770,7 +10779,7 @@
                     p
                   %-  ~(rep in `(set [tag=term data=*])`wir)
                   |=  [[tag=term data=*] p=_p]
-                  ?.  ?=(%missing-current tag)
+                  ?.  ?=(?(%missing-current-closing %missing-current) tag)
                     p
                   p(current ;;(@ud data))
                 ?^  fist=(pry:fo-mop:fo-core loads.snd.state)
@@ -10780,7 +10789,7 @@
                   ==
                 =.  next.pump  next
                 ?~  acks.snd.state
-                  ::  if coming straight from ahoying the peer, we  could still
+                  ::  if coming straight from ahoying the peer, we could still
                   ::  be peeking for the naxplanation, and that would have
                   ::  the current message sequence number;
                   ::  XX  if this is a test local migration we won't find the
