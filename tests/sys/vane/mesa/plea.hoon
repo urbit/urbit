@@ -73,7 +73,7 @@
     %:    ames-check-call:v  nec
         [~1111.1.1 0xdead.beef poke-roof]
     ::
-      [~[ack-wire /poke] moke]
+      [~[[%ames ack-wire] /poke] moke]
     ::
       =/  blob=@
         %:   ames-make-pact:v  nec
