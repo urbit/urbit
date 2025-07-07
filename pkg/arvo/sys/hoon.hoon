@@ -1079,7 +1079,7 @@
           =.  k1  (sit (mul k1 c2))
           (mix h1 k1)
     ==
-  =.  h1  (mix h1 len)
+  =.  h1  (mix h1 (end 5 len))
   |^  (fmix32 h1)
   ++  fmix32
     |=  h=@
