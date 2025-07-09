@@ -2,11 +2,11 @@
 ::::    /sys/hoon                                       ::
   ::                                                    ::
 =<  ride
-=>  %138  =>
+=>  %136  =>
 ::                                                      ::
 ::::    0: version stub                                 ::
   ::                                                    ::
-~%  %k.138  ~  ~                                        ::
+~%  %k.136  ~  ~                                        ::
 |%
 ++  hoon-version  +
 --  =>
@@ -99,7 +99,7 @@
   ~/  %lte
   ::    unsigned less than or equals
   ::
-  ::  returns whether {a >= b}.
+  ::  returns whether {a <= b}.
   ::
   ::  a: left hand operand (todo: name)
   ::  b: right hand operand
@@ -201,7 +201,7 @@
   ::    axis within head/tail
   ::
   ::  computes the axis of `a` within either the head or tail of a noun
-  ::  (depends whether `a` lies within the the head or tail).
+  ::  (depends whether `a` lies within the head or tail).
   |=  a=@
   ^-  @
   ?-  a
@@ -809,6 +809,19 @@
     (rsh a d)
   $(d (add c (lsh a d)), n +(n))
 ::
+++  hew                                                 ::  cut many
+  ~/  %hew
+  |=  [a=bite c=@]
+  =/  d=[=bloq =step]  ?^(a a [a 0])
+  ~%  %fun  +>+  ~
+  |*  b=*
+  ^+  [b d]
+  ?@  b
+    [(cut bloq.d [step.d b] c) bloq.d (add step.d b)]
+  =^  f  d  $(b -.b)
+  =^  g  d  $(b +.b)
+  [[f g] d]
+::
 ++  lsh                                                 ::  left-shift
   ~/  %lsh
   |=  [a=bite b=@]
@@ -854,6 +867,19 @@
   %+  lsh
     [boz (sub len (met boz dat))]
   (swp boz dat)
+::
+++  rig                                                 ::  convert bloqs
+  ~/  %rig
+  |=  [=bite b=bloq]
+  ^-  step
+  ?@  bite  0
+  =/  [a=bloq c=step]  bite
+  ?:  =(a b)  c
+  ?:  (gth a b)
+    (lsh [0 (sub a b)] c)
+  =/  d  [0 (sub b a)]
+  =/  e  (rsh d c)
+  ?:(=(0 (end d c)) e +(e))
 ::
 ++  rip                                                 ::  disassemble
   ~/  %rip
@@ -946,6 +972,19 @@
           ==
   ==
 ::
+++  clz                                                 ::  leading zeros
+  ~/  %clz
+  |=  [a=bite b=@]
+  =/  c=[=bloq =step]  ?^(a a [a 1])
+  (sub (mul (bex bloq.c) step.c) (met 0 (end a b)))
+::
+++  ctz                                                 ::  trailing zeros
+  ~/  %ctz
+  |=  a=@
+  ?:  =(0 a)  0
+  =|  i=@ud
+  |-(?:(=(1 (cut 0 [i 1] a)) i $(i +(i))))
+::
 ++  dis                                                 ::  binary and
   ~/  %dis
   |=  [a=@ b=@]
@@ -962,6 +1001,17 @@
               =(0 (end 0 b))
           ==
   ==
+::
+++  ham                                                 ::  popcount
+  ~/  %ham
+  |=  a=@
+  ?:  =(0 a)  0
+  =|  n=@ud
+  =/  m  (dec (met 0 a))
+  |-  ^-  @ud
+  =?  n  =(1 (cut 0 [m 1] a))
+    +(n)
+  ?:(=(0 m) n $(m (dec m)))
 ::
 ++  mix                                                 ::  binary xor
   ~/  %mix
@@ -1029,7 +1079,7 @@
           =.  k1  (sit (mul k1 c2))
           (mix h1 k1)
     ==
-  =.  h1  (mix h1 len)
+  =.  h1  (mix h1 (end 5 len))
   |^  (fmix32 h1)
   ++  fmix32
     |=  h=@
@@ -4013,8 +4063,6 @@
 ~%    %qua
     +
   ==
-    %mure  mure
-    %mute  mute
     %show  show
   ==
 ::    layer-4
@@ -4266,9 +4314,9 @@
   ::  ?.  ((sane a) b)  !!
   b
 ::
-++  trim                                                ::  tape split
-  |=  [a=@ b=tape]
-  ^-  [p=tape q=tape]
+++  trim                                                ::  list split
+  |*  [a=@ b=(list)]
+  ^+  [p=b q=b]
   ?~  b
     [~ ~]
   ?:  =(0 a)
@@ -5963,14 +6011,14 @@
 ++  mack
   |=  [sub=* fol=*]
   ^-  (unit)
-  =/  ton  (mink [sub fol] |~(^ ~))
+  =/  ton  (mink [sub fol] ~)
   ?.(?=(%0 -.ton) ~ `product.ton)
 ::  +mink: raw virtual nock
 ::
 ++  mink  !.
   ~/  %mink
   |=  $:  [subject=* formula=*]
-          scry=$-(^ (unit (unit)))
+          scry=$@(~ $-(^ (unit (unit))))
       ==
   =|  trace=(list [@ta *])
   |^  ^-  tone
@@ -6089,7 +6137,9 @@
         ?.  ?=(%0 -.ref)  ref
         =/  path  $(formula path.formula)
         ?.  ?=(%0 -.path)  path
-        =/  result  (scry product.ref product.path)
+        =/  result
+          ?~  scry  ~
+          (scry product.ref product.path)
         ?~  result
           [%1 product.path]
         ?~  u.result
@@ -6130,7 +6180,7 @@
 ::  +mock: virtual nock
 ::
 ++  mock
-  |=  [[sub=* fol=*] gul=$-(^ (unit (unit)))]
+  |=  [[sub=* fol=*] gul=$@(~ $-(^ (unit (unit))))]
   (mook (mink [sub fol] gul))
 ::  +mook: convert %tone to %toon, rendering stack frames
 ::
@@ -6201,14 +6251,6 @@
       ==
     ==
   --
-::  +mole: typed unitary virtual
-::
-++  mole
-  ~/  %mole
-  |*  tap=(trap)
-  ^-  (unit _$:tap)
-  =/  mur  (mure tap)
-  ?~(mur ~ `$:tap)
 ::  +mong: virtual slam
 ::
 ++  mong
@@ -6216,37 +6258,6 @@
   ^-  toon
   ?.  ?=([* ^] gat)  [%2 ~]
   (mock [gat(+< sam) %9 2 %0 1] gul)
-::  +mule: typed virtual
-::
-++  mule
-  ~/  %mule
-  |*  tap=(trap)
-  =/  mud  (mute tap)
-  ?-  -.mud
-    %&  [%& p=$:tap]
-    %|  [%| p=p.mud]
-  ==
-::  +mure: untyped unitary virtual
-::
-++  mure
-  |=  tap=(trap)
-  ^-  (unit)
-  =/  ton  (mink [tap %9 2 %0 1] |=(a=^ ``.*(a [%12 [%0 2] %0 3])))
-  ?.(?=(%0 -.ton) ~ `product.ton)
-::  +mute: untyped virtual
-::
-++  mute
-  |=  tap=(trap)
-  ^-  (each * (list tank))
-  =/  ton  (mock [tap %9 2 %0 1] |=(a=^ ``.*(a [%12 [%0 2] %0 3])))
-  ?-  -.ton
-    %0  [%& p.ton]
-  ::
-    %1  =/  sof=(unit path)  ((soft path) p.ton)
-        [%| ?~(sof leaf+"mute.hunk" (smyt u.sof)) ~]
-  ::
-    %2  [%| p.ton]
-  ==
 ::  +slum: slam a gate on a sample using raw nock, untyped
 ::
 ++  slum
@@ -6258,6 +6269,71 @@
 ++  soft
   |*  han=$-(* *)
   |=(fud=* (mole |.((han fud))))
+::  +vi: virtualization engine
+::
+++  vi
+  ~%  %vi  ..vi
+    ==
+      %mure  mure
+      %mute  mute
+    ==
+  ::  forward namespace?
+  ::
+  |_  for=?
+  ::  +mole: typed unitary virtual
+  ::
+  ++  mole
+    ~/  %mole
+    |*  tap=(trap)
+    ^-  (unit _$:tap)
+    =/  mur  (mure tap)
+    ?~(mur ~ `$:tap)
+  ::  +mule: typed virtual
+  ::
+  ++  mule
+    ~/  %mule
+    |*  tap=(trap)
+    =/  mud  (mute tap)
+    ?-  -.mud
+      %&  [%& p=$:tap]
+      %|  [%| p=p.mud]
+    ==
+  ::  +mure: untyped unitary virtual
+  ::
+  ++  mure
+    |=  tap=(trap)
+    ^-  (unit)
+    =/  gul
+      ?.  for  ~
+      =>  ~
+      |=(a=^ ``.*(a 12+[0+2 0+3]))
+    ::
+    =/  ton  (mink [tap %9 2 %0 1] gul)
+    ?.(?=(%0 -.ton) ~ `product.ton)
+  ::  +mute: untyped virtual
+  ::
+  ++  mute
+    |=  tap=(trap)
+    ^-  (each * (list tank))
+    =/  gul
+      ?.  for  ~
+      =>  ~
+      |=(a=^ ``.*(a 12+[0+2 0+3]))
+    ::
+    =/  ton  (mock [tap %9 2 %0 1] gul)
+    ?-  -.ton
+      %0  [%& p.ton]
+    ::
+      %1  =/  sof=(unit path)  ((soft path) p.ton)
+          [%| ?~(sof leaf+"mute.hunk" (smyt u.sof)) ~]
+    ::
+      %2  [%| p.ton]
+    ==
+  --
+::  aliases
+::
+++  mole  mole:vi
+++  mule  mule:vi
 ::
 ::    4o: molds and mold builders
 +|  %molds-and-mold-builders
@@ -8606,7 +8682,7 @@
       [%cnhp ~(factory ax p.gen) q.gen]
     ::
         [%tsbr *]
-      [%tsls ~(example ax p.gen) q.gen]
+      [%tsls [%kttr p.gen] q.gen]
     ::
         [%tstr *]
       :+  %tsgl
@@ -11399,6 +11475,14 @@
 ++  slap
   |=  [vax=vase gen=hoon]  ^-  vase                     ::  untyped vase .*
   =+  gun=(~(mint ut p.vax) %noun gen)
+  [p.gun .*(q.vax q.gun)]
+::
+++  slub
+  |=  [vax=vase gen=hoon]  ^-  vase                     ::  memoized slap
+  =/  gun
+    =>  [vax=p=p.vax gen=gen ut=ut]
+    ~>  %memo./hoon/mint
+    (~(mint ut p.vax) %noun gen)
   [p.gun .*(q.vax q.gun)]
 ::
 ++  slog                                                ::  deify printf

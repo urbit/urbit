@@ -428,7 +428,7 @@
 ::    docs for the arm itself, docs for the product of the arm, and
 ::    if the arm builds a core, docs for the default arm of that core.
 ::
-::    .adoc: docs written above the the arm
+::    .adoc: docs written above the arm
 ::    .pdoc: docs for the product of the arm
 ::    .cdoc: docs for the default arm of the core produced by the arm
 ++  arm-docs

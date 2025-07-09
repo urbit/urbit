@@ -42,11 +42,11 @@
   ?.  =(*pass public-key)
     public-key
   =/  cub  (pit:nu:crub:crypto 512 (shaz (jam mon life=1 eny)))
-  =/  =seed:jael
-    [mon 1 sec:ex:cub ~]
+  =/  =feed:jael
+    [[%2 ~] mon rift=0 [life=1 sec:ex:cub]~]
   %-  %-  slog
       :~  leaf+"moon: {(scow %p mon)}"
-          leaf+(scow %uw (jam seed))
+          leaf+(scow %uw (jam feed))
       ==
   pub:ex:cub
 `[mon *id:block:jael %keys [1 1 pass] %.n]

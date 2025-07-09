@@ -4,7 +4,7 @@
 =>  ..lull
 ~%  %zuse  ..part  ~
 |%
-++  zuse  %411
+++  zuse  %409
 ::                                                      ::  ::
 ::::                                                    ::  ::  (2) engines
   ::                                                    ::  ::
@@ -1020,6 +1020,7 @@
   ++  ed
     =>
       =+  =+  [b=256 q=(sub (bex 255) 19)]
+          =+  cb=(rsh [0 3] b)
           =+  fq=~(. fo q)
           =+  ^=  l
                %+  add
@@ -1027,12 +1028,15 @@
                27.742.317.777.372.353.535.851.937.790.883.648.493
           =+  d=(dif.fq 0 (fra.fq 121.665 121.666))
           =+  ii=(exp.fq (div (dec q) 4) 2)
-          [b=b q=q fq=fq l=l d=d ii=ii]
+          [b=b cb=cb q=q fq=fq l=l d=d ii=ii]
       ~%  %coed  ..part  ~
       |%
       ::                                                ::  ++norm:ed:crypto
       ++  norm                                          ::
         |=(x=@ ?:(=(0 (mod x 2)) x (sub q x)))
+      ::                                                ::  ++neg:ed:crypto
+      ++  neg                                           ::
+        |=(pp=[@ @] pp(- (dif:fq 0 -.pp)))
       ::                                                ::  ++xrec:ed:crypto
       ++  xrec                                          ::  recover x-coord
         |=  y=@  ^-  @
@@ -1086,6 +1090,7 @@
       ::                                                ::  ++deco:ed:crypto
       ++  deco                                          ::  decode point
         |=  s=@  ^-  (unit [@ @])
+        ?.  (lte (met 3 s) cb)  ~
         =+  y=(cut 0 [0 (dec b)] s)
         =+  si=(cut 0 [(dec b) 1] s)
         =+  x=(xrec y)
@@ -1102,16 +1107,27 @@
     ~%  %ed  +  ~
     |%
     ::
+    ++  recs
+      ~/  %recs
+      |=  a=@udscalar
+      (~(sit fo l) a)
+    ::
+    ++  smac
+      ~/  %smac
+      |=  [a=@udscalar b=@udscalar c=@udscalar]
+      (recs (add (mul a b) c))
+    ::
+    ++  point-neg
+      ~/  %point-neg
+      |=  [a-point=@udpoint]
+      ^-  @udpoint
+      (etch (neg (need (deco a-point))))
+    ::
     ++  point-add
       ~/  %point-add
       |=  [a-point=@udpoint b-point=@udpoint]
       ^-  @udpoint
-      ::
-      =/  a-point-decoded=[@ @]  (need (deco a-point))
-      =/  b-point-decoded=[@ @]  (need (deco b-point))
-      ::
-      %-  etch
-      (ward a-point-decoded b-point-decoded)
+      (etch (ward (need (deco a-point)) (need (deco b-point))))
     ::
     ++  scalarmult
       ~/  %scalarmult
@@ -1121,112 +1137,143 @@
       =/  a-point-decoded=[@ @]  (need (deco a-point))
       ::
       %-  etch
-      (scam a-point-decoded a)
+      (scam a-point-decoded (recs a))
     ::
     ++  scalarmult-base
       ~/  %scalarmult-base
       |=  scalar=@udscalar
       ^-  @udpoint
-      %-  etch
-      (scam bb scalar)
+      (scalarmult scalar (etch bb))
     ::
     ++  add-scalarmult-scalarmult-base
       ~/  %add-scalarmult-scalarmult-base
       |=  [a=@udscalar a-point=@udpoint b=@udscalar]
       ^-  @udpoint
       ::
-      =/  a-point-decoded=[@ @]  (need (deco a-point))
-      ::
-      %-  etch
-      %+  ward
-        (scam bb b)
-      (scam a-point-decoded a)
+      %+  point-add
+        (scalarmult-base b)
+      (scalarmult a a-point)
     ::
     ++  add-double-scalarmult
       ~/  %add-double-scalarmult
       |=  [a=@udscalar a-point=@udpoint b=@udscalar b-point=@udpoint]
       ^-  @udpoint
-      ::
-      =/  a-point-decoded=[@ @]  (need (deco a-point))
-      =/  b-point-decoded=[@ @]  (need (deco b-point))
-      ::
-      %-  etch
-      %+  ward
-        (scam a-point-decoded a)
-      (scam b-point-decoded b)
+      %+  point-add
+        (scalarmult a a-point)
+      (scalarmult b b-point)
+    ::                                                  ::  ++scad:ed:crypto
+    ++  scad                                            ::  scalar addition on public and private keys
+      ~/  %scad
+      |=  [pub=@udpoint sek=@udscalar sca=@udscalar]
+      ^-  [pub=@udpoint sek=@udscalar]
+      [(scap pub sca) (scas sek sca)]
+    ::                                                  ::  ++scas:ed:crypto
+    ++  scas                                            ::  scalar addition on private key
+      ~/  %scas
+      |=  [sek=@udscalar sca=@udscalar]
+      ^-  @
+      ?>  (lte (met 3 sek) (mul 2 cb))
+      ?>  (lte (met 3 sca) (mul 2 cb))
+      =/  n  (dis sca (con (lsh [3 (dec cb)] 0x7f) (fil 3 (dec cb) 0xff)))
+      =/  s0  (cut 0 [0 b] sek)
+      =/  s1  (cut 0 [b b] sek)
+      =/  ns0  (recs (add s0 n))
+      =/  ns1  (shal (mul 2 cb) (can 0 ~[[b s1] [b sca]]))
+      (can 0 ~[[b ns0] [b ns1]])
+    ::                                                  ::  ++scap:ed:crypto
+    ++  scap                                            ::  scalar addition on public key
+      ~/  %scap
+      |=  [pub=@udpoint sca=@udscalar]
+      ^-  @
+      ?>  (lte (met 3 pub) cb)
+      ?>  (lte (met 3 sca) cb)
+      =/  n  (dis sca (con (lsh [3 (dec cb)] 0x7f) (fil 3 (dec cb) 0xff)))
+      (point-add pub (scalarmult-base n))
     ::                                                  ::  ++puck:ed:crypto
-    ++  puck                                            ::  public key
+    ++  puck                                            ::  pubkey from seed
       ~/  %puck
-      |=  sk=@I  ^-  @
-      ?:  (gth (met 3 sk) 32)  !!
-      =+  h=(shal (rsh [0 3] b) sk)
+      |=  sed=@I
+      pub:(luck sed)
+    ::                                                  ::  ++luck:ed:crypto
+    ++  luck                                            ::  keypair from seed
+      ~/  %luck
+      |=  sed=@I
+      ^-  [pub=@udpoint sek=@udscalar]
+      ?>  (lte (met 3 sed) cb)
+      =+  h=(shal (rsh [0 3] b) sed)
       =+  ^=  a
           %+  add
             (bex (sub b 2))
           (lsh [0 3] (cut 0 [3 (sub b 5)] h))
-      =+  aa=(scam bb a)
-      (etch aa)
-    ::                                                  ::  ++suck:ed:crypto
-    ++  suck                                            ::  keypair from seed
-      |=  se=@I  ^-  @uJ
-      =+  pu=(puck se)
-      (can 0 ~[[b se] [b pu]])
+      =+  aa=(scalarmult-base a)
+      [aa (can 0 ~[[b a] [b (cut 0 [b b] h)]])]
     ::                                                  ::  ++shar:ed:crypto
     ++  shar                                            ::  curve25519 secret
       ~/  %shar
+      |=  [pub=@ sed=@]
+      ^-  @ux
+      (slar pub sek:(luck sed))
+    ::                                                  ::  ++slar:ed:crypto
+    ++  slar                                            ::  curve25519 secret
+      ~/  %slar
       |=  [pub=@ sek=@]
       ^-  @ux
-      =+  exp=(shal (rsh [0 3] b) (suck sek))
-      =.  exp  (dis exp (can 0 ~[[3 0] [251 (fil 0 251 1)]]))
-      =.  exp  (con exp (lsh [3 31] 0b100.0000))
-      =+  prv=(end 8 exp)
+      ?>  (lte (met 3 pub) cb)
+      ?>  (lte (met 3 sek) (mul 2 cb))
+      =>  .(pub `@udpoint`pub)
+      =+  prv=(end [0 b] sek)
+      =.  pub  +:(need (deco pub))
       =+  crv=(fra.fq (sum.fq 1 pub) (dif.fq 1 pub))
       (curt prv crv)
     ::                                                  ::  ++sign:ed:crypto
     ++  sign                                            ::  certify
       ~/  %sign
-      |=  [m=@ se=@]  ^-  @
-      =+  sk=(suck se)
-      =+  pk=(cut 0 [b b] sk)
-      =+  h=(shal (rsh [0 3] b) sk)
-      =+  ^=  a
-          %+  add
-            (bex (sub b 2))
-          (lsh [0 3] (cut 0 [3 (sub b 5)] h))
+      |=  [m=@ sed=@]  ^-  @
+      (sign-raw m (luck sed))
+    ::                                                  ::  ++sign-raw:ed:crypto
+    ++  sign-raw                                        ::  certify
+      ~/  %sign-raw
+      |=  [m=@ pub=@udpoint sek=@udscalar]  ^-  @
+      (sign-octs-raw (met 3 m)^m pub sek)
+    ::                                                  ::  ++sign-octs:ed:crypto
+    ++  sign-octs                                       ::  certify octs
+      ~/  %sign-octs
+      |=  [m=octs sed=@]  ^-  @
+      (sign-octs-raw m (luck sed))
+    ::                                                  ::  ++sign-octs-raw:ed:crypto
+    ++  sign-octs-raw                                   ::  certify octs
+      ~/  %sign-octs-raw
+      |=  [m=octs pub=@udpoint sek=@udscalar]  ^-  @
+      ?>  (lte (met 3 pub) cb)
+      ?>  (lte (met 3 sek) (mul 2 cb))
+      =+  a=(cut 0 [0 b] sek)
       =+  ^=  r
-          =+  hm=(cut 0 [b b] h)
-          =+  ^=  i
-              %+  can  0
-              :~  [b hm]
-                  [(met 0 m) m]
-              ==
-          (shaz i)
-      =+  rr=(scam bb r)
+          =+  hm=(cut 0 [b b] sek)
+          =+  i=(can 3 [cb hm] m ~)
+          (shal (add cb p.m) i)
+      =+  rr=(scalarmult-base r)
       =+  ^=  ss
-          =+  er=(etch rr)
-          =+  ^=  ha
-              %+  can  0
-              :~  [b er]
-                  [b pk]
-                  [(met 0 m) m]
-              ==
-          (~(sit fo l) (add r (mul (shaz ha) a)))
-      (can 0 ~[[b (etch rr)] [b ss]])
+          =+  ha=(can 3 [cb rr] [cb pub] m ~)
+          (smac (shal (add (mul cb 2) p.m) ha) a r)
+      (can 0 ~[[b rr] [b ss]])
     ::                                                  ::  ++veri:ed:crypto
     ++  veri                                            ::  validate
       ~/  %veri
-      |=  [s=@ m=@ pk=@]  ^-  ?
-      ?:  (gth (div b 4) (met 3 s))  |
-      ?:  (gth (div b 8) (met 3 pk))  |
-      =+  cb=(rsh [0 3] b)
-      =+  rr=(deco (cut 0 [0 b] s))
-      ?~  rr  |
-      =+  aa=(deco pk)
-      ?~  aa  |
+      |=  [s=@ m=@ pub=@]  ^-  ?
+      (veri-octs s (met 3 m)^m pub)
+    ::                                                  ::  ++veri-octs:ed:crypto
+    ++  veri-octs                                       ::  validate octs
+      ~/  %veri-octs
+      |=  [s=@ m=octs pub=@]  ^-  ?
+      =-  (fall - |)
+      %-  mole  |.  ^-  ?
+      ?:  (gth (met 3 s) (div b 4))  |
+      ?:  (gth (met 3 pub) (div b 8))  |
+      =+  rr=(cut 0 [0 b] s)
       =+  ss=(cut 0 [b b] s)
-      =+  ha=(can 3 ~[[cb (etch u.rr)] [cb pk] [(met 3 m) m]])
-      =+  h=(shaz ha)
-      =((scam bb ss) (ward u.rr (scam u.aa h)))
+      =+  ha=(can 3 ~[[cb rr] [cb pub] m])
+      =+  h=(shal (add (mul 2 cb) p.m) ha)
+      =(rr (add-scalarmult-scalarmult-base h (point-neg pub) ss))
     --  ::ed
   ::                                                    ::
   ::::                    ++scr:crypto                  ::  (2b3) scrypt
@@ -2357,6 +2404,155 @@
   ++  blake
     ~%  %blake  ..part  ~
     |%
+    ++  blake3
+      =<
+        =<  hash  :: cuter API
+        =+  [cv=iv flags=0b0]
+        ^?  ~/  %blake3
+        |%
+        ::
+        ++  keyed  |=(key=octs hash(cv q.key, flags f-keyedhash))
+        ::
+        ++  kdf
+          |=  [out=@ud ctx=tape seed=octs]
+          ^-  @ux
+          =/  der  (hash(cv iv, flags f-derivekeyctx) 32 (lent ctx)^(crip ctx))
+          (hash(cv der, flags f-derivekeymat) out seed)
+        ::
+        ++  hash
+          ~/  %hash
+          |=  [out=@ud msg=octs]
+          ^-  @ux
+          =/  root  (root-output (turn (split-octs 13 msg) chunk-output))
+          %+  end  [3 out]
+          %+  rep  9
+          %+  turn  (gulf 0 (div out 64))
+          |=(i=@ (compress root(counter i)))
+        ::
+        ++  root-output
+          |=  outputs=(list output)
+          ^-  output
+          %+  set-flag  f-root
+          |-
+          =/  mid  (div (bex (xeb (dec (lent outputs)))) 2)
+          =+  [l=(scag mid outputs) r=(slag mid outputs)]
+          ?>  ?=(^ outputs)
+          ?~  t.outputs  i.outputs
+          %-  parent-output
+          [(compress $(outputs l)) (compress $(outputs r))]
+        ::
+        ++  parent-output
+          |=  [l=@ux r=@ux]
+          ^-  output
+          %+  set-flag  f-parent
+          [cv 0 (rep 8 ~[l r]) 64 flags]
+        ::
+        ++  chunk-output
+          ~/  %chunk-output
+          |=  [counter=@ chunk=octs]
+          ^-  output
+          %+  set-flag  f-chunkend
+          %+  roll  (split-octs 9 chunk)
+          |=  [[i=@ block=octs] prev=output]
+          ?:  =(0 i)  [cv counter q.block p.block (con flags f-chunkstart)]
+          [(output-cv prev) counter q.block p.block flags]
+        --
+      ~%  %blake3-impl  ..blake3  ~
+      |%
+      ::
+      +$  output
+        $:  cv=@ux
+            counter=@ud
+            block=@ux
+            blocklen=@ud
+            flags=@ub
+        ==
+      ::
+      ++  compress
+        ~/  %compress
+        |=  output
+        ^-  @
+        |^
+          =/  state  (can32 [8 cv] [4 iv] [2 counter] [1 blocklen] [1 flags] ~)
+          =.  state  (round state block)  =.  block  (permute block)
+          =.  state  (round state block)  =.  block  (permute block)
+          =.  state  (round state block)  =.  block  (permute block)
+          =.  state  (round state block)  =.  block  (permute block)
+          =.  state  (round state block)  =.  block  (permute block)
+          =.  state  (round state block)  =.  block  (permute block)
+          =.  state  (round state block)  (mix state (rep 8 ~[(rsh 8 state) cv]))
+        ::
+        ++  round
+          |=  [state=@ block=@]
+          ^+  state
+          |^
+            =.  state  (g 0x0 0x4 0x8 0xc 0x0 0x1)
+            =.  state  (g 0x1 0x5 0x9 0xd 0x2 0x3)
+            =.  state  (g 0x2 0x6 0xa 0xe 0x4 0x5)
+            =.  state  (g 0x3 0x7 0xb 0xf 0x6 0x7)
+            =.  state  (g 0x0 0x5 0xa 0xf 0x8 0x9)
+            =.  state  (g 0x1 0x6 0xb 0xc 0xa 0xb)
+            =.  state  (g 0x2 0x7 0x8 0xd 0xc 0xd)
+            =.  state  (g 0x3 0x4 0x9 0xe 0xe 0xf)
+            state
+          ::
+          ++  g
+            |=  [a=@ b=@ c=@ d=@ mx=@ my=@]
+            ^+  state
+            =.  state  (set a :(sum32 (get a) (get b) (getb mx)))
+            =.  state  (set d (rox (get d) (get a) 16))
+            =.  state  (set c :(sum32 (get c) (get d)))
+            =.  state  (set b (rox (get b) (get c) 12))
+            =.  state  (set a :(sum32 (get a) (get b) (getb my)))
+            =.  state  (set d (rox (get d) (get a) 8))
+            =.  state  (set c :(sum32 (get c) (get d)))
+            =.  state  (set b (rox (get b) (get c) 7))
+            state
+          ::
+          ++  getb  (curr get32 block)
+          ++  get  (curr get32 state)
+          ++  set  |=([i=@ w=@] (set32 i w state))
+          ++  rox  |=([a=@ b=@ n=@] (ror32 n (mix a b)))
+          --
+        ::
+        ++  permute
+          |=  block=@
+          ^+  block
+          (rep 5 (turn perm (curr get32 block)))
+        --
+      ::  constants and helpers
+      ::
+      ++  iv  0x5be0.cd19.1f83.d9ab.9b05.688c.510e.527f.
+                a54f.f53a.3c6e.f372.bb67.ae85.6a09.e667
+      ++  perm  (rip 2 0x8fe9.5cb1.d407.a362)
+      ++  f-chunkstart    ^~  (bex 0)
+      ++  f-chunkend      ^~  (bex 1)
+      ++  f-parent        ^~  (bex 2)
+      ++  f-root          ^~  (bex 3)
+      ++  f-keyedhash     ^~  (bex 4)
+      ++  f-derivekeyctx  ^~  (bex 5)
+      ++  f-derivekeymat  ^~  (bex 6)
+      ++  set-flag  |=([f=@ o=output] o(flags (con flags.o f)))
+      ++  fe32   ~(. fe 5)
+      ++  ror32  (cury ror:fe32 0)
+      ++  sum32  sum:fe32
+      ++  can32  (cury can 5)
+      ++  get32  |=([i=@ a=@] (cut 5 [i 1] a))
+      ++  set32  |=([i=@ w=@ a=@] (sew 5 [i 1 w] a))
+      ++  output-cv  |=(o=output `@ux`(rep 8 ~[(compress o)]))
+      ++  split-octs
+        |=  [a=bloq msg=octs]
+        ^-  (list [i=@ octs])
+        ?>  ?=(@ q.msg)  :: simplfy jet logic
+        =/  per  (bex (sub a 3))
+        =|  chunk-octs=(list [i=@ octs])
+        =|  i=@
+        |-
+        ?:  (lte p.msg per)  [[i msg] chunk-octs]
+        :-  [i per^(end a q.msg)]
+        $(i +(i), msg (sub p.msg per)^(rsh a q.msg))
+      --
+    ::
     ::TODO  generalize for both blake2 variants
     ++  blake2b
       ~/  %blake2b
@@ -2538,6 +2734,92 @@
       |=  a=@
       (rev 3 8 (get-word h a 8))
     --  ::blake
+  ::
+  ++  chacha
+    =<
+      =<  crypt
+      ~%  %chacha  ..part  ~
+      |%
+      ++  crypt
+        ~/  %crypt
+        |=  [rounds=@ud key=@uxI nonce=@uxG counter=@udG msg=octs]
+        ^+  msg
+        :-  p.msg
+        %+  end  [3 p.msg]
+        %+  mix  q.msg
+        %+  rep  9
+        %+  turn  (iota (div (add p.msg 63) 64))
+        |=  i=@
+        =/  state  (can32 [4 sigma] [8 key] [2 (add counter i)] [2 nonce] ~)
+        =/  final  (do-rounds rounds state)
+        %+  rep  5
+        %+  turn  (iota 16)
+        |=(i=@ (add32 (get32 i state) (get32 i final)))
+      ::
+      ++  ietf
+        |=  [nonce=@ux]
+        ^-  [nonce=@uxG counter=@ud]
+        [(rsh 5 nonce) (lsh [5 1] (end 5 nonce))]
+      ::
+      ++  xchacha
+        ~/  %xchacha
+        |=  [rounds=@ud key=@uxI nonce=@ux]
+        ^-  [key=@uxI nonce=@uxG]
+        :_  (rsh [5 4] nonce)
+        =/  state  (do-rounds rounds (can32 [4 sigma] [8 key] [4 nonce] ~))
+        (cat 7 (end [5 4] state) (rsh [5 12] state))
+      --
+    |%
+    ++  do-rounds
+      |^
+        |=  [rounds=@ud state=@uxJ]
+        ?:  =(0 rounds)  state
+        $(rounds (sub rounds 2), state (double-round state))
+      ::
+      ++  double-round
+        ;:  cork
+          (quarter-round 0x0 0x4 0x8 0xc)
+          (quarter-round 0x1 0x5 0x9 0xd)
+          (quarter-round 0x2 0x6 0xa 0xe)
+          (quarter-round 0x3 0x7 0xb 0xf)
+        ::
+          (quarter-round 0x0 0x5 0xa 0xf)
+          (quarter-round 0x1 0x6 0xb 0xc)
+          (quarter-round 0x2 0x7 0x8 0xd)
+          (quarter-round 0x3 0x4 0x9 0xe)
+        ==
+      ::
+      ++  quarter-round
+        |=  [a=@ b=@ c=@ d=@]
+        ;:  cork
+          (add a b)  (xor d a)  (rol d 16)
+          (add c d)  (xor b c)  (rol b 12)
+          (add a b)  (xor d a)  (rol d 8)
+          (add c d)  (xor b c)  (rol b 7)
+        ==
+      ::
+      ++  add
+        |=  [i=@ j=@]
+        |=  s=@uxJ
+        (set32 i (add32 (get32 i s) (get32 j s)) s)
+      ++  xor
+        |=  [i=@ j=@]
+        |=  s=@uxJ
+        (set32 i (mix (get32 i s) (get32 j s)) s)
+      ++  rol
+        |=  [i=@ n=@]
+        |=  s=@uxJ
+        (set32 i (rol32 n (get32 i s)) s)
+      --
+    ::
+    ++  sigma  0x6b20.6574.7962.2d32.3320.646e.6170.7865
+    ++  can32  (cury can 5)
+    ++  add32  ~(sum fe 5)
+    ++  rol32  (cury ~(rol fe 5) 0)
+    ++  get32  |=([i=@ a=@] (cut 5 [i 1] a))
+    ++  set32  |=([i=@ w=@ a=@] (sew 5 [i 1 w] a))
+    ++  iota   |=(n=@ ?:(=(0 n) ~ (gulf 0 (dec n))))
+    --
   ::
   ++  argon2
     ~%  %argon  ..part  ~
@@ -6081,6 +6363,194 @@
       ?:  (gth (dis acc 1) 0)
         (mix 0xedb8.8320 (rsh [0 1] acc))
       (rsh [0 1] acc)
+::
+++  lss
+  =,  blake:crypto
+  |%
+  ::
+  ++  ctz
+    |=  a=@
+    ?<  =(0 a)  :: infinite!
+    =|  i=@ud
+    |-(?:(=(1 (cut 0 [i 1] a)) i $(i +(i))))
+  ::
+  ++  root
+    |=  msg=octs
+    ^-  @ux
+    (blake3 32 msg)
+  ::
+  ++  build
+    |=  msg=octs
+    ^-  [root=@ux proof=(list @ux) pairs=(list (unit (pair @ux @ux)))]
+    =|  =state:builder
+    |-
+    =/  off  (mul leaves.state 1.024)
+    ?:  (lte p.msg off)
+      (finalize:builder state)
+    =/  leaf  [(min 1.024 (sub p.msg off)) (cut 3 [off 1.024] q.msg)]
+    $(state (add-leaf:builder state leaf))
+  ::
+  ::  +builder: stateful core for computing proof data
+  ::
+  ++  builder
+    =<
+      |%
+      ::
+      ++  add-leaf
+        |=  [=state leaf=octs]
+        ^+  state
+        ?>  (lte p.leaf 1.024)
+        =/  =output:blake3  (chunk-output:blake3 leaves.state leaf)
+        =|  height=@ud
+        |-
+        ?.  (has-tree state height)
+          state(leaves +(leaves.state), trees (~(put by trees.state) height output))
+        =/  l  (output-cv:blake3 (~(got by trees.state) height))
+        =/  r  (output-cv:blake3 output)
+        %=  $
+          state   (add-pair state height l r)
+          output  (parent-output:blake3 l r)
+          height  +(height)
+        ==
+      ::
+      ++  finalize
+        |=  =state
+        ^-  [root=@ux proof=(list @ux) pairs=(list (unit (pair @ux @ux)))]
+        ?:  =(0 leaves.state)
+          [(blake3 32 0^0) ~ ~]
+        =^  root  state
+          =/  height  (ctz leaves.state)
+          =/  =output:blake3  (~(got by trees.state) height)
+          =.  height  +(height)
+          |-
+          ?:  =(height (xeb leaves.state))
+            [(output-cv:blake3 (set-flag:blake3 f-root:blake3 output)) state]
+          ?.  (has-tree state height)
+            $(height +(height))
+          =/  l  (output-cv:blake3 (~(got by trees.state) height))
+          =/  r  (output-cv:blake3 output)
+          %=  $
+            state   (add-pair state height l r)
+            output  (parent-output:blake3 l r)
+            height  +(height)
+          ==
+        =/  indices  ?:(=(0 leaves.state) ~ (gulf 0 (dec leaves.state)))
+        [root (flop proof.state) (turn indices ~(get by pairs.state))]
+      --
+    |%
+    +$  state
+        $:  trees=(map @ud output:blake3)
+            leaves=@ud
+            proof=(list @ux)
+            pairs=(map @ud (pair @ux @ux))
+        ==
+    ::
+    ++  has-tree
+      |=  [=state height=@ud]
+      ^-  ?
+      =(1 (cut 0 [height 1] leaves.state))
+    ::
+    ++  add-pair
+      |=  [=state height=@ud l=@ux r=@ux]
+      ^+  state
+      ?:  (lth +(height) (met 0 leaves.state))
+        =/  i  (sub leaves.state (add (mod leaves.state (bex +(height))) (bex height)))
+        state(pairs (~(put by pairs.state) i [l r]))
+      ?~  proof.state
+        state(proof ~[r l])
+      state(proof [r proof.state])
+    --
+  ::
+  ::  +verifier: stateful core for sequentially verifying messages
+  ::
+  ::  NOTE: A verifier can only be used for messages with at least two
+  ::  fragments. Empty and single-fragment messages can be verified by
+  ::  directly computing their blake3 root hash.
+  ::
+  ++  verifier
+    =<
+      |%
+      ::
+      ++  complete-inline-proof
+        |=  [proof=(list @ux) leaf=octs]
+        ^+  proof
+        [(output-cv:blake3 (chunk-output:blake3 0 leaf)) proof]
+      ::
+      ++  recover-root
+        |=  proof=(list @ux)
+        ^-  @ux
+        ?>  ?=([@ @ *] proof)
+        =/  =output:blake3  (parent-output:blake3 i.proof i.t.proof)
+        =/  proof  t.t.proof
+        |-
+        ?~  proof
+          (output-cv:blake3 (set-flag:blake3 f-root:blake3 output))
+        =/  [l=@ux r=@ux]  [(output-cv:blake3 output) i.proof]
+        $(output (parent-output:blake3 l r), proof t.proof)
+      ::
+      ++  init
+        |=  [leaves=@ud proof=(list @ux)]
+        ^-  state
+        ?>  (gte leaves 2)
+        ?>  ?=([@ @ *] proof)
+        =/  pairs  (my [0 [i.proof i.t.proof]] ~)
+        =/  proof  t.t.proof
+        =/  height  1
+        |-
+        ?~  proof
+          [leaves 0 pairs]
+        %=  $
+          pairs   (~(put by pairs) height [*@ux i.proof])
+          proof   t.proof
+          height  +(height)
+        ==
+      ::
+      ++  verify-msg
+        |=  [=state [leaf=octs pair=(unit [l=@ux r=@ux])]]
+        ^+  state
+        ?>  (lte p.leaf 1.024)
+        ?>  =(?=(^ pair) (expect-pair state))
+        ?>  (verify-leaf state leaf)
+        ?~  pair
+          state(counter +(counter.state))
+        ?>  (verify-pair state u.pair)
+        %=  state
+          counter  +(counter.state)
+          pairs    (~(put by pairs.state) (ctz counter.state) u.pair)
+        ==
+      --
+    |%
+    +$  state
+        $:  leaves=@ud
+            counter=@ud
+            pairs=(map @ud [l=@ux r=@ux])
+        ==
+    ::
+    ++  expect-pair
+      |=  state
+      &(!=(0 counter) (lth (add counter (bex +((ctz counter)))) leaves))
+    ::
+    ++  have-cv
+      |=  [=state height=@ud sel=@ud cv=@ux]
+      ^-  ?
+      =/  p  (~(get by pairs.state) height)
+      ?:  &(?=(^ p) =(?~(sel l.u.p r.u.p) cv))
+        %.y
+      (~(any by pairs.state) |=([l=@ux r=@ux] =(r cv)))
+    ::
+    ++  verify-leaf
+      |=  [=state leaf=octs]
+      ^-  ?
+      =/  cv  (output-cv:blake3 (chunk-output:blake3 counter.state leaf))
+      (have-cv state 0 (mod counter.state 2) cv)
+    ::
+    ++  verify-pair
+      |=  [=state pair=[l=@ux r=@ux]]
+      ^-  ?
+      =/  height  +((ctz counter.state))
+      =/  sel  (mix 1 (cut 0 [height 1] counter.state))
+      =/  cv  (output-cv:blake3 (parent-output:blake3 pair))
+      (have-cv state height sel cv)
     --
   --
 --

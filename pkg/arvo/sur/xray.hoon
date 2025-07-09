@@ -23,7 +23,7 @@
 ::  the type that was analyzed and one node for every type referenced
 ::  within that type.
 ::
-::  The `next` field is the the next available xkey (used when inserting
+::  The `next` field is the next available xkey (used when inserting
 ::  new xrays), `xrays` maps keys to graph nodes and `type-map` gives
 ::  the xkey corresponding to a type.
 ::

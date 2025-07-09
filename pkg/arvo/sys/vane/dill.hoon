@@ -8,11 +8,12 @@
 --                                                      ::
 =>  |%                                                  ::  console protocol
 +$  axle                                                ::
-  $:  %7                                                ::
+  $:  %8                                                ::
       hey=(unit duct)                                   ::  default duct
       dug=(map @tas axon)                               ::  conversations
       eye=(jug @tas duct)                               ::  outside observers
       ear=(set duct)                                    ::  syslog listeners
+      mem=(set duct)                                    ::  memory requests
       lit=?                                             ::  boot in lite mode
       egg=_|                                            ::  see +take, removeme
   ==                                                    ::
@@ -80,6 +81,7 @@
 --
 =|  all=axle
 |=  [now=@da eny=@uvJ rof=roof]                         ::  current invocation
+~>  %spin.[%dill]
 =>  ~%  %dill  ..part  ~
     |%
     ++  as                                              ::  per cause
@@ -103,9 +105,14 @@
           %verb  (pass /verb %$ kyz)
         ::
             %seat
-          %^  pass  /seat  %g
-          :+  %deal   [our our /dill]
-          [%hood %poke %kiln-install !>([desk.kyz our desk.kyz])]
+          =.  +>
+            %^  pass   /seat  %g
+            :+  %deal  [our our /dill]
+            [%hood %poke %kiln-install !>([desk.kyz our desk.kyz])]
+          ::
+          %^  pass   /seat  %g
+          :+  %deal  [our our /dill]
+          [%hood %poke %kiln-essential-desk !>([desk.kyz %.y])]
         ==
       ::
       ++  crud
@@ -250,6 +257,7 @@
           wrapped-task=(hobo task)
       ==
   ^+  [*(list move) ..^$]
+  ~>  %spin.[%call]
   =/  task=task
     ~|  wrapped-task
     ((harden task) wrapped-task)
@@ -265,6 +273,13 @@
     ?<  ?=(%crud -.task)
     [%crud -.task tang.u.dud]
   ::
+  ::
+  ?:  ?=(%born -.task)
+    ?~  hey.all
+      [~ ..^$]
+    ?:  ?=(~ mem.all)
+      [~ ..^$]
+    [[u.hey.all %give %quac ~]~ ..^$]
   ::  the boot event passes thru %dill for initial duct distribution
   ::
   ?:  ?=(%boot -.task)
@@ -368,6 +383,22 @@
       ?~  p.task  (~(del in ear.all) hen)
       (~(put in ear.all) hen)
     [~ ..^$]
+  ::  %mass runs a memory report
+  ::
+  ?:  ?=(%mass -.task)
+    ?>  ?=(^ hey.all)
+    ?:  =(~ mem.all)
+      =.  mem.all  (~(put in mem.all) hen)
+      [[u.hey.all %give %quac ~]~ ..^$]
+    =.  mem.all  (~(put in mem.all) hen)
+    [~ ..^$]
+  ::  %quac is a memory report from the runtime
+  ::
+  ?:  ?=(%quac -.task)
+    =/  moz=(list move)
+      (turn ~(tap in mem.all) (late %give %meme p.task))
+    =.  mem.all  ~
+    [moz ..^$]
   ::  if we were $told something, give %logs to all interested parties
   ::
   ?:  ?=(?(%crud %talk %text) -.task)
@@ -388,14 +419,31 @@
 ::
 ++  load                                                ::  import old state
   =<  |=  old=any-axle
+      ~>  %spin.[%load]
       ?-  -.old
-        %7  ..^$(all old)
+        %8  ..^$(all old)
+        %7  $(old (axle-7-to-8 old))
         %6  $(old (axle-6-to-7 old))
         %5  $(old (axle-5-to-6 old))
         %4  $(old (axle-4-to-5 old))
       ==
   |%
-  +$  any-axle  $%(axle axle-6 axle-5 axle-4)
+  +$  any-axle  $%(axle axle-7 axle-6 axle-5 axle-4)
+  ::
+  +$  axle-7
+    $:  %7
+        hey=(unit duct)
+        dug=(map @tas axon)
+        eye=(jug @tas duct)
+        ear=(set duct)
+        lit=?
+        egg=_|
+    ==
+  ::
+  ++  axle-7-to-8
+    |=  a=axle-7
+    ^-  axle
+    [%8 hey dug eye ear ~ lit egg]:a
   ::
   +$  axle-6
     $:  %6
@@ -409,7 +457,7 @@
   ::
   ++  axle-6-to-7
     |=  a=axle-6
-    ^-  axle
+    ^-  axle-7
     [%7 hey dug eye ~ lit egg]:a
   ::
   +$  axle-5
@@ -481,6 +529,7 @@
   ^-  roon
   |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
+  ~>  %spin.[%scry]
   =*  ren  car
   =*  why=shop  &/p.bem
   =*  syd  q.bem
@@ -515,6 +564,7 @@
 ++  take                                                ::  process move
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^+  [*(list move) ..^$]
+  ~>  %spin.[%take]
   ?^  dud
     ~|(%dill-take-dud (mean tang.u.dud))
   ::
