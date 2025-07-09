@@ -6363,6 +6363,7 @@
       ?:  (gth (dis acc 1) 0)
         (mix 0xedb8.8320 (rsh [0 1] acc))
       (rsh [0 1] acc)
+    --
 ::
 ++  lss
   =,  blake:crypto
