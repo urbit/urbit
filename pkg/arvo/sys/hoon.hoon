@@ -5981,8 +5981,8 @@
     %+  sear  (soft iota)
     %-  stew
     ^.  stet  ^.  limo
-    :~  :-  'a'^'z'  (stag %tas sym)
-        :-  '$'      (cold [%tas %$] buc)
+    :~  :-  'a'^'z'  sym
+        :-  '$'      (cold %$ buc)
         :-  '0'^'9'  bisk:so
         :-  '-'      tash:so
         :-  '.'      zust:so
