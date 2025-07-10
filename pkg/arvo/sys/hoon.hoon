@@ -5979,6 +5979,7 @@
   ::
   ++  spot
     %+  sear  (soft iota)
+    =-  ;~(pose - (easy %$))
     %-  stew
     ^.  stet  ^.  limo
     :~  :-  'a'^'z'  sym
@@ -11844,7 +11845,8 @@
       ?@  iota  [%rock %tas iota]
       ?:  ?=(%hoon -.iota)  hoon.iota
       [%clhp [%rock %tas -.iota] [%sand iota]]
-    |^  %-  stew
+    |^  =-  ;~(pose - (easy %$))
+      %-  stew
       ^.  stet  ^.  limo
       :~  :-  'a'^'z'  ;~  pose
                          (spit (stag %cncl (ifix [pal par] (most ace wide))))
@@ -13213,9 +13215,15 @@
               [i (snoc t e)]
             ;~  plug
               %+  most  ;~(less ;~(plug fas tar) fas)
+              =-  ;~(pose - (easy [%leaf %tas %$]))
               %-  stew
               ^.  stet  ^.  limo
-              :~  :-  ['a' 'z']
+              :~  ::  /$
+                  ::
+                  :-  '$'
+                  (cold [%leaf %tas %$] buc)
+                ::
+                  :-  ['a' 'z']
                   ;~  pose
                     ::  /name=@aura
                     ::
@@ -13234,7 +13242,7 @@
                   ::
                     ::  /constant
                     ::
-                    (stag %leaf (stag %tas ;~(pose sym (cold %$ buc))))
+                    (stag %leaf (stag %tas sym))
                   ==
                 ::
                   ::  /@aura
