@@ -194,6 +194,13 @@ class UrbitApi {
 
   // ames
 
+  getAll() { // both .chums and .peers in ames-state
+    this.getJson('/ames/all',
+      this.wrapLocal('amesAll'),
+      this.showStatus('error fetching ames peers and chums')
+    );
+  }
+
   getPeers() {
     this.getJson('/ames/peer',
       this.wrapLocal('amesPeers'),
@@ -207,6 +214,15 @@ class UrbitApi {
         return this.wrapLocal('amesPeer')(data);
       },
       this.showStatus('error fetching ames details for ' + who)
+    );
+  }
+
+  getChum(who) {
+    this.getJson(`/ames/chum/${who}`, (data) => {
+        data.who = who;
+        return this.wrapLocal('amesChum')(data);
+      },
+      this.showStatus('error fetching chum details for ' + who)
     );
   }
 

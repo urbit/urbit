@@ -600,6 +600,7 @@
     %kiln-uninstall          =;(f (f !<(_+<.f vase)) poke-uninstall)
     %kiln-unmount            =;(f (f !<(_+<.f vase)) poke-unmount)
     %kiln-unsync             =;(f (f !<(_+<.f vase)) poke-unsync)
+    %kiln-essential-desk     =;(f (f !<(_+<.f vase)) poke-essential-desk)
   ==
 ::
 ++  poke-approve-merge
@@ -924,7 +925,7 @@
       (clap a b furl)
   |-  ^-  (list (unit toro))
   =+  b=.^(arch %cy a)
-  ?:  ?=([^ ~] b)  (snoc c `(fray a))  
+  ?:  ?=([^ ~] b)  (snoc c `(fray a))
   =?  c  ?=(^ fil.b)  (snoc c `(fray a))
   %-  zing
   %+  turn  ~(tap by dir.b)
@@ -950,8 +951,8 @@
     %+  skim  desks
     |=  dek=desk
     ?:  (~(has in .^((set desk) %cd /(scot %p our)//(scot %da now))) dek)
-      &  
-    ~>  %slog.(fmt "desk does not yet exist: {<dek>}")  |   
+      &
+    ~>  %slog.(fmt "desk does not yet exist: {<dek>}")  |
   |=(=desk [%pass /kiln/suspend %arvo %c %zest desk %dead])
 ::
 ++  poke-sync
@@ -993,7 +994,7 @@
   ?~  got=(~(get by rock) loc)
     abet:(spam leaf+"desk does not exist: {<loc>}" ~)
   ~>  %slog.(fmt "uninstalling {<loc>}")
-  =?  ..on-init  !=(+<:got %dead)  
+  =?  ..on-init  !=(+<:got %dead)
     (emit %pass /kiln/uninstall %arvo %c %zest loc %dead)
   ?~  sync=(~(get by sources) loc)
     abet
@@ -1018,6 +1019,10 @@
   =.  ..abet  abet:drop:(sync hus)
   =.  zyn  (~(del by zyn) hus)
   abet:(spam (render "cancelling sync" sud.hus her.hus syd.hus kid.u.got) ~)
+::
+++  poke-essential-desk
+  |=  [=desk ese=?]
+  abet:(emit %pass /kiln/essential-desk %arvo %c %esse desk ese)
 ::  +peer: handle %watch
 ::
 ++  peer
@@ -1409,7 +1414,7 @@
       =.  ..abet  (merg /main syd)
       next
     ::
-        %main 
+        %main
       ?>  ?=(%mere +<.sign-arvo)
       =<  tada
       ?:  ?=(%| -.p.sign-arvo)

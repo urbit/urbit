@@ -10,8 +10,6 @@
 ::  Short names are simply the first letter of each word plus `s` if
 ::  it's a list.
 ::
-/+  pill
-=,  pill-lib=pill
 |%
 +$  az-log  [topics=(lest @) data=@t]
 +$  az-state
@@ -34,7 +32,6 @@
       [%verb p=(unit ?)]
       task-arvo
   ==
-+$  pill        pill:pill-lib
 ::
 +$  aqua-event
   $%  [%init-ship who=ship fake=?]

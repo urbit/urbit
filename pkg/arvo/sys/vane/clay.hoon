@@ -1,3 +1,4 @@
+!:
 ::  clay (4c), revision control
 ::
 ::  The way to understand Clay is to take it section-by-section:
@@ -151,6 +152,7 @@
       per=regs                                          ::  read perms per path
       pew=regs                                          ::  write perms per path
       fiz=melt                                          ::  state for mega merges
+      ese=?                                             ::  essential desk?
   ==
 ::
 ::  Over-the-wire backfill request/response
@@ -318,7 +320,7 @@
           $>(%what waif)                                ::
       ==                                                ::
       $:  %a                                            ::  to %ames
-          $>(?(%plea %keen %yawn) task:ames)            ::
+          $>(?(%plea %keen %yawn %whey) task:ames)      ::
       ==                                                ::
       $:  %b                                            ::  to %behn
           $>  $?  %drip                                 ::
@@ -336,6 +338,7 @@
                   %pork                                 ::
                   %warp                                 ::
                   %werp                                 ::
+                  %zeal                                 ::
               ==                                        ::
           task                                          ::
       ==                                                ::
@@ -362,7 +365,7 @@
           $>  $?  %boon                                 ::  response
                   %done                                 ::  (n)ack
                   %lost                                 ::  lost boon
-                  %tune                                 ::  scry response
+                  %sage                                 ::  %keen response
               ==                                        ::
           gift:ames                                     ::
       ==                                                ::
@@ -481,6 +484,100 @@
     %mult  [- mool]:rov
     %many  [- track moat]:rov
   ==
+::
+++  parse-pile
+  ~/  %parse-pile
+  |=  [pax=path txt=@t]
+  ^-  pile
+  =/  [=hair res=(unit [=pile =nail])]
+    %-  road  |.
+    =>  [pile-rule=pile-rule pax=pax txt=txt trip=trip]
+    ~>  %memo./clay/pile
+    ((pile-rule pax) [1 1] (trip txt))
+  ?^  res  pile.u.res
+  %-  mean
+  =/  lyn  p.hair
+  =/  col  q.hair
+  ^-  (list tank)
+  :~  leaf+"syntax error at [{<lyn>} {<col>}] in {<pax>}"
+    ::
+      =/  =wain  (to-wain:format txt)
+      ?:  (gth lyn (lent wain))
+        '<<end of file>>'
+      (snag (dec lyn) wain)
+    ::
+      leaf+(runt [(dec col) '-'] "^")
+  ==
+::
+++  pile-rule
+  =>  ..lull
+  =,  clay
+  |=  pax=path
+  %-  full
+  %+  ifix
+    :_  gay
+    ::  parse optional /? and ignore
+    ::
+    ;~(plug gay (punt ;~(plug fas wut gap dem gap)))
+  |^
+  ;~  plug
+    %+  cook  (bake zing (list (list taut)))
+    %+  rune  hep
+    (most ;~(plug com gaw) taut-rule)
+  ::
+    %+  cook  (bake zing (list (list taut)))
+    %+  rune  lus
+    (most ;~(plug com gaw) taut-rule)
+  ::
+    %+  rune  tis
+    ;~(plug sym ;~(pfix gap stap))
+  ::
+    %+  rune  sig
+    ;~((glue gap) sym wyde:vast stap)
+  ::
+    %+  rune  cen
+    ;~(plug sym ;~(pfix gap ;~(pfix cen sym)))
+  ::
+    %+  rune  buc
+    ;~  (glue gap)
+      sym
+      ;~(pfix cen sym)
+      ;~(pfix cen sym)
+    ==
+  ::
+    %+  rune  tar
+    ;~  (glue gap)
+      sym
+      ;~(pfix cen sym)
+      ;~(pfix stap)
+    ==
+  ::
+    %+  stag  %tssg
+    (most gap tall:(vang & pax))
+  ==
+  ::
+  ++  pant
+    |*  fel=^rule
+    ;~(pose fel (easy ~))
+  ::
+  ++  mast
+    |*  [bus=^rule fel=^rule]
+    ;~(sfix (more bus fel) bus)
+  ::
+  ++  rune
+    |*  [bus=^rule fel=^rule]
+    %-  pant
+    %+  mast  gap
+    ;~(pfix fas bus gap fel)
+  ::
+  ++  taut-rule
+    %+  cook  |=(taut +<)
+    ;~  pose
+      (stag ~ ;~(pfix tar sym))
+      ;~(plug (stag ~ sym) ;~(pfix tis sym))
+      (cook |=(a=term [`a a]) sym)
+    ==
+  --
 --  =>
 ~%  %clay  +  ~
 |%
@@ -594,7 +691,7 @@
       =.  cycle.nub  (~(put in cycle.nub) nave+mak)
       %-  (trace 1 |.("make mark {<mak>}"))
       =^  cor=vase  nub  (build-fit %mar mak)
-      =/  gad=vase  (slap cor limb/%grad)
+      =/  gad=vase  (slub cor limb/%grad)
       ?@  q.gad
         =+  !<(mok=mark gad)
         =^  deg=vase  nub  ^$(mak mok)
@@ -605,7 +702,7 @@
         =.  nub  nob
         :_  nub  :-  %vase
         ^-  vase  ::  vase of nave
-        %+  slap
+        %+  slub
           (with-faces deg+deg tub+tub but+but cor+cor nave+nave.bud ~)
         !,  *hoon
         =/  typ  _+<.cor
@@ -630,7 +727,7 @@
       =.  nub  nob
       :_  nub  :-  %vase
       ^-  vase  ::  vase of nave
-      %+  slap  (slop (with-face cor+cor) zuse.bud)
+      %+  slub  (slop (with-face cor+cor) zuse.bud)
       !,  *hoon
       =/  typ  _+<.cor
       =/  dif  _*diff:grad:cor
@@ -677,32 +774,32 @@
       |_  sam=vase
       ++  diff
         |=  new=vase
-        (slam (slap nav limb/%diff) (slop sam new))
-      ++  form  !<(mark (slap nav limb/%form))
+        (slam (slub nav limb/%diff) (slop sam new))
+      ++  form  !<(mark (slub nav limb/%form))
       ++  join
         |=  [a=vase b=vase]
         ^-  (unit (unit vase))
-        =/  res=vase  (slam (slap nav limb/%join) (slop a b))
+        =/  res=vase  (slam (slub nav limb/%join) (slop a b))
         ?~  q.res    ~
         ?~  +.q.res  [~ ~]
-        ``(slap res !,(*hoon ?>(?=([~ ~ *] .) u.u)))
+        ``(slub res !,(*hoon ?>(?=([~ ~ *] .) u.u)))
       ++  mash
         |=  [a=[=ship =desk diff=vase] b=[=ship =desk diff=vase]]
         ^-  (unit vase)
         =/  res=vase
-          %+  slam  (slap nav limb/%mash)
+          %+  slam  (slub nav limb/%mash)
           %+  slop
             :(slop [[%atom %p ~] ship.a] [[%atom %tas ~] desk.a] diff.a)
           :(slop [[%atom %p ~] ship.b] [[%atom %tas ~] desk.b] diff.b)
         ?~  q.res
           ~
-        `(slap res !,(*hoon ?>((^ .) u)))
+        `(slub res !,(*hoon ?>((^ .) u)))
       ++  pact
         |=  diff=vase
-        (slam (slap nav limb/%pact) (slop sam diff))
+        (slam (slub nav limb/%pact) (slop sam diff))
       ++  vale
-        |:  noun=q:(slap nav !,(*hoon *vale))
-        (slam (slap nav limb/%vale) noun/noun)
+        |:  noun=q:(slub nav !,(*hoon *vale))
+        (slam (slub nav limb/%vale) noun/noun)
       --
     ::  +build-cast: produce gate to convert mark .a to, statically typed
     ::
@@ -737,16 +834,24 @@
         %-  (trace 4 |.("{<a>} -> {<b>}: +{(trip b)}:grow:{(trip a)}"))
         =.  nub  nob
         :_  nub  :-  %vase
-        %+  slap  (with-faces cor+old ~)
+        %+  slub  (with-faces cor+old ~)
         ^-  hoon
         :+  %brcl  !,(*hoon v=+<.cor)
+        :+  %sggr  
+          [%spin %cltr [%sand %t (crip "grow-{<a>}->{<b>}")] ~]
         :+  %tsgl  limb/b
         !,(*hoon ~(grow cor v))
       ::  try direct +grab
       ::
       =^  new=vase  nub  (build-fit %mar b)
       =/  arm=?  (has-arm %grab a new)
-      =/  rab  (mule |.((slap new tsgl/[limb/a limb/%grab])))
+      =/  rab 
+        %-  mule  |.
+        %+  slap  new 
+        ^-  hoon
+        :+  %sggr  
+          [%spin %cltr [%sand %t (crip "grab-{<a>}->{<b>}")] ~]
+        tsgl/[limb/a limb/%grab]
       ?:  &(arm ?=(%& -.rab) ?=(^ q.p.rab))
         %+  gain-leak  cast+a^b
         |=  nob=state
@@ -755,7 +860,7 @@
         :_(nub vase+p.rab)
       ::  try +jump
       ::
-      =/  jum  (mule |.((slap old tsgl/[limb/b limb/%jump])))
+      =/  jum  (mule |.((slub old tsgl/[limb/b limb/%jump])))
       ?:  &((has-arm %jump a old) ?=(%& -.jum))
         =/  via  !<(mark p.jum)
         %-  (trace 4 |.("{<a>} -> {<b>}: via {<via>} per +jump:{(trip a)}"))
@@ -781,14 +886,14 @@
       |=  nob=state
       =.  nub  nob
       :_  nub  :-  %vase
-      %+  slap
+      %+  slub
         (with-faces uno+uno dos+dos ~)
       !,(*hoon |=(_+<.uno (dos (uno +<))))
     ::
     ++  has-arm
       |=  [arm=@tas =mark core=vase]
       ^-  ?
-      =/  rib  (mule |.((slap core [%wing ~[arm]])))
+      =/  rib  (mule |.((slub core [%wing ~[arm]])))
       ?:  ?=(%| -.rib)  %.n
       =/  lab  (mule |.((slob mark p.p.rib)))
       ?:  ?=(%| -.lab)  %.n
@@ -798,6 +903,7 @@
     ++  build-tube
       |=  [a=mark b=mark]
       ^-  [tube state]
+      ~>  %spin.[%build-tube]  ~>  %spin.[a]  ~>  %spin.[b]
       ~|  error-building-tube+[a b]
       %-  soak-tube
       %+  gain-sprig  tube+a^b  |.
@@ -861,8 +967,8 @@
       ^-  vase
       =^  cag=cage  nub  (read-file path)
       ?>  =(%hoon p.cag)
-      =/  tex=tape  (trip !<(@t q.cag))
-      =/  =pile  (parse-pile path tex)
+      =+  !<(txt=@t q.cag)
+      =/  =pile  (parse-pile path txt)
       =.  hoon.pile  !,(*hoon .)
       =^  res=vase  nub  (run-prelude pile)
       res
@@ -883,13 +989,13 @@
       =.  cycle.nub  (~(put in cycle.nub) file+path)
       =^  cag=cage  nub  (read-file path)
       ?>  =(%hoon p.cag)
-      =/  tex=tape  (trip !<(@t q.cag))
-      =/  =pile  (parse-pile path tex)
+      =+  !<(txt=@t q.cag)
+      =/  =pile  (parse-pile path txt)
       =^  sut=vase  nub  (run-prelude pile)
       %+  gain-leak  file+path
       |=  nob=state
       =.  nub  nob
-      =/  res=vase  (slap sut hoon.pile)
+      =/  res=vase  (slub sut hoon.pile)
       [[%vase res] nub]
     ::
     ++  build-file
@@ -942,96 +1048,6 @@
       =^  sut=vase  nub  (run-caz sut caz.pile)
       =^  sut=vase  nub  (run-bar sut bar.pile)
       [sut nub]
-    ::
-    ++  parse-pile
-      ~/  %parse-pile
-      |=  [pax=path tex=tape]
-      ^-  pile
-      =/  [=hair res=(unit [=pile =nail])]
-        %-  road  |.
-        ((pile-rule pax) [1 1] tex)
-      ?^  res  pile.u.res
-      %-  mean
-      =/  lyn  p.hair
-      =/  col  q.hair
-      ^-  (list tank)
-      :~  leaf+"syntax error at [{<lyn>} {<col>}] in {<pax>}"
-        ::
-          =/  =wain  (to-wain:format (crip tex))
-          ?:  (gth lyn (lent wain))
-            '<<end of file>>'
-          (snag (dec lyn) wain)
-        ::
-          leaf+(runt [(dec col) '-'] "^")
-      ==
-    ::
-    ++  pile-rule
-      |=  pax=path
-      %-  full
-      %+  ifix
-        :_  gay
-        ::  parse optional /? and ignore
-        ::
-        ;~(plug gay (punt ;~(plug fas wut gap dem gap)))
-      |^
-      ;~  plug
-        %+  cook  (bake zing (list (list taut)))
-        %+  rune  hep
-        (most ;~(plug com gaw) taut-rule)
-      ::
-        %+  cook  (bake zing (list (list taut)))
-        %+  rune  lus
-        (most ;~(plug com gaw) taut-rule)
-      ::
-        %+  rune  tis
-        ;~(plug sym ;~(pfix gap stap))
-      ::
-        %+  rune  sig
-        ;~((glue gap) sym wyde:vast stap)
-      ::
-        %+  rune  cen
-        ;~(plug sym ;~(pfix gap ;~(pfix cen sym)))
-      ::
-        %+  rune  buc
-        ;~  (glue gap)
-          sym
-          ;~(pfix cen sym)
-          ;~(pfix cen sym)
-        ==
-      ::
-        %+  rune  tar
-        ;~  (glue gap)
-          sym
-          ;~(pfix cen sym)
-          ;~(pfix stap)
-        ==
-      ::
-        %+  stag  %tssg
-        (most gap tall:(vang & pax))
-      ==
-      ::
-      ++  pant
-        |*  fel=^rule
-        ;~(pose fel (easy ~))
-      ::
-      ++  mast
-        |*  [bus=^rule fel=^rule]
-        ;~(sfix (more bus fel) bus)
-      ::
-      ++  rune
-        |*  [bus=^rule fel=^rule]
-        %-  pant
-        %+  mast  gap
-        ;~(pfix fas bus gap fel)
-      --
-    ::
-    ++  taut-rule
-      %+  cook  |=(taut +<)
-      ;~  pose
-        (stag ~ ;~(pfix tar sym))
-        ;~(plug (stag ~ sym) ;~(pfix tis sym))
-        (cook |=(a=term [`a a]) sym)
-      ==
     ::
     ++  run-tauts
       |=  [sut=vase wer=?(%lib %sur) taz=(list taut)]
@@ -1332,9 +1348,19 @@
       ruf(hoy (~(put by hoy.ruf) her run(rus rug)))
     ::  save domestic +room
     ::
+    =/  ese=?
+      =/  dojo=(unit dojo)
+        (~(get by dos.rom.ruf) syd)
+      ?:  =(%base syd)  %.y
+      ?~(dojo %.n ese.u.dojo)
+    =/  =dojo
+      :*  qyx.red  dom.red
+          per.red  pew.red
+          fiz.red  ese
+      ==
     %=  ruf
       hun.rom  (need hun)
-      dos.rom  (~(put by dos.rom.ruf) syd [qyx dom per pew fiz]:red)
+      dos.rom  (~(put by dos.rom.ruf) syd dojo)
     ==
   ::
   ++  apex
@@ -1426,6 +1452,46 @@
     ?~  ref
       [%give %writ riot]
     [%pass /drip %b %drip !>([%writ riot])]
+
+  ::
+  ::  +get-kelvin: read the desk's kernel version from /sys/kelvin
+  ::
+  ++  get-kelvin
+    |=  =yoki
+    ^-  waft
+    |^  ?-    -.yoki
+            %|
+          %-  lobe-to-waft
+          ~>  %mean.(cat 3 'clay: missing /sys/kelvin on ' syd)
+          ~|  ~(key by q.p.yoki)
+          (~(got by q.p.yoki) /sys/kelvin)
+        ::
+            %&
+          =/  fil=(each page lobe)
+            ~>  %mean.(cat 3 'clay: missing /sys/kelvin on ' syd)
+            ~|  ~(key by q.p.yoki)
+            (~(got by q.p.yoki) /sys/kelvin)
+          ?-    -.fil
+              %&  (page-to-waft p.fil)
+              %|  (lobe-to-waft p.fil)
+          ==
+        ==
+    ::
+    ++  lobe-to-waft
+      |=  =lobe
+      ^-  waft
+      =/  peg=(unit page)  (~(get by lat.ran) lobe)
+      ?~  peg  ~|([%sys-kelvin-tombstoned syd] !!)
+      (page-to-waft u.peg)
+    ::
+    ++  page-to-waft
+      |=  =page
+      ^-  waft
+      ?+    p.page  ~|(clay-bad-kelvin-mark/p.page !!)
+          %kelvin  ;;(waft q.page)
+          %mime    (cord-to-waft q.q:;;(mime q.page))
+      ==
+    --
   ::
   ++  case-to-date
     |=  =case
@@ -1825,6 +1891,7 @@
                 %+  levy  ~(tap by tore:(lu now rof hen ruf))
                 |=  [=desk =zest wic=(set weft)]
                 ?|  =(%base desk)
+                    !ese:(~(got by dos.rom.ruf) desk)
                     !?=(%live zest)
                     !=(~ (~(int in wic) kel))
                 ==
@@ -1851,7 +1918,11 @@
         *yaki
       (aeon-to-yaki:ze let.dom)
     =/  old-kel=(set weft)
-      ?:  =(0 let.dom)
+      ?:  ?|  =(0 let.dom)
+              =-  ~?  -  "clay: missing /sys/kelvin on {<syd>}"
+                  -
+              !(~(has by q.old-yaki) /sys/kelvin)
+          ==
         [zuse+zuse ~ ~]
       (waft-to-wefts (get-kelvin %| old-yaki))
     =/  [deletes=(set path) changes=(map path (each page lobe))]
@@ -2013,45 +2084,6 @@
         |
       %-  ~(any in invalid)
       |=(p=path &((is-kernel-path p) !?=([%sys %vane *] p)))
-    ::
-    ::  +get-kelvin: read the desk's kernel version from /sys/kelvin
-    ::
-    ++  get-kelvin
-      |=  =yoki
-      ^-  waft
-      |^  ?-    -.yoki
-              %|
-            %-  lobe-to-waft
-            ~>  %mean.(cat 3 'clay: missing /sys/kelvin on ' syd)
-            ~|  ~(key by q.p.yoki)
-            (~(got by q.p.yoki) /sys/kelvin)
-          ::
-              %&
-            =/  fil=(each page lobe)
-              ~>  %mean.(cat 3 'clay: missing /sys/kelvin on ' syd)
-              ~|  ~(key by q.p.yoki)
-              (~(got by q.p.yoki) /sys/kelvin)
-            ?-    -.fil
-                %&  (page-to-waft p.fil)
-                %|  (lobe-to-waft p.fil)
-            ==
-          ==
-      ::
-      ++  lobe-to-waft
-        |=  =lobe
-        ^-  waft
-        =/  peg=(unit page)  (~(get by lat.ran) lobe)
-        ?~  peg  ~|([%sys-kelvin-tombstoned syd] !!)
-        (page-to-waft u.peg)
-      ::
-      ++  page-to-waft
-        |=  =page
-        ^-  waft
-        ?+    p.page  ~|(clay-bad-kelvin-mark/p.page !!)
-            %kelvin  ;;(waft q.page)
-            %mime    (cord-to-waft q.q:;;(mime q.page))
-        ==
-      --
     ::
     ::  Find which files changed or were deleted
     ::
@@ -2268,8 +2300,11 @@
       ^+  ..park
       ?>  =(~ pud)
       =.  pud  `[syd yoki]
-      |^  %.  [hen %slip %c %pork ~]
-          emit:(pass-what files)
+      |^
+      =.  ..park
+        %-  emit  suspend-non-essentials
+      %.  [hen %slip %c %pork ~]
+      emit:(pass-what files)
       ::
       ++  files
         ^-  (list (pair path (cask)))
@@ -2291,6 +2326,25 @@
         |=  fil=(list (pair path (cask)))
         ^+  ..park
         (emit hen %pass /what %$ what/fil)
+      ::
+      ++  suspend-non-essentials
+        =/  sys-kel=weft
+          =/  w=waft  (get-kelvin yoki)
+          ?@  -.w  w  !!
+        :*  hen  %pass  /kiln/bump/zeal  %c  %zeal
+        %+  roll  ~(tap by dos.rom.ruf)
+        |=  [[=desk =dojo] l=(list [desk zest])]
+        ?:  ese.dojo  l
+        =/  kel=(set weft)
+          ?:  (~(has by wic.dom.dojo) sys-kel)
+            [sys-kel ~ ~]
+          =/  t=(unit tako)  (~(get by hit.dom.dojo) let.dom.dojo)
+          ?~  t  [sys-kel ~ ~]
+          %-  waft-to-wefts
+          (get-kelvin %| (tako-to-yaki:ze u.t))
+        ?:  (~(has in kel) sys-kel)  l
+        [[desk %held] l]
+        ==
       --
     --
   ::
@@ -3180,7 +3234,20 @@
   ::
   ++  set-zest                                          ::  [goad] <
     |=  liv=zest
-    =?  liv  =(%base syd)  %live
+    ?:  =(%base syd)
+      ..park(liv.dom %live)
+    ?:  =(%kids syd)
+      ..park(liv.dom %dead)
+    ?.  ?=(%live liv)
+      ..park(liv.dom liv)
+    =/  kel=(set weft)
+      %-  waft-to-wefts
+      %+  fall
+        (mole |.((get-kelvin %| (aeon-to-yaki:ze let.dom))))
+      [[%1 ~] ~]
+    ?.  (~(has in kel) zuse+zuse)
+      =/  msg  "clay: can't set {<syd>} live, it doesn't support zuse {<zuse>}"
+      ((slog leaf+msg ~) ..park)
     ..park(liv.dom liv)
   ::
   ++  rise                                              ::  [goad] <
@@ -3583,7 +3650,7 @@
         :-  ~
         =/  =wire  (request-wire %back-index her syd inx)
         =/  =path  [%backfill syd (scot %ud inx) ~]
-        ::  TODO: upgrade to %1 when most ships have upgaded
+        ::  TODO: upgrade to %1 when most ships have upgraded
         =/  =fill  [%0 syd lobe]
         (emit hen %pass wire %a %plea her %c path fill)
       ..abet(busy.sat ?~(scry `%ames scry))
@@ -4558,7 +4625,7 @@
       |^  =/  res  (mule |.(read))
           ?:  ?=(%& -.res)  p.res
           %.  [[~ ~] ..park]
-          (slog leaf+"clay: read-at-tako fail {<[desk=syd mun]>}" p.res)
+          (slog leaf+"clay: read-at-tako fail {<[desk=syd mun]>}" (flop p.res))
       ::
       ++  read
         ^-  [(unit (unit cage)) _..park]
@@ -4733,7 +4800,9 @@
       |-  ^-  [load:gall state:ford:fusion]
       ?~  bill.i.sat
         [~ nub.f]
-      =^  =vase  nub.f  (build-file:f /app/[i.bill.i.sat]/hoon)
+      =^  =vase  nub.f
+        %-  road  |.
+        (build-file:f /app/[i.bill.i.sat]/hoon)
       =/  agent  ~|  [%building-app bill.i.sat]  !<(agent:gall vase)
       =^  lid  nub.f  $(bill.i.sat t.bill.i.sat)
       [[[i.bill.i.sat [our desk.i.sat da+now] agent] lid] nub.f]
@@ -4831,10 +4900,11 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%14                                       ::  vane version
+    $:  ver=%15                                       ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
+~>  %spin.[%clay]
 ~%  %clay-top  ..part  ~
 |%                                                    ::
 ++  call                                              ::  handle request
@@ -4844,6 +4914,7 @@
           wrapped-task=(hobo task)
       ==
   ^-  [(list move) _..^$]
+  ~>  %spin.[%call]
   ::
   =/  req=task  ((harden task) wrapped-task)
   ::
@@ -4899,6 +4970,19 @@
       %drop
     ~&  %clay-idle
     [~ ..^$]
+  ::
+      %esse
+    ?:  ?=(%base des.req)
+      %-  (slog 'clay: base is always essential' ~)
+      [~ ..^$]
+    =.  dos.rom.ruf
+      %+  ~(jab by dos.rom.ruf)
+        des.req
+      |=  =dojo
+      dojo(ese ese.req)
+    =^  mos  ruf
+      abet:wick:((de now rof hen ruf) our %base)
+    [mos ..^$]
   ::
       %info
     ?:  ?=(%| -.dit.req)
@@ -5188,7 +5272,8 @@
 ++  load
   =>  |%
       +$  raft-any
-        $%  [%14 raft-14]
+        $%  [%15 raft-15]
+            [%14 raft-14]
             [%13 raft-13]
             [%12 raft-12]
             [%11 raft-11]
@@ -5198,7 +5283,34 @@
             [%7 raft-7]
             [%6 raft-6]
         ==
-      ::  We redefine the latest raft with * for the the ford caches.
+      +$  raft-15
+        $+  raft-15
+        $:  rom=room-15
+            hoy=(map ship rung-14)
+            ran=rang
+            fad=*
+            mon=(map term beam)
+            hez=(unit duct)
+            cez=(map @ta crew)
+            tyr=(set duct)
+            tur=rock:tire
+            pud=(unit [=desk =yoki])
+            sad=(map ship @da)
+            bug=[veb=@ mas=@]
+        ==
+      +$  room-15
+        $:  hun=duct
+            dos=(map desk dojo-15)
+        ==
+      +$  dojo-15
+        $:  qyx=cult
+            dom=dome-13
+            per=regs
+            pew=regs
+            fiz=melt
+            ese=?
+        ==
+      ::  We redefine the latest raft with * for the ford caches.
       ::  +clear-cache upgrades to +raft
       ::
       +$  raft-14
@@ -5577,6 +5689,7 @@
       --
   |=  old=raft-any
   |^
+  ~>  %spin.[%load]
   =?  old  ?=(%6 -.old)   7+(raft-6-to-7 +.old)
   =?  old  ?=(%7 -.old)   8+(raft-7-to-8 +.old)
   =?  old  ?=(%8 -.old)   9+(raft-8-to-9 +.old)
@@ -5585,7 +5698,8 @@
   =?  old  ?=(%11 -.old)  12+(raft-11-to-12 +.old)
   =?  old  ?=(%12 -.old)  13+(raft-12-to-13 +.old)
   =?  old  ?=(%13 -.old)  14+(raft-13-to-14 +.old)
-  ?>  ?=(%14 -.old)
+  =?  old  ?=(%14 -.old)  15+(raft-14-to-15 +.old)
+  ?>  ?=(%15 -.old)
   ..^^$(ruf (clear-cache +.old))
   ::
   ::  We clear the ford cache so we don't have to know how to upgrade
@@ -5593,13 +5707,13 @@
   ::  Also, many of the results would be different if zuse is different.
   ::
   ++  clear-cache
-    |=  raf=raft-14
+    |=  raf=raft-15
     ^-  raft
     %=    raf
         fad  *flow
         dos.rom
       %-  ~(run by dos.rom.raf)
-      |=  doj=dojo-13
+      |=  doj=dojo-15
       ^-  dojo
       doj(fod.dom *flue)
     ::
@@ -5896,6 +6010,18 @@
         ==
       ==
     ==
+  ::
+  ::  +raft-14-to-15: add ese
+  ::
+  ++  raft-14-to-15
+    |=  raf=raft-14
+    ^-  raft-15
+    %=  raf
+      dos.rom
+      %-  ~(run by dos.rom.raf)
+      |=  d=dojo-13
+      d(fiz [fiz.d ese=%.y])
+    ==
   --
 ::
 ++  scry                                              ::  inspect
@@ -5903,6 +6029,7 @@
   ^-  roon
   |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
+  ~>  %spin.[%scry]
   =*  scry-loop  $
   |^
   =*  ren  car
@@ -5967,6 +6094,7 @@
         %rang   ``[%rang !>(ran.ruf)]
         %tomb   ``[%flag !>((tomb t.path))]
         %cult   ``[%cult !>((cult t.path))]
+        %esse   (esse t.path)
         %flow   ``[%flow !>(fad.ruf)]
         %domes  domes
         %tire   ``[%tire !>(tore:(lu now rof *duct ruf))]
@@ -6008,6 +6136,15 @@
       %mult  [%mult mool.rove]
       %many  [%many [track moat]:rove]
     ==
+  ::
+  ++  esse
+    |=  =path
+    ^-  (unit (unit cage))
+    ?~  path
+      [~ ~]
+    =/  =desk
+      i.path
+    ``[%esse !>(ese:(~(got by dos.rom.ruf) desk))]
   ::
   ::  True if file is accessible
   ::
@@ -6090,7 +6227,7 @@
   =/  flo  ~
   =+  `flow`flo
   :-  ver
-  ^-  raft-14:load
+  ^-  raft-15:load
   %=    ruf
       fad  flo
       dos.rom
@@ -6113,6 +6250,7 @@
   ~/  %clay-take
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^+  [*(list move) ..^$]
+  ~>  %spin.[%take]
   ?^  dud
     ?+    tea
       ~|(%clay-take-dud (mean tang.u.dud))
@@ -6213,7 +6351,7 @@
     ==
   ::
   ?:  ?=([%back-index @ @ @ *] tea)
-    ?+    +<.hin  ~|  %clay-backfill-index-strange  !!
+    ?+    +<.hin  ~|  %clay-backfill-index-strange^+<.hin  !!
         %done
       ?~  error.hin
         [~ ..^$]
@@ -6227,16 +6365,16 @@
       %-  (slog leaf+"clay: lost backfill from {<tea>}" ~)
       [~ ..^$]
     ::
-        ?(%boon %tune)
+        ?(%boon %sage)
       =/  her=ship   (slav %p i.t.tea)
       =/  =desk      (slav %tas i.t.t.tea)
       =/  index=@ud  (slav %ud i.t.t.t.tea)
       ::
       =/  fell=(unit fell)
         ?:  ?=(%boon +<.hin)  `;;(fell payload.hin)
-        ?~  roar.hin  ~
-        ?~  q.dat.u.roar.hin  ~
-        `[%1 `u.q.dat.u.roar.hin]
+        =/  =spar:ames  p.sage.hin
+        ?~  q.sage.hin  ~
+        `[%1 `q.sage.hin]
       ::
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)
@@ -6246,7 +6384,7 @@
           ::
           %-  (slog leaf+"clay: got null from {<her>}, falling back to ames" ~)
           abet:(retry-with-ames:den %back-index index)
-        =?  den  ?=(%tune +<.hin)
+        =?  den  ?=(%sage +<.hin)
           (cancel-scry-timeout:den index)
         abet:abet:(take-backfill:(foreign-update:den index) u.fell)
       [mos ..^$]
@@ -6352,7 +6490,7 @@
       ::  handled in the wire dispatcher
       ::
       %boon  !!
-      %tune  !!
+      %sage  !!
       %lost  !!
       %unto  !!
       %wris  ~&  %strange-wris  !!

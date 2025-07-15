@@ -16,10 +16,10 @@ To manage your Urbit identity, use [Bridge][brid].
 ## Install
 
 To install and run Urbit, please follow the instructions at
-[urbit.org/getting-started][start]. You'll be on the live network in a
+[https://urbit.org/get-on-the-network][start]. You'll be on the live network in a
 few minutes.
 
-[start]: https://urbit.org/getting-started/
+[start]: https://urbit.org/get-on-the-network
 
 ## Contributing
 

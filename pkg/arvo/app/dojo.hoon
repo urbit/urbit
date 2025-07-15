@@ -402,13 +402,13 @@
       ?~  pux  +>
       %.  [%txt "! cancel {<u.pux>}"]
       =<  he-diff
-      %-  he-card
-      ?:  =(/wool u.pux)
-        ::  really shoud stop the thread as well
-        ::
-        [%pass u.pux %agent [our.hid %spider] %leave ~]
-      =/  [=ship =desk =case]  he-beak
-      [%pass u.pux %arvo %c %warp ship desk ~]
+      ?.  ?=([%wool *] u.pux)
+        =/  [=ship =desk =case]  he-beak
+        (he-card %pass u.pux %arvo %c %warp ship desk ~)
+      =.  +>  (he-card %pass u.pux %agent [our.hid %spider] %leave ~)
+      ?@  t.u.pux  +>
+      =/  =cage  [%spider-stop !>([i.t.u.pux |])]
+      (he-card %pass u.pux %agent [our.hid %spider] %poke cage)
     ::
     ++  dy-errd                                         ::  reject change, abet
       |=  [rev=(unit sole-edit) err=@u]
@@ -978,16 +978,16 @@
       ^+  +>+>
       ?>  ?=(~ pux)
       =/  tid  (scot %ta (cat 3 'dojo_' (scot %uv (sham eny.hid))))
-      =.  poy  `+>+<.$(pux `/wool)
+      =.  poy  `+>+<.$(pux `/wool/[tid])
       =.  +>+>.$
         %-  he-card
-        [%pass /wool %agent [our.hid %spider] %watch /thread-result/[tid]]
+        [%pass /wool/[tid] %agent [our.hid %spider] %watch /thread-result/[tid]]
       %-  he-card
       =/  =cage  ::  also sub
         ::TODO  would be nice if spider supported starting from paths,
         ::      for semantics/abilities/code closer to generators.
         [%spider-start !>([~ `tid he-beak(q.dir desk) term (dy-some src)])]
-      [%pass /wool %agent [our.hid %spider] %poke cage]
+      [%pass /wool/[tid] %agent [our.hid %spider] %poke cage]
     ::
     ++  dy-make                                         ::  build step
       ^+  +>
@@ -1202,7 +1202,7 @@
       ?~  p.sign
         +>.$
       =.  +>.$  (he-diff(poy ~) %tan leaf+"dojo: thread poke failed" u.p.sign)
-      (he-card %pass /wool %agent [our.hid %spider] %leave ~)
+      (he-card %pass [%wool way] %agent [our.hid %spider] %leave ~)
     ::
         %watch-ack
       ?~  p.sign
