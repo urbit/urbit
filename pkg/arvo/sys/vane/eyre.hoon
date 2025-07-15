@@ -918,17 +918,49 @@
     ::      perhaps that distinction, where userspace requests are async, but
     ::      eyre-handled requests are always synchronous, provides a fruitful
     ::      angle for refactoring...
-    =^  ?(invalid=@uv [suv=@uv =identity som=(list move)])  state
-      ?^  inner
-        (session-for-request:authentication desk.u.inner request)
-      ::NOTE  careful! this is wack!
-      ::      but this case always gets a %four-oh-four, which will instantly
-      ::      remove this from connection state (and not extend the non-
-      ::      existent session-id).
-      ?>  ?=(%four-oh-four -.action)
-      :_  state
-      [*@uv [[%fake ~fipfes-fipfes-fipfes-fipfes--fipfes-fipfes-fipfes-fipfes] ~] ~]
-    ?@  -
+    ::
+    ::    auth-state: authentiation detail for the incoming request
+    ::
+    ::    %invalid:   an invalid session was provided, or the session's
+    ::                provenance doesn't match the request target.
+    ::    %have:      known and valid session.
+    ::    %made       created a new session from whole cloth. (we will mint new
+    ::                guest sessions for auth-less requests to top-level domain.
+    ::    %negotiate: request lacks auth but came in on a subdomain. if we
+    ::                serve it the +auth-negotiation-page it may be able to
+    ::                obtain auth automagically.
+    ::
+    =/  t
+      $%  [%invalid session=@uv]
+          [%have session=@uv =identity ~]
+          [%made session=@uv =identity moves=(list move)]
+          [%negotiate ~]
+      ==
+    =^  auth-state=t  state
+      ?~  inner
+        :_  state
+        ::NOTE  careful! this is wack!
+        ::      but this case always gets a %four-oh-four, which will instantly
+        ::      remove this from connection state (and not extend the non-
+        ::      existent session-id).
+        ?>  ?=(%four-oh-four -.action)
+        [%made *@uv [fake+~fipfes-fipfes-fipfes-fipfes--fipfes-fipfes-fipfes-fipfes ~] ~]
+      ?~  sid=(session-id-from-request:authentication request)
+        ?^  desk.u.inner  [[%negotiate ~] state]
+        [[%made -] +]:(start-session:authentication %guest)
+      ?~  ses=(~(get by sessions.auth.state) u.sid)
+        [[%invalid u.sid] state]
+      ?:  (gth now expiry-time.u.ses)
+        [[%invalid u.sid] state]
+      ::  provenance doesn't match request target,
+      ::  they shouldn't pass this cookie!
+      ::
+      ?.  =(desk.u.inner provenance.identity.u.ses)
+        [[%invalid u.sid] state]
+      [[%have u.sid identity.u.ses ~] state]
+    ::
+    ?:  ?=(%invalid -.auth-state)
+      =*  session  session.auth-state
       ::  the request provided a session cookie that's not (or no longer)
       ::  valid. to make sure they're aware, tell them 401
       ::
@@ -942,23 +974,34 @@
         ::      deletes the connection from state.
         %+  ~(put by connections.state)  duct
         ^-  outstanding-connection
-        [action [| secure address request] [invalid [[%fake *@p] ~]] ~ 0]
+        [action [| secure address request] [session [[%fake *@p] ~]] ~ 0]
       ::  their cookie was invalid, make sure they expire it
       ::
       =/  bod=octs  (as-octs:mimes:html 'bad session auth')
       %-  handle-response
       :*  %start
           :-  401
-          :~  ['set-cookie' (session-cookie-string:authentication invalid ~)]
+          :~  ['set-cookie' (session-cookie-string:authentication session ~)]
               ['content-length' (crip (a-co:co p.bod))]
           ==
           `bod
           complete=%.y
       ==
-    =;  [moz=(list move) sat=server-state]
-      [(weld som moz) sat]
     ::
-    =/  authenticated  ?=(%ours -.who.identity)
+    ?:  ?=(%negotiate -.auth-state)
+      !!  ::TODOxx serve negotiation script page
+    ::
+    ?>  ?=(?(%made %have) -.auth-state)
+    =*  suv       session.auth-state
+    =*  identity  identity.auth-state
+    ::
+    =;  [moz=(list move) sat=server-state]
+      :_  sat
+      ?.  ?=(%made -.auth-state)  moz
+      (weld moves.auth-state moz)
+    ::
+    =/  authenticated=?
+      ?=(%ours -.who.identity)
     ::  if we have no eauth endpoint yet, and the request is authenticated,
     ::  deduce it from the hostname
     ::
@@ -1818,31 +1861,6 @@
       %^  cat  3
         (end 3^8 (fein:ob our))
       (~(raw og (shas %fake-name eny)) 128)
-    ::  +session-for-request: get the session details for the request
-    ::
-    ::    returns the @ case if an invalid session is provided,
-    ::    or the session's provenance doesn't match the request target.
-    ::    creates a guest session if the request does not have any session
-    ::    and is for the top-level domain. (desk subdomains don't get guest
-    ::    cookies auto-minted.)
-    ::    there is no need to call +give-session-tokens after this, because
-    ::    guest sessions do not make valid "auth session" tokens.
-    ::
-    ++  session-for-request
-      |=  [desk=(unit desk) =request:http]
-      ^-  [$@(invalid-session=@uv [session=@uv =identity moves=(list move)]) server-state]
-      ?~  sid=(session-id-from-request request)
-        ?^  desk  [*@uv state]  ::NOTE  slightly wack, but correct enough
-        (start-session %guest)
-      ?~  ses=(~(get by sessions.auth.state) u.sid)
-        [u.sid state]
-      ?:  (gth now expiry-time.u.ses)
-        [u.sid state]
-      ::  provenance doesn't match request target,
-      ::  they shouldn't pass this cookie!
-      ::
-      ?.  =(desk provenance.identity.u.ses)  [u.sid state]
-      [[u.sid identity.u.ses ~] state]
     ::  +close-session: delete a session and its associated channels
     ::
     ::    if :all is true, deletes all sessions that share the same identity.
