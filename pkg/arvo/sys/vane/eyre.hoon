@@ -622,6 +622,66 @@
     ==
     ;body:"{msg}"
   ==
+::  +auth-negotiation-page: render "negotiation script page"  xxtodo description
+::
+++  auth-negotiation-page
+  |=  *
+  |^  ^-  octs
+      %-  as-octs:mimes:html
+      %-  crip
+      %-  en-xml:html
+      ;html
+        ;head
+          ;title:"Setting up... TODOxx"
+        ==
+        ;body
+          ;h1:"Authenticating..."
+          ;script:"{(trip script)}"
+        ==
+      ==
+  ++  script
+    '''
+    const parts = window.location.hostname.split('.');
+    let parentDomain = window.location.hostname;
+    if (parts.length > 2 || (parts.length === 2 && parts[1] === 'localhost'))
+      parentDomain = parts.slice(1).join('.');
+    const parentLocation =
+      window.location.protocol +
+      '//' +
+      parentDomain +
+      window.location.pathname +
+      window.location.search +
+      window.location.hash;
+    //  check if there's an outer frame
+    if (window.parent === window) {
+      if (parentLocation !== window.location.toString()) {
+        location = parentLocation;
+      } else {
+        console.error('todoxx display erro msg already top-level');
+      }
+    } else {
+      //  send a msg asking for a fresh cookie
+      window.parent.postMessage({ tag: 'request-cookie' }, parentLocation);
+      //  receive the cookie, refresh the page when we've set it
+      console.log('never gonna get it', parentLocation);
+      window.addEventListener('message', function handler(e) {
+        if ( event.data
+          && event.data.tag === 'cookie-response'
+          && event.data.token )
+        {
+          console.log('received token', event.data.token);
+          //TODOxx  turn into cookie
+          //document.cookie = event.data.token;  //REVIEW  or construct from token
+          window.removeEventListener('message', handler);  //REVIEW  superfluous?
+          //TODOxx  only reload if we set the cookie lol
+          //location.reload();
+        } else {
+          console.log('unrecognized event data', event.data);
+        }
+      });
+    }
+    '''
+  --
 ::  +render-tang-to-marl: renders a tang and adds <br/> tags between each line
 ::
 ++  render-tang-to-marl
@@ -989,7 +1049,13 @@
       ==
     ::
     ?:  ?=(%negotiate -.auth-state)
-      !!  ::TODOxx serve negotiation script page
+      :_  state
+      =;  =http-event:http
+        [duct %give %response http-event]~
+      :+  %start
+        [200 ['content-type' 'text/html'] ~]
+      :_  complete=&
+      `(auth-negotiation-page)
     ::
     ?>  ?=(?(%made %have) -.auth-state)
     =*  suv       session.auth-state
@@ -1566,14 +1632,18 @@
     ::  generate a page that contains an iframe which points to the requested
     ::  path _under the appropriate subdomain_
     ::
+    =/  inner  (need inner)
+    =/  target-domain=@t
+      %+  rap  3
+      :~  u.pathowner  ::  appropriate subdomain
+          '.'          ::  dot
+          (en-turf:html domain.inner)  ::  our hostname (shorted found match)
+      ==
     =/  iframe-src=tape
       %-  trip
       %+  rap  3
-      =/  inner  (need inner)
       :~  '//'         ::  same protocol
-          u.pathowner  ::  appropriate subdomain
-          '.'          ::  dot
-          (en-turf:html domain.inner)  ::  our hostname (shorted found match)
+          target-domain
           ?~(port.inner '' (cat 3 ':' (crip (a-co:co u.port.inner))))
           url.request  ::  original request target
       ==
@@ -1581,17 +1651,42 @@
     %-  as-octs:mimes:html
     %-  crip
     %-  en-xml:html
-    ;html
-      ;head
-        ;title:"eyre outer frame"
-        ;style:"iframe \{ height: 100%; width: 100%; }"
-        ::TODOxx  appropriate meta etc
-      ==
-      ;body
-        ;script:"TODOxx? for injecting cookies, sharing cmds etc"
-        ;iframe#portal@"{iframe-src}";
-      ==
-    ==
+    |^  ;html
+          ;head
+            ;title:"eyre outer frame"
+            ;style:"iframe \{ height: 100%; width: 100%; }"
+            ::TODOxx  appropriate meta etc
+          ==
+          ;body
+            ;iframe#portal@"{iframe-src}";
+            ;script:"const targetDomain = '{(trip target-domain)}'; {script}"
+          ==
+        ==
+    ::
+    ++  script
+      %-  trip
+      '''
+      //const inner = document.getElementById('portal');
+      window.addEventListener('message', (e) => {
+        console.log('received', e);
+        //  ignore messages from unexpected origins
+        if (e.origin.split('//')[1] !== targetDomain) {
+          console.error('origin mismatch', e.origin, targetDomain);
+          return;
+        }
+        //  only handle messages we recognize
+        if (!e.data || !e.data.tag || e.data.tag !== 'request-cookie') {
+          console.log('unknown message', e.data);
+          return;
+        }
+        //TODOxx  make request to eyre for fresh cookie at request scope
+        const tmpToken = 'ablabalbbloo';
+        //TODOxx  receive token, inject into frame
+        console.log('injecting token', tmpToken);
+        e.source.postMessage({ tag: 'cookie-response', token: tmpToken }, e.origin);
+      });
+      '''
+    --
   ::  +authentication: per-event authentication as this Urbit's owner
   ::
   ::    Right now this hard codes the authentication page using the old +code
