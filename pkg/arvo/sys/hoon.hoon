@@ -1034,9 +1034,10 @@
 +|  %insecure-hashing
 ::
 ++  muk                                                 ::  standard murmur3
-  ~%  %muk  ..muk  ~
-  =+  ~(. fe 5)
+  ~/  %muk
   |=  [syd=@ len=@ key=@]
+  =+  ~(. fe 5)
+  |^  ^-  @
   =.  syd      (end 5 syd)
   =/  pad      (sub len (met 3 key))
   =/  data     (weld (rip 3 key) (reap pad 0))
@@ -1047,7 +1048,7 @@
   =/  i  nblocks
   =.  h1  =/  hi  h1  |-
     ?:  =(0 i)  hi
-    =/  k1  (snag (sub nblocks i) blocks)  ::  negative array index
+    =/  k1  (snug (sub nblocks i) blocks)  ::  negative array index
     =.  k1  (sit (mul k1 c1))
     =.  k1  (rol 0 15 k1)
     =.  k1  (sit (mul k1 c2))
@@ -1080,7 +1081,7 @@
           (mix h1 k1)
     ==
   =.  h1  (mix h1 (end 5 len))
-  |^  (fmix32 h1)
+  (fmix32 h1)
   ++  fmix32
     |=  h=@
     =.  h  (mix h (rsh [0 16] h))
@@ -1089,6 +1090,12 @@
     =.  h  (sit (mul h 0xc2b2.ae35))
     =.  h  (mix h (rsh [0 16] h))
     h
+  ::
+  ++  snug
+    |=  [a=@ b=(list @)]
+    ^-  @
+    ?:  (gte a (lent b))  0
+    (snag a b)
   --
 ::
 ++  mug                                                 ::  mug with murmur3
