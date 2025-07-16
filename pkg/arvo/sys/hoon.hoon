@@ -1036,8 +1036,8 @@
 ++  muk                                                 ::  standard murmur3
   ~/  %muk
   |=  [syd=@ len=@ key=@]
+  ^-  @
   =+  ~(. fe 5)
-  |^  ^-  @
   =.  syd      (end 5 syd)
   =/  nblocks  (div len 4)  ::  intentionally off-by-one
   =/  h1  syd
@@ -1078,7 +1078,7 @@
           (mix h1 k1)
     ==
   =.  h1  (mix h1 (end 5 len))
-  (fmix32 h1)
+  |^  (fmix32 h1)
   ++  fmix32
     |=  h=@
     =.  h  (mix h (rsh [0 16] h))
@@ -1087,12 +1087,6 @@
     =.  h  (sit (mul h 0xc2b2.ae35))
     =.  h  (mix h (rsh [0 16] h))
     h
-  ::
-  ++  snug
-    |=  [a=@ b=(list @)]
-    ^-  @
-    ?:  (gte a (lent b))  0
-    (snag a b)
   --
 ::
 ++  mug                                                 ::  mug with murmur3
