@@ -8607,10 +8607,10 @@
     ::
         [%sgts *]  [%sggr [%germ p.gen] q.gen]
         [%sgwt *]
-      :+  %tsls  [%wtdt q.gen [%bust %null] [[%bust %null] r.gen]]
-      :^  %wtsg  [%& 2]~
-        [%tsgr [%$ 3] s.gen]
-      [%sgpm p.gen [%$ 5] [%tsgr [%$ 3] s.gen]]
+      :+  %tsls
+        :^  %wtcl  q.gen  [%sgpm p.gen r.gen %bust %null]
+        [%bust %null]
+      [%tsgr $+3 s.gen]
     ::
         [%mcts *]
       |-
