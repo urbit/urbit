@@ -6599,6 +6599,7 @@
     [%zpmc p=hoon q=hoon]                               ::  !;
     [%zpts p=hoon]                                      ::  !=
     [%zppt p=(list wing) q=hoon r=hoon]                 ::  !@
+    [%zpkt p=(list wing) q=hoon r=hoon]                 ::  !^
     [%zpwt p=$@(p=@ [p=@ q=@]) q=hoon]                  ::  !?
     [%zpzp ~]                                           ::  !!
   ==                                                    ::
@@ -8772,6 +8773,8 @@
           &((lte hoon-version p.p.gen) (gte hoon-version q.p.gen))
         q.gen
       ~_(leaf+"hoon-version" !!)
+    ::
+        [%zpkt *]  [%zppt p.gen r.gen q.gen]
     ::
         *           gen
     ==
@@ -13487,6 +13490,7 @@
                   ['>' (rune gar %zpgr expa)]
                   ['<' (rune gal %zpgl exqc)]
                   ['@' (rune pat %zppt expx)]
+                  ['^' (rune ket %zpkt expx)]
                   ['=' (rune tis %zpts expa)]
                   ['?' (rune wut %zpwt hinh)]
               ==
