@@ -509,8 +509,8 @@
       :-  '!@'
       """
         $\{1:wing}
-        $\{2:if-exists}
-      $\{3:if-not-exists}
+        $\{2:if-not-exists}
+      $\{3:if-exists}
       """
       :-  '!?'
       """
