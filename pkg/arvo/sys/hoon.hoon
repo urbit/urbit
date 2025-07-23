@@ -7945,8 +7945,8 @@
         ^-  hoon
         :^    %zppt
             [[[%| 0 `%ruth] ~] ~]
-          [%cnls [%limb %ruth] [%sand %ta p.bas] fetch]
-        [%wtpt fetch-wing fetch [%zpzp ~]]
+          [%wtpt fetch-wing fetch [%zpzp ~]]
+        [%cnls [%limb %ruth] [%sand %ta p.bas] fetch]
       ::
           %cell
         :+  %ktls  example
@@ -10150,7 +10150,7 @@
       [typ val]
     ::
         [%zpts *]   [(nice %noun) [%1 q:$(vet |, gen p.gen)]]
-        [%zppt *]   ?:((feel p.gen) $(gen q.gen) $(gen r.gen))
+        [%zppt *]   ?.((feel p.gen) $(gen q.gen) $(gen r.gen))
     ::
         [%zpzp ~]  [%void [%0 0]]
         *
@@ -10314,7 +10314,7 @@
       =+  [(feel p.gen) (feel(sut dox) p.gen)]
       ?.  =(-< ->)
         ~>(%mean.'mull-bonk-f' !!)
-      ?:  -<
+      ?.  -<
         $(gen q.gen)
       $(gen r.gen)
     ::
@@ -10614,7 +10614,7 @@
       [%zpmc *]  (cell $(gen p.gen) $(gen q.gen))
       [%zpgl *]  (play [%kttr p.gen])
       [%zpts *]  %noun
-      [%zppt *]  ?:((feel p.gen) $(gen q.gen) $(gen r.gen))
+      [%zppt *]  ?.((feel p.gen) $(gen q.gen) $(gen r.gen))
       [%zpzp *]  %void
       *          =+  doz=~(open ap gen)
                  ?:  =(doz gen)
