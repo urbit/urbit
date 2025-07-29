@@ -31,7 +31,7 @@
 ::  +sign: private response from another vane to eyre
 ::
 +$  sign
-  $%  [%ames $>(?(%done %boon %lost %tune) gift:ames)]
+  $%  [%ames $>(?(%done %boon %lost %sage) gift:ames)]
       [%behn $>(%wake gift:behn)]
       [%gall gift:gall]
       [%clay gift:clay]
@@ -1126,7 +1126,7 @@
     =/  ship=(unit ship)  (slaw %p ship.crumbs)
     =/  bone=(unit @ud)
       ?.  ?=([bone=@t ~] req.crumbs)  ~
-      (slaw %ud bone.req.crumbs)
+      (rush bone.req.crumbs dem)
     ?:  ?|  ?=(~ ship)
             &(?=([bone=@ ~] req.crumbs) ?=(~ bone))
         ==
@@ -1151,20 +1151,6 @@
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 & url.request "Peer {(scow %p u.ship)} not found.")
     =+  !<  [rift=@ud life=@ud bone=(unit @ud) last-acked=(unit @ud)]  q.u.u.des
-    ?~  bone
-      %^  return-static-data-on-duct  200  'application/octet-stream'
-      %-  as-octs:mimes:html
-      %-  jam
-      ^-  boot
-      [%1 (galaxy-for u.ship) rift life ~ ~]
-    ?~  last-acked
-      %^  return-static-data-on-duct  404  'text/html'
-      %:  error-page
-        404
-        &
-        url.request
-        "Bone {(scow %u u.bone)} of peer {(scow %p u.ship)} not found."
-      ==
     %^  return-static-data-on-duct  200  'application/octet-stream'
     %-  as-octs:mimes:html
     %-  jam
@@ -1496,10 +1482,17 @@
         out(moves [give-session-tokens :(weld moz moves.fex moves.out)])
       ::NOTE  that we don't provide a 'set-cookie' header here.
       ::      +handle-response does that for us.
+      ::TODO  that should really also handle the content-length header for us,
+      ::      somewhat surprising that it doesn't...
+      %-  handle-response
+      =/  bod=octs
+        (as-octs:mimes:html (scot %uv session.fex))
+      =/  col=[key=@t value=@t]
+        ['content-length' (crip (a-co:co p.bod))]
       ?~  redirect
-        (handle-response %start 204^~ ~ &)
+        [%start 200^~[col] `bod &]
       =/  actual-redirect  ?:(=(u.redirect '') '/' u.redirect)
-      (handle-response %start 303^['location' actual-redirect]~ ~ &)
+      [%start 303^~['location'^actual-redirect col] `bod &]
     ::  +handle-logout: handles an http request for logging out
     ::
     ++  handle-logout
@@ -1559,11 +1552,18 @@
       =^  moz1  state  (close-session u.sid all)
       =^  moz2  state  (handle-response response)
       [[give-session-tokens (weld moz1 moz2)] state]
-    ::  +session-id-from-request: attempt to find a session cookie
+    ::  +session-id-from-request: attempt to find a session token
+    ::
+    ::    looks in the authorization header first. if there is no such header,
+    ::    looks in the cookie header(s) instead.
     ::
     ++  session-id-from-request
       |=  =request:http
       ^-  (unit @uv)
+      ::  is there an authorization header?
+      ::
+      ?^  auth=(get-header:http 'authorization' header-list.request)
+        (rush u.auth ;~(pfix (jest 'Bearer 0v') viz:ag))
       ::  are there cookies passed with this request?
       ::
       =/  cookie-header=@t
@@ -2724,7 +2724,7 @@
           ^-  move
           =,  u.maybe-subscription
           %-  (trace 1 |.("leaving subscription to {<app>}"))
-          %+  deal-as
+          %+  deal-as(duct duc)
             (subscription-wire channel-id subscription-id from ship app)
           [from ship app %leave ~]
         ::
@@ -3095,7 +3095,7 @@
       |=  [request-id=@ud ship=@p app=term =path duc=^duct]
       ^-  move
       %-  (trace 1 |.("{<channel-id>} leaving subscription to {<app>}"))
-      %+  deal-as
+      %+  deal-as(duct duc)
         (subscription-wire channel-id request-id identity.session ship app)
       [identity.session ship app %leave ~]
     --
@@ -4096,12 +4096,12 @@
           on-fail:server:eauth:authentication:(per-server-event args)
         [moz http-server-gate]
       ::
-      ?>  ?=([%ames %tune *] sign)
-      ?>  =(client ship.sign)
+      ?>  ?&  ?=([%ames %sage *] sign)
+              =(client ship.p.sage.sign)
+          ==
       =/  url=(unit @t)
-        ?~  roar.sign  ~
-        ?~  q.dat.u.roar.sign  ~
-        ;;((unit @t) q.u.q.dat.u.roar.sign)
+        ?~  q.sage.sign  ~
+        ;;((unit @t) q.q.sage.sign)
       =^  moz  server-state.ax
         ?~  url
           %.  [client nonce]
