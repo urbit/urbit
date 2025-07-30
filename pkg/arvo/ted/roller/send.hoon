@@ -88,8 +88,6 @@
 ::
 =/  gas-limit=@ud
   %+  add  22.000  ::  1.000 gas are added to the base fee for emitting the log
-  %+  max
-    (add (mul 16 p.batch-data) use-gas-price)
   (mul 40 p.batch-data)
 =/  max-cost=@ud   (mul gas-limit use-gas-price)
 ;<  balance=@ud  bind:m
