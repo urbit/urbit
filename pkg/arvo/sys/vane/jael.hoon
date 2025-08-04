@@ -266,7 +266,7 @@
         =/  cub  (nol:nu:crub:crypto key.ky)
         %+  ~(put by pos.zim.pki)
           our
-        [0 lyf.ky (my [lyf.ky [1 pub:ex:cub]] ~) spon-ship]
+        [ryf.feed.tac lyf.ky (my [lyf.ky [1 pub:ex:cub]] ~) spon-ship]
       ::  our initial private key
       ::
       =.  lyf.own.pki  lyf.ky
