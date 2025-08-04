@@ -4985,7 +4985,7 @@
                 (try-next-sponsor sponsor)
               ::
               %-  (ev-trace rot.veb final-ship |.("trying route: {<ship>}"))
-              =.  event-core
+              =?  event-core  ?=(^ unix-duct)
                 (emit unix-duct %give %send lane.u.route blob)
               ::
               ?:  direct.u.route
@@ -7293,7 +7293,7 @@
             ++  fi-pass-timer
               |=  =note
               =/  =wire  (welp /fine/behn/wake/(scot %p her) path)
-              (fi-emit unix-duct %pass wire note)
+              (fi-emit ~[/ames] %pass wire note)
             ::
             ++  fi-set-wake
               ^+  fine
@@ -8003,6 +8003,10 @@
                 sy-abet:(~(sy-publ sy hen) wire +>.sign)
               ::
                   [%jael %turf *]
+                ?~  unix-duct
+                  ::  unix duct is not set, this is a first boot; ignore %turf
+                  ::
+                  `ames-state
                 sy-abet:(~(sy-emit sy hen) unix-duct %give %turf +>.sign)
               ::  vane gifts
               ::
@@ -9631,16 +9635,6 @@
           ^+  sy-core
           =?  sy-core  ?=(^ error)   :: XX use verbosity flag
             (sy-emit hen %pass /crud %d %flog %crud %wake-error u.error)
-          ?:  ?=([%mesa %ask gift=@ *] wire)
-            =/  iota=(pole iota)  (mesa-pave:ev t.t.wire)
-            ?+  iota  ~&(unexpected-ask-wire/iota sy-core)
-                [%turf *]
-              (sy-emit hen %pass /turf %j %turf ~)
-            ::
-                [%public-keys [%p ship=@] *]
-              %^  sy-emit  hen  %pass
-              [/public-keys %j %public-keys [ship.iota ~ ~]]
-            ==
           ?:  ?=([%recork ~] wire)
             ::  XX don't reset the timer; this is done in on-take-wake:ames
             ::
@@ -9774,7 +9768,7 @@
               =/  wire  (make-pump-timer-wire ship snd-bone)
               =/  duct  ~[/ames]
               (sy-emit:core duct %pass wire %b %rest u.next-wake)
-            =.  sy-core
+            =?  sy-core  ?=(^ unix-duct)
               %-  sy-emit
               :*  unix-duct  %give  %nail  ship
                   ?.  ?=(%mesa -.peer)
@@ -9785,7 +9779,9 @@
             ::  if one of our sponsors breached, give the updated list to vere
             ::
             =/  sponsors  (~(gas in *(set ^ship)) sy-get-sponsors)
-            =?  sy-core  (~(has in sponsors) ship)
+            =?  sy-core  ?&  (~(has in sponsors) ship)
+                             ?=(^ unix-duct)
+                         ==
               (sy-emit unix-duct %give %saxo ~(tap in sponsors))
             ::
             sy-core
@@ -9854,6 +9850,8 @@
                 |.("hear new sponsor={<sponsor>}")
             ::
             ?:  =(our ship)
+              ?~  unix-duct
+                sy-core
               (sy-emit unix-duct %give %saxo sy-get-sponsors)
             ?~  sponsor
               %-  (slog leaf+"ames: {(scow %p ship)} lost sponsor, ignoring" ~)
@@ -9868,6 +9866,8 @@
               (~(put by chums.ames-state) ship u.peer)
             =?  peers.ames-state  ?=(%ames -.peer)
               (~(put by peers.ames-state) ship u.peer)
+            ?~  unix-duct
+              sy-core
             %-  sy-emit
             :*  unix-duct  %give  %nail  ship
                 ?.  ?=(%mesa -.peer)
@@ -9954,7 +9954,7 @@
                 %-  ~(rep by chums.todos)
                 |=  [[[=path =ints] ducts=(set duct)] cor=_ames-core]
                 ::  XX some of these ints can be %tune(s) but they are
-                  ::  treated as %sage(s)
+                ::  treated as %sage(s)
                 (~(rep in ducts) |=([=duct c=_cor] (on-chum:c ship^path)))
               ::
               (sy-emil moves)
@@ -10068,7 +10068,9 @@
                 u.sponsor.point
               (^^sein:title rof /ames our now ship)
             ::
-            =?  sy-core  ?=(%czar (clan:title ship))
+            =?  sy-core  ?&  ?=(%czar (clan:title ship))
+                             ?=(^ unix-duct)
+                         ==
               %-  sy-emit
               :*  unix-duct  %give  %nail  ship
                   ?.  ?=(%mesa -.peer)
@@ -12256,46 +12258,18 @@
     [(weld ames-moves mesa-moves) vane-gate]
   ::
   ?:  ?=([?(%turf %mesa %private-keys %public-keys) *] wire)
-    ?.  ?&  ?=(?(%turf %public-keys) -.wire)
-            ?=(~ unix-duct)
-        ==
-      ?~  flow-wire=(ev-parse-flow-wire:ev:me-core wire)
-        (take:me-core sample)
-      %.  sample
-      ?:  =(%mesa -:(find-peer her.u.flow-wire))
-        take:me-core
-      ::  XX this shouldn't happen. /mesa wires are used for peeking poke
-      ::  payloads, naxplanations and corks. if the peer has been regressed, all
-      ::  those peeks are dropped and the regression logic should guarantee that
-      ::  whatever state is pending gets handled now using the |ames core.
-      ::
-      ~>  %slog.0^leaf/"mesa: taking weird {<[[- +<]:sign]>} for {(spud wire)}"
+    ?~  flow-wire=(ev-parse-flow-wire:ev:me-core wire)
+      (take:me-core sample)
+    %.  sample
+    ?:  =(%mesa -:(find-peer her.u.flow-wire))
       take:me-core
-    ::  XX refactor defered gift handling so no timer is needed if no unix-duct
+    ::  XX this shouldn't happen. /mesa wires are used for peeking poke
+    ::  payloads, naxplanations and corks. if the peer has been regressed, all
+    ::  those peeks are dropped and the regression logic should guarantee that
+    ::  whatever state is pending gets handled now using the |ames core.
     ::
-    ::  If the unix-duct is not set, we defer applying %public-keys and %turf
-    ::  gifts (which can trigger other gifts to be sent to unix) by setting up
-    ::  a timer that will request them again
-    ::
-    =;  wires=(list ^wire)
-      :_  vane-gate
-      %+  turn  wires
-      |=  =^wire
-      ^-  move
-      [~[/ames] %pass wire %b %wait `@da`(add now ~s30)]
-    ?:  ?=(%turf -.wire)
-      ~>  %slog.0^leaf/"ames: unix-duct missing; delay %turf"
-      [%mesa %ask wire]~
-    ?>  ?=([%jael %public-keys *] sign)
-    =/  gift=public-keys-result:jael  +>.sign
-    ?.  ?=(%full -.gift)
-      ~&(unexpected-ask-gift/-.gift ~)
-    =/  ships=(set ship)  ~(key by points.gift)
-    %-  ~(rep in ships)
-    |=  [=ship wires=(list ^wire)]
-    ~>  %slog.0^leaf/"ames: unix-duct missing; delay {<i.wire>} for {<ship>}"
-    :_  wires
-    [%mesa %ask /public-keys/[(scot %p ship)]]
+    ~>  %slog.0^leaf/"mesa: taking weird {<[[- +<]:sign]>} for {(spud wire)}"
+    take:me-core
   ?~  parsed-wire=(parse-bone-wire wire)
     ::  not a /bone wire—used when passing %pleas to a local vane; use |ames
     ::  XX this is not a |mesa wire so it shouldn't happen for migrated flows
