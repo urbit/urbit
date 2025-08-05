@@ -9776,9 +9776,9 @@
             ::  XX
             ::
             =?  send-window.snd  (lth send-window.snd send-window-max.snd)
-              ::  XX  send-window-max.snd is always 1, so we are only to have
-              ::  one mesage in flight at any time. is that value changes we
-              ::  would need to only increase the window if we have actually
+              ::  XX  send-window-max.snd is always 1, so we are only able to
+              ::  have one mesage in flight at any time. if that value changes
+              ::  we  would need to only increase the window if we have actually
               ::  deleted anything from loads (if this is an outstanding
               ::  in-order message)
               ::
