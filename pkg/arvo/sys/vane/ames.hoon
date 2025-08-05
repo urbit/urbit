@@ -4969,7 +4969,9 @@
             ::
             event-core
           =/  blob=*  (cue (rep packet-size [fragment]~))
-          ?.  ?=(^ ;;((soft [%$ [%mesa ~] %ahoy ~]) blob))
+          ?.  ?|  ?=(^ ;;((soft [%$ [%mesa ~] %ahoy ~]) blob))
+                  ?=(^ ;;((soft [%$ [%mesa-1 ~] %ahoy ~]) blob))
+              ==
             %-  (ev-trace odd.veb sndr.shot |.("ignore non ahoy pleas"))
             ::  ignore single-fragment non %ahoy pleas
             ::
@@ -7105,7 +7107,7 @@
                 =+  ;;(=plea message)
                 ?:  ?&  =(%$ vane.plea)
                         ?=(%ahoy -.payload.plea)
-                        ?=([%test %mesa ~] path.plea)
+                        ?=([%test *] path.plea)
                     ==
                     ::  check that we can migrate this peer, without
                     ::  modifying the state
@@ -7138,7 +7140,7 @@
                   ::
                   ?+    -.payload.plea  ~|(weird-migration-plea/plea !!)
                       %ahoy
-                    ?>  ?=(%mesa -.path.plea)
+                    ?>  ?=(%mesa-1 -.path.plea)
                     (pe-emit duct %pass wire %a %deep %ahoy her bone)
                   ::
                       %cork
@@ -9585,7 +9587,7 @@
             %-  %+  ev-tace  msg.veb.bug.ames-state
                 |.("hear complete %plea {<[bone=bone seq=+(last-acked.rcv)]>}")
             ::
-            ?:  &(=(vane %$) ?=([%ahoy ~] payload) ?=([%mesa ~] path)):plea
+            ?:  &(=(vane %$) ?=([%ahoy ~] payload)):plea
               ::  migrated %ahoy pleas are always acked
               ::
               %-  %+  ev-tace  odd.veb.bug.ames-state
