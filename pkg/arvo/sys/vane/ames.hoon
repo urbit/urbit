@@ -2294,7 +2294,7 @@
             [%23 axle-23]
             [%24 axle-24]
             [%25 axle-25]
-            [%26 axle]
+            [?(%26 %27) axle]
         ==
     ::
     ::
@@ -2370,7 +2370,7 @@
       ~>  %slog.0^leaf/"ames: metamorphosis on %take"
       [:(weld molt-moves queu-moves take-moves) adult-gate]
     ::
-    ++  stay  [%26 larva/ames-state]
+    ++  stay  [%27 larva/ames-state]
     ++  scry  scry:adult-core
     ++  load
       |=  $=  old
@@ -2520,6 +2520,10 @@
                   state=axle-25
               ==
               $:  %26                            :: add cached acks
+                  ?(%adult %larva)               ::
+                  state=axle
+              ==
+              $:  %27                            :: enable Directed Messaging
                   ?(%adult %larva)               ::
                   state=axle
           ==  ==
@@ -2795,6 +2799,11 @@
         larval-gate
       ::
           [%26 *]
+        =.  cached-state  `[%26 state.old]
+        ~>  %slog.1^leaf/"ames: larva %26 reload"
+        larval-gate
+      ::
+          [%27 *]
         ?-  +<.old
           %larva  larval-gate
           %adult  (load:adult-core state.old)
@@ -2873,7 +2882,7 @@
       |^  ^+  [moz larval-core]
       ?~  cached-state  [~ larval-core]
       =*  old  u.cached-state
-      ?:  ?=(%26 -.old)
+      ?:  ?=(%27 -.old)
         ::  no state migrations left; update state, clear cache, and exit
         ::
         [(flop moz) larval-core(ames-state.adult-gate +.old, cached-state ~)]
@@ -2952,8 +2961,10 @@
         $(cached-state `24+(state-23-to-24 +.old))
       ?:  ?=(%24 -.old)
         $(cached-state `25+(state-24-to-25 +.old))
-      ?>  ?=(%25 -.old)
-      $(cached-state `26+(state-25-to-26 +.old))
+      ?:  ?=(%25 -.old)
+        $(cached-state `26+(state-25-to-26 +.old))
+      ?>  ?=(%26 -.old)
+      $(cached-state `27+(state-26-to-27 +.old))
       ::
       ++  our-beam  `beam`[[our %rift %da now] /(scot %p our)]
       ++  state-4-to-5
@@ -3438,6 +3449,12 @@
               tip  [tip.c weir=~]
           ==
         ==
+      ::
+      ++  state-26-to-27
+        |=  old=axle
+        ^+  old
+        ~>  %slog.0^leaf/"ames: migrating from state %26 to %27"
+        old(core %mesa)
       ::
       --
     ::
@@ -12237,7 +12254,7 @@
           ::  [%mesa ~ %alien *]
           ::    %mesa is our default network core. we might have outstanding
           ::    poke/peeks, but the keys are missing and the peer sends an %ames
-          ::    packet — if notthing outstanding, the peerhas first sent an
+          ::    packet — if notthing outstanding, the peer has first sent an
           ::    %ames packet, we dropped it and asked for the key, then the peer
           ::    sent a %mesa packet
           ::    XX log as missbeheaving peer?
@@ -12745,7 +12762,7 @@
   take:am-core
 ::  +stay: extract state before reload
 ::
-++  stay  [%26 adult/ames-state]
+++  stay  [%27 adult/ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load

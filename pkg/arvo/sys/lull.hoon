@@ -1604,7 +1604,7 @@
         =server=chain                       ::  for serving %shut requests
         priv=private-key
         chums=(map ship chum-state)         ::  XX migrated peers
-        core=_`?(%ames %mesa)`%ames         ::  XX use migrated core by default
+        core=_`?(%ames %mesa)`%mesa         ::  use |mesa core by default
         ::  TODOs
         :: XX tmp=(map @ux page)            :: temporary hash-addressed bindings
     ==
