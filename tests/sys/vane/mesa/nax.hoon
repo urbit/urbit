@@ -112,6 +112,11 @@
   =^  moves-3  nec
     %:    ames-check-take:v  nec
         [~1111.1.1 0xdead.beef *roof]
+      ~|  moves-page
+      =.  moves-page
+        %+  skim  moves-page
+        |=  =move:ames-bunt:v
+        ?=([* [%give [%sage *]]] move)
       ?>  ?=([[[[%ames *] *] [%give %sage *]] *] moves-page)
       ::  remove reentrant %ames wire; this would be done by %arvo to route it
       ::  to the %ames vane

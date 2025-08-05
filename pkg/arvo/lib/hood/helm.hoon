@@ -198,7 +198,7 @@
   =/  =wire
     :+  %helm  %ahoy
     ?.(test /(scot %p her) /test/(scot %p her))
-  =/  =path  ?:(test /test/mesa /mesa)
+  =/  =path  ?:(test /test/mesa-1 /mesa-1)
   ::  before migrating, test if we can migrate, regress, and check that there
   ::  are not flows in a weird state. if we don't crash, send the %ahoy $plea
   ::
