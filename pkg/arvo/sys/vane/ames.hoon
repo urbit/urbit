@@ -5520,20 +5520,8 @@
                 =|  flow=flow-state
                 =/  =dire
                   ?:  =(%0 (mod bone 4))  %for  :: send %plea; sink %boon
-                  %bak  :: (1) sink %plea; (0) send %boon; (3)send/(2)sink %nax
+                  %bak  :: (1) sink %plea; (1) send %boon; (3)send/(2)sink %nax
                 ::
-                :: ?:  =(%3 (mod bone 4))
-                ::   naxplanation bones are not migrated, but we account for
-                ::   them in nax.rcv.flow-state, porting the last acked message
-                ::   XX entries in nax.peer-state have not been used
-                ::
-                ::   =.  bone  (mix 0b1 (mix 0b10 bone))  ::  reference flow
-                ::   =/  live=?  !=(current.pump next.pump)
-                ::   =.  nax.rcv.flow
-                ::     (~(put by nax.rcv.flow) current.pump *error)
-                ::   ::
-                ::   :-  moves
-                ::   (~(put by flows) bone^dire flow)
                 ?:  =(%2 (mod bone 4))
                   ::  XX this shouldn't exist
                   ~?  >>>  odd.veb.bug.ames-state
@@ -5546,10 +5534,44 @@
                   (mix 0b1 bone)              ::  from %1 to [%0 dire=%bak]
                 =?  bone  =(%3 (mod bone 4))
                   (mix 0b1 (mix 0b10 bone))   ::  from %3 to [%0 dire=%bak]
-                ?:  (~(has in corked.peer-state) target-bone)
+                ::  %naxp flows with corked target bone (i.e. %0); skip
+                ::  (only reference bones -- %0 and %1 -- are added to this set)
+                ::
+                ?:  ?&  naxp-bone
+                        (~(has in corked.peer-state) target-bone)
+                    ==
                   ~?  >>  odd.veb.bug.ames-state
                     corked-naxp-flow/target=target-bone^naxp=original-bone
                   moves^fren
+                ::  if this is a naxplanation flow, with no haxplanations
+                ::  outstanding, and the reference flow is not corked, migrate
+                ::  nacked sequence numbers
+                ::
+                =?  flows.fren  ?&  naxp-bone
+                                    =(current.pump next.pump)  :: all naxp acked
+                                ==
+                  ::  naxplanation bones are not migrated, but we account for
+                  ::  them in nax.rcv.flow-state
+                  ::
+                  ::  XX entries in nax.peer-state have not been used
+                  ::
+                  ~|  target-bone=target-bone
+                  =/  target-flow=message-sink-state
+                    (~(got by rcv.peer-state) target-bone)
+                  ::
+                  ::
+                  ?.  =(current.pump +(last-acked.target-flow))
+                    flows.fren
+                  ::  we can only migrate nacked sequence numbers if every
+                  ::  sequence number in the target flow has been nacked
+                  ::
+                  =.  nax.rcv.flow
+                    %-  ~(gas by *_nax.rcv.flow)
+                    %+  turn   (gulf 1 last-acked.target-flow)
+                    |=  seq=message-num
+                    [seq *error]
+                  ::
+                  (~(put by flows.fren) [bone dire] flow)
                 =/  nothing-in-flight=?
                   ?&  ?=(~ live.packet-pump-state.pump)
                       ?=(~ unsent-fragments.pump)
@@ -5630,6 +5652,7 @@
                     (~(has in closing.peer-state) bone)
                   :-  (weld moves cork-moves)
                   fren(flows (~(put by flows.fren) [bone dire] flow))
+                ::
                 =?  moves  ?&  !=(current.pump next.pump)
                                ::  only forward flows; %boons are not nacked
                                ::
@@ -5856,16 +5879,6 @@
                     missing-current/[bone seq=current.pump closing.flow dire]
                   %-  ~(put ju weir.fren)
                   [bone^dire %missing-current current.pump]
-                ::  XX  do we care about this?
-                ::
-                ::  if this was a naxplanation flow (bone=%3) we migrate the
-                ::  last acked naxplanation message into nax.rcv.state
-                ::
-                :: =?  flow  naxp-bone
-                ::   %_  flow
-                ::     nax.rcv  (~(put by nax.rcv.state.core) current.pump *error)
-                ::   ==
-                ::
                 ::  queued-message-acks
                 ::
                 =+  ack-mop=((on ,@ud ack) lte)
@@ -5928,7 +5941,7 @@
                     ::
                     %-  ~(gas by *_nax.rcv.flow)
                     ::  if there are entries in nax.sink, we have nacked a
-                    ::  plea/boon, but we were waiting on the naxplanation
+                    ::  plea, but we were waiting on the naxplanation
                     ::  to be acked.
                     ::
                     ::  naxplanations are not sent anymore, just exposed
@@ -9563,6 +9576,8 @@
             ?:  pending-ack.rcv
               ::  if the previous plea is pending, no-op
               ::
+              %-  %+  ev-tace  odd.veb.bug.ames-state
+                  |.("pending %plea {<[bone=bone last-acked=last-acked.rcv]>}")
               fo-core
             =.  pending-ack.rcv  %.y
             ::
