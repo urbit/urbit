@@ -189,7 +189,7 @@
           `response-header:http-event
         ::
         [duct in-progress-http-request]
-      =/  status-code=@ud  status-code.response-header.http-event
+      =*  status-code=@ud  status-code.response-header.http-event
       ?:  ?|  =(307 status-code)
               =(303 status-code)
               =(301 status-code)
@@ -242,12 +242,11 @@
       |=  [duct=^duct =in-progress-http-request]
       :-  duct
       %=  in-progress-http-request
-        remaining-redirects
-      (dec remaining-redirects.in-progress-http-request)
+          remaining-redirects
+        (dec remaining-redirects.in-progress-http-request)
       ==
     :_  state
-    :_  ~
-    [outbound-duct.state %give %request id request(url u.loc)]
+    [outbound-duct.state %give %request id request(url u.loc)]~
   ::  +record-and-send-progress: save incoming data and send progress report
   ::
   ++  record-and-send-progress
