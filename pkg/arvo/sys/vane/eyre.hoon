@@ -2724,7 +2724,7 @@
           ^-  move
           =,  u.maybe-subscription
           %-  (trace 1 |.("leaving subscription to {<app>}"))
-          %+  deal-as
+          %+  deal-as(duct duc)
             (subscription-wire channel-id subscription-id from ship app)
           [from ship app %leave ~]
         ::
@@ -3095,7 +3095,7 @@
       |=  [request-id=@ud ship=@p app=term =path duc=^duct]
       ^-  move
       %-  (trace 1 |.("{<channel-id>} leaving subscription to {<app>}"))
-      %+  deal-as
+      %+  deal-as(duct duc)
         (subscription-wire channel-id request-id identity.session ship app)
       [identity.session ship app %leave ~]
     --
@@ -3570,11 +3570,13 @@
 ::  allow jets to be registered within this core
 ::
 ~%  %http-server  ..part  ~
+~>  %spin.[%eyre]
 |%
 ++  call
   ~/  %eyre-call
   |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _http-server-gate]
+  ~>  %spin.[%call]
   ::
   =/  task=task  ((harden task) wrapped-task)
   ::
@@ -3878,6 +3880,7 @@
   ~/  %eyre-take
   |=  [=wire =duct dud=(unit goof) =sign]
   ^-  [(list move) _http-server-gate]
+  ~>  %spin.[%take]
   =>  %=    .
           sign
         ?:  ?=(%gall -.sign)
@@ -4268,6 +4271,7 @@
       --
   |=  old=axle-any
   ^+  http-server-gate
+  ~>  %spin.[%load]
   ?-    -.old
   ::
   ::  adds /~/name
@@ -4398,6 +4402,7 @@
   ^-  roon
   |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
+  ~>  %spin.[%scry]
   =*  ren  car
   =*  why=shop  &/p.bem
   =*  syd  q.bem
