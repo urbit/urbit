@@ -447,8 +447,12 @@
     |=  [d=duct r=in-progress-http-request-0]
     ^-  [duct in-progress-http-request]
     :-  d
-    :: set remaining redirects to 0 because we don't have the original request
-    [0 +:r(|5 [|5 [%'GET' '' ~ ~]]:r)]
+    ::  set remaining redirects to 0 because we don't have the original request.
+    ::  it's safe to bunt the .request because it only gets used if
+    ::  .remaining-redirects is non-zero.
+    ::
+    :-  remaining-redirects=0
+    +.r(expected-size [expected-size.r *request:http])
     ==
       %~2025.7.17
     iris-gate(ax old)
