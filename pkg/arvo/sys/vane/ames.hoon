@@ -5542,8 +5542,6 @@
                 ?:  ?&  naxp-bone
                         (~(has in corked.peer-state) target-bone)
                     ==
-                  ~?  >>  odd.veb.bug.ames-state
-                    corked-naxp-flow/target=target-bone^naxp=original-bone
                   moves^fren
                 ::  if this is a naxplanation flow, with no haxplanations
                 ::  outstanding, and the reference flow is not corked, migrate
