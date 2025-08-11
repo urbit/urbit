@@ -13,24 +13,36 @@
       %e
       /(scot %p our)/host/(scot %da now)
   ==
+::
 =/  our-url
-  ;:  welp
-      "http"
-      ?:(p.hart "s" "")
-      "://"
-      (trip -.p.r.hart)
-      ?~(q.hart "" (welp ":" (a-co:co u.q.hart)))
-  ==
+  ?:  .^(? %j /(scot %p our)/fake/(scot %da now))
+    ;:  welp
+        "http"
+        "://"
+        (trip -.p.r.hart)
+        ?~(q.hart "" (welp ":" (a-co:co u.q.hart)))
+    ==
+  =/  eauth-url
+    .^((unit @t) %ex /(scot %p our)//(scot %da now)/eauth/url)
+  ::  remove /~/eauth from the end of .eauth-url
+  %-  flop
+  %+  swag
+    [8 (lent (trip (need eauth-url)))]
+  %-  flop
+  (trip (need eauth-url))
+::
 =/  fake-bars
   :~  "  |mount %base"
       "  |hi {<our>} 'hello {<our>}'"
       :(welp "  |eyre/cors/approve '" our-url "'")
   ==
+::
 =/  real-bars
   :~  "  |public %base"
       "  |hi ~zod 'hello ~zod'"
       "  |install ~paldev %pals"
   ==
+::
 %-  turn
 :_  |=(=tape leaf+tape)
 %-  zing
