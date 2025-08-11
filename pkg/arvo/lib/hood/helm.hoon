@@ -206,6 +206,41 @@
   =^  ahoy-moves  sat  abet:(emit %pass wire %arvo %a %plea her %$ path %ahoy ~)
   (emil (weld mate-moves ahoy-moves))
 ::
+++  poke-send-yoha
+  |=  [her=ship test=?]  =<  abet
+  =/  =wire
+    :+  %helm  %yoha
+    ?.(test /(scot %p her) /test/(scot %p her))
+  =/  =path  ?:(test /test/mesa-1 /mesa-1)
+  ::  before migrating, test if we can migrate, regress, and check that there
+  ::  are not flows in a weird state. if we don't crash, send the %yoha $plea
+  ::
+  =^  mate-moves  sat  (poke-mass-mate `her test=%.y)
+  =^  yoha-moves  sat  abet:(emit %pass wire %arvo %a %plea her %$ path %yoha ~)
+  (emil (weld mate-moves yoha-moves))
+::
+::
+++  take-yoha
+  |=  [way=wire error=(unit error:ames)]
+  ?:  ?=([%test @ *] way)
+    ?~  error
+      ~&  >   %migration-test-worked
+      ~&  >>  %test-local-migration
+      abet
+    %-  (slog %take-ahoy-test-failed u.error)
+    abet
+  ?>  ?=([@ ~] way)
+  ?~  error
+      ~&  >   %remote-migration-worked
+      ~&  >>  %try-local-migration
+    abet
+  ~&  >>>  %ahoy-crash
+  ::  XX retry?
+  ::
+  %-  (slog %take-ahoy-failed u.error)
+  abet
+  :: abet:(emit %pass `wire`[%helm %ahoy-crash way] %arvo %b %wait (add now.bowl ~s30)) :: XX exp backoff?
+::
 ++  poke-mass-mate
   |=  [ship=(unit ship) dry=?]
   =/  =wire
@@ -682,6 +717,7 @@
     %helm-rekey            =;(f (f !<(_+<.f vase)) poke-rekey)
     %helm-send-hi          =;(f (f !<(_+<.f vase)) poke-send-hi)
     %helm-send-ahoy        =;(f (f !<(_+<.f vase)) poke-send-ahoy)
+    %helm-send-yoha        =;(f (f !<(_+<.f vase)) poke-send-yoha)
     %helm-mass-mate        =;(f (f !<(_+<.f vase)) poke-mass-mate)
     %helm-send-rege        =;(f (f !<(_+<.f vase)) poke-send-rege)
     %helm-mass-rege        =;(f (f !<(_+<.f vase)) poke-mass-rege)
@@ -716,6 +752,8 @@
     [%moon-breach *]  %+  take-wake-moon-breach  t.wire
                       ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
     [%ahoy *]         %+  take-ahoy  t.wire
+                      ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
+    [%yoha *]         %+  take-yoha  t.wire
                       ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
     [%rege *]         %+  take-rege  t.wire
                       ?>(?=(%done +<.sign-arvo) +>.sign-arvo)

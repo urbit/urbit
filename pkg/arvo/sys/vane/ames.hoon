@@ -546,6 +546,12 @@
       :+  duct  %pass
       [/ahoy %g %deal [our our /ames] %hood %poke helm-send-ahoy+!>(who^test=|)]
     ::
+    ++  poke-send-yoha
+      |=  [=duct our=ship who=ship]
+      ^-  move
+      :+  duct  %pass
+      [/yoha %g %deal [our our /ames] %hood %poke helm-send-yoha+!>(who^test=|)]
+    ::
     +|  %atomics
     ::
     +$  private-key    @uwprivatekey
@@ -2294,7 +2300,7 @@
             [%23 axle-23]
             [%24 axle-24]
             [%25 axle-25]
-            [%26 axle]
+            [?(%26 %27) axle]
         ==
     ::
     ::
@@ -2370,7 +2376,7 @@
       ~>  %slog.0^leaf/"ames: metamorphosis on %take"
       [:(weld molt-moves queu-moves take-moves) adult-gate]
     ::
-    ++  stay  [%26 larva/ames-state]
+    ++  stay  [%27 larva/ames-state]
     ++  scry  scry:adult-core
     ++  load
       |=  $=  old
@@ -2520,6 +2526,10 @@
                   state=axle-25
               ==
               $:  %26                            :: add cached acks
+                  ?(%adult %larva)               ::
+                  state=axle
+              ==
+              $:  %27                            :: enable Directed Messaging
                   ?(%adult %larva)               ::
                   state=axle
           ==  ==
@@ -2795,6 +2805,11 @@
         larval-gate
       ::
           [%26 *]
+        =.  cached-state  `[%26 state.old]
+        ~>  %slog.1^leaf/"ames: larva %26 reload"
+        larval-gate
+      ::
+          [%27 *]
         ?-  +<.old
           %larva  larval-gate
           %adult  (load:adult-core state.old)
@@ -2873,7 +2888,7 @@
       |^  ^+  [moz larval-core]
       ?~  cached-state  [~ larval-core]
       =*  old  u.cached-state
-      ?:  ?=(%26 -.old)
+      ?:  ?=(%27 -.old)
         ::  no state migrations left; update state, clear cache, and exit
         ::
         [(flop moz) larval-core(ames-state.adult-gate +.old, cached-state ~)]
@@ -2952,8 +2967,10 @@
         $(cached-state `24+(state-23-to-24 +.old))
       ?:  ?=(%24 -.old)
         $(cached-state `25+(state-24-to-25 +.old))
-      ?>  ?=(%25 -.old)
-      $(cached-state `26+(state-25-to-26 +.old))
+      ?:  ?=(%25 -.old)
+        $(cached-state `26+(state-25-to-26 +.old))
+      ?>  ?=(%26 -.old)
+      $(cached-state `27+(state-26-to-27 +.old))
       ::
       ++  our-beam  `beam`[[our %rift %da now] /(scot %p our)]
       ++  state-4-to-5
@@ -3438,6 +3455,12 @@
               tip  [tip.c weir=~]
           ==
         ==
+      ::
+      ++  state-26-to-27
+        |=  old=axle
+        ^+  old
+        ~>  %slog.0^leaf/"ames: migrating from state %26 to %27"
+        old(core %mesa)
       ::
       --
     ::
@@ -5272,6 +5295,10 @@
             =.  peer-core  (update-qos %ames %live last-contact=now)
             ::
             =/  =bone  bone.shut-packet
+            ::  if the peer is responding, and out default core is %mesa,
+            ::  enqueue %ahoy $plea
+            =?  peer-core  ?=(%mesa core.ames-state)
+              (pe-emit (poke-send-ahoy duct our her))
             ::
             ?:  ?=(%& -.meat.shut-packet)
               =+  ?.  &(?=(^ dud) msg.veb)  ~
@@ -9599,6 +9626,8 @@
               ?+  vane.plea  ~|  %mesa-evil-vane^our^her^vane.plea  !!
                 ?(%c %e %g %j)  [hen %pass wire vane.plea %plea her plea]
               ==
+            ?:  ?=([%$ [%mesa-1 ~] %yoha ~] plea)
+              (fo-take-done:fo-core ~)
             ?:  ?=([%back ~] payload.plea)
               ::  ack %rege plea
               ::
@@ -9776,9 +9805,9 @@
             ::  XX
             ::
             =?  send-window.snd  (lth send-window.snd send-window-max.snd)
-              ::  XX  send-window-max.snd is always 1, so we are only to have
-              ::  one mesage in flight at any time. is that value changes we
-              ::  would need to only increase the window if we have actually
+              ::  XX  send-window-max.snd is always 1, so we are only able to
+              ::  have one mesage in flight at any time. if that value changes
+              ::  we  would need to only increase the window if we have actually
               ::  deleted anything from loads (if this is an outstanding
               ::  in-order message)
               ::
@@ -12224,6 +12253,7 @@
         (call:am-core hen dud %soft %hear lane blob)
       ?-    +.ship-state
           ::  [%mesa ~]
+          ::
           ::    a peer sends us an %ames packet, but %mesa is our default core
           ::    and have not communicated previously
           ::
@@ -12235,12 +12265,13 @@
         =^  moves  vane-gate  (call:am-core hen dud %soft %hear lane blob)
         [(poke-send-ahoy hen our sndr.shot) moves]^vane-gate
           ::  [%mesa ~ %alien *]
+          ::
           ::    %mesa is our default network core. we might have outstanding
           ::    poke/peeks, but the keys are missing and the peer sends an %ames
-          ::    packet — if notthing outstanding, the peerhas first sent an
+          ::    packet — if nothing outstanding, the peer has first sent an
           ::    %ames packet, we dropped it and asked for the key, then the peer
           ::    sent a %mesa packet
-          ::    XX log as missbeheaving peer?
+          ::    XX log as misbehaving peer?
           ::
           [~ %alien *]
         %-  %+  %*(ev-tace ev-core her sndr.shot)  odd.veb.bug.ames-state
@@ -12257,12 +12288,13 @@
         =.  peers.ames-state  (~(put by peers.ames-state) sndr.shot alien/alien)
         =.  chums.ames-state  (~(del by chums.ames-state) sndr.shot)
         ::  XX no need to call the ames-core again; +enqueue-alien-todo will say
-        ::  that the publick-keys gift is still pending
+        ::  that the public-keys gift is still pending
         ::
         ::  enqueue %ahoy $plea; poke /app/hood
         ::
         ~[(poke-send-ahoy hen our sndr.shot)]^vane-gate
         ::  [%mesa ~ %known *]
+        ::
         ::    if we can find the peer in chums, it means that they sent an %ahoy
         ::    $plea, we migrated them, but they haven't heard our %ack, and have
         ::    not migrated us, so they could still be resending the $plea.
@@ -12288,7 +12320,11 @@
           ?.  =(+:*fren-state +.fren)
             %-  %+  %*(ev-tace ev-core her sndr.shot)  odd.veb.bug.ames-state
                 |.("hear ames packet for migrated %known peer")
-            `vane-gate
+            ::  send %yoha $plea,
+            ::  XX  asserting that we only have forward live state
+            ::  and that nothing has been acked
+            ::
+            [~[(poke-send-yoha hen our sndr.shot)] vane-gate]
           ::  if the peer sends us an %ames packets, but we have %known state in
           ::  .chums. this could be caused by:
           ::    - the peer breached, we had communicated previously but our
@@ -12429,10 +12465,11 @@
             ::  [%ames ~ %alien *]
             ::    %ames is our default network core. we could have outstanding
             ::    poke/peeks, but the keys are missing and the peer sends up a
-            ::    %mesa packet — if notthing outstanding, the peer has first
+            ::    %mesa packet — if nothing outstanding, the peer has first
             ::    sent an %ames packet, we dropped it and asked for the key,
             ::    then the peer sent a %mesa packet
-            ::    XX log as missbeheaving peer?
+            ::
+            ::    XX log as misbehaving peer?
             ::
             =^  delete  chum-state
               ?.  ?=([%ames *] chum-state)  [| chum-state]
@@ -12488,12 +12525,9 @@
                 |.("peek for comet attestation")
             ::
             al-abet:(al-read-proof:al-core her-pok lane)
-          ::  peer has been regressed to %ames (or XX?)
-          ::
-          ?.  =(1 (div (add tob.data.pact 1.023) 1.024))
-            ::  only deal with single-fragment %rege pleas
-            ::
-            `ames-state
+          ::  peer has been regressed to %ames, or booted with a pill that has
+          ::  %ames as the default core, and the other ship booted with a pill
+          ::  that has %mesa enabled manually or by default
           ::
           %-  %+  %*(ev-tace ev-core her her-pok)  odd.veb.bug.ames-state
               |.("hear poke for regressed")
@@ -12501,6 +12535,7 @@
           ::
           =|  per=fren-state
           =.  -.per  azimuth-state=+<.u.chum-state
+          ::
           =/  mesa-core  ::  XX temporary core
             ::  XX  don't put the regressed peer again in chums
             ::
@@ -12508,12 +12543,56 @@
                 chums.ames-state.me-core
               (~(put by chums.ames-state.me-core) her-pok known/per)
             ==
-          =+  ev-core=(ev-abed:ev:mesa-core hen her-pok^per)
-          ::  XX refactor; same as hear-poke:ev-pact:ev:mesa
-          ::
           =/  [=space cyf=(unit @) =inner-poke=path]
             ~|  inner-path/[pat.ack^pat.pok]:pact
             (decrypt-path:mesa-core [pat her]:pok.pact)
+          =/  =gage:mess
+            ?:  (gth (div (add tob.data.pact 1.023) 1.024) 1)
+              *gage:mess
+            ;;(gage:mess (cue (decrypt-spac:mesa-core space dat.data cyf)))
+          ::
+          ?.  ?=([%message *] gage)
+            %-  %+  ev-tace:ev-core  odd.veb.bug.ames-state
+                |.("no op; not weird $gage={<-.gage>}")
+            `ames-state
+          =+  plea=;;((soft [%plea plea]) +>.gage)
+          ::
+          ?.  ?=([~ %plea %$ path=[%ames ~] payload=[%back ~]] plea)
+            ::  if not a %rege $plea this could be a %yoha $plea sent to us by
+            ::  .her.pok.pact after receiving an %ames packet, to confirm that
+            ::  we support |mesa, or another $plea for both, we need to assert
+            ::  that we only have outstanding forward pleas, and that we have
+            ::  not handled anything in %ames (otherwise this is a misbehaving
+            ::  peer) if the checks pass, we move the peer to %mesa
+            ::
+            ?.  ?|  ?&  ?=(~ plea)  :: if not a %plea, it should to be a
+                                    :: multi-fragmemt payload
+                        (gth (div (add tob.data.pact 1.023) 1.024) 1)
+                    ==
+                    ?=([~ %plea %$ path=[%mesa-1 ~] payload=[%yoha ~]] plea)
+                    ?=([~ %plea ?(%c %e %g %j) *] plea)
+                ==
+              %-  %+  ev-tace:ev-core  odd.veb.bug.ames-state
+                  |.("no op; weird poke")
+              `ames-state
+            ?>  %.y  :: XX TODO assertions
+            ::  move the ship to .chums, delete from .peers and don't handle the
+            ::  packet right now (it'll be resend)
+            ::
+            ?.  (on-mate-test:(ev:am-core now^eny^rof hen ames-state) her-pok)
+              `ames-state
+            =^  moves  vane-gate
+              (call:am-core hen dud %soft %mate `her-pok dry=%.n)
+            [moves ames-state.vane-gate]
+          ::  XX refactor; if this is a %rege $plea we need extra assurance
+          ::  checks to make sure that his is not a misbehaving peer
+          ::
+          ::  authenticate one-fragment %rege $plea
+          ::
+          ?>  %-  authenticate:mesa-core
+              [(root:lss (met 3 dat.data)^dat.data) aut.data pok.pact]
+          =+  ev-core=(ev-abed:ev:mesa-core hen her-pok^per)
+          ::  XX refactor; same as hear-poke:ev-pact:ev:mesa
           ::
           ?:  ?=(%none -.space)
             %-  %+  ev-tace:ev-core  odd.veb.bug.ames-state
@@ -12541,29 +12620,10 @@
             %-  %+  ev-tace:ev-core  odd.veb.bug.ames-state
                 |.("poke for {<rcvr.pok>} at rifts={<rifs>}; skip")
             `ames-state
-          ?.  =(her-pok rcvr.ack)  ::  do ack and pokes match?
+          ?.  =(her-pok rcvr.ack)      ::  do ack and pokes match?
             %-  %+  ev-tace:ev-core  odd.veb.bug.ames-state
                 |.("ack {<rcvr.ack>} and poke {<her-pok>} missmatch; skip")
             `ames-state
-          ::  authenticate one-fragment message
-          ::
-          ?>  %-  authenticate:mesa-core
-              [(root:lss (met 3 dat.data)^dat.data) aut.data pok.pact]
-          =+  ;;  =gage:mess
-                  (cue (decrypt-spac:mesa-core space dat.data cyf))
-          ?.  ?=([%message mark *] gage)
-            %-  %+  ev-tace:ev-core  odd.veb.bug.ames-state
-                |.("no op; weird %message gage {<-.gage>}")
-            `ames-state
-          ?:  ?=(%boon +<.gage)
-            %-  %+  ev-tace:ev-core  odd.veb.bug.ames-state
-                |.("no op; ignore %boon")
-            `ames-state
-          =+  ;;([%plea =plea] +.gage)
-          ?.  ?=([%$ path=[%ames ~] payload=[%back ~]] plea)
-            %-  %+  ev-tace:ev-core  odd.veb.bug.ames-state
-                |.("no op; ignore {(spud path.plea)} plea")
-            `ames-state  :: XX ignore non %rege plea
           ::  check that we have the ack in peers.ames-state
           ::
           ?~  sink=(~(get by rcv.+.u.chum-state) (mix 0b1 bone.ack))
@@ -12578,23 +12638,23 @@
           =/  moves=(list move)
             ::  create temporary flow for ack payload
             ::
-            =.  chums.ames-state.me-core
+            =.  chums.ames-state.mesa-core
               =.  flows.per
                 =|  state=flow-state
                 %-  ~(put by flows.per)
                 [[bone dire]:ack state(last-acked.rcv last-acked.u.sink)]
-              (~(put by chums.ames-state.me-core) her-pok known/per)
+              (~(put by chums.ames-state.mesa-core) her-pok known/per)
             =/  flow-roof
               ^-  roof
               |=  [lyc=gang pov=path vis=view bem=beam]
               ^-  (unit (unit cage))
               ?:  =(s.bem (pout ack))
-                (peek-flow:na:me-core lyc (pout ack))
+                (peek-flow:na:mesa-core lyc (pout ack))
               (rof lyc pov vis bem)
             ::
             =<  moves
             %.  [space=[%none ~] spar=[her-pok pat.ack.pact]]
-            co-make-page:co:me-core(rof flow-roof)
+            co-make-page:co:mesa-core(rof flow-roof)
           ::  produce mesa ack
           ::
           %-  %+  ev-tace:ev-core  &(?=(^ moves) snd.veb.bug.ames-state)
@@ -12745,7 +12805,7 @@
   take:am-core
 ::  +stay: extract state before reload
 ::
-++  stay  [%26 adult/ames-state]
+++  stay  [%27 adult/ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
