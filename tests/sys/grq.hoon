@@ -13,6 +13,8 @@
   :: =^  *  ames.bud
   ::  (ames-call:v ames.bud ~[/none] [%spew ~[%msg %snd %rcv %odd %rot]] *roof)
   ::
+  =^  *  ames.nec  (ames-call:v ames.nec ~[/none] [%load %ames] *roof)
+  =^  *  ames.bud  (ames-call:v ames.bud ~[/none] [%load %ames] *roof)
   ::  poke %sub to tell it to subscribe
   ~?  >  dbug  'poke %sub to tell it to subscribe'
   =/  =task:gall  [%deal [~nec ~nec /] %sub %poke watch+!>(~bud)]
