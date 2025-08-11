@@ -8,14 +8,14 @@
 :~
 :+  %rose
 ["" "" ""]
-=/  =hart:eyre
-  .^  hart:eyre
-      %e
-      /(scot %p our)/host/(scot %da now)
-  ==
 ::
 =/  our-url
   ?:  .^(? %j /(scot %p our)/fake/(scot %da now))
+    =/  =hart:eyre
+      .^  hart:eyre
+          %e
+          /(scot %p our)/host/(scot %da now)
+      ==
     ;:  welp
         "http"
         "://"
