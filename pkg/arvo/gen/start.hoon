@@ -55,10 +55,12 @@
         "  ."
         "  our"
         "  now"
+        ""
         "You can run simple scripts in /base/gen with '+':"
         "  +code"
         "  +vats"
         "  +cat /{<our>}/base/(scot %da now)/gen/start/hoon"
+        ""
         "Or run a system-changing script in /base/gen/hood with '|':"
     ==
     ?:  .^(? %j /(scot %p our)/fake/(scot %da now))
