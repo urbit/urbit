@@ -15,9 +15,9 @@
     !>
     |^
     %-  yield-need:wasm  =<  -
-    %^  (run-once:wasm (list lv) *)  [import-vec import]  flag
+    %^  (run-once:wasm (list lv) vase)  [import-vec import]  flag
     =/  m  runnable:wasm
-    =/  arr  (arrows:wasm *)
+    =/  arr  (arrows:wasm vase)
     =,  arr
     ;<  retptr=@  try:m  (call-1 '__wbindgen_add_to_stack_pointer' (i32neg 16) ~)
     ;<  *         try:m  (call 'process' retptr ~)
@@ -28,9 +28,9 @@
     ::
     ++  i32neg  ^~((cury sub (bex 32)))
     ++  import
-      ^-  (import:lia-sur:wasm *)
-      =/  m  (script:lia-sur:wasm (list cw) *)
-      :-  ~
+      ^-  (import:lia-sur:wasm vase)
+      =/  m  (script:lia-sur:wasm (list cw) vase)
+      :-  *vase
       %-  malt
       ^-  %-  list
           %+  pair  (pair cord cord)
@@ -40,7 +40,7 @@
         |=  args=(pole cw)
         ?>  ?=([[%i32 arg0=@] ~] args)
         =/  arg0=@  arg0.args
-        =/  arr  (arrows:wasm *)
+        =/  arr  (arrows:wasm vase)
         =,  arr
         ;<  ptr1=@  try:m  (call-1 '__wbindgen_malloc' 5 1 ~)
         ;<  *       try:m  (memwrite ptr1 5 'hello')
@@ -56,9 +56,9 @@
     !>  `(list lv)`~[i32+362.880]
     !>
     %-  yield-need:wasm  =<  -
-    %^  (run-once:wasm (list lv) *)  [fac-loop `~]  flag
+    %^  (run-once:wasm (list lv) vase)  [fac-loop *vase^~]  flag
     =/  m  runnable:wasm
-    =/  arr  (arrows:wasm *)
+    =/  arr  (arrows:wasm vase)
     =,  arr
     ;<  out=@  try:m  (call-1 'factorial' 9 ~)
     (return:m i32+out ~)
@@ -69,9 +69,9 @@
     !>
     |^
     %-  yield-need:wasm  =<  -
-    %^  (run-once:wasm (list lv) *)  [flopper `~]  flag
+    %^  (run-once:wasm (list lv) vase)  [flopper *vase^~]  flag
     =/  m  runnable:wasm
-    =/  arr  (arrows:wasm *)
+    =/  arr  (arrows:wasm vase)
     =,  arr
     ;<  retptr=@  try:m  (call-1 '__wbindgen_add_to_stack_pointer' (i32neg 16) ~)
     =/  src=@  'hello'
@@ -92,9 +92,9 @@
     !>  `(list lv)`~[i32+42]
     !>
     %-  yield-need:wasm  =<  -
-    %^  (run-once:wasm (list lv) *)  [flopper `~]  flag
+    %^  (run-once:wasm (list lv) vase)  [flopper *vase^~]  flag
     =/  m  runnable:wasm
-    =/  arr  (arrows:wasm *)
+    =/  arr  (arrows:wasm vase)
     =,  arr
     ;<  ptr0=@  try:m  (call-1 '__wbindgen_malloc' 5 1 ~)
     (return:m i32+42 ~)
@@ -104,9 +104,9 @@
     !>  `(list lv)`~[f64+.~362880]
     !>
     %-  yield-need:wasm  =<  -
-    %^  (run-once:wasm (list lv) *)  [fac-if `~]  flag
+    %^  (run-once:wasm (list lv) vase)  [fac-if *vase^~]  flag
     =/  m  runnable:wasm
-    =/  arr  (arrows:wasm *)
+    =/  arr  (arrows:wasm vase)
     =,  arr
     ;<  out=@  try:m  (call-1 'fac' .~9 ~)
     (return:m f64+out ~)

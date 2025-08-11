@@ -59,15 +59,36 @@
 ::
 ::  each l2 signature is 65 bytes + XX bytes for the raw data
 ::  from the ethereum yellow paper:
+::
 ::  gasLimit = G_transaction + G_txdatanonzero × dataByteLength
 ::  where
 ::      G_transaction = 21000 gas (base fee)
 ::    + G_txdatanonzero = 16 gas (previously 68; see EIP-2028)
 ::    * dataByteLength = (65 + raw) * (lent txs) bytes
 ::
-::  1.000 gas are added to the base fee as extra, for emitting the log
+::  Update for EIP-7623: https://eips.ethereum.org/EIPS/eip-7623
 ::
-=/  gas-limit=@ud  (add 22.000 (mul 16 p.batch-data))
+::  tokens_in_calldata = zero_bytes_in_calldata + nonzero_bytes_in_calldata * 4
+::
+::  tx.gasUsed = (
+::    21000
+::    +
+::    max(
+::        (STANDARD_TOKEN_COST = 4) * tokens_in_calldata
+::        + execution_gas_used
+::        + ...                             :: ignore contract creation gas cost
+::        (TOTAL_COST_FLOOR_PER_TOKEN = 10) * tokens_in_calldata
+::    )
+:: )
+::
+::  a roll always has non-zero call-data, which before had a floor gas cost of
+::  16 [(STANDARD_TOKEN_COST = 4) * nonzero_bytes_in_calldata * 4] per byte of
+::  data. EIP-7623 increases TOTAL_COST_FLOOR_PER_TOKEN to 10, making the floor
+::  gas cost 40
+::
+=/  gas-limit=@ud
+  %+  add  22.000  ::  1.000 gas are added to the base fee for emitting the log
+  (mul 40 p.batch-data)
 =/  max-cost=@ud   (mul gas-limit use-gas-price)
 ;<  balance=@ud  bind:m
   (get-balance:ethio endpoint address)

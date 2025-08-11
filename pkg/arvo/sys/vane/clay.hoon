@@ -365,8 +365,7 @@
           $>  $?  %boon                                 ::  response
                   %done                                 ::  (n)ack
                   %lost                                 ::  lost boon
-                  %tune                                 ::  |fine response
-                  %sage                                 ::  |mesa response
+                  %sage                                 ::  %keen response
               ==                                        ::
           gift:ames                                     ::
       ==                                                ::
@@ -838,13 +837,21 @@
         %+  slub  (with-faces cor+old ~)
         ^-  hoon
         :+  %brcl  !,(*hoon v=+<.cor)
+        :+  %sggr  
+          [%spin %cltr [%sand %t (crip "grow-{<a>}->{<b>}")] ~]
         :+  %tsgl  limb/b
         !,(*hoon ~(grow cor v))
       ::  try direct +grab
       ::
       =^  new=vase  nub  (build-fit %mar b)
       =/  arm=?  (has-arm %grab a new)
-      =/  rab  (mule |.((slub new tsgl/[limb/a limb/%grab])))
+      =/  rab 
+        %-  mule  |.
+        %+  slap  new 
+        ^-  hoon
+        :+  %sggr  
+          [%spin %cltr [%sand %t (crip "grab-{<a>}->{<b>}")] ~]
+        tsgl/[limb/a limb/%grab]
       ?:  &(arm ?=(%& -.rab) ?=(^ q.p.rab))
         %+  gain-leak  cast+a^b
         |=  nob=state
@@ -896,6 +903,7 @@
     ++  build-tube
       |=  [a=mark b=mark]
       ^-  [tube state]
+      ~>  %spin.[%build-tube]  ~>  %spin.[a]  ~>  %spin.[b]
       ~|  error-building-tube+[a b]
       %-  soak-tube
       %+  gain-sprig  tube+a^b  |.
@@ -2320,21 +2328,22 @@
         (emit hen %pass /what %$ what/fil)
       ::
       ++  suspend-non-essentials
-        =/  lit=(list [desk zest])
-          %+  turn
-            ~(tap by dos.rom.ruf)
-          |=  [=desk =dojo]
-          [desk ?:(ese.dojo %live %held)]
-        =/  sus=(list [desk zest])
-          %+  skim
-            lit
-          |=  [=desk =zest]  ?=(%held zest)
-        :*  hen
-            %pass
-            /kiln/bump/zeal
-            %c
-            %zeal
-            sus
+        =/  sys-kel=weft
+          =/  w=waft  (get-kelvin yoki)
+          ?@  -.w  w  !!
+        :*  hen  %pass  /kiln/bump/zeal  %c  %zeal
+        %+  roll  ~(tap by dos.rom.ruf)
+        |=  [[=desk =dojo] l=(list [desk zest])]
+        ?:  ese.dojo  l
+        =/  kel=(set weft)
+          ?:  (~(has by wic.dom.dojo) sys-kel)
+            [sys-kel ~ ~]
+          =/  t=(unit tako)  (~(get by hit.dom.dojo) let.dom.dojo)
+          ?~  t  [sys-kel ~ ~]
+          %-  waft-to-wefts
+          (get-kelvin %| (tako-to-yaki:ze u.t))
+        ?:  (~(has in kel) sys-kel)  l
+        [[desk %held] l]
         ==
       --
     --
@@ -4895,6 +4904,7 @@
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
+~>  %spin.[%clay]
 ~%  %clay-top  ..part  ~
 |%                                                    ::
 ++  call                                              ::  handle request
@@ -4904,6 +4914,7 @@
           wrapped-task=(hobo task)
       ==
   ^-  [(list move) _..^$]
+  ~>  %spin.[%call]
   ::
   =/  req=task  ((harden task) wrapped-task)
   ::
@@ -5678,6 +5689,7 @@
       --
   |=  old=raft-any
   |^
+  ~>  %spin.[%load]
   =?  old  ?=(%6 -.old)   7+(raft-6-to-7 +.old)
   =?  old  ?=(%7 -.old)   8+(raft-7-to-8 +.old)
   =?  old  ?=(%8 -.old)   9+(raft-8-to-9 +.old)
@@ -6017,6 +6029,7 @@
   ^-  roon
   |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
+  ~>  %spin.[%scry]
   =*  scry-loop  $
   |^
   =*  ren  car
@@ -6237,6 +6250,7 @@
   ~/  %clay-take
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^+  [*(list move) ..^$]
+  ~>  %spin.[%take]
   ?^  dud
     ?+    tea
       ~|(%clay-take-dud (mean tang.u.dud))
@@ -6351,17 +6365,13 @@
       %-  (slog leaf+"clay: lost backfill from {<tea>}" ~)
       [~ ..^$]
     ::
-        ?(%boon %tune %sage)
+        ?(%boon %sage)
       =/  her=ship   (slav %p i.t.tea)
       =/  =desk      (slav %tas i.t.t.tea)
       =/  index=@ud  (slav %ud i.t.t.t.tea)
       ::
       =/  fell=(unit fell)
         ?:  ?=(%boon +<.hin)  `;;(fell payload.hin)
-        ?:  ?=(%tune +<.hin)
-          ?~  roar.hin  ~
-          ?~  q.dat.u.roar.hin  ~
-          `[%1 `u.q.dat.u.roar.hin]
         =/  =spar:ames  p.sage.hin
         ?~  q.sage.hin  ~
         `[%1 `q.sage.hin]
@@ -6374,7 +6384,7 @@
           ::
           %-  (slog leaf+"clay: got null from {<her>}, falling back to ames" ~)
           abet:(retry-with-ames:den %back-index index)
-        =?  den  ?=(?(%tune %sage) +<.hin)
+        =?  den  ?=(%sage +<.hin)
           (cancel-scry-timeout:den index)
         abet:abet:(take-backfill:(foreign-update:den index) u.fell)
       [mos ..^$]
@@ -6480,7 +6490,6 @@
       ::  handled in the wire dispatcher
       ::
       %boon  !!
-      %tune  !!
       %sage  !!
       %lost  !!
       %unto  !!
