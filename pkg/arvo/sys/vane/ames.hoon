@@ -142,7 +142,7 @@
     +$  note
       $~  [%b %wait *@da]
       $%  $:  %a
-              $>(?(%deep %keen %meek %moke %mage %prod) task)
+              $>(?(%deep %keen %meek %moke %mage %prod %stir) task)
           ==
           $:  %b
               $>(?(%wait %rest) task:behn)
@@ -2971,7 +2971,9 @@
       ::
           moz
         ^-  (list move)
-        [[/ames]~ %pass /public-keys %j %public-keys [n=our ~ ~]]^moz
+        :+  ^-  move  [[/ames]~ %pass /public-keys %j %public-keys [n=our ~ ~]]
+            ^-  move  [[/ames]~ %pass /stir %a %stir '']
+        moz
       ==
       ::
       ++  our-beam  `beam`[[our %rift %da now] /(scot %p our)]
