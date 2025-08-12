@@ -12754,9 +12754,9 @@
   =/  ship-state  (find-peer her.u.parsed-wire)
   %.  sample
   ?:  ?|  ?=(%mesa -.ship-state)
-          ?=(%jael -.sign)
+          ?=(?(%private-keys %public-keys %turf) +<.sign)
       ==
-    ::  %jael gifts are captured in the |sy:mesa core
+    ::  $keys/$turf gifts are captured in |sy:mesa
     ::
     take:me-core
   take:am-core
