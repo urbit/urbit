@@ -273,7 +273,7 @@
            !!
   ::
       %ktls
-    =/  sam  $(naty p.naty)
+    =/  sam  $(naty p.naty, gol %noun)
     ::TODO  check type from recursion against -.sam
     [-.sam +:$(naty q.naty, gol -.sam)]
   ::
