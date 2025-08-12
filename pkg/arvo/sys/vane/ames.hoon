@@ -2971,8 +2971,8 @@
       ::
           moz
         ^-  (list move)
-        :+  ^-  move  [[/ames]~ %pass /public-keys %j %public-keys [n=our ~ ~]]
-            ^-  move  [[/ames]~ %pass /stir %a %stir '']
+        :+  [[/ames]~ %pass /public-keys %j %public-keys [n=our ~ ~]]
+          [[/ames]~ %pass /stir %a %stir '']
         moz
       ==
       ::
