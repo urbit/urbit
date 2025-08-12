@@ -636,9 +636,13 @@
         ==
         ;body
           ;h1:"Authenticating..."
-          ;script:"{(trip script)}"
+          ;script:"{vars} {(trip script)}"
         ==
       ==
+  ++  vars
+    """
+    const host = '{(scow %p our)}';
+    """
   ++  script
     '''
     const parts = window.location.hostname.split('.');
@@ -670,11 +674,15 @@
           && event.data.token )
         {
           console.log('received token', event.data.token);
-          //TODOxx  turn into cookie
-          //document.cookie = event.data.token;  //REVIEW  or construct from token
+          //NOTE  max-age doesn't really matter. the moment after we set the
+          //      cookie here, we will reload(), which makes a request with
+          //      the cookie, and causes eyre to include a "refreshed" cookie
+          //      in the response.
+          const cookie = `urbauth-${host}=${event.data.token}; Path=/; Max-Age=300`;
+          console.log('setting cookie', cookie);
+          document.cookie = cookie;
           window.removeEventListener('message', handler);  //REVIEW  superfluous?
-          //TODOxx  only reload if we set the cookie lol
-          //location.reload();
+          location.reload();
         } else {
           console.log('unrecognized event data', event.data);
         }
@@ -1659,10 +1667,15 @@
           ==
           ;body
             ;iframe#portal@"{iframe-src}";
-            ;script:"const targetDomain = '{(trip target-domain)}'; {script}"
+            ;script:"{vars} {script}"
           ==
         ==
     ::
+    ++  vars
+      """
+      const targetDomain = '{(trip target-domain)}';
+      const scope = '{(trip u.pathowner)}';
+      """
     ++  script
       %-  trip
       '''
@@ -1680,10 +1693,23 @@
           return;
         }
         //TODOxx  make request to eyre for fresh cookie at request scope
-        const tmpToken = 'ablabalbbloo';
-        //TODOxx  receive token, inject into frame
-        console.log('injecting token', tmpToken);
-        e.source.postMessage({ tag: 'cookie-response', token: tmpToken }, e.origin);
+        console.log('fetching token for', scope);
+        window.fetch(new Request('/~/login', {
+          credentials: 'same-origin',
+          method: 'POST',
+          body: 'xxtokenflow&scope=' + scope,
+        })).then((res) => {
+          if (!res.ok) {
+            console.error('res not ok', res);
+            throw new Error('bad response');
+          }
+          res.text().then((token) => {
+            console.log('injecting token', token);
+            e.source.postMessage({ tag: 'cookie-response', token: token }, e.origin);
+          });
+        }).catch((e) => {
+          console.log('token fetch failure', e);
+        });
       });
       '''
     --
@@ -1733,6 +1759,8 @@
         (login-page ~ our identity with-eauth %.n)
       ::
       =/  redirect=(unit @t)  (get-header:http 'redirect' u.parsed)
+      ?^  (get-header:http 'xxtokenflow' u.parsed)
+        (handle-token-flow-request [session-id identity] u.parsed)
       ?^  (get-header:http 'eauth' u.parsed)
         ?~  ship=(biff (get-header:http 'name' u.parsed) (cury slaw %p))
           %^  return-static-data-on-duct  400  'text/html'
@@ -1798,6 +1826,27 @@
         (handle-response %start 204^~ ~ &)
       =/  actual-redirect  ?:(=(u.redirect '') '/' u.redirect)
       (handle-response %start 303^['location' actual-redirect]~ ~ &)
+    ::  +handle-token-flow-request
+    ::
+    ++  handle-token-flow-request
+      |=  [[session-id=@uv =identity] args=(list [key=@t val=@t])]
+      ^-  [(list move) server-state]
+      =*  bad-req
+        %-  handle-response
+        [%start [400 ~] `(as-octs:mimes:html 'bad token flow req') &]
+      ?~  scope=(get-header:http 'scope' args)
+        bad-req
+      ::TODOxx  maybe check whether scope is an installed/active desk y/n?
+      =/  token-id=@uv  new-session-key
+      =.  sessions.auth.state
+        %+  ~(put by sessions.auth.state)  token-id
+        :*  identity(provenance scope)
+            timeout=(add now auth:session-timeout)
+            channels=~
+        ==
+      %-  handle-response
+      ::TODOxx  consider also cookie header?
+      [%start [200 ~] `(as-octs:mimes:html (scot %uv token-id)) &]
     ::  +handle-logout: handles an http request for logging out
     ::
     ++  handle-logout
