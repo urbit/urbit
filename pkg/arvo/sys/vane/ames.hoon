@@ -2295,6 +2295,7 @@
             [%24 axle-24]
             [%25 axle-25]
             [%26 axle]
+            [%27 axle]
         ==
     ::
     ::
@@ -2369,7 +2370,7 @@
       ~>  %slog.0^leaf/"ames: metamorphosis on %take"
       [:(weld molt-moves queu-moves take-moves) adult-gate]
     ::
-    ++  stay  [%26 larva/ames-state]
+    ++  stay  [%27 larva/ames-state]
     ++  scry  scry:adult-core
     ++  load
       |=  $=  old
@@ -2519,6 +2520,10 @@
                   state=axle-25
               ==
               $:  %26                            :: add cached acks
+                  ?(%adult %larva)               ::
+                  state=axle
+              ==
+              $:  %27                            :: re-fetch public-keys
                   ?(%adult %larva)               ::
                   state=axle
           ==  ==
@@ -2794,6 +2799,11 @@
         larval-gate
       ::
           [%26 *]
+        =.  cached-state  `[%26 state.old]
+        ~>  %slog.1^leaf/"ames: larva %26 reload"
+        larval-gate
+      ::
+          [%27 *]
         ?-  +<.old
           %larva  larval-gate
           %adult  (load:adult-core state.old)
@@ -2872,7 +2882,7 @@
       |^  ^+  [moz larval-core]
       ?~  cached-state  [~ larval-core]
       =*  old  u.cached-state
-      ?:  ?=(%26 -.old)
+      ?:  ?=(%27 -.old)
         ::  no state migrations left; update state, clear cache, and exit
         ::
         [(flop moz) larval-core(ames-state.adult-gate +.old, cached-state ~)]
@@ -2915,6 +2925,7 @@
       ?:  ?=(%17 -.old)
         ~>  %slog.0^leaf/"ames: fetching our public keys"
         %_    $
+            -.u.cached-state  %18
             moz
           ^-  (list move)
           [[/ames]~ %pass /public-keys %j %public-keys [n=our ~ ~]]^moz
@@ -2951,8 +2962,17 @@
         $(cached-state `24+(state-23-to-24 +.old))
       ?:  ?=(%24 -.old)
         $(cached-state `25+(state-24-to-25 +.old))
-      ?>  ?=(%25 -.old)
-      $(cached-state `26+(state-25-to-26 +.old))
+      ?:  ?=(%25 -.old)
+        $(cached-state `26+(state-25-to-26 +.old))
+      ?>  ?=(%26 -.old) 
+      ~>  %slog.0^leaf/"ames: re-fetching our public keys"
+      %_    $
+          -.u.cached-state  %27
+      ::
+          moz
+        ^-  (list move)
+        [[/ames]~ %pass /public-keys %j %public-keys [n=our ~ ~]]^moz
+      ==
       ::
       ++  our-beam  `beam`[[our %rift %da now] /(scot %p our)]
       ++  state-4-to-5
@@ -10240,7 +10260,7 @@
             %-  %+  %*(ev-tace ev her ship)  sun.veb.bug.ames-state
                 |.("hear new sponsor={<sponsor>}")
             ::
-            ?:  =(our ship)
+            =?  sy-core  =(our ship)
               ?~  unix-duct
                 sy-core
               (sy-emit unix-duct %give %saxo sy-get-sponsors)
@@ -12742,7 +12762,7 @@
   take:am-core
 ::  +stay: extract state before reload
 ::
-++  stay  [%26 adult/ames-state]
+++  stay  [%27 adult/ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
