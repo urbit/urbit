@@ -49,7 +49,7 @@
       ==
   $%  [%atom p=term q=(unit @)]
       [%cell p=type q=type]
-      [%core p=type var=?(%wet ?(%gold %iron %lead)) context=type bat=(map term naty)]
+      [%core p=type var=?(%wet ?(%gold %iron %lead)) pay=type bat=(map term naty)]
       [%face p=term q=type]
       [%bcpt tom=type cel=type]
       [%bccn p=(map @ [=aura type=$~(%noun type)])]  ::NOTE  strange compiler bug
@@ -61,20 +61,164 @@
 ++  nice
   |=  [gol=type pro=type]
   ^-  type
-  ::TODO  nest check
+  ?>  (nest gol pro)
   pro
+::
+++  nest
+  |=  [sut=type ref=type]
+  =|  cil=(set [$>(%core type) $>(%core type)])
+  =|  seg=(set type)
+  =|  reg=(set type)
+  =|  gil=(set [type type])
+  =<  dext
+  |%
+  ++  deem
+    |=  [mel=?(%gold %iron %lead) ram=?(%gold %iron %lead)]
+    ^-  ?
+    ?.  |(=(mel ram) =(%lead mel) =(%gold ram))  |
+    ?-  mel
+      %lead  &
+      %gold  &(dext dext(sut ref, ref sut)) ::meet
+      %iron  dext(sut (peek ref %rite 2), ref (peek sut %rite 2))
+    ==
+  ::
+  ++  deep
+    |=  $:  sat=(map term naty)
+            rat=(map term naty)
+        ==
+    ^-  ?
+    ?~  sat  =(~ rat)
+    ?~  rat  |
+    ?&  =(p.n.sat p.n.rat)
+        $(sat l.sat, rat l.rat)
+        $(sat r.sat, rat r.rat)
+        dext(sut (play sut q.n.sat), ref (play ref q.n.rat))
+    ==
+  ::
+  ++  dext
+    ^-  ?
+    ?:  =(sut ref)  &
+    ?@  sut
+      ?-  sut
+        %noun  &
+        %void  sint
+      ==
+    ?-  -.sut
+    ::
+      %atom  ?.  ?=([%atom *] ref)  sint
+             ?&  (fitz p.sut p.ref)
+                 |(?=(~ q.sut) =(q.sut q.ref))
+             ==
+    ::
+      %cell  ?.  ?=([%cell *] ref)  sint
+             ?&  dext(sut p.sut, ref p.ref)
+                 dext(sut q.sut, ref q.ref)
+             ==
+    ::
+      %core
+             ?.  ?=([%core *] ref)  sint
+             ?:  =(+>.sut +>.ref)  dext(sut p.sut, ref p.ref)
+             ?:  ?=(%wet var.sut)
+                 ?&(=(%wet var.ref) =(bat.sut bat.ref))
+             ?:  ?=(%wet var.ref)  |
+             ?&  
+               &(dext(sut pay.sut, ref p.sut) dext(sut p.sut, ref pay.sut)) ::meet
+               dext(sut pay.ref, ref p.ref)
+               (deem(sut pay.sut, ref pay.ref) var.sut var.ref)
+               ?|  (~(has in cil) [sut ref])
+                   %.  [bat.sut bat.ref]
+                   %=  deep
+                     cil  (~(put in cil) [sut ref])
+                     sut  sut(p pay.sut, var %gold)
+                     ref  ref(p pay.ref, var %gold)
+               ==  ==
+             ==
+    ::
+      %face  dext(sut q.sut)
+    ::
+      %bcpt  ?.  ?=(?([%atom *] %noun [%cell *] [%core *]) ref)  sint
+             |(dext(sut tom.sut) dext(sut cel.sut))
+    ::
+      %bccn  ?.  ?=(?(%noun [%cell *] [%core *]) ref)  sint
+             %-  ~(any in p.sut) 
+             |=([a=@ b=aura c=type] dext(sut [%cell [%atom b `a] c]))
+    ::
+      %bckt  ?.  ?=(?(%noun [%cell *] [%core *]) ref)  sint
+             |(dext(sut cel.sut) dext(sut tom.sut))
+    ::
+      %bcwt  ?.  ?=([%atom *] ref)  sint
+            (~(any in p.sut) |=([a=@ b=aura] dext(sut [%atom b `a])))
+    ::
+      %hold  ?:  (~(has in seg) sut)  |
+             ?:  (~(has in gil) [sut ref])  &
+             %=  dext
+               sut  (play p.sut q.sut) :: way to much work we migth want repo
+               seg  (~(put in seg) sut)
+               gil  (~(put in gil) [sut ref])
+             ==
+    ==
+  ++  sint
+    ^-  ?
+    ?@  ref
+      ?-  ref
+        %noun  |
+        %void  &
+      ==
+    ?-  -.ref
+    ::
+      %atom  |
+    ::
+      %cell  |
+    ::
+      %core  dext(ref [%cell %noun p.ref])
+    ::
+      %face  dext(ref q.ref)
+    ::
+      %bcpt  &(dext(ref tom.ref) dext(ref cel.ref)) :: unvalidated but so what
+    ::
+      %bccn  %-  ~(all in p.ref) 
+             |=([a=@ b=aura c=type] dext(ref [%cell [%atom b `a] c]))
+    ::
+      %bckt  &(dext(ref cel.ref) dext(ref tom.ref)) :: unvalidated but so what
+    ::
+      %bcwt  (~(all in p.ref) |=([a=@ b=aura] dext(ref [%atom b `a])))
+    ::
+      %hold  ?:  (~(has in reg) ref)  &
+             ?:  (~(has in gil) [sut ref])  &
+             %=  dext
+               ref  (play p.ref q.ref) :: way to much work we migth want repo
+               reg  (~(put in reg) ref)
+               gil  (~(put in gil) [sut ref])
+             ==
+    ==
+  --
+::
+++  peek
+  |=  [sut=type way=?(%read %rite %both %free) axe=axis]
+  ^-  type
+  !!
+::
+++  play
+  |=  [sut=type =naty]
+  ^-  type
+  -:(mint sut %noun naty)
 ::
 ++  mint
   |=  [sut=type gol=type =naty]
   ^-  [type nock]
   ?^  -.naty
     =/  g
+      =|  sog=(set type)
       |-  ^-  [l=type r=type]
       ?+  gol  ~|(%mint-nice !!)
         %noun      [%noun %noun]
         [%cell *]  +.gol
         [%face *]  $(gol q.gol)
-        [%hold *]  !!  ::TODO  expand and recur
+        [%hold *]  ?:  (~(has in sog) gol)  !! ::xx do we crash?
+                   %=  $
+                     gol  (play p.gol q.gol)
+                     sog  (~(put in sog) gol)
+                   ==
       ==
     =/  l  $(naty -.naty, gol l.g)
     =/  r  $(naty +.naty, gol r.g)
@@ -122,10 +266,10 @@
       [%11 tag.naty +.pro]
     [%11 [p.tag.naty +:$(naty q.tag.naty)] +.pro]
   ::
-    %brcn  :-  (nice gol [%core var.naty sut bat.naty])
+    %brcn  :-  (nice gol [%core sut var.naty sut bat.naty])
            !!
   ::
-    %brpt  :-  (nice gol [%core %wet sut bat.naty])
+    %brpt  :-  (nice gol [%core sut %wet sut bat.naty])
            !!
   ::
       %ktls
