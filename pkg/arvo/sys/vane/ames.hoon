@@ -4118,26 +4118,33 @@
             =.  want
               (~(put in want) (add now ~d1) ~[/ames/recork /ames])
             ::
-            =/  have
-              %-  ~(gas in *(set [@da ^duct]))
+            =/  have=(set [@da ^duct])
               =/  tim
                 ;;  (list [@da ^duct])
                 =<  q.q  %-  need  %-  need
                 (rof [~ ~] /ames %bx [[our %$ da+now] /debug/timers])
-              %+  skim  tim
-              |=([@da hen=^duct] ?=([[%ames ?(%pump %recork) *] *] hen))
+              %+  roll  tim
+              |=  [[tid=@da hen=^duct] has=(set [@da ^duct])]
+              ?.  ?=([[%ames ?(%pump %recork) *] *] hen)
+                has
+              (~(put in has) tid^hen)
             ::
             ::  set timers for flows that should have one set but don't
             ::
+            =+  waits=(~(dif in want) have)
+            =+  rests=(~(dif in have) want)
+            =+  w-l="{<~(wyt in waits)>} timers"
+            =+  r-l="{<~(wyt in rests)>} timers"
+            %-  (slog leaf/"ames: setting {<w-l>}; cancelling {<r-l>}" ~)
             =.  event-core
-              %-  ~(rep in (~(dif in want) have))
+              %-  ~(rep in waits)
               |=  [[wen=@da hen=^duct] this=_event-core]
               ?>  ?=([^ *] hen)
               (emit:this ~[/ames] %pass t.i.hen %b %wait wen)
             ::
             ::  cancel timers for flows that have one set but shouldn't
             ::
-            %-  ~(rep in (~(dif in have) want))
+            %-  ~(rep in rests)
             |=  [[wen=@da hen=^duct] this=_event-core]
             ?>  ?=([^ *] hen)
             (emit:this t.hen %pass t.i.hen %b %rest wen)
