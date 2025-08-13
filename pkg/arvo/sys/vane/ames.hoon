@@ -2342,7 +2342,7 @@
       ::
       =^  call-moves  adult-gate  (call:adult-core duct dud task)
       ~>  %slog.0^leaf/"ames: metamorphosis on %call"
-      [:(weld molt-moves queu-moves call-moves) adult-gate]
+      [:(weld queu-moves call-moves molt-moves) adult-gate]
     ::
     ++  take
       |=  [=wire =duct dud=(unit goof) =sign]
@@ -2938,7 +2938,6 @@
           =+  ev-core=(ev:ames:adult-core [now eny rof] [/saxo]~ ames-state)
           ^-  (list move)
           [unix-duct.+.old %give %saxo get-sponsors:ev-core]^moz
-          :: [[//ames/0v0]~ %give %saxo get-sponsors:ev-core]
         $(cached-state `20+(state-19-to-20 +.old))
       ::
       ?:  ?=(%20 -.old)  $(cached-state `21+(state-20-to-21 +.old))
