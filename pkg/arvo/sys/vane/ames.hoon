@@ -4050,7 +4050,7 @@
               =.  event-core
                 (emit:event-core duct.u.ded %pass wire.u.ded %b rest/date.u.ded)
               =.  flow.dead.ames-state.event-core  [%flow ~]
-              (wake-dead-flows:event-core ~)
+              (wake-dead-flows:event-core ~ abort=%.n)
             ::
             %-  (slog leaf+"ames: switching to dead flow consolidation" ~)
             =;  cor=event-core
@@ -4623,10 +4623,11 @@
             rots/`[~[/ames] /routes `@da`(add now ~m2)]
           (emit ~[/ames] %pass /routes %b %wait `@da`(add now ~m2))  :: XX ~s25?
         :: +wake-dead-flows: call on-wake on all dead flows, discarding any
-        ::                   ames-state changes
+        ::   ames-state changes if .abort is set (when waking dead flows on a
+        ::   timer, but not when turning off dead-flow consolidation)
         ::
         ++  wake-dead-flows
-          |=  error=(unit tang)
+          |=  [error=(unit tang) abort=?]
           ^+  event-core
           %-  ~(rep by peers.ames-state)
           |=  [[=ship =ship-state] core=_event-core]
@@ -4635,8 +4636,8 @@
             core
           =*  peer-state  +.ship-state
           =+  pe-core=(abed-peer:pe:core ship peer-state)
-          =<  abort
-          ^+  pe-core
+          =;  core=_pe-core
+            ?:(abort abort:core abet:core)
           %-  ~(rep by snd.peer-state)
           |=  [[=bone =message-pump-state] cor=_pe-core]
           ?.  ?&  =(~m2 rto.metrics.packet-pump-state.message-pump-state)
@@ -4702,7 +4703,7 @@
           ::
           ?:  ?=([%dead-flow ~] wire)
             =?  event-core  ?=(^ unix-duct)
-              (wake-dead-flows error)
+              (wake-dead-flows error abort=%.y)
             =+  ?.  =(~ unix-duct)  ~
                 %.  ~
                 (slog leaf+"ames: unix-duct pending; resetting dead-flow" ~)
