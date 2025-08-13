@@ -4113,10 +4113,40 @@
               |=  [[b=bone m=message-pump-state] acc=_acc]
               =*  tim  next-wake.packet-pump-state.m
               ?~  tim  acc
+              ?:  ?=(^ +.flow.dead.ames-state)
+                  ::  =(~m2 rto.metrics.state)  XX
+                  ::
+                ::  if dead-flow consolidated, we dont' want this timer
+                ::
+                acc
               %-  ~(put in acc)
               [u.tim `^duct`~[ames+(make-pump-timer-wire who b) /ames]]
             =.  want
-              (~(put in want) (add now ~d1) ~[/ames/recork /ames])
+              %-  ~(gas in want) 
+              :~  ?:  ?=(~ +.cork.dead.ames-state)            ::  nacked corks
+                    [(add now ~d1) ~[/ames/recork /ames]]     ::  (init if unset)
+                  [date ames/wire duct]:u.cork.dead.ames-state
+              ::    
+                  ?:  ?=(~ +.chum.dead.ames-state)            ::  mesa retries
+                    [(add now ~m2) ~[/ames/mesa/retry /ames]] ::  (init if unset)
+                  [date ames/wire duct]:u.chum.dead.ames-state
+              ::
+                  ?:  ?=(~ +.rots.dead.ames-state)            ::  expire routes
+                    [(add now ~m2) ~[/ames/routes /ames]]     ::  (init if unset)
+                  [date ames/wire duct]:u.rots.dead.ames-state
+              ==
+            ::
+            =?  want  ?=(^ +.flow.dead.ames-state)  ::  ames dead-flows; only if set
+              %-  ~(put in want)
+              [date ames/wire duct]:u.flow.dead.ames-state
+            ::  if system timers are not set in state, add them
+            ::
+            =?  cork.dead.ames-state  ?=(~ +.cork.dead.ames-state)
+              cork/`[~[/ames] /recork `@da`(add now ~d1)]
+            =?  chum.dead.ames-state  ?=(~ +.chum.dead.ames-state)
+              chum/`[~[/ames] /mesa/retry `@da`(add now ~m2)]
+            =?  rots.dead.ames-state  ?=(~ +.rots.dead.ames-state)
+              rots/`[~[/ames] /routes `@da`(add now ~m2)]
             ::
             =/  have=(set [@da ^duct])
               =/  tim
@@ -4125,7 +4155,8 @@
                 (rof [~ ~] /ames %bx [[our %$ da+now] /debug/timers])
               %+  roll  tim
               |=  [[tid=@da hen=^duct] has=(set [@da ^duct])]
-              ?.  ?=([[%ames ?(%pump %recork) *] *] hen)
+              ?.  ?=  [[%ames ?(%pump %recork %routes %mesa %dead-flow) *] *]
+                      hen
                 has
               (~(put in has) tid^hen)
             ::
@@ -4135,7 +4166,7 @@
             =+  rests=(~(dif in have) want)
             =+  w-l="{<~(wyt in waits)>} timers"
             =+  r-l="{<~(wyt in rests)>} timers"
-            %-  (slog leaf/"ames: setting {<w-l>}; cancelling {<r-l>}" ~)
+            %-  (slog leaf/"ames: setting {w-l}; cancelling {r-l}" ~)
             =.  event-core
               %-  ~(rep in waits)
               |=  [[wen=@da hen=^duct] this=_event-core]
