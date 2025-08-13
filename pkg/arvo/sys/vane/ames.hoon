@@ -142,7 +142,7 @@
     +$  note
       $~  [%b %wait *@da]
       $%  $:  %a
-              $>(?(%deep %keen %meek %moke %mage %prod) task)
+              $>(?(%deep %keen %meek %moke %mage %prod %stir) task)
           ==
           $:  %b
               $>(?(%wait %rest) task:behn)
@@ -2295,6 +2295,7 @@
             [%24 axle-24]
             [%25 axle-25]
             [%26 axle]
+            [%27 axle]
         ==
     ::
     ::
@@ -2342,7 +2343,7 @@
       ::
       =^  call-moves  adult-gate  (call:adult-core duct dud task)
       ~>  %slog.0^leaf/"ames: metamorphosis on %call"
-      [:(weld molt-moves queu-moves call-moves) adult-gate]
+      [:(weld queu-moves call-moves molt-moves) adult-gate]
     ::
     ++  take
       |=  [=wire =duct dud=(unit goof) =sign]
@@ -2370,7 +2371,7 @@
       ~>  %slog.0^leaf/"ames: metamorphosis on %take"
       [:(weld molt-moves queu-moves take-moves) adult-gate]
     ::
-    ++  stay  [%26 larva/ames-state]
+    ++  stay  [%27 larva/ames-state]
     ++  scry  scry:adult-core
     ++  load
       |=  $=  old
@@ -2520,6 +2521,10 @@
                   state=axle-25
               ==
               $:  %26                            :: add cached acks
+                  ?(%adult %larva)               ::
+                  state=axle
+              ==
+              $:  %27                            :: re-fetch public-keys
                   ?(%adult %larva)               ::
                   state=axle
           ==  ==
@@ -2795,6 +2800,11 @@
         larval-gate
       ::
           [%26 *]
+        =.  cached-state  `[%26 state.old]
+        ~>  %slog.1^leaf/"ames: larva %26 reload"
+        larval-gate
+      ::
+          [%27 *]
         ?-  +<.old
           %larva  larval-gate
           %adult  (load:adult-core state.old)
@@ -2873,7 +2883,7 @@
       |^  ^+  [moz larval-core]
       ?~  cached-state  [~ larval-core]
       =*  old  u.cached-state
-      ?:  ?=(%26 -.old)
+      ?:  ?=(%27 -.old)
         ::  no state migrations left; update state, clear cache, and exit
         ::
         [(flop moz) larval-core(ames-state.adult-gate +.old, cached-state ~)]
@@ -2916,6 +2926,7 @@
       ?:  ?=(%17 -.old)
         ~>  %slog.0^leaf/"ames: fetching our public keys"
         %_    $
+            -.u.cached-state  %18
             moz
           ^-  (list move)
           [[/ames]~ %pass /public-keys %j %public-keys [n=our ~ ~]]^moz
@@ -2928,7 +2939,6 @@
           =+  ev-core=(ev:ames:adult-core [now eny rof] [/saxo]~ ames-state)
           ^-  (list move)
           [unix-duct.+.old %give %saxo get-sponsors:ev-core]^moz
-          :: [[//ames/0v0]~ %give %saxo get-sponsors:ev-core]
         $(cached-state `20+(state-19-to-20 +.old))
       ::
       ?:  ?=(%20 -.old)  $(cached-state `21+(state-20-to-21 +.old))
@@ -2952,8 +2962,19 @@
         $(cached-state `24+(state-23-to-24 +.old))
       ?:  ?=(%24 -.old)
         $(cached-state `25+(state-24-to-25 +.old))
-      ?>  ?=(%25 -.old)
-      $(cached-state `26+(state-25-to-26 +.old))
+      ?:  ?=(%25 -.old)
+        $(cached-state `26+(state-25-to-26 +.old))
+      ?>  ?=(%26 -.old) 
+      ~>  %slog.0^leaf/"ames: re-fetching our public keys"
+      %_    $
+          -.u.cached-state  %27
+      ::
+          moz
+        ^-  (list move)
+        :+  [[/ames]~ %pass /public-keys %j %public-keys [n=our ~ ~]]
+          [[/ames]~ %pass /stir %a %stir '']
+        moz
+      ==
       ::
       ++  our-beam  `beam`[[our %rift %da now] /(scot %p our)]
       ++  state-4-to-5
@@ -4051,7 +4072,7 @@
               =.  event-core
                 (emit:event-core duct.u.ded %pass wire.u.ded %b rest/date.u.ded)
               =.  flow.dead.ames-state.event-core  [%flow ~]
-              (wake-dead-flows:event-core ~)
+              (wake-dead-flows:event-core ~ abort=%.n)
             ::
             %-  (slog leaf+"ames: switching to dead flow consolidation" ~)
             =;  cor=event-core
@@ -4092,31 +4113,69 @@
               |=  [[b=bone m=message-pump-state] acc=_acc]
               =*  tim  next-wake.packet-pump-state.m
               ?~  tim  acc
+              ?:  ?&  ?=(^ +.flow.dead.ames-state)
+                      =(~m2 rto.metrics.packet-pump-state.m)
+                  ==
+                ::  if dead-flow consolidated, we dont' want this timer
+                ::
+                acc
               %-  ~(put in acc)
               [u.tim `^duct`~[ames+(make-pump-timer-wire who b) /ames]]
             =.  want
-              (~(put in want) (add now ~d1) ~[/ames/recork /ames])
+              %-  ~(gas in want) 
+              :~  ?:  ?=(~ +.cork.dead.ames-state)            ::  nacked corks
+                    [(add now ~d1) ~[/ames/recork /ames]]     ::  (init if unset)
+                  [date ames/wire duct]:u.cork.dead.ames-state
+              ::    
+                  ?:  ?=(~ +.chum.dead.ames-state)            ::  mesa retries
+                    [(add now ~m2) ~[/ames/mesa/retry /ames]] ::  (init if unset)
+                  [date ames/wire duct]:u.chum.dead.ames-state
+              ::
+                  ?:  ?=(~ +.rots.dead.ames-state)            ::  expire routes
+                    [(add now ~m2) ~[/ames/routes /ames]]     ::  (init if unset)
+                  [date ames/wire duct]:u.rots.dead.ames-state
+              ==
             ::
-            =/  have
-              %-  ~(gas in *(set [@da ^duct]))
+            =?  want  ?=(^ +.flow.dead.ames-state)  ::  ames dead-flows; only if set
+              %-  ~(put in want)
+              [date ames/wire duct]:u.flow.dead.ames-state
+            ::  if system timers are not set in state, add them
+            ::
+            =?  cork.dead.ames-state  ?=(~ +.cork.dead.ames-state)
+              cork/`[~[/ames] /recork `@da`(add now ~d1)]
+            =?  chum.dead.ames-state  ?=(~ +.chum.dead.ames-state)
+              chum/`[~[/ames] /mesa/retry `@da`(add now ~m2)]
+            =?  rots.dead.ames-state  ?=(~ +.rots.dead.ames-state)
+              rots/`[~[/ames] /routes `@da`(add now ~m2)]
+            ::
+            =/  have=(set [@da ^duct])
               =/  tim
                 ;;  (list [@da ^duct])
                 =<  q.q  %-  need  %-  need
                 (rof [~ ~] /ames %bx [[our %$ da+now] /debug/timers])
-              %+  skim  tim
-              |=([@da hen=^duct] ?=([[%ames ?(%pump %recork) *] *] hen))
+              %+  roll  tim
+              |=  [[tid=@da hen=^duct] has=(set [@da ^duct])]
+              ?.  ?=  [[%ames ?(%pump %recork %routes %mesa %dead-flow) *] *]
+                      hen
+                has
+              (~(put in has) tid^hen)
             ::
             ::  set timers for flows that should have one set but don't
             ::
+            =+  waits=(~(dif in want) have)
+            =+  rests=(~(dif in have) want)
+            =+  w-l="{<~(wyt in waits)>} timers"
+            =+  r-l="{<~(wyt in rests)>} timers"
+            %-  (slog leaf/"ames: setting {w-l}; cancelling {r-l}" ~)
             =.  event-core
-              %-  ~(rep in (~(dif in want) have))
+              %-  ~(rep in waits)
               |=  [[wen=@da hen=^duct] this=_event-core]
               ?>  ?=([^ *] hen)
               (emit:this ~[/ames] %pass t.i.hen %b %wait wen)
             ::
             ::  cancel timers for flows that have one set but shouldn't
             ::
-            %-  ~(rep in (~(dif in have) want))
+            %-  ~(rep in rests)
             |=  [[wen=@da hen=^duct] this=_event-core]
             ?>  ?=([^ *] hen)
             (emit:this t.hen %pass t.i.hen %b %rest wen)
@@ -4624,10 +4683,11 @@
             rots/`[~[/ames] /routes `@da`(add now ~m2)]
           (emit ~[/ames] %pass /routes %b %wait `@da`(add now ~m2))  :: XX ~s25?
         :: +wake-dead-flows: call on-wake on all dead flows, discarding any
-        ::                   ames-state changes
+        ::   ames-state changes if .abort is set (when waking dead flows on a
+        ::   timer, but not when turning off dead-flow consolidation)
         ::
         ++  wake-dead-flows
-          |=  error=(unit tang)
+          |=  [error=(unit tang) abort=?]
           ^+  event-core
           %-  ~(rep by peers.ames-state)
           |=  [[=ship =ship-state] core=_event-core]
@@ -4636,8 +4696,8 @@
             core
           =*  peer-state  +.ship-state
           =+  pe-core=(abed-peer:pe:core ship peer-state)
-          =<  abort
-          ^+  pe-core
+          =;  core=_pe-core
+            ?:(abort abort:core abet:core)
           %-  ~(rep by snd.peer-state)
           |=  [[=bone =message-pump-state] cor=_pe-core]
           ?.  ?&  =(~m2 rto.metrics.packet-pump-state.message-pump-state)
@@ -4703,7 +4763,7 @@
           ::
           ?:  ?=([%dead-flow ~] wire)
             =?  event-core  ?=(^ unix-duct)
-              (wake-dead-flows error)
+              (wake-dead-flows error abort=%.y)
             =+  ?.  =(~ unix-duct)  ~
                 %.  ~
                 (slog leaf+"ames: unix-duct pending; resetting dead-flow" ~)
@@ -10241,7 +10301,7 @@
             %-  %+  %*(ev-tace ev her ship)  sun.veb.bug.ames-state
                 |.("hear new sponsor={<sponsor>}")
             ::
-            ?:  =(our ship)
+            =?  sy-core  =(our ship)
               ?~  unix-duct
                 sy-core
               (sy-emit unix-duct %give %saxo sy-get-sponsors)
@@ -12737,15 +12797,15 @@
   =/  ship-state  (find-peer her.u.parsed-wire)
   %.  sample
   ?:  ?|  ?=(%mesa -.ship-state)
-          ?=(%jael -.sign)
+          ?=(?(%private-keys %public-keys %turf) +<.sign)
       ==
-    ::  %jael gifts are captured in the |sy:mesa core
+    ::  $keys/$turf gifts are captured in |sy:mesa
     ::
     take:me-core
   take:am-core
 ::  +stay: extract state before reload
 ::
-++  stay  [%26 adult/ames-state]
+++  stay  [%27 adult/ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load

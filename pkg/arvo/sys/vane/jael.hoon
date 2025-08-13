@@ -531,9 +531,9 @@
       ::    XX  allow to change the rate via a %jael task in 409
       ::
       =?  moz  ?=([%plea ~] tim)
-        [hen %pass /public-keys %b %wait `@da`(add now ~d1)]^moz
+        [hen %pass /public-keys %b %wait `@da`(add now ~m10)]^moz
       =?  tim  ?=([%plea ~] tim)
-        plea/`[hen /public-keys `@da`(add now ~d1)]
+        plea/`[hen /public-keys `@da`(add now ~m10)]
       +>.$
     ::
         [%ames %boon *]
