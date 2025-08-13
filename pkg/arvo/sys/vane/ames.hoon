@@ -4113,9 +4113,9 @@
               |=  [[b=bone m=message-pump-state] acc=_acc]
               =*  tim  next-wake.packet-pump-state.m
               ?~  tim  acc
-              ?:  ?=(^ +.flow.dead.ames-state)
-                  ::  =(~m2 rto.metrics.state)  XX
-                  ::
+              ?:  ?&  ?=(^ +.flow.dead.ames-state)
+                      =(~m2 rto.metrics.packet-pump-state.m)
+                  ==
                 ::  if dead-flow consolidated, we dont' want this timer
                 ::
                 acc
