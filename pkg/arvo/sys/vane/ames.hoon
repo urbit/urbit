@@ -130,7 +130,7 @@
       $%  [%ames $>(?(%tune %sage) gift)]
           [%behn $>(%wake gift:behn)]
           [%gall $>(?(%flub %unto) gift:gall)]
-          [%jael $>(?(%private-keys %public-keys %turf) gift:jael)]
+          [%jael $>(?(%private-keys %public-keys) gift:jael)]
           $:  @tas
               $>(?(%noon %boon %done) gift)
       ==  ==
@@ -159,7 +159,6 @@
           $:  %j
               $>  $?  %private-keys
                       %public-keys
-                      %turf
                       %ruin
                   ==
               task:jael
@@ -4158,11 +4157,21 @@
                       hen
                 has
               (~(put in has) tid^hen)
+            ::  just in case there was still a /mesa/ask timer, ask again
             ::
+            =.  event-core
+              %-  ~(rep in have)
+              |=  [[wen=@da hen=^duct] this=_event-core]
+              ?.  ?=([[%ames %mesa %ask %public-keys @ *] *] hen)
+                this
+              %+  emit:this  hen 
+              [%pass /public-keys %j %public-keys [n=(slav %p &5.i.hen) ~ ~]]
             ::  set timers for flows that should have one set but don't
             ::
             =+  waits=(~(dif in want) have)
             =+  rests=(~(dif in have) want)
+            ~&  >  waits
+            ~&  >>  rests
             =+  w-l="{<~(wyt in waits)>} timers"
             =+  r-l="{<~(wyt in rests)>} timers"
             %-  (slog leaf/"ames: setting {w-l}; cancelling {r-l}" ~)
@@ -8354,13 +8363,6 @@
               ::
                   [%jael %public-keys *]
                 sy-abet:(~(sy-publ sy hen) wire +>.sign)
-              ::
-                  [%jael %turf *]
-                ?~  unix-duct
-                  ::  unix duct is not set, this is a first boot; ignore %turf
-                  ::
-                  `ames-state
-                sy-abet:(~(sy-emit sy hen) unix-duct %give %turf +>.sign)
               ::  vane gifts
               ::
                   ?([%gall %flub ~] [@ %done *] [@ %boon *] [@ %noon *])
@@ -8413,7 +8415,7 @@
           ames-state(chums (~(put by chums.ames-state) her %known per))
         ::
         ++  ev-emit  |=(=move ev-core(moves [move moves]))
-        ++  ev-emil  |=(mos=(list move) ev-core(moves (weld mos moves)))
+        ++  ev-emil  |=(mos=(list move) ev-core(moves (weld (flop mos) moves)))
         ++  ev-tace
           |=  [verb=? print=(trap tape)]
           ^+  same
@@ -9298,7 +9300,7 @@
             ev-core
           ::
           ++  fo-emit  |=(=move fo-core(moves [move moves]))
-          ++  fo-emil  |=(mos=(list move) fo-core(moves (weld mos moves)))
+          ++  fo-emil  |=(mos=(list move) fo-core(moves (weld (flop mos) moves)))
           ::  +fo-to-close: block non-cork pleas to be send if we are in closing
           ::
           ++  fo-to-close
@@ -10004,7 +10006,7 @@
         ++  sy-core  .
         ++  sy-abet  [(flop moves) ames-state]
         ++  sy-emit  |=(=move sy-core(moves [move moves]))
-        ++  sy-emil  |=(mos=(list move) sy-core(moves (weld mos moves)))
+        ++  sy-emil  |=(mos=(list move) sy-core(moves (weld (flop mos) moves)))
         ::
         +|  %entry-points
         ::
@@ -10050,8 +10052,7 @@
         ++  sy-init
           ^+  sy-core
           %-  sy-emil
-          :~  [hen %pass /turf %j %turf ~]
-              [hen %pass /private-keys %j %private-keys ~]
+          :~  [hen %pass /private-keys %j %private-keys ~]
               [hen %pass /public-keys %j %public-keys [n=our ~ ~]]
           ==
         ::
@@ -11224,7 +11225,7 @@
         ++  al-abet  [(flop moves) ames-state]
         ++  al-abed  |=(=duct al-core(hen duct))
         ++  al-emit  |=(=move al-core(moves [move moves]))
-        ++  al-emil  |=(mos=(list move) al-core(moves (weld mos moves)))
+        ++  al-emil  |=(mos=(list move) al-core(moves (weld (flop mos) moves)))
         ++  al-tace
           |=  [verb=? her=ship print=(trap tape)]
           ^+  same
@@ -12773,7 +12774,7 @@
       (take:me-core(ames-state ames-state.vane-gate) sample)
     [(weld ames-moves mesa-moves) vane-gate]
   ::
-  ?:  ?=([?(%turf %mesa %private-keys %public-keys) *] wire)
+  ?:  ?=([?(%mesa %private-keys %public-keys) *] wire)
     ?~  flow-wire=(ev-parse-flow-wire:ev:me-core wire)
       (take:me-core sample)
     %.  sample
@@ -12794,9 +12795,9 @@
   =/  ship-state  (find-peer her.u.parsed-wire)
   %.  sample
   ?:  ?|  ?=(%mesa -.ship-state)
-          ?=(?(%private-keys %public-keys %turf) +<.sign)
+          ?=(?(%private-keys %public-keys) +<.sign)
       ==
-    ::  $keys/$turf gifts are captured in |sy:mesa
+    ::  $keys gifts are captured in |sy:mesa
     ::
     take:me-core
   take:am-core
