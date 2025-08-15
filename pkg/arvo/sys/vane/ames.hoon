@@ -4314,8 +4314,11 @@
               ==
             =+  sy-core=~(. sy:mesa duct)
             =^  moves  ames-state
-              sy-abet:(sy-publ:sy-core / [%full (my [sndr.shot point]~)])
-            (emil moves)
+              ::  XX skip abet, only +ev-abet will flop these moves
+              ::
+              =<  [moves ames-state]
+              (sy-publ:sy-core / [%full (my [sndr.shot point]~)])
+            event-core(moves moves)
           ::  manually add the lane to the peer state
           ::
           =/  =peer-state  (gut-peer-state sndr.shot)
@@ -10394,7 +10397,7 @@
               ::
               =^  moves  ames-state
                 =+  peer-core=(abed:pe:ames-core ship)
-                ::  XX skip abet, only sy-abet will flop these moves
+                ::  XX skip abet, only +sy-abet will flop these moves
                 ::
                 =<  moves^ames-state  ^+  ames-core
                 =.  ames-core
@@ -10411,7 +10414,7 @@
                 ::  treated as %sage(s)
                 (~(rep in ducts) |=([=duct c=_cor] (on-chum:c ship^path)))
               ::
-              (sy-emil moves)
+              sy-core(moves moves)
             ::
             ++  meet-alien-chum
               |=  [=ship =point:jael todos=ovni-state =chum-state]
@@ -11225,7 +11228,6 @@
         ++  al-abet  [(flop moves) ames-state]
         ++  al-abed  |=(=duct al-core(hen duct))
         ++  al-emit  |=(=move al-core(moves [move moves]))
-        ++  al-emil  |=(mos=(list move) al-core(moves (weld (flop mos) moves)))
         ++  al-tace
           |=  [verb=? her=ship print=(trap tape)]
           ^+  same
@@ -11305,13 +11307,15 @@
                   chums=~(wyt by chums.u.ship-state)
               |.("todos: {<pokes=pokes>} {<peeks=peeks>} {<chums=chums>}")
           =^  moves  ames-state
-            =<  sy-abet
+            ::  XX skip sy-abet, only +al-abet will flop these moves
+            ::
+            =<  [moves ames-state]
             %^  ~(sy-publ sy hen)  /comet  %full
             %+  ~(put by *(map ship point:jael))  comet
             =|  =point:jael
             point(rift 0, life 1, keys keys, sponsor `(^sein:title comet))
           ::
-          (al-emil moves)
+          al-core(moves moves)
         ::
         ++  al-read-proof
           |=  [comet=ship =lane:pact]
@@ -11396,7 +11400,6 @@
         ++  co-abet  [(flop moves) ames-state]
         ++  co-abed  |=(=duct co-core(hen duct))
         ++  co-emit  |=(=move co-core(moves [move moves]))
-        ++  co-emil  |=(mos=(list move) co-core(moves (weld mos moves)))
         ++  co-tace
           |=  [verb=? her=ship print=(trap tape)]
           ^+  same
