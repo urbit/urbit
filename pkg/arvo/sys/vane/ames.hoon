@@ -4170,8 +4170,6 @@
             ::
             =+  waits=(~(dif in want) have)
             =+  rests=(~(dif in have) want)
-            ~&  >  waits
-            ~&  >>  rests
             =+  w-l="{<~(wyt in waits)>} timers"
             =+  r-l="{<~(wyt in rests)>} timers"
             %-  (slog leaf/"ames: setting {w-l}; cancelling {r-l}" ~)
