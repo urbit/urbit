@@ -2302,6 +2302,7 @@
             [%25 axle-25]
             [%26 axle]
             [%27 axle]
+            [%28 axle]
         ==
     ::
     ::
@@ -2377,7 +2378,7 @@
       ~>  %slog.0^leaf/"ames: metamorphosis on %take"
       [:(weld molt-moves queu-moves take-moves) adult-gate]
     ::
-    ++  stay  [%27 larva/ames-state]
+    ++  stay  [%28 larva/ames-state]
     ++  scry  scry:adult-core
     ++  load
       |=  $=  old
@@ -2531,6 +2532,10 @@
                   state=axle
               ==
               $:  %27                            :: re-fetch public-keys
+                  ?(%adult %larva)               ::
+                  state=axle
+              ==
+              $:  %28                            :: enable Directed Messaging
                   ?(%adult %larva)               ::
                   state=axle
           ==  ==
@@ -2811,6 +2816,11 @@
         larval-gate
       ::
           [%27 *]
+        =.  cached-state  `[%27 state.old]
+        ~>  %slog.1^leaf/"ames: larva %27 reload"
+        larval-gate
+      ::
+          [%28 *]
         ?-  +<.old
           %larva  larval-gate
           %adult  (load:adult-core state.old)
@@ -2889,7 +2899,7 @@
       |^  ^+  [moz larval-core]
       ?~  cached-state  [~ larval-core]
       =*  old  u.cached-state
-      ?:  ?=(%27 -.old)
+      ?:  ?=(%28 -.old)
         ::  no state migrations left; update state, clear cache, and exit
         ::
         [(flop moz) larval-core(ames-state.adult-gate +.old, cached-state ~)]
@@ -2970,17 +2980,19 @@
         $(cached-state `25+(state-24-to-25 +.old))
       ?:  ?=(%25 -.old)
         $(cached-state `26+(state-25-to-26 +.old))
-      ?>  ?=(%26 -.old) 
-      ~>  %slog.0^leaf/"ames: re-fetching our public keys"
-      %_    $
-          -.u.cached-state  %27
-      ::
+      ?:  ?=(%26 -.old) 
+        ~>  %slog.0^leaf/"ames: re-fetching our public keys"
+        %_    $
+            -.u.cached-state  %27
+        ::
+            moz
+          ^-  (list move)
+          :+  [[/ames]~ %pass /public-keys %j %public-keys [n=our ~ ~]]
+            [[/ames]~ %pass /stir %a %stir '']
           moz
-        ^-  (list move)
-        :+  [[/ames]~ %pass /public-keys %j %public-keys [n=our ~ ~]]
-          [[/ames]~ %pass /stir %a %stir '']
-        moz
-      ==
+        ==
+      ?>  ?=(%27 -.old) 
+      $(cached-state `28+(state-27-to-28 +.old))
       ::
       ++  our-beam  `beam`[[our %rift %da now] /(scot %p our)]
       ++  state-4-to-5
@@ -3466,10 +3478,10 @@
           ==
         ==
       ::
-      ++  state-26-to-27
+      ++  state-27-to-28
         |=  old=axle
         ^+  old
-        ~>  %slog.0^leaf/"ames: migrating from state %26 to %27"
+        ~>  %slog.0^leaf/"mesa: enabling Directed Messaging"
         old(core %mesa)
       ::
       --
@@ -12854,7 +12866,7 @@
   take:am-core
 ::  +stay: extract state before reload
 ::
-++  stay  [%27 adult/ames-state]
+++  stay  [%28 adult/ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
