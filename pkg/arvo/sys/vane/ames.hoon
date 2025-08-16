@@ -130,7 +130,7 @@
       $%  [%ames $>(?(%tune %sage) gift)]
           [%behn $>(%wake gift:behn)]
           [%gall $>(?(%flub %unto) gift:gall)]
-          [%jael $>(?(%private-keys %public-keys %turf) gift:jael)]
+          [%jael $>(?(%private-keys %public-keys) gift:jael)]
           $:  @tas
               $>(?(%noon %boon %done) gift)
       ==  ==
@@ -159,7 +159,6 @@
           $:  %j
               $>  $?  %private-keys
                       %public-keys
-                      %turf
                       %ruin
                   ==
               task:jael
@@ -4158,7 +4157,15 @@
                       hen
                 has
               (~(put in has) tid^hen)
+            ::  just in case there was still a /mesa/ask timer, ask again
             ::
+            =.  event-core
+              %-  ~(rep in have)
+              |=  [[wen=@da hen=^duct] this=_event-core]
+              ?.  ?=([[%ames %mesa %ask %public-keys @ *] *] hen)
+                this
+              %+  emit:this  hen 
+              [%pass /public-keys %j %public-keys [n=(slav %p &5.i.hen) ~ ~]]
             ::  set timers for flows that should have one set but don't
             ::
             =+  waits=(~(dif in want) have)
@@ -4305,8 +4312,11 @@
               ==
             =+  sy-core=~(. sy:mesa duct)
             =^  moves  ames-state
-              sy-abet:(sy-publ:sy-core / [%full (my [sndr.shot point]~)])
-            (emil moves)
+              ::  XX skip abet, only +ev-abet will flop these moves
+              ::
+              =<  [moves ames-state]
+              (sy-publ:sy-core / [%full (my [sndr.shot point]~)])
+            event-core(moves moves)
           ::  manually add the lane to the peer state
           ::
           =/  =peer-state  (gut-peer-state sndr.shot)
@@ -8354,13 +8364,6 @@
               ::
                   [%jael %public-keys *]
                 sy-abet:(~(sy-publ sy hen) wire +>.sign)
-              ::
-                  [%jael %turf *]
-                ?~  unix-duct
-                  ::  unix duct is not set, this is a first boot; ignore %turf
-                  ::
-                  `ames-state
-                sy-abet:(~(sy-emit sy hen) unix-duct %give %turf +>.sign)
               ::  vane gifts
               ::
                   ?([%gall %flub ~] [@ %done *] [@ %boon *] [@ %noon *])
@@ -8413,7 +8416,7 @@
           ames-state(chums (~(put by chums.ames-state) her %known per))
         ::
         ++  ev-emit  |=(=move ev-core(moves [move moves]))
-        ++  ev-emil  |=(mos=(list move) ev-core(moves (weld mos moves)))
+        ++  ev-emil  |=(mos=(list move) ev-core(moves (weld (flop mos) moves)))
         ++  ev-tace
           |=  [verb=? print=(trap tape)]
           ^+  same
@@ -9298,7 +9301,7 @@
             ev-core
           ::
           ++  fo-emit  |=(=move fo-core(moves [move moves]))
-          ++  fo-emil  |=(mos=(list move) fo-core(moves (weld mos moves)))
+          ++  fo-emil  |=(mos=(list move) fo-core(moves (weld (flop mos) moves)))
           ::  +fo-to-close: block non-cork pleas to be send if we are in closing
           ::
           ++  fo-to-close
@@ -10004,7 +10007,7 @@
         ++  sy-core  .
         ++  sy-abet  [(flop moves) ames-state]
         ++  sy-emit  |=(=move sy-core(moves [move moves]))
-        ++  sy-emil  |=(mos=(list move) sy-core(moves (weld mos moves)))
+        ++  sy-emil  |=(mos=(list move) sy-core(moves (weld (flop mos) moves)))
         ::
         +|  %entry-points
         ::
@@ -10050,8 +10053,7 @@
         ++  sy-init
           ^+  sy-core
           %-  sy-emil
-          :~  [hen %pass /turf %j %turf ~]
-              [hen %pass /private-keys %j %private-keys ~]
+          :~  [hen %pass /private-keys %j %private-keys ~]
               [hen %pass /public-keys %j %public-keys [n=our ~ ~]]
           ==
         ::
@@ -10393,7 +10395,7 @@
               ::
               =^  moves  ames-state
                 =+  peer-core=(abed:pe:ames-core ship)
-                ::  XX skip abet, only sy-abet will flop these moves
+                ::  XX skip abet, only +sy-abet will flop these moves
                 ::
                 =<  moves^ames-state  ^+  ames-core
                 =.  ames-core
@@ -10410,7 +10412,7 @@
                 ::  treated as %sage(s)
                 (~(rep in ducts) |=([=duct c=_cor] (on-chum:c ship^path)))
               ::
-              (sy-emil moves)
+              sy-core(moves moves)
             ::
             ++  meet-alien-chum
               |=  [=ship =point:jael todos=ovni-state =chum-state]
@@ -11224,7 +11226,6 @@
         ++  al-abet  [(flop moves) ames-state]
         ++  al-abed  |=(=duct al-core(hen duct))
         ++  al-emit  |=(=move al-core(moves [move moves]))
-        ++  al-emil  |=(mos=(list move) al-core(moves (weld mos moves)))
         ++  al-tace
           |=  [verb=? her=ship print=(trap tape)]
           ^+  same
@@ -11304,13 +11305,15 @@
                   chums=~(wyt by chums.u.ship-state)
               |.("todos: {<pokes=pokes>} {<peeks=peeks>} {<chums=chums>}")
           =^  moves  ames-state
-            =<  sy-abet
+            ::  XX skip sy-abet, only +al-abet will flop these moves
+            ::
+            =<  [moves ames-state]
             %^  ~(sy-publ sy hen)  /comet  %full
             %+  ~(put by *(map ship point:jael))  comet
             =|  =point:jael
             point(rift 0, life 1, keys keys, sponsor `(^sein:title comet))
           ::
-          (al-emil moves)
+          al-core(moves moves)
         ::
         ++  al-read-proof
           |=  [comet=ship =lane:pact]
@@ -11395,7 +11398,6 @@
         ++  co-abet  [(flop moves) ames-state]
         ++  co-abed  |=(=duct co-core(hen duct))
         ++  co-emit  |=(=move co-core(moves [move moves]))
-        ++  co-emil  |=(mos=(list move) co-core(moves (weld mos moves)))
         ++  co-tace
           |=  [verb=? her=ship print=(trap tape)]
           ^+  same
@@ -12773,7 +12775,7 @@
       (take:me-core(ames-state ames-state.vane-gate) sample)
     [(weld ames-moves mesa-moves) vane-gate]
   ::
-  ?:  ?=([?(%turf %mesa %private-keys %public-keys) *] wire)
+  ?:  ?=([?(%mesa %private-keys %public-keys) *] wire)
     ?~  flow-wire=(ev-parse-flow-wire:ev:me-core wire)
       (take:me-core sample)
     %.  sample
@@ -12794,9 +12796,9 @@
   =/  ship-state  (find-peer her.u.parsed-wire)
   %.  sample
   ?:  ?|  ?=(%mesa -.ship-state)
-          ?=(?(%private-keys %public-keys %turf) +<.sign)
+          ?=(?(%private-keys %public-keys) +<.sign)
       ==
-    ::  $keys/$turf gifts are captured in |sy:mesa
+    ::  $keys gifts are captured in |sy:mesa
     ::
     take:me-core
   take:am-core
