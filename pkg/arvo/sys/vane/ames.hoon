@@ -7382,7 +7382,6 @@
               (trace %fine verb her ships.bug.ames-state print)
             ::
             ++  fi-emit   |=(move fine(event-core (emit +<)))
-            ++  fi-emil   |=((list move) fine(event-core (emil +<)))
             ++  fi-mop    ((on @ud want) lte)
             ++  fi-gauge  (ga metrics.keen (wyt:fi-mop wan.keen))
             ++  fi-wait   |=(tim=@da (fi-pass-timer %b %wait tim))
@@ -8416,7 +8415,6 @@
           ames-state(chums (~(put by chums.ames-state) her %known per))
         ::
         ++  ev-emit  |=(=move ev-core(moves [move moves]))
-        ++  ev-emil  |=(mos=(list move) ev-core(moves (weld (flop mos) moves)))
         ++  ev-tace
           |=  [verb=? print=(trap tape)]
           ^+  same
@@ -8523,26 +8521,24 @@
             ::  that has the security context prefix
             ::
             (put:key-chain client-chain.per kid.space key.space path=/)
-          ::  XX  early abet; antipattern
           ::
-          ::  we should just emit the %meek task, but instead we punch
+          ::  XX we should just emit the %meek task, but instead we punch
           ::  through the message-builder core, so when retrieving the key from
           ::  chums.ames-state it's already been updated
           ::
-          =^  moves-a  ames-state  ev-abet
-          =^  moves-b  ames-state
-            co-abet:(co-make-peek:(co-abed:co hen) space her path)
+          =.  chums.ames-state  (~(put by chums.ames-state) her %known per)
+          =^  moves-peek  ames-state
+            [moves ames-state]:(co-make-peek:(co-abed:co hen) space her path)
           ::  update per in the door's sample with the updated value from
           ::  ames-state; removing this will discard the last change when doing
           ::  +ev-abet
           ::
-          =.  per  (got-per her)
-          (ev-emil (weld moves-a moves-b))
+          ev-core(moves (weld moves-peek moves), per (got-per her))
         ::
         +|  %packet-entry-points
         ::
         ++  ev-pact
-          |%
+          |%  
           ++  hear-poke
             |=  [dud=(unit goof) =lane:pact =pact:pact]
             ^+  ev-core
@@ -9301,7 +9297,6 @@
             ev-core
           ::
           ++  fo-emit  |=(=move fo-core(moves [move moves]))
-          ++  fo-emil  |=(mos=(list move) fo-core(moves (weld (flop mos) moves)))
           ::  +fo-to-close: block non-cork pleas to be send if we are in closing
           ::
           ++  fo-to-close
@@ -9674,14 +9669,14 @@
                   [%ames ~]
                 ::  regress peer back to ames
                 ::
-                =^  moves  ames-state
-                  =<  sy-abet
+                =^  moves-rege  ames-state
+                  =<  [moves ames-state]
                   ~|  %regress-crashed
                   %.  [`her dry=%.n]
                   %*  sy-rege  sy
                     ames-state  ames-state:fo-abet:fo-core
                   ==
-                (fo-emil:fo-core(delete-per %.y) moves)
+                fo-core(delete-per %.y, moves (weld moves-rege moves))
               ==
             ?>  &(?=([%cork ~] payload) ?=([%flow ~] path)):plea
             ::  publisher receives %cork
@@ -10104,15 +10099,12 @@
           ::
           =.  chum.dead.ames-state
             chum/`[~[/ames] /mesa/retry `@da`(add now ~m2)]
-          =^  prod-moves  ames-state
+          =?  sy-core  ?=(~ error)
             ::  if there's been an error, reset the timer and skip %proding
             ::
-            ?^(error `ames-state (sy-prod ~))
-          %-  sy-emil
-          :_  prod-moves
-          ::  XX reuse the ~m2 %dead-flow timer?
-          ::
-          [~[/ames] %pass /mesa/retry %b %wait `@da`(add now ~m2)]
+            =^  prod-moves  ames-state  (sy-prod ~)
+            sy-core(moves (weld prod-moves moves))
+          (sy-emit ~[/ames] %pass /mesa/retry %b %wait `@da`(add now ~m2))
         ::
         ++  sy-publ
           |=  [=wire =public-keys-result:jael]
@@ -10290,7 +10282,7 @@
               (~(put by chums.ames-state) ship u.peer)
             =?  peers.ames-state  ?=(%ames -.peer)
               (~(put by peers.ames-state) ship u.peer)
-            (sy-emil keens-moves)
+            sy-core(moves (weld keens-moves moves))
           ::  +on-publ-sponsor: handle new or lost sponsor for peer
           ::
           ::    TODO: really handle sponsor loss
@@ -10456,8 +10448,8 @@
               ::
               ::  XX skip ev-abet, only sy-abet will flop these moves
               ::
-              =^  moves  ames-state  [moves ames-state]:ev-core
-              (sy-emil moves)
+              =^  ev-moves  ames-state  [moves ames-state]:ev-core
+              sy-core(moves (weld ev-moves moves))
             ::
             --
           ::  on-publ-rift: XX
@@ -10584,7 +10576,7 @@
             ::
             known/fren-state(symmetric-key symmetric-key)
           ::
-          =/  [moves=(list move) peers=_peers.ames-state]
+          =/  [keen-moves=(list move) peers=_peers.ames-state]
             %-  ~(rep by peers.ames-state)
             |=  [[=ship =ship-state] moves=(list move) peers=_peers.ames-state]
             ?.  ?=(%known -.ship-state)
@@ -10597,13 +10589,13 @@
             =^  keens-moves  peer-state
               %-  sy-rederive-mesa-keens
               [ship peer-state our=life life.peer-state symmetric-key]
-            :-  (weld moves keens-moves)
+            :-  (weld keens-moves moves)
             %+  ~(put by peers)  ship
             known/peer-state(symmetric-key symmetric-key)
           =.  peers.ames-state  peers
           =.  priv.ames-state   private-key
           =.  life.ames-state   life
-          (sy-emil moves)
+          sy-core(moves (weld keen-moves moves))
         ::
         ++  sy-prod
           |=  ships=(list @p)
@@ -10814,7 +10806,7 @@
             ::
             =.  chums.ames-state.core  (~(del by chums.ames-state.core) ship)
             ::
-            (sy-emil:core (weld peek-moves flow-moves))
+            core(moves :(weld peek-moves flow-moves moves))
           ::
           ++  divide-bones
             |=  bones=(set side)
@@ -10830,7 +10822,7 @@
             =/  peer=peer-state  (got-peer-state:event-core her)
             =+  peer-core=(abed-peer:pe:event-core her peer)
             =;  core=_peer-core
-              [moves ames-state]:abet:core
+              [moves ames-state]:core
             =+  ev-core=(ev-abed:ev ~[//regress] her fren)
             %-  ~(rep by flows.fren)
             |=  [[side state=flow-state] core=_peer-core]
@@ -11063,8 +11055,8 @@
             ::  XX sort flows?
             ::
             =;  core=_ev-core
-              =^  moves  ames-state  [moves ames-state]:core
-              (sy-emil moves)
+              =^  clos-moves  ames-state  [moves ames-state]:core
+              sy-core(moves (weld clos-moves moves))
             %-  ~(rep by flows.per.ev-core)
             |=  [[side state=flow-state] c=_ev-core]
             ?:  =(%back dire)  c
