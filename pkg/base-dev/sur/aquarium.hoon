@@ -71,6 +71,9 @@
   %+  pair  wire
   $%  [%blit p=(list blit:dill)]
       [%send p=lane:ames q=@]
+      [%push p=(list lane:pact:ames) q=@]
+      [%saxo sponsors=(list ship)]
+      [%nail =ship lanes=(list lane:ames)]
       [%doze p=(unit @da)]
       [%thus p=@ud q=(unit hiss:eyre)]
       [%ergo p=@tas q=mode:clay]
@@ -84,5 +87,6 @@
       [%vega ~]
       [%set-config =http-config:eyre]
       [%sessions p=(set @t)]
+      [%unto p=unto:gall]
   ==
 --

@@ -150,11 +150,12 @@
   (init-ship moon |)
 ::
 ++  init-ship
+  =|  core=?(%mesa %ames)  :: XX make %mesa the default core
   |=  [=ship fake=?]
   =/  m  (strand ,~)
   ^-  form:m
   ~&  >  "starting {<ship>}"
-  ;<  ~  bind:m  (send-events (init:util ship fake))
+  ;<  ~  bind:m  (send-events (init:util ship fake core))
   (check-ship-booted ship)
 ::
 ++  check-ship-booted
