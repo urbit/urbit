@@ -3638,17 +3638,10 @@
       --
     ::
     ++  push-pact  :: XX forwarding?
-      |=  [=pact:pact lanes=(list lane:pact)]
+      |=  [who=ship =pact:pact lanes=(list lane:pact)]
       ^-  move
       ?<  =(~ unix-duct)
-      =/  =ship
-        ?-  +<.pact  ::  XX
-          %peek  her.name.pact
-          %poke  her.ack.pact
-          %page  her.name.pact
-        ==
-      ::
-      %-  %:  trace  %mesa  snd.veb.bug.ames-state  ship  ships.bug.ames-state
+      %-  %:  trace  %mesa  snd.veb.bug.ames-state  who  ships.bug.ames-state
             |.  %+  weld  %+  roll  lanes
                   |=  [=lane:pact:ames tape=_"push {<+<.pact>} on lanes=["]
                   %+  weld  tape
@@ -8754,7 +8747,7 @@
                 %-  (slog leaf+"ames: unix-duct pending; will retry %push" ~)
                 ev-core
               %-  ev-emit
-              %+  push-pact
+              %^  push-pact  her
                 [hop=0 %peek name(wan [%data 0])]
               (make-lanes her lane.per qos.per)
             ::
@@ -8815,7 +8808,7 @@
                     |.("request frag={<counter.los.ps>}")
                 ::
                 %-  ev-emit
-                %+  push-pact
+                %^  push-pact  her
                   [hop=0 %peek name(wan [%data counter.los.ps])]
                 (make-lanes her lane.per qos.per)
               ::  yield complete message
@@ -10684,7 +10677,7 @@
                 %.  ev-core:core
                 (slog leaf+"ames: unix-duct pending; retry %push" ~)
               %-  ev-emit:core
-              (push-pact u.pact (make-lanes [her [lane qos]:per]:core))
+              (push-pact ship u.pact (make-lanes [her [lane qos]:per]:core))
             core(moves (weld resend-moves moves))
           ::
           --
@@ -11359,7 +11352,7 @@
             !!
           %-  %^  al-tace  fin.veb.bug.ames-state  comet
               |.("peek for attestation proof")
-          (al-emit (push-pact u.pact (make-lanes comet `[0 lane] *qos)))
+          (al-emit (push-pact comet u.pact (make-lanes comet `[0 lane] *qos)))
         ::
         ++  al-take-proof
           |=  [=lane:pact hop=@ud =name:pact =data:pact =next:pact]
@@ -11513,13 +11506,14 @@
           ::  vere ignores any lanes and use the one it has stored in the pit
           ::  to avoid breaking symmetric routing
           ::
-          (co-emit (push-pact [hop=0 %page name u.page next=~] lanes=~))
+          (co-emit (push-pact ship [hop=0 %page name u.page next=~] lanes=~))
         ::
         ++  co-make-mess
           |=  [remote=spar payload=(unit path)]
           ^+  co-core
-          ?~  her=(~(get by chums.ames-state) ship.remote)
-            %-  %^  co-tace  odd.veb.bug.ames-state  ship.remote
+          =*  who  ship.remote
+          ?~  her=(~(get by chums.ames-state) who)
+            %-  %^  co-tace  odd.veb.bug.ames-state  who
                 |.("missing chum on {<[ship path]:remote>}")
             co-core
           ?>  ?=([%known *] u.her)
@@ -11547,13 +11541,15 @@
           =.  pit.per  (~(put by pit.per) path.remote new)
           ?>  ?=(^ pax)
           =.  tip.per  (~(put ju tip.per) pax [hen path.remote])
+          %-  %^  co-tace  fin.veb.bug.ames-state  who
+              |.("add {<(spud pax)>} to .pit")
           =.  chums.ames-state
-            (~(put by chums.ames-state) ship.remote known/per)
+            (~(put by chums.ames-state) who known/per)
           ::
           ?:  =(~ unix-duct)
             %.  co-core
             (slog leaf+"ames: unix-duct pending; will retry %push" ~)
-          (co-emit (push-pact u.pact (make-lanes ship.remote [lane qos]:per)))
+          (co-emit (push-pact who u.pact (make-lanes who [lane qos]:per)))
         ::
         ++  co-make-pact
           |=  [p=spar q=(unit path) =per=rift]
