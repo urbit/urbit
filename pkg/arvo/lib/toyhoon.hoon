@@ -196,7 +196,26 @@
 ++  peek
   |=  [sut=type way=?(%read %rite %both %free) axe=axis]
   ^-  type
-  !!
+  ?:  =(1 axe)  sut
+  =+  [now=(cap axe) lat=(mas axe)]
+  =|  gil=(set type)
+  |-  ^-  type
+  ?@  sut  sut
+  ?-  -.sut  
+      %atom  %void
+      %cell  ?:(=(2 now) ^$(sut p.sut, axe lat) ^$(sut q.sut, axe lat))
+      %face  $(sut q.sut)
+      %bcpt  %noun
+      %bccn  ?:(&(=(2 now) !=(2 axe)) %void %noun)
+      %bckt  %noun
+      %bcwt  %void 
+      %hold  $(sut (play p.sut q.sut))
+      %core  ?.  =(2 now)  %noun
+             ?.  |(?=(%gold var.sut) ?=(%wet var.sut) ?=(%free way)) 
+               %noun
+             ^$(axe lat, sut pay.sut)
+  ==
+  
 ::
 ++  play
   |=  [sut=type =naty]
