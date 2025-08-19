@@ -68,7 +68,7 @@
       aqua-core  +>
       ac         ~(. aqua-core bowl)
       def        ~(. (default-agent this %|) bowl)
-  ++  on-init           `this
+  ++  on-init  `this
   ++  on-save  !>(state)
   ++  on-load
     |=  old-vase=vase
