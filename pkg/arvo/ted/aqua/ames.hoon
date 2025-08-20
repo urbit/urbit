@@ -50,9 +50,7 @@
              ?>  ?=(@ i.lan)
              `@p`i.lan
     ==       
-  =/  lan=lane:pact:ames  
-    ?:  ?=(%page +<.pact)  `@ux`rcvr  
-    `@ux`sndr
+  =/  lan=lane:pact:ames  ?:(?=(%page +<.pact) `@ux`rcvr `@ux`sndr)
   %+  emit-aqua-events  our
   [%event rcvr /a/newt/0v1n.2m9vh %heer lan q]~
 ::  +lane-to-ship: decode a ship from an aqua lane
