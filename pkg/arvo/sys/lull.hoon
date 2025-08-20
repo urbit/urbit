@@ -1648,11 +1648,14 @@
         =qos
         corked=(set side)  ::  can be +peeked in the namespace
                            ::  XX how many flows to keep here?
-        =ossuary      ::  XX redefine ossuary in terms of bone^side
+        =ossuary           ::  XX redefine ossuary in terms of bone^side
         flows=(map side flow-state)
         pit=(map path request-state)           :: active +peek namespace paths
         =client=chain                          :: stores keys for %shut requests
         tip=(jug =user=path [duct =ames=path]) :: reverse .pit lookup map
+        ::  a migrated flow in a weird state is tagged with a $term, and data
+        ::
+        weir=(jug side [tag=term data=*])
     ==
   ::
   ::  interest gifts per path in the pith
@@ -1694,8 +1697,8 @@
   ::
   +$  flow-state
     $:  ::  a flow switches to closing when:
-        ::    - forward: a %cork %plea %poke request is sent
-        ::    - backward: a %cork %plea %poke request is received
+        ::    - forward:  a %cork $plea %poke request is sent
+        ::    - backward: a %cork $plea %poke request is received
         ::
         ::  the flow is deleted first on the forward side when it can read the
         ::  %ack for the %cork, and then on the backward side when it can +peek
@@ -1723,13 +1726,15 @@
           ::  payloads can be +peek'ed via a well-formed path with the format:
           ::  e.g.  /flow/[bone=0]/[load]/?[%for %bak]/[ship]/[seq=1]
           ::
-          ::  XX option to include messages that won't be bounded into the namespace (two-layer queue)
+          ::  XX option to include messages that won't be bounded into the
+          ::  namespace (two-layer queue)
+          ::
           loads=((mop ,@ud mesa-message) lte)         :: all unacked
           next=_1                                     :: =(next +(last-acked))
           ::
           send-window-max=_1                          :: how many pleas to send
           send-window=_1                              :: XX
-          :: cache=((mop ,@ud ?) lte)  :: out-of-order acks XX TODO
+          acks=((mop ,@ud ack) lte)                   :: out-of-order acks
         ==
         ::  incoming %pokes, pending their ack from the vane
         ::

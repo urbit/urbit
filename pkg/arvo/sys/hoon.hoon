@@ -1034,20 +1034,18 @@
 +|  %insecure-hashing
 ::
 ++  muk                                                 ::  standard murmur3
-  ~%  %muk  ..muk  ~
-  =+  ~(. fe 5)
+  ~/  %muk
   |=  [syd=@ len=@ key=@]
+  ^-  @
+  =+  ~(. fe 5)
   =.  syd      (end 5 syd)
-  =/  pad      (sub len (met 3 key))
-  =/  data     (weld (rip 3 key) (reap pad 0))
   =/  nblocks  (div len 4)  ::  intentionally off-by-one
   =/  h1  syd
   =+  [c1=0xcc9e.2d51 c2=0x1b87.3593]
-  =/  blocks  (rip 5 key)
   =/  i  nblocks
   =.  h1  =/  hi  h1  |-
     ?:  =(0 i)  hi
-    =/  k1  (snag (sub nblocks i) blocks)  ::  negative array index
+    =/  k1  (cut 5 [(sub nblocks i) 1] key)  ::  negative array index
     =.  k1  (sit (mul k1 c1))
     =.  k1  (rol 0 15 k1)
     =.  k1  (sit (mul k1 c2))
@@ -1055,31 +1053,31 @@
     =.  hi  (rol 0 13 hi)
     =.  hi  (sum (sit (mul hi 5)) 0xe654.6b64)
     $(i (dec i))
-  =/  tail  (slag (mul 4 nblocks) data)
+  =/  tail  (rsh [3 (mul 4 nblocks)] key)
   =/  k1    0
   =/  tlen  (dis len 3)
   =.  h1
     ?+  tlen  h1  ::  fallthrough switch
-      %3  =.  k1  (mix k1 (lsh [0 16] (snag 2 tail)))
-          =.  k1  (mix k1 (lsh [0 8] (snag 1 tail)))
-          =.  k1  (mix k1 (snag 0 tail))
+      %3  =.  k1  (mix k1 (lsh [0 16] (cut 3 [2 1] tail)))
+          =.  k1  (mix k1 (lsh [0 8] (cut 3 [1 1] tail)))
+          =.  k1  (mix k1 (cut 3 [0 1] tail))
           =.  k1  (sit (mul k1 c1))
           =.  k1  (rol 0 15 k1)
           =.  k1  (sit (mul k1 c2))
           (mix h1 k1)
-      %2  =.  k1  (mix k1 (lsh [0 8] (snag 1 tail)))
-          =.  k1  (mix k1 (snag 0 tail))
+      %2  =.  k1  (mix k1 (lsh [0 8] (cut 3 [1 1] tail)))
+          =.  k1  (mix k1 (cut 3 [0 1] tail))
           =.  k1  (sit (mul k1 c1))
           =.  k1  (rol 0 15 k1)
           =.  k1  (sit (mul k1 c2))
           (mix h1 k1)
-      %1  =.  k1  (mix k1 (snag 0 tail))
+      %1  =.  k1  (mix k1 (cut 3 [0 1] tail))
           =.  k1  (sit (mul k1 c1))
           =.  k1  (rol 0 15 k1)
           =.  k1  (sit (mul k1 c2))
           (mix h1 k1)
     ==
-  =.  h1  (mix h1 len)
+  =.  h1  (mix h1 (end 5 len))
   |^  (fmix32 h1)
   ++  fmix32
     |=  h=@
@@ -5977,13 +5975,14 @@
   ::
   ++  spot
     %+  sear  (soft iota)
+    =-  ;~(pose - (easy %$))
     %-  stew
     ^.  stet  ^.  limo
-    :~  :-  'a'^'z'  (stag %tas sym)
-        :-  '$'      (cold [%tas %$] buc)
+    :~  :-  'a'^'z'  sym
+        :-  '$'      (cold %$ buc)
         :-  '0'^'9'  bisk:so
         :-  '-'      tash:so
-        :-  '.'      zust:so
+        :-  '.'      ;~(pfix dot zust:so)
         :-  '~'      ;~(pfix sig ;~(pose crub:so (easy [%n ~])))
         :-  '\''     (stag %t qut)
     ==
@@ -7946,8 +7945,8 @@
         ^-  hoon
         :^    %zppt
             [[[%| 0 `%ruth] ~] ~]
-          [%cnls [%limb %ruth] [%sand %ta p.bas] fetch]
-        [%wtpt fetch-wing fetch [%zpzp ~]]
+          [%wtpt fetch-wing fetch [%zpzp ~]]
+        [%cnls [%limb %ruth] [%sand %ta p.bas] fetch]
       ::
           %cell
         :+  %ktls  example
@@ -8606,10 +8605,10 @@
     ::
         [%sgts *]  [%sggr [%germ p.gen] q.gen]
         [%sgwt *]
-      :+  %tsls  [%wtdt q.gen [%bust %null] [[%bust %null] r.gen]]
-      :^  %wtsg  [%& 2]~
-        [%tsgr [%$ 3] s.gen]
-      [%sgpm p.gen [%$ 5] [%tsgr [%$ 3] s.gen]]
+      :+  %tsls
+        :^  %wtcl  q.gen  [%sgpm p.gen r.gen %bust %null]
+        [%bust %null]
+      [%tsgr $+3 s.gen]
     ::
         [%mcts *]
       |-
@@ -10140,19 +10139,18 @@
         %_    $
             gol  %noun
             gen
-          :+  %tsls  q.gen                                            ::  =+  q  ::  vase
-          :^    %wtcl                                                 ::  ?:
-              :+  %cncl  [%tsgr $+3 [%limb %levi]]                    ::      %:  levi:+  
-              :~  [%tsgr $+3 %tsgr [%zpgr [%kttr p.gen]] $+2]         ::        -:!>(*p):+
-                  $+4                                                 ::        p.q
-              ==                                                      ::      ==
-            $+5                                                       ::    q.q
-          [%zpzp ~]                                                   ::  !!
+          :^    %wtcl
+              :+  %cncl  [%limb %levi]
+              :~  [%tsgr [%zpgr [%kttr p.gen]] [%$ 2]]
+                  [%tsgr q.gen [%$ 2]]
+              ==
+            [%tsgr q.gen [%$ 3]]
+          [%zpzp ~]
         ==
       [typ val]
     ::
         [%zpts *]   [(nice %noun) [%1 q:$(vet |, gen p.gen)]]
-        [%zppt *]   ?:((feel p.gen) $(gen q.gen) $(gen r.gen))
+        [%zppt *]   ?.((feel p.gen) $(gen q.gen) $(gen r.gen))
     ::
         [%zpzp ~]  [%void [%0 0]]
         *
@@ -10316,7 +10314,7 @@
       =+  [(feel p.gen) (feel(sut dox) p.gen)]
       ?.  =(-< ->)
         ~>(%mean.'mull-bonk-f' !!)
-      ?:  -<
+      ?.  -<
         $(gen q.gen)
       $(gen r.gen)
     ::
@@ -10616,7 +10614,7 @@
       [%zpmc *]  (cell $(gen p.gen) $(gen q.gen))
       [%zpgl *]  (play [%kttr p.gen])
       [%zpts *]  %noun
-      [%zppt *]  ?:((feel p.gen) $(gen q.gen) $(gen r.gen))
+      [%zppt *]  ?.((feel p.gen) $(gen q.gen) $(gen r.gen))
       [%zpzp *]  %void
       *          =+  doz=~(open ap gen)
                  ?:  =(doz gen)
@@ -11879,7 +11877,8 @@
       ?@  iota  [%rock %tas iota]
       ?:  ?=(%hoon -.iota)  hoon.iota
       [%clhp [%rock %tas -.iota] [%sand iota]]
-    |^  %-  stew
+    |^  =-  ;~(pose - (easy %$))
+      %-  stew
       ^.  stet  ^.  limo
       :~  :-  'a'^'z'  ;~  pose
                          (spit (stag %cncl (ifix [pal par] (most ace wide))))
@@ -13248,9 +13247,15 @@
               [i (snoc t e)]
             ;~  plug
               %+  most  ;~(less ;~(plug fas tar) fas)
+              =-  ;~(pose - (easy [%leaf %tas %$]))
               %-  stew
               ^.  stet  ^.  limo
-              :~  :-  ['a' 'z']
+              :~  ::  /$
+                  ::
+                  :-  '$'
+                  (cold [%leaf %tas %$] buc)
+                ::
+                  :-  ['a' 'z']
                   ;~  pose
                     ::  /name=@aura
                     ::
@@ -13269,7 +13274,7 @@
                   ::
                     ::  /constant
                     ::
-                    (stag %leaf (stag %tas ;~(pose sym (cold %$ buc))))
+                    (stag %leaf (stag %tas sym))
                   ==
                 ::
                   ::  /@aura
