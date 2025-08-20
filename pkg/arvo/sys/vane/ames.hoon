@@ -11499,10 +11499,15 @@
           ?:  =(~ unix-duct)
             %.  co-core
             (slog leaf+"ames: unix-duct pending; will retry %push" ~)
-          ::  vere ignores any lanes and use the one it has stored in the pit
-          ::  to avoid breaking symmetric routing
+          ::  vere should ignores any lanes attach to a %page, and use the one 
+          ::  it has stored in the pit to avoid breaking symmetric routing
+          ::    (we add the lane here as a hack to avoid having to deal with 
+          ::     %aqua's lane management)
           ::
-          (co-emit (push-pact ship [hop=0 %page name u.page next=~] lanes=~))
+          %-  co-emit 
+          %^  push-pact  ship 
+            [hop=0 %page name u.page next=~] 
+          (make-lanes ship lane.sat qos.sat)
         ::
         ++  co-make-mess
           |=  [remote=spar payload=(unit path)]
