@@ -4330,11 +4330,9 @@
               ==
             =+  sy-core=~(. sy:mesa duct)
             =^  publ-moves  ames-state
-              ::  XX skip abet, only +ev-abet will flop these moves
-              ::
-              =<  [moves ames-state]
+              =<  sy-abet
               (~(sy-publ sy:mesa duct) / [%full (my [sndr.shot point]~)])
-            event-core(moves (weld publ-moves moves))
+            (emil publ-moves)
           ::  manually add the lane to the peer state
           ::
           =/  =peer-state  (gut-peer-state sndr.shot)
@@ -5002,7 +5000,7 @@
           =/  [ahoy-moves=(list move) ahoy-state=axle]
             ~|(%migrate-crashed [moves ames-state]:on-migrate:peer-core)
           =/  [rege-moves=(list move) rege-state=axle]
-            =<  [moves ames-state]
+            =<  sy-abet
             ~|  %regress-crashed
             %.  [`ship dry=%.n]
             %*  sy-rege  sy:mesa
@@ -8437,6 +8435,7 @@
           ames-state(chums (~(put by chums.ames-state) her %known per))
         ::
         ++  ev-emit  |=(=move ev-core(moves [move moves]))
+        ++  ev-emil  |=(mos=(list move) ev-core(moves (weld (flop mos) moves)))
         ++  ev-tace
           |=  [verb=? print=(trap tape)]
           ^+  same
@@ -8550,12 +8549,13 @@
           ::
           =.  chums.ames-state  (~(put by chums.ames-state) her %known per)
           =^  moves-peek  ames-state
-            [moves ames-state]:(co-make-peek:(co-abed:co hen) space her path)
+            co-abet:(co-make-peek:(co-abed:co hen) space her path)
           ::  update per in the door's sample with the updated value from
           ::  ames-state; removing this will discard the last change when doing
           ::  +ev-abet
           ::
-          ev-core(moves (weld moves-peek moves), per (got-per her))
+          =.  per  (got-per her)
+          (ev-emil moves-peek)
         ::
         +|  %packet-entry-points
         ::
@@ -9319,6 +9319,7 @@
             ev-core
           ::
           ++  fo-emit  |=(=move fo-core(moves [move moves]))
+          ++  fo-emil  |=(mos=(list move) fo-core(moves (weld (flop mos) moves)))
           ::  +fo-to-close: block non-cork pleas to be send if we are in closing
           ::
           ++  fo-to-close
@@ -9694,13 +9695,14 @@
                 ::  regress peer back to ames
                 ::
                 =^  moves-rege  ames-state
-                  =<  [moves ames-state]
+                  =<  sy-abet
                   ~|  %regress-crashed
                   %.  [`her dry=%.n]
                   %*  sy-rege  sy
                     ames-state  ames-state:fo-abet:fo-core
                   ==
-                fo-core(delete-per %.y, moves (weld moves-rege moves))
+                =.  fo-core  (fo-emil moves-rege)
+                fo-core(delete-per %.y)
               ==
             ?>  &(?=([%cork ~] payload) ?=([%flow ~] path)):plea
             ::  publisher receives %cork
@@ -10305,7 +10307,7 @@
               (~(put by chums.ames-state) ship u.peer)
             =?  peers.ames-state  ?=(%ames -.peer)
               (~(put by peers.ames-state) ship u.peer)
-            sy-core(moves (weld keens-moves moves))
+            (sy-emil keens-moves)
           ::  +on-publ-sponsor: handle new or lost sponsor for peer
           ::
           ::    TODO: really handle sponsor loss
@@ -10410,9 +10412,7 @@
               ::
               =^  scry-moves  ames-state
                 =+  peer-core=(abed:pe:ames-core ship)
-                ::  XX skip abet, only +sy-abet will flop these moves
-                ::
-                =<  moves^ames-state  ^+  ames-core
+                =<  abet  ^+  ames-core
                 =.  ames-core
                   =<  abet  ^+  peer-core
                   %-  ~(rep by keens.todos)
@@ -10427,7 +10427,7 @@
                 ::  treated as %sage(s)
                 (~(rep in ducts) |=([=duct c=_cor] (on-chum:c ship^path)))
               ::
-              sy-core(moves (weld scry-moves moves))
+              (sy-emil scry-moves)
             ::
             ++  meet-alien-chum
               |=  [=ship =point:jael todos=ovni-state =chum-state]
@@ -10468,11 +10468,8 @@
                 %-  ~(rep in ducts)
                 |=  [=duct c=_core]
                 (ev-req-peek:c(hen duct) space=chum-to-our:c path)
-              ::
-              ::  XX skip ev-abet, only sy-abet will flop these moves
-              ::
-              =^  ev-moves  ames-state  [moves ames-state]:ev-core
-              sy-core(moves (weld ev-moves moves))
+              =^  ev-moves  ames-state  ev-abet:ev-core
+              (sy-emil ev-moves)
             ::
             --
           ::  on-publ-rift: XX
@@ -10642,14 +10639,12 @@
                 ::  XX resend attestation request?
                 ::
                 =/  spon=@p  (^sein:title ship)
-                =.  moves.core
-                  %+  weld
-                    ?:  =(our spon)  ~  ::  XX  don't send to ourselves
-                    =<  moves
-                    %.  [ship `@ux`spon]
-                    ~(al-read-proof al(ames-state ames-state.core) ~[/ames])
-                  moves.core
-                core
+                =^  al-moves  ames-state.core
+                  ?:  =(our spon)  ~  ::  XX  don't send to ourselves
+                  =<  al-abet
+                  %.  [ship `@ux`spon]
+                  ~(al-read-proof al(ames-state ames-state.core) ~[/ames])
+                (sy-emil:core al-moves)
               ~&  retrieving-keys-again/ship
               %-  sy-emit:core
               [~[//keys] %pass /public-keys %j %public-keys ship ~ ~]
@@ -10659,10 +10654,6 @@
             ::
             =^  resend-moves  ames-state.core
               =;  c=_ev-core
-                ::  moves are going to be flopped again in sy-abet but
-                ::  that seems fine since there is only one packet per
-                ::  entry in the pit
-                ::
                 ev-abet:c
               %-  ~(rep by pit.per.ev-core)
               |=  [[=path req=request-state] core=_ev-core]
@@ -10682,7 +10673,7 @@
                 (slog leaf+"ames: unix-duct pending; retry %push" ~)
               %-  ev-emit:core
               (push-pact ship u.pact (make-lanes [her [lane qos]:per]:core))
-            core(moves (weld resend-moves moves))
+            (sy-emil:core resend-moves)
           ::
           --
         ::  +sy-snub: handle request to change ship blacklist
@@ -10839,7 +10830,7 @@
             ::
             =.  chums.ames-state.core  (~(del by chums.ames-state.core) ship)
             ::
-            core(moves :(weld peek-moves flow-moves moves))
+            (sy-emil (weld peek-moves flow-moves))
           ::
           ++  divide-bones
             |=  bones=(set side)
@@ -10855,7 +10846,7 @@
             =/  peer=peer-state  (got-peer-state:event-core her)
             =+  peer-core=(abed-peer:pe:event-core her peer)
             =;  core=_peer-core
-              [moves ames-state]:core
+              abet:abet:core
             =+  ev-core=(ev-abed:ev ~[//regress] her fren)
             %-  ~(rep by flows.fren)
             |=  [[side state=flow-state] core=_peer-core]
@@ -11006,7 +10997,7 @@
             =+  event-core=(ev:ames now^eny^rof hen state)
             =/  mesa-core  mesa(ames-state state)
             =;  core=_event-core
-              [moves ames-state]:core
+              abet:core
             %-  ~(rep by pit.fren)
             |=  [[=path req=request-state] core=_event-core]
             ::  if =(~ pay.req) this could be a +peek for a %naxplanation,
@@ -11088,8 +11079,8 @@
             ::  XX sort flows?
             ::
             =;  core=_ev-core
-              =^  clos-moves  ames-state  [moves ames-state]:core
-              sy-core(moves (weld clos-moves moves))
+              =^  clos-moves  ames-state  ev-abet:core
+              (sy-emil clos-moves)
             %-  ~(rep by flows.per.ev-core)
             |=  [[side state=flow-state] c=_ev-core]
             ?:  =(%back dire)  c
@@ -11178,7 +11169,7 @@
           ^-  (quip move ^peer-state)
           =+  event-core=(ev:ames now^eny^rof ~[//ames] ames-state)
           =;  core=_event-core
-            =/  [moves=(list move) state=axle]  [moves ames-state]:core
+            =/  [moves=(list move) state=axle]  abet:core
             :-  moves
             ~|  %freaky-alien-rederive-mesa-keens^ship
             =-  ?>(?=(%known -<) ->)
@@ -11251,6 +11242,7 @@
         ++  al-abet  [(flop moves) ames-state]
         ++  al-abed  |=(=duct al-core(hen duct))
         ++  al-emit  |=(=move al-core(moves [move moves]))
+        ++  al-emil  |=(mos=(list move) al-core(moves (weld (flop mos) moves)))
         ++  al-tace
           |=  [verb=? her=ship print=(trap tape)]
           ^+  same
@@ -11332,13 +11324,13 @@
           =^  publ-moves  ames-state
             ::  XX skip sy-abet, only +al-abet will flop these moves
             ::
-            =<  [moves ames-state]
+            =<  sy-abet
             %^  ~(sy-publ sy hen)  /comet  %full
             %+  ~(put by *(map ship point:jael))  comet
             =|  =point:jael
             point(rift 0, life 1, keys keys, sponsor `(^sein:title comet))
           ::
-          al-core(moves (weld publ-moves moves))
+          (al-emil publ-moves)
         ::
         ++  al-read-proof
           |=  [comet=ship =lane:pact]
