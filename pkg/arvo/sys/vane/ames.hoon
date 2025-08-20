@@ -8666,7 +8666,7 @@
             ==
           ::
           ++  hear-peek
-            |=  =name:pact
+            |=  [=lane:pact =name:pact]
             ?.  =(our her.name)
               ev-core
             ::
@@ -8680,7 +8680,7 @@
             ?.  ?=([%atom *] u.u.res)
               ev-core  ::  XX support both %atom and %packet
             =+  !<([dat=@ pairs=(list @ux) pof=@ux] q.u.u.res)
-            (ev-emit hen %give %push ~ dat)
+            (ev-emit unix-duct %give %push ~[lane] dat)
           ::
           ++  hear-page
             |=  [dud=(unit goof) =lane:pact =pact:pact]
@@ -12486,7 +12486,7 @@
         ::
             %peek
           ?~  dud
-            ev-abet:(hear-peek:ev-pact:ev-core +>.pact)
+            ev-abet:(hear-peek:ev-pact:ev-core lane +>.pact)
           sy-abet:(~(sy-crud sy:me-core hen) %peek tang.u.dud)
         ::
             %poke
