@@ -46,10 +46,15 @@
     ?-  +<.pact
       %peek  her.name.pact
       %poke  her.ack.pact
-      %page  her.name.pact
-    ==
+      %page  ?>  ?=(^ lan)
+             ?>  ?=(@ i.lan)
+             `@p`i.lan
+    ==       
+  =/  lan=lane:pact:ames  
+    ?:  ?=(%page +<.pact)  `@ux`rcvr  
+    `@ux`sndr
   %+  emit-aqua-events  our
-  [%event rcvr /a/newt/0v1n.2m9vh %heer `@ux`rcvr q]~
+  [%event rcvr /a/newt/0v1n.2m9vh %heer lan q]~
 ::  +lane-to-ship: decode a ship from an aqua lane
 ::
 ::    Special-case one comet, since its address doesn't fit into a lane.
