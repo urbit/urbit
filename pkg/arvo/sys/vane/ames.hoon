@@ -10659,7 +10659,11 @@
             ::
             =^  resend-moves  ames-state.core
               =;  c=_ev-core
-                [moves ames-state]:c
+                ::  moves are going to be flopped again in sy-abet but
+                ::  that seems fine since there is only one packet per
+                ::  entry in the pit
+                ::
+                ev-abet:c
               %-  ~(rep by pit.per.ev-core)
               |=  [[=path req=request-state] core=_ev-core]
               ::  update and print connection status
