@@ -619,6 +619,7 @@
     !.
     =>  |%
         +$  state
+          ::  review
           $:  cycle=(set mist)
           ==
         +$  args
@@ -673,7 +674,10 @@
       =.  cycle.nub  (~(put in cycle.nub) nave+mak)
       %-  (trace 1 |.("make mark {<mak>}"))
       =^  cor=vase  nub  (build-fit %mar mak)
-      =/  gad=vase  (slub cor limb/%grad)
+      =/  gad=vase
+        =>  [slub=slub cor=cor]
+        ~>  %memo./clay/ford
+        (slub cor limb/%grad)
       ?@  q.gad
         =+  !<(mok=mark gad)
         =^  deg=vase  nub  $(mak mok)
@@ -684,6 +688,7 @@
         =.  nub  nob
         :_  nub  :-  %vase
         ^-  vase  ::  vase of nave
+        :: ~>  %memo./clay/ford
         %+  slub
           (with-faces deg+deg tub+tub but+but cor+cor nave+nave.bud ~)
         !,  *hoon
@@ -709,6 +714,7 @@
       =.  nub  nob
       :_  nub  :-  %vase
       ^-  vase  ::  vase of nave
+      :: ~>  %memo./clay/ford
       %+  slub  (slop (with-face cor+cor) zuse.bud)
       !,  *hoon
       =/  typ  _+<.cor
@@ -754,32 +760,57 @@
       |_  sam=vase
       ++  diff
         |=  new=vase
-        (slam (slub nav limb/%diff) (slop sam new))
-      ++  form  !<(mark (slub nav limb/%form))
+        %+  slam
+          =>  [slub=slub nav=nav]
+          ~>  %memo./clay/ford
+          (slub nav limb/%diff)
+        (slop sam new)
+      ++  form  !<  mark
+                =>  [slub=slub nav=nav]
+                ~>  %memo./clay/ford
+                (slub nav limb/%form)
       ++  join
         |=  [a=vase b=vase]
         ^-  (unit (unit vase))
-        =/  res=vase  (slam (slub nav limb/%join) (slop a b))
+        =/  res=vase
+          %+  slam
+            =>  [slub=slub nav=nav]
+            ~>  %memo./clay/ford
+            (slub nav limb/%join)
+          (slop a b)
         ?~  q.res    ~
         ?~  +.q.res  [~ ~]
-        ``(slub res !,(*hoon ?>(?=([~ ~ *] .) u.u)))
+        :+  ~  ~
+        :: =>  [slub=slub res=res hoon=hoon]  ::  XX fix
+        :: ~>  %memo./clay/ford
+        (slub res !,(*hoon ?>(?=([~ ~ *] .) u.u)))
       ++  mash
         |=  [a=[=ship =desk diff=vase] b=[=ship =desk diff=vase]]
         ^-  (unit vase)
         =/  res=vase
-          %+  slam  (slub nav limb/%mash)
+          %+  slam
+            =>  [slub=slub nav=nav]
+            ~>  %memo./clay/ford
+            (slub nav limb/%mash)
           %+  slop
             :(slop [[%atom %p ~] ship.a] [[%atom %tas ~] desk.a] diff.a)
           :(slop [[%atom %p ~] ship.b] [[%atom %tas ~] desk.b] diff.b)
         ?~  q.res
           ~
-        `(slub res !,(*hoon ?>((^ .) u)))
+        :-  ~
+        :: =>  [slub=slub res=res hoon=hoon u=u.q.res]  ::  XX fix
+        :: ~>  %memo./clay/ford
+        (slub res !,(*hoon ?>((^ .) u)))
       ++  pact
         |=  diff=vase
         (slam (slub nav limb/%pact) (slop sam diff))
       ++  vale
         |:  noun=q:(slub nav !,(*hoon *vale))
-        (slam (slub nav limb/%vale) noun/noun)
+        %+  slam
+          =>  [slub=slub nav=nav]
+          ~>  %memo./clay/ford  ::  XX slow?
+          (slub nav limb/%vale)
+        noun+noun
       --
     ::  +build-cast: produce gate to convert mark .a to, statically typed
     ::
