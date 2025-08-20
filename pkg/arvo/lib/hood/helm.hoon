@@ -198,7 +198,7 @@
   =/  =wire
     :+  %helm  %ahoy
     ?.(test /(scot %p her) /test/(scot %p her))
-  =/  =path  ?:(test /test/mesa /mesa)
+  =/  =path  ?:(test /test/mesa-1 /mesa-1)
   ::  before migrating, test if we can migrate, regress, and check that there
   ::  are not flows in a weird state. if we don't crash, send the %ahoy $plea
   ::
@@ -343,6 +343,11 @@
 ::
 ++  poke-gall-lave
   |=  [dry=? subs=(list [?(%g %a) ship term duct])]  =<  abet
+  ?:  dry  this
+  (emit %pass /helm %arvo %g %lave subs)
+::
+++  poke-eyre-lave
+  |=  [dry=? subs=(list [%g ship term duct])]  =<  abet
   ?:  dry  this
   (emit %pass /helm %arvo %g %lave subs)
 ::
@@ -665,6 +670,7 @@
     %helm-gall-sift        =;(f (f !<(_+<.f vase)) poke-gall-sift)
     %helm-gall-verb        =;(f (f !<(_+<.f vase)) poke-gall-verb)
     %helm-gall-lave        =;(f (f !<(_+<.f vase)) poke-gall-lave)
+    %helm-eyre-lave        =;(f (f !<(_+<.f vase)) poke-eyre-lave)
     %helm-hi               =;(f (f !<(_+<.f vase)) poke-hi)
     %helm-pans             =;(f (f !<(_+<.f vase)) poke-pans)
     %helm-mass             =;(f (f !<(_+<.f vase)) poke-mass)

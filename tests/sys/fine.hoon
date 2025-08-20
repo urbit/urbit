@@ -73,7 +73,7 @@
       [~[/keen-duct-1] task]
       :~  :-  ~[//unix]
           [%give %send [%& ~bud] (etch-shot:ames request)]
-          [~[//unix] %pass fine-behn-wire %b %wait ~1111.1.1..00.00.01]
+          [~[/ames] %pass fine-behn-wire %b %wait ~1111.1.1..00.00.01]
       ==
     ==
   ::
@@ -133,7 +133,7 @@
           [~[/keen-duct-1] %give %sage sage]
           :^  ~[/keen-duct-1]  %pass  /prune-tip
           [%a %deep %prun ~bud scry-path ~[/keen-duct-1] scry-path]
-          [~[//unix] %pass fine-behn-wire %b %rest ~1111.1.1..00.00.01]
+          [~[/ames] %pass fine-behn-wire %b %rest ~1111.1.1..00.00.01]
       ==
     ==
   ::
@@ -152,7 +152,7 @@
       [~1111.1.1 0xdead.beef *roof]
       [~[/keen-duct-3] %keen ~ ~bud future-path]
       :~  [~[//unix] [%give %send [%& ~bud] (etch-shot:ames request)]]
-          [~[//unix] %pass future-behn %b %wait ~1111.1.1..00.00.01]
+          [~[/ames] %pass future-behn %b %wait ~1111.1.1..00.00.01]
       ==
     ==
   ::
@@ -164,7 +164,7 @@
       [~[/keen-duct-3] %yawn ~bud future-path]
       :~  :^  ~[/keen-duct-3]  %pass  /prune-tip
           [%a %deep %prun ~bud future-path [i=/keen-duct-3 t=~] future-path]
-          [~[//unix] %pass future-behn %b %rest ~1111.1.1..00.00.01]
+          [~[/ames] %pass future-behn %b %rest ~1111.1.1..00.00.01]
       ==
     ==
   ::
@@ -175,7 +175,7 @@
       [~1111.1.1 0xdead.beef *roof]
       [~[/keen-duct-4] %keen ~ ~bud future-path]
       :~  [~[//unix] [%give %send [%& ~bud] (etch-shot:ames request)]]
-          [~[//unix] %pass future-behn %b %wait ~1111.1.1..00.00.01]
+          [~[/ames] %pass future-behn %b %wait ~1111.1.1..00.00.01]
       ==
     ==
   ::
@@ -199,7 +199,7 @@
           [~[/keen-duct-5] [%give %sage [~bud future-path] ~]]
           :^  ~[/keen-duct-5]  %pass  /prune-tip
           [%a %deep %prun ~bud future-path ~[/keen-duct-5] future-path]
-          [~[//unix] %pass future-behn %b %rest ~1111.1.1..00.00.01]
+          [~[/ames] %pass future-behn %b %rest ~1111.1.1..00.00.01]
       ==
     ==
   :-  t9  |.  :-  %&
@@ -245,7 +245,7 @@
       [~1111.1.1 0xdead.beef *roof]
       [~[/keen-duct-1] task]
       :~  [~[//unix] [%give %send [%& ~bud] (etch-shot:ames req1)]]
-          [~[//unix] %pass fine-behn-wire %b %wait ~1111.1.1..00.00.01]
+          [~[/ames] %pass fine-behn-wire %b %wait ~1111.1.1..00.00.01]
       ==
     ==
   ::
@@ -284,8 +284,8 @@
       :~  [~[//fine] %pass /qos %d %flog %text "; ~bud is your neighbor"]
           [~[//unix] [%give %send [%& ~bud] (etch-shot:ames req2)]]
           [~[//unix] [%give %send [%& ~bud] (etch-shot:ames req3)]]
-          [~[//unix] %pass fine-behn-wire %b %rest ~1111.1.1..00.00.01]
-          [~[//unix] %pass fine-behn-wire %b %wait ~1111.1.2..00.02.00]
+          [~[/ames] %pass fine-behn-wire %b %rest ~1111.1.1..00.00.01]
+          [~[/ames] %pass fine-behn-wire %b %wait ~1111.1.2..00.02.00]
       ==
     ==
   ::
@@ -313,7 +313,7 @@
       :~  [~[/keen-duct-1] %give %sage sage]
           :^  ~[/keen-duct-1]  %pass  /prune-tip
           [%a %deep %prun ~bud scry-path ~[/keen-duct-1] scry-path]
-          [~[//unix] %pass fine-behn-wire %b %rest ~1111.1.2..00.02.00]
+          [~[/ames] %pass fine-behn-wire %b %rest ~1111.1.2..00.02.00]
       ==
     ==
   ::

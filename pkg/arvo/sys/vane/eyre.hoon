@@ -2724,7 +2724,7 @@
           ^-  move
           =,  u.maybe-subscription
           %-  (trace 1 |.("leaving subscription to {<app>}"))
-          %+  deal-as
+          %+  deal-as(duct duc)
             (subscription-wire channel-id subscription-id from ship app)
           [from ship app %leave ~]
         ::
@@ -3095,7 +3095,7 @@
       |=  [request-id=@ud ship=@p app=term =path duc=^duct]
       ^-  move
       %-  (trace 1 |.("{<channel-id>} leaving subscription to {<app>}"))
-      %+  deal-as
+      %+  deal-as(duct duc)
         (subscription-wire channel-id request-id identity.session ship app)
       [identity.session ship app %leave ~]
     --

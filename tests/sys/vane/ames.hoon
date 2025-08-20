@@ -853,7 +853,7 @@
   ::   (call bud ~[/g/hood] %spew ~[%fin %for %ges %kay %msg %odd %rcv %rot %snd %sun])
   =/  poke-plea    [%g /talk [%get %post]]
   =^  moves1       nec  (call nec ~[/g/talk] %plea ~bud poke-plea)
-  =^  move-ahoy-1  nec  (call nec ~[/g/ahoy] %plea ~bud %$ /mesa %ahoy ~)
+  =^  move-ahoy-1  nec  (call nec ~[/g/ahoy] %plea ~bud %$ /mesa-1 %ahoy ~)
   =^  move-ahoy-2  bud  (call bud ~[//unix] %hear (snag-packet 0 move-ahoy-1))
   ?>  ?=([* [^ %pass *] *] move-ahoy-2)
   =^  ack-ahoy  bud

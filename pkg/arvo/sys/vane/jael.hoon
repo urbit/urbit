@@ -266,7 +266,7 @@
         =/  cub  (nol:nu:crub:crypto key.ky)
         %+  ~(put by pos.zim.pki)
           our
-        [0 lyf.ky (my [lyf.ky [1 pub:ex:cub]] ~) spon-ship]
+        [ryf.feed.tac lyf.ky (my [lyf.ky [1 pub:ex:cub]] ~) spon-ship]
       ::  our initial private key
       ::
       =.  lyf.own.pki  lyf.ky
@@ -531,9 +531,9 @@
       ::    XX  allow to change the rate via a %jael task in 409
       ::
       =?  moz  ?=([%plea ~] tim)
-        [hen %pass /public-keys %b %wait `@da`(add now ~d1)]^moz
+        [hen %pass /public-keys %b %wait `@da`(add now ~m10)]^moz
       =?  tim  ?=([%plea ~] tim)
-        plea/`[hen /public-keys `@da`(add now ~d1)]
+        plea/`[hen /public-keys `@da`(add now ~m10)]
       +>.$
     ::
         [%ames %boon *]
