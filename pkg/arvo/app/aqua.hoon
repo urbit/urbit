@@ -880,7 +880,7 @@
   |=  who=ship
   ^-  dawn-event:jael
   =/  clan  (clan:title who)
-  ?>  ?=(?(%czar %king %duke %earl) clan)
+  ?>  ?=(?(%czar %king %duke %earl %pawn) clan)
   =/  spon=(list [ship point:azimuth])
     %-  flop
     |-  ^-  (list [ship point:azimuth])
@@ -904,7 +904,7 @@
     [a-point $(who ship)]
   =/  =feed:jael
     =/  life-rift=[lyfe=life rut=rift]
-      ?:  =(%earl clan)  [1 0]
+      ?:  ?=(?(%pawn %earl) clan)  [1 0]
       (~(got by lives.azi.piers) who)
     =/  =life  lyfe.life-rift
     [who life sec:ex:(get-keys:aqua-azimuth who life) ~]
