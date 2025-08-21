@@ -10658,7 +10658,7 @@
                 (slog leaf+"ames: unix-duct pending; retry %push" ~)
               %-  ev-emit:core
               (push-pact u.pact (make-lanes [her [lane qos]:per]:core))
-            core(moves (weld resend-moves moves))
+            (sy-emil:core resend-moves)
           ::
           --
         ::  +sy-snub: handle request to change ship blacklist
