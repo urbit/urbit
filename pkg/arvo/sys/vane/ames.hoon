@@ -11347,7 +11347,7 @@
           ?~  pact=(co-make-pact:co `spar`comet^path ~ rift=0)
             !!
           %-  %^  al-tace  fin.veb.bug.ames-state  comet
-              |.("peek for attestation proof")
+              |.("peek for comet attestation proof")
           (al-emit (push-pact comet u.pact (make-lanes comet `[0 lane] *qos)))
         ::
         ++  al-take-proof
@@ -12577,9 +12577,6 @@
             ::  still waiting to hear attestation proof; no-op
             ::
             :: `ames-state
-            ::
-            %-  %+  %*(ev-tace ev-core her her-pok)  fin.veb.bug.ames-state
-                |.("peek for comet attestation")
             ::
             al-abet:(al-read-proof:al-core her-pok lane)
           ::  peer has been regressed to %ames, or booted with a pill that has
