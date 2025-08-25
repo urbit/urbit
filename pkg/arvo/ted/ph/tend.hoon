@@ -15,7 +15,7 @@
 ++  keen-wait-for-result
   |=  [cas=@ud zuse=@ud]
   =/  m  (strand ,~)
-  ;<  ~  bind:m  (dojo ~dev ":tend [%keen ~bud {(scow %ud cas)} /tend//foo/baz]")
+  ;<  ~  bind:m  (dojo ~dev ":tend [%keen ~bud {(scow %ud cas)} /foo/baz]")
   ;<  ~  bind:m  (wait-for-output ~dev "kal=[lal=%zuse num={(scow %ud zuse)}]")
   (pure:m ~)
 ::
@@ -47,10 +47,10 @@
   ;<  ~  bind:m  (dojo ~bud ":tend [%germ /foo]")
   ;<  ~  bind:m  (sleep:strandio ~s2)
   ;<  ~  bind:m  (tend zuse)
-  ;<  ~  bind:m  (keen-wait-for-result 0 zuse)
+  ;<  ~  bind:m  (keen-wait-for-result 1 zuse)
   =/  zuse  (dec zuse)
   ;<  ~  bind:m  (tend zuse)
-  ;<  ~  bind:m  (keen-wait-for-result 1 zuse)
+  ;<  ~  bind:m  (keen-wait-for-result 2 zuse)
   ;<  ~  bind:m  end
   (pure:m ~)
 ::
@@ -61,10 +61,10 @@
   ;<  ~  bind:m  (dojo ~bud ":tend [%germ /foo]")
   ;<  ~  bind:m  (sleep:strandio ~s2)
   ;<  ~  bind:m  (tend zuse)
-  ;<  ~  bind:m  (keen-wait-for-result 0 zuse)
+  ;<  ~  bind:m  (keen-wait-for-result 1 zuse)
   =/  zuse  (dec zuse)
   ;<  ~  bind:m  (tend zuse)
-  ;<  ~  bind:m  (keen-wait-for-result 1 zuse)
+  ;<  ~  bind:m  (keen-wait-for-result 2 zuse)
   ;<  ~  bind:m  end
   (pure:m ~)
 --

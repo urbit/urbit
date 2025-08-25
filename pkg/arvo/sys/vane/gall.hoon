@@ -1457,8 +1457,7 @@
           =.  pen.yoke  (~(del by pen.yoke) [ship t.wire])
           ap-core
         ?~  bod.bud
-          =.  ap-core  ::  (ap-generic-take i.wis %ames %sage [ship t.wire] ~)
-            (ap-generic-take i.wis %ames %tune [ship t.wire] ~)
+          =.  ap-core  (ap-generic-take i.wis %ames %sage [ship t.wire] ~)
           $(wis t.wis)
         =.  ap-core
           (ap-pass i.wis %arvo %a %keen `[idx key]:hutch.u.bod.bud ship t.wire)
@@ -1472,8 +1471,7 @@
           =.  pen.yoke  (~(del by pen.yoke) [ship t.wire])
           ap-core
         =.  ap-core
-          %.  ::  (ap-generic-take i.wis %ames %sage [ship t.wire] ~)
-              (ap-generic-take i.wis %ames %tune [ship t.wire] ~)
+          %.  (ap-generic-take i.wis %ames %sage [ship t.wire] ~)
           %+  trace  odd.veb.bug.state
           [leaf/"gall: {<agent-name>} bad brood res {<ship>} {<t.wire>}"]~
         $(wis t.wis)
@@ -2034,13 +2032,6 @@
           t.name.sign-arvo
         ==
       =^  maybe-tang  ap-core
-        =?  sign-arvo   ?=([%ames %sage *] sign-arvo)
-          ::  XX if %sage rewrite sign-arvo as %tune; remove in 409k
-          ::
-          =/  =roar:ames
-            :_  sigs=~ :: XX unsused
-            [path.p.sage.sign-arvo ?~(q.sage.sign-arvo ~ `q.sage.sign-arvo)]
-          sign-arvo(+ [%tune spar=p.sage.sign-arvo `roar])
         %+  ap-ingest  ~  |.
         (on-arvo:ap-agent-core wire sign-arvo)
       =?  ken.yoke   ?=([%ames %sage *] sign-arvo)
