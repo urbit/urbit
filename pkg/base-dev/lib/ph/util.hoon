@@ -16,9 +16,11 @@
 ::  Start a ship (low-level; prefer +raw-ship)
 ::
 ++  init
-  |=  [who=ship fake=?]
+  |=  [who=ship fake=? core=?(%mesa %ames)]
   ^-  (list aqua-event)
-  [%init-ship who fake]~
+  :~  [%init-ship who fake]
+      [%event who [/a/aqua/load %load core]]
+  ==
 ::
 ::  Send dojo command
 ::
