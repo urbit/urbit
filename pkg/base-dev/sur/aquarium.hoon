@@ -34,7 +34,7 @@
   ==
 ::
 +$  aqua-event
-  $%  [%init-ship who=ship fake=?]
+  $%  [%init-ship who=ship fake=? feed=(unit feed:jael)]
       [%pause-events who=ship]
       [%snap-ships lab=term hers=(list ship)]
       [%restore-snap lab=term]

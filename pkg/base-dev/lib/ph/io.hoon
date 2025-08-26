@@ -155,8 +155,17 @@
   =/  m  (strand ,~)
   ^-  form:m
   ~&  >  "starting {<ship>}"
-  ;<  ~  bind:m  (send-events (init:util ship fake core))
+  ;<  ~  bind:m  (send-events (init:util ship fake ~ core))
   (check-ship-booted ship)
+::
+++  init-comet
+  =|  core=?(%mesa %ames)  :: XX make %mesa the default core
+  |=  [comet=ship =feed:jael]
+  =/  m  (strand ,~)
+  ^-  form:m
+  ~&  >  "mining comet under {<(^sein:title comet)>}"
+  ;<  ~  bind:m  (send-events (init:util comet fake=%.n `feed core))
+  (check-ship-booted comet)
 ::
 ++  check-ship-booted
   |=  =ship

@@ -477,6 +477,9 @@
   ::
   ?+  val  ~|(%bad-noun-arg !!)
       [%swap-vanes vs=*]
+    ::  XX TODO
+    :: ?:  ?=(%brass nam.pil)
+    ::   ?>  ?=([boot-ovum=^ ^ *] kernel-ova.pil)
     ?>  ?=([aeon=^ boot-two=^ [%7 * %1 installed=*] *] boot-ova.pil)
     =.  installed.i.t.t.boot-ova.pil
       %+  roll  (,(list term) vs.val)
@@ -612,7 +615,7 @@
         :^  /d/term/1  %boot  &
         ?:  fake.ae
           [%fake who.ae]
-        [%dawn (dawn who.ae)]
+        [%dawn (dawn [who feed]:ae)]
         ::
         userspace-ova.pil  :: load os
         ::
@@ -877,7 +880,7 @@
   (spam-logs 10)
 ::
 ++  dawn
-  |=  who=ship
+  |=  [who=ship feed=(unit feed:jael)]
   ^-  dawn-event:jael
   =/  clan  (clan:title who)
   ?>  ?=(?(%czar %king %duke %earl %pawn) clan)
@@ -903,8 +906,9 @@
       [a-point]~
     [a-point $(who ship)]
   =/  =feed:jael
+    ?^  feed  u.feed
     =/  life-rift=[lyfe=life rut=rift]
-      ?:  ?=(?(%pawn %earl) clan)  [1 0]
+      ?:  ?=(%earl clan)  [1 0]
       (~(got by lives.azi.piers) who)
     =/  =life  lyfe.life-rift
     =/  =rift  rut.life-rift
