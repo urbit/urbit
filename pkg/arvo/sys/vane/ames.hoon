@@ -1492,14 +1492,14 @@
           =chain
         ==
     ::
-    +$  ship-state-25
-      $+  ship-state-25
+    +$  ship-state-26-27
+      $+  ship-state-26-27
       $%  [%alien alien-agenda]
-          [%known peer-state-25]
+          [%known peer-state-26-27]
       ==
     ::
-    +$  peer-state-25
-      $+  peer-state-25
+    +$  peer-state-26-27
+      $+  peer-state-26-27
       $:  [=symmetric-key =life =rift =public-key sponsor=ship]
           route=(unit [direct=? =lane])
           =qos
@@ -1513,7 +1513,6 @@
           =chain
           tip=(jug =user=path [duct =ames=path])
       ==
-    ::
     +|  %dialectics
     ::  $queued-event: event to be handled after initial boot completes
     ::
@@ -1787,8 +1786,60 @@
     ::
     +|  %state-migrations
     ::
+    +$  axle-26-27
+      $:  peers=(map ship ship-state-26-27)
+          =unix=duct  ::  [//ames/0v0 ~]
+          =life
+          =rift
+          =bug
+          snub=[form=?(%allow %deny) ships=(set ship)]
+          cong=[msg=_5 mem=_100.000]
+          $=  dead
+          $:  flow=[%flow (unit dead-timer)]
+              chum=[%chum (unit dead-timer)]
+              cork=[%cork (unit dead-timer)]
+              rots=[%rots (unit dead-timer)]
+          ==
+          ::
+          =server=chain
+          priv=private-key
+          chums=(map ship chum-state-26-27)
+          core=?(%ames %mesa)
+      ==
+    ::
+    +$  chum-state-26-27
+      $+  chum-state-26-27
+      $%  [%alien ovni-state]
+          [%known fren-state-26-27]
+      ==
+    ::
+    +$  fren-state-26-27
+      $:  azimuth-state
+          lane=(unit [hop=@ =lane:pact])  
+          =qos
+          corked=(set side)  
+          =ossuary         
+          flows=(map side flow-state-26-27)
+          pit=(map path request-state)          
+          =client=chain                          
+          tip=(jug =user=path [duct =ames=path]) 
+          weir=(jug side [tag=term data=*])
+      ==
+    ::
+    +$  flow-state-26-27
+      $:  closing=?(%.y %.n)
+          line=@ud
+          $=  snd
+          $:  %outbound 
+              loads=((mop ,@ud mesa-message) lte) 
+              @  @  @ 
+              acks=((mop ,@ud ack) lte)
+          ==
+          rcv=[%incoming acked=@ud pending-ack=_`?`%.n nax=(map seq=@ud error)]
+      ==
+    ::
     +$  axle-25
-      $:  peers=(map ship ship-state-25)
+      $:  peers=(map ship ship-state-26-27)
           =unix=duct  ::  [//ames/0v0 ~]
           =life
           =rift
@@ -1834,7 +1885,7 @@
       ==
     ::
     +$  axle-24
-      $:  peers=(map ship ship-state-25)
+      $:  peers=(map ship ship-state-26-27)
           =unix=duct  ::  [//ames/0v0 ~]
           =life
           =rift
@@ -2303,8 +2354,9 @@
             [%23 axle-23]
             [%24 axle-24]
             [%25 axle-25]
-            [%26 axle]
-            [%27 axle]
+            [%26 axle-26-27]
+            [%27 axle-26-27]
+            [%28 axle]
         ==
     ::
     ::
@@ -2380,7 +2432,7 @@
       ~>  %slog.0^leaf/"ames: metamorphosis on %take"
       [:(weld molt-moves queu-moves take-moves) adult-gate]
     ::
-    ++  stay  [%27 larva/ames-state]
+    ++  stay  [%28 larva/ames-state]
     ++  scry  scry:adult-core
     ++  load
       |=  $=  old
@@ -2531,9 +2583,13 @@
               ==
               $:  %26                            :: add cached acks
                   ?(%adult %larva)               ::
-                  state=axle
+                  state=axle-26-27
               ==
               $:  %27                            :: re-fetch public-keys
+                  ?(%adult %larva)               ::
+                  state=axle-26-27
+              ==
+              $:  %28                            :: add halted flows
                   ?(%adult %larva)               ::
                   state=axle
           ==  ==
@@ -2816,6 +2872,11 @@
         larval-gate
       ::
           [%27 *]
+        =.  cached-state  `[%27 state.old]
+        ~>  %slog.1^leaf/"ames: larva %27 reload"
+        larval-gate
+      ::
+          [%28 *]
         ?-  +<.old
           %larva  larval-gate
           %adult  (load:adult-core state.old)
@@ -2894,7 +2955,7 @@
       |^  ^+  [moz larval-core]
       ?~  cached-state  [~ larval-core]
       =*  old  u.cached-state
-      ?:  ?=(%27 -.old)
+      ?:  ?=(%28 -.old)
         ::  no state migrations left; update state, clear cache, and exit
         ::
         [(flop moz) larval-core(ames-state.adult-gate +.old, cached-state ~)]
@@ -2975,17 +3036,19 @@
         $(cached-state `25+(state-24-to-25 +.old))
       ?:  ?=(%25 -.old)
         $(cached-state `26+(state-25-to-26 +.old))
-      ?>  ?=(%26 -.old)
-      ~>  %slog.0^leaf/"ames: re-fetching our public keys"
-      %_    $
-          -.u.cached-state  %27
-      ::
+      ?:  ?=(%26 -.old)
+        ~>  %slog.0^leaf/"ames: re-fetching our public keys"
+        %_    $
+            -.u.cached-state  %27
+        ::
+            moz
+          ^-  (list move)
+          :+  [[/ames]~ %pass /public-keys %j %public-keys [n=our ~ ~]]
+            [[/ames]~ %pass /stir %a %stir '']
           moz
-        ^-  (list move)
-        :+  [[/ames]~ %pass /public-keys %j %public-keys [n=our ~ ~]]
-          [[/ames]~ %pass /stir %a %stir '']
-        moz
-      ==
+        ==
+      ?>  ?=(%27 -.old)
+      $(cached-state `28+(state-27-to-28 +.old))
       ::
       ++  our-beam  `beam`[[our %rift %da now] /(scot %p our)]
       ++  state-4-to-5
@@ -3331,7 +3394,7 @@
             peers
           %-  ~(run by peers.old)
           |=  s=ship-state-21
-          ^-  ship-state-25
+          ^-  ship-state-26-27
           ?:  ?=(%alien -.s)
             %=    s
                 keens
@@ -3447,34 +3510,58 @@
       ::
       ++  state-25-to-26
         |=  old=axle-25
-        ^-  axle
+        ^-  axle-26-27
         ~>  %slog.0^leaf/"ames: migrating from state %25 to %26"
+        %=    old
+            chums
+          %-  ~(run by chums.old)
+          |=  c=chum-state-25
+          ^-  chum-state-26-27
+          ?:  ?=(%alien -.c)  c
+          %=  c
+              flows
+            %-  ~(run by flows.c)
+            |=  flow=flow-state-25
+            =|  flow-state=flow-state-26-27
+            %_  flow-state
+              closing  closing.flow
+                 line  line.flow
+                  snd  snd.flow(send-window [send-window.snd.flow acks=~])
+                  rcv  rcv.flow
+            ==
+          ::
+              tip  [tip.c weir=~]
+          ==
+        ==
+      ::
+      ++  state-27-to-28
+        |=  old=axle-26-27
+        ^-  axle
+        ~>  %slog.0^leaf/"ames: migrating from state %27 to %26"
         %=    old
             peers
           %-  ~(run by peers.old)
-          |=  s=ship-state-25
+          |=  s=ship-state-26-27
           ^-  ship-state
           ?:  ?=(%alien -.s)  s
           s(tip [tip.s halt=~])
         ::
             chums
           %-  ~(run by chums.old)
-          |=  c=chum-state-25
+          |=  c=chum-state-26-27
           ^-  chum-state
           ?:  ?=(%alien -.c)  c
           %=  c
               flows
             %-  ~(run by flows.c)
-            |=  flow=flow-state-25
+            |=  flow=flow-state-26-27
             =|  =flow-state
             %_  flow-state
               closing  closing.flow
                  line  line.flow
-                  snd  snd.flow(send-window [send-window.snd.flow-state acks=~])
+                  snd  snd.flow
                   rcv  rcv.flow
             ==
-          ::
-              tip  [tip.c weir=~]
           ==
         ==
       ::
@@ -10816,14 +10903,14 @@
               %-  sy-emit:core
               [~[//keys] %pass /public-keys %j %public-keys ship ~ ~]
             ::
-            =+  ^=  ev-core
+            =/  ev-core
               ~(ev-core ev(ames-state ames-state.core) hen ship +.per-sat)
             ::
-            =^  resend-moves  state
-              =;  c=_core
+            =^  resend-moves  ames-state.core
+              =;  c=_ev-core
                 ev-abet:c
-              %-  ~(rep by pit.per.core)
-              |=  [[=path req=request-state] core=_core]
+              %-  ~(rep by pit.per.ev-core)
+              |=  [[=path req=request-state] core=_ev-core]
               ::  update and print connection status
               ::
               =?  core  (is-peer-dead:core now [her qos.per]:core)
@@ -13041,7 +13128,7 @@
   take:am-core
 ::  +stay: extract state before reload
 ::
-++  stay  [%27 adult/ames-state]
+++  stay  [%28 adult/ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
