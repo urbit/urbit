@@ -53,7 +53,7 @@
 ::    yokes: running agents
 ::    blocked: moves to agents that haven't been started yet
 ::    bug: debug printing configuration
-::    leaves: retry nacked %leaves timer, if set\
+::    leaves: retry nacked %leaves timer, if set
 ::    flubs: list of flubed apps, per ship
 ::    halts: list of missing/suspended apps, per ship
 ::
@@ -930,7 +930,7 @@
           %spur
         =.  flubs.state
           =-  ::  if we have deleted all flubbed apps, re-add the ship
-              ::  with an empty list of apps to no resend the /flub $plea
+              ::  with an empty list of apps to not resend the /flub $plea
               ::
               (~(put by -) u.ship (~(gut by -) u.ship ~))
           (~(del ju flubs.state) u.ship foreign-agent.response)
@@ -1060,6 +1060,7 @@
     |=  [[=ship =duct] m=_mo-core]
     =.  halts.state.m  (~(del ju halts.state.m) dap ship duct)
     =.  m  (mo-give:m(hen duct) %spur ~)  ::  un-halt flow
+    ~|  mo-give-halts/ship^dap
     (mo-emit:m (~(got by flub-ducts.state) ship) %give %boon %0 %spur dap)
   ::  +mo-filter-queue: remove all blocked tasks from ship.
   ::
@@ -1303,9 +1304,12 @@
       ::  XX if %leave, cork the flow; otherwise, halt it?
       ::  currently we always halt it
       ::
-      =.  halts.state  (~(put ju halts.state) agent-name ship hen)
+      =?  halts.state  (~(has by flub-ducts.state) ship)
+        ::  only add the app if we have received the /gf $plea
+        ::  
+        (~(put ju halts.state) agent-name ship hen)
       %+  mo-give  %flub
-      ::  if we are waiting to hear the /gf plea, only %flub the flow in %ames
+      ::  if we are waiting to hear the /gf $plea, only %flub the flow in %ames
       ::  and skip sending the %flub $boon
       ::
       ?.  (~(has by flub-ducts.state) ship)
@@ -3046,6 +3050,23 @@
     %-  malt  %+  murn  ~(tap by yokes.state)
     |=  [=dude =yoke]
     ?:  ?=(%nuke -.yoke)  ~  `[dude sub-nonce.yoke]
+  ::
+  ?:  ?&  =(%g care)
+          =(~ path)
+          =([%$ %da now] coin)
+          =(our ship)
+          =([~ ~] lyc)
+      ==
+    ::  XX support per ship
+    ``flubs+!>(flubs.state)
+  ::
+  ?:  ?&  =(%h care)
+          =(~ path)
+          =([%$ %da now] coin)
+          =(our ship)
+          =([~ ~] lyc)
+      ==
+    ``halts+!>(halts.state)
   ::
   ?:  ?&  =(%n care)
           ?=([@ @ ^] path)
