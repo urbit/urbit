@@ -4783,8 +4783,8 @@
           ::
           ++  prune-tip
             |=([=^duct =user=path =ames=path] (on-prune-tip:peer-core +<))
-          ::  +flub-flow: delete flow on backward side unconditionally
-          ::          ::
+          ::  +halt-flow: mark flow as hallted; will drop incoming packets
+          ::  
           ++  halt-flow
             |=  [=ship agent=term =bone]
             =.  halt.peer-state.peer-core

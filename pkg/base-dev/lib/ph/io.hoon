@@ -194,6 +194,73 @@
     (pure:m ~)
   loop
 ::
+++  wait-for-flub
+  |=  [our=ship her=ship dap=term]
+  =/  m  (strand ,~)
+  ^-  form:m
+  |-  ^-  form:m
+  =*  loop  $
+  ;<  ~             bind:m  (sleep ~s1)  :: XX if this is not hear we scry into the future
+  ;<  =bowl:spider  bind:m  get-bowl
+  =/  aqua-pax
+    :-  %i
+    /(scot %p our)/gg/(scot %p our)//(scot %da now.bowl)/[%$]/noun
+  =/  flubs  %-  need  ;;  (unit (jug ship term))
+    (scry-aqua:util noun our.bowl now.bowl aqua-pax)
+  ?.  (~(has ju flubs) her dap)
+    loop
+  (pure:m ~)
+::
+++  wait-for-spur
+  |=  [our=ship her=ship dap=term]
+  =/  m  (strand ,~)
+  ^-  form:m
+  |-  ^-  form:m
+  =*  loop  $
+  ;<  ~             bind:m  (sleep ~s1)  :: XX if this is not hear we scry into the future
+  ;<  =bowl:spider  bind:m  get-bowl
+  =/  aqua-pax
+    :-  %i
+    /(scot %p our)/gg/(scot %p our)//(scot %da now.bowl)/[%$]/noun
+  =/  flubs  %-  need  ;;  (unit (jug ship term))
+    (scry-aqua:util noun our.bowl now.bowl aqua-pax)
+  ?:  (~(has ju flubs) her dap)
+    loop
+  (pure:m ~)
+::
+++  wait-for-has-halt
+  |=  [our=ship her=ship dap=term]
+  =/  m  (strand ,~)
+  ^-  form:m
+  |-  ^-  form:m
+  =*  loop  $
+  ;<  ~             bind:m  (sleep ~s1)  :: XX if this is not hear we scry into the future
+  ;<  =bowl:spider  bind:m  get-bowl
+  =/  aqua-pax
+    :-  %i
+    /(scot %p our)/gh/(scot %p our)//(scot %da now.bowl)/[%$]/noun
+  =/  halts  %-  need  ;;  (unit (jug app=term [ship =duct]))
+    (scry-aqua:util noun our.bowl now.bowl aqua-pax)
+  ?.  (~(has by halts) dap)  ::  XX check .her as well
+    loop
+  (pure:m ~)
+::
+++  wait-for-del-halt
+  |=  [our=ship her=ship dap=term]
+  =/  m  (strand ,~)
+  ^-  form:m
+  |-  ^-  form:m
+  =*  loop  $
+  ;<  ~             bind:m  (sleep ~s1)  :: XX if this is not hear we scry into the future
+  ;<  =bowl:spider  bind:m  get-bowl
+  =/  aqua-pax
+    :-  %i
+    /(scot %p our)/gh/(scot %p our)//(scot %da now.bowl)/[%$]/noun
+  =/  halts  %-  need  ;;  (unit (jug app=term [ship =duct]))
+    (scry-aqua:util noun our.bowl now.bowl aqua-pax)
+  ?:  (~(has by halts) dap) ::  XX check .her as well
+    loop
+  (pure:m ~)
 ::  Send "|hi" from one ship to another
 ::
 ++  send-hi
