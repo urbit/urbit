@@ -124,13 +124,16 @@
 ::
 =>  ::  vane IO
     ::
+    ::  (note: %tune and %turf unused; left for migration purposes;
+    ::  removing any of these $signs will break any migration prior 
+    ::  to ames-state-22)
     |%
     +$  sign
       $~  [%behn %wake ~]
       $%  [%ames $>(?(%tune %sage) gift)]
           [%behn $>(%wake gift:behn)]
           [%gall $>(?(%flub %unto) gift:gall)]
-          [%jael $>(?(%private-keys %public-keys) gift:jael)]
+          [%jael $>(?(%private-keys %public-keys %turf) gift:jael)]
           $:  @tas
               $>(?(%noon %boon %done) gift)
       ==  ==
@@ -8355,7 +8358,7 @@
               ?:  ?=([%gall %unto *] sign)  :: XX from poking %ping app
                 `ames-state
               ::
-              ?+  sign  `ames-state  :: XX %tune; not used
+              ?+  sign  `ames-state  :: XX %tune and %turf; not used
                 [%behn %wake *]  sy-abet:(~(sy-wake sy hen) wire error.sign)
               ::
                   [%jael %private-keys *]
