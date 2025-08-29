@@ -546,7 +546,7 @@
       |=  [=duct our=ship who=ship force=?]
       ^-  move
       :^  duct  %pass  /ahoy
-      [%g %deal [our our /ames] %hood %poke helm-send-ahoy+!>(who^%.n^force)]
+      [%g %deal [our our /ames] %hood %poke helm-send-ahoy+!>(who^|^force)]
     ::
     +|  %atomics
     ::
@@ -4348,6 +4348,7 @@
           ::  will be resent.
           ::
           ?.  ?=([~ %known *] sndr-state)
+            ~&  %enqueue-alien
             (enqueue-alien-todo sndr.shot sndr-state |=(alien-agenda +<))
           ::  decrypt packet contents using symmetric-key.channel
           ::
@@ -5109,10 +5110,12 @@
           =.  todos             (mutate todos)
           =.  peers.ames-state  (~(put by peers.ames-state) ship %alien todos)
           ?:  already-pending
+            ~&  already-pending/already-pending
             event-core
           ::
           ?:  =(%pawn (clan:title ship))
             (request-attestation ship)
+          ~&  %ask-keys^ship
           ::  NB: we specifically look for this wire in +public-keys-give in
           ::  Jael.  if you change it here, you must change it there.
           ::
@@ -8529,6 +8532,7 @@
           ::  through the message-builder core, so when retrieving the key from
           ::  chums.ames-state it's already been updated
           ::
+          ~&  hen/hen
           =.  chums.ames-state  (~(put by chums.ames-state) her %known per)
           =^  moves-peek  ames-state
             [moves ames-state]:(co-make-peek:(co-abed:co hen) space her path)
@@ -9017,6 +9021,7 @@
           %-  ~(rep by ints)
           |=  [int=^ints c=_core]
           ?@  int
+            ~&  hen
             %.  (ev-emit:c hen %give %sage her^path gage)
             (ev-tace fin.veb.bug.ames-state |.("give %sage={(spud path)}"))
           %.  (ev-emit:c hen %give %rate her^path ~)
