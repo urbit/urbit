@@ -6132,11 +6132,11 @@
         [11 [tag.formula 1 product.clue] 1 product.next]
       ::
           [%12 ref=* path=*]
-        ?~  scry  !!
         =/  ref  $(formula ref.formula)
         ?.  ?=(%0 -.ref)  ref
         =/  path  $(formula path.formula)
         ?.  ?=(%0 -.path)  path
+        ?~  scry  [%2 trace]
         =/  result  (scry product.ref product.path)
         ?~  result
           [%1 product.path]
