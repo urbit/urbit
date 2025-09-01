@@ -1070,8 +1070,9 @@
   ++  wrd                                             ::  next or current word
     |=  a=(list @)
     =|  i=@ud
+    ?~  a  i
     |-  ^-  @ud
-    ?:  |(?=(~ a) (alnm i.a))  i
+    ?:  |(?=(~ t.a) (alnm i.a))  i
     $(i +(i), a t.a)
   --
 --

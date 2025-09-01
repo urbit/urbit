@@ -6,6 +6,7 @@
 :-  %ask
 |=  $:  [now=@da eny=@uvJ bec=beak]
         [who=ship ~]
+        rift=_0
         life=_1
     ==
 ^-  (sole-result (cask cord))
@@ -26,6 +27,6 @@
 %+  print  leaf+"  networking:     0x{(render-hex-bytes:ethereum 32 cry)}"
 %+  print  leaf+"ethereum public keys:"
 ::
-=/  sed=seed:jael
-  [who life sec:ex:cub ~]
-%-  produce  [%atom (scot %uw (jam sed))]
+=/  fed=feed:jael
+  [[%2 ~] who rift [life sec:ex:cub]~]
+%-  produce  [%atom (scot %uw (jam fed))]

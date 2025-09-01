@@ -8,7 +8,7 @@
 =>  |%
     +$  card  card:agent:gall
     +$  app-state
-      $:  %6
+      $:  %7
           dogs=(map path watchdog)
       ==
     ::
@@ -163,7 +163,6 @@
     ==
   ::
   =?  old-state  ?=(%5 -.old-state)
-    ^-  app-state
     %=    old-state
         -  %6
         dogs
@@ -182,11 +181,43 @@
       ==
     ==
   ::
-  [cards-1 this(state ?>(?=(%6 -.old-state) old-state))]
+  =^  cards-2=(list card)  old-state
+    ?.  ?=(%6 -.old-state)
+      `old-state
+    =.  dogs.old-state
+      %-   ~(run by dogs.old-state)
+      |=  dog=watchdog
+      =/  [old-b=@ud last-b=@ud]
+        ?~  history.dog         number.dog^number.dog
+        ?~  head=i.history.dog  number.dog^number.dog
+        ?~  mined=mined.i.head  number.dog^number.dog
+        number.dog^block-number.u.mined
+      ?:  =(old-b last-b)
+        dog
+      %-  (slog leaf+"rewinding eth-watcher from {<old-b>} to {<last-b>}" ~)
+      dog(number last-b)
+    ::
+    :_  old-state(- %7)
+    %+  turn  ~(tap by dogs.old-state)
+    |=  [=path dog=watchdog]
+    (wait-shortcut path now.bowl)
+  [(weld cards-1 cards-2) this(state ?>(?=(%7 -.old-state) old-state))]
   ::
   +$  app-states
-    $%(app-state-0 app-state-1 app-state-2 app-state-3 app-state-4 app-state-5 app-state)
+    $%  app-state-0
+        app-state-1
+        app-state-2
+        app-state-3
+        app-state-4
+        app-state-5
+        app-state-6
+        app-state
+    ==
   ::
+  +$  app-state-6
+    $:  %6
+        dogs=(map path watchdog)
+    ==
   +$  app-state-5
     $:  %5
         dogs=(map path watchdog-5)
@@ -327,6 +358,7 @@
 ::
 ++  on-poke
   |=  [=mark =vase]
+  ?>  (team:title [our src]:bowl)
   ?:  ?=(%noun mark)
     ~&  state
     `this

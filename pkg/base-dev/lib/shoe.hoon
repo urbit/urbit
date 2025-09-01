@@ -413,23 +413,25 @@
     =/  cobs=(list [wid=@ud (list tape)])
       (turn cows col-as-lines)
     =+  [lin=0 any=|]
+    =+  len=(lent cobs)
     =|  fez=(list sole-effect)
     |-  ^+  fez
-    =;  out=tape
+    =;  [line=(list tape) end=@ud]
       ::  done when we're past the end of all columns
       ::
-      ?:  (levy out (cury test ' '))
+      ?:  =(len end)
         (flop fez)
       =;  fec=sole-effect
         $(lin +(lin), fez [fec fez])
+      =/  out=tape
+        (zing (join " " line))
       ?.  bold  txt+out
       klr+[[`%br ~ ~]^[(crip out)]~]~
-    %+  roll  cobs
-    |=  [[wid=@ud lines=(list tape)] out=tape]
-    %+  weld  out
-    %+  weld  ?~(out "" " ")
+    %^  spin  cobs  0
+    |=  [[wid=@ud lines=(list tape)] empty=@ud]
     =+  l=(swag [lin 1] lines)
-    ?^(l i.l (reap wid ' '))
+    ?^  l  [i.l empty]
+    [(reap wid ' ') +(empty)]
   ::
   ++  col-as-lines
     |=  [wid=@ud col=dime]

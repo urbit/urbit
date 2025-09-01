@@ -88,7 +88,7 @@
       -.old  %6
     ::
         update-logs.old
-      %-  ~(rut by update-logs.old)
+      %-  ~(urn by update-logs.old)
       |=  [=resource:store =update-log:store]
       ^-  update-log:store
       ?:  =(our.bowl entity.resource)

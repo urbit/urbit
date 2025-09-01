@@ -14,7 +14,7 @@
   $:  starting=(map yarn [=trying =vase])
       running=(axal thread-form)
       tid=(map tid yarn)
-      serving=(map tid [(unit @ta) =mark =desk])
+      serving=(map tid [(unit [rid=@ta take=?(%json %noun)]) =mark =desk])
       scrying=(jug tid [=wire =ship =path])
   ==
 ::
@@ -26,10 +26,20 @@
       clean-slate-3
       clean-slate-4
       clean-slate-5
+      clean-slate-6
       clean-slate
   ==
 ::
 +$  clean-slate
+  $:  %7
+      starting=(map yarn [=trying =vase])
+      running=(list yarn)
+      tid=(map tid yarn)
+      serving=(map tid [(unit [rid=@ta take=?(%json %noun)]) =mark =desk])
+      scrying=(jug tid [wire ship path])
+  ==
+::
++$  clean-slate-6
   $:  %6
       starting=(map yarn [=trying =vase])
       running=(list yarn)
@@ -121,7 +131,8 @@
     =.  any  (old-to-4 any)
     =.  any  (old-to-5 any)
     =.  any  (old-to-6 any)
-    ?>  ?=(%6 -.any)
+    =.  any  (old-to-7 any)
+    ?>  ?=(%7 -.any)
     ::
     =.  tid.state  tid.any
     =/  yarns=(list yarn)
@@ -148,8 +159,8 @@
     ++  old-to-2
       |=  old=clean-slate-any
       ^-  (quip card clean-slate-any)
-      ?>  ?=(?(%1 %2 %3 %4 %5 %6) -.old)
-      ?:  ?=(?(%2 %3 %4 %5 %6) -.old)
+      ?>  ?=(?(%1 %2 %3 %4 %5 %6 %7) -.old)
+      ?:  ?=(?(%2 %3 %4 %5 %6 %7) -.old)
         `old
       :-  ~[bind-eyre:sc]
       :*  %2
@@ -162,8 +173,8 @@
     ++  old-to-3
       |=  old=clean-slate-any
       ^-  clean-slate-any
-      ?>  ?=(?(%2 %3 %4 %5 %6) -.old)
-      ?:  ?=(?(%3 %4 %5 %6) -.old)
+      ?>  ?=(?(%2 %3 %4 %5 %6 %7) -.old)
+      ?:  ?=(?(%3 %4 %5 %6 %7) -.old)
         old
       :*  %3
         starting.old
@@ -175,8 +186,8 @@
     ++  old-to-4
       |=  old=clean-slate-any
       ^-  clean-slate-any
-      ?>  ?=(?(%3 %4 %5 %6) -.old)
-      ?:  ?=(?(%4 %5 %6) -.old)
+      ?>  ?=(?(%3 %4 %5 %6 %7) -.old)
+      ?:  ?=(?(%4 %5 %6 %7) -.old)
         old
       :*  %4
         starting.old
@@ -188,15 +199,15 @@
     ++  old-to-5
       |=  old=clean-slate-any
       ^-  clean-slate-any
-      ?>  ?=(?(%4 %5 %6) -.old)
-      ?:  ?=(?(%5 %6) -.old)  old
+      ?>  ?=(?(%4 %5 %6 %7) -.old)
+      ?:  ?=(?(%5 %6 %7) -.old)  old
       [%5 +.old(serving [serving.old ~])]
     ::
     ++  old-to-6
       |=  old=clean-slate-any
-      ^-  clean-slate
-      ?>  ?=(?(%5 %6) -.old)
-      ?:  ?=(%6 -.old)  old
+      ^-  clean-slate-any
+      ?>  ?=(?(%5 %6 %7) -.old)
+      ?:  ?=(?(%6 %7) -.old)  old
       :-  %6
       %=    +.old
           scrying
@@ -208,12 +219,23 @@
         ::
         [/keen ship path]~
       ==
+    ::
+    ++  old-to-7
+      |=  old=clean-slate-any
+      ^-  clean-slate-any
+      ?>  ?=(?(%6 %7) -.old)
+      ?:  ?=(%7 -.old)  old
+      =-  old(- %7, serving -)
+      %-  ~(run by serving.old)
+      |=  [request=(unit @ta) =mark =desk]
+      [(bind request (late %json)) mark desk]
     --
   ::
   ++  on-poke
     ~/  %on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
+    ?>  (team:title [our src]:bowl)
     ?:  ?=(%spider-kill mark)
       (on-load on-save)
     =^  cards  state
@@ -308,15 +330,36 @@
   =*  input-mark   i.t.t.site.url
   =*  thread       i.t.t.t.site.url
   =*  output-mark  i.t.t.t.t.site.url
-  =/  =tid         (new-thread-id thread)
-  =.  serving.state
-    (~(put by serving.state) tid [`eyre-id output-mark desk])
   ::  TODO: speed this up somehow. we spend about 15ms in this arm alone
   ::
-  =/  tube  (convert-tube %json input-mark desk bowl)
   ?>  ?=(^ body.request.inbound-request)
-  =/  body=json  (need (de-json:html q.u.body.request.inbound-request))
-  =/  input=vase  (slop !>(~) (tube !>(body)))
+  =/  test=$-(@t ?(%json %noun))
+    |=  head=@t
+    =;  type=(unit @t)
+      ?:(=(`'application/x-urb-jam' type) %noun %json)
+    %+  bind
+      (get-header:http head header-list.request.inbound-request)
+    :(cork trip cass crip)
+  =/  give  (test 'content-type')
+  =/  take  (test 'accept')
+  ::
+  =/  =tid  (new-thread-id thread)
+  =.  serving.state
+    (~(put by serving.state) tid [`[eyre-id take] output-mark desk])
+  ::
+  =/  input=vase
+    %+  slop  !>(~)
+    ?-  give
+        %json
+      =/  tube  (convert-tube %json input-mark desk bowl)
+      =/  body=json  (need (de:json:html q.u.body.request.inbound-request))
+      (tube !>(body))
+    ::
+        %noun
+      =/  tube  (convert-tube %noun input-mark desk bowl)
+      =/  body=noun  (cue q.u.body.request.inbound-request)
+      (tube !>(body))
+    ==
   =/  boc  bec
   =/  =start-args:spider  [~ `tid boc(q desk, r da+now.bowl) thread input]
   (handle-start-thread start-args)
@@ -489,8 +532,15 @@
     ^-  [(list card) _state]
     %+  roll  cards.r
     |=  [=card cards=(list card) s=_state]
-    :_  =?  scrying.s  ?=([%pass ^ %arvo %a %keen @ *] card)
-          (~(put ju scrying.s) tid [&2 &6 |6]:card)
+    :_  =?  scrying.s  ?|  ?=([%pass ^ %arvo %a %keen ?(~ ^) @ *] card)
+                           ?=([%pass ^ %arvo %a %chum @ *] card)
+                       ==
+          ?:  ?=([%pass ^ %arvo %a %chum @ *] card)
+            ::  &2=wire &6=ship 6|=path
+            (~(put ju scrying.s) tid [&2 &6 |6]:card)
+          ?>  ?=([%pass ^ %arvo %a %keen ?(~ ^) @ *] card)
+          ::  &2=wire &7=ship 7|=path
+          (~(put ju scrying.s) tid [&2 &7 |7]:card)
         s
     :_  cards
     ^-  ^card
@@ -548,15 +598,26 @@
   =-  (fall - `state)
   %+  bind
     (~(get by serving.state) tid)
-  |=  [eyre-id=(unit @ta) output=mark =desk]
+  |=  [request=(unit [rid=@ta take=?(%json %noun)]) output=mark =desk]
   :_  state(serving (~(del by serving.state) tid))
-  ?~  eyre-id
+  ?~  request
     ~
-  %+  give-simple-payload:app:server  u.eyre-id
+  %+  give-simple-payload:app:server  rid.u.request
   ^-  simple-payload:http
-  :_  ~  :_  ~
   ?.  ?=(http-error:spider term)
-    ((slog tang) 500)
+    %-  (slog tang)
+    ?-  take.u.request
+        %json
+      =/  tube  (convert-tube %tang %json desk bowl)
+      :-  [500 [['content-type' 'application/json'] ~]]
+      =-  `(as-octs:mimes:html (en:json:html -))
+      o/(malt `(list [key=@t json])`[term+s/term tang+!<(json (tube !>(tang))) ~])
+    ::
+        %noun
+      :-  [500 [['content-type' 'application/x-urb-jam'] ~]]
+      `(as-octs:mimes:html (jam [term tang]))
+    ==
+  :_  ~  :_  ~
   ?-  term
     %bad-request  400
     %forbidden    403
@@ -570,9 +631,9 @@
   ::%-  (slog leaf+"strand {<yarn>} failed" leaf+<term> tang)
   =/  =tid  (yarn-to-tid yarn)
   =/  fail-cards  (thread-say-fail tid term tang)
-  =^  cards       state  (thread-clean yarn)
   =^  http-cards  state  (thread-http-fail tid term tang)
   =^  scry-card   state  (cancel-scry tid silent=%.n)
+  =^  cards       state  (thread-clean yarn)
   :_  state
   :(weld fail-cards cards http-cards scry-card)
 ::
@@ -582,13 +643,22 @@
   =-  (fall - `state)
   %+  bind
     (~(get by serving.state) tid)
-  |=  [eyre-id=(unit @ta) output=mark =desk]
-  ?~  eyre-id
+  |=  [request=(unit [rid=@ta take=?(%json %noun)]) output=mark =desk]
+  ?~  request
     `state
-  =/  tube  (convert-tube output %json desk bowl)
-  :_  state(serving (~(del by serving.state) tid))
-  %+  give-simple-payload:app:server  u.eyre-id
-  (json-response:gen:server !<(json (tube vase)))
+  ?-  take.u.request
+      %json
+    =/  tube  (convert-tube output %json desk bowl)
+    :_  state(serving (~(del by serving.state) tid))
+    %+  give-simple-payload:app:server  rid.u.request
+    (json-response:gen:server !<(json (tube vase)))
+  ::
+      %noun
+    :_  state(serving (~(del by serving.state) tid))
+    %+  give-simple-payload:app:server  rid.u.request
+    :-  [200 ['content-type' 'application/x-urb-jam']~]
+    `(as-octs:mimes:html (jam q.vase))
+  ==
 ::
 ++  thread-done
   |=  [=yarn =vase silent=?]
@@ -675,7 +745,7 @@
 ::
 ++  clean-state
   !>  ^-  clean-slate
-  6+state(running (turn ~(tap of running.state) head))
+  7+state(running (turn ~(tap of running.state) head))
 ::
 ++  convert-tube
   |=  [from=mark to=mark =desk =bowl:gall]
