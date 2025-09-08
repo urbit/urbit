@@ -5128,7 +5128,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%15                                       ::  vane version
+    $:  ver=%16                                       ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
@@ -5511,7 +5511,8 @@
 ++  load  !:
   =>  |%
       +$  raft-any
-        $%  [%15 raft-15]
+        $%  [%16 raft-16]
+            [%15 raft-15]
             [%14 raft-14]
             [%13 raft-13]
             [%12 raft-12]
@@ -5521,6 +5522,64 @@
             [%8 raft-8]
             [%7 raft-7]
             [%6 raft-6]
+        ==
+      ::  We redefine the latest raft with * for the ford caches.
+      ::  +clear-cache upgrades to +raft
+      ::
+      +$  raft-16
+        $+  raft-16
+        $:  rom=room-16
+            hoy=(map ship rung-16)
+            ran=rang
+            fad=*
+            mon=(map term beam)
+            hez=(unit duct)
+            cez=(map @ta crew)
+            tyr=(set duct)
+            tur=rock:tire
+            pud=(unit [=desk =yoki])
+            sad=(map ship @da)
+            bug=[veb=@ mas=@]
+        ==
+      +$  room-16
+        $:  hun=duct
+            dos=(map desk dojo-16)
+        ==
+      +$  rung-16
+        $:  rus=(map desk rede-16)
+        ==
+      +$  rede-16
+        $:  lim=@da
+            ref=(unit rind)
+            qyx=cult
+            dom=dome-16
+            per=regs
+            pew=regs
+            fiz=melt
+        ==
+      +$  dojo-16
+        $:  qyx=cult
+            dom=dome-16
+            per=regs
+            pew=regs
+            fiz=melt
+            ese=?
+        ==
+      +$  dome-16
+        $:  let=aeon
+            hit=(map aeon tako)
+            lab=(map @tas aeon)
+            tom=(map tako norm)
+            nor=norm
+            mim=(map path mime)
+            fod=*
+            wic=(map weft yoki)
+            cop=(unit [yok=yoki mis=pers:gall])
+            lac=pers:gall
+            liv=zest
+            ren=rein
+            pes=pers:gall
+            ask=pers:gall
         ==
       +$  raft-15
         $+  raft-15
@@ -5532,7 +5591,7 @@
             hez=(unit duct)
             cez=(map @ta crew)
             tyr=(set duct)
-            tur=rock:tire
+            tur=rock-13
             pud=(unit [=desk =yoki])
             sad=(map ship @da)
             bug=[veb=@ mas=@]
@@ -5549,64 +5608,6 @@
             fiz=melt
             ese=?
         ==
-      ::  We redefine the latest raft with * for the ford caches.
-      ::  +clear-cache upgrades to +raft
-      ::
-      +$  raft-15
-        $+  raft-15
-        $:  rom=room-15
-            hoy=(map ship rung-15)
-            ran=rang
-            fad=*
-            mon=(map term beam)
-            hez=(unit duct)
-            cez=(map @ta crew)
-            tyr=(set duct)
-            tur=rock:tire
-            pud=(unit [=desk =yoki])
-            sad=(map ship @da)
-            bug=[veb=@ mas=@]
-        ==
-      +$  room-15
-        $:  hun=duct
-            dos=(map desk dojo-15)
-        ==
-      +$  rung-15
-        $:  rus=(map desk rede-15)
-        ==
-      +$  rede-15
-        $:  lim=@da
-            ref=(unit rind)
-            qyx=cult
-            dom=dome-15
-            per=regs
-            pew=regs
-            fiz=melt
-        ==
-      +$  dojo-15
-        $:  qyx=cult
-            dom=dome-15
-            per=regs
-            pew=regs
-            fiz=melt
-        ==
-     +$  dome-15
-      $:  let=aeon
-          hit=(map aeon tako)
-          lab=(map @tas aeon)
-          tom=(map tako norm)
-          nor=norm
-          mim=(map path mime)
-          fod=*
-          wic=(map weft yoki)
-          cop=(unit [yok=yoki mis=pers:gall])
-          lac=pers:gall
-          liv=zest
-          ren=rein
-          pes=pers:gall
-          ask=pers:gall
-      ==
-      ::
       +$  raft-14
         $+  raft-14
         $:  rom=room-13
@@ -5993,7 +5994,8 @@
   =?  old  ?=(%12 -.old)  13+(raft-12-to-13 +.old)
   =?  old  ?=(%13 -.old)  14+(raft-13-to-14 +.old)
   =?  old  ?=(%14 -.old)  15+(raft-14-to-15 +.old)
-  ?>  ?=(%15 -.old)
+  =?  old  ?=(%15 -.old)  16+(raft-15-to-16 +.old)
+  ?>  ?=(%16 -.old)
   ..^^$(ruf (clear-cache +.old))
   ::
   ::  We clear the ford cache so we don't have to know how to upgrade
@@ -6001,22 +6003,22 @@
   ::  Also, many of the results would be different if zuse is different.
   ::
   ++  clear-cache
-    |=  raf=raft-15
+    |=  raf=raft-16
     ^-  raft
     %=    raf
         fad  *flow
         dos.rom
       %-  ~(run by dos.rom.raf)
-      |=  doj=dojo-15
+      |=  doj=dojo-16
       ^-  dojo
       doj(fod.dom *flue)
     ::
         hoy
       %-  ~(run by hoy.raf)
-      |=  =rung-15
+      |=  =rung-16
       ^-  rung
-      %-  ~(run by rus.rung-15)
-      |=  red=rede-15
+      %-  ~(run by rus.rung-16)
+      |=  red=rede-16
       ^-  rede
       red(dom dom.red(fod *flue))
     ==
@@ -6276,45 +6278,6 @@
       ^-  dome-13
       dom(fod [fod.dom ~ liv=%dead ren=~])
     --
-  ::  +raft-14-to-15:
-  ::
-  ::    add .cop, .lac, .pes and .ask to $dome
-  ::    add $belt:tire to $rock:tire with .pes, .ask, .cop and .lac
-  ::
-  ++  raft-14-to-15
-    |=  raf=raft-14
-    |^  ^-  raft-15
-        %=  raf
-          dos.rom  (~(run by dos.rom.raf) dojo-13-to-15)
-          hoy      (~(run by hoy.raf) rung-14-to-15)
-          tur      (~(run by tur.raf) belt-13-to-15)
-        ==
-    ::
-    ++  dojo-13-to-15
-      |=  doj=dojo-13
-      ^-  dojo-15
-      doj(dom (dome-13-to-15 dom.doj))
-    ::
-    ++  rung-14-to-15
-      |=  rug=rung-14
-      ^-  rung-15
-      rug(rus (~(run by rus.rug) rede-14-to-15))
-    ::
-    ++  rede-14-to-15
-      |=  red=rede-14
-      ^-  rede-15
-      red(dom (dome-13-to-15 dom.red))
-    ::
-    ++  dome-13-to-15
-      |=  dom=dome-13
-      ^-  dome-15
-      dom(|8 [cop=~ lac=~ &9.dom |9.dom(ren [ren.dom pes=~ ask=~])])
-    ::
-    ++  belt-13-to-15
-      |=  [=zest wic=(set weft)]
-      ^-  belt:tire
-      [zest=zest pes=~ ask=~ wic=wic cop=~ lac=~]
-    --
   ::
   ::  +raft-13-to-14: add sad, change busy
   ::
@@ -6356,6 +6319,45 @@
       |=  d=dojo-13
       d(fiz [fiz.d ese=%.y])
     ==
+  ::  +raft-15-to-16:
+  ::
+  ::    add .cop, .lac, .pes and .ask to $dome
+  ::    add $belt:tire to $rock:tire with .pes, .ask, .cop and .lac
+  ::
+  ++  raft-15-to-16
+    |=  raf=raft-15
+    |^  ^-  raft-16
+        %=  raf
+          dos.rom  (~(run by dos.rom.raf) dojo-15-to-16)
+          hoy      (~(run by hoy.raf) rung-14-to-16)
+          tur      (~(run by tur.raf) belt-13-to-16)
+        ==
+    ::
+    ++  dojo-15-to-16
+      |=  doj=dojo-15
+      ^-  dojo-16
+      doj(dom (dome-13-to-16 dom.doj))
+    ::
+    ++  rung-14-to-16
+      |=  rug=rung-14
+      ^-  rung-16
+      rug(rus (~(run by rus.rug) rede-14-to-16))
+    ::
+    ++  rede-14-to-16
+      |=  red=rede-14
+      ^-  rede-16
+      red(dom (dome-13-to-16 dom.red))
+    ::
+    ++  dome-13-to-16
+      |=  dom=dome-13
+      ^-  dome-16
+      dom(|8 [cop=~ lac=~ &9.dom |9.dom(ren [ren.dom pes=~ ask=~])])
+    ::
+    ++  belt-13-to-16
+      |=  [=zest wic=(set weft)]
+      ^-  belt:tire
+      [zest=zest pes=~ ask=~ wic=wic cop=~ lac=~]
+    --
   --
 ::
 ++  scry                                              ::  inspect
@@ -6628,7 +6630,7 @@
   =/  flo  ~
   =+  `flow`flo
   :-  ver
-  ^-  raft-15:load
+  ^-  raft-16:load
   %=    ruf
       fad  flo
       dos.rom

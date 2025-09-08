@@ -1010,7 +1010,7 @@
   ::  +mo-load: install agents
   ::
   ++  mo-load
-    |=  ^load
+    |=  [prov=path ^load]
     ::  calculate new permission state, and the diff
     ::
     =/  new-perms=(jug desk perm)
@@ -1042,7 +1042,7 @@
       |-  ^+  mo-core
       ?~  kil  mo-core
       ~>  %slog.0^leaf/"gall: stopping {<i.kil>}"
-      $(kil t.kil, mo-core (mo-idle i.kil))
+      $(kil t.kil, mo-core (mo-idle prov i.kil))
     ::  we must update permissions before re/loading & killing agents,
     ::  to ensure that new agents aren't run with old permissions
     ::
@@ -1054,7 +1054,7 @@
         ?~  dudes  mo-core
         =/  [=dude =desk]  [dude q.beak]:i.dudes
         ::  ~>  %slog.0^leaf/"gall: starting {<dude>} on {<desk>}"
-        $(dudes t.dudes, mo-core (mo-receive-core i.dudes))
+        $(dudes t.dudes, mo-core (mo-receive-core prov i.dudes))
       %+  roll  %+  turn  dudes
                 |=  [=dude =beak =agent]
                 [q.beak dude]
@@ -2285,16 +2285,16 @@
       =;  rov=roof
         (look rov lyc /gall/[agent-name])
       ?:  =(%base q.beak.yoke)  rof
-      |=  [lyc=gang vis=view bem=beam]
+      |=  [lyc=gang pov=path vis=view bem=beam]
       ^-  (unit (unit (cask vase)))
       ?.  (rite our [vis bem] (~(get ju perms.state) q.beak.yoke))
         =/  sef=tape  "%{(trip q.beak.yoke)}/{(trip agent-name)}"
         =/  tar=tape  "{<vis>} {(spud (en-beam bem))}"
         ::TODO PERM  replace the rof arg below with ~ to start enforcing
-        %.  (rof lyc vis bem)
+        %.  (rof lyc pov vis bem)
         %+  trace  pes.veb.bug.state
         [leaf+"insufficient permission: {sef} scrying for {tar}" ~]
-      (rof lyc vis bem)
+      (rof lyc pov vis bem)
     ::  +ap-ingest: call agent arm, check perms, emit result
     ::
     ::    Sends acks from here because they need to be emitted before the
@@ -2597,7 +2597,7 @@
       gall-payload(state old)
   ::
   +$  spore-any
-    $%  [%18 spore-18]
+    $%  [%18 spore]
         [%7 spore-7]
         [%8 spore-8]
         [%9 spore-9]
@@ -2610,16 +2610,20 @@
         [%16 spore-16]
         [%17 spore-17]
     ==
-  +$  spore-17  spore-16
-  +$  spore-16
+  +$  spore-17
     $:  system-duct=duct
         outstanding=(map [wire duct] (qeu remote-request))
         contacts=(set ship)
         eggs=(map term egg)
         blocked=(map term (qeu blocked-move))
-        =bug
+        bug=bug-17
         leaves=(unit [=duct =wire date=@da])
     ==
+  +$  bug-17
+    $:  veb=odd=?
+        dudes=(set dude)
+    ==
+  +$  spore-16  spore-17
   +$  spore-15
     $+  spore-15
     $:  system-duct=duct
@@ -2627,7 +2631,7 @@
         contacts=(set ship)
         eggs=(map term egg-15)
         blocked=(map term (qeu blocked-move))
-        =bug
+        bug=bug-17
         leaves=(unit [=duct =wire date=@da])
     ==
   +$  spore-14
@@ -2636,7 +2640,7 @@
         contacts=(set ship)
         eggs=(map term egg-15)
         blocked=(map term (qeu blocked-move))
-        =bug
+        bug=bug-17
     ==
   ::
   +$  spore-13
@@ -2645,7 +2649,7 @@
         contacts=(set ship)
         eggs=(map term egg-15)
         blocked=(map term (qeu blocked-move-13))
-        =bug
+        bug=bug-17
     ==
   ::
   +$  blocked-move-13  [=duct routes=routes-13 move=(each deal unto)]
@@ -2659,7 +2663,7 @@
         contacts=(set ship)
         eggs=(map term egg-12)
         blocked=(map term (qeu blocked-move-13))
-        =bug
+        bug=bug-17
     ==
   +$  egg-12
     $%  [%nuke sky=(map spur @ud)]
@@ -2683,7 +2687,7 @@
         contacts=(set ship)
         eggs=(map term egg-11)
         blocked=(map term (qeu blocked-move-13))
-        =bug
+        bug=bug-17
     ==
   +$  egg-11
     $:  control-duct=duct
@@ -2704,7 +2708,7 @@
         contacts=(set ship)
         eggs=(map term egg-10)
         blocked=(map term (qeu blocked-move-13))
-        =bug
+        bug=bug-17
     ==
   +$  egg-10
     $:  control-duct=duct
@@ -2725,7 +2729,7 @@
         contacts=(set ship)
         eggs=(map term egg-10)
         blocked=(map term (qeu blocked-move-13))
-        =bug
+        bug=bug-17
     ==
   ::
   +$  remote-request-9  ?(remote-request %cork)
@@ -2775,7 +2779,7 @@
     |=  old=spore-8
     :-  %9
     ^-  spore-9
-    =-  old(eggs -, blocked [blocked.old *bug])
+    =-  old(eggs -, blocked [blocked.old *bug-17])
     %-  ~(run by eggs.old)
     |=  =egg-8
     ^-  egg-10
@@ -2942,14 +2946,14 @@
     |=  old=spore-17
     ^-  spore-18
     :-  %18
-    $:  system-duct.old
+    :*  system-duct.old
         outstanding.old
         contacts.old
         eggs.old
         blocked.old
         *perms=(jug desk perm)
         *wards=(set duct)
-        bug.old
+        bug.old(veb [odd=odd.veb.bug.old pes=|])
         leaves.old
     ==
   ::

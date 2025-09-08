@@ -93,7 +93,7 @@
       (aor b a)
     %+  murn  (flop desks)
     |=  des=desk
-    ^-  (unit [=desk =zest wic=(set weft)])
+    ^-  (unit [=desk =belt:tire])
     ?~  got=(~(get by tyr.prep) des)
       ~
     `[des u.got]
@@ -206,10 +206,10 @@
       ::
         %held
       ?.  =(~ lac.dek)
-        "suspended until permissions are granted"
+        'suspended until permissions are granted'
       ?:  =(~ cop.dek)
-        "suspended until next update"
-      "suspended until next update, needs new permissions"
+        'suspended until next update'
+      'suspended until next update, needs new permissions'
     ==
   =/  kul=cord  (print-wefts (waft-to-wefts waft))
   =/  pen=cord
@@ -447,6 +447,15 @@
     ::
         [%reads *]
       [what+s+-.p vane+s+vane.p (spar +>.p)]
+    ::
+        [%raids *]
+      [what+s+-.p ship+?~(ship.p s+'any' (ship u.ship.p)) path+(path path.p) ~]
+    ::
+        [%press *]
+      [what+s+-.p spur+(path spur.p) ~]
+    ::
+        [%coops *]
+      [what+s+-.p ~]
     ::
         [%clay ?(%label %perms %liven) *]
       [vane+s+-.p what+s++<.p desk+(mote +>.p) ~]
