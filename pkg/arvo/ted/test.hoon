@@ -1,3 +1,4 @@
+::  Run tests at paths.
 /-  spider
 /+  strandio
 =,  strand=strand:spider
@@ -102,6 +103,8 @@
   :: if no args, test everything under /=base=/tests
   ::
   ?~  q.arg
+    ~[/(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/tests]
+  ?~  +.q.arg
     ~[/(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/tests]
   :: else cast path to ~[path] if needed
   ::

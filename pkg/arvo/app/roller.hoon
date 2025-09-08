@@ -363,7 +363,7 @@
     ++  state-0
       $:  %0
           pending=(list pend-tx)
-          sending=(tree [l1-tx-pointer send-tx])
+          sending=(tree [l1-tx-pointer old-send-tx-4])
           finding=(map keccak ?(%confirmed %failed [=time l1-tx-pointer]))
           history=(map address:ethereum (tree hist-tx))
           next-nonce=(unit @ud)

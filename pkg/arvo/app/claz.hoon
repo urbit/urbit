@@ -31,6 +31,7 @@
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
+    ?>  (team:title [our src]:bowl)
     ?.  ?=(%noun mark)  [~ this]
     ?^  in-progress
       ~&  %still-running-please-try-again-later
@@ -269,7 +270,7 @@
   |=  reg=cord
   ^-  (list [=ship rights])
   ~|  %registration-json-insane
-  =+  jon=(need (de-json:html reg))
+  =+  jon=(need (de:json:html reg))
   ~|  %registration-json-invalid
   ?>  ?=(%o -.jon)
   =.  p.jon  (~(del by p.jon) 'idCode')

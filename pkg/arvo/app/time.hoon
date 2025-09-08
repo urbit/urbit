@@ -15,6 +15,7 @@
 ++  on-load  _on-init
 ++  on-poke
   |=  [=mark =vase]
+  ?>  (team:title [our src]:bowl)
   ?+    mark  !!
       %noun  :_  this
              [%pass /(scot %da now.bowl) %arvo %b %wait `@da`+(now.bowl)]~

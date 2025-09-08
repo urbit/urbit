@@ -77,6 +77,7 @@
     ^+  on-poke:*agent:gall
     |=  [=mark =vase]
     ^-  (quip card _this)
+    ?>  (team:title [our src]:bowl)
     =^  cards  state
       ?+    mark  (on-poke:def mark vase)
           %language-server-rpc-notification

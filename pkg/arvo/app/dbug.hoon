@@ -43,7 +43,7 @@
     |=  [=mark =vase]
     ^-  (quip card _this)
     ?:  ?=(%noun mark)
-      ?>  (team:title [our src]:bowl)
+      ?>  =(our src):bowl
       =/  code  !<((unit @t) vase)
       =/  msg=tape
         ?~  code
@@ -55,6 +55,14 @@
         """
       %-  (slog leaf+msg ~)
       [~ this(passcode code)]
+    ?:  ?=(%json mark)
+      ?>  =(our src):bowl
+      =/  jon=json  !<(json vase)
+      =,  dejs:format
+      =/  cmd
+        ((of clear-eyre-cache+(ot url+so ~) ~) jon)
+      ?>  ?=(%clear-eyre-cache -.cmd)
+      [[%pass /cmd %arvo %e %set-response +.cmd ~]~ this]
     ?.  ?=(%handle-http-request mark)
       (on-poke:def mark vase)
     =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
@@ -263,11 +271,48 @@
   ::
     ::  /azimuth/status
   ::
+    ::  /ames/all.json
+    ::
+      [%ames %all ~]
+    =/  [known-chum=(list [^ship *]) alien-chum=(list [^ship *])]
+      %+  skid  ~(tap by chums:v-ames)
+      |=  [^ship kind=?(%alien %known)]
+      ?=(%known kind)
+    =/  [known-peer=(list [^ship *]) alien-peer=(list [^ship *])]
+      %+  skid  ~(tap by peers:v-ames)
+      |=  [^ship kind=?(%alien %known)]
+      ?=(%known kind)
+    %-  some
+    %-  pairs
+    :~  :-  'peers'
+        %-  pairs
+        :~  'known'^a+(turn (turn known-peer head) ship)
+            'alien'^a+(turn (turn alien-peer head) ship)
+        ==
+        :-  'chums'
+        %-  pairs
+        :~  'known'^a+(turn (turn known-chum head) ship)
+            'alien'^a+(turn (turn alien-chum head) ship)
+    ==  ==
     ::  /ames/peer.json
     ::
       [%ames %peer ~]
     =/  [known=(list [^ship *]) alien=(list [^ship *])]
       %+  skid  ~(tap by peers:v-ames)
+      |=  [^ship kind=?(%alien %known)]
+      ?=(%known kind)
+    %-  some
+    %-  pairs
+    ::NOTE  would do (cork head ship) but can't get that to compile...
+    :~  'known'^a+(turn (turn known head) ship)
+        'alien'^a+(turn (turn alien head) ship)
+    ==
+  ::
+    ::  /ames/chum.json
+    ::
+      [%ames %chum ~]
+    =/  [known=(list [^ship *]) alien=(list [^ship *])]
+      %+  skid  ~(tap by chums:v-ames)
       |=  [^ship kind=?(%alien %known)]
       ?=(%known kind)
     %-  some
@@ -285,6 +330,15 @@
     %-  some
     =,  v-ames
     (peer-to-json (peer who))
+  ::
+    ::  /ames/chum/[shipname].json
+    ::
+      [%ames %chum @ ~]
+    =/  who=^ship
+      (rash i.t.t.site fed:ag)
+    %-  some
+    =,  v-ames
+    (chum-to-json (chum who))
   ::
     ::  /behn/timers.json
     ::
@@ -314,6 +368,19 @@
     %-  pairs
     :~  'location'^s+(cat 3 (fall site '*') (spat path))
         'action'^(render-action:v-eyre action)
+    ==
+  ::
+    ::  /eyre/cache.json
+    ::
+      [%eyre %cache ~]
+    %-  some
+    :-  %a
+    %+  turn  (sort ~(tap by cache:v-eyre) aor)
+    |=  [url=@t aeon=@ud val=(unit cache-entry:eyre)]
+    %-  pairs
+    :~  'url'^s+url
+        'aeon'^(numb aeon)
+        'val'^?~(val ~ (render-cache-entry:v-eyre u.val))
     ==
   ::
     ::  /eyre/connections.json
@@ -361,16 +428,58 @@
     ::
       [%eyre %authentication ~]
     %-  some
-    :-  %a
-    %+  turn
-      %+  sort  ~(tap by sessions:auth-state:v-eyre)
-      |=  [[@uv a=session:eyre] [@uv b=session:eyre]]
-      (gth expiry-time.a expiry-time.b)
-    |=  [cookie=@uv session:eyre]
+    =/  auth  auth-state:v-eyre
     %-  pairs
-    :~  'cookie'^s+(end [3 4] (rsh [3 2] (scot %x (shax cookie))))
-        'expiry'^(time expiry-time)
-        'channels'^(numb ~(wyt in channels))
+    :~  :-  'sessions'
+        :-  %a
+        %+  turn
+          %+  sort  ~(tap by sessions.auth)
+          |=  [[@uv a=session:eyre] [@uv b=session:eyre]]
+          (gth expiry-time.a expiry-time.b)
+        |=  [cookie=@uv session:eyre]
+        %-  pairs
+        :~  'cookie'^s+(scot %uv cookie)
+            'identity'^(render-identity:v-eyre identity)
+            'expiry'^(time expiry-time)
+            'channels'^(numb ~(wyt in channels))
+        ==
+      ::
+        :-  'visitors'
+        :-  %a
+        %+  turn
+          %+  sort  ~(tap by visitors.auth)
+          |=  [[@uv a=visitor:eyre] [@uv b=visitor:eyre]]
+          ?@  +.a  &
+          ?@  +.b  |
+          (aor (scot %p ship.a) (scot %p ship.b))
+        |=  [nonce=@uv v=visitor:eyre]
+        %-  pairs
+        :+  'nonce'^s+(scot %uv nonce)
+          'duct'^?~(duct.v ~ a+(turn u.duct.v path))
+        ?@  +.v  ['sesh' s+(scot %uv sesh.v)]~
+        :~  'pend'^b+?=(^ pend.v)
+            'ship'^(ship ship.v)
+            'last'^s+last.v
+            'toke'^?~(toke.v ~ s+(scot %uv u.toke.v))
+        ==
+      ::
+        :-  'visiting'
+        :-  %a
+        %-  zing
+        %+  turn
+          %+  sort  ~(tap by visiting.auth)
+          |=  [[a=@p *] [b=@p *]]
+          (aor (scot %p a) (scot %p b))
+        |=  [who=@p q=(qeu @uv) m=(map @uv portkey)]
+        %+  turn  ~(tap by m)
+        |=  [nonce=@uv p=portkey]
+        %-  pairs
+        :+  'who'^(ship who)
+          'nonce'^s+(scot %uv nonce)
+        ?@  p  ['made' (time made.p)]~
+        :~  ['pend' b+?=(^ pend.p)]
+            ['toke' ?~(toke.p ~ s+(scot %uv u.toke.p))]
+        ==
     ==
   ::
     ::  /eyre/channels.json
@@ -383,6 +492,7 @@
     |=  [key=@t channel:eyre]
     %-  pairs
     :~  'session'^s+key
+        'identity'^(render-identity:v-eyre identity)
         'connected'^b+!-.state
         'expiry'^?-(-.state %& (time date.p.state), %| ~)
         'next-id'^(numb next-id)
@@ -500,12 +610,16 @@
 ::
 ++  v-ames
   |%
-  ++  peers
-    (scry (map ship ?(%alien %known)) %ax %$ /peers)
-  ::
+  ++  all    (scry (map ship [?(%peer %chum) ?(%alien %known)]) %ax %$ /chums/all)
+  ++  peers  (scry (map ship ?(%alien %known)) %ax %$ /peers)
+  ++  chums  (scry (map ship ?(%alien %known)) %ax %$ /chums)
   ++  peer
     |=  who=ship
-    (scry ship-state:ames %ax %$ /peers/(scot %p who))
+      (scry ship-state:ames %ax %$ /peers/(scot %p who))
+  ::
+  ++  chum
+    |=  who=ship
+    (scry chum-state:ames %ax %$ /chums/(scot %p who))
   ::
   ++  peer-to-json
     =,  ames
@@ -523,8 +637,8 @@
       %-  pairs
       :~  'messages'^(numb (lent messages))
           'packets'^(numb ~(wyt in packets))
-          'heeds'^(set-array heeds from-duct)
-          'keens'^(set-array ~(key by keens) path)
+          'keens'^(alien-listeners ~(key by keens))
+          'chums'^(alien-listeners ~(key by chums))
       ==
     ::
     ::  json for known peer is structured to closely match the peer-state type.
@@ -585,7 +699,8 @@
     ::      duct: ['/paths', ...],
     ::      message-num: 123
     ::    }, ...],
-    ::    heeds: [['/paths', ...] ...]
+    ::    closing: [bone, ..., bone],
+    ::    corked: [bone, ..., bone],
     ::    scries:
     ::    ->  { =path
     ::          keen-state: {
@@ -663,8 +778,8 @@
           |^  =/  mix=(list flow)
                 =-  (sort - dor)
                 %+  welp
-                  (turn ~(tap by snd) (tack %snd))
-                (turn ~(tap by rcv) (tack %rcv))
+                  (turn ~(tap by snd) (tack %snd closing corked))
+                (turn ~(tap by rcv) (tack %rcv closing corked))
               =/  [forward=(list flow) backward=(list flow)]
                 %+  skid  mix
                 |=  [=bone *]
@@ -676,6 +791,8 @@
           ::
           +$  flow
             $:  =bone
+                closing=?
+                corked=?
               ::
                 $=  state
                 $%  [%snd message-pump-state]
@@ -684,17 +801,17 @@
             ==
           ::
           ++  tack
-            |*  =term
+            |*  [=term closing=(set bone) corked=(set bone)]
             |*  [=bone =noun]
-            [bone [term noun]]
+            [bone (~(has in closing) bone) (~(has in corked) bone) [term noun]]
           ::
           ++  build
             |=  flow
             ^-  json
             %+  frond  -.state
             ?-  -.state
-              %snd  (snd-with-bone ossuary bone +.state)
-              %rcv  (rcv-with-bone ossuary bone +.state)
+              %snd  (snd-with-bone ossuary bone closing corked +.state)
+              %rcv  (rcv-with-bone ossuary bone closing corked +.state)
             ==
           --
         ::
@@ -707,20 +824,24 @@
               (bone-to-pairs bone ossuary)
           ==
         ::
-          'heeds'^(set-array heeds from-duct)
+          'closing'^(set-array closing numb)
+        ::
+          'corked'^(set-array corked numb)
         ::
           'scries'^(scries ~(tap by keens))
       ==
     ::
     ++  snd-with-bone
-      |=  [=ossuary =bone message-pump-state]
+      |=  [=ossuary =bone closing=? corked=? message-pump-state]
       ^-  json
       %-  pairs
-      :*  'current'^(numb current)
+      :*  'closing'^b+closing
+          'corked'^b+corked
+          'current'^(numb current)
           'next'^(numb next)
         ::
           :-  'unsent-messages'  ::  as byte sizes
-          (set-array unsent-messages (cork (cury met 3) numb))
+          (set-array unsent-messages (cork jam (cork (cury met 3) numb)))
         ::
           'unsent-fragments'^(numb (lent unsent-fragments))  ::  as lent
         ::
@@ -768,15 +889,17 @@
       ==
     ::
     ++  rcv-with-bone
-      |=  [=ossuary =bone message-sink-state]
+      |=  [=ossuary =bone closing=? corked=? message-sink-state]
       ^-  json
       %-  pairs
-      :*  'last-acked'^(numb last-acked)
+      :*  'closing'^b+closing
+          'corked'^b+corked
+          'last-acked'^(numb last-acked)
           'last-heard'^(numb last-heard)
         ::
           :-  'pending-vane-ack'
           =-  a+(turn - numb)
-          (sort (turn ~(tap in pending-vane-ack) head) dor)  ::  sort by msg #
+          (sort (turn ~(tap in pending-vane-ack) ^head) dor)  ::  sort by msg #
         ::
           :-  'live-messages'
           :-  %a
@@ -852,7 +975,7 @@
           'num-fragments'^(numb num-fragments)
           'num-received'^(numb num-received)
           'next-wake'^(maybe next-wake time)
-          'listeners'^(set-array listeners from-duct)
+          'listeners'^(set-array ~(key by listeners) from-duct)  :: XX add $ints
         ::
           ::  XX  refactor (see metric in snd-with-bone)
           :-  'metrics'
@@ -877,6 +1000,227 @@
         ==
       --
     --
+  ::
+  ++  chum-to-json
+    =,  ames
+    =,  enjs:format
+    |=  =chum-state
+    |^  ^-  json
+        %+  frond  -.chum-state
+        ?-  -.chum-state
+          %alien  (alien +.chum-state)
+          %known  (known +.chum-state)
+        ==
+    ::
+    ++  alien
+      |=  ovni-state
+      %-  pairs
+      :~  'pokes'^(numb (lent pokes))
+          'peeks'^(alien-listeners ~(key by peeks))
+          'chums'^(alien-listeners ~(key by chums))
+      ==
+    ::
+    ::  json for known peer is structured to closely match the peer-state type.
+    ::  where an index is specified, the array is generally sorted by those.
+    ::
+    ::  XX TODO
+    ::
+    ++  known
+      |=  fren-state
+      %-  pairs
+      :~  'life'^(numb life)
+          ::  TODO: needs to be updated in /pkg/interface/dbug
+          ::
+          'rift'^(numb rift)
+        ::
+          :-  'lane'
+          %+  maybe  lane
+          |=  [hop=@ =lane:pact]
+          ^-  json
+          ?@  lane  (ship `@`lane)
+          ::
+          %-  tape
+          :-  ?:(=(0 hop) 'direct' 'indirect')
+          " {(scow -.lane p.lane)}:{((d-co:co 1) q.lane)} ({(scow %ux p.lane)})"
+        ::
+          :-  'qos'
+          %-  pairs
+          :~  'kind'^s+-.qos
+              'last-contact'^(time last-contact.qos)
+          ==
+        ::
+          :-  'flows'
+          |^  =/  mix=(list flow)
+                =-  %+  sort  -
+                    |=([a=[[=bone *] *] b=[[=bone *] *]] (dor bone.a bone.b))
+                %+  turn  ~(tap by flows)
+                |=  [=side state=flow-state]
+                ^-  flow
+                [side (~(has in corked) side) state]
+              =/  [forward=(list flow) backward=(list flow)]
+                (skid mix |=([side *] =(dire %for)))
+              %-  pairs
+              :~  ['forward' a+(turn forward build)]
+                  ['backward' a+(turn backward build)]
+              ==
+          ::
+          +$  flow
+            $:  =side
+                corked=?
+                state=flow-state
+            ==
+          ::
+          ++  build
+            |=  flow
+            ^-  json
+            (flow-with-side ossuary side corked state)
+          --
+        ::
+          :-  'corked'
+          %+  set-array  corked
+          |=  side:ames
+          %-  tape
+          "{<[bone=bone dire=dire]>}"
+        ::
+          'scries'^(scries ~(tap by pit))
+      ==
+    ::
+    ++  flow-with-side
+      |=  [=ossuary =side corked=? flow-state]
+      ^-  json
+      =+  mop=((on ,@ud mesa-message) lte)
+      %-  pairs
+      :*  'closing'^b+closing
+          'corked'^b+corked
+          'line'^(numb line)
+        ::  %outgoing
+        ::
+          'next'^(numb next.snd)
+        ::
+          :-  'unsent-messages'  ::  as byte sizes
+          =|  loads-set=(set mesa-message)
+          =.  loads-set
+            ^+  loads-set
+            =;  [loads=_loads-set *]
+              loads
+            %^  (dip:mop _loads-set)  loads.snd
+              loads-set
+            |=  [loads=_loads-set seq=@ud req=mesa-message]
+            [~ | (~(put in loads) req)]
+          (set-array loads-set (cork jam (cork (cury met 3) numb)))
+        ::
+          'send-window'^(numb send-window.snd)
+          'send-window-max'^(numb send-window-max.snd)
+        ::  %incoming
+        ::
+          'last-acked'^(numb last-acked.rcv)
+          'pending-ack'^b+pending-ack.rcv
+          :-  'nax'
+          :-  %a
+          %+  turn  %+  sort  ~(tap by nax.rcv)
+                    |=  [a=[@ *] b=[@ *]]   (dor -.a -.b)
+          |=  [seq=@ud =error]
+          %-  pairs
+          :~  'seq'^(numb seq)
+              :-  'error'
+              %-  pairs
+              :~  'tag'^s+tag.error
+                  :-  'trace'
+                  %-  wall:enjs:format
+                  (turn tang.error |=(=^tank ~(ram re tank)))
+          ==  ==
+        ::
+          (side-to-pairs side ossuary)
+      ==
+    ::
+    ++  for-with-side
+      |=  [=ossuary =side corked=? flow-state]
+      ^-  json
+      =+  mop=((on ,@ud mesa-message) lte)
+      %-  pairs
+      :*  'closing'^b+closing
+          'corked'^b+corked
+          'next'^(numb next.snd)
+        ::
+          :-  'unsent-messages'  ::  as byte sizes
+          =|  loads-set=(set mesa-message)
+          :: =.  loads-set
+          ::   %^  (dip:mop (set mesa-message))  loads.snd
+          ::     loads-set
+          ::   |=  [loads=(set mesa-message) seq=@ud req=mesa-message]
+          ::   [~ | (~(put in loads) req)]
+          *json
+          :: (set-array loads-set (cork jam (cork (cury met 3) numb)))
+        ::
+          (side-to-pairs side ossuary)
+      ==
+    ::
+    ++  bak-with-side
+      |=  [=ossuary =side corked=? flow-state]
+      ^-  json
+      %-  pairs
+      :*  'closing'^b+closing
+          'corked'^b+corked
+          'last-acked'^(numb last-acked.rcv)
+          'pending-ack'^b+pending-ack.rcv
+          :: 'nax'^a+(turn (sort ~(tap by nax.rcv) dor) numb)
+          (side-to-pairs side ossuary)
+      ==
+    :: ::
+    ++  side-to-pairs
+      |=  [=side ossuary]
+      ^-  (list [@t json])
+      :~  'bone'^(numb bone.side)
+          'side'^s+dire.side
+          :-  'duct'
+          ?:  ?=(%bak dire.side)  ~
+          (from-duct (~(got by by-bone) bone.side))
+      ==
+    :: ::
+    ++  maybe
+      |*  [unit=(unit) enjs=$-(* json)]
+      ^-  json
+      ?~  unit  ~
+      (enjs u.unit)
+    ::
+    ++  set-array
+      |*  [set=(set) enjs=$-(* json)]
+      ^-  json
+      a+(turn ~(tap in set) enjs)
+    :: ::
+    ++  from-duct
+      |=  =duct
+      a+(turn duct path)
+    ::
+    ++  scries
+      |=  keens=(list [^path request-state])
+      ^-  json
+      :-  %a
+      %+  turn  keens
+      |=  [=^path req=request-state]
+      %-  pairs
+      :~  'scry-path'^(^path path)
+          'keen-state'^(parse-request req)
+      ==
+    :: ::
+    ++  parse-request
+      |=  request-state
+      |^  ^-  json
+      %-  pairs
+      :~  'payload'^(maybe pay path)
+          'listeners'^(set-array ~(key by for) from-duct)  :: XX add %ints
+          'packets'^~
+      ==
+      ::
+      ::  X TODO pact-state
+      --
+    --
+  ::
+  ++  alien-listeners
+    |=  paths=(set [path ints:ames])
+    ^-  json
+    a+(turn ~(tap in paths) |=([=path =ints:ames] (path:enjs:format path)))
+  ::
   --
 ::
 ::  behn
@@ -983,6 +1327,9 @@
   ++  bindings
     (scry ,(list [=binding =duct =action]) %e %bindings ~)
   ::
+  ++  cache
+    (scry ,(map url=@t [aeon=@ud (unit cache-entry)]) %e %cache ~)
+  ::
   ++  connections
     (scry ,(map duct outstanding-connection) %e %connections ~)
   ::
@@ -992,6 +1339,16 @@
   ++  channel-state
     (scry ^channel-state %e %channel-state ~)
   ::
+  ++  render-identity
+    |=  =identity
+    ^-  json
+    %-  ship:enjs:format
+    ?-  -.identity
+      %ours  our.bowl
+      %fake  who.identity
+      %real  who.identity
+    ==
+  ::
   ++  render-action
     |=  =action
     ^-  json
@@ -999,6 +1356,27 @@
     ?+  -.action  -.action
       %gen  :((cury cat 3) '+' (spat [desk path]:generator.action))
       %app  (cat 3 ':' app.action)
+    ==
+  ::
+  ++  render-cache-entry
+    |=  cache-entry
+    ^-  json
+    %-  pairs:enjs:format
+    :~  'auth'^b+auth
+        'payload'^(render-simple-payload simple-payload.body)
+    ==
+  ::
+  ++  render-simple-payload
+    |=  simple-payload:http
+    ^-  json
+    =,  enjs:format
+    %-  pairs
+    :~  'status'^(numb status-code.response-header)
+        'data'^?~(data ~ (numb p.u.data))
+      ::
+        :+  'headers'  %a
+        %+  turn  headers.response-header
+        |=([k=@t v=@t] (pairs 'key'^s+k 'value'^s+v ~))
     ==
   --
 ::

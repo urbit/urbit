@@ -50,6 +50,7 @@
   ^-  (quip card:agent:gall _this)
   ::
   ?:  &(?=(%noun mark) ?=(%cancel q.vase))
+    ?>  (team:title [our src]:bowl)
     ~&  %lens-cancel
     [~ this(job.state ~)]
   ::
@@ -70,7 +71,7 @@
     ^-  card:agent:gall
     [%pass /import-all %agent [our.bowl app] %poke %import !>(data)]
   =/  jon=json
-    (need (de-json:html body))
+    (need (de:json:html body))
   =/  com=command:lens
     (json:grab:lens-mark jon)
   ::

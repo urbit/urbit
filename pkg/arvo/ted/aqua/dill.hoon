@@ -14,20 +14,24 @@
   |=  [who=@p way=wire %blit blits=(list blit:dill)]
   ^-  (list card:agent:gall)
   =/  last-line
-    %+  roll  blits
-    |=  [b=blit:dill line=tape]
-    ?-    -.b
-        %put  (tape p.b)
-        %klr  (tape (zing (turn p.b tail)))
-        %nel  ~&  "{<who>}: {line}"  ""
-        %hop  line
-        %bel  line
-        %clr  ""
-        %sag  ~&  [%save-jamfile-to p.b]  line
-        %sav  ~&  [%save-file-to p.b]  line
-        %url  ~&  [%activate-url p.b]  line
-        %wyp  ""
-    ==
+    |^  (roll blits ha-blit)
+    ::
+    ++  ha-blit
+      |=  [b=blit:dill line=tape]
+      ?-    -.b
+          %put  (tape p.b)
+          %klr  (tape (zing (turn p.b tail)))
+          %mor  `tape`(roll p.b ha-blit)
+          %nel  ~&  "{<who>}: {line}"  ""
+          %hop  line
+          %bel  line
+          %clr  ""
+          %sag  ~&  [%save-jamfile-to p.b]  line
+          %sav  ~&  [%save-file-to p.b]  line
+          %url  ~&  [%activate-url p.b]  line
+          %wyp  ""
+      ==
+    --
   ~?  !=(~ last-line)  last-line
   ~
 --

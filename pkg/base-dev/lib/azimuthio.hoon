@@ -43,8 +43,8 @@
         url=url
         header-list=['Content-Type'^'application/json' ~]
         ^=  body
-        %-  some  %-  as-octt:mimes:html
-        %-  en-json:html
+        %-  some  %-  as-octs:mimes:html
+        %-  en:json:html
         (request-to-json:rpc:ethereum id req)
     ==
   ;<  ~  bind:m  (send-request:strandio request)
@@ -62,7 +62,7 @@
     ?~  full-file.client-response
       (pure:m ~)
     =/  body=@t  q.data.u.full-file.client-response
-    =/  jon=(unit json)  (de-json:html body)
+    =/  jon=(unit json)  (de:json:html body)
     ?~  jon
       (pure:m ~)
     =,  dejs-soft:format

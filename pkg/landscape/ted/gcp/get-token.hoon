@@ -110,8 +110,8 @@
       url=url
       header-list=['Content-Type'^'application/json' ~]
       ^=  body
-      %-  some  %-  as-octt:mimes:html
-      %-  en-json:html
+      %-  some  %-  as-octs:mimes:html
+      %-  en:json:html
       %:  pairs:enjs:format
         :-  'grant_type'
         s+'urn:ietf:params:oauth:grant-type:jwt-bearer'
@@ -125,7 +125,7 @@
   ?~  full-file.rep
     (strand-fail:strandio %gcp-no-response ~)
   =/  body=@t  q.data.u.full-file.rep
-  =/  jon=(unit json)  (de-json:html body)
+  =/  jon=(unit json)  (de:json:html body)
   ?~  jon
     ~|  body
     (strand-fail:strandio %gcp-bad-body ~)

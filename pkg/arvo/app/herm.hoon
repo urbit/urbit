@@ -5,7 +5,6 @@
 ::  keep relevant mark conversions in cache for performance
 ::
 /$  blit-to-json  %blit  %json
-/$  json-to-blit  %json  %blit
 /$  json-to-task  %json  %herm-task
 ::
 =,  jael
@@ -81,6 +80,7 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card:agent:gall _this)
+  ?>  (team:title [our src]:bowl)
   :_  this
   :_  ~
   ?+  mark  ~|([%unexpected-mark mark] !!)

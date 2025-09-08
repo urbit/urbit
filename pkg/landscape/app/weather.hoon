@@ -120,7 +120,7 @@
   ?~  data
     :: data is null
     [~ state]
-  =/  ujon=(unit json)  (de-json:html q.data.u.data)
+  =/  ujon=(unit json)  (de:json:html q.data.u.data)
   ?~  ujon
      [~ state]
   ?>  ?=(%o -.u.ujon)

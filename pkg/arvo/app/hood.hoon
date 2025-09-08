@@ -1,9 +1,9 @@
 /+  default-agent
-/+  drum=hood-drum, helm=hood-helm, kiln=hood-kiln
+/+  drum=hood-drum, helm=hood-helm, kiln=hood-kiln, load=hood-load
 |%
 +$  state
-  $~  [%26 *state:drum *state:helm *state:kiln]
-  $>(%26 any-state)
+  $~  [%28 *state:drum *state:helm *state:kiln]
+  $>(%28 any-state)
 ::
 +$  any-state
   $%  [ver=?(%1 %2 %3 %4 %5 %6) lac=(map @tas fin-any-state)]
@@ -27,6 +27,8 @@
       [%24 drum=state-4:drum helm=state-2:helm kiln=state-10:kiln]
       [%25 drum=state-5:drum helm=state-2:helm kiln=state-10:kiln]
       [%26 drum=state-6:drum helm=state-2:helm kiln=state-10:kiln]
+      [%27 drum=state-6:drum helm=state-2:helm kiln=state-11:kiln]
+      [%28 drum=state-6:drum helm=state-2:helm kiln=state-11:kiln]
   ==
 +$  any-state-tuple
   $:  drum=any-state:drum
@@ -70,6 +72,9 @@
   |=  =old-state=vase
   ^-  step:agent:gall
   =+  !<(old=any-state old-state-vase)
+  ?:  ?=(%27 -.old)
+    :_  this(state old(- %28))
+    (eyre-clean:load [our now]:bowl)
   =/  tup=any-state-tuple
     ?+    -.old  +.old
         ?(%1 %2 %3 %4 %5 %6)

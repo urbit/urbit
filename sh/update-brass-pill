@@ -4,4 +4,4 @@ set -xeuo pipefail
 
 cd "${0%/*}/.."
 
-cp "$(nix-build -A brass.build --no-out-link)" bin/brass.pill
+cp "$(nix build .#brass --no-link --print-out-paths)" bin/brass.pill

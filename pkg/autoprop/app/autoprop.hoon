@@ -190,9 +190,10 @@
         :+  %sag
           =/  ver=@ta
             =+  .^(vere %$ /(scot %p our.bowl)//(scot %da now.bowl)/zen/ver)
-            ?.  ?=([%vere @ ~] rev)
-              (rap 3 (join '-' rev))
-            (fall (slaw %ta i.t.rev) i.t.rev)
+            ?+  rev  (rap 3 (join '-' rev))
+              [%vere @ ~]    (fall (slaw %ta i.t.rev) i.t.rev)
+              [%vere @ @ ~]  (fall (slaw %ta i.t.t.rev) i.t.t.rev)
+            ==
           ?-  -.task
             ?(%solid %brass %ivory)  /[dap.bowl]/[ver]/[name]/pill
             %desk                    /[dap.bowl]/[ver]/[name]/jam
@@ -205,8 +206,8 @@
             %+  turn  ~(tap in etc.task)
             |=(d=desk [d (bek d)])
           ?-  -.task
-            %solid  (solid:libpill (sys base) dez | now.bowl &)
-            %brass  (brass:libpill (sys base) dez &)
+            %solid  (solid:libpill (sys base) dez | now.bowl & ~)
+            %brass  (brass:libpill (sys base) dez & ~)
           ==
         ::
             %desk

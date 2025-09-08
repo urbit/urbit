@@ -58,6 +58,7 @@
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
+    ?>  (team:title [our src]:bowl)
     ?.  ?=(%noun mark)  [~ this]
     =/  =command  !<(command vase)
     ?-  -.command

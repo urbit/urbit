@@ -385,7 +385,7 @@
 ::
 ++  scry
   ^-  roon
-  |=  [lyc=gang car=term bem=beam]
+  |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
   =*  ren  car
   =*  why=shop  &/p.bem
@@ -395,7 +395,7 @@
   ::
   ?.  ?=(%& -.why)  ~
   =*  his  p.why
-  ?:  &(?=(%x ren) =(tyl //whey))
+  ?:  &(?=(%x ren) =(tyl //whey) =([~ ~] lyc))
     =/  maz=(list mass)
       :~  nex+&+next-id.state.ax
           outbound+&+outbound-duct.state.ax

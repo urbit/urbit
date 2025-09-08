@@ -88,24 +88,22 @@
 ::
 |%
 +|  %tests
+++  time  ~1111.1.1
 ::  +test-init: test %init
 ::
 ++  test-init
   ^-  tang
   ::
-  =/  time  ~1111.1.1
   ::
   =/  call-args
     =/  =duct  ~[/init]
     =/  =task:gall  [%init ~]
     [duct task]
   ::
-  =/  expected-moves=(list move)  ~
   ::
-  =/  res
-    (gall-call nec-gall-pupal time *roof call-args expected-moves)
-  ::
-  -.res
+  =^  moves  nec-gall-pupal
+    (gall-call nec-gall-pupal time *roof call-args)
+  (expect-eq !>(moves) !>(*(list move:nec-gall-pupal)))
 ::
 ++  test-load-dudes
   ^-  tang
@@ -353,28 +351,16 @@
   %-  scry
   :+  vane  %x
   [[p=~dep q=%buster r=[%da now.dep-gall]] s=/bowl/noun]
-::
-::  +gall-call: have %gall run a +task and assert it produces expected-moves
+::  +gall-call: have %gall run a +task
 ::
 ++  gall-call
-  |=  $:  gall-gate=_nec-gall-pupal
+  |=  $:  nec=_nec-gall-pupal
           now=@da
           scry=roof
           call-args=[=duct wrapped-task=(hobo task:gall)]
-          expected-moves=(list move)
       ==
-  =/  gall-core  (gall-gate now=now eny=`@`0xdead.beef scry=scry)
-  ::
-  =/  res
-    =/  =type  -:!>(*task:gall)
-    (call:gall-core duct.call-args dud=~ wrapped-task.call-args)
-  ::
-  =/  output=tang
-    %+  expect-eq
-      !>  expected-moves
-      !>  -.res
-  ::
-  [output +.res]
+  =/  gall-core  (nec now=now eny=`@`0xdead.beef scry=scry)
+  (call:gall-core duct.call-args dud=~ wrapped-task.call-args)
 ::
 +|  %clay-utilities
 ::

@@ -5,7 +5,8 @@
 =,  format
 =*  dude  dude:gall
 |%
-+$  state     state-10
++$  state     state-11
++$  state-11  [%11 pith-11]
 +$  state-10  [%10 pith-10]
 +$  state-9   [%9 pith-9]
 +$  state-8   [%8 pith-9]
@@ -19,7 +20,8 @@
 +$  state-0   [%0 pith-0]
 +$  any-state
   $~  *state
-  $%  state-10
+  $%  state-11
+      state-10
       state-9
       state-8
       state-7
@@ -32,10 +34,32 @@
       state-0
   ==
 ::
++$  pith-11
+  $:  rem=(map desk per-desk)
+      nyz=@ud
+      zyn=(map sync-record sync-state)
+      ::  requests from publishers to switch sync source
+      hop=(map dock dock)
+      ::  toggle global update auto-merge
+      mer=?
+      ::
+      commit-timer=[way=wire nex=@da tim=@dr mon=term]
+      ::  map desk to the currently ongoing fuse request
+      ::  and the latest version numbers for beaks to
+      fus=(map desk per-fuse)
+      ::  used for fuses - every time we get a fuse we
+      ::  bump this. used when calculating hashes to
+      ::  ensure they're unique even when the same
+      ::  request is made multiple times.
+      hxs=(map desk @ud)
+  ==
+::
++$  sync-state-10  [nun=@ta kid=(unit desk) let=@ud]
+::
 +$  pith-10
   $:  rem=(map desk per-desk)
       nyz=@ud
-      zyn=(map kiln-sync sync-state)
+      zyn=(map sync-record sync-state-10)
       commit-timer=[way=wire nex=@da tim=@dr mon=term]
       ::  map desk to the currently ongoing fuse request
       ::  and the latest version numbers for beaks to
@@ -50,7 +74,7 @@
 +$  pith-9
   $:  wef=(unit weft)
       rem=(map desk per-desk)
-      syn=(map kiln-sync let=@ud)
+      syn=(map sync-record let=@ud)
       ark=(map desk arak-9)
       commit-timer=[way=wire nex=@da tim=@dr mon=term]
       ::  map desk to the currently ongoing fuse request
@@ -78,7 +102,7 @@
 +$  pith-7
   $:  wef=(unit weft)
       rem=(map desk per-desk)
-      syn=(map kiln-sync let=@ud)
+      syn=(map sync-record let=@ud)
       ark=(map desk arak-7)
       commit-timer=[way=wire nex=@da tim=@dr mon=term]
       ::  map desk to the currently ongoing fuse request
@@ -121,7 +145,7 @@
 +$  pith-6
   $:  wef=(unit weft)
       rem=(map desk per-desk)                           ::
-      syn=(map kiln-sync let=@ud)                       ::
+      syn=(map sync-record let=@ud)                       ::
       ark=(map desk arak-6)                             ::
       commit-timer=[way=wire nex=@da tim=@dr mon=term]  ::
       ::  map desk to the currently ongoing fuse request
@@ -139,7 +163,7 @@
 ::
 +$  pith-5
   $:  rem=(map desk per-desk)                           ::
-      syn=(map kiln-sync let=@ud)                       ::
+      syn=(map sync-record let=@ud)                       ::
       ark=(map desk arak-6)                             ::
       commit-timer=[way=wire nex=@da tim=@dr mon=term]  ::
       ::  map desk to the currently ongoing fuse request
@@ -154,7 +178,7 @@
 ::
 +$  pith-4                                              ::
   $:  rem=(map desk per-desk)                           ::
-      syn=(map kiln-sync let=@ud)                       ::
+      syn=(map sync-record let=@ud)                       ::
       ark=(map desk arak-4)                             ::
       commit-timer=[way=wire nex=@da tim=@dr mon=term]  ::
       ::  map desk to the currently ongoing fuse request
@@ -175,7 +199,7 @@
   ==
 +$  pith-3                                              ::
   $:  rem=(map desk per-desk)                           ::
-      syn=(map kiln-sync let=@ud)                       ::
+      syn=(map sync-record let=@ud)                       ::
       ark=(map desk arak-3)                             ::
       commit-timer=[way=wire nex=@da tim=@dr mon=term]  ::
       ::  map desk to the currently ongoing fuse request
@@ -201,7 +225,7 @@
 ::
 +$  pith-2                                              ::
   $:  rem=(map desk per-desk)                           ::
-      syn=(map kiln-sync let=@ud)                       ::
+      syn=(map sync-record let=@ud)                       ::
       ota=(unit [=ship =desk =aeon])                    ::
       commit-timer=[way=wire nex=@da tim=@dr mon=term]  ::
       fus=(map desk per-fuse)
@@ -209,13 +233,13 @@
   ==                                                    ::
 +$  pith-1                                              ::
   $:  rem=(map desk per-desk)                           ::
-      syn=(map kiln-sync let=@ud)                       ::
+      syn=(map sync-record let=@ud)                       ::
       ota=(unit [=ship =desk =aeon])                    ::
       commit-timer=[way=wire nex=@da tim=@dr mon=term]  ::
   ==                                                    ::
 +$  pith-0                                              ::
   $:  rem=(map desk per-desk)                           ::
-      syn=(map kiln-sync let=@ud)                       ::
+      syn=(map sync-record let=@ud)                       ::
       autoload-on=?                                     ::
       cur-hoon=@uvI                                     ::
       cur-arvo=@uvI                                     ::
@@ -245,16 +269,6 @@
       pot=term                                          ::
   ==
 +$  kiln-unmount  $@(term [knot path])                  ::
-+$  kiln-sync                                           ::
-  $:  syd=desk                                          ::  local desk
-      her=ship                                          ::  foreign ship
-      sud=desk                                          ::  foreign desk
-  ==
-+$  kiln-unsync                                         ::
-  $:  syd=desk                                          ::  local desk
-      her=ship                                          ::  foreign ship
-      sud=desk                                          ::  foreign desk
-  ==
 +$  kiln-merge                                          ::
   $@  ~
   $:  syd=desk                                          ::
@@ -285,7 +299,6 @@
 +$  kiln-fuse-list  (unit desk)
 --
 |=  [bowl:gall state]
-?>  =(src our)
 =|  moz=(list card:agent:gall)
 |%
 ++  kiln  .
@@ -444,7 +457,7 @@
   =^  cards-9=(list card:agent:gall)  old
     ?.  ?=(%9 -.old)
       `old
-    =/  syn=(set kiln-sync)
+    =/  syn=(set sync-record)
       %-  ~(gas in ~(key by syn.old))
       %+  murn  ~(tap by ark.old)
       |=  [=desk =arak-9]
@@ -472,8 +485,8 @@
       [%pass /kiln/load-zest %arvo %c %zest desk zest]
     ::
       %+  turn  ~(tap in syn)
-      |=  k=kiln-sync
-      [%pass /kiln/load-sync %agent [our %hood] %poke %kiln-sync !>(k)]
+      |=  r=sync-record
+      [%pass /kiln/load-sync %agent [our %hood] %poke %kiln-sync !>(r)]
     ::
       =/  ks  ~(tap in syn)
       |-  ^-  (list card:agent:gall)
@@ -487,7 +500,17 @@
       $(ks t.ks)
     ==
   ::
-  ?>  ?=(%10 -.old)
+  =?  old  ?=(%10 -.old)
+    %=  old
+      -    %11
+      |4   [hop=~ mer=& |4.old]
+      zyn  %-  ~(run by zyn.old)
+           |=  sync-state-10
+           ^-  sync-state
+           [nun kid let ~ ~ |]
+    ==
+  ::
+  ?>  ?=(%11 -.old)
   =.  state  old
   abet:(emil cards-9)
 ::
@@ -503,18 +526,31 @@
     =/  ver  (mergebase-hashes our %base now (~(got by sources) %base))
     ``noun+!>(?~(ver 0v0 i.ver))
   ::
-      [%x %kiln %syncs ~]  ``noun+!>(zyn)
-      [%x %kiln %sources ~]  ``noun+!>(sources)
+      [%x %kiln %jumps ~]      ``kiln-jump+!>([%all hop])
+      [%x %kiln %syncs ~]      ``noun+!>(zyn)
+      [%x %kiln %sources ~]    ``noun+!>(sources)
+      [%x %kiln %automerge ~]  ``loob+!>(mer)
       [%x %kiln %pikes ~]
     =+  .^(=rock:tire %cx /(scot %p our)//(scot %da now)/tire)
     :^  ~  ~  %kiln-pikes
     !>  ^-  pikes
-    %-  ~(rut by rock)
+    %-  ~(urn by rock)
     |=  [=desk =belt:tire]
     ^-  pike
     =+  .^(hash=@uv %cz /(scot %p our)/[desk]/(scot %da now))
     =/  sync  (~(get by sources) desk)
     [sync hash belt]
+  ::
+      [%x %kiln %pending ~]
+    :^  ~  ~  %kiln-sync-update
+    !>  ^-  sync-update
+    :-  %pending
+    %-  ~(gas by *(set [sync-record @ud]))
+    ^-  (list [sync-record @ud])
+    %+  murn  ~(tap by zyn)
+    |=  [sync-record sync-state]
+    ?~  hav  ~
+    (some [syd her sud] u.hav)
   ==
 ::
 ::  +get-germ: select merge strategy into local desk
@@ -532,12 +568,15 @@
 ::
 ++  poke
   |=  [=mark =vase]
+  ?>  |(=(src our) =(%kiln-jump-ask mark))
   ?+  mark  ~|([%poke-kiln-bad-mark mark] !!)
+    %kiln-approve-merge      =;(f (f !<(_+<.f vase)) poke-approve-merge)
     %kiln-autocommit         =;(f (f !<(_+<.f vase)) poke-autocommit)
     %kiln-bump               =;(f (f !<(_+<.f vase)) poke-bump)
     %kiln-cancel             =;(f (f !<(_+<.f vase)) poke-cancel)
     %kiln-cancel-autocommit  =;(f (f !<(_+<.f vase)) poke-cancel-autocommit)
     %kiln-commit             =;(f (f !<(_+<.f vase)) poke-commit)
+    %kiln-sync-automerge     =;(f (f !<(_+<.f vase)) poke-sync-automerge)
     %kiln-fuse               =;(f (f !<(_+<.f vase)) poke-fuse)
     %kiln-fuse-list          =;(f (f !<(_+<.f vase)) poke-fuse-list)
     %kiln-gall-sear          =;(f (f !<(_+<.f vase)) poke-gall-sear)
@@ -547,12 +586,16 @@
     %kiln-label              =;(f (f !<(_+<.f vase)) poke-label)
     %kiln-merge              =;(f (f !<(_+<.f vase)) poke-merge)
     %kiln-mount              =;(f (f !<(_+<.f vase)) poke-mount)
+    %kiln-jump-ask           =;(f (f !<(_+<.f vase)) poke-jump-ask)
+    %kiln-jump-opt           =;(f (f !<(_+<.f vase)) poke-jump-opt)
+    %kiln-jump-propose       =;(f (f !<(_+<.f vase)) poke-jump-propose)
     %kiln-nuke               =;(f (f !<(_+<.f vase)) poke-nuke)
     %kiln-pause              =;(f (f !<(_+<.f vase)) poke-pause)
     %kiln-permission         =;(f (f !<(_+<.f vase)) poke-permission)
     %kiln-revive             =;(f (f !<(_+<.f vase)) poke-revive)
     %kiln-rein               =;(f (f !<(_+<.f vase)) poke-rein)
     %kiln-rm                 =;(f (f !<(_+<.f vase)) poke-rm)
+    %kiln-global-automerge   =;(f (f !<(_+<.f vase)) poke-global-automerge)
     %kiln-schedule           =;(f (f !<(_+<.f vase)) poke-schedule)
     %kiln-suspend            =;(f (f !<(_+<.f vase)) poke-suspend)
     %kiln-suspend-many       =;(f (f !<(_+<.f vase)) poke-suspend-many)
@@ -561,7 +604,21 @@
     %kiln-uninstall          =;(f (f !<(_+<.f vase)) poke-uninstall)
     %kiln-unmount            =;(f (f !<(_+<.f vase)) poke-unmount)
     %kiln-unsync             =;(f (f !<(_+<.f vase)) poke-unsync)
+    %kiln-essential-desk     =;(f (f !<(_+<.f vase)) poke-essential-desk)
   ==
+::
+++  poke-approve-merge
+  |=  [sync-record approve=?]
+  ?~  got=(~(get by zyn) syd her sud)
+    =+  msg="kiln: no syncs from {(scow %p her)}/{(trip sud)} to {<syd>}"
+    ((slog leaf+msg ~) abet)
+  ?~  hav.u.got
+    =+  msg="kiln: no updates from {(scow %p her)}/{(trip sud)} for {<syd>}"
+    ((slog leaf+msg ~) abet)
+  =<  abet
+  ?.  approve
+    abet:drop:(sync syd her sud)
+  abet:(merg /main syd):(sync syd her sud)
 ::
 ++  poke-autocommit
   |=  [mon=kiln-commit auto=?]
@@ -683,6 +740,23 @@
   |=  =ship
   abet:(emit %pass /kiln %arvo %g %sear ship)
 ::
+++  poke-global-automerge
+  |=  auto=?
+  =.  mer  auto
+  ?.  mer  abet
+  =/  zyns=(list [sync-record sync-state])  ~(tap by zyn)
+  =<  abet
+  |-
+  ?~  zyns  ..abet
+  ?.  ?&  ?=(^ hav.i.zyns)
+          !?=([~ %.n] nit.i.zyns)
+      ==
+    $(zyns t.zyns)
+  %=  $
+    zyns    t.zyns
+    ..abet  abet:(merg /main syd):(sync -.i.zyns)
+  ==
+::
 ++  poke-info
   |=  [mez=tape tor=(unit toro)]
   ?~  tor
@@ -696,10 +770,13 @@
     ?~  got=(~(get by rock) loc)
       %dead
     zest.u.got
-  =.  zyn
+  =.  ..abet
     ?~  got=(~(get by sources) loc)
-      zyn
-    (~(del by zyn) loc u.got)
+      ..abet
+    ?:  =([her rem] u.got)
+      ..abet
+    =.  ..abet  abet:drop:(sync loc u.got)
+    ..abet(zyn (~(del by zyn) loc u.got))
   =?  ..abet  ?=(%dead zest)
     ::  we want to set the desk to %live, but this may not succeed right away.
     ::  setting the desk to %held makes clay set it to %live as soon as it can,
@@ -710,7 +787,7 @@
     abet:(spam (render "already syncing" loc her rem ~) ~)
   ?:  =([our loc] [her rem])
     abet
-  =/  sun  (sync loc her rem)
+  =/  sun  okay:(sync loc her rem)
   ~>  %slog.(fmt "beginning install into {here:sun}")
   =<  abet:abet:init
   ?:  =(%base loc)
@@ -718,7 +795,7 @@
   sun
 ::
 ++  poke-kids
-  |=  [hos=kiln-sync nex=(unit desk)]
+  |=  [hos=sync-record nex=(unit desk)]
   abet:abet:(apex:(sync hos) nex)
 ::
 ++  poke-label
@@ -738,6 +815,84 @@
     =+  "can't mount bad path: {<pax>}"
     abet:(spam leaf+- ~)
   abet:(emit %pass /mount %arvo %c [%mont pot u.bem])
+::
+++  poke-jump-propose
+  |=  [syd=desk her=ship sud=desk]
+  ?:  =([our syd] [her sud])
+    abet
+  =/  let=@ud  ud:.^(cass:clay %cw /(scot %p our)/[syd]/(scot %da now))
+  =/  subs=(set [@p rave:clay])
+    .^((set [@p rave:clay]) %cx /(scot %p our)//(scot %da now)/cult/[syd])
+  =/  ships=(set @p)
+    %+  roll  ~(tap in subs)
+    |=  [[=ship =rave:clay] ships=(set @p)]
+    ?:  =(our ship)                    ships
+    ?.  ?=([%sing %w [%ud @] ~] rave)  ships
+    ?.  =(+(let) p.case.mood.rave)     ships
+    (~(put in ships) ship)
+  =<  abet
+  %-  emil
+  %+  turn  ~(tap in ships)
+  |=  =ship
+  :*  %pass  /kiln/jump-propose  %agent  [ship %hood]
+      %poke  %kiln-jump-ask  !>([[our syd] [her sud]])
+  ==
+::
+++  poke-jump-ask
+  |=  [old=dock new=dock]
+  ?>  |(=(src p.old) =(src our))
+  ?:  =(old new)
+    ?~  had=(~(get by hop) old)
+      abet
+    =.  hop  (~(del by hop) old)
+    abet:(emit %give %fact ~[/jumps] %kiln-jump !>([%nay old u.had]))
+  ?~  (skim ~(tap by sources) |=(sync-record =(old [her sud])))
+    ~>  %slog.(fmt "no syncs from {(scow %p p.old)}/{(trip q.old)}")
+    abet
+  =.  hop  (~(put by hop) old new)
+  abet:(emit %give %fact ~[/jumps] %kiln-jump !>([%add old new]))
+::
+++  poke-jump-opt
+  |=  [old=dock new=dock yea=?]
+  ?~  got=(~(get by hop) old)
+    ~>  %slog.(fmt "no jump request for {(scow %p p.old)}/{(trip q.old)}")
+    abet
+  ?.  =(new u.got)
+    =/  txt-old  "{(scow %p p.old)}/{(trip q.old)}"
+    =/  txt-new  "{(scow %p p.new)}/{(trip q.new)}"
+    ~>  %slog.(fmt "no jump request from {txt-old} to {txt-new}")
+    abet
+  ?.  yea
+    =/  txt-old  "{(scow %p p.old)}/{(trip q.old)}"
+    =/  txt-new  "{(scow %p p.new)}/{(trip q.new)}"
+    ~>  %slog.(fmt "denied jump from {txt-old} to {txt-new}")
+    =.  hop  (~(del by hop) old)
+    abet:(emit %give %fact ~[/jumps] %kiln-jump !>([%nay old new]))
+  =/  old-sources=(list sync-record)
+    (skim ~(tap by sources) |=(sync-record =(old [her sud])))
+  =/  new-sources=(list sync-record)
+    (turn old-sources |=(sync-record [syd new]))
+  =.  ..abet
+    (emit %give %fact ~[/jumps] %kiln-jump !>([%yea old new]))
+  =.  ..abet
+    |-
+    ?~  old-sources
+      ..abet
+    =.  ..abet  abet:drop:(sync i.old-sources)
+    =.  zyn  (~(del by zyn) i.old-sources)
+    $(old-sources t.old-sources, ..abet ..abet)
+  =.  hop  (~(del by hop) old)
+  =<  abet
+  |-  ^+  ..abet
+  ?~  new-sources  ..abet
+  %=  $
+    new-sources  t.new-sources
+    ..abet       =/  sun  (sync i.new-sources)
+                 =<  abet:init
+                 ?:  =(%base syd.i.new-sources)
+                   (apex:sun `%kids)
+                 sun
+  ==
 ::
 ++  poke-nuke
   |=  [=term desk=?]
@@ -778,7 +933,7 @@
       (clap a b furl)
   |-  ^-  (list (unit toro))
   =+  b=.^(arch %cy a)
-  ?:  ?=([^ ~] b)  (snoc c `(fray a))  
+  ?:  ?=([^ ~] b)  (snoc c `(fray a))
   =?  c  ?=(^ fil.b)  (snoc c `(fray a))
   %-  zing
   %+  turn  ~(tap by dir.b)
@@ -803,17 +958,34 @@
   %+  turn
     %+  skim  desks
     |=  dek=desk
-    ?:  (~(has in .^((set desk) %cd /(scot %p our)/base/(scot %da now))) dek)
-      &  
-    ~>  %slog.(fmt "desk does not yet exist: {<dek>}")  |   
+    ?:  (~(has in .^((set desk) %cd /(scot %p our)//(scot %da now))) dek)
+      &
+    ~>  %slog.(fmt "desk does not yet exist: {<dek>}")  |
   |=(=desk [%pass /kiln/suspend %arvo %c %zest desk %dead])
 ::
 ++  poke-sync
-  |=  hos=kiln-sync
-  ?:  (~(has by zyn) hos)
-    abet:(spam (render "already syncing" [sud her syd ~]:hos) ~)
-  ~>  %slog.(fmt "beginning sync into {<syd.hos>} from {<her.hos>}/{<sud.hos>}")
-  abet:abet:init:(sync hos)
+  |=  sync-record
+  ?:  (~(has by zyn) sud her syd)
+    abet:(spam (render "already syncing" [sud her syd ~]) ~)
+  =.  ..abet
+    ?~  got=(~(get by sources) syd)
+      ..abet
+    =.  ..abet  abet:drop:(sync syd u.got)
+    ..abet(zyn (~(del by zyn) syd u.got))
+  ~>  %slog.(fmt "beginning sync into {<syd>} from {<her>}/{<sud>}")
+  abet:abet:init:(sync syd her sud)
+::
+++  poke-sync-automerge
+  |=  [sync-record auto=(unit ?)]
+  ?~  got=(~(get by zyn) syd her sud)
+    =+  msg="kiln: no syncs from {(scow %p her)}/{(trip sud)} to {<syd>}"
+    ((slog leaf+msg ~) abet)
+  =.  zyn  (~(put by zyn) [syd her sud] u.got(nit auto))
+  ?~  hav.u.got
+    abet
+  ?.  |(?=([~ %.y] auto) &(mer ?=(~ auto)))
+    abet
+  abet:abet:(merg /main syd):(sync [syd her sud])
 ::
 ++  poke-syncs                                        ::  print sync config
   |=  ~
@@ -821,7 +993,7 @@
   ?:  =(0 ~(wyt by zyn))
     [%leaf "no syncs configured"]~
   %+  turn  ~(tap by zyn)
-  |=  [kiln-sync sync-state]
+  |=  [sync-record sync-state]
   (render "sync configured" sud her syd kid)
 ::
 ++  poke-uninstall
@@ -829,10 +1001,9 @@
   =+  .^(=rock:tire %cx /(scot %p our)//(scot %da now)/tire)
   ?~  got=(~(get by rock) loc)
     abet:(spam leaf+"desk does not exist: {<loc>}" ~)
-  ?:  =(+<:got %dead)
-    abet:(spam leaf+"desk not installed: {<loc>}" ~)
   ~>  %slog.(fmt "uninstalling {<loc>}")
-  =.  ..on-init  (emit %pass /kiln/uninstall %arvo %c %zest loc %dead)
+  =?  ..on-init  !=(+<:got %dead)
+    (emit %pass /kiln/uninstall %arvo %c %zest loc %dead)
   ?~  sync=(~(get by sources) loc)
     abet
   (poke-unsync loc u.sync)
@@ -850,20 +1021,41 @@
 ::  Don't need to cancel anything because new syncs will get a new nonce
 ::
 ++  poke-unsync
-  |=  hus=kiln-unsync
+  |=  hus=sync-record
   ?~  got=(~(get by zyn) hus)
     abet:(spam (render "not syncing" [sud her syd ~]:hus) ~)
+  =.  ..abet  abet:drop:(sync hus)
   =.  zyn  (~(del by zyn) hus)
   abet:(spam (render "cancelling sync" sud.hus her.hus syd.hus kid.u.got) ~)
+::
+++  poke-essential-desk
+  |=  [=desk ese=?]
+  abet:(emit %pass /kiln/essential-desk %arvo %c %esse desk ese)
 ::  +peer: handle %watch
 ::
 ++  peer
   |=  =path
   ?>  (team:title our src)
-  ?:  =(0 1)  abet  ::  avoid mint-vain
   ?+    path  ~|(kiln-path/path !!)
       [%vats ~]
     (mean leaf+"kiln: old subscription to /kiln/vats failed" ~)
+  ::
+      [%jumps ~]
+    abet:(emit %give %fact ~ %kiln-jump !>([%all hop]))
+  ::
+      [%updates ~]
+    =<  abet
+    %-  emit
+    :^  %give  %fact  ~
+    :-  %kiln-sync-update
+    !>  ^-  sync-update
+    :-  %pending
+    %-  ~(gas by *(set [sync-record @ud]))
+    ^-  (list [sync-record @ud])
+    %+  murn  ~(tap by zyn)
+    |=  [sync-record sync-state]
+    ?~  hav  ~
+    (some [syd her sud] u.hav)
   ==
 ::
 ++  take-agent
@@ -873,6 +1065,8 @@
           ~?  ?=(^ p.sign)  [%kiln-poke-nack u.p.sign]
           abet
         ~|([%kiln-bad-take-agent wire -.sign] !!)
+  ::
+      [%change-publisher ~]  abet
   ::
       [%fancy *]
     ?>  ?=(%poke-ack -.sign)
@@ -1087,15 +1281,30 @@
   abet:abet:(take:(sync syd her sud) t.t.t.wire sign-arvo)
 ::
 ++  sync
-  |=  kiln-sync
+  |=  sync-record
   =/  got  (~(get by zyn) syd her sud)
-  =+  `sync-state`(fall got [(scot %uv nyz) ~ *@ud])
+  =+  `sync-state`(fall got [(scot %uv nyz) ~ *@ud ~ ~ |])
   =?  nyz  ?=(~ got)  +(nyz)
   |%
-  ++  abet  ..sync(zyn (~(put by zyn) [syd her sud] nun kid let))
+  ++  abet  ..sync(zyn (~(put by zyn) [syd her sud] nun kid let nit hav yea))
   ++  apex  |=(nex=(unit desk) ..abet(kid nex))
   ++  emit  |=(card:agent:gall ..abet(kiln (^emit +<)))
   ++  emil  |=((list card:agent:gall) ..abet(kiln (^emil +<)))
+  ++  okay  ..abet(yea &)
+  ++  gain
+    =.  hav  `(dec let)
+    =/  upd=sync-update  [%new [syd her sud] (dec let)]
+    (emit %give %fact ~[/update] %kiln-sync-update !>(upd))
+  ++  drop
+    =?  ..abet  ?=(^ hav)
+      =/  upd=sync-update  [%drop [syd her sud] u.hav]
+      (emit %give %fact ~[/updates] %kiln-sync-update !>(upd))
+    ..abet(hav ~, yea |)
+  ++  tada
+    =?  ..abet  ?=(^ hav)
+      =/  upd=sync-update  [%done [syd her sud] u.hav]
+      (emit %give %fact ~[/updates] %kiln-sync-update !>(upd))
+    ..abet(hav ~, yea |)
   ++  here  "{<syd>} from {<her>}/{<sud>}"
   ++  ware
     |=  =wire
@@ -1110,7 +1319,6 @@
       %merg  desk  her  sud
       ud+(dec let)  (get-germ desk)
     ==
-  ::
   ::  (re)Start a sync from scratch by finding what version the source
   ::  desk is at
   ::
@@ -1136,6 +1344,12 @@
     =/  m  (strand:rand ,vase)
     ;<  =riot:clay  bind:m  (warp:strandio her sud ~ %sing %w ud+let /)
     ?>  ?=(^ riot)
+    ::  The syncs may have changed, so get the latest
+    ::
+    ;<  zyx=(map sync-record sync-state)  bind:m
+      (scry:strandio (map sync-record sync-state) /gx/hood/kiln/syncs/noun)
+    ?.  (~(has by zyx) syd her sud)
+      (pure:m !>(%done))
     ~>  %slog.(fmt "downloading update for {here}")
     ;<  =riot:clay  bind:m  (warp:strandio her sud ~ %sing %v ud+let /)
     ?>  ?=(^ riot)
@@ -1178,6 +1392,7 @@
       ?:  ?=(%| -.p.sign-arvo)
         ::  ~>  %slog.(fmt "download failed into {here}; retrying sync")
         ::  %-  (slog p.p.sign-arvo)
+        =.  ..abet  drop
         init
       ::
       ~>  %slog.(fmt "finished downloading update for {here}")
@@ -1185,7 +1400,7 @@
       ::  If nothing changed, just ensure %kids is up-to-date and advance
       ::
       ?.  (get-remote-diff our syd now [her sud (dec let)])
-        =<  next
+        =<  next:drop
         ?~  kid
           ~>  %slog.(fmt "remote is identical to {here}, skipping")
           ..abet
@@ -1194,15 +1409,22 @@
           ..abet
         ~>  %slog.(fmt "remote is identical to {here}, merging into {<u.kid>}")
         (merg /kids u.kid)
+      ::  wait for approval if can't automerge & signal available update
+      ::
+      ?.  |(=(our her) yea =([~ &] nit) &(=(~ nit) mer))
+        =.  ..abet  gain
+        next
       ::  Else start merging, but also immediately start listening to
       ::  the next revision.  Now, all errors should no-op -- we're
       ::  already waiting for the next revision.
       ::
+      =.  yea  |
       =.  ..abet  (merg /main syd)
       next
     ::
         %main
       ?>  ?=(%mere +<.sign-arvo)
+      =<  tada
       ?:  ?=(%| -.p.sign-arvo)
         =+  "kiln: merge into {here} failed, waiting for next revision"
         %-  (slog leaf/- p.p.sign-arvo)
