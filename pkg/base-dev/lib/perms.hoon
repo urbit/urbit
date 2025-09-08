@@ -199,6 +199,9 @@
           [%watch * @tas *]     (from-name dude.perm)
           [%reads %g * ~ *]     %any
           [%reads %g * ^ *]     (from-name u.desk.perm)
+          [%raids *]            %sys
+          [%press *]            %sys
+          [%coops *]            %sys
         ::
           [%clay %write ~ *]    %any
           [%clay %write ^ *]    (from-desk u.desk.perm)
@@ -271,6 +274,8 @@
         [%write *]        (with-network jump.perm %write %app ~)
         [%watch *]        (with-network jump.perm %read %app ~)
         [%press *]        ~[%app %remote]
+        [%raids *]        ~[%app %remote]
+        [%coops *]        ~[%app %remote]
       ::
         [%ames %debug ~]  ~[%local %kernel]
         [%ames %block ~]  ~[%remote %kernel]
@@ -325,6 +330,8 @@
       [%write * ~]       'interact with all your apps'
       [%write * *]       (with-dude | 'interact with ' dude.perm)
       [%press *]         'publish and manage data'
+      [%coops *]         'manage security for published data'
+      [%raids *]         'read data from other urbits'
     ::
       [%ames %debug ~]  'control networking logging levels'
       [%ames %block ~]  'manage the networking blocklist'
@@ -372,6 +379,8 @@
       [%write * ~]      'interact with all your apps'
       [%write * @]      (with-dude & 'interact with ' dude.perm)
       [%press *]        'publish and manage data'
+      [%coops *]        'manage security for published data'
+      [%raids *]        'read data from other urbits'
     ::
         [%watch *]
       %+  rap  3

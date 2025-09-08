@@ -3947,7 +3947,9 @@
     $%  [%write jump=? dude=?(~ dude)]                  ::  poke
         [%watch jump=? dude=?(~ dude) =path]            ::  subscribe
         [%reads vane=term spar]                         ::  scry
-        [%press =spur]                                  ::  %grow %tomb %cull
+        [%raids ship=(unit ship) =path]                 ::  do remote scry
+        [%press =spur]                                  ::  edit remote scry
+        [%coops ~]                                      ::  security context
     ==
   ::
   +$  perm-arvo
@@ -4066,6 +4068,19 @@
       |=  p=perm
       ?&  ?=([%press *] p)
           |(=(/ spur.p) =(`0 (find spur.p spur.mus)))  ::TODO  find-at-head
+      ==
+    ::
+        [%coops *]
+      %+  lien  ~(tap in pes)
+      |=  p=perm
+      ?=([%coops *] p)
+    ::
+        [%raids *]
+      %+  lien  ~(tap in pes)
+      |=  p=perm
+      ?&  ?=([%raids *] p)
+          |(?=(~ ship.p) =(ship.mus ship.p))
+          |(=(/ path.p) =(`0 (find path.p path.mus)))  ::TODO  find-at-head
       ==
     ::
         [%reads *]
@@ -4214,11 +4229,12 @@
         %poke-as   [%write jump name.note]
         %leave     &
       ==
-    ?:  ?=(%grow -.note)
-      [%press spur.note]
-    ?:  ?=(?(%tomb %cull) -.note)
-      [%press spur.note]
-    ::
+    ?:  ?=(%grow -.note)           [%press spur.note]
+    ?:  ?=(?(%tomb %cull) -.note)  [%press spur.note]
+    ?:  ?=(%tend -.note)           [%press path.note]
+    ?:  ?=(?(%germ %snip) -.note)  [%coops ~]
+    ?:  ?=(%keen -.note)           [%raids `ship.note path.note]
+    ::  %arvo
     ?-  +<.note
         %a
       ?+  +>-.note  |
