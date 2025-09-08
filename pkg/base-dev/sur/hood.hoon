@@ -448,6 +448,15 @@
         [%reads *]
       [what+s+-.p vane+s+vane.p (spar +>.p)]
     ::
+        [%raids *]
+      [what+s+-.p ship+?~(ship.p s+'any' (ship u.ship.p)) path+(path path.p) ~]
+    ::
+        [%press *]
+      [what+s+-.p spur+(path spur.p) ~]
+    ::
+        [%coops *]
+      [what+s+-.p ~]
+    ::
         [%clay ?(%label %perms %liven) *]
       [vane+s+-.p what+s++<.p desk+(mote +>.p) ~]
     ::
