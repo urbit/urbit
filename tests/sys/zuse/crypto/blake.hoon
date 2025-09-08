@@ -1,7 +1,8 @@
-::  tests for the blake2b hashing algorithm
+::  tests for the blake2b and blake3 hashing algorithms
 ::
 ::  test vectors from here:
 ::  https://github.com/emilbayes/blake2b/blob/master/test-vectors.json
+::  https://github.com/BLAKE3-team/BLAKE3/blob/master/test_vectors/test_vectors.json
 ::
 /+  *test
 =,  blake:crypto
@@ -89,5 +90,79 @@
     0x1427.09d6.2e28.fccc.d0af.97fa.d0f8.465b.971e.8220.1dc5.
       1070.faa0.372a.a43e.9248.4be1.c1e7.3ba1.0906.d5d1.853d.
       b6a4.106e.0a7b.f980.0d37.3d6d.ee2d.46d6.2ef2.a461
+  ==
+::
+++  do-blake3-test-vectors
+  |=  ves=(list [out=@ msglen=@ud res=@ keyres=@])
+  ^-  tang
+  ?~  ves  ~
+  =-  (weld - $(ves t.ves))
+  =,  i.ves
+  =/  msg  (blake3-test-msg msglen)
+  =/  keyed  (keyed:blake3 32^'whats the Elvish word for friend')
+  ;:  weld
+    %+  expect-eq
+      !>  `@ux`res
+      !>  `@ux`(blake3 out msg)
+    %+  expect-eq
+      !>  `@ux`keyres
+      !>  `@ux`(keyed out msg)
+  ==
+::
+++  blake3-test-msg
+  |=  len=@
+  =/  iota  ?:(=(0 len) ~ (gulf 0 (dec len)))
+  len^(rep 3 (turn iota (curr mod 251)))
+::
+++  test-blake3
+  ::
+  %-  do-blake3-test-vectors
+  :~
+    :^    32
+        0
+      0x6232.1fe4.ca93.9acc.b712.c1ad.c925.cb9b.
+        49c9.dc36.ea4d.40a0.a6a1.f9f5.b949.13af
+    0x260d.d64e.8a49.f183.e773.95f0.a30e.ad27.
+      928a.2c39.626f.9d1f.763c.ed04.56b7.b292
+  ::
+    :^    128
+        0
+      0x2154.1663.531c.a399.3676.4e31.8282.07f1.
+        fdde.f296.ca77.f231.2640.9b15.2ec2.0170.
+        dadb.fff9.76f4.91cf.5904.a824.3039.e792.
+        2bc5.e0f9.9ec9.e6af.60f6.e889.7748.f526.
+        3a24.086c.208b.a99c.86cc.b885.e0df.8d33.
+        5030.33cd.9ff0.aa7f.6bf2.9ab6.e703.0fe0.
+        6232.1fe4.ca93.9acc.b712.c1ad.c925.cb9b.
+        49c9.dc36.ea4d.40a0.a6a1.f9f5.b949.13af
+    0xe871.c354.4269.1092.2a69.aac4.2a3b.ca60.
+      e50d.1953.262c.e2bb.eae1.6b85.6089.e58b.
+      75a9.4411.d4c1.18dc.c793.425e.e445.df72.
+      43f5.88f7.7e8c.9459.5e7d.797b.f9cb.733b.
+      7d62.8733.e1ec.205c.94d2.e4ba.c418.49a2.
+      db53.7110.1f70.2c82.944b.2af2.a271.81b1.
+      260d.d64e.8a49.f183.e773.95f0.a30e.ad27.
+      928a.2c39.626f.9d1f.763c.ed04.56b7.b292
+  ::
+    :^    32
+        1
+      0x13e2.92f5.d025.0251.c1b5.274d.a787.cd6d.
+        7336.a0af.356e.884c.f161.1bf1.dfde.3a2d
+    0x5bc9.808a.2238.abc1.4bd3.a2a3.c0b8.5414.
+      4fe1.8a27.1390.d335.5648.2fff.df78.786d
+  ::
+    :^    32
+        1.024
+      0xf75a.851c.125d.9b18.55aa.0dc1.31f8.0dc0.
+        4a74.89b8.de83.fcf3.06a4.95f0.3947.2142
+    0xa47b.9c71.317c.6803.5067.1e6f.5405.216c.
+      2e73.db80.e4ae.ca5e.f5b4.9e3d.6f6f.c475
+  ::
+    :^    32
+        31.744
+      0x475c.8994.cedc.6c4c.fbc4.abe7.328f.b7b4.
+        b635.628d.1a61.1aeb.c1bc.441a.0e96.b662
+    0x19a4.3999.bf4c.e62e.3042.9dac.e499.ab53.
+      730f.8d89.4d62.ba3d.597c.b69a.383b.a5ef
   ==
 --

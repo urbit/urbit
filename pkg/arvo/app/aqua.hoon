@@ -80,11 +80,12 @@
   ::
   ++  on-poke
     |=  [=mark =vase]
+    ?>  (team:title [our src]:bowl)
     ^-  step:agent:gall
     =^  cards  state
       ?+  mark  ~|([%aqua-bad-mark mark] !!)
           %aqua-events     (poke-aqua-events:ac !<((list aqua-event) vase))
-          %pill       (poke-pill:ac !<(pill vase))
+          %pill            (poke-pill:ac !<(pill vase))
           %noun            (poke-noun:ac !<(* vase))
           %azimuth-action  (poke-azimuth-action:ac !<(azimuth-action vase))
       ==
@@ -615,7 +616,7 @@
           ::
             ?:  fake.ae  ~
             =+  [%raw-poke %noun %refresh-rate ~s30]
-            [/g/aqua/reduce-refresh-rate %deal [. .]:who.ae %azimuth -]~
+            [/g/aqua/reduce-refresh-rate %deal [. . /]:who.ae %azimuth -]~
         ==
       ==
     =.  this
@@ -662,34 +663,55 @@
     (pe ~bud)  ::  XX why ~bud?  need an example
   ::
       %read
-    ?~  pier=(~(get by ships.piers) from.ae)
-      (pe from.ae)
+    ?~  pier=(~(get by ships.piers) ship.from.ae)
+      (pe ship.from.ae)
     =/  cash  (~(get by namespace.u.pier) path.ae)
     |-
     ?^  cash
       ?:  (gth num.ae (lent u.cash))
-        (pe from.ae)
+        (pe ship.from.ae)
       ::TODO  depends on /ted/aqua/ames behavior in a weird indirect way
-      =/  for=@p  `@`(tail for.ae)  ::NOTE  moons & comets not supported
-      =;  task=task-arvo
-        ^$(ae [%event for /a/aqua/fine-response task], thus this)
-      :+  %hear  `lane:ames`[%| `@`from.ae]
+      =/  for=@p  `@`(tail lane.for.ae)  ::NOTE  moons & comets not supported
+      %-  push-events:(pe for)
+      %-  flop  =<  events
+      %+  roll  u.cash
+      |=  [=yowl:ames i=@ud events=(list unix-event)]
+      :-  +(i)
+      :_  events
+      :-  /a/aqua/fine-response/[(scot %ud i)]
+      ^-  task-arvo
+      :+  %hear  `lane:ames`[%| `@`ship.from.ae]
       ^-  blob:ames
-      =/  =shot:ames
-        ::NOTE  dec is important! so dumb!!
-        (sift-shot:ames `@`(snag (dec num.ae) u.cash))
-      ::TODO  runtime needs to update rcvr field also
-      ::NOTE  rcvr life is allowed to be wrong
-      (etch-shot:ames shot(sndr from.ae, rcvr for))
+      %-  etch-shot:ames
+      :*  [sndr=ship.from.ae rcvr=for]
+          req=|  sam=|
+          sndr-tick=life.from.ae
+          rcvr-tick=life.for.ae
+          origin=~
+          content=`@ux`yowl
+      ==
+    ::
     =/  pacs=(unit (list yowl:ames))
+      =/  =path  [%fine %hunk (scot %ud num.ae) '512' path.ae]
       %+  biff
-        (peek-once:(pe from.ae) %ax %$ [%fine %message path.ae])
+        (peek-once:(pe ship.from.ae) %ax %$ path)
       (soft (list yowl:ames))
-    ?~  pacs  (pe from.ae)
+    ?~  pacs  (pe ship.from.ae)
+    =.  u.pacs
+      ::  add request to each response packet payload
+      ::
+      =+  pat=(spat path.ae)
+      =+  wid=(met 3 pat)
+      %-  flop  =<  blobs
+      %+  roll  u.pacs
+      |=  [=yowl:ames num=_1 blobs=(list @ux)]
+      :-  +(num)
+      :_  blobs
+      (can 3 4^num 2^wid wid^`@`pat (met 3 yowl)^yowl ~)
     =.  namespace.u.pier
       (~(put by namespace.u.pier) path.ae u.pacs)
     =.  ships.piers
-      (~(put by ships.piers) from.ae u.pier)
+      (~(put by ships.piers) ship.from.ae u.pier)
     $(cash pacs, thus this)
   ::
       %event
@@ -871,13 +893,13 @@
     ?:  ?=(%czar (clan:title ship))
       [a-point]~
     [a-point $(who ship)]
-  =/  =seed:jael
+  =/  =feed:jael
     =/  life-rift=[lyfe=life rut=rift]
       ?:  =(%earl clan)  [1 0]
       (~(got by lives.azi.piers) who)
     =/  =life  lyfe.life-rift
     [who life sec:ex:(get-keys:aqua-azimuth who life) ~]
-  :*  seed
+  :*  feed
       spon
       get-czars
       ~[~['arvo' 'netw' 'ork']]

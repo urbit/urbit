@@ -40,7 +40,7 @@
     %|  ~
     %&  ['expected failure - succeeded' ~]
   ==
-::  +expect-runs: kicks a trap, expecting success; returns trace on failure
+::  +expect-success: kicks a trap, expecting success; returns trace on failure
 ::
 ++  expect-success
   |=  a=(trap)
@@ -49,6 +49,27 @@
   ?-  -.b
     %&  ~
     %|  ['expected success - failed' p.b]
+  ==
+::
+::  +expect-fail-message: kicks a trap, expecting crash, compares the resulting error message
+++  expect-fail-message
+  |=  [msg=@t a=(trap)]
+  ^-  tang
+  =/  b  (mule a)
+  ?-  -.b
+    %|  |^
+        =/  =tang  (flatten +.b)
+        ?:  ?=(^ (find (trip msg) tang))
+          ~
+        ['expected error message - not found' ~]
+        ++  flatten
+          |=  tang=(list tank)
+          =|  res=tape
+          |-  ^-  tape
+          ?~  tang  res
+          $(tang t.tang, res (weld ~(ram re i.tang) res))
+        --
+    %&  ['expected failure - succeeded' ~]
   ==
 ::  $a-test-chain: a sequence of tests to be run
 ::

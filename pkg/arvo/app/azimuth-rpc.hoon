@@ -45,7 +45,6 @@
     |=  [=mark =vase]
     ^-  (quip card _this)
     |^
-    ?>  (team:title our.bowl src.bowl)
     ?+  mark  (on-poke:def mark vase)
         %handle-http-request
       =+  !<([id=@ta req=inbound-request:eyre] vase)
@@ -53,6 +52,7 @@
       (handle-http-request id req)
     ::
         %azimuth-action
+      ?>  (team:title [our src]:bowl)
       =+  !<([%disconnect bind=binding:eyre] vase)
       ~&  >>>  "disconnecting at {<bind>}"
       :_  this
@@ -89,7 +89,6 @@
   ++  on-watch
     |=  =path
     ^-  (quip card _this)
-    ?>  (team:title our.bowl src.bowl)
     ?+  path  (on-watch:def path)
         [%http-response *]  [~ this]
     ==

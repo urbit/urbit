@@ -26,11 +26,13 @@
   ^-  (list card:agent:gall)
   =/  rcvr=ship  (lane-to-ship lan)
   =/  hear-lane  (ship-to-lane sndr)
-  =/  [ames=? =packet]  (decode-packet pac)
-  ?:  &(!ames !resp==(& (cut 0 [2 1] pac)))
-    =/  [=peep =purr]  (decode-request-info `@ux`(rsh 3^64 content.packet))
+  =/  =shot      (sift-shot pac)
+  ?:  &(!sam.shot req.shot)  :: is fine request
+    =/  [%0 =peep]  (sift-wail `@ux`content.shot)
     %+  emit-aqua-events  our
-    [%read [rcvr path.peep] [hear-lane num.peep]]~
+    :_  ~
+    :-  %read
+    [[[rcvr rcvr-tick.shot] path.peep] [hear-lane sndr-tick.shot] num.peep]
   %+  emit-aqua-events  our
   [%event rcvr /a/newt/0v1n.2m9vh %hear hear-lane pac]~
 ::  +lane-to-ship: decode a ship from an aqua lane

@@ -9,13 +9,42 @@
   ==
 ::
 +$  pikes  (map desk pike)
+::  $jump: changes to update source change requests
 ::
++$  jump
+  $%  [%all all=(map dock dock)]        :: pending requests
+      [%add old=dock new=dock]          :: new request
+      [%yea old=dock new=dock]          :: approved
+      [%nay old=dock new=dock]          :: denied
+  ==
 ::  $rung: reference to upstream commit
 ::
 +$  rung  [=aeon =weft]
+::  #sync-record: source and destination of a kiln sync
+::
++$  sync-record                         ::
+  $:  syd=desk                          :: local desk
+      her=ship                          :: foreign ship
+      sud=desk                          :: foreign desk
+  ==
+::
++$  sync-state                          ::
+  $:  nun=@ta                           :: nonce
+      kid=(unit desk)                   :: has kids desk too?
+      let=@ud                           :: next revision
+      nit=(unit ?)                      :: automerge or default
+      hav=(unit @ud)                    :: update available
+      yea=?                             :: update approved
+  ==
+::
++$  sync-update
+  $%  [%new for=sync-record rev=@ud]
+      [%done for=sync-record rev=@ud]
+      [%drop for=sync-record rev=@ud]
+      [%pending pending=(set [for=sync-record rev=@ud])]
+  ==
 ::
 +$  seal        (list perm:gall)
-+$  sync-state  [nun=@ta kid=(unit desk) let=@ud]
 +$  sink        (unit [her=@p sud=desk kid=(unit desk) let=@ud])
 ::  +truncate-hash: get last 5 digits of hash and convert to tape
 ::
@@ -30,7 +59,7 @@
   =/  ego  (scot %p our)
   =/  wen  (scot %da now)
   :*  .^(rock:tire %cx /[ego]//[wen]/tire)
-      .^(=cone %cx /[ego]//[wen]/domes)
+      .^(cone %cx /[ego]//[wen]/domes)
       .^((map desk [ship desk]) %gx /[ego]/hood/[wen]/kiln/sources/noun)
       .^  (map [desk ship desk] sync-state)  %gx
           /[ego]/hood/[wen]/kiln/syncs/noun
@@ -43,166 +72,240 @@
   ^-  tang
   =/  ego  (scot %p our)
   =/  wen  (scot %da now)
-  =/  prep  (report-prep our now)
-  ?~  filt
+  =+  prep=[tyr cone sor zyn]=(report-prep our now)
+  ?:  =(%$ filt)
     %-  zing
-    %+  turn  (flop desks)
+    %+  turn
+      ?^  desks
+        (flop desks)
+      %+  sort  ~(tap in ~(key by tyr.prep))
+      |=  [a=desk b=desk]
+      ?:  |(=(a %kids) =(b %base))  &
+      ?:  |(=(a %base) =(b %kids))  |
+      (aor b a)
     |=(syd=@tas (report-vat prep our now syd verb))
-  =/  deks
+  =/  deks=(list [=desk =belt:tire])
     ?~  desks
-      %+  sort
-        (sort ~(tap in -.prep) |=([[a=@ *] b=@ *] !(aor a b)))
-      |=([[a=@ *] [b=@ *]] ?|(=(a %kids) =(b %base)))
-    %+  skip  ~(tap in -.prep)
-    |=([syd=@tas *] =(~ (find ~[syd] desks)))
+      %+  sort  ~(tap by tyr.prep)
+      |=  [[a=desk *] [b=desk *]]
+      ?:  |(=(a %kids) =(b %base))  &
+      ?:  |(=(a %base) =(b %kids))  |
+      (aor b a)
+    %+  murn  (flop desks)
+    |=  des=desk
+    ^-  (unit [=desk =belt:tire])
+    ?~  got=(~(get by tyr.prep) des)
+      ~
+    `[des u.got]
   ?:  =(filt %blocking)
-    =/  base-wic
-      %+  sort  ~(tap by wic:(~(got by -.prep) %base))
-      |=([[* a=@ud] [* b=@ud]] (gth a b))
-    ?~  base-wic  ~[leaf+"%base already up-to-date"]
+    =/  base-weft=(unit weft)
+      %-  ~(rep in wic:(~(got by tyr.prep) %base))
+      |=  [=weft out=(unit weft)]
+      ?~  out
+        `weft
+      ?:  (lth num.weft num.u.out)
+        out
+      `weft
+    ?~  base-weft  ~['%base already up-to-date']
     =/  blockers=(list desk)
-      %+  turn
-        %+  skip  ~(tap by -.prep)
-        |=  [* =belt:tire]
-        ?.  =(zest.belt %live)  &
-        (~(has in wic.belt) i.base-wic)
-      |=([syd=desk *] syd)
-    ?~  blockers  ~[leaf+"No desks blocking upgrade, run |bump to apply"]
-    :-  [%rose [" %" "To unblock upgrade run |suspend %" ""] blockers]
+      %+  sort
+        ^-  (list desk)
+        %+  murn  deks
+        |=  [=desk =belt:tire]
+        ^-  (unit ^desk)
+        ?.  =(%live zest.belt)
+          ~
+        ?:  (~(has in wic.belt) u.base-weft)
+          ~
+        `desk
+      aor
+    ?~  blockers  ~['No desks blocking upgrade']
     %-  zing
-    %+  turn  (flop blockers)
+    ^-  (list tang)
+    :-  :~  %+  rap  3
+            :~  'These desks are blocking upgrade to [%zuse '
+                (scot %ud num.u.base-weft)
+                ']:'
+        ==  ==
+    %+  turn  blockers
     |=(syd=desk (report-vat prep our now syd verb))
   ::
   %-  zing
   %+  turn
     ?+    filt  !!
-    ::
         %exists
       %+  skip  deks
-      |=([syd=desk *] =(ud:.^(cass %cw /[ego]/[syd]/[wen]) 0))
+      |=  [syd=desk *]
+      ?~  got=(~(get by cone.prep) our syd)
+        &
+      =(0 let.u.got)
     ::
         %running
       %+  skim  deks
-      |=([* [zest=@tas *]] =(zest %live))
+      |=([* =belt:tire] =(zest.belt %live))
     ::
         %suspended
       %+  skip  deks
-      |=  [syd=@tas [zest=@tas *]]
+      |=  [syd=@tas =belt:tire]
       ?|  =(syd %kids)
-          =(zest %live)
-          =(ud:.^(cass %cw /[ego]/[syd]/[wen]) 0)
+          =(zest.belt %live)
+          ?~  got=(~(get by cone.prep) our syd)
+            &
+          =(0 let.u.got)
       ==
     ::
         %exists-not
       %+  skim  deks
-      |=([syd=desk *] =(ud:.^(cass %cw /[ego]/[syd]/[wen]) 0))
+      |=  [syd=desk *]
+      ?~  got=(~(get by cone.prep) our syd)
+        |
+      =(0 let.u.got)
     ==
   |=([syd=desk *] (report-vat prep our now syd verb))
 ::  +report-vat: report on a single desk installation
 ::
 ++  report-vat
-  |=  $:  $:  tyr=rock:tire  =cone  sor=(map desk [ship desk])
+  |=  $:  $:  tyr=rock:tire  =cone  sor=(map desk (pair ship desk))
               zyn=(map [desk ship desk] sync-state)
           ==
           our=ship  now=@da  syd=desk  verb=?
       ==
-  ^-  tang
-  =-  ::  hack to force wrapped rendering
-      ::
-      ::    edg=6 empirically prevents dedent
-      ::
-      %+  roll
-        (~(win re -) [0 6])
-      |=([a=tape b=(list @t)] [(crip a) b])
-  ::
-  ^-  tank
+  |^  ^-  tang
   =/  ego  (scot %p our)
   =/  wen  (scot %da now)
-  =+  .^(=cass %cw /[ego]/[syd]/[wen])
-  ?:  =(ud.cass 0)
-    leaf+"desk does not yet exist: {<syd>}"
-  ?:  =(%kids syd)
-    =+  .^(hash=@uv %cz /[ego]/[syd]/[wen])
-    leaf+"%kids %cz hash:     {<hash>}"
-  =/  kel-path
-    /[ego]/[syd]/[wen]/sys/kelvin
-  ?.  .^(? %cu kel-path)
-    leaf+"bad desk: {<syd>}"
-  =+  .^(=waft %cx kel-path)
-  :+  %rose  ["" "{<syd>}" "::"]
-  ^-  tang
+  ?.  ((sane %tas) syd)
+    ~[(cat 3 'insane desk: %' syd)]
+  ?.  (~(has by cone) our syd)
+    ~[(cat 3 'desk does not yet exist: %' syd)]
   =/  hash  .^(@uv %cz /[ego]/[syd]/[wen])
+  ?:  =(%kids syd)
+    ~[(cat 3 '%kids %cz hash:     ' (scot %uv hash))]
+  =/  kel-path  /[ego]/[syd]/[wen]/sys/kelvin
+  ?.  .^(? %cu kel-path)
+    ~[(cat 3 'bad desk: %' syd)]
+  =+  .^(=waft %cx kel-path)
+  ^-  tang
   =/  =sink
     ?~  s=(~(get by sor) syd)
       ~
     ?~  z=(~(get by zyn) syd u.s)
       ~
-    `[-.u.s +.u.s +.u.z]
+    `[p.u.s q.u.s [kid let]:u.z]
   =/  meb=(list @uv)
-    ?~  sink  [hash]~
-    (mergebase-hashes our syd now her.u.sink sud.u.sink)
+    ?~  sink  ~[hash]
+    %+  turn
+      .^  (list tako)  %cs
+        /[ego]/[syd]/[wen]/base/(scot %p her.u.sink)/[sud.u.sink]
+      ==
+    |=(=tako .^(@uv %cs /[ego]/[syd]/[wen]/hash/(scot %uv tako)))
   =/  dek  (~(got by tyr) syd)
   =/  sat
     ?-  zest.dek
-      %live  "running"
-      %dead  "suspended"
-    ::
+      %live  'running'
+      %dead  'suspended'
+      ::
         %held
       ?.  =(~ lac.dek)
-        "suspended until permissions are granted"
+        'suspended until permissions are granted'
       ?:  =(~ cop.dek)
-        "suspended until next update"
-      "suspended until next update, needs new permissions"
+        'suspended until next update'
+      'suspended until next update, needs new permissions'
     ==
-  =/  kul=tape
-    %+  roll
-      %+  sort
-        ~(tap in (waft-to-wefts:clay waft))
-      |=  [a=weft b=weft]
-      ?:  =(lal.a lal.b)
-        (lte num.a num.b)
-      (lte lal.a lal.b)
-    |=  [=weft =tape]
-    (welp " {<[lal num]:weft>}" tape)
-  =/  pen=(list $@(@tas [@tas @ud]))
-    %+  weld  ~(tap in wic.dek)
-    ?:  =(~ cop.dek)  ~
-    `(list $@(@tas [@tas @ud]))`[%awaiting-perms]~
+  =/  kul=cord  (print-wefts (waft-to-wefts waft))
+  =/  pen=cord
+    ?:  =(~ cop.dek)  (print-wefts wic.dek)
+    (rap 3 '[%awaiting-perms ' (print-wefts (waft-to-wefts waft)) ']' ~)
+  =/  ese=cord
+    ?:(.^(? %cx /[ego]//[wen]/esse/[syd]) 'yes' 'no')
+  =/  pax=path  /(scot %p our)/[syd]/(scot %da now)
   ?.  verb
-    =/  cut=(list tape)  (turn meb truncate-hash)
-    =/  len  (lent cut)
-    =/  base-hash
-      ?:  =(0 len)  "~"
-      ?:  =(1 len)  (head cut)
-        "~[{`tape`(zing (join " " `(list tape)`cut))}]"
-    :~  leaf/"/sys/kelvin:          {kul}"
-        leaf/"base hash ends in:     {base-hash}"
-        leaf/"%cz hash ends in:      {(truncate-hash hash)}"
-        leaf/"app status:            {sat}"
-        leaf/"pending updates:       {<pen>}"
+    :~  '::'
+        =+  .^(exist=? cu+(weld pax /desk/bill))
+        ?.  exist  '  /desk/bill:             missing'
+        =+  .^(dudes=(list dude:gall) cx+(weld pax /desk/bill))
+        (cat 3 '  /desk/bill:             ' (crip "{<dudes>}"))
+        (cat 3 '  pending updates:        ' pen)
+        (cat 3 '  source ship:            ' ?~(sink '~' (scot %p her.u.sink)))
+        (cat 3 '  app status:             ' sat)
+        (cat 3 '  essential desk:         ' ese)
+        (cat 3 '  %cz hash ends in:       ' (print-shorthash hash))
+        (cat 3 '  /sys/kelvin:            ' (print-wefts (waft-to-wefts waft)))
+        (cat 3 '%' syd)
     ==
   ::
-  =/  [on=(list [@tas ?]) of=(list [@tas ?])]
-    =/  =dome  (~(got by cone) our syd)
-    (skid ~(tap by ren.dome) |=([* ?] +<+))
-  :~  leaf/"/sys/kelvin:     {kul}"
-      leaf/"base hash:        {?.(=(1 (lent meb)) <meb> <(head meb)>)}"
-      leaf/"%cz hash:         {<hash>}"
-      ::
-      leaf/"app status:       {sat}"
-      leaf/"force on:         {<(sort (turn on head) aor)>}"
-      leaf/"force off:        {<(sort (turn of head) aor)>}"
-      ::
-      leaf/"publishing ship:  {?~(sink <~> <(get-publisher our syd now)>)}"
-      leaf/"updates:          {?~(sink "local" "remote")}"
-      leaf/"source ship:      {?~(sink <~> <her.u.sink>)}"
-      leaf/"source desk:      {?~(sink <~> <sud.u.sink>)}"
-      leaf/"source aeon:      {?~(sink <~> <let.u.sink>)}"
-      leaf/"kids desk:        {?~(sink <~> ?~(kid.u.sink <~> <u.kid.u.sink>))}"
-      leaf/"pending updates:  {<pen>}"
-      leaf/" awaiting perms:  {=+(~(wyt in cop.dek) ?:(=(0 -) "~" (a-co:co -)))}"
-      leaf/"missing perms:    {=+(~(wyt in lac.dek) ?:(=(0 -) "~" (a-co:co -)))}"
+  =/  [on=(list @tas) of=(list @tas)]
+    =/  [on=(list @tas) of=(list @tas)]
+      %-  ~(rep by ren:(~(got by cone) our syd))
+      |=  [[=dude:gall is-on=?] on=(list @tas) of=(list @tas)]
+      ?:  is-on
+        [[dude on] of]
+      [on [dude of]]
+    [(sort on aor) (sort of aor)]
+  :~  '::'
+      (cat 3 '  pending updates:  ' pen)
+      (cat 3 '  awaiting perms:   ' (crip =+(~(wyt in cop.dek) ?:(=(0 -) "~" (a-co:co -)))))
+      (cat 3 '  missing perms:    ' (crip =+(~(wyt in lac.dek) ?:(=(0 -) "~" (a-co:co -)))))
+      %^  cat  3  '  kids desk:        '  ?~  sink  '~'
+                                          ?~  kid.u.sink  '~'
+                                          (cat 3 '%' u.kid.u.sink)
+      (cat 3 '  source aeon:      ' ?~(sink '~' (scot %ud let.u.sink)))
+      (cat 3 '  source desk:      ' ?~(sink '~' (cat 3 '%' sud.u.sink)))
+      (cat 3 '  source ship:      ' ?~(sink '~' (scot %p her.u.sink)))
+      (cat 3 '  updates:          ' ?~(sink 'local' 'remote'))
+      %^  cat  3  '  publishing ship:  '  ?~  got=(get-publisher our syd now)
+                                            '~'
+                                          (scot %p u.got)
+  ::
+      (cat 3 '  force off:        ' (print-agents of))
+      (cat 3 '  force on:         ' (print-agents on))
+      (cat 3 '  app status:       ' sat)
+      (cat 3 '  essential desk:   ' ese)
+  ::
+      (cat 3 '  %cz hash:         ' (scot %uv hash))
+      (cat 3 '  base hash:        ' (print-mergebases meb))
+      (cat 3 '  /sys/kelvin:      ' (print-wefts (waft-to-wefts waft)))
+      (cat 3 '%' syd)
   ==
+  ++  print-wefts
+    |=  wefts=(set weft)
+    ^-  @t
+    ?:  =(~ wefts)
+      '~'
+    %+  roll  (sort ~(tap in wefts) aor)
+    |=  [=weft out=@t]
+    ?:  =('' out)
+      (rap 3 '[%' lal.weft ' ' (scot %ud num.weft) ']' ~)
+    (rap 3 out ' [%' lal.weft ' ' (scot %ud num.weft) ']' ~)
+  ::
+  ++  print-shorthash
+    |=  hash=@uv
+    ^-  @t
+    (crip ((v-co:co 5) (end [0 25] hash)))
+  ::
+  ++  print-mergebases
+    |=  hashes=(list @uv)
+    ^-  @t
+    ?~  hashes
+      '~'
+    ?~  t.hashes
+      (scot %uv i.hashes)
+    %+  roll  `(list @uv)`hashes
+    |=  [hash=@uv out=@t]
+    ?:  =('' out)
+      (print-shorthash hash)
+    (rap 3 out ' ' (print-shorthash hash) ~)
+  ::
+  ++  print-agents
+    |=  agents=(list @tas)
+    ^-  @t
+    ?~  agents
+      '~'
+    %+  roll  `(list @tas)`agents
+    |=  [agent=@tas out=@tas]
+    ?:  =('' out)
+      (cat 3 '%' agent)
+    (rap 3 out ' %' agent ~)
+  --
 ::  +report-kids: non-vat cz hash report for kids desk
 ::
 ++  report-kids
@@ -212,9 +315,9 @@
   =/  ego  (scot %p our)
   =/  wen  (scot %da now)
   ?.  (~(has in .^((set desk) %cd /[ego]//[wen])) syd)
-    leaf/"no %kids desk"
+    'no %kids desk'
   =+  .^(hash=@uv %cz /[ego]/[syd]/[wen])
-  leaf/"%kids %cz hash:     {<hash>}"
+  (cat 3 '%kids %cz hash:     ' (scot %uv hash))
 ::  +read-bill-foreign: read /desk/bill from a foreign desk
 ::
 ++  read-foreign
@@ -294,8 +397,8 @@
   =/  her  (scot %p her)
   =/  ego  (scot %p our)
   =/  wen  (scot %da now)
-  %+  turn  .^((list tako) %cs ~[ego syd wen %base her sud])
-  |=(=tako .^(@uv %cs ~[ego syd wen %hash (scot %uv tako)]))
+  %+  turn  .^((list tako) %cs /[ego]/[syd]/[wen]/base/[her]/[sud])
+  |=(=tako .^(@uv %cs /[ego]/[syd]/[wen]/hash/(scot %uv tako)))
 ::
 ++  enjs
   =,  enjs:format

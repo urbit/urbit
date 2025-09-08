@@ -177,14 +177,14 @@
   ::  in both maps are the same as before, and that both returned
   ::  maps are correct
   ::
-  =/  splits-a=[(map) (map)]  (~(bif by m-des) [99 99])
-  =/  splits-b=[(map) (map)]  (~(bif by m-des) [6 12])
+  =/  splits-a=[(map) (map)]  (~(bif by m-des) 99)
+  =/  splits-b=[(map) (map)]  (~(bif by m-des) 6)
   ;:  weld
     ::  Checks with empty map
     ::
     %+  expect-eq
       !>  [~ ~]
-      !>  (~(bif by m-nul) [1 2])
+      !>  (~(bif by m-nul) 1)
     ::  Checks bifurcating by non-existing element
     ::
     %+  expect-eq
@@ -594,12 +594,12 @@
     ::
     %+  expect-eq
       !>  ~
-      !>  (~(rut by m-nul) add)
+      !>  (~(urn by m-nul) add)
     ::  Checks success
     ::
     %+  expect-eq
       !>  (my ~[[1 3] [2 6] [3 9] [4 12] [5 15] [6 18] [7 21]])
-      !>  (~(rut by m-asc) add)
+      !>  (~(urn by m-asc) add)
   ==
 ::
 ::  Test listify pairs

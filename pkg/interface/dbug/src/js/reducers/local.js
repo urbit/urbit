@@ -12,17 +12,21 @@ export class LocalReducer {
       this.appFailed(data, state);
       this.verbResult(data, state);
       this.verbStatus(data, state);
+      this.verbEventPlus(data, state);
     //
       this.threads(data, state);
     //
+      this.amesAll(data, state);
       this.amesPeers(data, state);
       this.amesPeer(data, state);
+      this.amesChum(data, state);
     //
       this.behnTimers(data, state);
     //
       this.clayCommits(data, state);
     //
       this.eyreBindings(data, state);
+      this.eyreCache(data, state);
       this.eyreConnections(data, state);
       this.eyreAuthentication(data, state);
       this.eyreChannels(data, state);
@@ -102,6 +106,26 @@ export class LocalReducer {
     }
   }
 
+  verbEventPlus(obj, state) {
+    const data = _.get(obj, 'verbEventPlus', false);
+    if (data) {
+      //NOTE  this is just a store.addLogs() that makes some assumptions
+      if (!state.logs[data.gill]) {
+        state.logs[data.gill] = {
+          logs: [data.log],
+          oldest: data.log.now,
+          newest: data.log.now,
+        };
+        state.logsRange.oldest = Math.min(state.logsRange.oldest || data.log.now, data.log.now);
+        state.logsRange.newest = data.log.now;
+      } else {
+        state.logs[data.gill].logs.push(data.log);
+        state.logs[data.gill].newest = data.log.now;
+        state.logsRange.newest = data.log.now;
+      }
+    }
+  }
+
   // spider
 
   threads(obj, state) {
@@ -125,6 +149,25 @@ export class LocalReducer {
     const data = _.get(obj, 'amesPeer', false);
     if (data) {
       state.peers.deets[data.who] = data;
+    }
+  }
+
+  amesChum(obj, state) {
+    const data = _.get(obj, 'amesChum', false);
+    if (data) {
+      state.chums.deets[data.who] = data;
+    }
+  }
+
+  amesAll(obj, state) {
+    const data = _.get(obj, 'amesAll', false);
+      console.log("BLABLA", data);
+
+    if (data) {
+      state.peers.known = data.peers.known;
+      state.peers.alien = data.peers.alien;
+      state.chums.known = data.chums.known;
+      state.chums.alien = data.chums.alien;
     }
   }
 
@@ -153,6 +196,13 @@ export class LocalReducer {
     const data = _.get(obj, 'eyreBindings', false);
     if (data) {
       state.bindings = data;
+    }
+  }
+
+  eyreCache(obj, state) {
+    const data = _.get(obj, 'eyreCache', false);
+    if (data) {
+      state.cache = data;
     }
   }
 

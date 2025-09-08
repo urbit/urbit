@@ -10,25 +10,21 @@
   --
 +$  aeon  @ud
 +$  dude  dude:agent:gall
-+$  what  ?(%rock %wave)
 ++  poke
   |%
   ++  request
     |*  paths=mold
     $:  path=paths
         =dude
-        when=(unit aeon)
     ==
   ++  response
     |*  [=(lake) paths=mold]
     $:  path=paths
         =dude
-        =aeon
-        $%  [type=?(%nigh %yore %tomb) ~]
-            $:  type=%scry
-                $%  [what=%rock =rock:lake]
-                    [what=%wave =wave:lake]
-    ==  ==  ==  ==
+        $%  [what=%tomb ~]
+            [what=%rock =aeon =rock:lake]
+            [what=%wave =aeon =wave:lake]
+    ==  ==
   ++  on-rock
     |*  [=(lake) paths=mold]
     $:  path=paths
