@@ -8532,7 +8532,6 @@
           ::  through the message-builder core, so when retrieving the key from
           ::  chums.ames-state it's already been updated
           ::
-          ~&  hen/hen
           =.  chums.ames-state  (~(put by chums.ames-state) her %known per)
           =^  moves-peek  ames-state
             [moves ames-state]:(co-make-peek:(co-abed:co hen) space her path)
@@ -9021,7 +9020,6 @@
           %-  ~(rep by ints)
           |=  [int=^ints c=_core]
           ?@  int
-            ~&  hen
             %.  (ev-emit:c hen %give %sage her^path gage)
             (ev-tace fin.veb.bug.ames-state |.("give %sage={(spud path)}"))
           %.  (ev-emit:c hen %give %rate her^path ~)
