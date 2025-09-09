@@ -121,7 +121,7 @@
              ?:  ?=(%wet var.sut)
                  ?&(=(%wet var.ref) =(bat.sut bat.ref))
              ?:  ?=(%wet var.ref)  |
-             ?&  
+             ?&
                &(dext(sut pay.sut, ref p.sut) dext(sut p.sut, ref pay.sut)) ::meet
                dext(sut pay.ref, ref p.ref)
                (deem(sut pay.sut, ref pay.ref) var.sut var.ref)
@@ -140,7 +140,7 @@
              |(dext(sut tom.sut) dext(sut cel.sut))
     ::
       %bccn  ?.  ?=(?(%noun [%cell *] [%core *]) ref)  sint
-             %-  ~(any in p.sut) 
+             %-  ~(any in p.sut)
              |=([a=@ b=aura c=type] dext(sut [%cell [%atom b `a] c]))
     ::
       %bckt  ?.  ?=(?(%noun [%cell *] [%core *]) ref)  sint
@@ -176,7 +176,7 @@
     ::
       %bcpt  &(dext(ref tom.ref) dext(ref cel.ref)) :: unvalidated but so what
     ::
-      %bccn  %-  ~(all in p.ref) 
+      %bccn  %-  ~(all in p.ref)
              |=([a=@ b=aura c=type] dext(ref [%cell [%atom b `a] c]))
     ::
       %bckt  &(dext(ref cel.ref) dext(ref tom.ref)) :: unvalidated but so what
@@ -201,21 +201,21 @@
   =|  gil=(set type)
   |-  ^-  type
   ?@  sut  sut
-  ?-  -.sut  
+  ?-  -.sut
       %atom  %void
       %cell  ?:(=(2 now) ^$(sut p.sut, axe lat) ^$(sut q.sut, axe lat))
       %face  $(sut q.sut)
       %bcpt  %noun
       %bccn  ?:(&(=(2 now) !=(2 axe)) %void %noun)
       %bckt  %noun
-      %bcwt  %void 
+      %bcwt  %void
       %hold  $(sut (play p.sut q.sut))
       %core  ?.  =(2 now)  %noun
-             ?.  |(?=(%gold var.sut) ?=(%wet var.sut) ?=(%free way)) 
+             ?.  |(?=(%gold var.sut) ?=(%wet var.sut) ?=(%free way))
                %noun
              ^$(axe lat, sut pay.sut)
   ==
-  
+
 ::
 ++  play
   |=  [sut=type =naty]
