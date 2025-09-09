@@ -300,4 +300,61 @@
     %wtcn  !!
     %wtkt  !!
   ==
+::  +xxxx: makes a union from two types, if possible
+::  ?(%foo %bar) <- type union
+::  ?(@ud @ux)   <- aura union ?
+::
+++  make-union
+  |=  [a=type b=type]
+  ^-  type
+  ?:  (nest a b)  a
+  ?:  (nest b a)  b
+  ::TODO  %face, %hold
+  ?:  (is-atomic a)
+    ?:  (is-atomic b)
+      ?:  &((is-cat a) (is-cat b))
+        =+  c=(cat-map a)
+        =+  d=(cat-map b)
+        :-  %bcwt
+        %-  (~(uno by c) d)
+        |=  [k=@ a=aura b=aura]
+        (aura-union a b)
+      %noun  ::TODO  aura union
+    [%bcpt a b]
+  ?:  (is-atomic b)
+    [%bcpt b a]
+  =+  ha=(has-atomic-head a)
+  =+  hb=(has-atomic-head b)
+  ?:  &(ha !hb)  [%bckt b a]
+  ?:  &(!ha hb)  [%bckt a b]
+  ?:  &(ha hb)
+    ?:  &((has-cat-head a) (has-cat-head b))
+      =+  c=(cat-head-map a)
+      =+  d=(cat-head-map b)
+      :-  %bccn
+      %-  (~(uno by c) d)
+      |=  [k=@ a=[=aura =type] b=[=aura =type]]
+      [(aura-union aura.a aura.b) ^$(a type.a, b type.b)]
+    %noun  ::TODO  recur on heads and tails, or different based on a and b...
+  %noun  ::TODO  recur on heads and tails, or different based on a and b...
+::
+++  is-cat  ::  Constant Atomic Type
+  |=  a=type
+  ?=(?([%atom @ ~ @] [%bcwt *]) a)
+++  is-atomic
+  |=  a=type
+  ?=(?(%atom %bcwt) -.a)
+++  cat-map
+  |=  a=type
+  ^-  (map @ aura)
+  ?+  a  ~
+    [%atom *]  [(need q.a)^p.a ~ ~]
+    [%bcwt *]  a
+  ==
+++  aura-union
+  |=  [a=aura b=aura]
+  ^-  aura
+  ?:  |((fitz a b) (fitz b a))
+    (min a b)  ::  shortest & alphabetical
+  %$
 --
