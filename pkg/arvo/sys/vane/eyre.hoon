@@ -622,10 +622,10 @@
     ==
     ;body:"{msg}"
   ==
-::  +auth-negotiation-page: render "negotiation script page"  xxtodo description
+::  +build-inner-frame: render "negotiation script page"  xxtodo description
 ::
-++  auth-negotiation-page
-  |=  *
+++  build-inner-frame
+  |=  [cookie=(unit identity) target-src=@t]
   |^  ^-  octs
       %-  as-octs:mimes:html
       %-  crip
@@ -636,15 +636,23 @@
         ==
         ;body
           ;h1:"Authenticating..."
+          ;iframe#content;
           ;script:"{vars} {(trip script)}"
         ==
       ==
   ++  vars
+    =/  nom=tape
+      ?~  cookie  "null"
+      =;  who=@p  "'{(scow %p who)}'"
+      ?+(-.who.u.cookie who.who.u.cookie %ours our)
     """
     const host = '{(scow %p our)}';
+    const our = {nom};
+    const target = '{(trip target-src)}';
     """
   ++  script
     '''
+    const frame = document.getElementById('content');
     const parts = window.location.hostname.split('.');
     let parentDomain = window.location.hostname;
     if (parts.length > 2 || (parts.length === 2 && parts[1] === 'localhost'))
@@ -656,23 +664,33 @@
       window.location.pathname +
       window.location.search +
       window.location.hash;
-    //  check if there's an outer frame
     if (window.parent === window) {
+      //  if there is no outer frame, redirect to the outer frame if we can
       if (parentLocation !== window.location.toString()) {
+        console.log('redirecting to root domain...');
         location = parentLocation;
       } else {
-        console.error('todoxx display erro msg already top-level');
+        console.error('todoxx display error msg, we are already at top-level');
       }
     } else {
-      //  send a msg asking for a fresh cookie
-      window.parent.postMessage({ tag: 'request-cookie' }, parentLocation);
-      //  receive the cookie, refresh the page when we've set it
-      console.log('never gonna get it', parentLocation);
+      //  there is an outer frame, communicate with it.
+      //  send a msg to either check our identity, or ask for a fresh cookie.
+      const msg = {}
+      if (our) {
+        msg.tag = 'check-identity';
+        msg.our = our;
+      } else {
+        msg.tag = 'give-cookie';
+      }
+      window.parent.postMessage(msg, parentLocation);
+      //  await the response
+      console.log('awaiting response from parent...', parentLocation);
       window.addEventListener('message', function handler(e) {
-        if ( event.data
-          && event.data.tag === 'cookie-response'
-          && event.data.token )
-        {
+        let tag = '';
+        if (event.data) tag = event.data.tag;
+        console.log('inner frame handling msg tag', tag);
+        switch (tag) {
+            case 'cookie-response':
           console.log('received token', event.data.token);
           //NOTE  max-age doesn't really matter. the moment after we set the
           //      cookie here, we will reload(), which makes a request with
@@ -682,9 +700,40 @@
           console.log('setting cookie', cookie);
           document.cookie = cookie;
           window.removeEventListener('message', handler);  //REVIEW  superfluous?
-          location.reload();
-        } else {
-          console.log('unrecognized event data', event.data);
+          //NOTE  intentionally no break, continue with setup
+        //
+            case 'good-identity':
+          console.log('good to go, setting content frame src to', target);
+          frame.src = target;
+          //TODOxx  figure out a way to get events on url/history change of content pane
+          setTimeout(() => {
+            console.log('histoory?', frame.contentWindow);
+            frame.contentWindow.addEventListener('popstate', (e) => {
+              console.log('windowxx: content src changed', frame.contentWindow.location, e);
+            });
+            frame.addEventListener('load', (e) => {
+              console.log('frame: content src changed', frame.contentWindow.location, e);
+            });
+            frame.addEventListener('hashchange', (e) => {
+              console.log('frame: content hash changed', frame.contentWindow.location, e);
+            });
+            frame.contentWindow.addEventListener('hashchange', (e) => {
+              console.log('window hashchange: ahconc changed', frame.contentWindow.location, e);
+            });
+            frame.contentWindow.addEventListener('popstate', (e) => {
+              console.log('window popstate', frame.contentWindow.location, e);
+            });
+            frame.contentWindow.onpopstate = (e) => {
+              console.log('window popstate2', frame.contentWindow.location, e);
+            };
+          }, 500);
+          break;
+        //
+            default:
+          console.log('unknown message', event.data);
+          //TODOxx  if the outer frame can't give us what we want,
+          //        maybe we want to leverage iframe's `allow-top-navigation`
+          //        to let us redirect the outer page somewhere else.
         }
       });
     }
@@ -887,7 +936,7 @@
       !!
     ::  parse the hostname from the request, then
     ::  find the domain that we _know_ (.domains.state) that is the
-    ::  longest prefix for the requested hostname and take its smallest
+    ::  longest prefix for the requested hostname and take its last
     ::  subdomain as the candidate request-target desk
     ::
     ::    example 1: request to mopfel.np.io:
@@ -895,6 +944,7 @@
     ::    example 2: request to pals.mopfel.np.io:
     ::               `[domain=~['io' 'np' 'mopfel'] desk=`%pals]
     ::
+    ::TODOxx  better name.
     =/  inner=(unit [[domain=turf port=(unit @ud)] desk=(unit desk)])
       ::REVIEW  should just parse earlier?
       =/  doom=(unit [port=(unit @ud) doom=(each turf @if)])
@@ -961,6 +1011,9 @@
       ?~  pathowner
         ::NOTE  per .pathowner implementation, this will always be an
         ::      "eyre endpoint", never %app or %gen
+        ::TODOxx  tmp
+        ?:  =('/~/frame' (end 3^8 url.request))
+          [[%iframe ~] (rsh 3^8 url.request)]
         (get-action-for-binding host url.request)
       ::  if the domain is known, but has no desk in the subdomain,
       ::  this is the "homepage" case.
@@ -987,7 +1040,7 @@
     ::      eyre-handled requests are always synchronous, provides a fruitful
     ::      angle for refactoring...
     ::
-    ::    auth-state: authentiation detail for the incoming request
+    ::    auth-state: authentication detail for the incoming request
     ::
     ::    %invalid:   an invalid session was provided, or the session's
     ::                provenance doesn't match the request target.
@@ -995,7 +1048,7 @@
     ::    %made       created a new session from whole cloth. (we will mint new
     ::                guest sessions for auth-less requests to top-level domain.
     ::    %negotiate: request lacks auth but came in on a subdomain. if we
-    ::                serve it the +auth-negotiation-page it may be able to
+    ::                serve it the +build-inner-frame it may be able to
     ::                obtain auth automagically.
     ::
     =/  t
@@ -1017,14 +1070,18 @@
         ?^  desk.u.inner  [[%negotiate ~] state]
         [[%made -] +]:(start-session:authentication %guest)
       ?~  ses=(~(get by sessions.auth.state) u.sid)
+        ?:  &(?=(^ desk.u.inner) ?=(%iframe -.action))
+          [[%negotiate ~] state]
         [[%invalid u.sid] state]
       ?:  (gth now expiry-time.u.ses)
+        ?:  &(?=(^ desk.u.inner) ?=(%iframe -.action))
+          [[%negotiate ~] state]
         [[%invalid u.sid] state]
       ::  provenance doesn't match request target,
       ::  they shouldn't pass this cookie!
       ::
       ?.  =(desk.u.inner provenance.identity.u.ses)
-        [[%invalid u.sid] state]
+        [[%negotiate ~] state]
       [[%have u.sid identity.u.ses ~] state]
     ::
     ?:  ?=(%invalid -.auth-state)
@@ -1063,7 +1120,11 @@
       :+  %start
         [200 ['content-type' 'text/html'] ~]
       :_  complete=&
-      `(auth-negotiation-page)
+      :-  ~
+      ?:  ?=([~ * ^] inner)
+        (build-inner-frame ~ suburl)
+      ~&  %wtf-negotiate-outer-frame
+      (build-outer-frame pathowner inner *identity request)
     ::
     ?>  ?=(?(%made %have) -.auth-state)
     =*  suv       session.auth-state
@@ -1172,7 +1233,20 @@
     ::
     ?-    -.action
         %iframe
-      (handle-iframe pathowner (bind inner head) request)
+      ::TODOxx  this factoring smh
+      ?:  ?=([~ * ^] inner)
+        %^  return-static-data-on-duct  200  'text/html'
+        (build-inner-frame `identity suburl)
+      ?~  pathowner
+        ::  nobody has bound this path, the iframe would just contain a 404,
+        ::  so serve the 404 directly
+        ::
+        %^  return-static-data-on-duct  404  'text/html'
+        ::TODO  consider: even w/ "real" auth flag, will leak 404.
+        ::      is eyre in the business of preventing service discovery y/n? (y!)
+        (error-page 404 & url.request "no such route")
+      %^  return-static-data-on-duct  200  'text/html'
+      (build-outer-frame pathowner inner identity request)
     ::
         %gen
       =/  bek=beak  [our desk.generator.action da+now]
@@ -1622,21 +1696,16 @@
         data=[~ data]
         complete=%.y
     ==
-  ::  +handle-iframe
+  ::  +build-outer-frame: outer frame
   ::
-  ++  handle-iframe
+  ++  build-outer-frame
     |=  $:  pathowner=(unit desk)
-            inner=(unit [domain=turf port=(unit @ud)])
+            inner=(unit [[domain=turf port=(unit @ud)] desk=(unit desk)])
+            =identity
             =request:http
         ==
-    ?~  pathowner
-      ::  nobody has bound this path, the iframe would just contain a 404,
-      ::  so serve the 404 directly
-      ::
-      %^  return-static-data-on-duct  404  'text/html'
-      ::TODO  consider: even w/ "real" auth flag, will leak 404.
-      ::      is eyre in the business of preventing service discovery y/n? (y!)
-      (error-page 404 & url.request "no such route")
+    ^-  octs
+    ?>  ?=(^ pathowner)  ::TODOxx retarded factoring
     ::  generate a page that contains an iframe which points to the requested
     ::  path _under the appropriate subdomain_
     ::
@@ -1653,9 +1722,9 @@
       :~  '//'         ::  same protocol
           target-domain
           ?~(port.inner '' (cat 3 ':' (crip (a-co:co u.port.inner))))
+          '/~/frame'
           url.request  ::  original request target
       ==
-    %^  return-static-data-on-duct  200  'text/html'
     %-  as-octs:mimes:html
     %-  crip
     %-  en-xml:html
@@ -1675,11 +1744,16 @@
       """
       const targetDomain = '{(trip target-domain)}';
       const scope = '{(trip u.pathowner)}';
+      const our = '{(scow %p ?+(-.who.identity who.who.identity %ours our))}';
       """
     ++  script
       %-  trip
       '''
-      //const inner = document.getElementById('portal');
+      const inner = document.getElementById('portal');
+      inner.addEventListener('load', (e) => {
+        console.log('outer loaded inner', e);
+        //console.log('inner href', inner.contentWindow.location.href);
+      });
       window.addEventListener('message', (e) => {
         console.log('received', e);
         //  ignore messages from unexpected origins
@@ -1687,29 +1761,41 @@
           console.error('origin mismatch', e.origin, targetDomain);
           return;
         }
-        //  only handle messages we recognize
-        if (!e.data || !e.data.tag || e.data.tag !== 'request-cookie') {
-          console.log('unknown message', e.data);
+        let tag = '';
+        if (e.data) tag = e.data.tag;
+        console.log('outer frame handling msg tag', tag);
+        switch (tag) {
+            case 'check-identity':
+          console.log('outer checking identity', e.data.our, 'against', our);
+          if (e.data.our === our) {
+            e.source.postMessage({ tag: 'good-identity' }, e.origin);
+            return;
+          }
+          //NOTE  intentionally don't break, want to send them a new cookie
+            case 'give-cookie':
+          console.log('fetching token for', scope);
+          window.fetch(new Request('/~/login', {
+            credentials: 'same-origin',
+            method: 'POST',
+            body: 'xxtokenflow&scope=' + scope,
+          })).then((res) => {
+            if (!res.ok) {
+              console.error('res not ok', res);
+              throw new Error('bad response');
+            }
+            res.text().then((token) => {
+              console.log('injecting token', token);
+              e.source.postMessage({ tag: 'cookie-response', token: token }, e.origin);
+            });
+          }).catch((e) => {
+            console.log('token fetch failure', e);
+          });
+          break;
+        //
+            default:
+          console.log('unknown message!', e.data);
           return;
         }
-        //TODOxx  make request to eyre for fresh cookie at request scope
-        console.log('fetching token for', scope);
-        window.fetch(new Request('/~/login', {
-          credentials: 'same-origin',
-          method: 'POST',
-          body: 'xxtokenflow&scope=' + scope,
-        })).then((res) => {
-          if (!res.ok) {
-            console.error('res not ok', res);
-            throw new Error('bad response');
-          }
-          res.text().then((token) => {
-            console.log('injecting token', token);
-            e.source.postMessage({ tag: 'cookie-response', token: token }, e.origin);
-          });
-        }).catch((e) => {
-          console.log('token fetch failure', e);
-        });
       });
       '''
     --
