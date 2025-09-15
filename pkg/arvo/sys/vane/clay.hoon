@@ -918,15 +918,15 @@
     ::
     ++  cast-path
       |=  [=path mak=mark]
-      ^-  [cage state]
+      ^-  cage
       =/  mok  (head (flop path))
       ~|  error-casting-path+[path mok mak]
       =^  cag=cage  nub  (read-file path)
       ?:  =(mok mak)
-        [cag nub]
+        cag
       =/  =tube  (build-tube mok mak)
       ~|  error-running-cast+[path mok mak]
-      :_(nub [mak (tube q.cag)])
+      [mak (tube q.cag)]
     ::
     ++  run-pact
       |=  [old=page diff=page]
@@ -1085,7 +1085,7 @@
       |=  [sut=vase bar=(list [face=term =mark =path])]
       ^-  vase
       ?~  bar  sut
-      =^  =cage  nub  (cast-path [path mark]:i.bar)
+      =/  =cage  (cast-path [path mark]:i.bar)
       =.  p.q.cage  [%face face.i.bar p.q.cage]
       $(sut (slop q.cage sut), bar t.bar)
     ::
@@ -2912,7 +2912,7 @@
     |-  ^-  [(map path (unit mime)) args:ford:fusion]
     ?~  cans
       [mim ford-args]
-    =/  [=cage *]
+    =/  =cage
       ~|  mime-cast-fail+i.cans
       (cast-path:(ford:fusion ford-args) i.cans %mime)
     =^  mim  ford-args  $(cans t.cans)
