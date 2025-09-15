@@ -946,8 +946,7 @@
       =+  !<(txt=@t q.cag)
       =/  =pile  (parse-pile path txt)
       =.  hoon.pile  !,(*hoon .)
-      =^  res=vase  nub  (run-prelude pile)
-      res
+      (run-prelude pile)
     ::
     ++  build-dependency
       ~/  %build-dep
@@ -965,7 +964,7 @@
       ?>  =(%hoon p.cag)
       =+  !<(txt=@t q.cag)
       =/  =pile  (parse-pile path txt)
-      =^  sut=vase  nub  (run-prelude pile)
+      =/  sut=vase  (run-prelude pile)
       %+  gain-leak  file+path
       |=  nob=state
       =.  nub  nob
@@ -1013,15 +1012,16 @@
     ::
     ++  run-prelude
       |=  =pile
+      ^-  vase
       =/  sut=vase  zuse.bud
-      =^  sut=vase  nub  (run-tauts sut %sur sur.pile)
-      =^  sut=vase  nub  (run-tauts sut %lib lib.pile)
-      =^  sut=vase  nub  (run-raw sut raw.pile)
-      =^  sut=vase  nub  (run-raz sut raz.pile)
-      =^  sut=vase  nub  (run-maz sut maz.pile)
-      =^  sut=vase  nub  (run-caz sut caz.pile)
-      =^  sut=vase  nub  (run-bar sut bar.pile)
-      [sut nub]
+      =/  sut=vase  =<  -  (run-tauts sut %sur sur.pile)
+      =/  sut=vase  =<  -  (run-tauts sut %lib lib.pile)
+      =/  sut=vase  =<  -  (run-raw sut raw.pile)
+      =/  sut=vase  =<  -  (run-raz sut raz.pile)
+      =/  sut=vase  =<  -  (run-maz sut maz.pile)
+      =/  sut=vase  =<  -  (run-caz sut caz.pile)
+      =/  sut=vase  =<  -  (run-bar sut bar.pile)
+      sut
     ::
     ++  run-tauts
       |=  [sut=vase wer=?(%lib %sur) taz=(list taut)]
