@@ -729,7 +729,7 @@
     ++  build-dais
       ~/  %build-dais
       |=  mak=mark
-      ^-  [dais state]
+      ^-  dais
       ~|  %error-building-dais^mak
       %-  soak-dais
       ?:  (~(has in cycle.nub) dais+mak)
@@ -737,7 +737,7 @@
       =.  cycle.nub  (~(put in cycle.nub) dais+mak)
       =^  nav=vase  nub  (build-nave mak)
       %-  (trace 1 |.("make dais {<mak>}"))
-      :_  nub  :-  %dais
+      :-  %dais
       ^-  dais
       =>  [nav=nav ..zuse]
       |_  sam=vase
@@ -883,7 +883,7 @@
         :_(nub [%hoon [%atom %t ~] q.page])
       ?:  =(%mime p.page)
         :_(nub [%mime =>([;;(mime q.page) ..zuse] !>(-))])
-      =^  =dais  nub  (build-dais p.page)
+      =/  =dais  (build-dais p.page)
       :_(nub [p.page (vale:dais q.page)])
     ::
     ++  cast-path
@@ -906,8 +906,8 @@
         =+  ;;(dif=(urge cord) q.diff)
         =/  new=@t  (of-wain:format (lurk:differ txt dif))
         :_(nub [%hoon =>([new ..zuse] !>(-))])
-      =^  dys=dais  nub  (build-dais p.old)
-      =^  syd=dais  nub  (build-dais p.diff)
+      =/  dys=dais  (build-dais p.old)
+      =/  syd=dais  (build-dais p.diff)
       :_(nub [p.old (~(pact dys (vale:dys q.old)) (vale:syd q.diff))])
     ::
     ++  prelude
@@ -1130,7 +1130,7 @@
     ::
     ++  soak-cage  |=([s=soak n=state] ?>(?=(%cage -.s) [cage.s n]))
     ++  soak-vase  |=([s=soak n=state] ?>(?=(%vase -.s) [vase.s n]))
-    ++  soak-dais  |=([s=soak n=state] ?>(?=(%dais -.s) [dais.s n]))
+    ++  soak-dais  |=(s=soak ?>(?=(%dais -.s) dais.s))
     ++  soak-tube  |=(s=soak ?>(?=(%tube -.s) tube.s))
     ++  soak-arch  |=(s=soak ?>(?=(%arch -.s) dir.s))
     --
@@ -2642,9 +2642,7 @@
       ++  get-dais
         |=  =mark
         ^-  dais
-        =/  [=dais *]
-          (build-dais:(tako-ford (~(got by hit.dom) let.dom)) mark)
-        dais
+        (build-dais:(tako-ford (~(got by hit.dom) let.dom)) mark)
       ::
       ::  Diff two files on bob-desk
       ::
@@ -3974,7 +3972,7 @@
       ^-  (unit (unit cage))
       ?.  ?=([@ ~] path)
         [~ ~]
-      =/  [=dais *]
+      =/  =dais
         (build-dais:(tako-ford tako) i.path)
       [~ ~ %dais !>(dais)]
     ::
@@ -4626,7 +4624,7 @@
       |-  ^-  [~ state:ford:fusion]
       ?~  marks
         [~ nub.f]
-      =^  =dais  nub.f  (build-dais:f i.marks)
+      =/  =dais  (build-dais:f i.marks)
       $(marks t.marks)
     $(desks t.desks)
   ::
