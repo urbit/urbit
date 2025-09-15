@@ -639,7 +639,8 @@
     ++  read-file
       ~/  %read-file
       |=  =path
-      ^-  [cage state]
+      ^-  cage
+      =<  -
       ~|  %error-validating^path
       %-  soak-cage
       ?:  (~(has in cycle.nub) vale+path)
@@ -921,7 +922,7 @@
       ^-  cage
       =/  mok  (head (flop path))
       ~|  error-casting-path+[path mok mak]
-      =^  cag=cage  nub  (read-file path)
+      =/  cag=cage  (read-file path)
       ?:  =(mok mak)
         cag
       =/  =tube  (build-tube mok mak)
@@ -943,7 +944,7 @@
     ++  prelude
       |=  =path
       ^-  vase
-      =^  cag=cage  nub  (read-file path)
+      =/  cag=cage  (read-file path)
       ?>  =(%hoon p.cag)
       =+  !<(txt=@t q.cag)
       =/  =pile  (parse-pile path txt)
@@ -962,7 +963,7 @@
       ?:  (~(has in cycle.nub) file+path)
         ~|(cycle+file+path^cycle.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) file+path)
-      =^  cag=cage  nub  (read-file path)
+      =/  cag=cage  (read-file path)
       ?>  =(%hoon p.cag)
       =+  !<(txt=@t q.cag)
       =/  =pile  (parse-pile path txt)
@@ -986,7 +987,8 @@
     ::
     ++  build-directory
       |=  =path
-      ^-  [(map @ta vase) state]
+      ^-  (map @ta vase)
+      =<  -
       %-  soak-arch
       %+  gain-leak  arch+path
       |=  nob=state
@@ -1045,7 +1047,7 @@
       |=  [sut=vase raz=(list [face=term =spec =path])]
       ^-  vase
       ?~  raz  sut
-      =^  res=(map @ta vase)  nub
+      =/  res=(map @ta vase)
         (build-directory path.i.raz)
       =;  pin=vase
         =.  p.pin  [%face face.i.raz p.pin]
@@ -2035,7 +2037,7 @@
               [built=(map path [lobe cage]) cache=_ford-args]
           ==
       ^+  [built ford-args]
-      =/  [=cage *]
+      =/  =cage
         ::  ~>  %slog.[0 leaf/"clay: validating {(spud path)}"]
         (read-file:(ford:fusion ford-args) path)
       =/  =lobe
