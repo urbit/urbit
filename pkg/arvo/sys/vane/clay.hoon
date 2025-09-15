@@ -4001,51 +4001,51 @@
     ++  read-a
       !.
       |=  [=tako =path]
-      ^-  [(unit (unit cage)) _..park]
+      ^-  (unit (unit cage))
       =/  [=vase *]
         ~_  leaf/"clay: %a build failed {<[syd tako path]>}"
         (build-file:(tako-ford tako) path)
-      :_(..park [~ ~ %vase !>(vase)])
+      [~ ~ %vase !>(vase)]
     ::
     ++  read-b
       !.
       |=  [=tako =path]
-      ^-  [(unit (unit cage)) _..park]
+      ^-  (unit (unit cage))
       ?.  ?=([@ ~] path)
-        [[~ ~] ..park]
+        [~ ~]
       =/  [=dais *]
         (build-dais:(tako-ford tako) i.path)
-      :_(..park [~ ~ %dais !>(dais)])
+      [~ ~ %dais !>(dais)]
     ::
     ++  read-c
       !.
       |=  [=tako =path]
-      ^-  [(unit (unit cage)) _..park]
+      ^-  (unit (unit cage))
       ?.  ?=([@ @ ~] path)
-        [[~ ~] ..park]
+        [~ ~]
       =/  [=tube *]
         (build-tube:(tako-ford tako) [i i.t]:path)
-      :_(..park [~ ~ %tube !>(tube)])
+      [~ ~ %tube !>(tube)]
     ::
     ++  read-e
       !.
       |=  [=tako =path]
-      ^-  [(unit (unit cage)) _..park]
+      ^-  (unit (unit cage))
       ?.  ?=([@ ~] path)
-        [[~ ~] ..park]
+        [~ ~]
       =/  [=vase *]
         (build-nave:(tako-ford tako) i.path)
-      :_(..park [~ ~ %nave vase])
+      [~ ~ %nave vase]
     ::
     ++  read-f
       !.
       |=  [=tako =path]
-      ^-  [(unit (unit cage)) _..park]
+      ^-  (unit (unit cage))
       ?.  ?=([@ @ ~] path)
-        [[~ ~] ..park]
+        [~ ~]
       =/  [=vase *]
         (build-cast:(tako-ford tako) [i i.t]:path)
-      :_(..park [~ ~ %cast vase])
+      [~ ~ %cast vase]
     ::
     ::  TODO move to +read-buc
     ::
@@ -4174,10 +4174,9 @@
     ::
     ++  read-r
       |=  [tak=tako pax=path]
-      ^-  [(unit (unit cage)) _..park]
-      =^  x  ..park  (read-x tak pax)
-      :_  ..park
-      ?~  x    ~
+      ^-  (unit (unit cage))
+      =/  x  (read-x tak pax)
+      ?~  x     ~
       ?~  u.x  [~ ~]
       ``[p.u.u.x !>(q.u.u.x)]
     ::  +read-s: produce miscellaneous
@@ -4364,15 +4363,15 @@
     ::
     ++  read-x
       |=  [tak=tako pax=path]
-      ^-  [(unit (unit cage)) _..park]
+      ^-  (unit (unit cage))
       =/  q  (read-q tak pax)
-      ?~  q    `..park
-      ?~  u.q  [[~ ~] ..park]
+      ?~  q     ~
+      ?~  u.q  [~ ~]
       ::  should convert any lobe to cage
       ::
       =/  [=cage *]
         (page-to-cage:(tako-ford tak) p.u.u.q q.q.u.u.q)
-      [``cage ..park]
+      ``cage
     ::
     ::  Gets an arch (directory listing) at a node.
     ::
@@ -4442,24 +4441,25 @@
       ::
       ++  read
         ^-  [(unit (unit cage)) _..park]
+        :_  ..park
         ?-  care.mun
           %a  (read-a tak path.mun)
           %b  (read-b tak path.mun)
           %c  (read-c tak path.mun)
-          %d  [(read-d tak path.mun) ..park]
+          %d  (read-d tak path.mun)
           %e  (read-e tak path.mun)
           %f  (read-f tak path.mun)
-          %p  [(read-p path.mun) ..park]
-          %q  [(read-q tak path.mun) ..park]
+          %p  (read-p path.mun)
+          %q  (read-q tak path.mun)
           %r  (read-r tak path.mun)
-          %s  [(read-s tak path.mun case.mun) ..park]
-          %t  [(read-t tak path.mun) ..park]
-          %u  [(read-u tak path.mun) ..park]
-          %v  [(read-v tak path.mun) ..park]
-          %w  [(read-w tak) ..park]
+          %s  (read-s tak path.mun case.mun)
+          %t  (read-t tak path.mun)
+          %u  (read-u tak path.mun)
+          %v  (read-v tak path.mun)
+          %w  (read-w tak)
           %x  (read-x tak path.mun)
-          %y  [(read-y tak path.mun) ..park]
-          %z  [(read-z tak path.mun) ..park]
+          %y  (read-y tak path.mun)
+          %z  (read-z tak path.mun)
         ==
       --
     --
