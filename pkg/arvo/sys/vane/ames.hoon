@@ -5347,6 +5347,16 @@
             ::
             ?:  ?=(%& -.meat.shut-packet)
               =+  ?.  &(?=(^ dud) msg.veb)  ~
+                  =/  [num-fragments=@ud =fragment-num =fragment]
+                    +.meat.shut-packet
+                  ::  don't print stack trace for /gf $pleas
+                  ::
+                  ?:  ?&  =(num-fragments 1) 
+                          =(fragment-num 0)
+                          =/  blob=*  (cue (rep packet-size [fragment]~))
+                          ?=(^ ;;((soft [%g [%gf ~] %0 ~]) blob))
+                      ==
+                    ~
                   %.  ~
                   %-  slog
                   :_  tang.u.dud
