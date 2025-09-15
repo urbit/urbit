@@ -672,7 +672,7 @@
         ~|(cycle+nave+mak^cycle.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) nave+mak)
       %-  (trace 1 |.("make mark {<mak>}"))
-      =^  cor=vase  nub  (build-fit %mar mak)
+      =/  cor=vase  (build-fit %mar mak)
       =/  gad=vase  (slub cor limb/%grad)
       ?@  q.gad
         =+  !<(mok=mark gad)
@@ -803,7 +803,7 @@
       ::  try +grow; is there a +grow core with a .b arm?
       ::
       %-  (trace 1 |.("make cast {<a>} -> {<b>}"))
-      =^  old=vase  nub  (build-fit %mar a)
+      =/  old=vase  (build-fit %mar a)
       ?:  (has-arm %grow b old)
         ::  +grow core has .b arm; use that
         ::
@@ -821,7 +821,7 @@
         !,(*hoon ~(grow cor v))
       ::  try direct +grab
       ::
-      =^  new=vase  nub  (build-fit %mar b)
+      =/  new=vase  (build-fit %mar b)
       =/  arm=?  (has-arm %grab a new)
       =/  rab 
         %-  mule  |.
@@ -974,6 +974,8 @@
     ::
     ++  build-file
       |=  =path
+      ^-  vase
+      =<  -
       (build-dependency |+path)
     ::  +build-directory: builds files in top level of a directory
     ::
@@ -1025,7 +1027,7 @@
       |=  [sut=vase wer=?(%lib %sur) taz=(list taut)]
       ^-  [vase state]
       ?~  taz  [sut nub]
-      =^  pin=vase  nub  (build-fit wer pax.i.taz)
+      =/  pin=vase  (build-fit wer pax.i.taz)
       =?  p.pin  ?=(^ face.i.taz)  [%face u.face.i.taz p.pin]
       $(sut (slop pin sut), taz t.taz)
     ::
@@ -1033,7 +1035,7 @@
       |=  [sut=vase raw=(list [face=term =path])]
       ^-  [vase state]
       ?~  raw  [sut nub]
-      =^  pin=vase  nub  (build-file (snoc path.i.raw %hoon))
+      =/  pin=vase  (build-file (snoc path.i.raw %hoon))
       =.  p.pin  [%face face.i.raw p.pin]
       $(sut (slop pin sut), raw t.raw)
     ::
@@ -1089,7 +1091,7 @@
     ::
     ++  build-fit
       |=  [pre=@tas pax=@tas]
-      ^-  [vase state]
+      ^-  vase
       (build-file (fit-path pre pax))
     ::
     ::  +fit-path: find path, maybe converting '-'s to '/'s
@@ -4002,7 +4004,7 @@
       !.
       |=  [=tako =path]
       ^-  (unit (unit cage))
-      =/  [=vase *]
+      =/  =vase
         ~_  leaf/"clay: %a build failed {<[syd tako path]>}"
         (build-file:(tako-ford tako) path)
       [~ ~ %vase !>(vase)]
@@ -4613,7 +4615,6 @@
       ?~  bill.i.sat
         ~
       =/  =vase
-        =<  -
         %-  road  |.
         (build-file:f /app/[i.bill.i.sat]/hoon)
       =/  agent  ~|  [%building-app bill.i.sat]  !<(agent:gall vase)
