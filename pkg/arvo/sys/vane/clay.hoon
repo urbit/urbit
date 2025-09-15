@@ -640,7 +640,6 @@
       ~/  %read-file
       |=  =path
       ^-  cage
-      =<  -
       ~|  %error-validating^path
       %-  soak-cage
       ?:  (~(has in cycle.nub) vale+path)
@@ -656,7 +655,7 @@
         ~|  %tombstoned-file^path^p.file
         (~(got by file-store) p.file)
       =/  =cage  (validate-page path page)
-      [[%cage cage] nub]
+      [%cage cage]
     ::
     ::  +build-nave: build a statically typed mark core
     ::
@@ -1128,7 +1127,7 @@
         ==
       ==
     ::
-    ++  soak-cage  |=([s=soak n=state] ?>(?=(%cage -.s) [cage.s n]))
+    ++  soak-cage  |=(s=soak ?>(?=(%cage -.s) cage.s))
     ++  soak-vase  |=([s=soak n=state] ?>(?=(%vase -.s) [vase.s n]))
     ++  soak-dais  |=(s=soak ?>(?=(%dais -.s) dais.s))
     ++  soak-tube  |=(s=soak ?>(?=(%tube -.s) tube.s))
