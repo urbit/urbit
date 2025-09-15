@@ -657,7 +657,7 @@
           p.file
         ~|  %tombstoned-file^path^p.file
         (~(got by file-store) p.file)
-      =^  =cage  nub  (validate-page path page)
+      =/  =cage  (validate-page path page)
       [[%cage cage] nub]
     ::
     ::  +build-nave: build a statically typed mark core
@@ -895,14 +895,15 @@
     ::
     ++  validate-page
       |=  [=path =page]
-      ^-  [cage state]
+      ^-  cage
       ~|  validate-page-fail+path^from+p.page
       =/  mak=mark  (head (flop path))
       ?:  =(mak p.page)
+        =<  -
         (page-to-cage page)
       =^  [mark vax=vase]  nub  (page-to-cage page)
       =^  =tube  nub  (build-tube p.page mak)
-      :_(nub [mak (tube vax)])
+      [mak (tube vax)]
     ::
     ++  page-to-cage
       |=  =page
