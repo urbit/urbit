@@ -1457,11 +1457,6 @@
     |*  [tak=tako res=*]
     :-  res
     ^+  ..park
-    ?:  &(?=(~ ref) =((aeon-to-tako:ze let.dom) tak))
-      ..park
-    :: if in the past, don't update ford cache, since any results have
-    :: no roots
-    ::
     ..park
   ::
   ++  request-wire
@@ -4507,7 +4502,7 @@
   ::  +wrap: save ford cache
   ::
   ++  wrap
-    |*  [her=ship syd=desk yon=(unit aeon) res=* =state:ford:fusion]
+    |*  [her=ship syd=desk yon=(unit aeon) res=*]
     =^  moves  ruf
       =/  den  ((de now rof hen ruf) her syd)
       =/  tak  (aeon-to-tako:ze:den ?~(yon let.dom:den u.yon))
@@ -4624,15 +4619,16 @@
     =/  f  (ford our desk.i.sat ~)
     =^  new=load:gall  ..abet
       %-  wrap  :^  our  desk.i.sat  ~
-      |-  ^-  [load:gall state:ford:fusion]
+      |-  ^-  load:gall
       ?~  bill.i.sat
-        [~ nub.f]
-      =^  =vase  nub.f
+        ~
+      =/  =vase
+        =<  -
         %-  road  |.
         (build-file:f /app/[i.bill.i.sat]/hoon)
       =/  agent  ~|  [%building-app bill.i.sat]  !<(agent:gall vase)
-      =^  lid  nub.f  $(bill.i.sat t.bill.i.sat)
-      [[[i.bill.i.sat [our desk.i.sat da+now] agent] lid] nub.f]
+      =/  lid  $(bill.i.sat t.bill.i.sat)
+      [[i.bill.i.sat [our desk.i.sat da+now] agent] lid]
     =.  lad  (weld lad new)
     $(sat t.sat)
   ::  build-dais for each mark
