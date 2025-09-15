@@ -855,7 +855,6 @@
     ++  build-tube
       |=  [a=mark b=mark]
       ^-  tube
-      =<  -
       ~>  %spin.[%build-tube]  ~>  %spin.[a]  ~>  %spin.[b]
       ~|  error-building-tube+[a b]
       %-  soak-tube
@@ -863,7 +862,7 @@
         ~|(cycle+tube+[a b]^cycle.nub !!)
       =^  gat=vase  nub  (build-cast a b)
       %-  (trace 1 |.("make tube {<a>} -> {<b>}"))
-      :_(nub [%tube =>([gat=gat ..zuse] |=(v=vase (slam gat v)))])
+      [%tube =>([gat=gat ..zuse] |=(v=vase (slam gat v)))]
     ::
     ++  validate-page
       |=  [=path =page]
@@ -955,7 +954,6 @@
     ++  build-directory
       |=  =path
       ^-  (map @ta vase)
-      =<  -
       %-  soak-arch
       =/  fiz=(list @ta)
         =/  len  (lent path)
@@ -972,7 +970,7 @@
       =|  rez=(map @ta vase)
       |-
       ?~  fiz
-        [[%arch rez] nub]
+        [%arch rez]
       =*  nom=@ta    i.fiz
       =/  pax=^path  (weld path nom %hoon ~)
       =^  res  nub   (build-dependency &+[path pax])
@@ -1133,8 +1131,8 @@
     ++  soak-cage  |=([s=soak n=state] ?>(?=(%cage -.s) [cage.s n]))
     ++  soak-vase  |=([s=soak n=state] ?>(?=(%vase -.s) [vase.s n]))
     ++  soak-dais  |=([s=soak n=state] ?>(?=(%dais -.s) [dais.s n]))
-    ++  soak-tube  |=([s=soak n=state] ?>(?=(%tube -.s) [tube.s n]))
-    ++  soak-arch  |=([s=soak n=state] ?>(?=(%arch -.s) [dir.s n]))
+    ++  soak-tube  |=(s=soak ?>(?=(%tube -.s) tube.s))
+    ++  soak-arch  |=(s=soak ?>(?=(%arch -.s) dir.s))
     --
   ::
   ++  trace
