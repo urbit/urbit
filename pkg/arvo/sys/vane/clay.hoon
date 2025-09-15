@@ -1444,20 +1444,11 @@
   ::
   ::  Create a ford appropriate for the aeon
   ::
-  ::  Don't forget to call +tako-flow!
-  ::
   ++  tako-ford
     |=  tak=tako
     %-  ford:fusion
     :_  [lat.ran veb.bug]
     (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
-  ::  Produce ford cache appropriate for the aeon
-  ::
-  ++  tako-flow
-    |*  [tak=tako res=*]
-    :-  res
-    ^+  ..park
-    ..park
   ::
   ++  request-wire
     |=  [kind=@ta =ship =desk index=@ud]
@@ -4505,8 +4496,7 @@
     |*  [her=ship syd=desk yon=(unit aeon) res=*]
     =^  moves  ruf
       =/  den  ((de now rof hen ruf) her syd)
-      =/  tak  (aeon-to-tako:ze:den ?~(yon let.dom:den u.yon))
-      abet:+:(tako-flow:den tak res)
+      abet:..park:den
     [res (emil moves)]
   ::
   ++  trace
