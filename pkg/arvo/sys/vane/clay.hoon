@@ -1017,10 +1017,10 @@
       =/  sut=vase  (run-tauts sut %sur sur.pile)
       =/  sut=vase  (run-tauts sut %lib lib.pile)
       =/  sut=vase  (run-raw sut raw.pile)
-      =/  sut=vase  =<  -  (run-raz sut raz.pile)
-      =/  sut=vase  =<  -  (run-maz sut maz.pile)
-      =/  sut=vase  =<  -  (run-caz sut caz.pile)
-      =/  sut=vase  =<  -  (run-bar sut bar.pile)
+      =/  sut=vase  (run-raz sut raz.pile)
+      =/  sut=vase  (run-maz sut maz.pile)
+      =/  sut=vase  (run-caz sut caz.pile)
+      =/  sut=vase  (run-bar sut bar.pile)
       sut
     ::
     ++  run-tauts
@@ -1041,8 +1041,8 @@
     ::
     ++  run-raz
       |=  [sut=vase raz=(list [face=term =spec =path])]
-      ^-  [vase state]
-      ?~  raz  [sut nub]
+      ^-  vase
+      ?~  raz  sut
       =^  res=(map @ta vase)  nub
         (build-directory path.i.raz)
       =;  pin=vase
@@ -1065,24 +1065,24 @@
     ::
     ++  run-maz
       |=  [sut=vase maz=(list [face=term =mark])]
-      ^-  [vase state]
-      ?~  maz  [sut nub]
+      ^-  vase
+      ?~  maz  sut
       =^  pin=vase  nub  (build-nave mark.i.maz)
       =.  p.pin  [%face face.i.maz p.pin]
       $(sut (slop pin sut), maz t.maz)
     ::
     ++  run-caz
       |=  [sut=vase caz=(list [face=term =mars])]
-      ^-  [vase state]
-      ?~  caz  [sut nub]
+      ^-  vase
+      ?~  caz  sut
       =^  pin=vase  nub  (build-cast mars.i.caz)
       =.  p.pin  [%face face.i.caz p.pin]
       $(sut (slop pin sut), caz t.caz)
     ::
     ++  run-bar
       |=  [sut=vase bar=(list [face=term =mark =path])]
-      ^-  [vase state]
-      ?~  bar  [sut nub]
+      ^-  vase
+      ?~  bar  sut
       =^  =cage  nub  (cast-path [path mark]:i.bar)
       =.  p.q.cage  [%face face.i.bar p.q.cage]
       $(sut (slop q.cage sut), bar t.bar)
