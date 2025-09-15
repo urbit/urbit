@@ -1014,9 +1014,9 @@
       |=  =pile
       ^-  vase
       =/  sut=vase  zuse.bud
-      =/  sut=vase  =<  -  (run-tauts sut %sur sur.pile)
-      =/  sut=vase  =<  -  (run-tauts sut %lib lib.pile)
-      =/  sut=vase  =<  -  (run-raw sut raw.pile)
+      =/  sut=vase  (run-tauts sut %sur sur.pile)
+      =/  sut=vase  (run-tauts sut %lib lib.pile)
+      =/  sut=vase  (run-raw sut raw.pile)
       =/  sut=vase  =<  -  (run-raz sut raz.pile)
       =/  sut=vase  =<  -  (run-maz sut maz.pile)
       =/  sut=vase  =<  -  (run-caz sut caz.pile)
@@ -1025,16 +1025,16 @@
     ::
     ++  run-tauts
       |=  [sut=vase wer=?(%lib %sur) taz=(list taut)]
-      ^-  [vase state]
-      ?~  taz  [sut nub]
+      ^-  vase
+      ?~  taz  sut
       =/  pin=vase  (build-fit wer pax.i.taz)
       =?  p.pin  ?=(^ face.i.taz)  [%face u.face.i.taz p.pin]
       $(sut (slop pin sut), taz t.taz)
     ::
     ++  run-raw
       |=  [sut=vase raw=(list [face=term =path])]
-      ^-  [vase state]
-      ?~  raw  [sut nub]
+      ^-  vase
+      ?~  raw  sut
       =/  pin=vase  (build-file (snoc path.i.raw %hoon))
       =.  p.pin  [%face face.i.raw p.pin]
       $(sut (slop pin sut), raw t.raw)
