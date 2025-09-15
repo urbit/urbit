@@ -880,7 +880,8 @@
     ::
     ++  build-tube
       |=  [a=mark b=mark]
-      ^-  [tube state]
+      ^-  tube
+      =<  -
       ~>  %spin.[%build-tube]  ~>  %spin.[a]  ~>  %spin.[b]
       ~|  error-building-tube+[a b]
       %-  soak-tube
@@ -902,7 +903,7 @@
         =<  -
         (page-to-cage page)
       =^  [mark vax=vase]  nub  (page-to-cage page)
-      =^  =tube  nub  (build-tube p.page mak)
+      =/  =tube  (build-tube p.page mak)
       [mak (tube vax)]
     ::
     ++  page-to-cage
@@ -923,7 +924,7 @@
       =^  cag=cage  nub  (read-file path)
       ?:  =(mok mak)
         [cag nub]
-      =^  =tube  nub  (build-tube mok mak)
+      =/  =tube  (build-tube mok mak)
       ~|  error-running-cast+[path mok mak]
       :_(nub [mak (tube q.cag)])
     ::
@@ -4026,7 +4027,7 @@
       ^-  (unit (unit cage))
       ?.  ?=([@ @ ~] path)
         [~ ~]
-      =/  [=tube *]
+      =/  =tube
         (build-tube:(tako-ford tako) [i i.t]:path)
       [~ ~ %tube !>(tube)]
     ::
