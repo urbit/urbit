@@ -4348,7 +4348,6 @@
           ::  will be resent.
           ::
           ?.  ?=([~ %known *] sndr-state)
-            ~&  %enqueue-alien
             (enqueue-alien-todo sndr.shot sndr-state |=(alien-agenda +<))
           ::  decrypt packet contents using symmetric-key.channel
           ::
@@ -5110,12 +5109,10 @@
           =.  todos             (mutate todos)
           =.  peers.ames-state  (~(put by peers.ames-state) ship %alien todos)
           ?:  already-pending
-            ~&  already-pending/already-pending
             event-core
           ::
           ?:  =(%pawn (clan:title ship))
             (request-attestation ship)
-          ~&  %ask-keys^ship
           ::  NB: we specifically look for this wire in +public-keys-give in
           ::  Jael.  if you change it here, you must change it there.
           ::
