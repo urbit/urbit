@@ -127,6 +127,10 @@
     ::
     =.  connection-by-duct.state
       (~(put by connection-by-duct.state) duct id)
+    :: if we don't have a duct yet just ignore the request, %born will
+    :: cancel it soon. this is not ideal to say the least.
+    ::
+    ?~  outbound-duct.state  [~ state]
     ::  start the download
     ::
     ::  the original eyre keeps track of the duct on %born and then sends a
@@ -149,7 +153,8 @@
       ~&  %iris-invalid-cancel
       [~ state]
     ::
-    :-  [outbound-duct.state %give %cancel-request u.cancel-id]~
+    :-  ?~  outbound-duct.state  ~
+      [outbound-duct.state %give %cancel-request u.cancel-id]~
     (cleanup-connection u.cancel-id)
   ::  +receive: receives a response to an http-request we made
   ::
