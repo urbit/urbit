@@ -646,9 +646,6 @@
       ?:  (~(has in cycle.nub) vale+path)
         ~|(cycle+vale+path^cycle.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) vale+path)
-      %+  gain-leak  vale+path
-      |=  nob=state
-      =.  nub  nob
       %-  (trace 1 |.("read file {(spud path)}"))
       =/  file
         ~|  %file-not-found^path
@@ -680,9 +677,6 @@
         =^  deg=vase  nub  $(mak mok)
         =^  tub=vase  nub  (build-cast mak mok)
         =^  but=vase  nub  (build-cast mok mak)
-        %+  gain-leak  nave+mak
-        |=  nob=state
-        =.  nub  nob
         :_  nub  :-  %vase
         ^-  vase  ::  vase of nave
         %+  slub
@@ -705,9 +699,6 @@
           (but (pact:deg (tub v) d))
         ++  vale  noun:grab:cor
         --
-      %+  gain-leak  nave+mak
-      |=  nob=state
-      =.  nub  nob
       :_  nub  :-  %vase
       ^-  vase  ::  vase of nave
       %+  slub  (slop (with-face cor+cor) zuse.bud)
@@ -745,9 +736,6 @@
         ~|(cycle+dais+mak^cycle.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) dais+mak)
       =^  nav=vase  nub  (build-nave mak)
-      %+  gain-leak  dais+mak
-      |=  nob=state
-      =.  nub  nob
       %-  (trace 1 |.("make dais {<mak>}"))
       :_  nub  :-  %dais
       ^-  dais
@@ -793,10 +781,7 @@
       ?:  (~(has in cycle.nub) cast+[a b])
         ~|(cycle+cast+[a b]^cycle.nub !!)
       ?:  =(a b)
-        %+  gain-leak  cast+a^b
-        |=  nob=state
         %-  (trace 4 |.("identity shortcircuit"))
-        =.  nub  nob
         :_(nub vase+same.bud)
       ?:  =([%mime %hoon] [a b])
         %-  (trace 4 |.("%mime -> %hoon shortcircuit"))
@@ -808,10 +793,7 @@
       ?:  (has-arm %grow b old)
         ::  +grow core has .b arm; use that
         ::
-        %+  gain-leak  cast+a^b
-        |=  nob=state
         %-  (trace 4 |.("{<a>} -> {<b>}: +{(trip b)}:grow:{(trip a)}"))
-        =.  nub  nob
         :_  nub  :-  %vase
         %+  slub  (with-faces cor+old ~)
         ^-  hoon
@@ -832,10 +814,7 @@
           [%spin %cltr [%sand %t (crip "grab-{<a>}->{<b>}")] ~]
         tsgl/[limb/a limb/%grab]
       ?:  &(arm ?=(%& -.rab) ?=(^ q.p.rab))
-        %+  gain-leak  cast+a^b
-        |=  nob=state
         %-  (trace 4 |.("{<a>} -> {<b>}: +{(trip a)}:grab:{(trip b)}"))
-        =.  nub  nob
         :_(nub vase+p.rab)
       ::  try +jump
       ::
@@ -849,10 +828,7 @@
         %-  (trace 4 |.("{<a>} -> {<b>}: via {<via>} per +grab:{(trip b)}"))
         (compose-casts a via b)
       ?:  ?=(%noun b)
-        %+  gain-leak  cast+a^b
-        |=  nob=state
         %-  (trace 4 |.("{<a>} -> {<b>} default"))
-        =.  nub  nob
         :_(nub vase+same.bud)
       ~|(no-cast-from+[a b] !!)
     ::
@@ -861,9 +837,6 @@
       ^-  [soak state]
       =^  uno=vase  nub  (build-cast x y)
       =^  dos=vase  nub  (build-cast y z)
-      %+  gain-leak  cast+x^z
-      |=  nob=state
-      =.  nub  nob
       :_  nub  :-  %vase
       %+  slub
         (with-faces uno+uno dos+dos ~)
@@ -889,9 +862,6 @@
       ?:  (~(has in cycle.nub) tube+[a b])
         ~|(cycle+tube+[a b]^cycle.nub !!)
       =^  gat=vase  nub  (build-cast a b)
-      %+  gain-leak  tube+a^b
-      |=  nob=state
-      =.  nub  nob
       %-  (trace 1 |.("make tube {<a>} -> {<b>}"))
       :_(nub [%tube =>([gat=gat ..zuse] |=(v=vase (slam gat v)))])
     ::
@@ -968,9 +938,6 @@
       =+  !<(txt=@t q.cag)
       =/  =pile  (parse-pile path txt)
       =/  sut=vase  (run-prelude pile)
-      %+  gain-leak  file+path
-      |=  nob=state
-      =.  nub  nob
       =/  res=vase  (slub sut hoon.pile)
       [[%vase res] nub]
     ::
@@ -990,9 +957,6 @@
       ^-  (map @ta vase)
       =<  -
       %-  soak-arch
-      %+  gain-leak  arch+path
-      |=  nob=state
-      =.  nub  nob
       =/  fiz=(list @ta)
         =/  len  (lent path)
         %+  murn  ~(tap by files)
@@ -1171,13 +1135,6 @@
     ++  soak-dais  |=([s=soak n=state] ?>(?=(%dais -.s) [dais.s n]))
     ++  soak-tube  |=([s=soak n=state] ?>(?=(%tube -.s) [tube.s n]))
     ++  soak-arch  |=([s=soak n=state] ?>(?=(%arch -.s) [dir.s n]))
-    ::
-    ++  gain-leak
-      |=  [=mist next=$-(state [soak state])]
-      ^-  [soak state]
-      =.  cycle.nub  (~(del in cycle.nub) mist)
-      =^  =soak  nub  (next nub)
-      [soak nub]
     --
   ::
   ++  trace
