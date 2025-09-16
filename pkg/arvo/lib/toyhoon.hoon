@@ -314,7 +314,22 @@
   ^-  type
   ?:  (nest a b)  a
   ?:  (nest b a)  b
-  ::TODO  %face, %hold
+  ::  %hold expansion
+  ::TODO  track these y/n?
+  ::
+  ?:  ?=([%hold *] a)  $(a (drop a))
+  ?:  ?=([%hold *] b)  $(b (drop b))
+  ::  keep faces only if they match
+  ::
+  ?:  ?=([%face *] a)
+    ?:  ?=([%face *] b)
+      ?:  =(p.a p.b)
+        a(q $(a q.a, b q.b))
+      $(a q.a, b q.b)
+    $(a q.a)
+  ?:  ?=([%face *] b)
+    $(b q.b)
+  ::
   ?:  (is-atomic a)
     ?:  (is-atomic b)
       ?:  &((is-cat a) (is-cat b))
@@ -324,10 +339,13 @@
         %-  (~(uno by c) d)
         |=  [k=@ a=aura b=aura]
         (aura-union a b)
-      %noun  ::TODO  aura union
+      [%atom (aura-union (extract-aura a) (extract-aura b)) ~]
     [%bcpt a b]
   ?:  (is-atomic b)
     [%bcpt b a]
+  ::
+  ::NOTE  remember, a and b could be %cores...
+  ::
   =+  ha=(has-atomic-head a)
   =+  hb=(has-atomic-head b)
   ?:  &(ha !hb)  [%bckt b a]
@@ -340,8 +358,17 @@
       %-  (~(uno by c) d)
       |=  [k=@ a=[=aura =type] b=[=aura =type]]
       [(aura-union aura.a aura.b) ^$(a type.a, b type.b)]
-    %noun  ::TODO  recur on heads and tails, or different based on a and b...
-  %noun  ::TODO  recur on heads and tails, or different based on a and b...
+    ::  both cell types
+    ::  both atomic heads
+    ::  one of them not cat head, could be %bccn or %bckt
+    :+  %cell
+      $(a (peek a %free 2), b (peek b %free 2))
+    $(a (peek a %free 3), b (peek b %free 3))
+  ::  neither has atomic head
+  ::  one could be %bckt
+  :+  %cell
+    $(a (peek a %free 2), b (peek b %free 2))
+  $(a (peek a %free 3), b (peek b %free 3))
 ::
 ++  is-cat  ::  Constant Atomic Type
   |=  a=type
@@ -354,8 +381,70 @@
   ^-  (map @ aura)
   ?+  a  ~
     [%atom *]  [(need q.a)^p.a ~ ~]
-    [%bcwt *]  a
+    [%bcwt *]  p.a
   ==
+++  cat-head-map
+  |=  a=type
+  ^-  (map @ [aura type])
+  ?+  a  ~
+    ?([%atom *] [%bcwt *] [%face *] [%hold *])  !!
+    [%bccn *]  p.a
+  ::
+      [%cell *]
+    =|  gil=(set type)
+    |-
+    ?+  p.a  ~
+      [%face *]  $(p.a q.p.a)
+      [%atom *]  [[(need q.p.a) [p.p.a q.a]] ~ ~]
+      [%bcwt *]  (~(run by p.p.a) (late q.a))
+    ::
+        [%hold *]
+      ?:  (~(has in gil) p.a)  ~|(%hah-hold !!)
+      $(p.a (drop p.a), gil (~(put in gil) p.a))
+    ==
+  ==
+++  has-cat-head
+  |=  a=type
+  ^-  ?
+  ?+  a  |
+    ?([%atom *] [%bcwt *] [%face *] [%hold *])  !!
+    [%bccn *]  &
+  ::
+      [%cell *]
+    =|  gil=(set type)
+    |-
+    ?+  p.a  (is-cat p.a)
+      [%face *]  $(p.a q.p.a)
+    ::
+        [%hold *]
+      ?:  (~(has in gil) p.a)  ~|(%hah-hold !!)
+      $(p.a (drop p.a), gil (~(put in gil) p.a))
+    ==
+  ==
+++  has-atomic-head
+  |=  a=type
+  ^-  ?
+  ?+  a  |
+    ?([%atom *] [%bcwt *] [%face *] [%hold *])  !!
+    [%bccn *]  &
+  ::
+      [%cell *]
+    =|  gil=(set type)
+    |-
+    ?+  p.a  (is-atomic p.a)
+      [%face *]  $(p.a q.p.a)
+    ::
+        [%hold *]
+      ?:  (~(has in gil) p.a)  ~|(%hah-hold !!)
+      $(p.a (drop p.a), gil (~(put in gil) p.a))
+    ==
+  ==
+++  extract-aura
+  |=  a=type
+  ?:  ?=(%atom -.a)  p.a
+  ?>  ?=(%bcwt -.a)
+  =+  b=(sy ~(val by p.a))
+  ?:(?=([* ~ ~] b) n.b %$)
 ++  aura-union
   |=  [a=aura b=aura]
   ^-  aura
