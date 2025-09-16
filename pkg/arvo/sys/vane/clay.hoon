@@ -869,21 +869,20 @@
       ~|  validate-page-fail+path^from+p.page
       =/  mak=mark  (head (flop path))
       ?:  =(mak p.page)
-        =<  -
         (page-to-cage page)
-      =^  [mark vax=vase]  nub  (page-to-cage page)
+      =/  [mark vax=vase]  (page-to-cage page)
       =/  =tube  (build-tube p.page mak)
       [mak (tube vax)]
     ::
     ++  page-to-cage
       |=  =page
-      ^-  [cage state]
+      ^-  cage
       ?:  =(%hoon p.page)
-        :_(nub [%hoon [%atom %t ~] q.page])
+        [%hoon [%atom %t ~] q.page]
       ?:  =(%mime p.page)
-        :_(nub [%mime =>([;;(mime q.page) ..zuse] !>(-))])
+        [%mime =>([;;(mime q.page) ..zuse] !>(-))]
       =/  =dais  (build-dais p.page)
-      :_(nub [p.page (vale:dais q.page)])
+      [p.page (vale:dais q.page)]
     ::
     ++  cast-path
       |=  [=path mak=mark]
@@ -2634,9 +2633,7 @@
         =/  peg=(unit page)  (~(get by lat.ran) lobe)
         ?~  peg
           ~
-        =/  [=cage *]
-          (page-to-cage:(tako-ford (~(got by hit.dom) let.dom)) u.peg)
-        `cage
+        `(page-to-cage:(tako-ford (~(got by hit.dom) let.dom)) u.peg)
       ::
       ++  get-dais
         |=  =mark
@@ -3271,7 +3268,7 @@
       ?:  ?=(%| -.vale-result)
         %-  (slog >%validate-x-failed< p.vale-result)
         ~
-      `-.p.vale-result
+      `p.vale-result
     ::
     ::  Make sure the incoming data is a %z response
     ::
@@ -4203,7 +4200,7 @@
         =/  peg=(unit page)  (~(get by lat.ran) lobe)
         ?~  peg
           ~
-        =/  [=cage *]
+        =/  =cage
           (page-to-cage:(tako-ford tak) u.peg)
         ``cage+[-:!>(*^cage) cage]
       ::
@@ -4327,9 +4324,7 @@
       ?~  u.q  [~ ~]
       ::  should convert any lobe to cage
       ::
-      =/  [=cage *]
-        (page-to-cage:(tako-ford tak) p.u.u.q q.q.u.u.q)
-      ``cage
+      ``(page-to-cage:(tako-ford tak) p.u.u.q q.q.u.u.q)
     ::
     ::  Gets an arch (directory listing) at a node.
     ::
