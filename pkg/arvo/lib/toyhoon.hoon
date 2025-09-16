@@ -152,7 +152,7 @@
       %hold  ?:  (~(has in seg) sut)  |
              ?:  (~(has in gil) [sut ref])  &
              %=  dext
-               sut  (play p.sut q.sut) :: way to much work we migth want repo
+               sut  (drop sut)
                seg  (~(put in seg) sut)
                gil  (~(put in gil) [sut ref])
              ==
@@ -186,7 +186,7 @@
       %hold  ?:  (~(has in reg) ref)  &
              ?:  (~(has in gil) [sut ref])  &
              %=  dext
-               ref  (play p.ref q.ref) :: way to much work we migth want repo
+               ref  (drop ref)
                reg  (~(put in reg) ref)
                gil  (~(put in gil) [sut ref])
              ==
@@ -209,13 +209,18 @@
       %bccn  ?:(&(=(2 now) !=(2 axe)) %void %noun)
       %bckt  %noun
       %bcwt  %void
-      %hold  $(sut (play p.sut q.sut))
+      %hold  $(sut (drop sut))
       %core  ?.  =(2 now)  %noun
              ?.  |(?=(%gold var.sut) ?=(%wet var.sut) ?=(%free way))
                %noun
              ^$(axe lat, sut pay.sut)
   ==
-
+++  drop
+  |=  $=  sut
+      $~  [%hold %void *naty]
+      $>(%hold type)
+  ^-  type
+  (play +.sut)
 ::
 ++  play
   |=  [sut=type =naty]
@@ -235,7 +240,7 @@
         [%face *]  $(gol q.gol)
         [%hold *]  ?:  (~(has in sog) gol)  !! ::xx do we crash?
                    %=  $
-                     gol  (play p.gol q.gol)
+                     gol  (drop gol)
                      sog  (~(put in sog) gol)
                    ==
       ==
