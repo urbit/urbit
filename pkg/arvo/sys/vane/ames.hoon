@@ -124,13 +124,16 @@
 ::
 =>  ::  vane IO
     ::
+    ::  (note: %tune and %turf unused; left for migration purposes;
+    ::  removing any of these $signs will break any migration prior 
+    ::  to ames-state-22)
     |%
     +$  sign
       $~  [%behn %wake ~]
       $%  [%ames $>(?(%tune %sage) gift)]
           [%behn $>(%wake gift:behn)]
           [%gall $>(?(%flub %unto %spur) gift:gall)]
-          [%jael $>(?(%private-keys %public-keys) gift:jael)]
+          [%jael $>(?(%private-keys %public-keys %turf) gift:jael)]
           $:  @tas
               $>(?(%noon %boon %done) gift)
       ==  ==
@@ -5518,6 +5521,16 @@
               peer-core
             ?:  ?=(%& -.meat.shut-packet)
               =+  ?.  &(?=(^ dud) msg.veb)  ~
+                  =/  [num-fragments=@ud =fragment-num =fragment]
+                    +.meat.shut-packet
+                  ::  don't print stack trace for /gf $pleas
+                  ::
+                  ?:  ?&  =(num-fragments 1) 
+                          =(fragment-num 0)
+                          =/  blob=*  (cue (rep packet-size [fragment]~))
+                          ?=(^ ;;((soft [%g [%gf ~] %0 ~]) blob))
+                      ==
+                    ~
                   %.  ~
                   %-  slog
                   :_  tang.u.dud
@@ -8561,7 +8574,7 @@
               ?:  ?=([%gall %unto *] sign)  :: XX from poking %ping app
                 `ames-state
               ::
-              ?+  sign  `ames-state  :: XX %tune; not used
+              ?+  sign  `ames-state  :: XX %tune and %turf; not used
                 [%behn %wake *]  sy-abet:(~(sy-wake sy hen) wire error.sign)
               ::
                   [%jael %private-keys *]
@@ -10902,6 +10915,10 @@
             ::
             =^  resend-moves  ames-state.core
               =;  c=_ev-core
+                ::  moves are going to be flopped again in sy-abet but
+                ::  that seems fine since there is only one packet per
+                ::  entry in the pit
+                ::
                 ev-abet:c
               %-  ~(rep by pit.per.ev-core)
               |=  [[=path req=request-state] core=_ev-core]
