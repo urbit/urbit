@@ -821,10 +821,12 @@
       ?:  &((has-arm %jump a old) ?=(%& -.jum))
         =/  via  !<(mark p.jum)
         %-  (trace 4 |.("{<a>} -> {<b>}: via {<via>} per +jump:{(trip a)}"))
+        :_  nub
         (compose-casts a via b)
       ?:  &(arm ?=(%& -.rab))
         =/  via  !<(mark p.rab)
         %-  (trace 4 |.("{<a>} -> {<b>}: via {<via>} per +grab:{(trip b)}"))
+        :_  nub
         (compose-casts a via b)
       ?:  ?=(%noun b)
         %-  (trace 4 |.("{<a>} -> {<b>} default"))
@@ -833,10 +835,10 @@
     ::
     ++  compose-casts
       |=  [x=mark y=mark z=mark]
-      ^-  [soak state]
+      ^-  soak
       =^  uno=vase  nub  (build-cast x y)
       =^  dos=vase  nub  (build-cast y z)
-      :_  nub  :-  %vase
+      :-  %vase
       %+  slub
         (with-faces uno+uno dos+dos ~)
       !,(*hoon |=(_+<.uno (dos (uno +<))))
