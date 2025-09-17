@@ -664,8 +664,7 @@
       |=  mak=mark
       ^-  vase
       ~|  %error-building-mark^mak
-      =<  -
-      %-  soak-vase  :_  nub
+      %-  soak-vase
       ?:  (~(has in cycle.nub) nave+mak)
         ~|(cycle+nave+mak^cycle.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) nave+mak)
@@ -675,8 +674,8 @@
       ?@  q.gad
         =+  !<(mok=mark gad)
         =/  deg=vase  $(mak mok)
-        =^  tub=vase  nub  (build-cast mak mok)
-        =^  but=vase  nub  (build-cast mok mak)
+        =/  tub=vase  (build-cast mak mok)
+        =/  but=vase  (build-cast mok mak)
         :-  %vase
         ^-  vase  ::  vase of nave
         %+  slub
@@ -775,17 +774,17 @@
     ++  build-cast
       ~/  %build-cast
       |=  [a=mark b=mark]
-      ^-  [vase state]
+      ^-  vase
       ~|  error-building-cast+[a b]
       %-  soak-vase
       ?:  (~(has in cycle.nub) cast+[a b])
         ~|(cycle+cast+[a b]^cycle.nub !!)
       ?:  =(a b)
         %-  (trace 4 |.("identity shortcircuit"))
-        :_(nub vase+same.bud)
+        [%vase same.bud]
       ?:  =([%mime %hoon] [a b])
         %-  (trace 4 |.("%mime -> %hoon shortcircuit"))
-        :_(nub [%vase =>(..zuse !>(|=(m=mime q.q.m)))])
+        [%vase =>(..zuse !>(|=(m=mime q.q.m)))]
       ::  try +grow; is there a +grow core with a .b arm?
       ::
       %-  (trace 1 |.("make cast {<a>} -> {<b>}"))
@@ -794,7 +793,7 @@
         ::  +grow core has .b arm; use that
         ::
         %-  (trace 4 |.("{<a>} -> {<b>}: +{(trip b)}:grow:{(trip a)}"))
-        :_  nub  :-  %vase
+        :-  %vase
         %+  slub  (with-faces cor+old ~)
         ^-  hoon
         :+  %brcl  !,(*hoon v=+<.cor)
@@ -815,30 +814,28 @@
         tsgl/[limb/a limb/%grab]
       ?:  &(arm ?=(%& -.rab) ?=(^ q.p.rab))
         %-  (trace 4 |.("{<a>} -> {<b>}: +{(trip a)}:grab:{(trip b)}"))
-        :_(nub vase+p.rab)
+        [%vase p.rab]
       ::  try +jump
       ::
       =/  jum  (mule |.((slub old tsgl/[limb/b limb/%jump])))
       ?:  &((has-arm %jump a old) ?=(%& -.jum))
         =/  via  !<(mark p.jum)
         %-  (trace 4 |.("{<a>} -> {<b>}: via {<via>} per +jump:{(trip a)}"))
-        :_  nub
         (compose-casts a via b)
       ?:  &(arm ?=(%& -.rab))
         =/  via  !<(mark p.rab)
         %-  (trace 4 |.("{<a>} -> {<b>}: via {<via>} per +grab:{(trip b)}"))
-        :_  nub
         (compose-casts a via b)
       ?:  ?=(%noun b)
         %-  (trace 4 |.("{<a>} -> {<b>} default"))
-        :_(nub vase+same.bud)
+        [%vase same.bud]
       ~|(no-cast-from+[a b] !!)
     ::
     ++  compose-casts
       |=  [x=mark y=mark z=mark]
       ^-  soak
-      =^  uno=vase  nub  (build-cast x y)
-      =^  dos=vase  nub  (build-cast y z)
+      =/  uno=vase  (build-cast x y)
+      =/  dos=vase  (build-cast y z)
       :-  %vase
       %+  slub
         (with-faces uno+uno dos+dos ~)
@@ -862,7 +859,7 @@
       %-  soak-tube
       ?:  (~(has in cycle.nub) tube+[a b])
         ~|(cycle+tube+[a b]^cycle.nub !!)
-      =^  gat=vase  nub  (build-cast a b)
+      =/  gat=vase  (build-cast a b)
       %-  (trace 1 |.("make tube {<a>} -> {<b>}"))
       [%tube =>([gat=gat ..zuse] |=(v=vase (slam gat v)))]
     ::
@@ -928,8 +925,7 @@
       =/  =path
         ?:(?=(%| -.dep) p.dep fil.p.dep)
       ~|  %error-building^path
-      =<  -
-      %-  soak-vase  :_  nub
+      %-  soak-vase
       %-  (trace 1 |.("make file {(spud path)}"))
       ?:  (~(has in cycle.nub) file+path)
         ~|(cycle+file+path^cycle.nub !!)
@@ -1042,7 +1038,7 @@
       |=  [sut=vase caz=(list [face=term =mars])]
       ^-  vase
       ?~  caz  sut
-      =^  pin=vase  nub  (build-cast mars.i.caz)
+      =/  pin=vase  (build-cast mars.i.caz)
       =.  p.pin  [%face face.i.caz p.pin]
       $(sut (slop pin sut), caz t.caz)
     ::
@@ -1130,7 +1126,7 @@
       ==
     ::
     ++  soak-cage  |=(s=soak ?>(?=(%cage -.s) cage.s))
-    ++  soak-vase  |=([s=soak n=state] ?>(?=(%vase -.s) [vase.s n]))
+    ++  soak-vase  |=(s=soak ?>(?=(%vase -.s) vase.s))
     ++  soak-dais  |=(s=soak ?>(?=(%dais -.s) dais.s))
     ++  soak-tube  |=(s=soak ?>(?=(%tube -.s) tube.s))
     ++  soak-arch  |=(s=soak ?>(?=(%arch -.s) dir.s))
@@ -4001,7 +3997,7 @@
       ^-  (unit (unit cage))
       ?.  ?=([@ @ ~] path)
         [~ ~]
-      =/  [=vase *]
+      =/  =vase
         (build-cast:(tako-ford tako) [i i.t]:path)
       [~ ~ %cast vase]
     ::
