@@ -923,11 +923,12 @@
     ++  build-dependency
       ~/  %build-dep
       |=  dep=(each [dir=path fil=path] path)
-      ^-  [vase state]
+      ^-  vase
       =/  =path
         ?:(?=(%| -.dep) p.dep fil.p.dep)
       ~|  %error-building^path
-      %-  soak-vase
+      =<  -
+      %-  soak-vase  :_  nub
       %-  (trace 1 |.("make file {(spud path)}"))
       ?:  (~(has in cycle.nub) file+path)
         ~|(cycle+file+path^cycle.nub !!)
@@ -938,12 +939,11 @@
       =/  =pile  (parse-pile path txt)
       =/  sut=vase  (run-prelude pile)
       =/  res=vase  (slub sut hoon.pile)
-      [[%vase res] nub]
+      [%vase res]
     ::
     ++  build-file
       |=  =path
       ^-  vase
-      =<  -
       (build-dependency |+path)
     ::  +build-directory: builds files in top level of a directory
     ::
@@ -973,7 +973,7 @@
         [%arch rez]
       =*  nom=@ta    i.fiz
       =/  pax=^path  (weld path nom %hoon ~)
-      =^  res  nub   (build-dependency &+[path pax])
+      =/  res  (build-dependency &+[path pax])
       $(fiz t.fiz, rez (~(put by rez) nom res))
     ::
     ++  run-prelude
