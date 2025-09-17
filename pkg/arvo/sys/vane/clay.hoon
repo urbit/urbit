@@ -662,9 +662,10 @@
     ++  build-nave
       ~/  %build-nave
       |=  mak=mark
-      ^-  [vase state]
+      ^-  vase
       ~|  %error-building-mark^mak
-      %-  soak-vase
+      =<  -
+      %-  soak-vase  :_  nub
       ?:  (~(has in cycle.nub) nave+mak)
         ~|(cycle+nave+mak^cycle.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) nave+mak)
@@ -673,10 +674,10 @@
       =/  gad=vase  (slub cor limb/%grad)
       ?@  q.gad
         =+  !<(mok=mark gad)
-        =^  deg=vase  nub  $(mak mok)
+        =/  deg=vase  $(mak mok)
         =^  tub=vase  nub  (build-cast mak mok)
         =^  but=vase  nub  (build-cast mok mak)
-        :_  nub  :-  %vase
+        :-  %vase
         ^-  vase  ::  vase of nave
         %+  slub
           (with-faces deg+deg tub+tub but+but cor+cor nave+nave.bud ~)
@@ -698,7 +699,7 @@
           (but (pact:deg (tub v) d))
         ++  vale  noun:grab:cor
         --
-      :_  nub  :-  %vase
+      :-  %vase
       ^-  vase  ::  vase of nave
       %+  slub  (slop (with-face cor+cor) zuse.bud)
       !,  *hoon
@@ -734,7 +735,7 @@
       ?:  (~(has in cycle.nub) dais+mak)
         ~|(cycle+dais+mak^cycle.nub !!)
       =.  cycle.nub  (~(put in cycle.nub) dais+mak)
-      =^  nav=vase  nub  (build-nave mak)
+      =/  nav=vase  (build-nave mak)
       %-  (trace 1 |.("make dais {<mak>}"))
       :-  %dais
       ^-  dais
@@ -1033,7 +1034,7 @@
       |=  [sut=vase maz=(list [face=term =mark])]
       ^-  vase
       ?~  maz  sut
-      =^  pin=vase  nub  (build-nave mark.i.maz)
+      =/  pin=vase  (build-nave mark.i.maz)
       =.  p.pin  [%face face.i.maz p.pin]
       $(sut (slop pin sut), maz t.maz)
     ::
@@ -3990,7 +3991,7 @@
       ^-  (unit (unit cage))
       ?.  ?=([@ ~] path)
         [~ ~]
-      =/  [=vase *]
+      =/  =vase
         (build-nave:(tako-ford tako) i.path)
       [~ ~ %nave vase]
     ::
