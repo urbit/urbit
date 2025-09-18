@@ -617,10 +617,6 @@
   ++  ford
     !.
     =>  |%
-        +$  state
-          ::  review
-          $:  cycle=(set mist)
-          ==
         +$  args
           $:  files=(map path (each page lobe))
               file-store=(map lobe page)
@@ -629,9 +625,6 @@
         --
     ~%  %ford-gate  ..ford  ~
     |=  args
-    ::  nub: internal mutable state for this computation
-    ::
-    =|  nub=state
     ~%  %ford-core  ..$  ~
     |%
     ::  +read-file: retrieve marked, validated file contents at path
@@ -4566,13 +4559,13 @@
     =/  f  (ford our i.desks ~)
     =^  null  ..abet
       %-  wrap  :^  our  i.desks  ~
-      =^  marks=(list mark)  nub.f
+      =/  marks=(list mark)
         =/  pax=path  /
-        |-  ^-  [(list mark) _nub.f]
+        |-  ^-  (list mark)
         =/  den  ((de now rof hen ruf) our i.desks)
         =^  res  den  (aver:den ~ %y da+now mar+pax)
         ?.  ?=([~ ~ *] res)
-          [~ nub.f]
+          ~
         =/  arch  ~|  [%building-arch i.desks]  !<(arch q.u.u.res)
         =/  m1=(list mark)
           ?.  ?&  ?=(^ fil.arch)
@@ -4588,19 +4581,19 @@
             i.pax
           (rap 3 i.pax '-' $(pax t.pax) ~)
         ::
-        =^  m2  nub.f
-          |-  ^-  [(list mark) _nub.f]
+        =/  m2
+          |-  ^-  (list mark)
           ?~  dir.arch
-            [~ nub.f]
-          =^  n1  nub.f  ^$(pax (weld pax /[p.n.dir.arch]))
-          =^  n2  nub.f  $(dir.arch l.dir.arch)
-          =^  n3  nub.f  $(dir.arch r.dir.arch)
-          [:(weld n1 n2 n3) nub.f]
-        [(weld m1 m2) nub.f]
+            ~
+          =/  n1  ^$(pax (weld pax /[p.n.dir.arch]))
+          =/  n2  $(dir.arch l.dir.arch)
+          =/  n3  $(dir.arch r.dir.arch)
+          :(weld n1 n2 n3)
+        (weld m1 m2)
       ::
-      |-  ^-  [~ state:ford:fusion]
+      |-  ^-  ~
       ?~  marks
-        [~ nub.f]
+        ~
       =/  =dais  (build-dais:f i.marks)
       $(marks t.marks)
     $(desks t.desks)
