@@ -10887,7 +10887,7 @@
         [%fork *]  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
         [%hold *]  $(sut repo)
       ==
-    =+  vil=*(set type)
+    =+  vil=*(set [type axis])
     |-  ^-  type
     ?:  =(1 u.i.vit)
       ^$(vit t.vit)
@@ -10905,9 +10905,9 @@
       [%face *]  (face p.sut $(sut q.sut))
       [%fork *]  (fork (turn ~(tap in p.sut) |=(type ^$(sut +<))))
       [%hint *]  (hint p.sut $(sut q.sut))
-      [%hold *]  ?:  (~(has in vil) sut)
+      [%hold *]  ?:  (~(has in vil) [sut u.i.vit])
                    %void
-                 $(sut repo, vil (~(put in vil) sut))
+                 $(sut repo, vil (~(put in vil) [sut u.i.vit]))
     ==
   ::
   ++  tack
