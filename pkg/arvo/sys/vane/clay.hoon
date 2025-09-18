@@ -642,9 +642,6 @@
       ^-  cage
       ~|  %error-validating^path
       %-  soak-cage
-      ?:  (~(has in cycle.nub) vale+path)
-        ~|(cycle+vale+path^cycle.nub !!)
-      =.  cycle.nub  (~(put in cycle.nub) vale+path)
       %-  (trace 1 |.("read file {(spud path)}"))
       =/  file
         ~|  %file-not-found^path
@@ -665,9 +662,6 @@
       ^-  vase
       ~|  %error-building-mark^mak
       %-  soak-vase
-      ?:  (~(has in cycle.nub) nave+mak)
-        ~|(cycle+nave+mak^cycle.nub !!)
-      =.  cycle.nub  (~(put in cycle.nub) nave+mak)
       %-  (trace 1 |.("make mark {<mak>}"))
       =/  cor=vase  (build-fit %mar mak)
       =/  gad=vase  (slub cor limb/%grad)
@@ -731,9 +725,6 @@
       ^-  dais
       ~|  %error-building-dais^mak
       %-  soak-dais
-      ?:  (~(has in cycle.nub) dais+mak)
-        ~|(cycle+dais+mak^cycle.nub !!)
-      =.  cycle.nub  (~(put in cycle.nub) dais+mak)
       =/  nav=vase  (build-nave mak)
       %-  (trace 1 |.("make dais {<mak>}"))
       :-  %dais
@@ -777,8 +768,6 @@
       ^-  vase
       ~|  error-building-cast+[a b]
       %-  soak-vase
-      ?:  (~(has in cycle.nub) cast+[a b])
-        ~|(cycle+cast+[a b]^cycle.nub !!)
       ?:  =(a b)
         %-  (trace 4 |.("identity shortcircuit"))
         [%vase same.bud]
@@ -857,8 +846,6 @@
       ~>  %spin.[%build-tube]  ~>  %spin.[a]  ~>  %spin.[b]
       ~|  error-building-tube+[a b]
       %-  soak-tube
-      ?:  (~(has in cycle.nub) tube+[a b])
-        ~|(cycle+tube+[a b]^cycle.nub !!)
       =/  gat=vase  (build-cast a b)
       %-  (trace 1 |.("make tube {<a>} -> {<b>}"))
       [%tube =>([gat=gat ..zuse] |=(v=vase (slam gat v)))]
@@ -927,9 +914,6 @@
       ~|  %error-building^path
       %-  soak-vase
       %-  (trace 1 |.("make file {(spud path)}"))
-      ?:  (~(has in cycle.nub) file+path)
-        ~|(cycle+file+path^cycle.nub !!)
-      =.  cycle.nub  (~(put in cycle.nub) file+path)
       =/  cag=cage  (read-file path)
       ?>  =(%hoon p.cag)
       =+  !<(txt=@t q.cag)
