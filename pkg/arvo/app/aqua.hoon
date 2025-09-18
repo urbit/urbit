@@ -68,7 +68,7 @@
       aqua-core  +>
       ac         ~(. aqua-core bowl)
       def        ~(. (default-agent this %|) bowl)
-  ++  on-init           `this
+  ++  on-init  `this
   ++  on-save  !>(state)
   ++  on-load
     |=  old-vase=vase
@@ -477,12 +477,10 @@
   ::
   ?+  val  ~|(%bad-noun-arg !!)
       [%swap-vanes vs=*]
-    ?>  ?=(^ boot-ova.pil)
-    ?>  ?=([%7 * %1 installed=*] i.boot-ova.pil)
-    =.  installed.i.boot-ova.pil
+    ?>  ?=([aeon=^ boot-two=^ [%7 * %1 installed=*] *] boot-ova.pil)
+    =.  installed.i.t.t.boot-ova.pil
       %+  roll  (,(list term) vs.val)
-      |=  [v=term =_installed.i.boot-ova.pil]
-      %^  slum  installed  now.hid
+      |=  [v=term =_installed.i.t.t.boot-ova.pil]
       =/  vane
         ?+  v  ~|([%unknown-vane v] !!)
           %a  %ames
@@ -494,10 +492,12 @@
           %j  %jael
           %g  %gall
         ==
+      ~&  swaping/vane
       =/  pax
-        /(scot %p our.hid)/work/(scot %da now.hid)/sys/vane/[vane]
+        /(scot %p our.hid)/base/(scot %da now.hid)/sys/vane/[vane]
       =/  txt  .^(@ %cx (weld pax /hoon))
-      [/vane/[vane] [%veer v pax txt]]
+      %^  slum  installed  now.hid
+      [//arvo %what pax^hoon/txt ~]
     =>  .(this ^+(this this))
     =^  ms  state  (poke-pill pil)
     (emit-cards ms)
@@ -880,7 +880,7 @@
   |=  who=ship
   ^-  dawn-event:jael
   =/  clan  (clan:title who)
-  ?>  ?=(?(%czar %king %duke %earl) clan)
+  ?>  ?=(?(%czar %king %duke %earl %pawn) clan)
   =/  spon=(list [ship point:azimuth])
     %-  flop
     |-  ^-  (list [ship point:azimuth])
@@ -904,7 +904,7 @@
     [a-point $(who ship)]
   =/  =feed:jael
     =/  life-rift=[lyfe=life rut=rift]
-      ?:  =(%earl clan)  [1 0]
+      ?:  ?=(?(%pawn %earl) clan)  [1 0]
       (~(got by lives.azi.piers) who)
     =/  =life  lyfe.life-rift
     [who life sec:ex:(get-keys:aqua-azimuth who life) ~]

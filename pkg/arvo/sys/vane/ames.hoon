@@ -124,13 +124,16 @@
 ::
 =>  ::  vane IO
     ::
+    ::  (note: %tune and %turf unused; left for migration purposes;
+    ::  removing any of these $signs will break any migration prior 
+    ::  to ames-state-22)
     |%
     +$  sign
       $~  [%behn %wake ~]
       $%  [%ames $>(?(%tune %sage) gift)]
           [%behn $>(%wake gift:behn)]
-          [%gall $>(?(%flub %unto) gift:gall)]
-          [%jael $>(?(%private-keys %public-keys) gift:jael)]
+          [%gall $>(?(%flub %unto %spur) gift:gall)]
+          [%jael $>(?(%private-keys %public-keys %turf) gift:jael)]
           $:  @tas
               $>(?(%noon %boon %done) gift)
       ==  ==
@@ -154,7 +157,7 @@
               $>(%flog task:dill)
           ==
           $:  %g
-              $>(?(%clog %deal) task:gall)
+              $>(?(%clog %deal %halt) task:gall)
           ==
           $:  %j
               $>  $?  %private-keys
@@ -540,10 +543,10 @@
       [duct %pass /ping %g %deal [our our /ames] %ping %poke noun+!>(poke)]
     ::
     ++  poke-send-ahoy
-      |=  [=duct our=ship who=ship]
+      |=  [=duct our=ship who=ship force=?]
       ^-  move
-      :+  duct  %pass
-      [/ahoy %g %deal [our our /ames] %hood %poke helm-send-ahoy+!>(who^test=|)]
+      :^  duct  %pass  /ahoy
+      [%g %deal [our our /ames] %hood %poke helm-send-ahoy+!>(who^|^force)]
     ::
     +|  %atomics
     ::
@@ -613,96 +616,6 @@
     +$  naxplanation  [=message-num =error]
     ::
     +|  %statics
-    ::
-    ::  $ames-state: state for entire vane
-    ::
-    ::    peers:       states of connections to other ships
-    ::    unix-duct:   handle to give moves to unix
-    ::    life:        our $life; how many times we've rekeyed
-    ::    crypto-core: interface for encryption and signing
-    ::    bug:         debug printing configuration
-    ::    snub:        blocklist for incoming packets
-    ::    cong:        parameters for marking a flow as clogged
-    ::    dead:        dead flow consolidation timer and recork timer, if set
-    ::
-    ::
-    +$  ames-state-22
-      $+  ames-state-22
-      $:  peers=(map ship ship-state-21)
-          =unix=duct
-          =life
-          =rift
-          crypto-core=acru:ames
-          =bug
-          snub=[form=?(%allow %deny) ships=(set ship)]
-          cong=[msg=_5 mem=_100.000]
-        ::
-          $=  dead
-          $:  flow=[%flow (unit dead-timer)]
-              cork=[%cork (unit dead-timer)]
-              rots=[%rots (unit dead-timer)]
-          ==
-        ::
-          =chain
-        ==
-    ::
-    +$  ames-state-21
-      $:  peers=(map ship ship-state-21)
-          =unix=duct
-          =life
-          =rift
-          crypto-core=acru:ames
-          =bug
-          snub=[form=?(%allow %deny) ships=(set ship)]
-          cong=[msg=_5 mem=_100.000]
-        ::
-          $=  dead
-          $:  flow=[%flow (unit dead-timer)]
-              cork=[%cork (unit dead-timer)]
-          ==
-        ::
-          =chain
-        ==
-    ::
-    +$  ship-state-21
-      $+  ship-state-21
-      $%  [%alien alien-agenda-21]
-          [%known peer-state-21]
-      ==
-    ::
-    +$  alien-agenda-21
-      $+  alien-agenda-21
-      $:  messages=(list [=duct =plea])
-          packets=(set =blob)
-          keens=(jug path duct)
-          chums=(jug path duct)
-      ==
-    ::
-    +$  peer-state-21
-      $:  azimuth-state
-          route=(unit [direct=? =lane])
-          =qos
-          =ossuary
-          snd=(map bone message-pump-state)
-          rcv=(map bone message-sink-state)
-          nax=(set [=bone =message-num])
-          closing=(set bone)
-          corked=(set bone)
-          keens=(map path keen-state-21)
-          =chain
-      ==
-    ::
-    +$  keen-state-21
-      $+  keen-state-21
-      $:  wan=((mop @ud want) lte)  ::  request packets, sent
-          nex=(list want)           ::  request packets, unsent
-          hav=(list have)           ::  response packets, backward
-          num-fragments=@ud
-          num-received=@ud
-          next-wake=(unit @da)
-          listeners=(set duct)
-          metrics=pump-metrics
-      ==
     ::
     +$  dead-timer       [=duct =wire date=@da]
     ::
@@ -1359,13 +1272,13 @@
     +$  queued-event-4-til-8
       $+  queued-event-4-til-8
       $%  [%call =duct wrapped-task=(hobo task-4-til-8)]
-          [%take =wire =duct =sign]
+          [%take =wire =duct sign=sign]
       ==
     ::
     +$  queued-event-9-til-11
       $+  queued-event-9-til-11
       $%  [%call =duct wrapped-task=(hobo task-9-til-11)]
-          [%take =wire =duct =sign]
+          [%take =wire =duct sign=sign]
       ==
     ::
     +$  task-9-til-11
@@ -1379,7 +1292,7 @@
     +$  queued-event-12-til-16
       $+  queued-event-12-til-16
       $%  [%call =duct wrapped-task=(hobo task-12-til-16)]
-          [%take =wire =duct =sign]
+          [%take =wire =duct sign=sign]
       ==
     ::
     +$  task-12-til-16
@@ -1403,7 +1316,7 @@
     +$  queued-event-17-and-18
       $+  queued-event-17-and-18
       $%  [%call =duct wrapped-task=(hobo task-16-and-18)]
-          [%take =wire =duct =sign]
+          [%take =wire =duct sign=sign]
       ==
     ::
     +$  task-16-and-18
@@ -1446,7 +1359,7 @@
     +$  queued-event-19-and-20
       $+  queued-event-19-and-20
       $%  [%call =duct wrapped-task=(hobo task-19-and-20)]
-          [%take =wire =duct =sign]
+          [%take =wire =duct sign=sign]
       ==
     ::
     +$  peer-state-20
@@ -1504,6 +1417,106 @@
           =chain
       ==
     ::
+    +$  ames-state-21
+      $:  peers=(map ship ship-state-21)
+          =unix=duct
+          =life
+          =rift
+          crypto-core=acru:ames
+          =bug
+          snub=[form=?(%allow %deny) ships=(set ship)]
+          cong=[msg=_5 mem=_100.000]
+        ::
+          $=  dead
+          $:  flow=[%flow (unit dead-timer)]
+              cork=[%cork (unit dead-timer)]
+          ==
+        ::
+          =chain
+        ==
+    ::
+    +$  ship-state-21
+      $+  ship-state-21
+      $%  [%alien alien-agenda-21]
+          [%known peer-state-21]
+      ==
+    ::
+    +$  alien-agenda-21
+      $+  alien-agenda-21
+      $:  messages=(list [=duct =plea])
+          packets=(set =blob)
+          keens=(jug path duct)
+          chums=(jug path duct)
+      ==
+    ::
+    +$  peer-state-21
+      $:  azimuth-state
+          route=(unit [direct=? =lane])
+          =qos
+          =ossuary
+          snd=(map bone message-pump-state)
+          rcv=(map bone message-sink-state)
+          nax=(set [=bone =message-num])
+          closing=(set bone)
+          corked=(set bone)
+          keens=(map path keen-state-21)
+          =chain
+      ==
+    ::
+    +$  keen-state-21
+      $+  keen-state-21
+      $:  wan=((mop @ud want) lte)  ::  request packets, sent
+          nex=(list want)           ::  request packets, unsent
+          hav=(list have)           ::  response packets, backward
+          num-fragments=@ud
+          num-received=@ud
+          next-wake=(unit @da)
+          listeners=(set duct)
+          metrics=pump-metrics
+      ==
+    ::
+    +$  ames-state-22
+      $+  ames-state-22
+      $:  peers=(map ship ship-state-21)
+          =unix=duct
+          =life
+          =rift
+          crypto-core=acru:ames
+          =bug
+          snub=[form=?(%allow %deny) ships=(set ship)]
+          cong=[msg=_5 mem=_100.000]
+        ::
+          $=  dead
+          $:  flow=[%flow (unit dead-timer)]
+              cork=[%cork (unit dead-timer)]
+              rots=[%rots (unit dead-timer)]
+          ==
+        ::
+          =chain
+        ==
+    ::
+    +$  ship-state-26-27
+      $+  ship-state-26-27
+      $%  [%alien alien-agenda]
+          [%known peer-state-26-27]
+      ==
+    ::
+    +$  peer-state-26-27
+      $+  peer-state-26-27
+      $:  [=symmetric-key =life =rift =public-key sponsor=ship]
+          route=(unit [direct=? =lane])
+          =qos
+          =ossuary
+          snd=(map bone message-pump-state)
+          rcv=(map bone message-sink-state)
+          nax=(set [=bone =message-num])
+          closing=(set bone)
+          corked=(set bone)
+          keens=(map path keen-state)
+          =chain
+          tip=(jug =user=path [duct =ames=path])
+      ==
+    ::
     +|  %dialectics
     ::  $queued-event: event to be handled after initial boot completes
     ::
@@ -1550,7 +1563,7 @@
     ::
     +$  message-sink-task
       $%  [%done ok=?]
-          [%flub ~]
+          [%flub agent=(unit term)] :: XX add [=agent=path cork=?]
           [%drop =message-num]
           [%hear =lane =shut-packet ok=?]
       ==
@@ -1714,8 +1727,8 @@
     +|  %flow-signs
     ::
     +$  flow-sign
-      $%  $>(?(%flub %done) gift:gall)  :: from vanes
-          [%sage seq=@ud sage:mess]     :: added seq number to %sage
+      $%  $>(?(%flub %spur %done) gift:gall)  :: from vanes
+          [%sage seq=@ud sage:mess]           :: added seq number to %sage
       ==
     ::
     +|  %top-level-paths
@@ -1777,8 +1790,60 @@
     ::
     +|  %state-migrations
     ::
+    +$  axle-26-27
+      $:  peers=(map ship ship-state-26-27)
+          =unix=duct  ::  [//ames/0v0 ~]
+          =life
+          =rift
+          =bug
+          snub=[form=?(%allow %deny) ships=(set ship)]
+          cong=[msg=_5 mem=_100.000]
+          $=  dead
+          $:  flow=[%flow (unit dead-timer)]
+              chum=[%chum (unit dead-timer)]
+              cork=[%cork (unit dead-timer)]
+              rots=[%rots (unit dead-timer)]
+          ==
+          ::
+          =server=chain
+          priv=private-key
+          chums=(map ship chum-state-26-27)
+          core=?(%ames %mesa)
+      ==
+    ::
+    +$  chum-state-26-27
+      $+  chum-state-26-27
+      $%  [%alien ovni-state]
+          [%known fren-state-26-27]
+      ==
+    ::
+    +$  fren-state-26-27
+      $:  azimuth-state
+          lane=(unit [hop=@ =lane:pact])  
+          =qos
+          corked=(set side)  
+          =ossuary         
+          flows=(map side flow-state-26-27)
+          pit=(map path request-state)          
+          =client=chain                          
+          tip=(jug =user=path [duct =ames=path]) 
+          weir=(jug side [tag=term data=*])
+      ==
+    ::
+    +$  flow-state-26-27
+      $:  closing=?(%.y %.n)
+          line=@ud
+          $=  snd
+          $:  %outbound 
+              loads=((mop ,@ud mesa-message) lte) 
+              @  @  @ 
+              acks=((mop ,@ud ack) lte)
+          ==
+          rcv=[%incoming acked=@ud pending-ack=_`?`%.n nax=(map seq=@ud error)]
+      ==
+    ::
     +$  axle-25
-      $:  peers=(map ship ship-state)
+      $:  peers=(map ship ship-state-26-27)
           =unix=duct  ::  [//ames/0v0 ~]
           =life
           =rift
@@ -1824,7 +1889,7 @@
       ==
     ::
     +$  axle-24
-      $:  peers=(map ship ship-state)
+      $:  peers=(map ship ship-state-26-27)
           =unix=duct  ::  [//ames/0v0 ~]
           =life
           =rift
@@ -1939,20 +2004,20 @@
       ?&  ?=(%known -.back)
           %+  print-check  %keys     =(+<.ames +<.back)
           %+  print-check  %route    ?|  ?&  ?=(~ route.ames)
-                                             =(route.ames route.back)
-                                         ==
-                                         ?&  ?=(^ route.ames)  ?=(^ route.back)
-                                             .=  lane.u.route.ames
-                                                 lane.u.route.back
-                                     ==  ==
+                                            =(route.ames route.back)
+                                        ==
+                                        ?&  ?=(^ route.ames)  ?=(^ route.back)
+                                            .=  lane.u.route.ames
+                                                lane.u.route.back
+                                    ==  ==
           %+  print-check  %ossuary  =(ossuary.ames ossuary.back)
           =-  ~?  !-  :+  ames=~(wyt in closing.ames)
-                         back=~(wyt in closing.back)
+                        back=~(wyt in closing.back)
                       (~(dif in closing.back) closing.ames)
               -
           %+  print-check  %closing  =(closing.ames closing.back)
           =-  ~?  !-  :+  ames=~(wyt in corked.ames)
-                         back=~(wyt in corked.back)
+                        back=~(wyt in corked.back)
                       (~(dif in corked.back) corked.ames)
               -
           %+  print-check  %corked   =(corked.ames corked.back)
@@ -2004,7 +2069,7 @@
                         ?.  ?=([%a %meek *] q.card)
                           %.n
                         =/  nax-path=(pole iota)
-                         (validate-path path.spar.q.card)
+                        (validate-path path.spar.q.card)
                         ?.  ?=(flow-pith nax-path)
                           %.n
                         =-  ~?  >>  -  nax-path/nax-path^current.pump^next.pump
@@ -2163,11 +2228,11 @@
           %+  print-check  %lane    =-  ~?  !-  [back=lane.back mesa=lane.mesa]
                                         -
                                     ?|  ?&  ?=(~ lane.mesa)
-                                             =(lane.mesa lane.back)
-                                         ==
-                                         ?&  ?=(^ lane.mesa)  ?=(^ lane.back)
-                                             =(u.lane.mesa u.lane.back)
-                                     ==  ==
+                                            =(lane.mesa lane.back)
+                                        ==
+                                        ?&  ?=(^ lane.mesa)  ?=(^ lane.back)
+                                            =(u.lane.mesa u.lane.back)
+                                    ==  ==
           %+  print-check  %ossuary  =(ossuary.mesa ossuary.back)
           ::  corked.mesa could contain more bones if any %bak flow was in
           ::  closing, which deletes it automatically
@@ -2293,8 +2358,9 @@
             [%23 axle-23]
             [%24 axle-24]
             [%25 axle-25]
-            [%26 axle]
-            [%27 axle]
+            [%26 axle-26-27]
+            [%27 axle-26-27]
+            [%28 axle]
         ==
     ::
     ::
@@ -2370,7 +2436,7 @@
       ~>  %slog.0^leaf/"ames: metamorphosis on %take"
       [:(weld molt-moves queu-moves take-moves) adult-gate]
     ::
-    ++  stay  [%27 larva/ames-state]
+    ++  stay  [%28 larva/ames-state]
     ++  scry  scry:adult-core
     ++  load
       |=  $=  old
@@ -2521,9 +2587,13 @@
               ==
               $:  %26                            :: add cached acks
                   ?(%adult %larva)               ::
-                  state=axle
+                  state=axle-26-27
               ==
               $:  %27                            :: re-fetch public-keys
+                  ?(%adult %larva)               ::
+                  state=axle-26-27
+              ==
+              $:  %28                            :: add halted flows
                   ?(%adult %larva)               ::
                   state=axle
           ==  ==
@@ -2747,7 +2817,8 @@
           [%19 %larva *]
         ~>  %slog.1^leaf/"ames: larva %19 load"
         =.  cached-state   `[%19 state.old]
-        =.  queued-events  (event-20-to-last events.old)
+        =.  queued-events   %-  event-20-to-last
+                            events.old
         larval-gate
       ::
           [%20 %adult *]
@@ -2758,7 +2829,8 @@
           [%20 %larva *]
         ~>  %slog.1^leaf/"ames: larva %20 load"
         =.  cached-state  `[%20 state.old]
-        =.  queued-events  (event-20-to-last events.old)
+        =.  queued-events  %-  event-20-to-last
+                           events.old
         larval-gate
       ::
           [%21 %adult *]
@@ -2804,6 +2876,11 @@
         larval-gate
       ::
           [%27 *]
+        =.  cached-state  `[%27 state.old]
+        ~>  %slog.1^leaf/"ames: larva %27 reload"
+        larval-gate
+      ::
+          [%28 *]
         ?-  +<.old
           %larva  larval-gate
           %adult  (load:adult-core state.old)
@@ -2882,7 +2959,7 @@
       |^  ^+  [moz larval-core]
       ?~  cached-state  [~ larval-core]
       =*  old  u.cached-state
-      ?:  ?=(%27 -.old)
+      ?:  ?=(%28 -.old)
         ::  no state migrations left; update state, clear cache, and exit
         ::
         [(flop moz) larval-core(ames-state.adult-gate +.old, cached-state ~)]
@@ -2963,17 +3040,19 @@
         $(cached-state `25+(state-24-to-25 +.old))
       ?:  ?=(%25 -.old)
         $(cached-state `26+(state-25-to-26 +.old))
-      ?>  ?=(%26 -.old)
-      ~>  %slog.0^leaf/"ames: re-fetching our public keys"
-      %_    $
-          -.u.cached-state  %27
-      ::
+      ?:  ?=(%26 -.old)
+        ~>  %slog.0^leaf/"ames: re-fetching our public keys"
+        %_    $
+            -.u.cached-state  %27
+        ::
+            moz
+          ^-  (list move)
+          :+  [[/ames]~ %pass /public-keys %j %public-keys [n=our ~ ~]]
+            [[/ames]~ %pass /stir %a %stir '']
           moz
-        ^-  (list move)
-        :+  [[/ames]~ %pass /public-keys %j %public-keys [n=our ~ ~]]
-          [[/ames]~ %pass /stir %a %stir '']
-        moz
-      ==
+        ==
+      ?>  ?=(%27 -.old)
+      $(cached-state `28+(state-27-to-28 +.old))
       ::
       ++  our-beam  `beam`[[our %rift %da now] /(scot %p our)]
       ++  state-4-to-5
@@ -3319,7 +3398,7 @@
             peers
           %-  ~(run by peers.old)
           |=  s=ship-state-21
-          ^-  ship-state
+          ^-  ship-state-26-27
           ?:  ?=(%alien -.s)
             %=    s
                 keens
@@ -3435,27 +3514,58 @@
       ::
       ++  state-25-to-26
         |=  old=axle-25
-        ^-  axle
+        ^-  axle-26-27
         ~>  %slog.0^leaf/"ames: migrating from state %25 to %26"
         %=    old
             chums
           %-  ~(run by chums.old)
           |=  c=chum-state-25
-          ^-  chum-state
+          ^-  chum-state-26-27
           ?:  ?=(%alien -.c)  c
           %=  c
               flows
             %-  ~(run by flows.c)
             |=  flow=flow-state-25
-            =|  =flow-state
+            =|  flow-state=flow-state-26-27
             %_  flow-state
               closing  closing.flow
                  line  line.flow
-                  snd  snd.flow(send-window [send-window.snd.flow-state acks=~])
+                  snd  snd.flow(send-window [send-window.snd.flow acks=~])
                   rcv  rcv.flow
             ==
           ::
               tip  [tip.c weir=~]
+          ==
+        ==
+      ::
+      ++  state-27-to-28
+        |=  old=axle-26-27
+        ^-  axle
+        ~>  %slog.0^leaf/"ames: migrating from state %27 to %26"
+        %=    old
+            peers
+          %-  ~(run by peers.old)
+          |=  s=ship-state-26-27
+          ^-  ship-state
+          ?:  ?=(%alien -.s)  s
+          s(tip [tip.s halt=~])
+        ::
+            chums
+          %-  ~(run by chums.old)
+          |=  c=chum-state-26-27
+          ^-  chum-state
+          ?:  ?=(%alien -.c)  c
+          %=  c
+              flows
+            %-  ~(run by flows.c)
+            |=  flow=flow-state-26-27
+            =|  =flow-state
+            %_  flow-state
+              closing  closing.flow
+                 line  line.flow
+                  snd  snd.flow
+                  rcv  rcv.flow
+            ==
           ==
         ==
       ::
@@ -3614,17 +3724,10 @@
       --
     ::
     ++  push-pact  :: XX forwarding?
-      |=  [=pact:pact lanes=(list lane:pact)]
+      |=  [who=ship =pact:pact lanes=(list lane:pact)]
       ^-  move
       ?<  =(~ unix-duct)
-      =/  =ship
-        ?-  +<.pact  ::  XX
-          %peek  her.name.pact
-          %poke  her.ack.pact
-          %page  her.name.pact
-        ==
-      ::
-      %-  %:  trace  %mesa  snd.veb.bug.ames-state  ship  ships.bug.ames-state
+      %-  %:  trace  %mesa  snd.veb.bug.ames-state  who  ships.bug.ames-state
             |.  %+  weld  %+  roll  lanes
                   |=  [=lane:pact:ames tape=_"push {<+<.pact>} on lanes=["]
                   %+  weld  tape
@@ -3811,6 +3914,7 @@
             |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
             ^-  [(list move) _vane-gate]
             ::
+            ~|  wrapped-task
             =/  =task       ((harden task) wrapped-task)
             =/  event-core  (ev now^eny^rof duct ames-state)
             ::
@@ -3833,6 +3937,8 @@
                 %cork  (on-cork:event-core ship.task)
                 %kroc  (on-kroc:event-core bones.task)
                 %deep  (on-deep:event-core deep.task)
+                %halt  (on-halt:event-core [ship bone]:task)
+                %goad  (on-goad:event-core ship.task)
               ::
                 %keen  (on-keen:event-core +.task)
                 %chum  (on-chum:event-core +.task)
@@ -3888,7 +3994,8 @@
               ::
                 [%behn %wake *]  (on-take-wake:event-core wire error.sign)
               ::
-                [%gall %flub ~]  (on-take-flub:event-core wire)
+                [%gall %flub *]  (on-take-flub:event-core wire +>.sign)
+                [%gall %spur *]  (on-take-spur:event-core wire)
               ==
             ::
             [moves vane-gate]
@@ -3958,10 +4065,36 @@
           (rof [~ ~] /ames %j `beam`[[our %saxo %da now] /(scot %p our)])
         ::
         +|  %tasks
-        ::  +on-take-flub: vane not ready to process message, pretend it
-        ::                 was never delivered
+        ::  +on-take-flub: vane not ready to process message, pretend it was
+        ::  never delivered
         ::
         ++  on-take-flub
+          |=  [=wire agent=(unit term)]
+          ^+  event-core
+          ?~  parsed=(parse-bone-wire wire)
+            ::  no-op
+            ::
+            ~>  %slog.0^leaf/"ames: dropping malformed wire: {(spud wire)}"
+            event-core
+          ?>  ?=([@ her=ship *] u.parsed)
+          =*  her  her.u.parsed
+          =/  peer-core  (abed-got:pe her)
+          ?:  ?&  ?=([%new *] u.parsed)
+                  (lth rift.u.parsed rift.peer-state.peer-core)
+              ==
+            ::  ignore events from an old rift
+            ::
+            %-  %^  ev-trace  odd.veb  her
+                |.("dropping old rift wire: {(spud wire)}")
+            event-core
+          =/  =bone
+            ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
+          %-  %^  ev-trace  odd.veb  her
+              |.("%flubbing: agent={<agent>} bone={<bone>} {(spud wire)}")
+          abet:(on-take-flub:peer-core bone agent)
+        ::  +on-take-spur: vane ready to process message
+        ::
+        ++  on-take-spur
           |=  =wire
           ^+  event-core
           ?~  parsed=(parse-bone-wire wire)
@@ -3983,8 +4116,8 @@
           =/  =bone
             ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
           %-  %^  ev-trace  odd.veb  her
-              |.("dropping %flub: bone={<bone>} {(spud wire)}")
-          abet:(on-flub:peer-core bone)
+              |.("%goading: bone={<bone>} {(spud wire)}")
+          abet:(on-take-spur:peer-core bone)
         ::  +on-take-done: handle notice from vane that it processed a message
         ::
         ++  on-take-done
@@ -4313,11 +4446,9 @@
               ==
             =+  sy-core=~(. sy:mesa duct)
             =^  publ-moves  ames-state
-              ::  XX skip abet, only +ev-abet will flop these moves
-              ::
-              =<  [moves ames-state]
+              =<  sy-abet
               (~(sy-publ sy:mesa duct) / [%full (my [sndr.shot point]~)])
-            event-core(moves (weld publ-moves moves))
+            (emil publ-moves)
           ::  manually add the lane to the peer state
           ::
           =/  =peer-state  (gut-peer-state sndr.shot)
@@ -4346,6 +4477,7 @@
           ::  will be resent.
           ::
           ?.  ?=([~ %known *] sndr-state)
+            ~&  %enqueue-alien
             (enqueue-alien-todo sndr.shot sndr-state |=(alien-agenda +<))
           ::  decrypt packet contents using symmetric-key.channel
           ::
@@ -4599,6 +4731,7 @@
             %kill  (kill-bone bone.deep)
             %ahoy  (migrate-peer [ship bone]:deep) :: XX remove bone
             %prun  abet:(prune-tip [duct user-path ames-path]:deep)
+            %halt  abet:(halt-flow [ship agent bone]:deep)
           ==
           ::
           ++  send-nack-trace
@@ -4655,8 +4788,41 @@
           ::
           ++  prune-tip
             |=([=^duct =user=path =ames=path] (on-prune-tip:peer-core +<))
+          ::  +halt-flow: mark flow as hallted; will drop incoming packets
+          ::  
+          ++  halt-flow
+            |=  [=ship agent=term =bone]
+            =.  halt.peer-state.peer-core
+              (~(put in halt.peer-state.peer-core) bone)
+            %-  pe-emit:peer-core
+            [duct %pass /halt %g %halt ship agent (mix 0b1 bone)]
+            ::  XX  if %leave, add a .cork=? to the task and delete the flow
+            ::
+            :: =.  closing.peer-state.peer-core
+            ::   (~(put in closing.peer-state.peer-core) bone)
+            :: =<  abet
+            :: %-  pe-emit:(handle-cork:peer-core bone)
+            :: [duct %pass /flub %g %flub ship agent (mix 0b1 bone) agent-path]
           ::
           --
+        ::
+        ++  on-halt
+          |=  [=ship =bone]
+          ^+  event-core
+          =/  ship-state  (~(get by peers.ames-state) ship)
+          ?>  ?=([~ %known *] ship-state)
+          abet:(on-halt-flow:(abed-peer:pe ship +.u.ship-state) bone)
+        ::
+        ++  on-goad
+          |=  =ship
+          ^+  event-core
+          =/  ship-state  (~(get by peers.ames-state) ship)
+          ?>  ?=([~ %known *] ship-state)
+          =+  peer-core=(abed-peer:pe ship +.u.ship-state)
+          =/  =bone
+            ~|  goad-flow-missing/duct
+            (~(got by by-duct.ossuary.peer-state.peer-core) duct)
+          abet:(on-goad-flow:peer-core bone)
         ::  +on-stun: poke %ping app when hearing a STUN response
         ::
         ++  on-stun
@@ -4985,7 +5151,7 @@
           =/  [ahoy-moves=(list move) ahoy-state=axle]
             ~|(%migrate-crashed [moves ames-state]:on-migrate:peer-core)
           =/  [rege-moves=(list move) rege-state=axle]
-            =<  [moves ames-state]
+            =<  sy-abet
             ~|  %regress-crashed
             %.  [`ship dry=%.n]
             %*  sy-rege  sy:mesa
@@ -5107,10 +5273,12 @@
           =.  todos             (mutate todos)
           =.  peers.ames-state  (~(put by peers.ames-state) ship %alien todos)
           ?:  already-pending
+            ~&  already-pending/already-pending
             event-core
           ::
           ?:  =(%pawn (clan:title ship))
             (request-attestation ship)
+          ~&  %ask-keys^ship
           ::  NB: we specifically look for this wire in +public-keys-give in
           ::  Jael.  if you change it here, you must change it there.
           ::
@@ -5314,6 +5482,8 @@
                     (~(has in corked.peer-state) (mix 0b10 bone))
             ==  ==
           ::
+          ++  is-halted  |=(=bone (~(has in halt.peer-state) bone))
+          ::
           +|  %tasks
           ::  +update-qos: update and maybe print connection status
           ::
@@ -5342,9 +5512,25 @@
             =.  peer-core  (update-qos %ames %live last-contact=now)
             ::
             =/  =bone  bone.shut-packet
+            ::  if flow is halted, no-op
             ::
+            ?:  (is-halted bone)
+              %-  %+  pe-trace  msg.veb
+                  =/  dat  [her bone=bone message-num=message-num]
+                  |.("flow is halted; drop bone={<bone>}")
+              peer-core
             ?:  ?=(%& -.meat.shut-packet)
               =+  ?.  &(?=(^ dud) msg.veb)  ~
+                  =/  [num-fragments=@ud =fragment-num =fragment]
+                    +.meat.shut-packet
+                  ::  don't print stack trace for /gf $pleas
+                  ::
+                  ?:  ?&  =(num-fragments 1) 
+                          =(fragment-num 0)
+                          =/  blob=*  (cue (rep packet-size [fragment]~))
+                          ?=(^ ;;((soft [%g [%gf ~] %0 ~]) blob))
+                      ==
+                    ~
                   %.  ~
                   %-  slog
                   :_  tang.u.dud
@@ -5366,10 +5552,15 @@
                 tang.u.dud
             abet:(call:(abed:mu bone) %hear [message-num +.meat]:shut-packet)
           ::
-          ++  on-flub
+          ++  on-take-flub
+            |=  [=bone agent=(unit term)]
+            ^+  peer-core
+            abet:(call:(abed:mi:peer-core bone) %flub agent)
+          ::
+          ++  on-take-spur
             |=  =bone
             ^+  peer-core
-            abet:(call:(abed:mi:peer-core bone) %flub ~)
+            peer-core(halt.peer-state (~(del in halt.peer-state) bone))
           ::
           ++  check-clog
             |=  [=bone id=*]
@@ -5457,10 +5648,13 @@
                 ==
               =/  =blob  (attestation-packet [her her-life]:channel)
               (send-blob for=| her blob `known/peer-state)
-            ?:  (is-corked bone)
+            ?:  ?|  (is-corked bone)
+                    (is-halted bone)
+                ==
               ::  no-op if the bone (or, if a naxplanation, the reference bone)
               ::  was corked, because the flow doesn't exist anymore
               ::  TODO: clean up corked bones?
+              ::  for halted flows, this won't start new timers; %wake on %goad
               ::
               peer-core
             ::  maybe resend some timed out packets
@@ -5499,6 +5693,21 @@
             |=  =bone
             ^+  peer-core
             peer-core(closing.peer-state (~(put in closing.peer-state) bone))
+          ::  +on-halt-flow: mark .bone as halt; timer will %rest on-wake
+          ::
+          ++  on-halt-flow
+            |=  =bone
+            ^+  peer-core
+            peer-core(halt.peer-state (~(put in halt.peer-state) bone))
+          ::  +on-goad-flow: delete .bone from halted flows; %wake timers
+          ::
+          ++  on-goad-flow
+            |=  =bone
+            ^+  peer-core
+            ?.  (~(has in halt.peer-state) bone)
+              peer-core
+            =.  halt.peer-state  (~(del in halt.peer-state) bone)
+            abet:(call:(abed:mu bone) %wake ~)
           ::  +on-kill-flow: delete flow on cork sender side
           ::
           ++  on-kill-flow
@@ -6636,7 +6845,9 @@
                 ::  tell congestion control a packet timed out
                 ::
                 =.  metrics.state  on-timeout:gauge
-                =?  metrics.state  (lth 100.000 tries:-:+:-:(pop:packet-queue live.state))
+                =?  metrics.state  %+  lth
+                                     100.000
+                                   tries:-:+:-:(pop:packet-queue live.state)
                   =/  jitter=@da  (mul ~s1 (~(rad og eny) 43.200))
                   metrics.state(rto (add ~d1 jitter))
                 ::
@@ -6896,6 +7107,11 @@
                   %drop  sink(nax.state (~(del in nax.state) message-num.task))
                   %done  (done ok.task)
                   %flub
+                ::  emit %deep %flub to halt the flow
+                ::
+                =?  peer-core  ?=(^ agent.task)
+                  %+  pe-emit  duct
+                  [%pass /flub %a %deep %halt her u.agent.task bone]
                 %=  sink
                   last-heard.state        (dec last-heard.state)
                   pending-vane-ack.state  ~(nap to pending-vane-ack.state)
@@ -7276,7 +7492,9 @@
                 ::  ack nack-trace message (only if we don't later crash)
                 ::
                 (done ok=%.y)
+              ::
               --
+            ::
             --
           ::  +fi: constructor for |fine remote scry core
           ::
@@ -8356,17 +8574,16 @@
               ?:  ?=([%gall %unto *] sign)  :: XX from poking %ping app
                 `ames-state
               ::
-              ?+  sign  `ames-state  :: XX %tune; not used
+              ?+  sign  `ames-state  :: XX %tune and %turf; not used
                 [%behn %wake *]  sy-abet:(~(sy-wake sy hen) wire error.sign)
               ::
                   [%jael %private-keys *]
                 sy-abet:(~(sy-priv sy hen) [life vein]:sign)
-              ::
                   [%jael %public-keys *]
                 sy-abet:(~(sy-publ sy hen) wire +>.sign)
               ::  vane gifts
               ::
-                  ?([%gall %flub ~] [@ %done *] [@ %boon *] [@ %noon *])
+                  ?([%gall *] [@ %done *] [@ %boon *] [@ %noon *])
                 =+  ev-core=ev-core:ev
                 =^  side  ev-core  (ev-peel:ev wire +.sign)
                 =+  side
@@ -8416,6 +8633,7 @@
           ames-state(chums (~(put by chums.ames-state) her %known per))
         ::
         ++  ev-emit  |=(=move ev-core(moves [move moves]))
+        ++  ev-emil  |=(mos=(list move) ev-core(moves (weld (flop mos) moves)))
         ++  ev-tace
           |=  [verb=? print=(trap tape)]
           ^+  same
@@ -8428,8 +8646,9 @@
         ::      to/from-vane=%van
         ::      for-corks=%cor
         ::      for-poke-payloads=%pok
+        ::      for-flubs=%fub
         ::  ==
-        +$  were  ?(%van %nax %ack %cor %pok)
+        +$  were  ?(%van %nax %ack %cor %pok %fub)
         +$  ev-flow-wire
           $:  %mesa
               %flow
@@ -8527,14 +8746,16 @@
           ::  through the message-builder core, so when retrieving the key from
           ::  chums.ames-state it's already been updated
           ::
+          ~&  hen/hen
           =.  chums.ames-state  (~(put by chums.ames-state) her %known per)
           =^  moves-peek  ames-state
-            [moves ames-state]:(co-make-peek:(co-abed:co hen) space her path)
+            co-abet:(co-make-peek:(co-abed:co hen) space her path)
           ::  update per in the door's sample with the updated value from
           ::  ames-state; removing this will discard the last change when doing
           ::  +ev-abet
           ::
-          ev-core(moves (weld moves-peek moves), per (got-per her))
+          =.  per  (got-per her)
+          (ev-emil moves-peek)
         ::
         +|  %packet-entry-points
         ::
@@ -8645,7 +8866,7 @@
             ==
           ::
           ++  hear-peek
-            |=  =name:pact
+            |=  [=lane:pact =name:pact]
             ?.  =(our her.name)
               ev-core
             ::
@@ -8659,7 +8880,7 @@
             ?.  ?=([%atom *] u.u.res)
               ev-core  ::  XX support both %atom and %packet
             =+  !<([dat=@ pairs=(list @ux) pof=@ux] q.u.u.res)
-            (ev-emit hen %give %push ~ dat)
+            (ev-emit unix-duct %give %push ~[lane] dat)
           ::
           ++  hear-page
             |=  [dud=(unit goof) =lane:pact =pact:pact]
@@ -8726,7 +8947,7 @@
                 %-  (slog leaf+"ames: unix-duct pending; will retry %push" ~)
                 ev-core
               %-  ev-emit
-              %+  push-pact
+              %^  push-pact  her
                 [hop=0 %peek name(wan [%data 0])]
               (make-lanes her lane.per qos.per)
             ::
@@ -8787,7 +9008,7 @@
                     |.("request frag={<counter.los.ps>}")
                 ::
                 %-  ev-emit
-                %+  push-pact
+                %^  push-pact  her
                   [hop=0 %peek name(wan [%data counter.los.ps])]
                 (make-lanes her lane.per qos.per)
               ::  yield complete message
@@ -8883,9 +9104,10 @@
         ++  ev-peel
           |=  $:  =wire
                   $=  sign
-                  $~  flub/~
-                  $%([%flub ~] $>(?(%noon %boon %done %sage) gift))
-              ==
+                  $~  done/~
+                  $%   $>(%sage gift)
+                       $>(?(%flub %spur %noon %boon %done) gift:gall)
+              ==  ==
           ^-  [[side=(unit side) were=(unit were)] _ev-core]
           ?^  flow-wire=(ev-parse-flow-wire wire)
             =.  her  her.u.flow-wire
@@ -8924,8 +9146,8 @@
         ++  ev-take
           |=  $:  =bone
                   $=  sign
-                  $~  flub/~
-                  $%([%flub ~] $>(?(%noon %boon %done) gift))
+                  $~  done/~
+                  $>(?(%flub %spur %noon %boon %done) gift:gall)
               ==
           ^+  ev-core
           =+  fo-core=(fo-abed:fo bone dire=%bak)
@@ -8933,14 +9155,13 @@
             ::  XX for %done, we ack one message at at time, seq is not needed?
             ::  XX use it as an assurance check?
             ::
-              ?(%flub %done)
+              ?(%flub %done %spur)
             fo-abet:(fo-take:fo-core %van sign)
           ::
               ?(%boon %noon)
             %+  ev-req-boon  bone
             ?-(-.sign %boon [id=~ payload.sign], %noon [`id payload]:sign)
           ==
-        ::
         ::  +ev-take-sage: receive remote responses
         ::
         ++  ev-take-sage
@@ -8950,17 +9171,22 @@
           =/  message-path=(pole iota)  (validate-path path.p.sage)
           =+  fo-core=(fo-abed:fo side)
           ::
-          ?:  =(%cor were)
+          ?:  ?|  =(%cor were)
+                  =(%fub were)
+              ==
             ::  validate %cork path and wire
             ::
             ?>  ?&  ?=(cork-pith message-path)
                     ?|  &(=(%for dire.message-path) =(%bak dire.side))
                         &(=(%bak dire.message-path) =(%for dire.side))
                 ==  ==
+            ?:  =(%fub were)
+              %-  %+  ev-tace  msg.veb.bug.ames-state
+                  |.("%cork %flub received; delete {<side>}")
+              fo-abel:(fo-take-fub:fo-core sage)
             ::  the server is reading corks on the forward side, the one
             ::  that sent the %cork, on the original flow (coming on a %watch)
             ::
-
             ?:  (~(has in corked.per) side)
               %-  %+  ev-tace  odd.veb.bug.ames-state
                   |.("unexpected %gone $page; ignore")
@@ -9015,6 +9241,7 @@
           %-  ~(rep by ints)
           |=  [int=^ints c=_core]
           ?@  int
+            ~&  hen
             %.  (ev-emit:c hen %give %sage her^path gage)
             (ev-tace fin.veb.bug.ames-state |.("give %sage={(spud path)}"))
           %.  (ev-emit:c hen %give %rate her^path ~)
@@ -9203,6 +9430,16 @@
           ^-  duct
           ~|  %dangling-bone^her^bone
           (~(got by by-bone.ossuary.per) bone)
+        ::  +ev-goad-flow: try to send any queued messages if sen-window is open
+        ::
+        ++  ev-goad-flow
+          =/  =bone
+            ~|  goad-flow-missing/hen
+            (~(got by by-duct.ossuary.per) hen)
+          =+  fo-core=(fo-abed:fo bone %for)
+          ::  if the ack/payload is already in the .pit, it will assert it
+          ::
+          fo-abet:fo-send:fo-core(halt.state %.n)
         ::
         +|  %flows
         ::
@@ -9298,6 +9535,7 @@
             ev-core
           ::
           ++  fo-emit  |=(=move fo-core(moves [move moves]))
+          ++  fo-emil  |=(mos=(list move) fo-core(moves (weld (flop mos) moves)))
           ::  +fo-to-close: block non-cork pleas to be send if we are in closing
           ::
           ++  fo-to-close
@@ -9422,7 +9660,7 @@
             ::
             ++  pump
               |=  load=mesa-message
-              ?:  |((fo-to-close load) fo-corked)
+              ?:  |((fo-to-close load) fo-corked halt.state)
                 %-  %+  ev-tace  odd.veb.bug.ames-state
                     ?:  (fo-to-close load)
                       |.("skip $plea; flow {<bone>} is closing")
@@ -9432,7 +9670,11 @@
               =:   next.snd   +(next.snd)
                   loads.snd   (put:fo-mop loads.snd next.snd load)
                 ==
-              fo-send
+              ?.  halt.state
+                fo-send
+              %-  %+  ev-tace  odd.veb.bug.ames-state
+                  |.("queue {<mess>}; flow is halted flow={<bone>}")
+              fo-core
             ::
             ++  sink
               |=  [seq=@ud =gage:mess ok=?]
@@ -9445,8 +9687,12 @@
               ::
               =+  flow-state=[bone=bone seq=seq last=last-acked.rcv]
               ::
-              ?:  |(closing.state (~(has in corked.per) side))
+              ?:  |(halt.state closing.state (~(has in corked.per) side))
                 =+  ;;(mess=@tas +<.gage)
+                ?:  halt.state
+                  %-  %+  ev-tace  odd.veb.bug.ames-state
+                      |.("skip {<mess>}; flow is halted flow={<bone>} ")
+                  fo-core
                 =+  ;;([%plea =plea] +.gage)
                 =/  is-cork-plea=?
                   &(?=([%cork ~] payload) ?=([%flow ~] path)):plea
@@ -9503,18 +9749,32 @@
           ++  fo-take
             |=  [=were sign=flow-sign]
             ^+  fo-core
-            ?+    were  !!  :: %pok is handle outside, in the message layer
+            ?+    were  !!  :: %pok is handled outside, in the message layer
                 %nax  ?>(?=(%sage -.sign) (fo-take-nax +.sign))
                 %ack  ?>(?=(%sage -.sign) (fo-take-ack +.sign))
                 %cor  ?>(?=(%sage -.sign) (fo-take-cor +>.sign))
+                %fub  ?>(?=(%sage -.sign) (fo-take-fub +>.sign))
               ::
                 %van
-              ?+  -.sign  !!  :: %sage doesn't come from vanes
-                %flub  =.(pending-ack.rcv %.n fo-core)
-                %done  :: ack from client vane
-                       ::
-                       ?>  =(%.y pending-ack.rcv)
-                       (fo-take-done +.sign)
+              ?+    -.sign  !!  :: %sage doesn't come from vanes
+                :: ack from client vane
+                ::
+                  %done
+                ?>  =(%.y pending-ack.rcv)
+                (fo-take-done +.sign)
+                ::  halt the flow
+                ::
+                  %flub
+                =?  halt.state   ?=(^ agent.sign)  %.y
+                =?     fo-core   ?=(^ agent.sign)
+                  (fo-emit hen %pass /halt %g %halt her u.agent.sign bone)
+                =.  pending-ack.rcv  %.n  :: XX  tack.pending-ack.rcv
+                fo-core
+                ::  un-halt the flow
+                ::
+                  %spur
+                =.  halt.state  %.n
+                fo-core
               ==
             ==
           ::
@@ -9671,13 +9931,14 @@
                 ::  regress peer back to ames
                 ::
                 =^  moves-rege  ames-state
-                  =<  [moves ames-state]
+                  =<  sy-abet
                   ~|  %regress-crashed
                   %.  [`her dry=%.n]
                   %*  sy-rege  sy
                     ames-state  ames-state:fo-abet:fo-core
                   ==
-                fo-core(delete-per %.y, moves (weld moves-rege moves))
+                =.  fo-core  (fo-emil moves-rege)
+                fo-core(delete-per %.y)
               ==
             ?>  &(?=([%cork ~] payload) ?=([%flow ~] path)):plea
             ::  publisher receives %cork
@@ -9881,6 +10142,8 @@
             ::
             $(seq ack.next, error error.next, no-pokes |, miss-nax |)
           ::
+          ::  +fo-take-cor: take %cork $page; started by receiving a $cork $plea
+          ::
           ++  fo-take-cor
             |=  [=spar =gage:mess]
             ^+  fo-core
@@ -9898,6 +10161,18 @@
             ?~  first=(pry:fo-mop loads.snd)  !!
             ?>  ?&  =(1 (wyt:fo-mop loads.snd))         ::  %cork is unacked
                     ?=([%plea %$ [%flow ~] %cork ~] val.u.first)
+                ==
+            fo-core
+          ::  +fo-take-fub: take %cork $page; started by flubbing a flow
+          ::
+          ++  fo-take-fub
+            |=  [=spar =gage:mess]
+            ^+  fo-core
+            ::  sanity checks on the state of the flow
+            ::
+            ?>  ?&  ?=([%message %gone ~] gage)         ::  corked page received
+                    closing.state                       ::  flow is in closing
+                    !pending-ack.rcv                    ::  no pending acks
                 ==
             fo-core
           ::
@@ -9929,6 +10204,17 @@
             ::  for-cor-path will produce a path for the %cork on the other side
             ::
             [(fo-wire %cor) %a meek/[chum-to-our her (fo-cor-path seq=0 our)]]
+          ::  +fo-peek-flub: XX not used
+          ::
+          ::    intended for handling %flubs by puting the flow in closing and
+          ::    inmediately start peeking for the cork on the other side.
+          ::    currently we halt the flow and drop any messages we receive
+          ::
+          ++  fo-peek-flub
+            %^  fo-emit  hen  %pass
+            ::  for-cor-path will produce a path for the %cork on the other side
+            ::
+            [(fo-wire %fub) %a meek/[chum-to-our her (fo-cor-path seq=0 our)]]
           ::
           ++  fo-handle-miss-ack
             |=  seq=message-num
@@ -10282,7 +10568,7 @@
               (~(put by chums.ames-state) ship u.peer)
             =?  peers.ames-state  ?=(%ames -.peer)
               (~(put by peers.ames-state) ship u.peer)
-            sy-core(moves (weld keens-moves moves))
+            (sy-emil keens-moves)
           ::  +on-publ-sponsor: handle new or lost sponsor for peer
           ::
           ::    TODO: really handle sponsor loss
@@ -10387,9 +10673,7 @@
               ::
               =^  scry-moves  ames-state
                 =+  peer-core=(abed:pe:ames-core ship)
-                ::  XX skip abet, only +sy-abet will flop these moves
-                ::
-                =<  moves^ames-state  ^+  ames-core
+                =<  abet  ^+  ames-core
                 =.  ames-core
                   =<  abet  ^+  peer-core
                   %-  ~(rep by keens.todos)
@@ -10404,7 +10688,7 @@
                 ::  treated as %sage(s)
                 (~(rep in ducts) |=([=duct c=_cor] (on-chum:c ship^path)))
               ::
-              sy-core(moves (weld scry-moves moves))
+              (sy-emil scry-moves)
             ::
             ++  meet-alien-chum
               |=  [=ship =point:jael todos=ovni-state =chum-state]
@@ -10445,11 +10729,8 @@
                 %-  ~(rep in ducts)
                 |=  [=duct c=_core]
                 (ev-req-peek:c(hen duct) space=chum-to-our:c path)
-              ::
-              ::  XX skip ev-abet, only sy-abet will flop these moves
-              ::
-              =^  ev-moves  ames-state  [moves ames-state]:ev-core
-              sy-core(moves (weld ev-moves moves))
+              =^  ev-moves  ames-state  ev-abet:ev-core
+              (sy-emil ev-moves)
             ::
             --
           ::  on-publ-rift: XX
@@ -10619,30 +10900,49 @@
                 ::  XX resend attestation request?
                 ::
                 =/  spon=@p  (^sein:title ship)
-                =.  moves.core
-                  %+  weld
-                    ?:  =(our spon)  ~  ::  XX  don't send to ourselves
-                    =<  moves
-                    %.  [ship `@ux`spon]
-                    ~(al-read-proof al(ames-state ames-state.core) ~[/ames])
-                  moves.core
-                core
+                =^  al-moves  ames-state.core
+                  ?:  =(our spon)  ~  ::  XX  don't send to ourselves
+                  =<  al-abet
+                  %.  [ship `@ux`spon]
+                  ~(al-read-proof al(ames-state ames-state.core) ~[/ames])
+                (sy-emil:core al-moves)
               ~&  retrieving-keys-again/ship
               %-  sy-emit:core
               [~[//keys] %pass /public-keys %j %public-keys ship ~ ~]
             ::
-            =+  ^=  ev-core
+            =/  ev-core
               ~(ev-core ev(ames-state ames-state.core) hen ship +.per-sat)
             ::
             =^  resend-moves  ames-state.core
               =;  c=_ev-core
-                [moves ames-state]:c
+                ::  moves are going to be flopped again in sy-abet but
+                ::  that seems fine since there is only one packet per
+                ::  entry in the pit
+                ::
+                ev-abet:c
               %-  ~(rep by pit.per.ev-core)
               |=  [[=path req=request-state] core=_ev-core]
               ::  update and print connection status
               ::
               =?  core  (is-peer-dead:core now [her qos.per]:core)
                 (ev-update-qos:core qos.per.core(- %dead))
+              ::  XX find the bone for the flow inspecting the duct and checking
+              ::  if the flow is halted; add state to .req to track halt?
+              ::
+              ?:  ?|  ?=(^ pay.req)
+                      %-  ~(rep by for.req)
+                      |=  [[hen=duct *] found=?(%.y %.n)]
+                      ?.  ?=([[%ames %mesa %flow *] *] hen)
+                        found
+                      =>  .(i.hen `(pole knot)`i.hen)
+                      ?.  ?=([@ @ @ %ack %for ship=@ rift=@ bone=@ ~] i.hen)
+                        found
+                      =+  bone=(slav %ud bone.i.hen)
+                      ?~  flow=(~(get by flows.per.core) bone %for)
+                        found
+                      halt.u.flow
+                  ==
+                core
               ::  if =(~ pay.req); %naxplanation, %cork or external (i.e. not
               ::  coming from %ames) $peek request
               ::
@@ -10654,8 +10954,8 @@
                 %.  ev-core:core
                 (slog leaf+"ames: unix-duct pending; retry %push" ~)
               %-  ev-emit:core
-              (push-pact u.pact (make-lanes [her [lane qos]:per]:core))
-            core(moves (weld resend-moves moves))
+              (push-pact ship u.pact (make-lanes [her [lane qos]:per]:core))
+            (sy-emil:core resend-moves)
           ::
           --
         ::  +sy-snub: handle request to change ship blacklist
@@ -10812,7 +11112,7 @@
             ::
             =.  chums.ames-state.core  (~(del by chums.ames-state.core) ship)
             ::
-            core(moves :(weld peek-moves flow-moves moves))
+            (sy-emil (weld peek-moves flow-moves))
           ::
           ++  divide-bones
             |=  bones=(set side)
@@ -10828,7 +11128,7 @@
             =/  peer=peer-state  (got-peer-state:event-core her)
             =+  peer-core=(abed-peer:pe:event-core her peer)
             =;  core=_peer-core
-              [moves ames-state]:core
+              abet:abet:core
             =+  ev-core=(ev-abed:ev ~[//regress] her fren)
             %-  ~(rep by flows.fren)
             |=  [[side state=flow-state] core=_peer-core]
@@ -10866,7 +11166,7 @@
                   ==
                 =.  next.pump  next
                 ?~  acks.snd.state
-                  ::  if coming straight from ahoying the peer, we could still
+                  ::  if coming straight from ahoying the peer, we  could still
                   ::  be peeking for the naxplanation, and that would have
                   ::  the current message sequence number;
                   ::  XX  if this is a test local migration we won't find the
@@ -10885,7 +11185,7 @@
                     ?.  ?=([[%ames %mesa %flow *] *] hen)
                       c
                     =>  .(i.hen `(pole knot)`i.hen)
-                    ::  if the flow is in closing we need to stop +peeking for the
+                    ::  if the flow is in closing we need to stop +peeking for
                     ::  %cork (in +regress-peek) and remove the flow on our side
                     ::
                     ?.  ?=([@ @ @ %nax ?(%for %bak) h=@ r=@ bone=@ ~] i.hen)
@@ -10979,7 +11279,7 @@
             =+  event-core=(ev:ames now^eny^rof hen state)
             =/  mesa-core  mesa(ames-state state)
             =;  core=_event-core
-              [moves ames-state]:core
+              abet:core
             %-  ~(rep by pit.fren)
             |=  [[=path req=request-state] core=_event-core]
             ::  if =(~ pay.req) this could be a +peek for a %naxplanation,
@@ -11061,8 +11361,8 @@
             ::  XX sort flows?
             ::
             =;  core=_ev-core
-              =^  clos-moves  ames-state  [moves ames-state]:core
-              sy-core(moves (weld clos-moves moves))
+              =^  clos-moves  ames-state  ev-abet:core
+              (sy-emil clos-moves)
             %-  ~(rep by flows.per.ev-core)
             |=  [[side state=flow-state] c=_ev-core]
             ?:  =(%back dire)  c
@@ -11151,7 +11451,7 @@
           ^-  (quip move ^peer-state)
           =+  event-core=(ev:ames now^eny^rof ~[//ames] ames-state)
           =;  core=_event-core
-            =/  [moves=(list move) state=axle]  [moves ames-state]:core
+            =/  [moves=(list move) state=axle]  abet:core
             :-  moves
             ~|  %freaky-alien-rederive-mesa-keens^ship
             =-  ?>(?=(%known -<) ->)
@@ -11224,6 +11524,7 @@
         ++  al-abet  [(flop moves) ames-state]
         ++  al-abed  |=(=duct al-core(hen duct))
         ++  al-emit  |=(=move al-core(moves [move moves]))
+        ++  al-emil  |=(mos=(list move) al-core(moves (weld (flop mos) moves)))
         ++  al-tace
           |=  [verb=? her=ship print=(trap tape)]
           ^+  same
@@ -11305,13 +11606,13 @@
           =^  publ-moves  ames-state
             ::  XX skip sy-abet, only +al-abet will flop these moves
             ::
-            =<  [moves ames-state]
+            =<  sy-abet
             %^  ~(sy-publ sy hen)  /comet  %full
             %+  ~(put by *(map ship point:jael))  comet
             =|  =point:jael
             point(rift 0, life 1, keys keys, sponsor `(^sein:title comet))
           ::
-          al-core(moves (weld publ-moves moves))
+          (al-emil publ-moves)
         ::
         ++  al-read-proof
           |=  [comet=ship =lane:pact]
@@ -11328,8 +11629,8 @@
           ?~  pact=(co-make-pact:co `spar`comet^path ~ rift=0)
             !!
           %-  %^  al-tace  fin.veb.bug.ames-state  comet
-              |.("peek for attestation proof")
-          (al-emit (push-pact u.pact (make-lanes comet `[0 lane] *qos)))
+              |.("peek for comet attestation proof")
+          (al-emit (push-pact comet u.pact (make-lanes comet `[0 lane] *qos)))
         ::
         ++  al-take-proof
           |=  [=lane:pact hop=@ud =name:pact =data:pact =next:pact]
@@ -11480,16 +11781,22 @@
           ?:  =(~ unix-duct)
             %.  co-core
             (slog leaf+"ames: unix-duct pending; will retry %push" ~)
-          ::  vere ignores any lanes and use the one it has stored in the pit
-          ::  to avoid breaking symmetric routing
+          ::  vere should ignores any lanes attach to a %page, and use the one 
+          ::  it has stored in the pit to avoid breaking symmetric routing
+          ::    (we add the lane here as a hack to avoid having to deal with 
+          ::     %aqua's lane management)
           ::
-          (co-emit (push-pact [hop=0 %page name u.page next=~] lanes=~))
+          %-  co-emit 
+          %^  push-pact  ship 
+            [hop=0 %page name u.page next=~] 
+          (make-lanes ship lane.sat qos.sat)
         ::
         ++  co-make-mess
           |=  [remote=spar payload=(unit path)]
           ^+  co-core
-          ?~  her=(~(get by chums.ames-state) ship.remote)
-            %-  %^  co-tace  odd.veb.bug.ames-state  ship.remote
+          =*  who  ship.remote
+          ?~  her=(~(get by chums.ames-state) who)
+            %-  %^  co-tace  odd.veb.bug.ames-state  who
                 |.("missing chum on {<[ship path]:remote>}")
             co-core
           ?>  ?=([%known *] u.her)
@@ -11517,13 +11824,15 @@
           =.  pit.per  (~(put by pit.per) path.remote new)
           ?>  ?=(^ pax)
           =.  tip.per  (~(put ju tip.per) pax [hen path.remote])
+          %-  %^  co-tace  fin.veb.bug.ames-state  who
+              |.("add {<(spud pax)>} to .pit")
           =.  chums.ames-state
-            (~(put by chums.ames-state) ship.remote known/per)
+            (~(put by chums.ames-state) who known/per)
           ::
           ?:  =(~ unix-duct)
             %.  co-core
             (slog leaf+"ames: unix-duct pending; will retry %push" ~)
-          (co-emit (push-pact u.pact (make-lanes ship.remote [lane qos]:per)))
+          (co-emit (push-pact who u.pact (make-lanes who [lane qos]:per)))
         ::
         ++  co-make-pact
           |=  [p=spar q=(unit path) =per=rift]
@@ -12164,6 +12473,8 @@
         %rate  (pe-rate dud +.task)
         %prog  (pe-prog dud +.task)
         %whey  (pe-whey dud +.task)
+        %halt  (pe-halt dud +.task)
+        %goad  (pe-goad dud +.task)
       ::  |mesa only tasks
       ::
         %heer  (pe-heer dud +.task)
@@ -12292,7 +12603,7 @@
         ::  handle %ames packet; keys will be asked and packet dropped
         ::
         =^  moves  vane-gate  (call:am-core hen dud %soft %hear lane blob)
-        [(poke-send-ahoy hen our sndr.shot) moves]^vane-gate
+        (flop [(poke-send-ahoy hen our sndr.shot force=%.n) moves])^vane-gate
           ::  [%mesa ~ %alien *]
           ::    %mesa is our default network core. we might have outstanding
           ::    poke/peeks, but the keys are missing and the peer sends an %ames
@@ -12320,7 +12631,7 @@
         ::
         ::  enqueue %ahoy $plea; poke /app/hood
         ::
-        ~[(poke-send-ahoy hen our sndr.shot)]^vane-gate
+        ~[(poke-send-ahoy hen our sndr.shot force=|)]^vane-gate
         ::  [%mesa ~ %known *]
         ::    if we can find the peer in chums, it means that they sent an %ahoy
         ::    $plea, we migrated them, but they haven't heard our %ack, and have
@@ -12370,7 +12681,7 @@
           ::  enqueue %ahoy $plea; poke /app/hood
           ::
           =^  moves  vane-gate  (call:am-core hen dud %soft %hear lane blob)
-          [(poke-send-ahoy hen our sndr.shot)^moves vane-gate]
+          [(poke-send-ahoy hen our sndr.shot force=|)^moves vane-gate]
         [moves-peer vane-gate]
       ==
     ::
@@ -12423,6 +12734,39 @@
         (pe-chum ship %a %x '1' %$ %whey (scot %ud boq) (scot %p our) path)
       (call:am-core hen dud %soft %whey ship^path boq)
     ::
+    ++  pe-halt
+      |=  [dud=(unit goof) =ship agent=term =bone]
+      =/  ship-state  (find-peer ship)
+      ::
+      ?:  ?=(%ames -.ship-state)
+        (call:am-core hen ~ soft+halt/ship^agent^bone)
+      ?>  ?=([~ %known *] +.ship-state)
+      %-  %+  %*(ev-tace ev-core her ship)  sun.veb.bug.ames-state
+          |.("hear local %flub; halt side=[{<bone>} %for]")
+      =^  moves  ames-state
+        =<  ev-abet:fo-abet(halt.state %.y)
+        (fo-abed:fo:(ev-abed:ev-core hen ship +.u.ship-state) bone %for)
+      moves^vane-gate
+    ::
+    ++  pe-goad
+      |=  [dud=(unit goof) =ship]
+      =/  ship-state  (find-peer ship)
+      ::
+      ?:  ?=(%ames -.ship-state)
+        (call:am-core hen ~ soft+goad/ship)
+      ?>  ?=([~ %known *] +.ship-state)
+      %-  %+  %*(ev-tace ev-core her ship)  sun.veb.bug.ames-state
+          |.("hear %goad; wake side=[{<bone>} %for]")
+      =^  moves  ames-state
+        =<  ev-abet
+        ev-goad-flow:(ev-abed:ev-core hen ship +.u.ship-state)
+      ::  XX don't prod; wait for the ~m2 /retry timer
+      ::
+      :: =^  moves-prod  vane-gate
+      ::   (call:me-core hen dud %soft %prod ship ~)
+      :: (weld moves moves-prod)^vane-gate
+      moves^vane-gate
+    ::
     +|  %mesa-tasks
     ::
     ++  pe-heer
@@ -12457,7 +12801,7 @@
         ::
             %peek
           ?~  dud
-            ev-abet:(hear-peek:ev-pact:ev-core +>.pact)
+            ev-abet:(hear-peek:ev-pact:ev-core lane +>.pact)
           sy-abet:(~(sy-crud sy:me-core hen) %peek tang.u.dud)
         ::
             %poke
@@ -12542,9 +12886,6 @@
             ::  still waiting to hear attestation proof; no-op
             ::
             :: `ames-state
-            ::
-            %-  %+  %*(ev-tace ev-core her her-pok)  fin.veb.bug.ames-state
-                |.("peek for comet attestation")
             ::
             al-abet:(al-read-proof:al-core her-pok lane)
           ::  peer has been regressed to %ames (or XX?)
@@ -12745,7 +13086,7 @@
     (call:me-core sample)
     ::  common tasks
     ::
-      ?(%plea %cork %keen %chum %yawn %wham %load %rate %prog %whey)
+      ?(%plea %cork %keen %chum %yawn %wham %load %rate %prog %whey %halt %goad)
     (~(call pe-core hen) dud task)
     ::  core-dependent tasks
     ::
@@ -12804,7 +13145,7 @@
   take:am-core
 ::  +stay: extract state before reload
 ::
-++  stay  [%27 adult/ames-state]
+++  stay  [%28 adult/ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
