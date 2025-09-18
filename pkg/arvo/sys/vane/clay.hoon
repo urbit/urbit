@@ -653,6 +653,7 @@
       ~/  %build-nave
       |=  mak=mark
       ^-  vase
+      ~>  %memo./clay/ford
       ~|  %error-building-mark^mak
       %-  soak-vase
       %-  (trace 1 |.("make mark {<mak>}"))
@@ -716,6 +717,7 @@
       ~/  %build-dais
       |=  mak=mark
       ^-  dais
+      ~>  %memo./clay/ford
       ~|  %error-building-dais^mak
       %-  soak-dais
       =/  nav=vase  (build-nave mak)
@@ -759,6 +761,7 @@
       ~/  %build-cast
       |=  [a=mark b=mark]
       ^-  vase
+      ~>  %memo./clay/ford
       ~|  error-building-cast+[a b]
       %-  soak-vase
       ?:  =(a b)
@@ -837,6 +840,7 @@
       |=  [a=mark b=mark]
       ^-  tube
       ~>  %spin.[%build-tube]  ~>  %spin.[a]  ~>  %spin.[b]
+      ~>  %memo./clay/ford
       ~|  error-building-tube+[a b]
       %-  soak-tube
       =/  gat=vase  (build-cast a b)
@@ -902,6 +906,7 @@
       ~/  %build-dep
       |=  dep=(each [dir=path fil=path] path)
       ^-  vase
+      ~>  %memo./clay/ford
       =/  =path
         ?:(?=(%| -.dep) p.dep fil.p.dep)
       ~|  %error-building^path
@@ -928,6 +933,7 @@
     ++  build-directory
       |=  =path
       ^-  (map @ta vase)
+      ~>  %memo./clay/ford
       %-  soak-arch
       =/  fiz=(list @ta)
         =/  len  (lent path)
