@@ -10865,34 +10865,37 @@
     (turn leg |=([p=type q=hoon] (play(sut p) q)))
   ::
   ++  sink
-    ~/  %sink
-    |^  ^-  cord
-    ?-  sut
-      %void      'void'
-      %noun      'noun'
-      [%atom *]  (rap 3 'atom ' p.sut ' ' ?~(q.sut '~' u.q.sut) ~)
-      [%cell *]  (rap 3 'cell ' (mup p.sut) ' ' (mup q.sut) ~)
-      [%face *]  (rap 3 'face ' ?@(p.sut p.sut (mup p.sut)) ' ' (mup q.sut) ~)
-      [%fork *]  (rap 3 'fork ' (mup p.sut) ~)
-      [%hint *]  (rap 3 'hint ' (mup p.sut) ' ' (mup q.sut) ~)
-      [%hold *]  (rap 3 'hold ' (mup p.sut) ' ' (mup q.sut) ~)
-    ::
-        [%core *]
-      %+  rap  3
-      :~  'core '
-          (mup p.sut)
-          ' '
-          ?~(p.p.q.sut '~' u.p.p.q.sut)
-          ' '
-          q.p.q.sut
-          ' '
-          r.p.q.sut
-          ' '
-          (mup q.q.sut)
-          ' '
-          (mup p.r.q.sut)
+    =<  $
+    ~%  %sink  ..sink  ~
+    |%
+    ++  $
+      ^-  cord
+      ?-  sut
+        %void      'void'
+        %noun      'noun'
+        [%atom *]  (rap 3 'atom ' p.sut ' ' ?~(q.sut '~' u.q.sut) ~)
+        [%cell *]  (rap 3 'cell ' (mup p.sut) ' ' (mup q.sut) ~)
+        [%face *]  (rap 3 'face ' ?@(p.sut p.sut (mup p.sut)) ' ' (mup q.sut) ~)
+        [%fork *]  (rap 3 'fork ' (mup p.sut) ~)
+        [%hint *]  (rap 3 'hint ' (mup p.sut) ' ' (mup q.sut) ~)
+        [%hold *]  (rap 3 'hold ' (mup p.sut) ' ' (mup q.sut) ~)
+      ::
+          [%core *]
+        %+  rap  3
+        :~  'core '
+            (mup p.sut)
+            ' '
+            ?~(p.p.q.sut '~' u.p.p.q.sut)
+            ' '
+            q.p.q.sut
+            ' '
+            r.p.q.sut
+            ' '
+            (mup q.q.sut)
+            ' '
+            (mup p.r.q.sut)
+        ==
       ==
-    ==
     ::
     ++  mup  |=(* (scot %p (mug +<)))
     --
