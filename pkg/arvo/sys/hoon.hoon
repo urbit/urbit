@@ -6136,9 +6136,8 @@
         ?.  ?=(%0 -.ref)  ref
         =/  path  $(formula path.formula)
         ?.  ?=(%0 -.path)  path
-        =/  result
-          ?~  scry  ~
-          (scry product.ref product.path)
+        ?~  scry  [%2 trace]
+        =/  result  (scry product.ref product.path)
         ?~  result
           [%1 product.path]
         ?~  u.result
