@@ -33,14 +33,14 @@
       [/sys/arvo hoon/arvo]
   ==
 ::  +dirs: filter for userspace directories to include
-::     
+::
 ++  dirs
   |=  [bas=path exc=(list spur)]
   ^-  (list spur)
   ?~  exc  ~(tap in dir:.^(arch %cy bas))
   %+  skim
     ~(tap in dir:.^(arch %cy bas))
-  |=(=spur =(~ (find ~[spur] exc)))  
+  |=(=spur =(~ (find ~[spur] exc)))
 ::  +file-ovum: userspace filesystem load
 ::
 ::    bas: full path to / directory
@@ -200,25 +200,30 @@
         :-  (boot-ovum:pill compiler-src arvo-src)
         %+  turn
           (snoc (turn dez tail) bas)
-        |=  =path  
+        |=  =path
         (file-ovum2 [path exc])
       .*(0 arvo-formula)
     |=  [ovo=ovum ken=*]
     [~ (slum ken [now ovo])]
   ::
-  ::  boot-two: startup formula
+  ::  kernel-formula
   ::
   ::    We evaluate :arvo-formula (for jet registration),
   ::    then ignore the result and produce .installed
   ::
+  =/  kernel-formula
+    [%7 arvo-formula %1 installed]
+  ::
+  ::  boot-two: startup formula
+  ::
   =/  boot-two
-    =>  *[arvo-formula=^ installed=^ tale=*]
-    !=  =+(.*(0 arvo-formula) [installed tale])
+    =>  *[kernel-formula=^ tale=*]
+    !=  [.*(0 kernel-formula) tale]
   ::
   ::  boot-ova
   ::
   =/  boot-ova=(list)
-    [aeon:eden:part boot-two arvo-formula installed ~]
+    [aeon:eden:part boot-two kernel-formula ~]
   ::
   ::  a pill is a 3-tuple of event-lists: [boot kernel userspace]
   ::
@@ -229,12 +234,19 @@
   :+  %pill  %solid
   :+  boot-ova  ~
   =.  dez  (snoc dez [%base bas])
-  %+  weld
-    %+  turn  dez 
-    |=  [dek=desk bas=path] 
+  ;:  weld
+    %+  turn  dez
+    |=  [dek=desk bas=path]
     (file-ovum [dek bas exc])
-  ?.  prime  ~
-  [(prep-ovum (turn dez tail))]~
+  ::
+    ?.  prime  ~
+    [(prep-ovum (turn dez tail))]~
+  ::
+    %+  turn  dez
+    |=  [dek=desk *]
+    ^-  unix-event
+    [/c/essential/[dek] %esse dek %.y]
+  ==
 ::
 ++  brass
   ::  sys: root path to boot system, `/~me/[desk]/now/sys`
@@ -282,8 +294,8 @@
     ==
   =.  dez  (snoc dez [%base bas])
   %+  weld
-    %+  turn  dez 
-    |=  [dek=desk bas=path] 
+    %+  turn  dez
+    |=  [dek=desk bas=path]
     (file-ovum [dek bas exc])
   ?.  prime  ~
   [(prep-ovum (turn dez tail))]~

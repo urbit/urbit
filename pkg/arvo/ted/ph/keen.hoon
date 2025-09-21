@@ -7,7 +7,7 @@
 ;<  ~  bind:m  start-simple
 ;<  ~  bind:m  (init-ship ~bud &)
 ;<  ~  bind:m  (init-ship ~dev &)
-;<  ~  bind:m  (dojo ~bud "-keen /cx/~dev/kids/1/desk/bill")
-;<  ~  bind:m  (wait-for-output ~bud "[ ~")
+;<  ~  bind:m  (dojo ~bud "-keen ~dev /c/x/1/kids/sys/kelvin")
+;<  ~  bind:m  (wait-for-output ~bud "kal=[lal=%zuse num={(scow %ud zuse)}]")
 ;<  ~  bind:m  end
 (pure:m *vase)

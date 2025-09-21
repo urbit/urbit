@@ -8,11 +8,12 @@
 --                                                      ::
 =>  |%                                                  ::  console protocol
 +$  axle                                                ::
-  $:  %7                                                ::
+  $:  %8                                                ::
       hey=(unit duct)                                   ::  default duct
       dug=(map @tas axon)                               ::  conversations
       eye=(jug @tas duct)                               ::  outside observers
       ear=(set duct)                                    ::  syslog listeners
+      mem=(set duct)                                    ::  memory requests
       lit=?                                             ::  boot in lite mode
       egg=_|                                            ::  see +take, removeme
   ==                                                    ::
@@ -103,9 +104,14 @@
           %verb  (pass /verb %$ kyz)
         ::
             %seat
-          %^  pass  /seat  %g
-          :+  %deal   [our our]
-          [%hood %poke %kiln-install !>([desk.kyz our desk.kyz])]
+          =.  +>
+            %^  pass   /seat  %g
+            :+  %deal  [our our /dill]
+            [%hood %poke %kiln-install !>([desk.kyz our desk.kyz])]
+          ::
+          %^  pass   /seat  %g
+          :+  %deal  [our our /dill]
+          [%hood %poke %kiln-essential-desk !>([desk.kyz %.y])]
         ==
       ::
       ++  crud
@@ -129,7 +135,7 @@
       ::
       ++  deal                                          ::  pass to %gall
         |=  [=wire =deal:gall]
-        (pass wire [%g %deal [our our] ram deal])
+        (pass wire [%g %deal [our our /dill] ram deal])
       ::
       ++  pass                                          ::  pass note
         |=  [=wire =note]
@@ -146,7 +152,7 @@
       ++  sponsor
         ^-  ship
         =/  dat=(unit (unit cage))
-          (rof `[our ~ ~] j/[[our sein/da/now] /(scot %p our)])
+          (rof [~ ~] /dill j/[[our sein/da/now] /(scot %p our)])
         ;;(ship q.q:(need (need dat)))
       ::
       ++  init                                          ::  initialize
@@ -265,6 +271,13 @@
     ?<  ?=(%crud -.task)
     [%crud -.task tang.u.dud]
   ::
+  ::
+  ?:  ?=(%born -.task)
+    ?~  hey.all
+      [~ ..^$]
+    ?:  ?=(~ mem.all)
+      [~ ..^$]
+    [[u.hey.all %give %quac ~]~ ..^$]
   ::  the boot event passes thru %dill for initial duct distribution
   ::
   ?:  ?=(%boot -.task)
@@ -368,6 +381,22 @@
       ?~  p.task  (~(del in ear.all) hen)
       (~(put in ear.all) hen)
     [~ ..^$]
+  ::  %mass runs a memory report
+  ::
+  ?:  ?=(%mass -.task)
+    ?>  ?=(^ hey.all)
+    ?:  =(~ mem.all)
+      =.  mem.all  (~(put in mem.all) hen)
+      [[u.hey.all %give %quac ~]~ ..^$]
+    =.  mem.all  (~(put in mem.all) hen)
+    [~ ..^$]
+  ::  %quac is a memory report from the runtime
+  ::
+  ?:  ?=(%quac -.task)
+    =/  moz=(list move)
+      (turn ~(tap in mem.all) (late %give %meme p.task))
+    =.  mem.all  ~
+    [moz ..^$]
   ::  if we were $told something, give %logs to all interested parties
   ::
   ?:  ?=(?(%crud %talk %text) -.task)
@@ -389,13 +418,29 @@
 ++  load                                                ::  import old state
   =<  |=  old=any-axle
       ?-  -.old
-        %7  ..^$(all old)
+        %8  ..^$(all old)
+        %7  $(old (axle-7-to-8 old))
         %6  $(old (axle-6-to-7 old))
         %5  $(old (axle-5-to-6 old))
         %4  $(old (axle-4-to-5 old))
       ==
   |%
-  +$  any-axle  $%(axle axle-6 axle-5 axle-4)
+  +$  any-axle  $%(axle axle-7 axle-6 axle-5 axle-4)
+  ::
+  +$  axle-7
+    $:  %7
+        hey=(unit duct)
+        dug=(map @tas axon)
+        eye=(jug @tas duct)
+        ear=(set duct)
+        lit=?
+        egg=_|
+    ==
+  ::
+  ++  axle-7-to-8
+    |=  a=axle-7
+    ^-  axle
+    [%8 hey dug eye ear ~ lit egg]:a
   ::
   +$  axle-6
     $:  %6
@@ -409,7 +454,7 @@
   ::
   ++  axle-6-to-7
     |=  a=axle-6
-    ^-  axle
+    ^-  axle-7
     [%7 hey dug eye ~ lit egg]:a
   ::
   +$  axle-5
@@ -479,7 +524,7 @@
 ::
 ++  scry
   ^-  roon
-  |=  [lyc=gang car=term bem=beam]
+  |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
   =*  ren  car
   =*  why=shop  &/p.bem
@@ -490,11 +535,12 @@
   ?.  ?=(%& -.why)  ~
   =*  his  p.why
   ::
-  ::  only respond for the local identity, %$ desk, current timestamp
+  ::  only respond for the local identity, %$ desk, current timestamp, root gang
   ::
   ?.  ?&  =(&+our why)
           =([%$ %da now] lot)
           =(%$ syd)
+          =([~ ~] lyc)
       ==
     ~
   ::  /%x//whey           (list mass)   memory usage labels
@@ -525,9 +571,10 @@
       ::  only the new-style subscription.
       ::
       =/  hey  (need hey.all.lax)
-      :*  [hey %pass / %g %deal [our our] %hood %leave ~]
-          [hey %pass [%peer %$ ~] %g %deal [our our] %hood %leave ~]
-          [hey %pass [%peer %$ ~] %g %deal [our our] %hood %watch [%dill %$ ~]]
+      =/  =sack  [our our /dill]
+      :*  [hey %pass / %g %deal sack %hood %leave ~]
+          [hey %pass [%peer %$ ~] %g %deal sack %hood %leave ~]
+          [hey %pass [%peer %$ ~] %g %deal sack %hood %watch [%dill %$ ~]]
           moz
       ==
     =.  egg.all.lax  |

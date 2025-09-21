@@ -1,0 +1,73 @@
+#viewport {
+  position: relative;
+  width: 100%;
+  padding-top: 1em;
+  border: 1px solid black;
+  font-family: monospace;
+}
+#controls input {
+  width: 100%;
+}
+.agent {
+  position: relative;
+  padding-left: 1em;
+  width: calc(100% - 1em);
+  border-top: 2px solid black;
+  margin-top: 2em;
+}
+.cause {
+  position: relative;
+  width: 100%;
+  height: 5em;
+  border-top: 1px solid grey;
+}
+.legend {
+  position: absolute;
+  left: -1em;
+  width: auto;
+  height: auto;
+  text-orientation: sideways;
+  writing-mode: vertical-rl;
+  text-wrap: nowrap;
+}
+.event {
+  position: absolute;
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 1px dotted rgba(0,0,0,0);
+}
+.event.effects {
+  border-style: solid;
+}
+.details {
+  padding: 0.3em;
+  display: none;
+  position: absolute;
+  top: 0.75em;
+  left: 0.75em;
+  z-index: 2;
+  min-width: 20em;
+  display: none;
+  overflow: visible;
+  border: 1px solid black;
+  background-color: white;
+}
+.event.right .details {
+  left: initial;
+  right: 0.75em;
+}
+.event:hover .details, .event.focus .details {
+  display: block;
+}
+.event:hover, .event.focus {
+  box-shadow: 0 0 10px 0 #f30;
+}
+.event details {
+  padding-left: 1em;
+}
+.event details summary {
+  position: relative;
+  left: -1em;
+}

@@ -256,6 +256,14 @@
   ;<  ~  bind:m  (send-events (insert-files:util her desk [pax warped] ~))
   (pure:m warped)
 ::
+++  copy-file
+  =/  m  (strand ,~)
+  |=  [her=ship pax=path file=@t]
+  ^-  form:m
+  ;<  ~  bind:m
+    (send-events (insert-files:util her %base [pax file] ~))
+  (sleep ~s1)
+::
 ::  Check /sur/aquarium/hoon on the given has the given contents.
 ::
 ++  check-file-touched

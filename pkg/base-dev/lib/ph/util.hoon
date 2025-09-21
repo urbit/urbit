@@ -62,15 +62,26 @@
 ::TODO  should be rename -dill-output
 ++  is-dojo-output
   |=  [who=ship her=ship uf=unix-effect what=tape]
+  |^
   ?&  =(who her)
       ?=(%blit -.q.uf)
-    ::
-      %+  lien  p.q.uf
-      |=  =blit:dill
-      ?.  ?=(%put -.blit)
-        |
-      !=(~ (find what p.blit))
+       (lien p.q.uf handle-blit)
   ==
+  ::
+  ++  handle-blit
+    |=  =blit:dill
+    ^-  ?
+    ?:  ?=(%mor -.blit)
+      (lien p.blit handle-blit)
+    ?+  -.blit  |
+      %put  !=(~ (find what p.blit))
+    ::
+        %klr
+      %+  lien  p.blit
+      |=  [* q=(list @c)]
+      !=(~ (find what q))
+    ==
+  --
 ::
 ::  Test is successful if +is-dojo-output
 ::
