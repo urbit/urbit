@@ -284,8 +284,8 @@
   (call:vane-core duct ~ task)
 ::
 ++  scry
-  |=  [vane=_dep-gall care=term bem=beam]
-  =/  res  (scry:(vane) ~ care bem)
+  |=  [vane=_dep-gall pov=path care=term bem=beam]
+  =/  res  (scry:(vane) ~ pov care bem)
   res
 ::
 ++  take
@@ -339,9 +339,9 @@
   ^-  [moves=(list move) _dep-gall]
   ::
   =;  =task:gall  (call vane ~[/perm] task)
-  =/  =sock  [~dep ~dep]
+  =/  =sack  [~dep ~dep /]
   =/  =term  %buster
-  [%deal sock term taz]
+  [%deal sack term taz]
 ::
 ++  scry-test-dummy-bowl
   |=  vane=_dep-gall
@@ -349,7 +349,7 @@
   ::
   =;  res  !<(bowl:gall q:(need (need res)))
   %-  scry
-  :+  vane  %x
+  :^  vane  /  %x
   [[p=~dep q=%buster r=[%da now.dep-gall]] s=/bowl/noun]
 ::  +gall-call: have %gall run a +task
 ::
