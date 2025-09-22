@@ -792,12 +792,16 @@
         (clap (forwarded-host u.forwards) host head)
       (fall (forwarded-for u.forwards) address)
     ::
-    =/  [=action suburl=@t]
-      (get-action-for-binding host url.request)
-    ::
     =/  session=?(invalid=@uv [suv=@uv =identity som=(list move)])
-      (session-for-request:authentication request action)
+      (session-for-request:authentication request)
+    =/  authenticated
+      ?@  session  |
+      ?=(%ours -.identity.session)
+    =/  origin=(unit origin)
+      (get-header:http 'origin' headers)
     =/  session-id=(unit @uv)  ?@(session ~ `suv.session)
+    ::
+    =/  [=action suburl=@t]  (get-action-for-binding host url.request)
     ::  if session is not cell or default, session expired  
     ?.  ?|  .?(session)
             =(session 0v0)
@@ -833,11 +837,6 @@
       ?@  session  [moz sat]
       [(weld som.session moz) sat]
     ::
-    =/  authenticated
-      ?@  session  |
-      ?=(%ours -.identity.session)
-    =/  origin=(unit origin)
-      (get-header:http 'origin' headers)
     ::  if we have no eauth endpoint yet, and the request is authenticated,
     ::  deduce it from the hostname
     ::
@@ -929,11 +928,11 @@
       ==
     ::
     ?:  ?&  ?=(@ session)
-            =(?(%gen %channel %name) -.action)
+            ?=(?(%gen %channel %name) -.action)
         ==
         %:  return-static-data-on-duct  
             401  'text/html'
-            (error-page 401 authenticated url.request "request is not authenticated")
+            (error-page 401 authenticated url.request "bad session auth")
             ~  origin
         ==
     ?-    -.action
@@ -1447,6 +1446,9 @@
   ++  cancel-request
     ^-  [(list move) server-state]
     ::
+    ?.  =(~ (~(get by duct-to-key.channel-state.state) duct))
+      ::  handle channel cancel-request 
+      on-cancel-request:by-channel
     ?~  connection=(~(get by connections.state) duct)
       ::  nothing has handled this connection
       ::
@@ -1454,27 +1456,12 @@
     ::
     =.   connections.state  (~(del by connections.state) duct)
     ::
-    ?-    -.action.u.connection
-        %gen  [~ state]
-        %app
-      :_  state
-      :_  ~
-      =,  u.connection
-      %-  (trace 1 |.("leaving subscription to {<app.action>}"))
-      (deal-as /watch-response/[eyre-id] identity our app.action %leave ~)
-    ::
-        ?(%authentication %eauth %logout)
-      ::NOTE  expiry timer will clean up cancelled eauth attempts
-      [~ state]
-    ::
-        %channel
-      on-cancel-request:by-channel
-    ::
-        ?(%scry %four-oh-four %name %host %ip %sponsor %boot)
-      ::  it should be impossible for these to be asynchronous
-      ::
-      !!
-    ==
+    ?.  ?=(%app -.action.u.connection)  [~ state]
+    :_  state
+    :_  ~
+    =,  u.connection
+    %-  (trace 1 |.("leaving subscription to {<app.action>}"))
+    (deal-as /watch-response/[eyre-id] identity our app.action %leave ~)
   ::  +return-static-data-on-duct-async: returns one piece of data all at once on asynchronous request 
   ::
   ++  return-static-data-on-duct-async
@@ -1574,14 +1561,16 @@
       =/  redirect=(unit @t)  (get-header:http 'redirect' u.parsed)
       ?^  (get-header:http 'eauth' u.parsed)
         ?~  ship=(biff (get-header:http 'name' u.parsed) (cury slaw %p))
-          %^  return-static-data-on-duct-async  400  'text/html'
-          (login-page redirect our u-identity `& %.n)
+          %:  return-static-data-on-duct  400  'text/html'
+            (login-page redirect our u-identity `& %.n)
+            session-id  origin
+          ==
         ::TODO  redirect logic here and elsewhere is ugly
         =/  redirect  (fall redirect '')
         =/  base=(unit @t)
           ?~  host  ~
           `(cat 3 ?:(secure 'https://' 'http://') u.host)
-        (start:server:eauth u.ship base ?:(=(redirect '') '/' redirect))
+        (start:server:eauth u.ship base ?:(=(redirect '') '/' redirect) secure address request)
       ::
       =.  with-eauth  (bind with-eauth |=(? |))
       ?~  password=(get-header:http 'password' u.parsed)
@@ -1826,7 +1815,7 @@
     ::    if request doesn't have session returns 0v0
     ::
       ++  session-for-request
-      |=  [=request:http =action]
+      |=  =request:http
       ^-  $@(session=@uv [session=@uv =identity moves=(list move)])
       ?~  sid=(session-id-from-request request)
         0v0
@@ -1920,7 +1909,7 @@
         ::  +start: initiate an eauth login attempt for the :ship identity
         ::
         ++  start
-          |=  [=ship base=(unit @t) last=@t]
+          |=  [=ship base=(unit @t) last=@t secure=? =address =request:http]
           ^-  [(list move) server-state]
           %-  (trace 2 |.("eauth: starting eauth into {(scow %p ship)}"))
           =/  nonce=@uv
@@ -1930,6 +1919,15 @@
             $(eny (shas %try-again n))
           =/  visit=visitor  [~ `[duct now] ship base last ~]
           =.  visitors.auth  (~(put by visitors.auth) nonce visit)
+          ::  check if request has session if so get session data from authentication-state
+          :: if doesn't have session start guest session
+          =^  session=[suv=@uv =identity som=(list move)]  state  
+            ?~  session-id=(session-id-from-request:authentication request)  (start-session:authentication %guest)
+            ?~  sesh=(~(get by sessions.auth) u.session-id)  (start-session:authentication %guest)
+            [[u.session-id identity.u.sesh ~] state]
+          =/  connection=outstanding-connection
+          [[%authentication ~] [| secure address request] [suv.session identity.session] ~ 0]
+          =.  connections.state  (~(put by connections.state) duct connection)
           :_  state
           ::  we delay serving an http response until we receive a scry %tune
           ::
@@ -2808,12 +2806,13 @@
           ::  everything succeeded, mark the request as completed
           ::
           =^  http-moves  state
-            %-  handle-response
-            :_  [`session-id origin]
-            :*  %start
-                [status-code=204 headers=~]
-                data=~
-                complete=%.y
+            %:  handle-response
+              :*  %start
+                  [status-code=204 headers=~]
+                  data=~
+                  complete=%.y
+              ==
+              `session-id  origin
             ==
           ::
           [:(weld (flop gall-moves) http-moves moves) state]
