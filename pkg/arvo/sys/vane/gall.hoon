@@ -1679,7 +1679,15 @@
           ==
         ::
         =/  =note-arvo
-          =/  prov=path  /gall/[agent-name]
+          ::  include thread in provenance if %spider is starting child
+          ::
+          =/  prov=path
+            ?:  ?&  ?=([%pass * %agent [* %spider] %poke %spider-start *] card)
+                    =(our ship.q.card)
+                    ?=([%thread @ *] p.card)
+                ==
+              /gall/spider/[i.t.p.card]
+            /gall/[agent-name]
           ?-  -.neet
             %arvo   ?.  ?=([%l *] +.neet)
                       +.neet
@@ -2325,6 +2333,25 @@
       ::
       =?  result  ?=(^ forbad)
         [%| u.forbad]
+      ::  wrap %khan thread-starters in %home tasks with provenance
+      ::
+      =?  result  ?=(%& -.result)
+        ^-  (each step:agent tang)
+        =-  result(-.p -)
+        ^-  (list card:agent)
+        %+  turn  -.p.result
+        |=  =card:agent
+        ?.  ?=([%pass * %arvo %k ?(%home %fard %fyrd %lard) *] card)
+          card
+        =/  prov=path
+          ?:  &(=(%spider agent-name) ?=([%thread @ *] p.card))
+            /gall/spider/[i.t.p.card]
+          /gall/[agent-name]
+        ?-    q.card
+            [%arvo %k %home *]  card(path.q prov)
+            [%arvo %k ?(%fard %fyrd %lard) *]
+          card(q [%arvo %k %home prov +>.q.card])
+        ==
       =^  new-moves  ap-core
         (ap-handle-result result)
       =/  maybe-tang=(unit tang)
