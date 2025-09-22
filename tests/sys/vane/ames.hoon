@@ -947,8 +947,8 @@
   =^  moves1  comet  (call comet ~[/g/talk] %plea ~bud poke-plea)
   ::  drop packet, move .chum to .peer, and enqueue %ahoy $plea
   ::
-  =^  moves2  bud    (call bud ~[//unix] %hear (snag-packet 0 moves1))
-  =/  ahoy-plea  helm-send-ahoy/!>(our-comet^test=|)
+  =^  moves2  bud  (call bud ~[//unix] %hear (snag-packet 0 moves1))
+  =/  ahoy-plea  helm-send-ahoy/!>(our-comet^test=|^force=|)
   %+  weld
     %+  expect-eq
       +:ahoy-plea
@@ -1002,7 +1002,7 @@
   ::  inject plea packet, move .chum to .peer, and enqueue %ahoy $plea
   ::
   =^  moves2  bud    (call bud ~[//unix] %hear (snag-packet 0 moves1))
-  =/  ahoy-plea  helm-send-ahoy/!>(our-comet^test=|)
+  =/  ahoy-plea  helm-send-ahoy/!>(our-comet^test=|^force=|)
   =/  gall-plea  [our-comet poke-plea]
   ;:  weld
     %+  expect-eq

@@ -543,10 +543,10 @@
       [duct %pass /ping %g %deal [our our /ames] %ping %poke noun+!>(poke)]
     ::
     ++  poke-send-ahoy
-      |=  [=duct our=ship who=ship]
+      |=  [=duct our=ship who=ship force=?]
       ^-  move
-      :+  duct  %pass
-      [/ahoy %g %deal [our our /ames] %hood %poke helm-send-ahoy+!>(who^test=|)]
+      :^  duct  %pass  /ahoy
+      [%g %deal [our our /ames] %hood %poke helm-send-ahoy+!>(who^|^force)]
     ::
     +|  %atomics
     ::
@@ -5347,6 +5347,16 @@
             ::
             ?:  ?=(%& -.meat.shut-packet)
               =+  ?.  &(?=(^ dud) msg.veb)  ~
+                  =/  [num-fragments=@ud =fragment-num =fragment]
+                    +.meat.shut-packet
+                  ::  don't print stack trace for /gf $pleas
+                  ::
+                  ?:  ?&  =(num-fragments 1) 
+                          =(fragment-num 0)
+                          =/  blob=*  (cue (rep packet-size [fragment]~))
+                          ?=(^ ;;((soft [%g [%gf ~] %0 ~]) blob))
+                      ==
+                    ~
                   %.  ~
                   %-  slog
                   :_  tang.u.dud
@@ -12298,7 +12308,7 @@
         ::  handle %ames packet; keys will be asked and packet dropped
         ::
         =^  moves  vane-gate  (call:am-core hen dud %soft %hear lane blob)
-        [(poke-send-ahoy hen our sndr.shot) moves]^vane-gate
+        (flop [(poke-send-ahoy hen our sndr.shot force=%.n) moves])^vane-gate
           ::  [%mesa ~ %alien *]
           ::    %mesa is our default network core. we might have outstanding
           ::    poke/peeks, but the keys are missing and the peer sends an %ames
@@ -12326,7 +12336,7 @@
         ::
         ::  enqueue %ahoy $plea; poke /app/hood
         ::
-        ~[(poke-send-ahoy hen our sndr.shot)]^vane-gate
+        ~[(poke-send-ahoy hen our sndr.shot force=|)]^vane-gate
         ::  [%mesa ~ %known *]
         ::    if we can find the peer in chums, it means that they sent an %ahoy
         ::    $plea, we migrated them, but they haven't heard our %ack, and have
@@ -12376,7 +12386,7 @@
           ::  enqueue %ahoy $plea; poke /app/hood
           ::
           =^  moves  vane-gate  (call:am-core hen dud %soft %hear lane blob)
-          [(poke-send-ahoy hen our sndr.shot)^moves vane-gate]
+          [(poke-send-ahoy hen our sndr.shot force=|)^moves vane-gate]
         [moves-peer vane-gate]
       ==
     ::
