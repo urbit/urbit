@@ -312,8 +312,11 @@
 ++  make-union
   |=  [a=type b=type]
   ^-  type
-  ?:  (nest a b)  a
-  ?:  (nest b a)  b
+  ?:  ?=(%void a)  b
+  ?:  ?=(%void b)  a
+  ::NOTE  two-sided nest handles %noun types
+  ?:  (nest a b)   a
+  ?:  (nest b a)   b
   ::  %hold expansion
   ::TODO  track these y/n?
   ::
