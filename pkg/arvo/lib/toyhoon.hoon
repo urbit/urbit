@@ -263,7 +263,11 @@
       %dtts  :-  (nice gol [%bcwt (my [%& %f] [%| %f] ~)])
              [%5 +:$(naty p.naty) +:$(naty q.naty)]
   ::
-      %wtcl  !!
+      %wtcl  =+  p=$(naty p.naty, gol [%bcwt (my [%& %f] [%| %f] ~)])
+             =+  q=$(naty q.naty)
+             =+  r=$(naty r.naty)
+             :-  (make-union -.q -.r)
+             [%6 +.p +.q +.r]
   ::
       %tsgr
     =/  sub  $(naty p.naty, gol %noun)
@@ -301,9 +305,20 @@
     ::TODO  check type from recursion against -.sam
     [-.sam +:$(naty q.naty, gol -.sam)]
   ::
-    %wtpt  !!
+    %wtpt  =/  [=type =axis]  (find sut wing.naty)
+           =/  [atom=^type cell=^type]  (split-union type)
+           =+  y=$(naty y.naty, sut (take sut axis atom))
+           =+  n=$(naty n.naty, sut (take sut axis cell))
+           :-  (make-union -.y -.n)
+           [%6 [%3 %0 axis] +.n +.y]
     %wtcn  !!
-    %wtkt  !!
+    %wtkt  =/  [=type =axis]  (find sut wing.naty)
+           =.  type  (peek type %read 2)
+           =/  [atom=^type cell=^type]  (split-union type)
+           =+  y=$(naty y.naty, sut (take sut axis atom))
+           =+  n=$(naty n.naty, sut (take sut axis cell))
+           :-  (make-union -.y -.n)
+           [%6 [%3 %0 (peg axis 2)] +.y +.n]
   ==
 ::  +xxxx: makes a union from two types, if possible
 ::  ?(%foo %bar) <- type union
@@ -454,4 +469,15 @@
   ?:  |((fitz a b) (fitz b a))
     (min a b)  ::  shortest & alphabetical
   %$
+::
+++  split-union  :: into atom and cell cases
+  |=  a=type
+  ^-  [type type]
+  ?+  a  !!
+    %noun      [[%atom %$ ~] [%cell %noun %noun]]
+    [%bcpt *]  +.a
+    [%face *]  =/  [atom=type cell=type]  $(a q.a)
+               [a(q atom) a(q cell)]
+    [%hold *]  $(a (drop a))  ::TODO  track!
+  ==
 --
