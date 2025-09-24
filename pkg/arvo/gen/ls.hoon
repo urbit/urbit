@@ -1,4 +1,4 @@
-::  LiSt directory subnodes
+::  LiSt directory contents
 ::
 ::::  /hoon/ls/gen
   ::

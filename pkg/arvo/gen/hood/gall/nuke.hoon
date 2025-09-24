@@ -1,4 +1,4 @@
-::  |nuke: wipe agent state & subscriptions after confirmation
+::  Kill a Gall agent and wipe its state
 ::
 /+  *generators
 :-  %ask

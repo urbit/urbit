@@ -1,3 +1,5 @@
+::  Perform remote scry tests for Aqua virtual ships
+::
 /-  spider
 /+  *ph-io, strandio
 /*  tend-agent  %hoon  /tests/app/tend/hoon

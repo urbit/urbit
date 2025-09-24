@@ -1,4 +1,4 @@
-::  Helm: compact memory
+::  Defragment memory, reducing memory usage
 ::
 ::::  /hoon/pack/hood/gen
   ::

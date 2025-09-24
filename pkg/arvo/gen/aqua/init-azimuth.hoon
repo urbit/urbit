@@ -1,3 +1,5 @@
+::  Initialize Azimuth in Aqua
+::
 :-  %say
 |=  [* ~ ~]
 :-  %azimuth-action

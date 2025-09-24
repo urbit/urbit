@@ -1,3 +1,5 @@
+::  Get the current runtime version
+::
 /-  spider
 /+  strandio
 =>

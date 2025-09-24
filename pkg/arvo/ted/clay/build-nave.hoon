@@ -1,3 +1,5 @@
+::  Build a static mark core
+::
 /-  spider
 /+  strandio
 =,  strand=strand:spider

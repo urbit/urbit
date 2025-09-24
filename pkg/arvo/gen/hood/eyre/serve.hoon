@@ -1,4 +1,4 @@
-::  Eyre: set web root
+::  Serve a generator through Eyre
 ::
 ::::  /hoon/serve/hood/gen
   ::

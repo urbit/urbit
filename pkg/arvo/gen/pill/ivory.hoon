@@ -1,4 +1,4 @@
-::  Produce an ivory pill
+::  Compile an ivory pill
 ::
 ::::  /hoon/ivory/gen
   ::

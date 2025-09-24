@@ -1,4 +1,4 @@
-::  Send a %keen remote scry request task
+::  Read a remote file via Remote Scry
 ::
 :-  %say
 |=  [^ [=ship pax=$@(~ [path ~])] ~]

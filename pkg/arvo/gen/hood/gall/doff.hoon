@@ -1,4 +1,4 @@
-::  Kill old-style subscription.
+::  Kill old-style outgoing subscriptions in Gall
 ::
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]

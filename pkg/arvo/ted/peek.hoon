@@ -1,3 +1,5 @@
+::  Perform a remote scry
+::
 /-  spider
 /+  strandio
 =,  strand=strand:spider

@@ -1,4 +1,4 @@
-::  Pass-through Eyre driver
+::  Aqua Eyre handler (internal)
 ::
 /-  aquarium, spider
 /+  aqua-vane-thread

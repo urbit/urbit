@@ -1,3 +1,5 @@
+::  Produce the diff of two files or directories
+::
 /-  spider
 /+  strandio
 =,  strand=strand:spider

@@ -1,4 +1,4 @@
-::  allow-remote-login: allow a ship to link to dojo
+::  Allow a ship to link to the Dojo
 ::
 /?    310
 ::

@@ -1,4 +1,4 @@
-::  Helm: Adjust Gall verbosity
+::  Adjust Gall verbosity
 ::
 ::  List of diagnostic flags is in verb:gall in zuse.hoon, documented in
 ::  gall.hoon

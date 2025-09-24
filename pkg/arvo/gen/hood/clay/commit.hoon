@@ -1,4 +1,4 @@
-::  Kiln: Commit from mount
+::  Commit changes to Clay from a mount
 ::
 ::::  /hoon/commit/hood/gen
   ::

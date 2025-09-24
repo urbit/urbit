@@ -1,4 +1,4 @@
-::  Print most recently seen ethereum block
+::  Print most recently seen Ethereum block
 ::
 ::  Note we require 30 confirmation blocks, so we should expect to have
 ::  processed only those blocks which are this number minus 30.

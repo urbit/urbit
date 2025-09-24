@@ -1,3 +1,5 @@
+::  Run a memory report
+::
 /-  spider
 /+  strandio
 =,  strand=strand:spider

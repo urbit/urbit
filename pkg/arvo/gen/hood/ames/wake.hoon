@@ -1,4 +1,4 @@
-::  Set timers for any ames flows that lack them
+::  Set timers for any Ames flows that lack them
 ::
 :-  %say
 |=  [^ ~ ~]

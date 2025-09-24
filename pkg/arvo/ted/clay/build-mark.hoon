@@ -1,3 +1,5 @@
+::  Build a dynamic mark core
+::
 /-  spider
 /+  strandio
 =,  strand=strand:spider

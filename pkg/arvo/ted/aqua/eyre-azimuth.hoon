@@ -1,4 +1,4 @@
-::  Pass-through Eyre driver
+::  Aqua Azimuth handler (internal)
 ::
 /-  spider, *aquarium
 /+  ethereum, azimuth, ph-io, util=ph-util, strandio

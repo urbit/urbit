@@ -1,4 +1,4 @@
-::  +gall-nonces: print %gall agent subscription nonces, highest-last
+::  Print Gall agent subscription nonces, highest last
 ::
 :-  %say
 |=  [[now=@da eny=@uvJ bec=beak] ~ ~]

@@ -1,4 +1,4 @@
-::  eth/send-txs: query ethereum for contract data
+::  Send Ethereum transactions
 ::
 ::    produces hex string result, for use with +decode-results:rpc:ethereum
 ::

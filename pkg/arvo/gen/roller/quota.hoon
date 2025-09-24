@@ -1,4 +1,4 @@
-::  Modifies the number of txs a ship is allowed to send, per unit of time (slice)
+::  Change the number of transactions a ship can send per unit of time in the roller
 ::
 :-  %say
 |=  [* [quota=@ud ~] ~]

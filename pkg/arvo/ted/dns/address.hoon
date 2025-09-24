@@ -1,3 +1,5 @@
+::  Configure DNS for a star or planet
+::
 /-  spider, dns
 /+  strandio, libdns=dns
 =,  strand=strand:spider

@@ -1,6 +1,6 @@
-::  :dns-collector: manually "complete" (fulfill) requests
+::  Manually "complete" (fulfill) DNS requests
 ::
-::::  /hoon/complete/dns-collector/gen
+::::  /hoon/complete/collector/dns/gen
   ::
 /-  *dns, *sole
 /+  *generators

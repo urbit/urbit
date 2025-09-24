@@ -1,3 +1,5 @@
+::  Test an update for an Aqua virtual ship
+::
 /-  spider
 /+  *ph-io
 =,  strand=strand:spider

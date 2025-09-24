@@ -1,4 +1,4 @@
-::  -new-app: creates a desk from example agent repo
+::  Create a desk from example agent repo
 ::  Derived from pkova/deployer/ted/sync.hoon
 ::
 /-  spider

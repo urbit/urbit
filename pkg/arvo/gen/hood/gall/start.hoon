@@ -1,4 +1,4 @@
-::  Drum: boot unstarted app
+::  Start a Gall agent
 ::
 ::::  /hoon/start/hood/gen
   ::

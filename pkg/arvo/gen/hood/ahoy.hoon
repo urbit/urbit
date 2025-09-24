@@ -1,4 +1,4 @@
-::  Ahoy: migrate peer to Directed Messaging
+::  Migrate peer to Directed Messaging
 ::
 ::    (by default it runs on dry mode and forces a test migration)
 ::

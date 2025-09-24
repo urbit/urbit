@@ -1,3 +1,5 @@
+::  Perform a remote scry read for an Aqua virtual ship
+::
 /-  spider
 /+  *ph-io
 =,  strand=strand:spider

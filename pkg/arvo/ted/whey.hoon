@@ -1,3 +1,5 @@
+::  Get the size of a remote scry file
+::
 /-  spider
 /+  strandio
 =,  strand=strand:spider

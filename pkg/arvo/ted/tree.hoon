@@ -1,3 +1,5 @@
+::  Get a tree list of files in Clay
+::
 /-  spider
 /+  strandio
 =,  strand=strand:spider

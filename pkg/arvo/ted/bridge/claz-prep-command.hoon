@@ -1,4 +1,4 @@
-::  claz/pre-command: sanity-check command and gather prerequisites
+::  Sanity check Claz command and gather prerequisites
 ::
 /-  *claz
 /+  *claz, ethio, strandio

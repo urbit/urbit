@@ -1,4 +1,4 @@
-::  Kiln: cancel pending merge
+::  Cancel a pending merge in Clay
 ::
 ::::  /hoon/cancel/hood/gen
   ::

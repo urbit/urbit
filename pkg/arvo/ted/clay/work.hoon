@@ -1,4 +1,4 @@
-::  -work: create and mount development desk(s)
+::  Create and mount one or more desks by merging from %base
 ::
 ::    With no arguments, creates and mounts a %work desk.
 ::    If there are arguments, each one is created and mounted.

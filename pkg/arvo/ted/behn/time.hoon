@@ -1,3 +1,5 @@
+::  Run a timer
+::
 /-  spider
 /+  strandio
 =,  strand=strand:spider

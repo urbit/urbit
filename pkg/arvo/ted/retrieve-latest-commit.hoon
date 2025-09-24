@@ -1,4 +1,4 @@
-::  Retrieve latest commit hash in a given branch of a GitHub repository.
+::  Get the latest commit hash in a given branch of a GitHub repository
 ::
 /-  spider
 /+  strandio

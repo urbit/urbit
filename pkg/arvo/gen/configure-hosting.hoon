@@ -1,4 +1,4 @@
-::  .configuration/pill +configure-hosting
+::  Generates an event for Tlon hosting configuration (internal)
 ::
 ::  boot king haskell with `--inject-event-list /path/to/configuration.pill`
 ::

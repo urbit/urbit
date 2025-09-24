@@ -1,4 +1,4 @@
-::  Print keys for a ship
+::  Print life and rift for a ship
 ::
 :-  %say
 |=  [[now=time @ our=ship ^] [her=ship ~] ~]

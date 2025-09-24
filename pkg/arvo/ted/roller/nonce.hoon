@@ -1,4 +1,4 @@
-::  aggregator/nonce: get next nonce
+::  Get next roller nonce
 ::
 /-  rpc=json-rpc
 /+  ethereum, ethio, strandio

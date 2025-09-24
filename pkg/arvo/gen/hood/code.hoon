@@ -1,4 +1,4 @@
-::  Helm: query or reset login code for web
+::  Query or reset the web login code
 ::
 ::::  /hoon/code/hood/gen
   ::

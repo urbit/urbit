@@ -1,4 +1,4 @@
-::  Updates a configuration option for /app/roller
+::  Update a configuration option for the roller
 ::
 /-  *dice
 ::

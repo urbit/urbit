@@ -1,4 +1,4 @@
-::  This tests breaches of both parent and child in succession.
+::  Test connectivity after successive parent and child breaches of Aqua virtuals ships
 ::
 /-  spider
 /+  *ph-io

@@ -1,4 +1,4 @@
-::  Loads a private key into the roller and retrieves its L1 nonce
+::  Load a private key into the roller and retrieves its L1 nonce
 ::
 :-  %say
 |=  [* [pk=@t ~] ~]

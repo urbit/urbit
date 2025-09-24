@@ -1,4 +1,4 @@
-::  Modifies the unit of time (e.g. ~d1) for each ship's quota
+::  Modifies the unit of time for each ship's quota in the roller
 ::
 :-  %say
 |=  [* [slice=@dr ~] ~]

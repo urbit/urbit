@@ -1,4 +1,5 @@
-::  Scry into an aqua ship
+::  Scry into an Aqua virtual ship
+::
 /-  aquarium
 /+  ph-util
 =,  aquarium

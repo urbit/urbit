@@ -1,4 +1,4 @@
-::  Propose update source change request
+::  Propose desk update source change request
 ::
 /+  *generators
 :-  %ask

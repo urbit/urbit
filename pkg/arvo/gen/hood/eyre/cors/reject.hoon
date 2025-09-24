@@ -1,4 +1,4 @@
-::  eyre: disallow cors requests from origin
+::  Disallow CORS requests from origin
 ::
 :-  %say
 |=  [^ [=origin:eyre ~] ~]

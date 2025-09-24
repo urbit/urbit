@@ -1,3 +1,5 @@
+::  Inject Dojo command into Aqua virtual ship
+::
 /-  aquarium
 =,  aquarium
 :-  %say

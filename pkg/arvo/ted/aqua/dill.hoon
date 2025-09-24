@@ -1,3 +1,5 @@
+::  Aqua Dill handler (internal)
+::
 ::  Would love to see a proper stateful terminal handler.  Ideally,
 ::  you'd be able to ^X into the virtual ship, like the old ^W.
 ::

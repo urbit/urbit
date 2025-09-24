@@ -1,4 +1,4 @@
-::  eth/get-timestamps: query ethereum block timestamps
+::  Query Ethereum block timestamps
 ::
 ::    produces list of @da result
 ::

@@ -1,4 +1,4 @@
-::  Kiln: Fuse local desk from (optionally-)foreign sources
+::  List active Fuse octopus merge syncs
 ::
 ::::  /hoon/fuse/hood/gen
   ::

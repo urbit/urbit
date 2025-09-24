@@ -1,3 +1,5 @@
+::  Write a file in an Aqua virtual ship's Clay
+::
 /-  aquarium
 =,  aquarium
 :-  %say

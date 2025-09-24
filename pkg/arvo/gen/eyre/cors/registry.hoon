@@ -1,4 +1,4 @@
-::  eyre: give cors configuration
+::  Print Eyre's CORS configuration
 ::
 :-  %say
 |=  [[now=@da eny=@uvJ =beak] ~ ~]

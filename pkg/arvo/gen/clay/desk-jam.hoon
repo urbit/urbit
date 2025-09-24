@@ -1,4 +1,4 @@
-::  +desk-jam: jam ankh from desk
+::  Get the jam of a desk in Clay
 ::
 /+  jammer=desk-jam
 :-  %say

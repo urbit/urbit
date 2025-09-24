@@ -1,4 +1,4 @@
-::  Print keys for a ship, as stored in %ames
+::  Print life and rift for a ship, as stored in Ames
 ::
 :-  %say
 |=  [[now=time @ our=ship ^] [=ship ~] ~]

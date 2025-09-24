@@ -1,4 +1,4 @@
-::  Drum: ^D, quit urbit process
+::  Shut down the ship
 ::
 ::::  /hoon/exit/hood/gen
   ::

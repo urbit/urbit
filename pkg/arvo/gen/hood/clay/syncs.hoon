@@ -1,4 +1,4 @@
-::  Kiln: List active syncs
+::  List active Clay syncs
 ::
 ::::  /hoon/syncs/hood/gen
   ::

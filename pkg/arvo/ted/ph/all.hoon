@@ -1,3 +1,5 @@
+::  Perform a battery of tests for Aqua virtual ships
+::
 /-  spider
 /+  *strandio
 =,  strand=strand:spider

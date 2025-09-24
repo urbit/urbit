@@ -1,3 +1,5 @@
+::  Test modifying a file on an Aqua virtual ship
+::
 /-  spider
 /+  *ph-io
 =,  strand=strand:spider

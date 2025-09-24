@@ -1,3 +1,5 @@
+::  Aqua Behn handler (internal)
+::
 /-  aquarium, spider
 /+  aqua-vane-thread
 =,  aquarium

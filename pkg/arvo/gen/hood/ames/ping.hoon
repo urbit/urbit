@@ -1,4 +1,4 @@
-::  ping: send atom
+::  Send an atom over Ames to test connectivity
 ::
 ::::  /hoon/ping/hood/gen
   ::

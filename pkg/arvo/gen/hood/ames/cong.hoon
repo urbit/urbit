@@ -1,4 +1,4 @@
-::  Helm: Adjust Ames congestion control constants
+::  Adjust Ames congestion control constants
 ::
 :-  %say
 |=  [^ [msg=@ud mem=@ud ~] ~]

@@ -1,4 +1,4 @@
-::  Kiln: make (subtree in) desk privately readable.
+::  Make desk (or subtree) privately readable only
 ::
 ::::  /gen/hood/private/hoon
   ::

@@ -1,4 +1,4 @@
-::  :acme domain validation request handler
+::  Acme domain validation request handler (internal)
 ::
 |=  [[now=@da eny=@ bek=beak] ~ ~]
 |=  [authorized=? =request:http]

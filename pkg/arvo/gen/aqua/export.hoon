@@ -1,3 +1,5 @@
+::  Export agent state(s) for Aqua virtual ship
+::
 /+  *ph-util
 :-  %say
 |=  $:  [now=@da eny=@uv bec=beak]

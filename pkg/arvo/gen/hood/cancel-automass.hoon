@@ -1,4 +1,4 @@
-::  Cancel automass
+::  Cancel automatic memory reports
 ::
 ::::  /hoon/cancel-automass/hood/gen
   ::

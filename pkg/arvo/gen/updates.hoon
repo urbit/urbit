@@ -1,3 +1,5 @@
+::  Lists pending desk updates
+::
 /-  h=hood
 :-  %say
 |=  [[now=@da eny=@uvJ bec=beak] ~ ~]

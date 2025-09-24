@@ -1,4 +1,4 @@
-::  print [len] %ames flows, sorted by number-per-ship
+::  print [len] Ames flows, sorted by number-per-ship
 ::
 :-  %say
 |=  [[now=@da eny=@uvJ bec=beak] arg=$@(~ [len=@ ~]) ~]

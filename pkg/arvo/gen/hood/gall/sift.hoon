@@ -1,4 +1,4 @@
-::  Helm: Set Gall Verbosity by Agent
+::  Filter Gall debug prints by agent
 ::
 /?    310
 ::

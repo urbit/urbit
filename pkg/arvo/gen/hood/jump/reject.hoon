@@ -1,4 +1,4 @@
-::  Reject update source change request
+::  Reject desk update source change request
 ::
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]

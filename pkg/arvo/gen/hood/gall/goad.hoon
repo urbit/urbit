@@ -1,4 +1,4 @@
-::  Kiln: force Gall to rebuild agents
+::  Force Gall to rebuild agents
 ::
 ::::  /hoon/goad-gall/hood/gen
   ::

@@ -1,4 +1,5 @@
-::  Run tests at paths.
+::  Run unit tests at path
+::
 /-  spider
 /+  strandio
 =,  strand=strand:spider

@@ -1,4 +1,4 @@
-::  Login code for web UI
+::  Print login code for web UI
 ::
 ::::  /hoon/code/gen
   ::

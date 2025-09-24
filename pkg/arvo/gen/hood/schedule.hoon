@@ -1,4 +1,4 @@
-::  Kiln: add entry to a .sched  XX belongs in Write
+::  Add entry to a .sched file
 ::
 ::::  /hoon/schedule/hood/gen
   ::

@@ -1,3 +1,5 @@
+::  Read a file in Clay
+::
 /-  spider
 /+  strandio
 =,  strand=strand:spider

@@ -1,4 +1,4 @@
-::  Create a private key-file for a random (or specified) moon
+::  Create a new moon and print its private key
 ::
 ::::  /hoon/moon/hood/gen
   ::

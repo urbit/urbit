@@ -1,4 +1,4 @@
-::  Kiln: make (subtree in) desk publicly readable.
+::  Make a desk (or subtree) publicly readable
 ::
 ::::  /gen/hood/public/hoon
   ::
