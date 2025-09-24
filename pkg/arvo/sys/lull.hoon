@@ -4542,9 +4542,9 @@
       ::  %dill: reset terminal configuration
       ::
       $>(%hail task:dill)
-      ::  %ames: hear packet
+      ::  %ames: hear packet; load network protocol core
       ::
-      $>(?(%hear %heer) task:ames)
+      $>(?(%hear %heer %load) task:ames)
       ::  %clay: external edit
       ::
       $>(%into task:clay)

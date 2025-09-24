@@ -154,7 +154,14 @@
   ::  dez: secondary desks and their root paths
   ::  exc: list of desk folders to exclude
   ::
-  |=  [sys=path dez=(list [desk path]) dub=? now=@da prime=? exc=(list spur)]
+  |=  $:  sys=path
+          dez=(list [desk path])
+          dub=?
+          now=@da
+          prime=?
+          ames-core=?(%ames %mesa)
+          exc=(list spur)
+      ==
   ^-  pill
   =/  bas=path       (scag 3 sys)
   =/  compiler-path  (weld sys /hoon)
@@ -246,6 +253,11 @@
     |=  [dek=desk *]
     ^-  unix-event
     [/c/essential/[dek] %esse dek %.y]
+  ::
+    ?:  ?=(%ames ames-core)  ~
+    ^-  (list unix-event)
+    [/a/load %load %mesa]~
+  ::
   ==
 ::
 ++  brass
@@ -253,7 +265,12 @@
   ::  dez: secondary desks and their root paths
   ::  exc: list of desk folders to exclude
   ::
-  |=  [sys=path dez=(list [desk path]) prime=? exc=(list spur)]
+  |=  $:  sys=path
+          dez=(list [desk path])
+          prime=?
+          ames-core=?(%ames %mesa)
+          exc=(list spur)
+      ==
   ^-  pill
   =/  bas=path  (scag 3 sys)
   ::  compiler-source: hoon source file producing compiler, `sys/hoon`
@@ -293,12 +310,24 @@
         (file-ovum2 [bas exc])
     ==
   =.  dez  (snoc dez [%base bas])
-  %+  weld
+  ;:  weld
     %+  turn  dez
     |=  [dek=desk bas=path]
     (file-ovum [dek bas exc])
-  ?.  prime  ~
-  [(prep-ovum (turn dez tail))]~
+  ::
+    ?.  prime  ~
+    [(prep-ovum (turn dez tail))]~
+  ::
+    %+  turn  dez
+    |=  [dek=desk *]
+    ^-  unix-event
+    [/c/essential/[dek] %esse dek %.y]
+  ::
+    ?:  ?=(%ames ames-core)  ~
+    ^-  (list unix-event)
+    [/a/load %load %mesa]~
+  ::
+  ==
 ::
 ++  ivory
   |=  sys=path
