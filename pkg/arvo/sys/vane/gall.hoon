@@ -1222,6 +1222,11 @@
     ?>  ?=([%sys %way @ @ ~] wire)
     (mo-pass wire %a %plea (slav %p &3.wire) %g /ge/[&4.wire] %0 %u ~)
   ::
+  ++  mo-resend-cork
+    |=  =wire
+    ^+  mo-core
+    ?>  ?=([%sys %way @ @ ~] wire)
+    (mo-pass wire %a %cork (slav %p &3.wire))
   ::  +ap: agent engine
   ::
   ::    An inner, agent-level core.  The sample refers to the agent we're
@@ -3098,11 +3103,33 @@
                   !=(~ stand)
                   =^(rr stand ~(get to stand) &(=(%missing rr) =(~ stand)))
               ==
+      ::  if the subscription doesn't exist anymore, don't send the %leave
+      ::
+      ?.  ?=([[%gall %use agent=@ nonce=@ %out ship=@ app=@ *] *] duct)
+        core
+      =/  use=^^wire     i.duct
+      =/  =agent=path    |8.use
+      =/  our-agent      &3.use
+      =/  her-ship       &6.use
+      =/  her-agent      &7.use
+      =/  sub-key        [agent.path (slav %p her-ship) her-agent]
+      ?~  yoke=(~(get by yokes.state) our-agent)
+        core
+      ?.  ?=(%live -.u.yoke)
+        core
+      ?.  (~(has by boar.u.yoke) sub-key)
+        %-  %:  trace  odd.veb.bug.state  our-agent  ~
+              leaf/"gall: removing stale %nacked %leave {<(spud agent.path)>}"  ~
+            ==
+        =+  core=(mo-resend-cork:(mo-abed:core duct) wire)
+        %_  core
+          outstanding.state  (~(del by outstanding.state) [wire duct])
+        ==
       =+  core=(mo-handle-nacked-leaves:(mo-abed:core duct) wire)
       ::  make sure that only the %leave remains in the queue
       ::
-      %-  %:  trace  odd.veb.bug.state  *dude  ~
-            leaf/"gall: resending %nacked %leave {<(spud wire)>}"  ~
+      %-  %:  trace  odd.veb.bug.state  our-agent  ~
+            leaf/"gall: resending %nacked %leave {<(spud agent.path)>}"  ~
           ==
       %_    core
           outstanding.state
