@@ -11427,10 +11427,9 @@
 ::
 ++  slam                                                ::  slam a gate
   |=  [gat=vase sam=vase]  ^-  vase
-  =+  :-  ^=  typ  ^-  type
-          [%cell p.gat p.sam]
-      ^=  gen  ^-  hoon
-      [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
+  =/  [typ=type gen=hoon]
+    :-  [%cell p.gat p.sam]
+    [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
   =+  gun=(~(mint ut typ) %noun gen)
   [p.gun (slum q.gat q.sam)]
 ::
@@ -11541,14 +11540,42 @@
     %-  ~(play ut p.vax)
     [%wtgr [%wtts [%leaf %tas -.q.vax] [%& 2]~] [%$ 1]]
   (~(fuse ut p.vax) [%cell %noun %noun])
-::  +swat: deferred +slap
 ::
-++  swat
+++  bang                                                ::  deferred +slam
+  |=  [gat=(trap vase) sam=(trap vase)]
+  ^-  (trap vase)
+  =/  [typ=type gen=hoon]
+    :-  [%cell p:$:gat p:$:sam]
+    [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
+  =+  gun=(~(mint ut typ) %noun gen)
+  =>  [typ=p.gun +<.$]
+  |.  ~+
+  [typ .*([q:$:gat q:$:sam] [%9 2 %10 [6 %0 3] %0 2])]
+::
+++  bump                                                ::  deferred +slop
+  |=  [hed=(trap vase) tal=(trap vase)]
+  ^-  (trap vase)
+  =>  +<
+  |.  ~+
+  =+  [bed bal]=[$:hed $:tal]
+  [[%cell p:bed p:bal] [q:bed q:bal]]
+::
+++  beat                                                ::  deferred +slap
   |=  [tap=(trap vase) gen=hoon]
   ^-  (trap vase)
   =/  gun  (~(mint ut p:$:tap) %noun gen)
+  =>  [tap=tap gun=gun]
   |.  ~+
   [p.gun .*(q:$:tap q.gun)]
+::
+++  bash                                                ::  +beat but with +slop
+  |=  [tap=(trap vase) gen=hoon]
+  ^-  (trap vase)
+  =/  gun  (~(mint ut p:$:tap) %noun gen)
+  =>  [tap=tap gun=gun]
+  |.  ~+
+  =/  pro  q:$:tap
+  [[%cell p.gun p:$:tap] [.*(pro q.gun) pro]]
 ::
 ::    5d: parser
 +|  %parser
