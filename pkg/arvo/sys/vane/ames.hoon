@@ -9459,8 +9459,10 @@
               ::
               ?:  |(closing.state (~(has in corked.per) side))
                 =+  ;;(mess=@tas +<.gage)
-                =+  ;;([%plea =plea] +.gage)
+                
                 =/  is-cork-plea=?
+                  ?:  ?=(%boon mess)  |
+                  =+  ;;  =plea  +>.gage
                   &(?=([%cork ~] payload) ?=([%flow ~] path)):plea
                 ?.  closing.state
                   ?:  is-cork-plea
