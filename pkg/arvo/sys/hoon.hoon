@@ -6598,6 +6598,8 @@
     [%zppt p=(list wing) q=hoon r=hoon]                 ::  !@
     [%zpwt p=$@(p=@ [p=@ q=@]) q=hoon]                  ::  !?
     [%zpzp ~]                                           ::  !!
+  ::                                            ::::::  macro expansion
+    [%hxcn p=term q=(list hoon)]                        ::  #%  expand with args
   ==                                                    ::
 +$  tyre  (list [p=term q=hoon])                        ::
 +$  tyke  (list (unit hoon))                            ::
@@ -8844,6 +8846,7 @@
           rib=*(set [type type hoon])
           vet=`?`&
       ==
+  =|  ros=(map term $-((list hoon) hoon))
   =+  sut=`type`%noun
   |%
   ++  clip
@@ -10150,6 +10153,14 @@
     ::
         [%zpts *]   [(nice %noun) [%1 q:$(vet |, gen p.gen)]]
         [%zppt *]   ?.((feel p.gen) $(gen q.gen) $(gen r.gen))
+    ::
+        [%hxcn *]
+      =/  cro  ~|  %macro-lost  (~(got by ros) p.gen)
+      =/  doz  ~|  %macro-fail  (cro q.gen)
+      ?:  =(doz gen)
+        ~_  (show [%c 'hoon'] [%q gen])
+        ~>(%mean.'mint-macro-open' !!)
+      $(gen doz)
     ::
         [%zpzp ~]  [%void [%0 0]]
         *
@@ -13023,7 +13034,12 @@
       :-  '\''
         (stag %sand (stag %t qut))
       :-  '('
-        (stag %cncl (ifix [pal par] (most ace wide)))
+        ;~  pose
+          (stag %cncl (ifix [pal par] (most ace wide)))
+        ::
+          %+  stag  %hxcn
+          (ifix [pal par] ;~(plug ;~(sfix sym zap ace) (most ace wide)))
+        ==
       :-  '*'
         ;~  pose
           (stag %kttr ;~(pfix tar wyde))
@@ -13491,6 +13507,10 @@
                   ['?' (rune wut %zpwt hinh)]
               ==
             ==
+          :-  '#'
+            ;~  pfix  hax
+              (rune cen %hxcn expl)
+            ==
       ==
     ::
     ++  boog  !:
@@ -13772,6 +13792,7 @@
     ++  expx  |.(;~(goop ropa loaf loaf))               ::  wings and two hoons
     ++  expy  |.(loaf(bug &))                           ::  hoon with tracing
     ++  expz  |.(;~(goop loan loaf loaf loaf))          ::  spec and three hoons
+    ++  expl  |.((butt ;~(goop sym hank)))              ::  term, hoons
     ::  spec contents
     ::
     ++  exqa  |.(loan)                                  ::  one spec
