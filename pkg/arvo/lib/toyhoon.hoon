@@ -58,6 +58,17 @@
       [%hold p=type q=naty]
   ==
 ::
++$  vial  ?(%read %rite %both %free)
++$  opal
+  $%  [%leg =type]
+      [%arm =axis =type var=?(%wet %dry) =naty]
+  ==
++$  pony
+  $%  [%pale =vein =opal]
+      [%fail skip=@ud]
+      [%void ~]
+  ==
+::
 ++  nice
   |=  [gol=type pro=type]
   ^-  type
@@ -193,6 +204,63 @@
     ==
   --
 ::
+++  find
+  =<  find
+  |%
+  ++  find
+    |=  [sut=type =wing]
+    ^-  [type axis]
+    !!
+  ::
+  ++  fxnd
+    |=  [sut=type way=vial heg=limb]
+    ^-  pony
+    =>  .(heg ?^(heg heg [%| p=0 q=(some heg)]))
+    ?:  ?=(%& -.heg)
+      ::  resolve the tree address directly
+      ::
+      [%pale [`p.heg]~ %leg (peek sut way p.heg)]
+    =/  axe  1
+    =|  gil=(set type)
+    |-  ^-  pony
+    ?~  q.heg
+      ?>  =(0 p.heg)  ::  no skipping on bare com
+      [%pale [~ `axe ~] %leg ?:(?=([%face *] sut) q.sut sut)]
+    ?-  sut
+      %void      [%void ~]
+      %noun      [%fail p.heg]
+      [%atom *]  [%fail p.heg]
+      [%cell *]  =+  taf=$(axe (peg axe 2), sut p.sut)
+                 ?.  ?=(%fail -.taf)  taf
+                 $(axe (peg axe 3), p.heg skip.taf, sut q.sut)
+      [%face *]  ?.  =(u.q.heg p.sut)  [%fail p.heg]
+                 ?.  =(0 p.heg)        [%fail (dec p.heg)]
+                 [%pale [~ `axe ~] %leg q.sut]
+      [%hold *]  ?:  (~(has in gil) sut)  [%void ~]  ::TODO  review: necessary?
+                 $(gil (~(put in gil) sut), sut (drop sut))
+      [%bcpt *]  [%fail p.heg]
+      [%bccn *]  [%fail p.heg]
+      [%bckt *]  [%fail p.heg]
+      [%bcwt *]  [%fail p.heg]
+    ::
+        [%core *]
+      =^  zem=(unit (pair axis naty))  p.heg
+        ?~  axe=(~(dig by bat.sut) u.q.heg)  [~ p.heg]
+        ?.  =(0 p.heg)                       [~ (dec p.heg)]
+        [`[u.axe (~(got by bat.sut) u.q.heg)] p.heg]
+      ?^  zem
+        :+  %pale  [`axe ~]
+        [%arm p.u.zem sut ?:(?=(%wet var.sut) %wet %dry) q.u.zem]
+      =/  pec=[sam=? con=?]
+        ?:  |(?=(%gold var.sut) ?=(%wet var.sut) ?=(%free way))
+          [& &]
+        [&(?=(%iron var.sut) ?=(%rite way)) |]
+      ?.  sam.pec  [%fail p.heg]
+      ?:  con.pec  $(sut p.sut, axe (peg axe 3))
+      $(sut (peek p.sut way 2), axe (peg axe 6))
+    ==
+  --
+::
 ++  take
   |=  [sut=type =axis =type]  ::TODO  wrong?
   ^-  ^type
@@ -216,7 +284,7 @@
   ==
 ::
 ++  peek
-  |=  [sut=type way=?(%read %rite %both %free) axe=axis]
+  |=  [sut=type way=vial axe=axis]
   ^-  type
   ?:  =(1 axe)  sut
   =+  [now=(cap axe) lat=(mas axe)]
