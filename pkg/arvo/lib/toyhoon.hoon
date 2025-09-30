@@ -193,6 +193,28 @@
     ==
   --
 ::
+++  take
+  |=  [sut=type =axis =type]  ::TODO  wrong?
+  ^-  ^type
+  ?:  =(1 axis)  type
+  ?-  sut
+    %void      %void
+    %noun      $(sut [%cell %noun %noun])
+    [%atom *]  %void
+    [%cell *]  ?:  =(2 (cap axis))  ::TODO  wrong, propagate %void!
+                 sut(p $(sut p.sut, axis (mas axis)))
+               sut(q $(sut q.sut, axis (mas axis)))
+    [%core *]  ?:  =(2 (cap axis))
+                 $(sut [%cell %noun p.sut])
+               sut(p $(sut p.sut, axis (mas axis)))
+    [%face *]  sut(q $(sut q.sut))
+    [%bcpt *]  %void  ::TODO  review after writing name resolution! mb do cell branch
+    [%bccn *]  %void  ::TODO  review after writing name resolution!
+    [%bckt *]  %void  ::TODO  review after writing name resolution!
+    [%bcwt *]  %void
+    [%hold *]  $(sut (drop sut))
+  ==
+::
 ++  peek
   |=  [sut=type way=?(%read %rite %both %free) axe=axis]
   ^-  type
