@@ -584,6 +584,12 @@
     ?:  (mor key.n.a key.n.r)
       a(r r)
     r(l a(r l.r))
+  ::
+  ++  run                                               ::  apply gate to values
+    |*  [a=(tree item) b=$-(val *)]
+    |-
+    ?~  a  a
+    [n=[key=key.n.a val=(b val.n.a)] l=$(a l.a) r=$(a r.a)]
   --
 ::
 ::  Sets

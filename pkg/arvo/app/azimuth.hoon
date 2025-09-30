@@ -15,7 +15,7 @@
 =,  jael
 |%
 +$  app-state
-  $:  %7
+  $:  %8
       url=@ta
       =net
       refresh=_~m5
@@ -30,7 +30,7 @@
 +$  poke-data
   $%  ::  %load: load snapshot
       ::
-      [%load snap=snap-state]
+      [%load snap=versioned-snap]
       ::  %listen
       ::
       [%listen whos=(list ship) =source:jael]
@@ -112,7 +112,7 @@
         `old-state
       %-  %-  slog  :_  ~
           leaf+"ship: loading snapshot with {<(lent logs.old-state)>} events"
-      =.  +.state  +:(state-6-to-7 (state-5-to-6 old-state))
+      =.  +.state  +:(state-7-to-8 (state-6-to-7 (state-5-to-6 old-state)))
       =^  cards  state
         (%*(run-logs do nas.state *^state:naive) logs.state)
       [(jael-update:do (to-udiffs:do cards)) state]
@@ -120,25 +120,25 @@
       ?.  ?=(%2 -.old-state)
         `old-state
       ~&  >  '%azimuth: updating to state 3'
-      =.  +.state  +:(state-6-to-7 (state-5-to-6 old-state))
-      ::  replace naive state and indices with snapshot
-      ::
-      =:  nas.state   nas.sap.state
-          own.state   owners.sap.state
-          spo.state   sponsors.sap.state
+      =.  +.state  +:(state-7-to-8 (state-6-to-7 (state-5-to-6 old-state)))
+      =:  nas.state   *^state:naive
+          own.state   ~
+          spo.state   ~
           logs.state  ~
           ::  TODO: shouldn't be needed but have seen eth-watcher
           ::        threads use a url='' if this is not used
           ::
           url.state   'http://eth-mainnet.urbit.org:8545'
         ==
-      =/  points=@ud  ~(wyt by points.nas.state)
-      %-  %-  slog  :_  ~
-          leaf+"ship: processing azimuth snapshot (~{<points>} points)"
-      =/  snap-cards=udiffs:point  (run-state:do id.sap.state points.nas.state)
-      :_  [%3 url net whos nas own spo logs]:state
-      %+  weld
-        (jael-update:do snap-cards)
+      :_  :*  %3
+              url.state
+              net.state
+              whos.state
+              *state-0:naive
+              own.state
+              spo.state
+              logs.state
+          ==
       ::  start getting new logs after the last id:block in the snapshot
       ::
       start:do
@@ -150,18 +150,36 @@
     =^  cards-4  old-state
       ?.  ?=(%4 -.old-state)  [cards-3 old-state]
       =^  cards  this
-        %-  %*(. on-poke +.state.this +:(state-6-to-7 (state-5-to-6 old-state)))
+        %-  %*    .  on-poke
+                +.state.this
+              +:(state-7-to-8 (state-6-to-7 (state-5-to-6 old-state)))
+            ==
         [%azimuth-poke !>([%watch [url net]:old-state])]
       ~&  >  '%azimuth: updating to state 5'
-      [cards [%5 url net whos nas own spo logs]:state.this]
+      [cards state.this]
     =?  old-state  ?=(%5 -.old-state)
       (state-5-to-6 old-state)
     =?  old-state  ?=(%6 -.old-state)
       (state-6-to-7 old-state)
-    ?>  ?=(%7 -.old-state)
+    =?  old-state  ?=(%7 -.old-state)
+      (state-7-to-8 old-state)
+    ?>  ?=(%8 -.old-state)
     [cards-4 this(state old-state)]
     ::
-    ++  app-states  $%(state-0 state-1-2-3-4-5 state-6 app-state)
+    ++  app-states  $%(state-0 state-1-2-3-4-5 state-6 state-7 app-state)
+
+    +$  state-7
+      $:  %7
+          url=@ta
+          =net
+          refresh=_~m5
+          whos=(set ship)
+          nas=state-0:naive
+          own=owners
+          spo=sponsors
+          logs=(list =event-log:rpc:ethereum)
+          sap=snap-state-0
+      ==
     ::
     +$  state-6
       $:  %6
@@ -169,7 +187,7 @@
           =net
           refresh=_~m5
           whos=(set ship)
-          nas=^state:naive
+          nas=state-0:naive
           own=owners
           spo=sponsors
           logs=(list =event-log:rpc:ethereum)
@@ -179,7 +197,7 @@
           url=@ta
           =net
           whos=(set ship)
-          nas=^state:naive
+          nas=state-0:naive
           own=owners
           spo=sponsors
           logs=(list =event-log:rpc:ethereum)
@@ -190,7 +208,7 @@
           url=@ta
           =net
           whos=(set ship)
-          nas=^state:naive
+          nas=state-0:naive
           own=owners
           logs=(list =event-log:rpc:ethereum)
       ==
@@ -201,8 +219,13 @@
     ::
     ++  state-6-to-7
       |=  state-6
+      ^-  state-7
+      [%7 url net refresh whos nas own spo logs *snap-state-0]
+    ::
+    ++  state-7-to-8
+      |=  state-7
       ^-  app-state
-      [%7 url net refresh whos nas own spo logs *snap-state]
+      [%8 url net refresh whos (load:naive nas) own spo logs *snap-state]
     --
   ::
   ++  on-poke
@@ -244,6 +267,9 @@
       %-  %-  slog
           [leaf+"ship: loading azimuth snapshot ({<points>} points)"]~
       ::
+      =?  snap.poke  ?=(%0 -.snap.poke)
+        snap.poke(- %1, nas (load:naive nas.snap.poke))
+      ?>  ?=(%1 -.snap.poke)
       =:  net.state   %default
           nas.state   nas.snap.poke
           own.state   owners.snap.poke
@@ -449,6 +475,7 @@
   :*  [ship id %keys [life.keys.net suite.keys.net pass] %.y]
       [ship id %rift rift.net %.y]
       [ship id %spon ?:(has.sponsor.net `who.sponsor.net ~)]
+      [ship id %fief fief.net]
       udiffs
   ==
 ::

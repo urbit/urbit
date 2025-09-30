@@ -17,7 +17,7 @@
   ^-  signature
   =+  (jael-scry ,=life our %life now /(scot %p our))
   =+  (jael-scry ,=ring our %vein now /(scot %ud life))
-  :+  `@ux`(sign:as:(nol:nu:crub:crypto ring) hash)
+  :+  `@ux`(sign:as:(nol:nu:cryc:crypto ring) hash)
     our
   life
 ::
@@ -39,7 +39,7 @@
   ::  verify signature from ship at life
   ::
   =/  them
-    (com:nu:crub:crypto b.deed)
+    (com:nu:cryc:crypto b.deed)
   =(`hash (sure:as.them p.signature))
 ::
 ++  are-signatures-valid

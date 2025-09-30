@@ -41,7 +41,7 @@
 =/  =pass
   ?.  =(*pass public-key)
     public-key
-  =/  cub  (pit:nu:crub:crypto 512 (shaz (jam mon life=1 eny)))
+  =/  cub  (pit:nu:cryc:crypto 512 (shaz (jam mon life=1 eny)))
   =/  =feed:jael
     [[%2 ~] mon rift=0 [life=1 sec:ex:cub]~]
   %-  %-  slog

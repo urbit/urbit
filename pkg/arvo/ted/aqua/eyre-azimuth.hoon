@@ -282,10 +282,10 @@
       ::  hard-code a valid comet key for convenience so we don't have to mine
       ::
       ?:  =(who ~bosrym-podwyl-magnes-dacrys--pander-hablep-masrym-marbud)
-        %-  nol:nu:crub:crypto
+        %-  nol:nu:cryc:crypto
         0w9N.5uIvA.Jg0cx.NCD2R.o~MtZ.uEQOB.9uTbp.6LHvg.0yYTP.
         3q3td.T4UF0.d5sDL.JGpZq.S3A92.QUuWg.IHdw7.izyny.j9W92
-      (pit:nu:crub:crypto 512 (shaz (jam who life=1 %entropy)))
+      (pit:nu:cryc:crypto 512 (shaz (jam who life=1 %entropy)))
     =/  =feed:jael
       [[%2 ~] who 0 [1 sec:ex:cub] ~]
     =/  =pass  pub:ex:cub
@@ -420,8 +420,7 @@
 ::
 ++  get-keys
   |=  [who=@p lyfe=life]
-  ^-  acru:ames
-  %+  pit:nu:crub:crypto  32
+  %+  pit:nu:cryc:crypto  32
   (can 5 [1 (scot %p who)] [1 (scot %ud lyfe)] ~)
 ::
 ++  get-public
