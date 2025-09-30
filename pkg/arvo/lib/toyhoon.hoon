@@ -294,11 +294,17 @@
       [%11 tag.naty +.pro]
     [%11 [p.tag.naty +:$(naty q.tag.naty)] +.pro]
   ::
-    %brcn  :-  (nice gol [%core sut var.naty sut bat.naty])
-           !!
+    %brcn  =/  typ  (nice gol [%core sut var.naty sut bat.naty])
+           :-  typ
+           =;  bat  [[%1 bat] %0 1]  ::TODO  better layout
+           %-  ~(run by bat.naty)
+           |=(n=^naty ^$(sut typ, naty n))
   ::
-    %brpt  :-  (nice gol [%core sut %wet sut bat.naty])
-           !!
+    %brpt  =/  typ  (nice gol [%core sut %wet sut bat.naty])
+           :-  typ
+           =;  bat  [[%1 bat] %0 1]  ::TODO  better layout
+           %-  ~(run by bat.naty)
+           |=(n=^naty ^$(sut typ, naty n))
   ::
       %ktls
     =/  sam  $(naty p.naty, gol %noun)
