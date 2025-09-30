@@ -1679,15 +1679,7 @@
           ==
         ::
         =/  =note-arvo
-          ::  include thread in provenance if %spider is starting child
-          ::
-          =/  prov=path
-            ?:  ?&  ?=([%pass * %agent [* %spider] %poke %spider-start *] card)
-                    =(our ship.q.card)
-                    ?=([%thread @ *] p.card)
-                ==
-              /gall/spider/[i.t.p.card]
-            /gall/[agent-name]
+          =/  prov=path  /gall/[agent-name]
           ?-  -.neet
             %arvo   ?.  ?=([%l *] +.neet)
                       +.neet
@@ -2341,15 +2333,12 @@
         ^-  (list card:agent)
         %+  turn  -.p.result
         |=  =card:agent
-        ?.  ?=([%pass * %arvo %k ?(%home %fard %fyrd %lard) *] card)
+        ?.  ?=([%pass * %arvo %k ?(%home %fard %fyrd %lard %laid) *] card)
           card
-        =/  prov=path
-          ?:  &(=(%spider agent-name) ?=([%thread @ *] p.card))
-            /gall/spider/[i.t.p.card]
-          /gall/[agent-name]
+        =/  prov=path  /gall/[agent-name]
         ?-    q.card
             [%arvo %k %home *]  card(path.q prov)
-            [%arvo %k ?(%fard %fyrd %lard) *]
+            [%arvo %k ?(%fard %fyrd %lard %laid) *]
           card(q [%arvo %k %home prov +>.q.card])
         ==
       =^  new-moves  ap-core

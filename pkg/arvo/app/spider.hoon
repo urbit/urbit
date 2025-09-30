@@ -271,6 +271,14 @@
     ?>  (team:title [our src]:bowl)
     ?:  ?=(%spider-kill mark)
       (on-load on-save)
+    ?:  ?=(%spider-laid mark)
+      ?>  ?=([%gall %spider *] sap.bowl)
+      =+  !<([parent-tid=tid =cage] vase)
+      %=  $
+        mark  p.cage
+        vase  q.cage
+        t.t.sap.bowl  /[parent-tid]
+      ==
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
           %spider-input   (on-poke-input:sc !<(input vase))
@@ -597,6 +605,7 @@
       p.toon
     ==
   =.  running.state  (~(put of running.state) yarn eval-form)
+  =.  cards.r  (handle-child-thread-effects tid cards.r)
   =/  forbad=(unit tang)  (warn-bad-cards tid cards.r)
   ::TODO PERM    replace slog with below to start enforcing
   ::  ?^  forbade
@@ -907,6 +916,27 @@
   ::
       [%khan %gall %spider @ ~]
     (~(gut by authority.state) i.t.t.t.sap.bowl [%none ~])
+  ==
+::
+++  handle-child-thread-effects
+  |=  [=tid caz=(list card)]
+  %+  turn  caz
+  |=  cad=card
+  ^-  card
+  ?+  cad  cad
+      [%pass * %agent [* %spider] %poke ?(%spider-start %spider-inline) *]
+    ?.  =(ship.q.cad our.bowl)  cad
+    =/  dat  !>([tid cage.task.q.cad])
+    [%pass p.cad %agent [ship.q.cad %spider] %poke %spider-laid dat]
+  ::
+      [%pass * %arvo %k ?(%fard %lard) *]
+    [%pass p.cad %arvo %k %laid tid +>.q.cad]
+  ::
+      [%pass * %arvo %k %laid *]
+    [%pass p.cad %arvo %k %laid tid task.q.cad]
+  ::
+      [%pass * %arvo %k %home *]
+    $(cad [%pass p.cad %arvo %k task.q.cad])
   ==
 ::
 ++  scry-intercept

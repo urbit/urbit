@@ -4695,7 +4695,11 @@
         $>(%vega vane-task)                             ::  report upgrade
         runner                                          ::  thread starter
     ==
-  +$  runner                                            ::  thread starter
+  +$  runner                                            ::  thread runner
+    $%  [%laid =tid:rand task=$<(%fyrd starter)]        ::  child wrapper
+        starter                                         ::
+    ==
+  +$  starter                                           ::  thread starter
         ::  TODO  mark ignored                          ::
     $%  [%fard p=(fyrd cage)]                           ::  in-arvo thread
         [%fyrd p=(fyrd cast)]                           ::  external thread

@@ -138,6 +138,11 @@
   ++  handle-runner
     |=  [prov=path task=runner:khan]
     ^-  [(list move) _khan-gate]
+    =?  +<  ?=(%laid -.task)
+      ?>  ?=([%gall %spider *] prov)
+      :-  prov(t.t /[tid.task])
+      task.task
+    ?<  ?=(%laid -.task)
     ?-    -.task
         %fard  (bard hen prov 'khan-fyrd--' bear.p.task %| [name args]:p.task)
         %lard  (bard hen prov 'khan-lard--' bear.task %& shed.task)
