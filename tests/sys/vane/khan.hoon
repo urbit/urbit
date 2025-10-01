@@ -39,8 +39,9 @@
       !>  /fyrd/~nul/base/~1162.1.1..00.00.01/noun
       !>  wire.q.mev
   =/  results-4  (expect-eq !>(%k) !>(-.note.q.mev))
-  ?>  ?=(%fard +<.note.q.mev)
-  =/  fad  p.note.q.mev
+  ?>  ?=(%home +<.note.q.mev)
+  ?>  ?=(%fard -.task.note.q.mev)
+  =/  fad  p.task.note.q.mev
   ;:  weld
     results-0  results-1  results-2
     results-3  results-4

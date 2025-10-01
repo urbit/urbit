@@ -185,7 +185,6 @@
       [%iris %fetch]          full
       [%jael %prick]          `'impersonate you on the network, read all your messages'
       [%jael %break]          `'prevent you from communicating with other ships'
-      [%khan %tread]          full
     ==
   ::
   ++  perm-pail  ::  category the permission belongs in
@@ -367,7 +366,7 @@
       [%jael %creak]    'manage your credentials'
       [%jael %login]    'manage your credentials'
       [%jael %break]    'destroy connectivity with other ships'
-      [%khan %tread]    'run asynchronous, permissionless computation'
+      [%khan %tread]    'run asynchronous computation'
     ==
   ::
   ++  perm-cord  ::  "this app wants to ..."
@@ -449,7 +448,7 @@
       [%jael %creak]    'update your networking keys'
       [%jael %login]    'update your login code'
       [%jael %break]    'destroy connectivity with other ships'
-      [%khan %tread]    'run asynchronous, permissionless computation'
+      [%khan %tread]    'run asynchronous computation'
     ==
   ::
   ++  full-spar

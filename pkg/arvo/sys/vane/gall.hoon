@@ -2325,6 +2325,22 @@
       ::
       =?  result  ?=(^ forbad)
         [%| u.forbad]
+      ::  wrap %khan thread-starters in %home tasks with provenance
+      ::
+      =?  result  ?=(%& -.result)
+        ^-  (each step:agent tang)
+        =-  result(-.p -)
+        ^-  (list card:agent)
+        %+  turn  -.p.result
+        |=  =card:agent
+        ?.  ?=([%pass * %arvo %k ?(%home %fard %fyrd %lard %laid) *] card)
+          card
+        =/  prov=path  /gall/[agent-name]
+        ?-    q.card
+            [%arvo %k %home *]  card(path.q prov)
+            [%arvo %k ?(%fard %fyrd %lard %laid) *]
+          card(q [%arvo %k %home prov +>.q.card])
+        ==
       =^  new-moves  ap-core
         (ap-handle-result result)
       =/  maybe-tang=(unit tang)
