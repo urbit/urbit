@@ -477,9 +477,6 @@
   ::
   ?+  val  ~|(%bad-noun-arg !!)
       [%swap-vanes vs=*]
-    ::  XX TODO
-    :: ?:  ?=(%brass nam.pil)
-    ::   ?>  ?=([boot-ovum=^ ^ *] kernel-ova.pil)
     ?>  ?=([aeon=^ boot-two=^ [%7 * %1 installed=*] *] boot-ova.pil)
     =.  installed.i.t.t.boot-ova.pil
       %+  roll  (,(list term) vs.val)
@@ -908,7 +905,7 @@
   =/  =feed:jael
     ?^  feed  u.feed
     =/  life-rift=[lyfe=life rut=rift]
-      ?:  ?=(%earl clan)  [1 0]
+      ?:  ?=(?(%pawn %earl) clan)  [1 0]
       (~(got by lives.azi.piers) who)
     =/  =life  lyfe.life-rift
     =/  =rift  rut.life-rift

@@ -1345,7 +1345,7 @@
     ?.  =([%& our] why)
       [~ ~]
     =/  who  (slaw %p i.tyl)
-    =/  lif  (slaw %p i.t.tyl)
+    =/  lif  (slaw %ud i.t.tyl)
     ?~  who  [~ ~]
     ?~  lif  [~ ~]
     =/  pos  (~(get by pos.zim.pki.lex) u.who)
