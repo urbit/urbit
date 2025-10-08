@@ -105,6 +105,7 @@
       (on-peek:ag path)
     ?+  path  [~ ~]
       [%u %dbug ~]                 ``noun+!>(&)
+      [%x %dbug %bowl ~]           ``noun+!>(bowl)
       [%x %dbug %state ~]          ``noun+!>(on-save:ag)
       [%x %dbug %subscriptions ~]  ``noun+!>([wex sup]:bowl)
     ==

@@ -2441,6 +2441,8 @@
         [%perm des=desk pax=path rit=rite]              ::  change permissions
         [%pork ~]                                       ::  resume commit
         [%prep lat=(map lobe page)]                     ::  prime clay store
+        [%hope des=desk pes=pers:gall]                  ::  app-desired perms
+        [%curb des=desk pes=pers:gall]                  ::  user-approved perms
         [%rein des=desk ren=rein]                       ::  extra apps
         [%stir arg=*]                                   ::  debug
         [%tire p=(unit ~)]                              ::  app state subscribe
@@ -2460,6 +2462,7 @@
   +$  aeon  @ud                                         ::  version number
   +$  beam  [[p=ship q=desk r=case] s=path]             ::  global name
   +$  beak  [p=ship q=desk r=case]                      ::  path prefix
+  +$  bill  (list dude:gall)                            ::  live agents on desk
   +$  cable                                             ::  lib/sur/mark ref
     $:  face=(unit term)                                ::
         file-path=term                                  ::
@@ -2483,6 +2486,11 @@
         [%seek =ship =desk =cash]                       ::  fetch source blobs
     ==                                                  ::
   +$  cone  (map [ship desk] dome)                      ::  domes
+  +$  hone  (map desk loam)                             ::  /loams scry return
+  +$  foam                                              ::
+    $:  dome                                            ::  ref transparent
+        loam                                            ::  non-ref transparent
+    ==
   ::
   ::  Desk state.
   ::
@@ -2504,9 +2512,21 @@
         mim=(map path mime)                             ::  mime cache
         fod=flue                                        ::  ford cache
         wic=(map weft yoki)                             ::  commit-in-waiting
+        cop=(unit [yok=yoki mis=pers:gall])             ::  commit awaiting pers
+        lac=pers:gall                                   ::  perms blocking live
         liv=zest                                        ::  running agents
         ren=rein                                        ::  force agents on/off
+        pes=pers:gall                                   ::  user-approved perms
+        ask=pers:gall                                   ::  requested perms
     ==                                                  ::
+  +$  loam                                              ::  non-ref transparent
+    $:  tom=(map tako norm)                             ::  tombstone override
+        nor=norm                                        ::  gen tombstone policy
+        liv=zest                                        ::  desk liveness
+        ren=(map dude:gall ?)                           ::  liveness override
+        pes=pers:gall                                   ::  granted perms
+        cop=pers:gall                                   ::  missing perms
+    ==
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission
   +$  domo                                              ::  project state
@@ -2638,11 +2658,26 @@
   ::                                                    ::
   ++  tire                                              ::  app state
     |%                                                  ::
-    +$  rock  (map desk [=zest wic=(set weft)])         ::
+    +$  belt                                            ::
+      $:  =zest                                         ::  running?
+          pes=pers:gall                                 ::  granted perms
+          ask=pers:gall                                 ::  requested perms
+          wic=(set weft)                                ::  waiting kelvins
+          cop=pers:gall                                 ::  perms blocking next
+          lac=pers:gall                                 ::  perms blocking live
+      ==                                                ::
+    +$  rock  (map desk belt)                           ::
     +$  wave                                            ::
       $%  [%wait =desk =weft]                           ::  blocked
           [%warp =desk =weft]                           ::  unblocked
           [%zest =desk =zest]                           ::  running
+          $:  %perm                                     ::  permissions:
+              =desk                                     ::  on
+              pes=pers:gall                             ::  granted
+              ask=pers:gall                             ::  requested
+              cop=pers:gall                             ::  blocking a commit
+              lac=pers:gall                             ::  blocking live
+          ==                                            ::
       ==                                                ::
     ::
     ++  wash                                            ::  patch
@@ -2650,21 +2685,27 @@
       ^+  rock
       ?-    -.wave
           %wait
-        =/  got=[=zest wic=(set weft)]
-          (~(gut by rock) desk.wave *zest ~)
+        =/  got=belt
+          (~(gut by rock) desk.wave *belt)
         (~(put by rock) desk.wave got(wic (~(put in wic.got) weft.wave)))
       ::
           %warp
         %-  ~(run by rock)
-        |=  [=zest wic=(set weft)]
-        [zest (~(del in wic) weft.wave)]
+        |=  =belt
+        belt(wic (~(del in wic.belt) weft.wave))
       ::
           %zest
         ?:  ?=(%dead zest.wave)
           (~(del by rock) desk.wave)
-        =/  got=[=zest wic=(set weft)]
-          (~(gut by rock) desk.wave *zest ~)
+        =/  got=belt
+          (~(gut by rock) desk.wave *belt)
         (~(put by rock) desk.wave got(zest zest.wave))
+      ::
+          %perm
+        =/  got=belt
+          (~(gut by rock) desk.wave *belt)
+        %+  ~(put by rock)  desk.wave
+        got(pes pes.wave, ask ask.wave, cop cop.wave, lac lac.wave)
       ==
     ::
     ++  walk                                            ::  diff
@@ -2677,28 +2718,29 @@
         ^-  (list wave)
         %-  zing
         %+  turn  ~(tap by adds)
-        |=  [=desk =zest wic=(set weft)]
+        |=  [=desk belt]
         ^-  (list wave)
         :-  [%zest desk zest]
+        :-  [%perm desk pes ask cop lac]
         %+  turn  ~(tap in wic)
         |=  =weft
         [%wait desk weft]
       ::
         ^-  (list wave)
         %+  turn  ~(tap by dels)
-        |=  [=desk =zest wic=(set weft)]
+        |=  [=desk belt]
         ^-  wave
         [%zest desk %dead]
       ::
         ^-  (list wave)
         %-  zing
         %+  turn  ~(tap by bots)
-        |=  [=desk * *]
+        |=  [=desk *]
         ^-  (list wave)
-        =/  aa  (~(got by a) desk)
-        =/  bb  (~(got by b) desk)
-        =/  wadds  (~(dif in wic.bb) wic.aa)
-        =/  wdels  (~(dif in wic.aa) wic.bb)
+        =/  aa=belt  (~(got by a) desk)
+        =/  bb=belt  (~(got by b) desk)
+        =/  wadds    (~(dif in wic.bb) wic.aa)
+        =/  wdels    (~(dif in wic.aa) wic.bb)
         ;:  welp
           ?:  =(zest.aa zest.bb)
             ~
@@ -2713,6 +2755,10 @@
           |=  =weft
           ^-  wave
           [%warp desk weft]
+        ::
+          ?:  =([pes ask cop lac]:aa [pes ask cop lac]:bb)
+            ~
+          [%perm desk [pes ask cop lac]:bb]~
         ==
       ==
     --
@@ -3663,16 +3709,19 @@
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
         [%flub ~]                                       ::  not ready to handle plea
         [%unto p=unto]                                  ::
+        ::TODO: should this be a list instead?
+        [%perm [=desk free=(set perm) lock=(set perm)]] ::  perm notification
     ==                                                  ::
   +$  task                                              ::  incoming request
     $~  [%vega ~]                                       ::
     $%  [%clog id=*]                                    ::  clog notification
         [%deal p=sack q=term r=deal]                    ::  full transmission
         [%sear =ship]                                   ::  clear pending queues
-        [%jolt =desk =dude]                             ::  (re)start agent
-        [%idle =dude]                                   ::  suspend agent
         [%load =load]                                   ::  load agent
         [%nuke =dude]                                   ::  delete agent
+        ::TODO  %ward & %wink in clay now y/n?
+        [%ward ~]                                       ::  watch %perm diffs
+        [%wink ~]                                       ::  stop watching
         [%doff dude=(unit dude) ship=(unit ship)]       ::  kill subscriptions
         [%rake dude=(unit dude) all=?]                  ::  reclaim old subs
         [%lave subs=(list [?(%g %a) ship dude duct])]   ::  delete stale bitt(s)
@@ -3759,10 +3808,17 @@
             eny=@uvJ                                    ::  entropy
             now=@da                                     ::  current time
             byk=beak                                    ::  load source
-    ==  ==                                              ::                                                  ::
+        ==
+        $:  pes=pers                                    ::  agent allowance
+    ==  ==                                              ::
+  ::
   +$  dude  term                                        ::  server identity
   +$  gill  (pair ship term)                            ::  general contact
-  +$  load  (list [=dude =beak =agent])                 ::  loadout
+  ::TODO: change perms to a jug?
+  +$  load                                              ::  loadout
+    $:  perms=(list [=desk pers])                       ::  desk permissions
+        dudes=(list [=dude =beak =agent])               ::  agents to run
+    ==
   +$  scar                                              ::  opaque duct
     $:  p=@ud                                           ::  bone sequence
         q=(map duct bone)                               ::  by duct
@@ -3780,7 +3836,7 @@
     ==
   ::  TODO: add more flags?
   ::
-  +$  verb  ?(%odd)
+  +$  verb  ?(%odd %pes)
   +$  coop  spur
   ::
   ::  +agent: app core
@@ -3795,7 +3851,7 @@
     +$  note
       $+  gall-agent-note
       $%  [%agent [=ship name=term] =task]
-          [%arvo note-arvo]
+          [%arvo note-arvo]  ::TODO  userspace-note
           [%pyre =tang]
       ::
           [%grow =spur =page]
@@ -3872,6 +3928,420 @@
         *(quip card _^|(..on-init))
       --
     --
+  ::
+  ::NOTE  changing permission types or behaviors necessitates a kelvin bump
+  ::
+  +$  perm
+    $~  [%behn %timer]
+    $%  perm-arvo
+        perm-gall
+        [%super ~]  ::  allows everything
+    ==
+  ::
+  +$  pers  (set perm)
+  ::
+  +$  burr  [desk=(unit desk) =spur]
+  +$  spar  [care=(unit term) burr]
+  ::
+  +$  perm-gall                                         ::  inter-agent perms
+    $%  [%write jump=? dude=?(~ dude)]                  ::  poke
+        [%watch jump=? dude=?(~ dude) =path]            ::  subscribe
+        [%reads vane=term spar]                         ::  scry
+        [%raids ship=(unit ship) =path]                 ::  do remote scry
+        [%press =spur]                                  ::  edit remote scry
+        [%coops ~]                                      ::  security context
+    ==
+  ::
+  +$  perm-arvo
+    $%  $:  %ames
+        $%  [%debug ~]                       ::  %sift %spew
+            [%block ~]                       ::  %snub
+            [%order ship=(unit ship) =path]  ::  %keen
+            [%whack ship=(unit ship) =path]  ::  %wham
+        ==  ==
+      ::
+        $:  %behn
+        $?  %timer  ::  %wait %rest
+        ==  ==
+      ::
+        $:  %clay
+        $%  [%mount ~]                 ::  %mont %ogre %dirk
+            [%creds ~]                 ::  %cred %crew %crow %perm
+            [%label desk=(unit desk)]  ::  %info w/ %| nori
+            [%write burr]              ::  %info %merg %fuse %park
+            [%local spar]              ::  %warp for local data
+            [%peers spar]              ::  %warp for remote data
+          ::
+            [%perms desk=(unit desk)]  ::  %curb
+            [%plead desk=(unit desk)]  ::  %hope
+            [%liven desk=(unit desk)]  ::  %rein %zest %wick
+            [%pulse ~]                 ::  %tire
+            [%grave ship=(unit ship) desk=(unit desk)]  ::  %tomb
+        ==  ==
+      ::
+        $:  %dill
+        $?  %views  ::  %hail %view
+            %input  ::  %belt %blew
+            %print  ::  %crud %talk %text
+            %extra  ::  %flog
+        ==  ==
+      ::
+        $:  %eyre
+        $?  %serve  ::  %connect %serve %disconnect
+            %certs  ::  %rule
+            %perms  ::  %approve-origin %reject-origin
+        ==  ==
+      ::
+        $:  %gall
+        $%  [%clear dude=(unit dude)]  ::  %nuke  ::TODO  ?(~ dude) ?
+            [%guard ~]                 ::  %ward %wink  ::TODO  clay?
+        ==  ==
+      ::
+        $:  %iris
+        $?  %fetch  ::  %request %cancel-request
+        ==  ==
+      ::
+        $:  %jael
+        $?  %moons  ::  %moon
+            %prick  ::  %private-keys %resend
+            %creak  ::  %rekey
+            %login  ::  %step
+            %break  ::  %meet %ruin
+            ::NOTE  always allowed, public data:
+            ::  %pucks  ::  %public-keys %nuke %turf
+        ==  ==
+      ::
+        $:  %khan
+        $?  %tread  ::  %fard %lard
+        ==  ==
+    ==
+  ::  +rite: namespace permissions check
+  ::
+  ++  rite  !:
+    |=  [our=ship [=view =beam] pes=pers]
+    ^-  ?
+    ?:  (~(has in pes) [%super ~])  &
+    ?.  =(our p.beam)  |
+    =/  [vane=term care=term]
+      ::TODO  copied from arvo's +peek:le, should deduplicate
+      ?^  view  view
+      ?.  =(2 (met 3 view))
+        [view %$]
+      [(end 3 view) (rsh 3 view)]
+    %+  lien  ~(tap in pes)
+    |=  p=perm
+    ?.  ?=(%reads -.p)  |
+    ?&  =(vane.p vane)
+        =(care (fall care.p care))
+        =(q.beam (fall desk.p q.beam))
+      ::
+        |-
+        ?~  spur.p  &
+        ?~  s.beam  |
+        &(=(i.spur.p i.s.beam) $(spur.p t.spur.p, s.beam t.s.beam))
+    ==
+  ::  +cred: userspace permissions check
+  ::
+  ::    agents may call +cred to see if they have the right optional
+  ::    permissions to send a card. they shouldn't check this when sending
+  ::    a task that only needs the required permissions they're already
+  ::    guaranteed to have in their desk.seal. of course, it might often be
+  ::    easier to just check for the optional permission's presence in :pes.
+  ::
+  ++  cred  !:
+    |=  [our=ship pes=pers =card:agent]
+    ^-  ?
+    %+  levy  (rive card)
+    |=  =card:agent
+    =/  mus  (must our card)
+    ?@  mus  mus
+    (have pes mus)
+  ::  +have: check if mus, or a broader perm, is present in pes
+  ::
+  ++  have  !:
+    |=  [pes=pers mus=perm]
+    ^-  ?
+    ?:  (~(has in pes) [%super ~])  &
+    ?+  mus  (~(has in pes) mus)
+        [%press *]
+      %+  lien  ~(tap in pes)
+      |=  p=perm
+      ?&  ?=([%press *] p)
+          |(=(/ spur.p) =(`0 (find spur.p spur.mus)))  ::TODO  find-at-head
+      ==
+    ::
+        [%coops *]
+      %+  lien  ~(tap in pes)
+      |=  p=perm
+      ?=([%coops *] p)
+    ::
+        [%raids *]
+      %+  lien  ~(tap in pes)
+      |=  p=perm
+      ?&  ?=([%raids *] p)
+          |(?=(~ ship.p) =(ship.mus ship.p))
+          |(=(/ path.p) =(`0 (find path.p path.mus)))  ::TODO  find-at-head
+      ==
+    ::
+        [%reads *]
+      %+  lien  ~(tap in pes)
+      |=  p=perm
+      ?&  ?=([%reads *] p)
+          =(vane.mus vane.p)
+          |(?=(~ care.p) =(care.mus care.p))
+          |(?=(~ desk.p) =(desk.mus desk.p))
+          |(=(/ spur.p) =(`0 (find spur.p spur.mus)))  ::TODO  find-at-head
+      ==
+    ::
+        [?(%write %watch) *]
+      =/  dum=?(~ dude)
+        ?-(-.mus %write dude.mus, %watch dude.mus)
+      %+  lien  ~(tap in pes)
+      |=  p=perm
+      ?.  ?=(?(%write %watch) -.p)  |
+      =/  dup=?(~ dude)
+        ?-(-.p %write dude.p, %watch dude.p)
+      ?&  ::  perm matches
+          ::
+          =(-.mus -.p)
+          ::  perm allows remote, or we just need local
+          ::
+          |(jump.p !jump.mus)
+          ::  dude is allowed
+          ::
+          |(=(~ dup) =(dum dup))
+          ::  if watching, path is allowed
+          ::
+          ?.  ?=(%watch -.p)  &
+          ?>  ?=(%watch -.mus)
+          ::TODO  find-at-head list operation
+          |-
+          ?~  path.p  &
+          ?~  path.mus  |
+          ?.  =(i.path.p i.path.mus)  |
+          $(path.p t.path.p, path.mus t.path.mus)
+      ==
+    ::
+        [%ames ?(%order %whack) *]
+      %+  lien  ~(tap in pes)
+      |=  p=perm
+      ?&  ?=([%ames ?(%order %whack) *] p)
+          =(+<.mus +<.p)
+          |(?=(~ ship.p) =(ship.mus ship.p))
+          |(=(/ path.p) =(`0 (find path.p path.mus)))  ::TODO  find-at-head
+      ==
+    ::
+        [%clay %write *]
+      %+  lien  ~(tap in pes)
+      |=  p=perm
+      ?&  ?=([%clay %write *] p)
+          |(?=(~ desk.p) =(desk.mus desk.p))
+          |(=(/ spur.p) =(`0 (find spur.p spur.mus)))  ::TODO  find-at-head
+      ==
+    ::
+        [%clay ?(%local %peers) *]
+      %+  lien  ~(tap in pes)
+      |=  p=perm
+      ?&  ?=([%clay ?(%local %peers) *] p)
+          =(+<.mus +<.p)
+          |(?=(~ care.p) =(care.mus care.p))
+          |(?=(~ desk.p) =(desk.mus desk.p))
+          |(=(/ spur.p) =(`0 (find spur.p spur.mus)))  ::TODO  find-at-head
+      ==
+    ::
+        [%clay ?(%label %perms %plead %liven) *]
+      %+  lien  ~(tap in pes)
+      |=  p=perm
+      ?&  ?=([%clay ?(%label %perms %plead %liven) *] p)
+          =(+<.mus +<.p)
+          |(?=(~ desk.p) =(desk.mus desk.p))
+          =(desk (fall desk.p desk))
+      ==
+    ::
+        [%clay %grave *]
+      %+  lien  ~(tap in pes)
+      |=  p=perm
+      ?&  ?=([%clay %grave *] p)
+          |(?=(~ ship.p) =(ship.mus ship.p))
+          |(?=(~ desk.p) =(desk.mus desk.p))
+      ==
+
+        [%gall %clear *]
+      %+  lien  ~(tap in pes)
+      |=  p=perm
+      ?&  ?=([%gall %clear *] p)
+          |(?=(~ dude.p) =(dude.mus dude.p))
+      ==
+    ==
+  ::  +rive: split card into individual components
+  ::
+  ::    splitting cards up into their separate, unique components
+  ::    (for example, an %info write to both /a and /b becoming two cards)
+  ::    lets +must implement a simple one-to-one card-to-perm mapping.
+  ::
+  ++  rive  !:
+    |=  =card:agent
+    ^-  (list card:agent)
+    ?:  ?=(%give -.card)  [card]~
+    =/  wrap=$-(note:agent card:agent)
+      |=  =note:agent
+      ?-  -.card
+        %pass  card(q note)
+        %slip  card(p note)
+      ==
+    =/  =note:agent
+      ?-  -.card
+        %pass  q.card
+        %slip  p.card
+      ==
+    ?+  note  [card]~
+        [%arvo %c %info *]
+      ?-  -.dit.note
+        %|  [card]~
+        %&  %+  turn  p.dit.note
+            |=  d=[path $~([%del ~] miso:clay)]
+            (wrap note(p.dit [d]~))
+      ==
+    ==
+  ::  +must: perm required for card, or loob if guaranteed
+  ::
+  ::    you should call +rive on the card prior to calling this, if there's
+  ::    any chance of it being a card that touches multiple areas.
+  ::
+  ++  must  !:
+    |=  [our=ship =card:agent]
+    ^-  $@(? perm)
+    ?:  ?=(%give -.card)
+      &
+    =/  =note:agent
+      ?-  -.card
+        %pass  q.card
+        %slip  p.card
+      ==
+    ?:  ?=(%pyre -.note)
+      &
+    ?:  ?=(%agent -.note)
+      =*  jump=?  !=(our ship.note)
+      ?-  -.task.note
+        %watch     [%watch jump name.note path.task.note]
+        %watch-as  [%watch jump name.note path.task.note]
+        %poke      [%write jump name.note]
+        %poke-as   [%write jump name.note]
+        %leave     &
+      ==
+    ?:  ?=(%grow -.note)           [%press spur.note]
+    ?:  ?=(?(%tomb %cull) -.note)  [%press spur.note]
+    ?:  ?=(%tend -.note)           [%press path.note]
+    ?:  ?=(?(%germ %snip) -.note)  [%coops ~]
+    ?:  ?=(%keen -.note)           [%raids `ship.note path.note]
+    ::  %arvo
+    ?-  +<.note
+        %a
+      ?+  +>-.note  |
+        ?(%sift %spew)  [%ames %debug ~]
+        %snub           [%ames %block ~]
+        %keen           [%ames %order `ship.note path.note]
+        %yawn           &
+        %wham           [%ames %whack `ship.note path.note]
+      ==
+    ::
+        %b
+      ?+  +>-.note  |
+        ?(%wait %rest)  [%behn %timer]
+      ==
+    ::
+        %c
+      ?+  +>-.note  |
+        ?(%mont %ogre %dirk)        [%clay %mount ~]
+        ?(%cred %crew %crow %perm)  [%clay %creds ~]
+        %curb                       [%clay %perms `des.note]
+        %hope                       [%clay %plead `des.note]
+        ?(%merg %fuse %park)        [%clay %write `des.note /]
+        %tire                       [%clay %pulse ~]
+        ?(%rein %zest)              [%clay %liven `des.note]
+        %wick                       [%clay %liven ~]
+      ::
+          %tomb
+        ?-    -.clue.note
+            ?(%lobe %all %pick %seek)
+          [%clay %grave ~ ~]
+        ::
+            ?(%norm %worn)
+          [%clay %grave `ship.clue.note `desk.clue.note]
+        ==
+      ::
+          %info
+        ?-  -.dit.note
+          %|  [%clay %label `des.note]
+          %&  ?>  ?=([* ~] p.dit.note)  ::NOTE  see +rive
+              [%clay %write `des.note p.i.p.dit.note]
+        ==
+      ::
+          %warp
+        ?~  q.rif.note  &  ::  can always cancel request
+        ::NOTE  we intentionally do not allow %mult and %many,
+        ::      they're considered deprecated
+        ?.  ?=(?(%sing %next) -.u.q.rif.note)
+          |
+        =/  =spar  [`care.mood.u.q `p path.mood.u.q]:rif.note
+        ?.  =(our wer.note)
+          [%clay %peers spar]
+        [%clay %local spar]
+      ==
+    ::
+        %d
+      |-
+      ?+  +>-.note  |
+        %shot  $(+>.note task.note)
+        %flee  &
+      ::
+          ?(%hail %view)
+        [%dill %views]
+      ::
+          ?(%belt %blew)
+        [%dill %input]
+      ::
+        ?(%crud %talk %text)  [%dill %print]
+        %flog                 [%dill %extra]
+      ==
+    ::
+        %e
+      ?+  +>-.note  |
+        ?(%connect %serve %disconnect)     [%eyre %serve]
+        %rule                              [%eyre %certs]
+        ?(%approve-origin %reject-origin)  [%eyre %perms]
+      ==
+    ::
+        %g
+      ?+  +>-.note  |
+        %nuke           [%gall %clear `dude.note]
+        %ward           [%gall %guard ~]
+        %wink           &
+      ==
+    ::
+        %i
+      ?+  +>-.note  |
+        ?(%request %cancel-request)  [%iris %fetch]
+      ==
+    ::
+        %j
+      ?+  +>-.note  |
+        %moon                        [%jael %moons]
+        ?(%private-keys %resend)     [%jael %prick]
+        %rekey                       [%jael %creak]
+        %step                        [%jael %login]
+        ?(%meet %ruin)               [%jael %break]
+        ?(%public-keys %nuke %turf)  &
+      ==
+    ::
+        %k
+      ?+  +>-.note  |
+        ?(%fard %lard)  [%khan %tread]
+      ==
+    ::
+      %$    |
+      @tas  |
+    ==
   --  ::gall
 ::  %iris http-client interface
 ::

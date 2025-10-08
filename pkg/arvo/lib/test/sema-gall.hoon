@@ -233,7 +233,7 @@
   |=  [=ship =gall-gate =dude:gall =agent:gall]
   =^  *  gall-gate
     %+  gall-call  gall-gate
-    [~[/load] load/[[dude [ship %base da+~1111.1.1] agent]~] *roof]
+    [~[/load] [%load [%base [super/~ ~ ~]]~ [dude [ship %base da+~1111.1.1] agent]~] *roof]
   =^  *  gall-gate
     =/  =sign-arvo
       :+  %clay  %writ

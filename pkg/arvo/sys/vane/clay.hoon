@@ -85,6 +85,7 @@
 ::  defined in lull.
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+!:
 =/  bud
   ^~
   =/  zuse  !>(..zuse)
@@ -264,6 +265,7 @@
   ==                                                    ::
 ::
 +$  bill  (list dude:gall)
++$  seal  [%0 (list perm:gall)]
 ::
 ::  Active downloads
 ::
@@ -350,7 +352,6 @@
       ==                                                ::
       $:  %g                                            ::  to %gall
           $>  $?  %deal
-                  %jolt
                   %load
               ==
           task:gall
@@ -526,6 +527,52 @@
     =.  res  `?~(res faz (slop faz u.res))
     $(vaz t.vaz)
   ::
+  ++  built-ins
+    |^  ^-  (list [path vase])
+        :~  [/mar/seal/hoon seal]
+        ==
+    ::
+    ++  seal  !>
+      =>  [seal=^seal ..zuse]
+      |_  =seal
+      ++  grow
+        |%
+        ++  mime  `^mime`[/text/x-seal (as-octs:mimes:html hoon)]
+        ++  noun  seal
+        ++  hoon
+          ^-  @t
+          |^  %-  crip
+              %-  of-wall:format
+              (enlist (enhoon +.seal))
+          ::
+          ++  enlist
+            |=  taz=wall
+            ^-  wall
+            ?~  taz  ["[%0 ~]"]~
+            :+  ":-  %0"
+              [':' '~' ' ' ' ' i.taz]
+            %-  snoc  :_  "=="
+            (turn t.taz |=(t=tape `tape`[' ' ' ' ' ' ' ' t]))
+          ::
+          ++  enhoon
+            |=  pez=(list perm:gall)
+            ^-  wall
+            (turn pez |=(=perm:gall <`perm:gall`perm>))
+          --
+        ++  txt   (to-wain:format hoon)
+        --
+      ++  grab
+        |%
+        ++  noun  ,[%0 (list perm:gall)]
+        ++  mime
+          |=  [=mite len=@ud tex=@]
+          ~_  tex
+          !<(^seal (slap !>(~) (ream tex)))
+        --
+      ++  grad  %noun
+      --
+    --
+  ::
   ++  ford
     !.
     =>  |%
@@ -552,6 +599,10 @@
     =.  cache.nub  cache
     =.  spill.nub  spill
     =.  sprig.nub  sprig
+    ::  trunk: built-in files
+    ::
+    =/  trunk=(map path vase)
+      (~(gas by *(map path vase)) built-ins)
     ~%  %ford-core  ..$  ~
     |%
     ::  +read-file: retrieve marked, validated file contents at path
@@ -876,6 +927,8 @@
       ^-  [vase state]
       =/  =path
         ?:(?=(%| -.dep) p.dep fil.p.dep)
+      ?:  (~(has by trunk) path)
+        [(~(got by trunk) path) nub]
       ~|  %error-building^path
       %-  soak-vase
       %+  gain-sprig  file+path  |.
@@ -1120,8 +1173,8 @@
       ?~  paz
         ~_(leaf/"clay: no files match /{(trip pre)}/{(trip pax)}/hoon" !!)
       =/  pux=path  pre^(snoc i.paz %hoon)
-      ?:  (~(has by files) pux)
-        pux
+      ?:  (~(has by trunk) pux)  pux
+      ?:  (~(has by files) pux)  pux
       $(paz t.paz)
     ::
     ++  all-fits
@@ -1876,7 +1929,7 @@
             ==
             ?&  =(%base syd)                            ::  ready to upgrade
                 %+  levy  ~(tap by tore:(lu now rof hen ruf))
-                |=  [=desk =zest wic=(set weft)]
+                |=  [=desk belt:tire]
                 ?|  =(%base desk)
                     !ese:(~(got by dos.rom.ruf) desk)
                     !?=(%live zest)
@@ -1894,11 +1947,29 @@
       =?  ..park  !?=(%base syd)  wick                  ::  [wick]
       %-  (slog leaf+"clay: wait-for-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
       tare                                              ::  [tare] >
+    ::TODO  asserts that perms don't change across kelvin upgrade
+    ::  if the desk is running, and this commit would leave it with
+    ::  insufficient permissions to be running, hold the commit.
+    ::
+    =/  mis=(list perm:gall)
+      ?:  =(%base syd)  ~
+      (skip +:(get-seal yoki) (cury have:gall pes.dom))
+    ?:  &(=(%live liv.dom) !=(~ mis))
+      =.  cop.dom  `[yoki (sy mis)]                     ::  [tare] <
+      =/  msg=tang
+        :~  leaf+"clay: missing {(a-co:co (lent mis))} permissions on {<syd>}"
+            leaf+"clay: run |okay {<syd>} to review permissions"
+        ==
+      %-  (slog msg)
+      tare                                              ::  [tare] >
+    ::
+    =.  lac.dom  (sy mis)
     =.  wic.dom
       %-  ~(gas by *(map weft ^yoki))
       %+  skip  ~(tap by wic.dom)
       |=  [w=weft ^yoki]
       (gte num.w zuse)
+    =.  cop.dom  ~
     ::
     =/  old-yaki
       ?:  =(0 let.dom)
@@ -2038,6 +2109,19 @@
       ?~  wat=(~(get by wic.dom.dojo.i.desks) zuse+zuse)
         (mean (cat 3 'clay: missing commit-in-waiting on ' desk.i.desks) ~)
       =/  den  ((de now rof hen ruf) our desk.i.desks)
+      ::  if we are upgrading from a pre-permissions world into a world
+      ::  in which permissions exist, grandfather in all existing live apps
+      ::  by auto-granting their required permissions.
+      ::  (we must do this because, since old clay doesn't know about perms,
+      ::  it cannot warn the user about lacking ones post-upgrade, or grant
+      ::  them ahead of time, and so getting the base update here to succeed
+      ::  would require all apps be suspended, which kills the user.)
+      ::
+      =?  den  ?&  ?=([* ~ ~] old-kel)
+                   =(%zuse lal.n.old-kel)
+                   (gte num.n.old-kel %412)  ::TODO  update to match livenet kelvin on release
+               ==
+        den(pes.dom (sy +:(get-seal u.wat)))            ::  [goad] <
       ::  [goad] < call without goading so that we apply all the commits
       ::  before trying to compile all desks to send to gall.
       ::
@@ -2071,6 +2155,42 @@
         |
       %-  ~(any in invalid)
       |=(p=path &((is-kernel-path p) !?=([%sys %vane *] p)))
+    ::
+    ::  +get-seal: read the desk's kernel version from /desk/seal
+    ::
+    ++  get-seal
+      |=  =yoki
+      ^-  seal
+      |^  ?-    -.yoki
+              %|
+            ?~  lob=(~(get by q.p.yoki) /desk/seal)
+              *seal
+            (lobe-to-seal u.lob)
+          ::
+              %&
+            ?~  lob=(~(get by q.p.yoki) /desk/seal)
+              *seal
+            ?-  -.u.lob
+              %&  (page-to-seal p.u.lob)
+              %|  (lobe-to-seal p.u.lob)
+            ==
+          ==
+      ::
+      ++  lobe-to-seal
+        |=  =lobe
+        ^-  seal
+        ?~  peg=(~(get by lat.ran) lobe)
+          ~|([%desk-seal-tombstoned syd] !!)
+        (page-to-seal u.peg)
+      ::
+      ++  page-to-seal
+        |=  =page
+        ^-  seal
+        ?+  p.page  ~|(clay-bad-seal-mark+p.page !!)
+          %seal  ;;(seal q.page)
+          %mime  !<(seal (slap !>(~) (ream q.q:;;(mime q.page))))
+        ==
+      --
     ::
     ::  Find which files changed or were deleted
     ::
@@ -3214,13 +3334,81 @@
     |=  r=rule
     r(who (~(del in who.r) |+nom))
   ::
-  ++  set-rein                                          ::  [goad] <
-    |=  [ren=(map dude:gall ?)]
+  ++  set-hope
+    |=  pis=(set perm:gall)
+    ^+  ..park
+    =?  pis  =(%base syd)  ~
+    =/  ask  ~(tap in pis)
+    ::  exclude permissions that are already allowed
+    ::
+    =.  ask
+      (skip ask (cury have:gall pes.dom))
+    ::  exclude permissions that are required by the seal
+    ::
+    =.  ask
+      =^  res  ..park  (aver ~ %x da+now /desk/seal)
+      ?.  ?=([~ ~ *] res)  ask
+      ~|  [%reading-seal syd]
+      =/  reqs  +:!<(seal q.u.u.res)
+      (skip ask (cury have:gall (sy reqs)))
+    ::
+    tare(ask.dom (sy ask))
+  ::
+  ++  set-curb                                          ::  [goad] <
+    |=  pes=(set perm:gall)
+    ^+  ..park
+    =?  pes  =(%base syd)  ~
+    =/  pre  lac.dom
+    =.  pes.dom  pes
+    =.  lac.dom
+      %-  sy
+      ^-  (list perm:gall)
+      =^  res  ..park  (aver ~ %x da+now /desk/seal)
+      ?.  ?=([~ ~ *] res)  ~
+      ~|  [%reading-seal syd]
+      =/  =seal  !<(seal q.u.u.res)
+      (skip +.seal (cury have:gall pes.dom))
+    =.  ask.dom
+      (sy (skip ~(tap in ask.dom) (cury have:gall pes.dom)))
+    ::  if desk is already live, we cannot take away the permissions
+    ::  it needs to be live
+    ::
+    ?:  &(=(%live liv.dom) !=(~ lac.dom))
+      ~|  ?:(=(~ pre) %sane %insane-pre)
+      %-  mean
+      :-  'clay: cannot take away required permissions for live desk:'
+      (turn ~(tap in lac.dom) |=(p=perm:gall >p<))
+    ::  if this desk has a commit that was blocked on permissions,
+    ::  try reapplying that commit
+    ::
+    ?:  ?=(^ cop.dom)
+      ::REVIEW  can we ever be %held here?
+      ::        if we can, this may not set to %live if it becomes possible
+      weck
+    ::  if desk was held, try and make it live, it may now be allowed
+    ::
+    ?-  liv.dom
+      %held  (emit hen %pass /park-held/[syd] %b %wait now)
+      %dead  goad
+      %live  goad
+    ==
+  ::
+  ++  set-rein
+    |=  ren=(map dude:gall ?)
     ^+  ..park
     ..park(ren.dom ren)
   ::
   ++  set-zest                                          ::  [goad] <
     |=  liv=zest
+    ::  when setting to live, we do not need to check that =(~ lac.dom) here,
+    ::  because goad gets called later, and will crash if that's the case.
+    ::  if you want to not crash in the same event that you set %live,
+    ::  set to %held instead, and clay will try to make it %live asap, but
+    ::  no sooner than the next event.
+    ::
+    ::REVIEW  suspending a desk does not apply pending cop.dom. should it?
+    =?  ..park  =(%held liv)
+      (emit hen %pass /park-held/[syd] %b %wait now)
     ?:  =(%base syd)
       ..park(liv.dom %live)
     ?:  =(%kids syd)
@@ -3280,6 +3468,19 @@
     ?~  wis  ::  Every commit bottoms out here ?
       ..park
     (park | & yoki.i.wis *rang)
+  ::
+  ::  +weck: try to apply a commit that got blocked on perms
+  ::
+  ++  weck
+    ^+  ..park
+    (emit hen %pass /weck/[syd] %b %wait now)
+  ::
+  ++  take-weck
+    |=  err=(unit tang)
+    ?^  err
+      ((slog 'clay: failed to upgrade (weck)' u.err) ..park)
+    ?~  cop.dom  ..park
+    (park | & yok.u.cop.dom *rang)
   ::
   ::  Cancel a request.
   ::
@@ -4683,6 +4884,7 @@
   ::
   ::  [goad] Must be called any time the set of running agents changes.
   ::  This is whenever an agent is started, stopped, or updated.
+  ::  Must also be called any time granted permissions change.
   ::
   ::  This is not move-order agnostic -- you must be careful of
   ::  reentrancy as long as arvo's move order is depth-first.
@@ -4691,8 +4893,60 @@
   ::
   ++  goad
     ^+  ..abet
-    =^  sat=(list [=desk =bill])  ..abet
-      =/  desks=(list desk)  ~(tap in ~(key by dos.rom))
+    =^  pes=(list [=desk =pers:gall])  ..abet  pers
+    =^  sat=(list [=desk =bill])       ..abet  sats
+    =.  sat  (apply-precedence sat)
+    =+  ?:  (lth veb.bug 1)  ~
+        %.  ~  %-  slog
+        %+  turn  sat
+        |=  [=desk =bill]
+        leaf+"goad: output: {<desk>}: {<bill>}"
+    =^  agents  ..abet  (build-agents sat)
+    ::  TODO: enable if we can reduce memory usage
+    ::
+    ::  =.  ..abet
+    ::    (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
+    ::
+    =.  ..abet  tare                                    ::  [tare] >
+    (emit hen %pass /lu/load %g %load pes agents)
+  ::  +pers: produce list of [desk pers:gall] for live desks, update cache
+  ::
+  ::    asserts that live desks have all their required permissions
+  ::
+  ++  pers
+    =/  desks=(list desk)  ~(tap in ~(key by dos.rom))
+    |-  ^-  [(list [desk (set perm:gall)]) _..abet]
+    ?~  desks
+      [~ ..abet]
+    =/  den  ((de now rof hen ruf) our i.desks)
+    ?.  =(%live liv.dom.den)
+      %-  (trace 2 |.("{<i.desks>} is not live"))
+      $(desks t.desks)
+    =^  res  den  (aver:den ~ %x da+now /desk/seal)
+    =.  ruf  +:abet:den
+    ?.  ?=([~ ~ *] res)
+      ::REVIEW  block instead?
+      ~&  [%clay %no-seal-in i.desks]
+      $(desks t.desks)
+    =/  mis=(list perm:gall)
+      ::REVIEW  is it ok to depend on this always being equal to lac.dom.den?
+      %+  skip
+        ~|  [%reading-seal i.desks]
+        +:!<(seal q.u.u.res)
+      (cury have:gall pes.dom.den)
+    ?.  =(~ mis)
+      %-  mean
+      :~  leaf+"clay: run |okay {<i.desks>} to review permissions"
+          :-  %leaf
+          "clay: missing {(a-co:co (lent mis))}".
+          " permissions to set {<i.desks>} live"
+      ==
+    =^  rest  ..abet  $(desks t.desks)
+    [[[i.desks pes.dom.den] rest] ..abet]
+  ::  +sats: produce list of [desk bill], update ford cache
+  ::
+  ++  sats
+    =/  desks=(list desk)  ~(tap in ~(key by dos.rom))
       |-  ^-  [(list [desk bill]) _..abet]
       ?~  desks
         [~ ..abet]
@@ -4712,21 +4966,6 @@
           "{<i.desks>} has bill {<bill>} and rein {<ren.dom.den>}, so {<rid>}"
       =^  sats  ..abet  $(desks t.desks)
       [[[i.desks rid] sats] ..abet]
-    ::
-    =.  sat  (apply-precedence sat)
-    =+  ?:  (lth veb.bug 1)  ~
-        %.  ~  %-  slog
-        %+  turn  sat
-        |=  [=desk =bill]
-        leaf+"goad: output: {<desk>}: {<bill>}"
-    =^  agents  ..abet  (build-agents sat)
-    ::  TODO: enable if we can reduce memory usage
-    ::
-    ::  =.  ..abet
-    ::    (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
-    ::
-    =.  ..abet  tare                                    ::  [tare] >
-    (emit hen %pass /lu/load %g %load agents)
   ::  +override: apply rein to bill
   ::
   ++  override
@@ -4776,15 +5015,15 @@
   ::
   ++  build-agents
     |=  sat=(list [=desk =bill])
-    ^-  [load:gall _..abet]
-    =|  lad=load:gall
-    |-  ^-  [load:gall _..abet]
+    ^+  [dudes:*load:gall ..abet]
+    =/  lad  dudes:*load:gall
+    |-  ^+  [dudes:*load:gall ..abet]
     ?~  sat
       [lad ..abet]
     =/  f  (ford our desk.i.sat ~)
-    =^  new=load:gall  ..abet
+    =^  new=_dudes:*load:gall  ..abet
       %-  wrap  :^  our  desk.i.sat  ~
-      |-  ^-  [load:gall state:ford:fusion]
+      |-  ^-  [_dudes:*load:gall state:ford:fusion]
       ?~  bill.i.sat
         [~ nub.f]
       =^  =vase  nub.f
@@ -4848,7 +5087,9 @@
     ^-  rock:tire
     %-  ~(run by dos.rom)
     |=  =dojo
-    [liv.dom.dojo ~(key by wic.dom.dojo)]
+    ^-  belt:tire
+    =,  dom.dojo
+    [liv pes ask ~(key by wic) ?~(cop.dom.dojo ~ mis.u.cop) lac]
   ::
   ::  [tare] Must be called any time the zest or commits-in-waiting
   ::  might have changed for a desk.  +goad calls this uncondtionally,
@@ -4887,7 +5128,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%15                                       ::  vane version
+    $:  ver=%16                                       ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
@@ -5099,6 +5340,19 @@
       abet:(perm:den pax.req rit.req)
     [mos ..^$]
   ::
+      %hope
+    =^  mos  ruf
+      =/  den  ((de now rof hen ruf) our des.req)
+      abet:(set-hope:den pes.req)
+    [mos ..^$]
+  ::
+      %curb
+    =^  m1  ruf
+      =/  den  ((de now rof hen ruf) our des.req)
+      abet:(set-curb:den pes.req)
+    =^  m2  ruf  abet:goad:(lu now rof hen ruf)
+    [(weld m1 m2) ..^$]
+  ::
       %rein
     =^  m1  ruf
       =/  den  ((de now rof hen ruf) our des.req)
@@ -5254,10 +5508,11 @@
     ==
   ==
 ::
-++  load
+++  load  !:
   =>  |%
       +$  raft-any
-        $%  [%15 raft-15]
+        $%  [%16 raft-16]
+            [%15 raft-15]
             [%14 raft-14]
             [%13 raft-13]
             [%12 raft-12]
@@ -5267,6 +5522,64 @@
             [%8 raft-8]
             [%7 raft-7]
             [%6 raft-6]
+        ==
+      ::  We redefine the latest raft with * for the ford caches.
+      ::  +clear-cache upgrades to +raft
+      ::
+      +$  raft-16
+        $+  raft-16
+        $:  rom=room-16
+            hoy=(map ship rung-16)
+            ran=rang
+            fad=*
+            mon=(map term beam)
+            hez=(unit duct)
+            cez=(map @ta crew)
+            tyr=(set duct)
+            tur=rock:tire
+            pud=(unit [=desk =yoki])
+            sad=(map ship @da)
+            bug=[veb=@ mas=@]
+        ==
+      +$  room-16
+        $:  hun=duct
+            dos=(map desk dojo-16)
+        ==
+      +$  rung-16
+        $:  rus=(map desk rede-16)
+        ==
+      +$  rede-16
+        $:  lim=@da
+            ref=(unit rind)
+            qyx=cult
+            dom=dome-16
+            per=regs
+            pew=regs
+            fiz=melt
+        ==
+      +$  dojo-16
+        $:  qyx=cult
+            dom=dome-16
+            per=regs
+            pew=regs
+            fiz=melt
+            ese=?
+        ==
+      +$  dome-16
+        $:  let=aeon
+            hit=(map aeon tako)
+            lab=(map @tas aeon)
+            tom=(map tako norm)
+            nor=norm
+            mim=(map path mime)
+            fod=*
+            wic=(map weft yoki)
+            cop=(unit [yok=yoki mis=pers:gall])
+            lac=pers:gall
+            liv=zest
+            ren=rein
+            pes=pers:gall
+            ask=pers:gall
         ==
       +$  raft-15
         $+  raft-15
@@ -5278,7 +5591,7 @@
             hez=(unit duct)
             cez=(map @ta crew)
             tyr=(set duct)
-            tur=rock:tire
+            tur=rock-13
             pud=(unit [=desk =yoki])
             sad=(map ship @da)
             bug=[veb=@ mas=@]
@@ -5295,9 +5608,6 @@
             fiz=melt
             ese=?
         ==
-      ::  We redefine the latest raft with * for the ford caches.
-      ::  +clear-cache upgrades to +raft
-      ::
       +$  raft-14
         $+  raft-14
         $:  rom=room-13
@@ -5308,7 +5618,7 @@
             hez=(unit duct)
             cez=(map @ta crew)
             tyr=(set duct)
-            tur=rock:tire
+            tur=rock-13
             pud=(unit [=desk =yoki])
             sad=(map ship @da)
             bug=[veb=@ mas=@]
@@ -5342,10 +5652,11 @@
             hez=(unit duct)
             cez=(map @ta crew)
             tyr=(set duct)
-            tur=rock:tire
+            tur=rock-13
             pud=(unit [=desk =yoki])
             bug=[veb=@ mas=@]
         ==
+      +$  rock-13  (map desk [=zest wic=(set weft)])
       +$  room-13
         $:  hun=duct
             dos=(map desk dojo-13)
@@ -5683,7 +5994,8 @@
   =?  old  ?=(%12 -.old)  13+(raft-12-to-13 +.old)
   =?  old  ?=(%13 -.old)  14+(raft-13-to-14 +.old)
   =?  old  ?=(%14 -.old)  15+(raft-14-to-15 +.old)
-  ?>  ?=(%15 -.old)
+  =?  old  ?=(%15 -.old)  16+(raft-15-to-16 +.old)
+  ?>  ?=(%16 -.old)
   ..^^$(ruf (clear-cache +.old))
   ::
   ::  We clear the ford cache so we don't have to know how to upgrade
@@ -5691,23 +6003,24 @@
   ::  Also, many of the results would be different if zuse is different.
   ::
   ++  clear-cache
-    |=  raf=raft-15
+    |=  raf=raft-16
     ^-  raft
     %=    raf
         fad  *flow
         dos.rom
       %-  ~(run by dos.rom.raf)
-      |=  doj=dojo-15
+      |=  doj=dojo-16
       ^-  dojo
       doj(fod.dom *flue)
     ::
         hoy
       %-  ~(run by hoy.raf)
-      |=  =rung-14
-      %-  ~(run by rus.rung-14)
-      |=  =rede-14
+      |=  =rung-16
+      ^-  rung
+      %-  ~(run by rus.rung-16)
+      |=  red=rede-16
       ^-  rede
-      rede-14(dom dom.rede-14(fod *flue))
+      red(dom dom.red(fod *flue))
     ==
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
   ::
@@ -5940,8 +6253,8 @@
       rof(dos.rom (~(jab by dos.rom.rof) %base |=(d=dojo-13 d(liv.dom %live))))
     ^-  raft-13
     %=  raf
-      dos.rom  (~(run by dos.rom.raf) dojo-11-to-13)
-      hoy      (~(run by hoy.raf) rung-11-to-13)
+      dos.rom  `(map desk dojo-13)`(~(run by dos.rom.raf) dojo-11-to-13)
+      hoy      `(map ship rung-13)`(~(run by hoy.raf) rung-11-to-13)
       |6       [&7.raf ~ ~ |7.raf]
     ==
     ::
@@ -6006,6 +6319,45 @@
       |=  d=dojo-13
       d(fiz [fiz.d ese=%.y])
     ==
+  ::  +raft-15-to-16:
+  ::
+  ::    add .cop, .lac, .pes and .ask to $dome
+  ::    add $belt:tire to $rock:tire with .pes, .ask, .cop and .lac
+  ::
+  ++  raft-15-to-16
+    |=  raf=raft-15
+    |^  ^-  raft-16
+        %=  raf
+          dos.rom  (~(run by dos.rom.raf) dojo-15-to-16)
+          hoy      (~(run by hoy.raf) rung-14-to-16)
+          tur      (~(run by tur.raf) belt-13-to-16)
+        ==
+    ::
+    ++  dojo-15-to-16
+      |=  doj=dojo-15
+      ^-  dojo-16
+      doj(dom (dome-13-to-16 dom.doj))
+    ::
+    ++  rung-14-to-16
+      |=  rug=rung-14
+      ^-  rung-16
+      rug(rus (~(run by rus.rug) rede-14-to-16))
+    ::
+    ++  rede-14-to-16
+      |=  red=rede-14
+      ^-  rede-16
+      red(dom (dome-13-to-16 dom.red))
+    ::
+    ++  dome-13-to-16
+      |=  dom=dome-13
+      ^-  dome-16
+      dom(|8 [cop=~ lac=~ &9.dom |9.dom(ren [ren.dom pes=~ ask=~])])
+    ::
+    ++  belt-13-to-16
+      |=  [=zest wic=(set weft)]
+      ^-  belt:tire
+      [zest=zest pes=~ ask=~ wic=wic cop=~ lac=~]
+    --
   --
 ::
 ++  scry                                              ::  inspect
@@ -6073,36 +6425,49 @@
     ?~  path
       ~
     ?+    i.path  ~
-        %sweep  ``[%sweep !>(sweep)]
-        %rang   ``[%rang !>(ran.ruf)]
-        %tomb   ``[%flag !>((tomb t.path))]
-        %cult   ``[%cult !>((cult t.path))]
-        %esse   (esse t.path)
-        %flow   ``[%flow !>(fad.ruf)]
-        %domes  domes
-        %tire   ``[%tire !>(tore:(lu now rof *duct ruf))]
-        %tyre   ``[%tyre !>(tyr.ruf)]
+        %sweep   ``[%sweep !>(sweep)]
+        %rang    ``[%rang !>(ran.ruf)]
+        %tomb    ``[%flag !>((tomb t.path))]
+        %tire    ``[%tire !>(tore:(lu now rof *duct ruf))]
+        %tyre    ``[%tyre !>(tyr.ruf)]
+        %domes   (domes t.path)
+        %loams   (loams t.path)
+        %dudes   (dudes t.path)
+        %esse    (esse t.path)
+        %cult    ``[%cult !>((cult t.path))]
+        %flow    ``[%flow !>(fad.ruf)]
     ==
   ::
   ++  domes
+    |=  =path
     =/  domes
       %-  ~(gas by *cone)
       %+  turn  ~(tap by dos.rom.ruf)
       |=  [=desk =dojo]
       [[our desk] dom.dojo]
-    =.  domes
-      %-  ~(uni by domes)
-      %-  ~(gas by *cone)
-      ^-  (list [[ship desk] dome])
-      %-  zing
-      ^-  (list (list [[ship desk] dome]))
-      %+  turn  ~(tap by hoy.ruf)
-      |=  [=ship =rung]
-      ^-  (list [[^ship desk] dome])
-      %+  turn  ~(tap by rus.rung)
-      |=  [=desk =rede]
-      [[ship desk] dom.rede]
-    ``[%domes !>(`cone`domes)]
+    ::
+    ::TODO: are the ~ and [~ ~] returns here correct?
+    ?+  path  [~ ~]
+        [@tas ~]
+      =/  dum=(unit dome)  (~(get by domes) [our i.path])
+      ?~  dum  ~
+      ``[%dome !>(u.dum)]
+    ::
+        ~
+      =.  domes
+        %-  ~(uni by domes)
+        %-  ~(gas by *cone)
+        ^-  (list [[ship desk] dome])
+        %-  zing
+        ^-  (list (list [[ship desk] dome]))
+        %+  turn  ~(tap by hoy.ruf)
+        |=  [=ship =rung]
+        ^-  (list [[^ship desk] dome])
+        %+  turn  ~(tap by rus.rung)
+        |=  [=desk =rede]
+        [[ship desk] dom.rede]
+      ``[%domes !>(`cone`domes)]
+    ==
   ::
   ++  cult
     |=  =path
@@ -6195,6 +6560,61 @@
     ?:  =(need have)
       ~
     `u=[need have leak]
+  ::
+  ::TODO: refactor to use +domes?
+  ++  loams
+    |=  =path
+    =/  =hone
+      %-  ~(gas by *hone)
+      %+  turn  ~(tap by dos.rom.ruf)
+      |=  [=desk =dojo]
+      =,  dom.dojo
+      =/  cop=pers:gall  ?~(cop.dom.dojo ~ mis.u.cop)
+      [desk tom nor liv ren pes cop]
+    ::TODO: are the ~ and [~ ~] returns correct?
+    ?+  path  [~ ~]
+        ~
+      ``[%loams !>(hone)]
+    ::
+        [@tas ~]
+      =/  lum=(unit loam)  (~(get by hone) i.path)
+      ?~  lum  ~
+      ``[%loam !>(`loam`u.lum)]
+    ==
+  ::
+  ++  dudes
+    |=  =path
+    =/  duds=(list [=desk =(list dude:gall)])
+      -:sats:(lu now rof ~ ruf)
+    ::TODO: are the ~ and [~ ~] returns correct?
+    ?+  path  [~ ~]
+        ~
+      ``[%dudes !>(`(list [=desk (list dude:gall)])`duds)]
+    ::
+        [@tas ~]
+      =/  dul=(unit (list dude:gall))
+        (~(get by (~(gas by *(map desk (list dude:gall))) duds)) i.path)
+      ?~  dul  ~
+      ``[%dude !>(`(list dude:gall)`u.dul)]
+    ==
+  ::
+    ::TODO  clean up as needed
+    :: ++  visas
+    ::   |=  =path
+    ::   =/  visas=(list [=desk (set perm:gall)])
+    ::     -:pers:(lu now rof ~ ruf)
+    ::   ::
+    ::   ::TODO: are the ~ and [~ ~] returns correct?
+    ::   ?+  path  [~ ~]
+    ::       ~
+    ::     ``[%visas !>(visas)]
+    ::   ::
+    ::       [@tas ~]
+    ::     =/  vus=(unit (set perm:gall))
+    ::       (~(get by (~(gas by *(map desk (set perm:gall))) visas)) i.path)
+    ::     ?~  vus  ~
+    ::     ``[%visa !>(`(set perm:gall)`u.vus)]
+    ::   ==
   --
 ::
 ::  We clear the ford cache by replacing it with its bunt as a literal,
@@ -6210,7 +6630,7 @@
   =/  flo  ~
   =+  `flow`flo
   :-  ver
-  ^-  raft-15:load
+  ^-  raft-16:load
   %=    ruf
       fad  flo
       dos.rom
@@ -6297,6 +6717,13 @@
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our %base)
       abet:(take-wick:den error.hin)
+    [mos ..^$]
+  ::
+  ?:  ?=([%weck @ ~] tea)
+    ?>  ?=(%wake +<.hin)
+    =^  mos  ruf
+      =/  den  ((de now rof hen ruf) our i.t.tea)
+      abet:(take-weck:den error.hin)
     [mos ..^$]
   ::
   ?:  ?=([%foreign-warp *] tea)

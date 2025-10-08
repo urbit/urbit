@@ -353,6 +353,10 @@
   =/  dez=(list desk)  ~(tap in desks)
   |-  ^+  ..on-init
   ?~  dez  ..on-init
+  =/  sep=path  /(scot %p our)/[i.dez]/(scot %da now)/desk/seal
+  =?  ..on-init  .^(? %cu sep)
+    =/  pes=pers:gall  (sy +:.^([%0 (list perm:gall)] %cx sep))
+    (emit %pass /kiln/init-curb %arvo %c %curb i.dez pes)
   =.  ..on-init
     (emit %pass /kiln/init-zest %arvo %c %zest i.dez %live)
   =.  ..on-init
@@ -531,11 +535,11 @@
     :^  ~  ~  %kiln-pikes
     !>  ^-  pikes
     %-  ~(urn by rock)
-    |=  [=desk =zest wic=(set weft)]
+    |=  [=desk =belt:tire]
     ^-  pike
     =+  .^(hash=@uv %cz /(scot %p our)/[desk]/(scot %da now))
     =/  sync  (~(get by sources) desk)
-    [sync hash zest wic]
+    [sync hash belt]
   ::
       [%x %kiln %pending ~]
     :^  ~  ~  %kiln-sync-update
@@ -643,7 +647,7 @@
   %-  emil
   =/  desks=(list [=desk =zest])
     %+  murn  ~(tap by rock)
-    |=  [=desk =zest wic=(set weft)]
+    |=  [=desk belt:tire]
     ?:  |(=(%base desk) !?=(%live zest) (~(has in wic) kel))
       ~
     `u=[desk %held]
@@ -774,7 +778,11 @@
     =.  ..abet  abet:drop:(sync loc u.got)
     ..abet(zyn (~(del by zyn) loc u.got))
   =?  ..abet  ?=(%dead zest)
-    (emit %pass /kiln/install %arvo %c %zest loc ?:(=(our her) %live %held))
+    ::  we want to set the desk to %live, but this may not succeed right away.
+    ::  setting the desk to %held makes clay set it to %live as soon as it can,
+    ::  without crashing the current event if it can't right now.
+    ::
+    (emit %pass /kiln/install %arvo %c %zest loc %held)
   ?:  (~(has by zyn) loc her rem)
     abet:(spam (render "already syncing" loc her rem ~) ~)
   ?:  =([our loc] [her rem])

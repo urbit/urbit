@@ -5,8 +5,7 @@
 +$  pike
   $:  sync=(unit [=ship =desk])
       hash=@uv
-      =zest
-      wic=(set weft)
+      belt:tire
   ==
 ::
 +$  pikes  (map desk pike)
@@ -45,6 +44,7 @@
       [%pending pending=(set [for=sync-record rev=@ud])]
   ==
 ::
++$  seal        (list perm:gall)
 +$  sink        (unit [her=@p sud=desk kid=(unit desk) let=@ud])
 ::  +truncate-hash: get last 5 digits of hash and convert to tape
 ::
@@ -84,7 +84,7 @@
       ?:  |(=(a %base) =(b %kids))  |
       (aor b a)
     |=(syd=@tas (report-vat prep our now syd verb))
-  =/  deks=(list [=desk =zest wic=(set weft)])
+  =/  deks=(list [=desk =belt:tire])
     ?~  desks
       %+  sort  ~(tap by tyr.prep)
       |=  [[a=desk *] [b=desk *]]
@@ -93,7 +93,7 @@
       (aor b a)
     %+  murn  (flop desks)
     |=  des=desk
-    ^-  (unit [=desk =zest wic=(set weft)])
+    ^-  (unit [=desk =belt:tire])
     ?~  got=(~(get by tyr.prep) des)
       ~
     `[des u.got]
@@ -111,11 +111,11 @@
       %+  sort
         ^-  (list desk)
         %+  murn  deks
-        |=  [=desk =zest wic=(set weft)]
+        |=  [=desk =belt:tire]
         ^-  (unit ^desk)
-        ?.  =(%live zest)
+        ?.  =(%live zest.belt)
           ~
-        ?:  (~(has in wic) u.base-weft)
+        ?:  (~(has in wic.belt) u.base-weft)
           ~
         `desk
       aor
@@ -142,13 +142,13 @@
     ::
         %running
       %+  skim  deks
-      |=([* [zest=@tas *]] =(zest %live))
+      |=([* =belt:tire] =(zest.belt %live))
     ::
         %suspended
       %+  skip  deks
-      |=  [syd=@tas [zest=@tas *]]
+      |=  [syd=@tas =belt:tire]
       ?|  =(syd %kids)
-          =(zest %live)
+          =(zest.belt %live)
           ?~  got=(~(get by cone.prep) our syd)
             &
           =(0 let.u.got)
@@ -203,9 +203,18 @@
     ?-  zest.dek
       %live  'running'
       %dead  'suspended'
-      %held  'suspended until next update'
+      ::
+        %held
+      ?.  =(~ lac.dek)
+        'suspended until permissions are granted'
+      ?:  =(~ cop.dek)
+        'suspended until next update'
+      'suspended until next update, needs new permissions'
     ==
   =/  kul=cord  (print-wefts (waft-to-wefts waft))
+  =/  pen=cord
+    ?:  =(~ cop.dek)  (print-wefts wic.dek)
+    (rap 3 '[%awaiting-perms ' (print-wefts (waft-to-wefts waft)) ']' ~)
   =/  ese=cord
     ?:(.^(? %cx /[ego]//[wen]/esse/[syd]) 'yes' 'no')
   =/  pax=path  /(scot %p our)/[syd]/(scot %da now)
@@ -215,7 +224,7 @@
         ?.  exist  '  /desk/bill:             missing'
         =+  .^(dudes=(list dude:gall) cx+(weld pax /desk/bill))
         (cat 3 '  /desk/bill:             ' (crip "{<dudes>}"))
-        (cat 3 '  pending updates:        ' (print-wefts wic.dek))
+        (cat 3 '  pending updates:        ' pen)
         (cat 3 '  source ship:            ' ?~(sink '~' (scot %p her.u.sink)))
         (cat 3 '  app status:             ' sat)
         (cat 3 '  essential desk:         ' ese)
@@ -233,7 +242,9 @@
       [on [dude of]]
     [(sort on aor) (sort of aor)]
   :~  '::'
-      (cat 3 '  pending updates:  ' (print-wefts wic.dek))
+      (cat 3 '  pending updates:  ' pen)
+      (cat 3 '  awaiting perms:   ' (crip =+(~(wyt in cop.dek) ?:(=(0 -) "~" (a-co:co -)))))
+      (cat 3 '  missing perms:    ' (crip =+(~(wyt in lac.dek) ?:(=(0 -) "~" (a-co:co -)))))
       %^  cat  3  '  kids desk:        '  ?~  sink  '~'
                                           ?~  kid.u.sink  '~'
                                           (cat 3 '%' u.kid.u.sink)
@@ -309,9 +320,9 @@
   (cat 3 '%kids %cz hash:     ' (scot %uv hash))
 ::  +read-bill-foreign: read /desk/bill from a foreign desk
 ::
-++  read-bill-foreign
-  |=  [=ship =desk =aeon]
-  ^-  (list dude)
+++  read-foreign
+  |*  [=ship =desk =aeon =path =mold easy=*]
+  ^-  mold
   ~|  +<
   =/  her  (scot %p ship)
   =/  syd  (scot %tas desk)
@@ -321,11 +332,17 @@
   =/  tak  ~|  aeons=~(key by hit.dom)
            (scot %uv (~(got by hit.dom) aeon))
   =/  yak  .^(yaki cs/~[her syd yon %yaki tak])
-  =/  fil  (~(get by q.yak) /desk/bill)
-  ?~  fil  ~
+  =/  fil  (~(get by q.yak) path)
+  ?~  fil  easy
   =/  lob  (scot %uv u.fil)
   =/  peg  .^(page cs/~[her syd yon %blob lob])
-  ;;((list dude) q.peg)
+  ;;(mold q.peg)
+::  +read-bill-foreign: read /desk/bill from a foreign desk
+::
+++  read-bill-foreign
+  |=  [=ship =desk =aeon]
+  ^-  (list dude)
+  (read-foreign ship desk aeon /desk/bill (list dude) ~)
 ::  +read-bill: read contents of /desk/bill manifest
 ::
 ++  read-bill
@@ -334,6 +351,20 @@
   ?.  .^(? cu/pax)
     *(list dude)
   .^((list dude) cx/pax)
+::  +read-seal-foreign: read /desk/seal from a foreign desk
+::
+++  read-seal-foreign
+  |=  [=ship =desk =aeon]
+  ^-  seal
+  (read-foreign ship desk aeon /desk/seal seal *seal)
+::  +read-seal: read contents of /desk/seal manifest
+::
+++  read-seal
+  |=  [our=ship =desk now=@da]
+  =/  pax  (en-beam [our desk da+now] /desk/seal)
+  ?.  .^(? cu/pax)
+    *seal
+  .^(seal cx/pax)
 ::
 ++  get-remote-diff
   |=  [our=ship here=desk now=@da her=ship there=desk when=aeon]
@@ -397,5 +428,47 @@
     :~  aeon+(numb aeon.r)
         weft+(weft weft.r)
     ==
+  ::
+  ++  perm
+    |=  p=perm:gall
+    %-  pairs
+    =/  mote  |=(u=(unit @) ?~(u ~ s+u.u))
+    =/  burr  |=(b=burr:gall [desk+(mote desk.b) spur+(path spur.b) ~])
+    =/  spar  |=(s=spar:gall [care+(mote care.s) (burr +.s)])
+    ?+  p  [vane+s+-.p what+s+`@`?@(+.p +.p +<.p) ~]
+        [%super ~]
+      [what+s+'super' ~]
+    ::
+        [%write *]
+      [what+s+-.p jump+b+jump.p dude+s+`@`dude.p ~]
+    ::
+        [%watch *]
+      [what+s+-.p jump+b+jump.p dude+s+`@`dude.p path+(path path.p) ~]
+    ::
+        [%reads *]
+      [what+s+-.p vane+s+vane.p (spar +>.p)]
+    ::
+        [%raids *]
+      [what+s+-.p ship+?~(ship.p s+'any' (ship u.ship.p)) path+(path path.p) ~]
+    ::
+        [%press *]
+      [what+s+-.p spur+(path spur.p) ~]
+    ::
+        [%coops *]
+      [what+s+-.p ~]
+    ::
+        [%clay ?(%label %perms %liven) *]
+      [vane+s+-.p what+s++<.p desk+(mote +>.p) ~]
+    ::
+        [%clay %write *]
+      [vane+s+-.p what+s++<.p (burr +>.p)]
+    ::
+        [%clay ?(%local %peers) *]
+      [vane+s+-.p what+s++<.p (spar +>.p)]
+    ::
+        [%gall %clear *]
+      [vane+s+-.p what+s++<.p dude+(mote +>.p) ~]
+    ==
+  ::
   --
 --

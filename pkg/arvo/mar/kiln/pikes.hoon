@@ -4,7 +4,7 @@
 ++  grow
   |%
   ++  noun  pikes
-  ++  json  
+  ++  json
     =,  enjs:format
     %-  pairs
     %+  turn  ~(tap by pikes)
@@ -15,6 +15,8 @@
         hash/s/(scot %uv hash.pike)
         zest/s/zest.pike
         wefts/a/(turn ~(tap in wic.pike) weft:enjs:h)
+        perms/a/(turn ~(tap in pes.pike) perm:enjs:h)
+        lacks/a/(turn ~(tap in cop.pike) perm:enjs:h)
     ==
   --
 ++  grab

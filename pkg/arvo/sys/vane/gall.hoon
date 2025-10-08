@@ -10,6 +10,7 @@
   ::  TODO: add more flags?
   ::
   :*  odd=`?`%.n  ::  unusual events
+      pes=`?`%.n  ::  permission failures
   ==
 =,  gall
 =>
@@ -42,9 +43,9 @@
 ::  $move: Arvo-level move
 ::
 +$  move  [=duct move=(wind note-arvo gift-arvo)]
-::  $state-17: overall gall state, versioned
+::  $state-18: overall gall state, versioned
 ::
-+$  state-17  [%17 state]
++$  state-18  [%18 state]
 ::  $state: overall gall state
 ::
 ::    system-duct: TODO document
@@ -52,6 +53,8 @@
 ::    contacts: other ships we're in communication with
 ::    yokes: running agents
 ::    blocked: moves to agents that haven't been started yet
+::    perms: per-desk permissions
+::    wards: permission diff subscribers
 ::    bug: debug printing configuration
 ::    leaves: retry nacked %leaves timer, if set
 ::
@@ -60,8 +63,10 @@
   $:  system-duct=duct
       outstanding=(map [wire duct] (qeu remote-request))
       contacts=(set ship)
-      yokes=(map term yoke)
-      blocked=(map term (qeu blocked-move))
+      yokes=(map dude yoke)
+      blocked=(map dude (qeu blocked-move))
+      perms=(jug desk perm)
+      wards=(set duct)
       =bug
       leaves=(unit [=duct =wire date=@da])
   ==
@@ -385,17 +390,18 @@
   $:  system-duct=duct
       outstanding=(map [wire duct] (qeu remote-request))
       contacts=(set ship)
-      eggs=(map term egg)
-      blocked=(map term (qeu blocked-move))
+      eggs=(map dude egg)
+      blocked=(map dude (qeu blocked-move))
+      perms=(jug desk perm)
+      wards=(set duct)
       =bug
       leaves=(unit [=duct =wire date=@da])
   ==
-+$  spore-17  [%17 spore]
-+$  spore-16  [%16 spore]  ::  XX avoids having to support a %17 egg-any
++$  spore-18  [%18 spore]
 --
 ::  adult gall vane interface, for type compatibility with pupa
 ::
-=|  state=state-17
+=|  state=state-18
 |=  [now=@da eny=@uvJ rof=roof]
 =*  gall-payload  .
 ~%  %gall-top  ..part  ~
@@ -442,14 +448,6 @@
       mo-core
     =.  mo-core  (mo-pass i.list)
     $(list t.list)
-  ::  +mo-jolt: (re)start agent
-  ::
-  ++  mo-jolt
-    |=  [dap=term =ship =desk]
-    ^+  mo-core
-    =/  =wire  /sys/cor/[dap]/(scot %p ship)/[desk]
-    ..mo-core
-    ::  XX  (mo-pass wire %c %jolt dap ship desk)
   ::  +mo-doff: kill all outgoing subscriptions
   ::
   ++  mo-doff
@@ -525,7 +523,9 @@
         mo-core
       ::
       =.  yokes.state
-        (~(put by yokes.state) dap u.yak(beak bek, code agent))
+        %+  ~(put by yokes.state)
+          dap
+        u.yak(beak bek, code agent)
       =/  ap-core  (ap-abed:ap dap [~ our prov])
       =.  ap-core  (ap-reinstall:ap-core agent)
       =.  mo-core  ap-abet:ap-core
@@ -999,28 +999,78 @@
       |=  plot
       (fall (clap bob (bind (ram:on-path fan) head) max) 0)
     ~(tap-hutch of-farm sky.yoke)
+  ::  +mo-ward: add permission notification subsciber
+  ::
+  ++  mo-ward
+    mo-core(wards.state (~(put in wards.state) hen))
+  ::  +mo-wink: remove permission notification subscriber
+  ::
+  ++  mo-wink
+    mo-core(wards.state (~(del in wards.state) hen))
   ::  +mo-load: install agents
   ::
   ++  mo-load
-    |=  [prov=path agents=(list [=dude =beak =agent])]
-    =.  mo-core
-      |-  ^+  mo-core
-      ?~  agents  mo-core
-      =/  [=dude =desk]  [dude q.beak]:i.agents
-      ::  ~>  %slog.0^leaf/"gall: starting {<dude>} on {<desk>}"
-      $(agents t.agents, mo-core (mo-receive-core prov i.agents))
+    |=  [prov=path ^load]
+    ::  calculate new permission state, and the diff
     ::
-    =/  kil
-      =/  lol
-        (skim ~(tap by yokes.state) |=([* y=yoke] &(?=(%live -.y) -.agent.y)))
-      =/  mol  (~(gas by *(map term yoke)) lol)
-      =/  sol  ~(key by mol)
-      =/  new  (silt (turn agents head))
-      ~(tap in (~(dif in sol) new))
-    |-  ^+  mo-core
-    ?~  kil  mo-core
-    ~>  %slog.0^leaf/"gall: stopping {<i.kil>}"
-    $(kil t.kil, mo-core (mo-idle prov i.kil))
+    =/  new-perms=(jug desk perm)
+      (~(gas by *(jug desk perm)) perms)
+    ::
+    =/  pes-dif=(list [=desk free=(set perm) lock=(set perm)])
+      =/  desks=(list desk)
+        ~(tap in (~(uni in ~(key by perms.state)) ~(key by new-perms)))
+      |-
+      ?~  desks  ~
+      =/  old  (~(get ju perms.state) i.desks)
+      =/  new  (~(get ju new-perms) i.desks)
+      :_  $(desks t.desks)
+      :*  i.desks
+          (~(dif in new) old)
+          (~(dif in old) new)
+      ==
+    ::  before updating permission state, we shut down agents that need to
+    ::  be stopped, to avoid +on-save running with inappropriate permissions
+    ::
+    =.  mo-core
+      =/  kil
+        =/  lol
+          (skim ~(tap by yokes.state) |=([* y=yoke] &(?=(%live -.y) -.agent.y)))
+        =/  mol  (~(gas by *(map term yoke)) lol)
+        =/  sol  ~(key by mol)
+        =/  new  (silt (turn dudes head))
+        ~(tap in (~(dif in sol) new))
+      |-  ^+  mo-core
+      ?~  kil  mo-core
+      ~>  %slog.0^leaf/"gall: stopping {<i.kil>}"
+      $(kil t.kil, mo-core (mo-idle prov i.kil))
+    ::  we must update permissions before re/loading & killing agents,
+    ::  to ensure that new agents aren't run with old permissions
+    ::
+    =.  perms.state  new-perms
+    ::
+    =.  mo-core
+      =;  agencies=(jug desk dude)
+        |-  ^+  mo-core
+        ?~  dudes  mo-core
+        =/  [=dude =desk]  [dude q.beak]:i.dudes
+        ::  ~>  %slog.0^leaf/"gall: starting {<dude>} on {<desk>}"
+        $(dudes t.dudes, mo-core (mo-receive-core prov i.dudes))
+      %+  roll  %+  turn  dudes
+                |=  [=dude =beak =agent]
+                [q.beak dude]
+      |=  [a=[desk dude] b=(jug desk dude)]
+      (~(put ju b) a)
+    ::  lastly notify about the permission change, which would reach agents
+    ::  only after all of the above anyway
+    ::
+    =/  dux=(list duct)
+      ~(tap in wards.state)
+    |-
+    ?~  dux  mo-core
+    |-
+    ?~  pes-dif  ^$(dux t.dux)
+    =.  mo-core  (mo-give(hen i.dux) %perm i.pes-dif)
+    $(pes-dif t.pes-dif)
   ::
   ++  mo-authorized-coop
     |=  [lyc=(set ship) =farm dap=term =path =coop]
@@ -1206,6 +1256,7 @@
       ^+  veb.bug.state
       ?-  verb
         %odd  acc(odd %.y)
+        %pes  acc(pes %.y)
       ==
     mo-core
   ::  +mo-sift: handle request to filter debug output by agent
@@ -1811,6 +1862,8 @@
               eny=eny.stats.yoke                      ::  nonce
               now=time.stats.yoke                     ::  time
               byk=beak.yoke                           ::  source
+          ==                                          ::
+          :*  pes=(~(get ju perms.state) q.beak.yoke) ::  permissions
       ==  ==
     ::  +ap-reinstall: reinstall.
     ::
@@ -1849,7 +1902,7 @@
       =/  incoming   [ship.attributing.agent-routes pax]
       =.  bitt.yoke  (~(put by bitt.yoke) agent-duct incoming)
       =^  maybe-tang  ap-core
-        %+  ap-ingest  %watch-ack  |.
+        %+  ap-ingest  %watch  |.
         (on-watch:ap-agent-core pax)
       ?^  maybe-tang
         ap-silent-delete
@@ -1861,7 +1914,7 @@
       |=  =cage
       ^+  ap-core
       =^  maybe-tang  ap-core
-        %+  ap-ingest  %poke-ack  |.
+        %+  ap-ingest  %poke  |.
         (on-poke:ap-agent-core cage)
       ap-core
     ::  +ap-error: pour error.
@@ -1871,8 +1924,10 @@
       ^+  ap-core
       =/  form  |=(=tank [%rose [~ "! " ~] tank ~])
       =^  maybe-tang  ap-core
-        %+  ap-ingest  ~  |.
+        %+  ap-ingest  %fail  |.
         (on-fail:ap-agent-core term (turn tang form))
+      ?~  maybe-tang  ap-core
+      %-  (slog (cat 3 agent-name ': +on-fail crashed:') u.maybe-tang)
       ap-core
     ::  +ap-generic-take: generic take.
     ::
@@ -2060,7 +2115,7 @@
       ^-  [(unit tang) _ap-core]
       ::
       =^  maybe-tang  ap-core
-        %+  ap-ingest  ~
+        %+  ap-ingest  %load
         ?~  maybe-vase
           |.  on-init:ap-agent-core
         |.  (on-load:ap-agent-core u.maybe-vase)
@@ -2206,7 +2261,7 @@
     ++  ap-mule
       |=  run=_^?(|.(*step:agent))
       ^-  (each step:agent tang)
-      =/  res  (mock [run %9 2 %0 1] (look rof [~ ~] /gall/[agent-name]))
+      =/  res  (mock [run %9 2 %0 1] (ap-look rof [~ ~]))
       ?-  -.res
         %0  [%& !<(step:agent [-:!>(*step:agent) p.res])]
         %1  [%| (smyt ;;(path p.res)) ~]
@@ -2217,22 +2272,61 @@
     ++  ap-mule-peek
       |=  run=_^?(|.(*(unit (unit cage))))
       ^-  (each (unit (unit cage)) tang)
-      =/  res  (mock [run %9 2 %0 1] (look rof [~ ~] /gall/[agent-name]))
+      =/  res  (mock [run %9 2 %0 1] (ap-look rof [~ ~]))
       ?-  -.res
         %0  [%& !<((unit (unit cage)) [-:!>(*(unit (unit cage))) p.res])]
         %1  [%| (smyt ;;(path p.res)) ~]
         %2  [%| p.res]
       ==
-    ::  +ap-ingest: call agent arm
+    ::  +ap-look: namespace lookup with permission check
     ::
-    ::    Handle acks here because they need to be emitted before the
+    ++  ap-look
+      |=  [rof=roof lyc=gang]
+      =;  rov=roof
+        (look rov lyc /gall/[agent-name])
+      ?:  =(%base q.beak.yoke)  rof
+      |=  [lyc=gang pov=path vis=view bem=beam]
+      ^-  (unit (unit (cask vase)))
+      ?.  (rite our [vis bem] (~(get ju perms.state) q.beak.yoke))
+        =/  sef=tape  "%{(trip q.beak.yoke)}/{(trip agent-name)}"
+        =/  tar=tape  "{<vis>} {(spud (en-beam bem))}"
+        ::TODO PERM  replace the rof arg below with ~ to start enforcing
+        %.  (rof lyc pov vis bem)
+        %+  trace  pes.veb.bug.state
+        [leaf+"insufficient permission: {sef} scrying for {tar}" ~]
+      (rof lyc pov vis bem)
+    ::  +ap-ingest: call agent arm, check perms, emit result
+    ::
+    ::    Sends acks from here because they need to be emitted before the
     ::    rest of the moves.
     ::
     ++  ap-ingest
-      |=  [ack=?(%poke-ack %watch-ack ~) run=_^?(|.(*step:agent))]
+      |=  [for=?(%poke %watch %fail %load ~) run=_^?(|.(*step:agent))]
       ^-  [(unit tang) _ap-core]
       =/  result  (ap-mule run)
-      =^  new-moves  ap-core  (ap-handle-result result)
+      =/  forbad=(unit tang)
+        ?:  ?=(%| -.result)  ~
+        ::TODO PERM  _produce_ the +ap-douane output to start enforcing
+        =+  b=(ap-douane -.p.result)
+        ?~  b  ~
+        =/  sef=tape  "%{(trip q.beak.yoke)}/{(trip agent-name)}"
+        %.  ~
+        %+  trace  pes.veb.bug.state
+        [leaf+"{sef} violated permissions:" u.b]
+      ::  handle permission violation, except for %poke and %watch
+      ::
+      ?:  &(?=(^ forbad) !?=(?(%poke %watch) for))
+        ?+  for  !!
+          ~      [~ (ap-error %not-permitted u.forbad)]
+          %fail  [`['insufficient permission:' u.forbad] ap-core]
+          %load  (mean 'insufficient permission:' u.forbad)
+        ==
+      ::  for %poke and %watch, failure nacks back over the wire
+      ::
+      =?  result  ?=(^ forbad)
+        [%| u.forbad]
+      =^  new-moves  ap-core
+        (ap-handle-result result)
       =/  maybe-tang=(unit tang)
         ?:  ?=(%& -.result)
           ~
@@ -2241,15 +2335,49 @@
         %-  zing
         %-  turn  :_  ap-from-internal
         ^-  (list carp)
-        ?-  ack
-          ~      ~
-          %poke-ack   [%give %poke-ack maybe-tang]~
-          %watch-ack  [%give %watch-ack maybe-tang]~
+        ?+  for  ~
+          %poke   [%give %poke-ack maybe-tang]~
+          %watch  [%give %watch-ack maybe-tang]~
         ==
       ::
       =.  agent-moves
         :(weld (flop new-moves) ack-moves agent-moves)
       [maybe-tang ap-core]
+    ::  +ap-douane: describe unpermitted cards, if any
+    ::
+    ++  ap-douane
+      |=  caz=(list card:agent)
+      ^-  (unit tang)
+      =/  bad=(list [=card:agent perm=(unit perm)])
+        ?:  =(%base q.beak.yoke)  ~
+        =/  pes=(set perm)  (~(get ju perms.state) q.beak.yoke)
+        %+  murn  `(list card:agent)`(zing (turn caz rive))
+        |=  =card:agent
+        ^-  (unit [card:agent (unit perm)])
+        =/  mus  (must our card)
+        ?@  mus  ?:(mus ~ `card^~)
+        ?:  (have pes mus)  ~
+        `[card `mus]
+      ?:  =(~ bad)  ~
+      :-  ~
+      ::  put the unpermitted cards and their requirements in the tang,
+      ::  making sure to exclude actual card data to avoid huge nouns.
+      ::
+      |-  ^-  tang
+      ?~  bad  ~
+      :_  $(bad t.bad)
+      =-  ?~  perm.i.bad  >[never=-]<
+          >[need=u.perm.i.bad for=-]<
+      =/  =card:agent  card.i.bad
+      |-
+      ?-  -.card
+        %pass  [%pass p.card $(card [%slip q.card])]
+        %slip  ?+  -.p.card  -.p.card
+                 %agent  p.card(task -.task.p.card)
+                 %arvo   [- +<]:+.p.card
+               ==
+        %give  [%give +<.card]  ::NOTE  shouldn't ever be forbidden
+      ==
     ::  +ap-handle-result: handle result.
     ::
     ++  ap-handle-result
@@ -2438,10 +2566,10 @@
     mo-abet
   ::
       %sear  mo-abet:(mo-filter-queue:mo-core ship.task)
-      %jolt  mo-abet:(mo-jolt:mo-core dude.task our desk.task)
-      %idle  mo-abet:(mo-idle:mo-core prov dude.task)
       %load  mo-abet:(mo-load:mo-core prov +.task)
       %nuke  mo-abet:(mo-nuke:mo-core prov dude.task)
+      %ward  mo-abet:mo-ward:mo-core
+      %wink  mo-abet:mo-wink:mo-core
       %doff  mo-abet:(mo-doff:mo-core prov +.task)
       %rake  mo-abet:(mo-rake:mo-core prov +.task)
       %lave  mo-abet:(mo-lave:mo-core prov +.task)
@@ -2464,11 +2592,12 @@
       =?  old  ?=(%14 -.old)  (spore-14-to-15 +.old)
       =?  old  ?=(%15 -.old)  (spore-15-to-16 +.old)
       =?  old  ?=(%16 -.old)  (spore-16-to-17 +.old)
-      ?>  ?=(%17 -.old)
+      =?  old  ?=(%17 -.old)  (spore-17-to-18 +.old)
+      ?>  ?=(%18 -.old)
       gall-payload(state old)
   ::
   +$  spore-any
-    $%  [%17 spore]
+    $%  [%18 spore]
         [%7 spore-7]
         [%8 spore-8]
         [%9 spore-9]
@@ -2479,8 +2608,22 @@
         [%14 spore-14]
         [%15 spore-15]
         [%16 spore-16]
+        [%17 spore-17]
     ==
-  +$  spore-16  spore
+  +$  spore-17
+    $:  system-duct=duct
+        outstanding=(map [wire duct] (qeu remote-request))
+        contacts=(set ship)
+        eggs=(map term egg)
+        blocked=(map term (qeu blocked-move))
+        bug=bug-17
+        leaves=(unit [=duct =wire date=@da])
+    ==
+  +$  bug-17
+    $:  veb=odd=?
+        dudes=(set dude)
+    ==
+  +$  spore-16  spore-17
   +$  spore-15
     $+  spore-15
     $:  system-duct=duct
@@ -2488,7 +2631,7 @@
         contacts=(set ship)
         eggs=(map term egg-15)
         blocked=(map term (qeu blocked-move))
-        =bug
+        bug=bug-17
         leaves=(unit [=duct =wire date=@da])
     ==
   +$  spore-14
@@ -2497,7 +2640,7 @@
         contacts=(set ship)
         eggs=(map term egg-15)
         blocked=(map term (qeu blocked-move))
-        =bug
+        bug=bug-17
     ==
   ::
   +$  spore-13
@@ -2506,7 +2649,7 @@
         contacts=(set ship)
         eggs=(map term egg-15)
         blocked=(map term (qeu blocked-move-13))
-        =bug
+        bug=bug-17
     ==
   ::
   +$  blocked-move-13  [=duct routes=routes-13 move=(each deal unto)]
@@ -2520,7 +2663,7 @@
         contacts=(set ship)
         eggs=(map term egg-12)
         blocked=(map term (qeu blocked-move-13))
-        =bug
+        bug=bug-17
     ==
   +$  egg-12
     $%  [%nuke sky=(map spur @ud)]
@@ -2544,7 +2687,7 @@
         contacts=(set ship)
         eggs=(map term egg-11)
         blocked=(map term (qeu blocked-move-13))
-        =bug
+        bug=bug-17
     ==
   +$  egg-11
     $:  control-duct=duct
@@ -2565,7 +2708,7 @@
         contacts=(set ship)
         eggs=(map term egg-10)
         blocked=(map term (qeu blocked-move-13))
-        =bug
+        bug=bug-17
     ==
   +$  egg-10
     $:  control-duct=duct
@@ -2586,7 +2729,7 @@
         contacts=(set ship)
         eggs=(map term egg-10)
         blocked=(map term (qeu blocked-move-13))
-        =bug
+        bug=bug-17
     ==
   ::
   +$  remote-request-9  ?(remote-request %cork)
@@ -2636,7 +2779,7 @@
     |=  old=spore-8
     :-  %9
     ^-  spore-9
-    =-  old(eggs -, blocked [blocked.old *bug])
+    =-  old(eggs -, blocked [blocked.old *bug-17])
     %-  ~(run by eggs.old)
     |=  =egg-8
     ^-  egg-10
@@ -2782,8 +2925,8 @@
   ::
   ++  spore-16-to-17
     |=  old=spore-16
-    ^-  spore-17
     :-  %17
+    ^-  spore-17
     %=    old
         blocked
       %-  ~(urn by blocked.old)
@@ -2796,6 +2939,22 @@
       ::  /gall-use-wire will be dropped in mo-clear-queu
       ::
       (~(put to r) blocked-move(duct [/gall-use-wire duct.blocked-move]))
+    ==
+  ::  +spore-17-to-18: add perms and wards
+  ::
+  ++  spore-17-to-18
+    |=  old=spore-17
+    ^-  spore-18
+    :-  %18
+    :*  system-duct.old
+        outstanding.old
+        contacts.old
+        eggs.old
+        blocked.old
+        *perms=(jug desk perm)
+        *wards=(set duct)
+        bug.old(veb [odd=odd.veb.bug.old pes=|])
+        leaves.old
     ==
   ::
   --
@@ -2911,7 +3070,7 @@
           p.agent.u.yok
         on-save:p.agent.u.yok
       ==
-    ``noun+!>(`egg-any`[-:*spore-16 egg]) :: XX spore-17 same as 16
+    ``noun+!>(`egg-any`[%16 egg]) :: XX egg-any %16 is used in spore-16, 17, and 18
   ::
   ?:  ?&  =(%w care)
           =([%$ %da now] coin)
@@ -3043,7 +3202,7 @@
 ::    TODO: superfluous? see +molt
 ::
 ++  stay
-  ^-  spore-17
+  ^-  spore-18
   =;  eggs=(map term egg)  state(yokes eggs)
   %-  ~(run by yokes.state)
   |=  =yoke
