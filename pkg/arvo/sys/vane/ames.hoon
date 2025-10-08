@@ -2596,10 +2596,6 @@
               $:  %28                            :: add halted flows
                   ?(%adult %larva)               ::
                   state=axle
-              ==
-              $:  %28                            :: enable Directed Messaging
-                  ?(%adult %larva)               ::
-                  state=axle
           ==  ==
       |^  ?-  old
           [%4 %adult *]
