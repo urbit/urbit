@@ -155,7 +155,7 @@
   =/  m  (strand ,~)
   ^-  form:m
   ~&  >  "starting {<ship>}"
-  ;<  ~  bind:m  (send-events (init:util ship fake core))
+  ;<  ~  bind:m  (send-events (init:util ship fake ~ core))
   (check-ship-booted ship)
 ::
 ++  init-comet
@@ -166,6 +166,15 @@
   ~&  >  "mining comet under {<(^sein:title comet)>}"
   ;<  ~  bind:m  (send-events (init:util comet fake=%.n `feed core))
   (check-ship-booted comet)
+::
+::  Load network core protocol
+::
+++  load
+  |=  [who=ship ore=?(%mesa %ames)]
+  =/  m  (strand ,~)
+  ^-  form:m
+  ;<  ~  bind:m  (send-events [%event who [/a/aqua/load %load ore]]~)
+  (pure:m ~)
 ::
 ++  check-ship-booted
   |=  =ship
