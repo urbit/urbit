@@ -10929,7 +10929,13 @@
               ::  XX find the bone for the flow inspecting the duct and checking
               ::  if the flow is halted; add state to .req to track halt?
               ::
-              ?:  ?|  ?=(^ pay.req)
+              ?:  ?&  ?=(^ pay.req)  ::  only pokes can be halted
+                      ::  currently pokes are only associated with one listener
+                      ::  therefore the ~(rep by for.req) is not necessary but we
+                      ::  leave it here for future consideration, asserting only
+                      ::  one listener as of the current implementation
+                      ::
+                      ?>  =(1 ~(wyt by for.req))
                       %-  ~(rep by for.req)
                       |=  [[hen=duct *] found=?(%.y %.n)]
                       ?.  ?=([[%ames %mesa %flow *] *] hen)
