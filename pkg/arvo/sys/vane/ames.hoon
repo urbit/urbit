@@ -12901,6 +12901,10 @@
           ::
           =|  per=fren-state
           =.  -.per  azimuth-state=+<.u.chum-state
+          ::  if galaxy, transfer lane
+          ::
+          =?  lane.per  =(%czar (clan:title her-pok))
+            `[0 `@ux`her-pok]
           =/  mesa-core  ::  XX temporary core
             ::  XX  don't put the regressed peer again in chums
             ::
