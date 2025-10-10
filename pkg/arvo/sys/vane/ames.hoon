@@ -125,7 +125,7 @@
 =>  ::  vane IO
     ::
     ::  (note: %tune and %turf unused; left for migration purposes;
-    ::  removing any of these $signs will break any migration prior 
+    ::  removing any of these $signs will break any migration prior
     ::  to ames-state-22)
     |%
     +$  sign
@@ -1819,14 +1819,14 @@
     ::
     +$  fren-state-26-27
       $:  azimuth-state
-          lane=(unit [hop=@ =lane:pact])  
+          lane=(unit [hop=@ =lane:pact])
           =qos
-          corked=(set side)  
-          =ossuary         
+          corked=(set side)
+          =ossuary
           flows=(map side flow-state-26-27)
-          pit=(map path request-state)          
-          =client=chain                          
-          tip=(jug =user=path [duct =ames=path]) 
+          pit=(map path request-state)
+          =client=chain
+          tip=(jug =user=path [duct =ames=path])
           weir=(jug side [tag=term data=*])
       ==
     ::
@@ -1834,9 +1834,9 @@
       $:  closing=?(%.y %.n)
           line=@ud
           $=  snd
-          $:  %outbound 
-              loads=((mop ,@ud mesa-message) lte) 
-              @  @  @ 
+          $:  %outbound
+              loads=((mop ,@ud mesa-message) lte)
+              @  @  @
               acks=((mop ,@ud ack) lte)
           ==
           rcv=[%incoming acked=@ud pending-ack=_`?`%.n nax=(map seq=@ud error)]
@@ -4789,7 +4789,7 @@
           ++  prune-tip
             |=([=^duct =user=path =ames=path] (on-prune-tip:peer-core +<))
           ::  +halt-flow: mark flow as hallted; will drop incoming packets
-          ::  
+          ::
           ++  halt-flow
             |=  [=ship agent=term =bone]
             =.  halt.peer-state.peer-core
@@ -5525,7 +5525,7 @@
                     +.meat.shut-packet
                   ::  don't print stack trace for /gf $pleas
                   ::
-                  ?:  ?&  =(num-fragments 1) 
+                  ?:  ?&  =(num-fragments 1)
                           =(fragment-num 0)
                           =/  blob=*  (cue (rep packet-size [fragment]~))
                           ?=(^ ;;((soft [%g [%gf ~] %0 ~]) blob))
@@ -11112,7 +11112,7 @@
             ::
             =.  chums.ames-state.core  (~(del by chums.ames-state.core) ship)
             ::
-            (sy-emil (weld peek-moves flow-moves))
+            (sy-emil:core (weld flow-moves peek-moves))
           ::
           ++  divide-bones
             |=  bones=(set side)
@@ -11781,14 +11781,14 @@
           ?:  =(~ unix-duct)
             %.  co-core
             (slog leaf+"ames: unix-duct pending; will retry %push" ~)
-          ::  vere should ignores any lanes attach to a %page, and use the one 
+          ::  vere should ignores any lanes attach to a %page, and use the one
           ::  it has stored in the pit to avoid breaking symmetric routing
-          ::    (we add the lane here as a hack to avoid having to deal with 
+          ::    (we add the lane here as a hack to avoid having to deal with
           ::     %aqua's lane management)
           ::
-          %-  co-emit 
-          %^  push-pact  ship 
-            [hop=0 %page name u.page next=~] 
+          %-  co-emit
+          %^  push-pact  ship
+            [hop=0 %page name u.page next=~]
           (make-lanes ship lane.sat qos.sat)
         ::
         ++  co-make-mess
