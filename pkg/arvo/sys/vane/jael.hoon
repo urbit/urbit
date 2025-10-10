@@ -358,8 +358,17 @@
         %fake
       ::  single-homed
       ::
+      ~|  %jael-bad-fake
       =>  ?@  +.tac  [cyc=(pit:nu:cryc:crypto 512 our %b ~) .]
-          =+  cyc=(pit:nu:cryc:crypto 512 seed.tac %c %fake) 
+          =/  cyc
+            %-  nol:nu:cryc:crypto
+            ?@  -.feed.tac
+              ?>  =(1 lyf.feed.tac)
+              key.feed.tac
+            ?-  -.feed.tac
+              [%1 ~]  (~(got by (malt kyz.feed.tac)) 1)
+              [%2 ~]  (~(got by (malt kyz.feed.tac)) 1)
+            ==
           .(tac [%fake ship=`@p`fig:ex:cyc])
       ?>  =(our ship.tac)
       ::  fake keys are deterministically derived from the ship
