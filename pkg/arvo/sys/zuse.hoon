@@ -1484,9 +1484,9 @@
       (hsh p s 16.384 8 1 256)
     --  ::scr
   ::                                                    ::
-  ::::                    ++cryc:crypto                 ::  (2b4) suite C, Ed
+  ::::                    ++cric:crypto                 ::  (2b4) suite C, Ed
     ::                                                  ::::
-  ++  cryc  ::!:
+  ++  cric  ::!:
     |_  $%  ::$:  suite=%$
             ::    pub=[cry=@ sgn=@ ~]
             ::    sek=$@(~ [~ cry=@ sgn=@])
@@ -1496,46 +1496,54 @@
                 sek=$@(~ [sed=@ cry=@ sgn=@])
             ==
             $:  suite=%c
-                pub=[cry=@ sgn=@ tw=[ugn=@ dat=@]]
+                pub=[cry=@ sgn=@ tw=[ugn=@ dat=@ xtr=@]]
                 sek=$@(~ [sed=@ cry=@ sgn=@])
             ==
         ==
-    ::                                                  ::  ++ex:cryc:crypto
+    ::                                                  ::  ++ex:cric:crypto
     ++  ex                                              ::  extract
       |%
-      ::                                                ::  ++fig:ex:crub:crypto
+      ::                                                ::  ++fig:ex:cric:crypto
       ++  fig                                           ::  fingerprint
         ^-  @uvH
         ?:  ?=(%b suite)  (shaf %bfig pub)
         (shaf %cfig sgn.^pub)
-      ::                                                ::  ++pac:ex:crub:crypto
+      ::                                                ::  ++pac:ex:cric:crypto
       ++  pac                                           ::  private fingerprint
         ^-  @uvG
         ::?<  ?=(%$ suite)
         ?~  sek  ~|  %pubkey-only  !!
         ?:  ?=(%b suite)  (end 6 (shaf %bcod sed.sek))
         (end 6 (shaf %ccod (can 3 [32 sed.sek] [(met 3 dat.tw.^pub) dat.tw.^pub] ~)))
-      ::                                                ::  ++pub:ex:crub:crypto
+      ::                                                ::  ++pub:ex:cric:crypto
       ++  pub                                           ::  public key
         ^-  pass
         ::?:  ?=(%$ suite)  (can 3 1^%$ 32^sgn.^pub 32^cry.^pub ~)
         ?:  ?=(%b suite)  (can 3 1^'b' 32^sgn.^pub 32^cry.^pub ~)
-        %+  can  3
-        :~  [1 %'c']
-            [32 ugn.tw.^pub]
-            [32 cry.^pub]
-            [(met 3 dat.tw.^pub) dat.tw.^pub]
+        =<  p
+        %-  fax:plot
+        :-  0
+        :*  [s+~ 3 [1 'c'] ~]
+            [s+~ 3 [32 ugn.tw.^pub] ~]
+            [s+~ 3 [32 cry.^pub] ~]
+            (mat dat.tw.^pub)
+            ?:  =(0 xtr.tw.^pub)  ~
+            [(met 0 xtr.tw.^pub)^xtr.tw.^pub ~]
         ==
-      ::                                                ::  ++sec:ex:crub:crypto
+      ::                                                ::  ++sec:ex:cric:crypto
       ++  sec                                           ::  private key
         ^-  ring
         ::?<  ?=(%$ suite)
         ?~  sek  ~|  %pubkey-only  !!
         ?:  ?=(%b suite)  (can 3 1^'B' 64^sed.sek ~)
-        %+  can  3
-        :~  [1 %'C']
-            [64 sed.sek]
-            [(met 3 dat.tw.^pub) dat.tw.^pub]
+        =<  p
+        %-  fax:plot
+        :-  0
+        :*  [s+~ 3 [1 'C'] ~]
+            [s+~ 3 [64 sed.sek] ~]
+            (mat dat.tw.^pub)
+            ?:  =(0 xtr.tw.^pub)  ~
+            [(met 0 xtr.tw.^pub)^xtr.tw.^pub ~]
         ==
       ::
       ++  ven
@@ -1555,50 +1563,63 @@
         ^-  @
         (sub suite 'a')
       --  ::ex
-    ::                                                  ::  ++nu:crub:crypto
+    ::                                                  ::  ++nu:cric:crypto
     ++  nu                                              ::
       |%
-      ::                                                ::  ++pit:nu:crub:crypto
+      ::                                                ::  ++pit:nu:cric:crypto
       ++  pit                                           ::  create keypair
-        |=  [w=@ seed=@ $%([suite=%b ~] [suite=%c dat=@])]
+        |=  [w=@ seed=@ $%([suite=%b ~] [suite=%c dat=$@(@ [dat=@ xtr=@])])]
         ^+  ..nu
         =+  wid=(add (div w 8) ?:(=((mod w 8) 0) 0 1))
-        =+  bits=(shal wid seed)
+        =+  sed=(shal wid seed)
         %-  nol  ^-  ring
-        ?:  ?=(%b suite)  (can 3 1^'B' 64^bits ~)
-        (can 3 1^'C' 64^bits (met 3 dat)^dat ~)
-      ::                                                ::  ++nol:nu:crub:crypto
+        ?:  ?=(%b suite)  (can 3 1^'B' 64^sed ~)
+        =<  p
+        %-  fax:plot
+        :-  0
+        :*  [s+~ 3 [1 'C'] ~]
+            [s+~ 3 [64 sed] ~]
+            ?@  dat  [(mat dat) ~]
+            [(mat dat.dat) (met 0 xtr.dat)^xtr.dat ~]
+        ==
+      ::                                                ::  ++nol:nu:cric:crypto
       ++  nol                                           ::  activate secret
         |=  a=ring
         ^+  ..nu
         =+  [mag=(end 3 a) bod=(rsh 3 a)]
-        ~|  %not-crub-seckey
+        ~|  %not-cric-seckey
         =+  [c=(luck:ed (cut 8 [1 1] bod)) s=(luck:ed (end 8 bod))]
         ?:  =('B' mag)
-          ..nu(+<- %b, pub [cry=pub.c sgn=pub.s ~], sek [sed=bod cry=sek.c sgn=sek.s])
+          %=  ..nu
+            +<-  %b
+            pub  [cry=pub.c sgn=pub.s ~]
+            sek  [sed=bod cry=sek.c sgn=sek.s]
+          ==
         ?>  =('C' mag)
-        =/  dat  (rsh [8 2] bod)
+        =+  [cur dat]=(rub 512 bod)
+        =/  xtr  (rsh [0 (add 512 cur)] bod)
         =/  mit  (shax (can 3 [32 pub.s] [(met 3 dat) dat] ~))
         =/  t  (scad:ed pub.s sek.s mit)
         %=  ..nu
           +<-   %c
-          pub   [cry=pub.c sgn=pub.t tw=[ugn=pub.s dat=dat]]
+          pub   [cry=pub.c sgn=pub.t tw=[ugn=pub.s dat=dat xtr=xtr]]
           sek   [sed=(cut 8 [0 2] bod) cry=sek.c sgn=sek.t]
         ==
-      ::                                                ::  ++com:nu:crub:crypto
+      ::                                                ::  ++com:nu:cric:crypto
       ++  com                                           ::  activate public
         |=  a=pass
         ^+  ..nu
         =+  [mag=(end 3 a) bod=(rsh 3 a)]
-        ~|  %not-crub-pubkey
+        ~|  %not-cric-pubkey
         =+  [cry=(cut 8 [1 1] bod) sgn=(end 8 bod)]
         ?:  =('b' mag)
           ..nu(+<- %b, pub [cry=cry sgn=sgn ~], sek ~)
         ?>  =('c' mag)
-        =/  dat  (rsh [8 2] bod)
+        =+  [cur dat]=(rub 512 bod)
+        =/  xtr  (rsh [0 (add 512 cur)] bod)
         =/  mit  (shax (can 3 [32 sgn] [(met 3 dat) dat] ~))
         =/  tgn  (scap:ed sgn mit)
-        ..nu(+<- %c, pub [cry=cry sgn=tgn tw=[sgn dat]], sek ~)
+        ..nu(+<- %c, pub [cry=cry sgn=tgn tw=[sgn dat xtr=xtr]], sek ~)
     ::
       ::++  ven
       ::  |=  private-keys
@@ -1623,7 +1644,7 @@
       --  ::nu
     ++  cyf
       |%
-      ::                                                  ::  ++de:crub:crypto
+      ::                                                  ::  ++de:cric:crypto
       ++  de                                              ::  decrypt
         |=  [key=@J txt=@]
         ^-  (unit @)
@@ -1632,11 +1653,11 @@
             iv
           len
         cph
-      ::                                                  ::  ++dy:crub:crypto
+      ::                                                  ::  ++dy:cric:crypto
       ++  dy                                              ::  need decrypt
         |=  [key=@J cph=@]
         (need (de key cph))
-      ::                                                  ::  ++en:crub:crypto
+      ::                                                  ::  ++en:cric:crypto
       ++  en                                              ::  encrypt
         |=  [key=@J msg=@]
         ^-  @
@@ -1654,16 +1675,16 @@
   ++  test  ^?
     |%
     ::                                                  ::  ++trub:test:crypto
-    ++  trub                                            ::  test cryc
+    ++  trub                                            ::  test cric
       |=  msg=@t
       !!
       ::::
-      ::::  make cryc cores
+      ::::  make cric cores
       ::::
-      ::=/  ali      (pit:nu:cryc 512 (shaz 'Alice') %b ~)
-      ::=/  ali-pub  (com:nu:cryc pub:ex.ali)
-      ::=/  bob      (pit:nu:cryc 512 (shaz 'Robert') %b ~)
-      ::=/  bob-pub  (com:nu:cryc pub:ex.bob)
+      ::=/  ali      (pit:nu:cric 512 (shaz 'Alice') %b ~)
+      ::=/  ali-pub  (com:nu:cric pub:ex.ali)
+      ::=/  bob      (pit:nu:cric 512 (shaz 'Robert') %b ~)
+      ::=/  bob-pub  (com:nu:cric pub:ex.bob)
       ::::
       ::::  alice signs and encrypts a symmetric key to bob
       ::::

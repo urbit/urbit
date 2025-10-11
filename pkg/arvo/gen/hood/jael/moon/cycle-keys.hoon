@@ -40,12 +40,12 @@
 =/  =pass
   ?.  =(*pass public-key)
     public-key
-  =/  cub  (pit:nu:cryc:crypto 512 (shaz (jam mon life eny)))
+  =/  cic  (pit:nu:cric:crypto 512 (shaz (jam mon life eny)))
   =/  =feed:jael
-    [[%2 ~] mon u.ryf [life sec:ex:cub]~]
+    [[%2 ~] mon u.ryf [life sec:ex:cic]~]
   %-  %-  slog
       :~  leaf+"moon: {(scow %p mon)}"
           leaf+(scow %uw (jam feed))
       ==
-  pub:ex:cub
+  pub:ex:cic
 `[mon *id:block:jael %keys [life 1 pass] %.n]
