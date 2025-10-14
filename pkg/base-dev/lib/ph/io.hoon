@@ -218,7 +218,6 @@
   ^-  form:m
   |-  ^-  form:m
   =*  loop  $
-  ;<  ~             bind:m  (sleep ~s1)  :: XX if this is not hear we scry into the future
   ;<  =bowl:spider  bind:m  get-bowl
   =/  aqua-pax
     :-  %i
@@ -235,7 +234,6 @@
   ^-  form:m
   |-  ^-  form:m
   =*  loop  $
-  ;<  ~             bind:m  (sleep ~s1)  :: XX if this is not hear we scry into the future
   ;<  =bowl:spider  bind:m  get-bowl
   =/  aqua-pax
     :-  %i
@@ -252,7 +250,6 @@
   ^-  form:m
   |-  ^-  form:m
   =*  loop  $
-  ;<  ~             bind:m  (sleep ~s1)  :: XX if this is not hear we scry into the future
   ;<  =bowl:spider  bind:m  get-bowl
   =/  aqua-pax
     :-  %i
@@ -269,7 +266,6 @@
   ^-  form:m
   |-  ^-  form:m
   =*  loop  $
-  ;<  ~             bind:m  (sleep ~s1)  :: XX if this is not hear we scry into the future
   ;<  =bowl:spider  bind:m  get-bowl
   =/  aqua-pax
     :-  %i
