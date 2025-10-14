@@ -6340,16 +6340,6 @@
 +$  foot  $%  [%dry p=hoon]                             ::  dry arm, geometric
               [%wet p=hoon]                             ::  wet arm, generic
           ==                                            ::
-+$  link                                                ::  lexical segment
-          $%  [%chat p=term]                            ::  |chapter
-              [%cone p=aura q=atom]                     ::  %constant
-              [%frag p=term]                            ::  .face
-              [%funk p=term]                            ::  +arm
-              [%plan p=term]                            ::  $spec
-          ==                                            ::
-+$  cuff  (list link)                                   ::  parsed lex segments
-+$  crib  [summary=cord details=(list sect)]            ::
-+$  help  [=cuff =crib]                                 ::  documentation
 +$  limb  $@  term                                      ::  wing element
           $%  [%& p=axis]                               ::  by geometry
               [%| p=@ud q=(unit term)]                  ::  by name
@@ -6362,7 +6352,6 @@
           $%  [%& p=type]                               ::  leg
               [%| p=axis q=(set [p=type q=foot])]       ::  arm
           ==                                            ::
-+$  pica  (pair ? cord)                                 ::  & prose, | code
 +$  palo  (pair vein opal)                              ::  wing trace, match
 +$  pock  (pair axis nock)                              ::  changes
 +$  port  (each palo (pair type nock))                  ::  successful match
@@ -6370,7 +6359,6 @@
           $~  [%base %null]                             ::
           $%  [%base p=base]                            ::  base type
               [%dbug p=spot q=spec]                     ::  set debug
-              [%gist p=[%help p=help] q=spec]           ::  formal comment
               [%leaf p=term q=@]                        ::  constant atom
               [%like p=wing q=(list wing)]              ::  reference
               [%loop p=term]                            ::  hygienic reference
@@ -6414,13 +6402,12 @@
               [%cell =skin =skin]                       ::  pair
               [%dbug =spot =skin]                       ::  trace
               [%leaf =aura =atom]                       ::  atomic constant
-              [%help =help =skin]                       ::  describe
               [%name =term =skin]                       ::  apply label
               [%over =wing =skin]                       ::  relative to
               [%spec =spec =skin]                       ::  cast to
               [%wash depth=@ud]                         ::  strip faces
           ==                                            ::
-+$  tome  (pair what (map term hoon))                   ::  core chapter
++$  tome  (map term hoon)                               ::  core chapter
 +$  tope                                                ::  topographic type
   $@  $?  %&                                            ::  cell or atom
           %|                                            ::  atom
@@ -6594,8 +6581,7 @@
               [%0 p=@]                                  ::  axis select
           ==                                            ::
 +$  note                                                ::  type annotation
-          $%  [%help p=help]                            ::  documentation
-              [%know p=stud]                            ::  global standard
+          $%  [%know p=stud]                            ::  global standard
               [%made p=term q=(unit (list wing))]       ::  structure
           ==                                            ::
 +$  type  $+  type
@@ -6633,12 +6619,6 @@
 +$  vial  ?(%read %rite %both %free)                    ::  co/contra/in/bi
 +$  vair  ?(%gold %iron %lead %zinc)                    ::  in/contra/bi/co
 +$  vein  (list (unit axis))                            ::  search trace
-+$  sect  (list pica)                                   ::  paragraph
-+$  whit                                                ::  prefix docs parse
-  $:  bat=(map cuff (pair cord (list sect)))            ::  batch comment
-  ==                                                    ::
-+$  whiz  cord                                          ::  postfix doc parse
-+$  what  (unit (pair cord (list sect)))                ::  help slogan/section
 +$  wing  (list limb)                                   ::  search path
 ::
 ::  +block: abstract identity of resource awaited
@@ -7485,7 +7465,7 @@
 ::
 ++  loot
   ~/  %loot
-  |=  [cog=term dom=(map term tome)]
+  |=  [cog=term dom=(map term (pair ~ tome))]  ::NOTE  ~ for jet-compat
   =+  axe=1
   |-  ^-  (unit [p=axis q=hoon])
   ?-  dom
@@ -7591,7 +7571,6 @@
     ?-  -.mod
       %base  ?.(?=([%atom *] p.mod) ~ ?:(=(%$ p.p.mod) `%atom `p.p.mod))
       %dbug  $(mod q.mod)
-      %gist  $(mod q.mod)
       %leaf  `p.mod
       %loop  `p.mod
       %like  ?~(p.mod ~ ?^(i.p.mod ?:(?=(%& -.i.p.mod) ~ q.i.p.mod) `i.p.mod))
@@ -7658,7 +7637,7 @@
     ^-  hoon
     :+  %tsgr  example:clear(mod payload)
     :+  %brcn  ~
-    =-  [[%$ ~ -] ~ ~]
+    =-  [[%$ -] ~ ~]
     %-  ~(gas by *(map term hoon))
     %+  turn
       ~(tap by arms)
@@ -7784,7 +7763,6 @@
                         (~(put by ^+(cox (~(uni by cox) q.mod))) %$ p.mod)
                  ==
       [%dbug *]  [%dbug p.mod $(mod q.mod)]
-      [%gist *]  $(mod q.mod)
       [%leaf *]  [%rock p.mod q.mod]
       [%loop *]  ~|([%loop p.mod] $(mod (~(got by cox) p.mod)))
       [%like *]  $(mod bcmc/(unreel p.mod q.mod))
@@ -7843,7 +7821,6 @@
     ::
       [%base *]  (decorate (basal p.mod))
       [%dbug *]  example(mod q.mod, bug [p.mod bug])
-      [%gist *]  example(mod q.mod, nut `p.mod)
       [%leaf *]  (decorate [%rock p.mod q.mod])
       [%like *]  example(mod bcmc/(unreel p.mod q.mod))
       [%loop *]  [%limb p.mod]
@@ -7876,7 +7853,6 @@
     ^-  hoon
     ::  process annotations outside construct, to catch default
     ::
-    ::TODO: try seeing if putting %gist in here fixes %brbc
     ?:  ?=(%dbug -.mod)  factory(mod q.mod, bug [p.mod bug])
     ?:  ?=(%bcsg -.mod)  factory(mod q.mod, def `[%kthp q.mod p.mod])
     ^-  hoon
@@ -8035,11 +8011,6 @@
           [%dbug *]
         relative(mod q.mod, bug [p.mod bug])
       ::
-      ::  formal comment
-      ::
-          [%gist *]
-        relative(mod q.mod, nut `p.mod)
-      ::
       ::  constant
       ::
           [%leaf *]
@@ -8086,7 +8057,7 @@
         ::
         :+  %brkt
           relative(mod p.mod, dom (peg 3 dom))
-        =-  [[%$ ~ -] ~ ~]
+        =-  [[%$ -] ~ ~]
         %-  ~(gas by *(map term hoon))
         ^-  (list (pair term hoon))
         %+  turn
@@ -8276,9 +8247,6 @@
         [%leaf *]
       [%kthp skin gen]
     ::
-        [%help *]
-      [%note [%help help.skin] $(skin skin.skin)]
-    ::
         [%name *]
       [%tsgl [%tune term.skin] $(skin skin.skin)]
     ::
@@ -8371,9 +8339,6 @@
         [%limb @]
       `p.gen
     ::
-        [%note [%help *] *]
-      (bind $(gen q.gen) |=(=skin [%help p.p.gen skin]))
-    ::
         [%wing *]
       ?:  ?=([@ ~] p.gen)
         `i.p.gen
@@ -8447,14 +8412,8 @@
         [%yell *]  [%cncl [%limb %cain] [%zpgr [%cltr p.gen]] ~]
         [%note *]  q.gen
     ::
-    ::TODO: does %gist need to be special cased here?
         [%brbc *]  =-  ?~  -  !!
-                       :+  %brtr
-                         [%bccl -]
-                       |-
-                       ?.  ?=([%gist *] body.gen)
-                         [%ktcl body.gen]
-                       [%note p.body.gen $(body.gen q.body.gen)]
+                       [%brtr [%bccl -] [%ktcl body.gen]]
                    %+  turn  `(list term)`sample.gen
                    |=  =term
                    ^-  spec
@@ -8464,31 +8423,30 @@
                    :+  %brcn  ~
                    %-  ~(run by r.gen)
                    |=  =tome
-                   :-  p.tome
-                   %-  ~(run by q.tome)
+                   %-  ~(run by tome)
                    |=  =hoon
                    ?~  q.gen  hoon
                    [%tstr [p.i.q.gen ~] q.i.q.gen $(q.gen t.q.gen)]
         [%brcl *]  [%tsls p.gen [%brdt q.gen]]
         [%brdt *]  :+  %brcn  ~
-                   =-  [[%$ ~ -] ~ ~]
+                   =-  [[%$ -] ~ ~]
                    (~(put by *(map term hoon)) %$ p.gen)
         [%brkt *]  :+  %tsgl  [%limb %$]
                    :+  %brcn  ~
                    =+  zil=(~(get by q.gen) %$)
                    ?~  zil
                      %+  ~(put by q.gen)  %$
-                     [*what [[%$ p.gen] ~ ~]]
+                     [[%$ p.gen] ~ ~]
                    %+  ~(put by q.gen)  %$
-                   [p.u.zil (~(put by q.u.zil) %$ p.gen)]
+                   (~(put by u.zil) %$ p.gen)
         [%brhp *]  [%tsgl [%limb %$] [%brdt p.gen]]
         [%brsg *]  [%ktbr [%brts p.gen q.gen]]
         [%brtr *]  :+  %tsls  [%kttr p.gen]
                    :+  %brpt  ~
-                   =-  [[%$ ~ -] ~ ~]
+                   =-  [[%$ -] ~ ~]
                    (~(put by *(map term hoon)) %$ q.gen)
         [%brts *]  :+  %brcb  p.gen
-                   =-  [~ [[%$ ~ -] ~ ~]]
+                   =-  [~ [[%$ -] ~ ~]]
                    (~(put by *(map term hoon)) %$ q.gen)
         [%brwt *]  [%ktwt %brdt p.gen]
     ::
@@ -8598,7 +8556,7 @@
                :+  %tsbr  [%base %cell]
                :+  %brpt  ~
                ^-  (map term tome)
-               =-  [[%$ ~ -] ~ ~]
+               =-  [[%$ -] ~ ~]
                ^-  (map term hoon)
                :_  [~ ~]
                =+  sug=[[%& 12] ~]
@@ -8883,7 +8841,6 @@
         [%5 [%1 atom.skin] [%0 axis]]
       ::
           %dbug  $(skin skin.skin)
-          %help  $(skin skin.skin)
           %name  $(skin skin.skin)
           %over  ::NOTE  might need to guard with +feel, crashing is too strict
                  =+  ~|  %oops-guess-you-needed-feel-after-all
@@ -8977,7 +8934,6 @@
         ==
       ::
           %dbug  $(skin skin.skin)
-          %help  (hint [sut %help help.skin] $(skin skin.skin))
           %name  (face term.skin $(skin skin.skin))
           %over  $(skin skin.skin, sut (~(play ut sut) %wing wing.skin))
           %spec  =/  hit  (~(play ut sut) ~(example ax spec.skin))
@@ -9064,7 +9020,6 @@
         ==
       ::
           %dbug  $(skin skin.skin)
-          %help  $(skin skin.skin)
           %name  $(skin skin.skin)
           %over  ::TODO  if we guard in +fish (+feel), we have to guard again here
                  $(skin skin.skin, sut (~(play ut sut) %wing wing.skin))
@@ -9461,7 +9416,7 @@
                 [%core *]
               ?~  q.heg  here
               =^  zem  p.heg
-                  =+  zem=(loot u.q.heg q.r.q.sut)
+                  =+  zem=(loot u.q.heg (~(run by q.r.q.sut) (lead ~)))
                   ?~  zem  [~ p.heg]
                   ?:(=(0 p.heg) [zem 0] [~ (dec p.heg)])
               ?^  zem
@@ -9718,16 +9673,16 @@
     =+  axe=1
     |^  ?-  dom
           ~        yeb
-          [* ~ ~]  (chapter q.q.n.dom)
+          [* ~ ~]  (chapter q.n.dom)
           [* * ~]  %=  $
                      dom  l.dom
                      axe  (peg axe 3)
-                     yeb  (chapter(axe (peg axe 2)) q.q.n.dom)
+                     yeb  (chapter(axe (peg axe 2)) q.n.dom)
                    ==
           [* ~ *]  %=  $
                      dom  r.dom
                      axe  (peg axe 3)
-                     yeb  (chapter(axe (peg axe 2)) q.q.n.dom)
+                     yeb  (chapter(axe (peg axe 2)) q.n.dom)
                    ==
           [* * *]  %=  $
                      dom  r.dom
@@ -9735,7 +9690,7 @@
                      yeb  %=  $
                             dom  l.dom
                             axe  (peg axe 6)
-                            yeb  (chapter(axe (peg axe 2)) q.q.n.dom)
+                            yeb  (chapter(axe (peg axe 2)) q.n.dom)
         ==         ==     ==
     ++  chapter
       |=  dab=(map term hoon)
@@ -9812,7 +9767,7 @@
     ^-  *
     ?:  ?=(~ dom)
       ~
-    =+  dov=(bake dox hud q.q.n.dom)
+    =+  dov=(bake dox hud q.n.dom)
     ?-    dom
       [* ~ ~]   dov
       [* ~ *]   [dov $(dom r.dom)]
@@ -9846,7 +9801,7 @@
     ?:  ?=(~ dom)
       ~
     =/  dov=?(~ ^)
-      =/  dab=(map term hoon)  q.q.n.dom
+      =/  dab=(map term hoon)  q.n.dom
       =/  dag  (arms-check dab (get-arms dog p.n.dom))
       |-  ^-  ?(~ ^)
       ?:  ?=(~ dab)
@@ -9937,7 +9892,7 @@
       %+  bind  dog
       |=  a=(map term tome)
       ~_  leaf+"unexpcted-chapter.{(trip nam)}"
-      q:(~(got by a) nam)
+      (~(got by a) nam)
     ::  +arms-check: check we have the expected number of arms
     ::
     ++  arms-check
@@ -10403,7 +10358,7 @@
           $(dom l.dom, vim l.vim)
           $(dom r.dom, vim r.vim)
       ::
-          =+  [dab hem]=[q.q.n.dom q.q.n.vim]
+          =+  [dab hem]=[q.n.dom q.n.vim]
           |-  ^-  ?
           ?:  ?=(~ dab)  =(hem ~)
           ?:  ?=(~ hem)  |
@@ -11349,7 +11304,7 @@
       %^  cat  3
         %~  rent  co
         :+  %$  %ud
-        %-  ~(rep by (~(run by q.r.q.sut) |=(tome ~(wyt by q.+<))))
+        %-  ~(rep by (~(run by q.r.q.sut) |=(tome ~(wyt by +<))))
         |=([[@ a=@u] b=@u] (add a b))
       %^  cat  3
         ?-(r.p.q.sut %gold '.', %iron '|', %lead '?', %zinc '&')
@@ -11497,7 +11452,7 @@
       [%core *]
     |-  ^-  ?
     ?~  q.r.q.typ  |
-    ?|  (~(has by q.q.n.q.r.q.typ) cog)
+    ?|  (~(has by q.n.q.r.q.typ) cog)
         $(q.r.q.typ l.q.r.q.typ)
         $(q.r.q.typ r.q.r.q.typ)
     ==
@@ -11513,7 +11468,7 @@
     %-  zing
     %+  turn  ~(tap by q.r.q.typ)
       |=  [* b=tome]
-    %+  turn  ~(tap by q.b)
+    %+  turn  ~(tap by b)
       |=  [a=term *]
     a
   ==
@@ -13379,7 +13334,6 @@
         :_  (~(uni by q.mor) q.wap.i.a)
         %+  ~(put by p.mor)
           p.wap.i.a
-        :-  *what
         ?.  (~(has by p.mor) p.wap.i.a)
           q.wap.i.a
         [[%$ [%eror (weld "duplicate chapter: |" (trip p.wap.i.a))]] ~ ~]
