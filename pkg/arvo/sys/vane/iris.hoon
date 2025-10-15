@@ -127,10 +127,6 @@
     ::
     =.  connection-by-duct.state
       (~(put by connection-by-duct.state) duct id)
-    :: if we don't have a duct yet just ignore the request, %born will
-    :: cancel it soon. this is not ideal to say the least.
-    ::
-    ?~  outbound-duct.state  [~ state]
     ::  start the download
     ::
     ::  the original eyre keeps track of the duct on %born and then sends a
@@ -153,8 +149,7 @@
       ~&  %iris-invalid-cancel
       [~ state]
     ::
-    :-  ?~  outbound-duct.state  ~
-      [outbound-duct.state %give %cancel-request u.cancel-id]~
+    :-  [outbound-duct.state %give %cancel-request u.cancel-id]~
     (cleanup-connection u.cancel-id)
   ::  +receive: receives a response to an http-request we made
   ::
@@ -292,6 +287,28 @@
       connection-by-id    (~(del by connection-by-id.state) id)
       connection-by-duct  (~(del by connection-by-duct.state) duct.u.con)
     ==
+  ++  ws-connect
+    |=  [desk=term url=@t]
+      ~&  iris-ws-connect=[desk url]
+      :: TODO ... the wid comes from vere tho...?
+      =^  id  next-id.state  [next-id.state +(next-id.state)]
+      ::  add a new open session
+      =/  wid  id
+      ::
+      =.  connection-by-id.state
+        %+  ~(put by connection-by-id.state)  id
+        [duct [0 3 ~ ~ 0 ~]]
+      ::  keep track of the duct for cancellation
+      ::
+      =.  connection-by-duct.state
+        (~(put by connection-by-duct.state) duct id)
+      :-  [outbound-duct.state %give %websocket-handshake wid url]~
+      state
+  ++  ws-event
+    |=  [id=@ud event=websocket-event:eyre]
+      ~&  iris-ws-event=[id event]
+      :-  [outbound-duct.state %give %websocket-response id event]~
+      state
   --
 --
 ::  end the =~
@@ -364,6 +381,14 @@
   ::
       %receive
     =^  moves  state.ax  (receive:client +.task)
+    [moves light-gate]
+  ::
+  ::  UIP-125
+    %websocket-connect
+    =^  moves  state.ax  (ws-connect:client +.task)
+    [moves light-gate]
+    %websocket-event
+    =^  moves  state.ax  (ws-event:client +.task)
     [moves light-gate]
   ==
 ::  http-client issues no requests to other vanes
