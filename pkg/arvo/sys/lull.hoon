@@ -3042,6 +3042,9 @@
         ::  notification that a cache entry has changed
         ::
         [%grow =path]
+        :: UIP-125
+        ::
+        [%websocket-response wid=@ event=websocket-event]
     ==
   ::
   +$  task
@@ -3108,6 +3111,25 @@
         ::  remember (or update) a cache mapping
         ::
         [%set-response url=@t entry=(unit cache-entry)]
+        :: UIP-125
+        ::
+        [%websocket-event ws-id=@ event=websocket-event]
+        [%websocket-handshake ws-id=@ secure=? =address =request:http]
+    ==
+  :: UIP-125
+  +$  websocket-connection
+    $:  app=term
+        =inbound-request
+    ==
+  +$  websocket-message
+    $:  opcode=@ud
+        message=(unit data=octs)
+    ==
+  +$  websocket-event
+    $%  [%accept ~]
+        [%reject ~]
+        [%disconnect ~]
+        [%message message=websocket-message]
     ==
   ::  +origin: request origin as specified in an Origin header
   ::
@@ -3892,6 +3914,10 @@
         ::  %response: response to the caller
         ::
         [%http-response =client-response]
+        :: UIP-125
+        ::
+        [%websocket-handshake id=@ud url=@t]
+        [%websocket-response id=@ud websocket-event:eyre]
     ==
   ::
   +$  task
@@ -3914,6 +3940,21 @@
         ::  receives http data from outside
         ::
         [%receive id=@ud =http-event:http]
+        :: UIP-125
+        :: 
+        [%websocket-connect app=term url=@t]
+        ::  receives websocket event from earth
+        ::
+        [%websocket-event id=@ud event=websocket-event:eyre]
+    ==
+  ::  UIP-125
+  :: 
+  +$  websocket-connection
+    $:  app=term
+        =duct
+        id=@ud
+        url=@t
+        status=?(%pending %accepted)
     ==
   ::  +client-response: one or more client responses given to the caller
   ::
