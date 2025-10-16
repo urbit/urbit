@@ -4181,7 +4181,10 @@
             =/  bones  ~(tap in ~(key by snd.u.par))
             |-  ^+  event-core
             ?~  bones      abet:peer-core
-            =.  peer-core  abet:(call:(abed:mu:peer-core i.bones) %prod ~)
+            %-  %^  ev-trace  &(odd.veb (is-halted:peer-core i.bones))  her
+                |.("%halted: bone={<i.bones>}")
+            =?  peer-core  !(is-halted:peer-core i.bones)
+              abet:(call:(abed:mu:peer-core i.bones) %prod ~)
             $(bones t.bones)
           ::
           --
