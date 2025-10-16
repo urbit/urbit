@@ -1306,7 +1306,7 @@
       ::
       =?  halts.state  (~(has by flub-ducts.state) ship)
         ::  only add the app if we have received the /gf $plea
-        ::  
+        ::
         (~(put ju halts.state) agent-name ship hen)
       %+  mo-give  %flub
       ::  if we are waiting to hear the /gf $plea, only %flub the flow in %ames
@@ -2104,7 +2104,7 @@
           (on-bad-nonce nonce.u.got)
       ::
       ++  sub-key  [agent-wire dock]
-      ++  ingest   
+      ++  ingest
         ~>  %spin.[(crip "on-agent/{<agent-name>}")]
         (ap-ingest ~ |.((on-agent:ap-agent-core agent-wire sign)))
       ++  run-sign

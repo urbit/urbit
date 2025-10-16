@@ -222,9 +222,10 @@
   =/  aqua-pax
     :-  %i
     /(scot %p our)/gg/(scot %p our)//(scot %da now.bowl)/[%$]/noun
-  =/  flubs  %-  need  ;;  (unit (jug ship term))
+  =+  ;;  flubs=(unit (jug ship term))
     (scry-aqua:util noun our.bowl now.bowl aqua-pax)
-  ?.  (~(has ju flubs) her dap)
+  ?~  flubs  loop
+  ?.  (~(has ju u.flubs) her dap)
     loop
   (pure:m ~)
 ::
@@ -238,9 +239,10 @@
   =/  aqua-pax
     :-  %i
     /(scot %p our)/gg/(scot %p our)//(scot %da now.bowl)/[%$]/noun
-  =/  flubs  %-  need  ;;  (unit (jug ship term))
+  =+  ;;  flubs=(unit (jug ship term))
     (scry-aqua:util noun our.bowl now.bowl aqua-pax)
-  ?:  (~(has ju flubs) her dap)
+  ?~  flubs  loop
+  ?:  (~(has ju u.flubs) her dap)
     loop
   (pure:m ~)
 ::
@@ -254,9 +256,10 @@
   =/  aqua-pax
     :-  %i
     /(scot %p our)/gh/(scot %p our)//(scot %da now.bowl)/[%$]/noun
-  =/  halts  %-  need  ;;  (unit (jug app=term [ship =duct]))
+  =+  ;;  halts=(unit (jug app=term [ship =duct]))
     (scry-aqua:util noun our.bowl now.bowl aqua-pax)
-  ?.  (~(has by halts) dap)  ::  XX check .her as well
+  ?~  halts  loop
+  ?.  (~(has by u.halts) dap)  ::  XX check .her as well
     loop
   (pure:m ~)
 ::
@@ -270,9 +273,10 @@
   =/  aqua-pax
     :-  %i
     /(scot %p our)/gh/(scot %p our)//(scot %da now.bowl)/[%$]/noun
-  =/  halts  %-  need  ;;  (unit (jug app=term [ship =duct]))
+  =+  ;;  halts=(unit (jug app=term [ship =duct]))
     (scry-aqua:util noun our.bowl now.bowl aqua-pax)
-  ?:  (~(has by halts) dap) ::  XX check .her as well
+  ?~  halts  loop
+  ?:  (~(has by u.halts) dap) ::  XX check .her as well
     loop
   (pure:m ~)
 ::  Send "|hi" from one ship to another
