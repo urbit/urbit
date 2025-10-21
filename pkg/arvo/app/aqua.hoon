@@ -31,7 +31,6 @@
       $:  %0
           pil=$>(%pill pill-0)
           assembled=*
-          tym=@da
           fresh-piers=(map [=ship fake=?] [=pier boths=(list unix-both)])
           fleet-snaps=(map term fleet)
           piers=fleet
@@ -54,6 +53,7 @@
           next-events=(qeu unix-event)
           processing-events=?
           namespace=(map path (list yowl:ames))
+          tym=@da
       ==
     --
 ::
@@ -218,8 +218,8 @@
     =/  poke-arm  (mox +23.snap)
     ?>  ?=(%0 -.poke-arm)
     =/  poke  p.poke-arm
-    =.  tym  (max +(tym) now.hid)
-    =/  poke-result  (mule |.((slum poke tym ue)))
+    =.  tym.pier-data  (max +(tym.pier-data) now.hid)
+    =/  poke-result  (mule |.((slum poke tym.pier-data ue)))
     ?:  ?=(%| -.poke-result)
       %-  (slog >%aqua-crash< >guest=who< p.poke-result)
       $
