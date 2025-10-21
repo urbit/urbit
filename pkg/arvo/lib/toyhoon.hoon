@@ -1,10 +1,7 @@
 ::  toyhoon: xx
 ::
 |%
-+$  axis  @
-+$  part  (each axis term)
-+$  wing  (list part)
-+$  aura-tree  $@(aura [aura-tree aura-tree])
++$  axis  $~(1 @)
 ::  naty: natural runes
 ::
 ::    each of these represents a digraph followed by its "sub runes".
@@ -25,7 +22,7 @@
       [%tsgr p=naty q=naty]                       ::  %7
       [%tsls p=naty q=naty]                       ::  %8
       [%pull =axis =naty]                         ::  %9
-      [%cnts =naty diff=(list (pair wing naty))]  ::  %10
+      [%cnts =wing diff=(list (pair wing naty))]  ::  %10
       [%sggr tag=$@(@ (pair @ naty)) =naty]       ::  %11
     ::
       ::  hoon constructs
@@ -68,6 +65,10 @@
       [%fail skip=@ud]
       [%void ~]
   ==
+::
+++  opal-type
+  |=  =opal
+  ?-(-.opal %leg type.opal, %arm type.opal)
 ::
 ++  nice
   |=  [gol=type pro=type]
@@ -208,9 +209,15 @@
   =<  find
   |%
   ++  find
-    |=  [sut=type =wing]
-    ^-  [type axis]
-    !!
+    |=  [sut=type way=vial =wing]
+    ^-  [vein opal]
+    %+  reel  wing
+    |=  [heg=limb out=[=vein opal=$~([%leg sut] opal)]]
+    ^+  out
+    =+  nex=(fxnd (opal-type opal.out) way heg)
+    ?+  -.nex  ~|(%find-fail !!)
+      %pale  [(weld vein.nex vein.out) opal.nex]
+    ==
   ::
   ++  fxnd
     |=  [sut=type way=vial heg=limb]
@@ -261,10 +268,24 @@
     ==
   --
 ::
+++  fire
+  |=  [=axis =type var=?(%wet %dry) =naty]
+  ^+  type
+  !!
+::
 ++  take
-  |=  [sut=type =axis =type]  ::TODO  wrong?
+  |=  [sut=type =vein =type]
   ^-  ^type
-  ?:  =(1 axis)  type
+  ?~  vein  type
+  ?~  i.vein
+    |-  ^-  ^type
+    ?+  sut  ^$(vein t.vein)
+      [%face *]  sut(q $(sut q.sut))
+      [%hold *]  $(sut (drop sut))
+    ==
+  =*  axis  u.i.vein
+  |-  ^-  ^type
+  ?:  =(1 axis)  ^$(vein t.vein)
   ?-  sut
     %void      %void
     %noun      $(sut [%cell %noun %noun])
@@ -375,7 +396,30 @@
     !!
   ::
       %cnts
-    !!
+    =/  [=vein =opal]  (find sut %read wing.naty)
+    =/  =axis  (tend:ut vein)
+    =|  hej=(list (pair ^axis nock))
+    ?:  ?=(%leg -.opal)
+      |-  ^-  [type nock]
+      ?~  diff.naty  [type.opal (hike axis hej)]
+      =/  rec=[=type =nock]      ^$(gol %noun, naty q.i.diff.naty)
+      =/  [ven=^vein ope=^opal]  (find type.opal %rite p.i.diff.naty)
+      ?>  ?=(%leg -.ope)
+      %_  $
+        type.opal  (take type.opal ven type.rec)
+        hej        [[(tend:ut ven) nock.rec] hej]
+        diff.naty  t.diff.naty
+      ==
+    |-  ^-  [type nock]
+    ?~  diff.naty  [(fire +.opal) [%9 axis.opal (hike axis hej)]]
+    =/  rec=[=type =nock]      ^$(gol %noun, naty q.i.diff.naty)
+    =/  [ven=^vein ope=^opal]  (find type.opal %rite p.i.diff.naty)
+    ?>  ?=(%leg -.ope)
+    %_  $
+      type.opal  (take type.opal ven type.rec)
+      hej        [[(tend:ut ven) nock.rec] hej]
+      diff.naty  t.diff.naty
+    ==
   ::
       %sggr
     =/  pro  $(naty naty.naty)
@@ -401,20 +445,26 @@
     ::TODO  check type from recursion against -.sam
     [-.sam +:$(naty q.naty, gol -.sam)]
   ::
-    %wtpt  =/  [=type =axis]  (find sut wing.naty)
+    %wtpt  =/  [=vein =type]
+             =/  [=vein =opal]  (find sut %read wing.naty)
+             ?>  ?=(%leg -.opal)
+             [vein type.opal]
            =/  [atom=^type cell=^type]  (split-union type)
-           =+  y=$(naty y.naty, sut (take sut axis atom))
-           =+  n=$(naty n.naty, sut (take sut axis cell))
+           =+  y=$(naty y.naty, sut (take sut vein atom))
+           =+  n=$(naty n.naty, sut (take sut vein cell))
            :-  (make-union -.y -.n)
-           [%6 [%3 %0 axis] +.n +.y]
+           [%6 [%3 %0 (tend:ut vein)] +.n +.y]
     %wtcn  !!
-    %wtkt  =/  [=type =axis]  (find sut wing.naty)
+    %wtkt  =/  [=vein =type]
+             =/  [=vein =opal]  (find sut %read wing.naty)
+             ?>  ?=(%leg -.opal)
+             [vein type.opal]
            =.  type  (peek type %read 2)
            =/  [atom=^type cell=^type]  (split-union type)
-           =+  y=$(naty y.naty, sut (take sut axis atom))
-           =+  n=$(naty n.naty, sut (take sut axis cell))
+           =+  y=$(naty y.naty, sut (take sut vein atom))
+           =+  n=$(naty n.naty, sut (take sut vein cell))
            :-  (make-union -.y -.n)
-           [%6 [%3 %0 (peg axis 2)] +.y +.n]
+           [%6 [%3 %0 (peg (tend:ut vein) 2)] +.y +.n]
   ==
 ::  +xxxx: makes a union from two types, if possible
 ::  ?(%foo %bar) <- type union
