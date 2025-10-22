@@ -6020,6 +6020,7 @@
           scry=$@(~ $-(^ (unit (unit))))
       ==
   =|  trace=(list [@ta *])
+  =|  loop=(set ^)
   |^  ^-  tone
       ?+  formula  [%2 trace]
           [^ *]
@@ -6112,7 +6113,10 @@
         [%0 u.mutant]
       ::
           [%11 tag=@ next=*]
-        =/  next  $(formula next.formula)
+        =/  next
+          ?.  ?=(%loop tag.formula)  $(formula next.formula)
+          ?:  (~(has in loop) subject next.formula)  [%2 trace]
+          $(formula next.formula, loop (~(put in loop) subject next.formula))
         ?.  ?=(%0 -.next)  next
         :-  %0
         .*  subject
@@ -6122,6 +6126,10 @@
         =/  clue  $(formula clue.formula)
         ?.  ?=(%0 -.clue)  clue
         =/  next
+          ?:  ?=(%loop tag.formula)
+            ?:  (~(has in loop) subject next.formula)
+              [%2 [tag.formula product.clue] trace]
+            $(formula next.formula, loop (~(put in loop) subject next.formula))
           =?    trace
               ?=(?(%hunk %hand %lose %mean %spot) tag.formula)
             [[tag.formula product.clue] trace]

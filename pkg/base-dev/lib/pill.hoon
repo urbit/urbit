@@ -453,6 +453,7 @@
   ~/  %mice
   |=  [subject=* formula=*]
   =|  trace=(list [@ta *])
+  =|  loop=(set ^)
   =|  memo=(map)
   =;  [ton=tone mem=_memo]
     ?.  ?=(%0 -.ton)
@@ -556,7 +557,10 @@
         [%0 u.mutant]
       ::
           [%11 tag=@ next=*]
-        =^  next  memo  $(formula next.formula)
+        =^  next  memo
+          ?.  ?=(%loop tag.formula)  $(formula next.formula)
+          ?:  (~(has in loop) subject next.formula)  [[%2 trace] memo]
+          $(formula next.formula, loop (~(put in loop) subject next.formula))
         :_  memo
         ?.  ?=(%0 -.next)  next
         :-  %0
@@ -574,6 +578,10 @@
             [ton memo]
           [ton (~(put by memo) [subject next.formula] product.ton)]
         =^  next  memo
+          ?:  ?=(%loop tag.formula)
+            ?:  (~(has in loop) subject next.formula)
+              [[%2 [tag.formula product.clue] trace] memo]
+            $(formula next.formula, loop (~(put in loop) subject next.formula))
           =?    trace
               ?=(?(%hunk %hand %lose %mean %spot) tag.formula)
             [[tag.formula product.clue] trace]
