@@ -465,6 +465,15 @@
     %1       peg.fell
   ==
 ::
+++  has-arm
+  |=  [arm=@tas =mark core=vase]
+  ^-  ?
+  =/  rib  (mule |.((slub core [%wing ~[arm]])))
+  ?:  ?=(%| -.rib)  %.n
+  =/  lab  (mule |.((slob mark p.p.rib)))
+  ?:  ?=(%| -.lab)  %.n
+  p.lab
+::
 ++  rave-to-rove
   |=  rav=rave
   ^-  rove
@@ -626,30 +635,13 @@
     ::    build-cast
     ::    build-tube
     ::
-    !.
-    =*  stub  ~|  %stub  !!
+    !:
     =>  |%
         +$  args
           $+  args
           $:  files=(map path (each page lobe))
               file-store=(map lobe page)
               verb=@
-          ==
-        ::
-        +$  bush
-          $%  [%file =cage]
-              [%hoon text=@t deps=(list (pair (unit term) bush)) =path]
-              [%arch =spec files=(map @ta bush) =path]
-              [%mark grad=(unit (trel bush bush bush)) vax=vase]
-              [%tube (each [from=[=mark =bush] to=[=mark =bush]] ?(%same %moon))]  ::  identity/mime -> hoon
-          ==
-        ::
-        +$  node-kind
-          $%  [%hoon =path]
-              [%file =mark =path]  :: leaf
-              [%mark =mark]
-              [%tube =mars]
-              [%arch =spec =path]
           ==
         --
     =>  |%
@@ -661,16 +653,16 @@
               %file
             =.  sut  *vase
             ~>  %memo./clay/ford
-            q.cage
+            q.cage.bush
           ::
               %hoon
             ~>  %memo./clay/ford
-            =/  =pile  (parse-pile text.bush path.bush)
+            =/  =pile  (parse-pile path.bush text.bush)
             |-  ^-  vase
-            ?^  deps
+            ?^  deps.bush
               =/  dep=vase  (bush-to-vase q.i.deps.bush)
               =?  p.dep  ?=(^ p.i.deps.bush)  [%face u.p.i.deps.bush p.dep]
-              $(deps t.deps, sut (slop dep sut))
+              $(deps.bush t.deps.bush, sut (slop dep sut))
             (slub sut hoon.pile)
           ::
               %arch
@@ -689,6 +681,7 @@
           ::
               %mark
             ~>  %memo./clay/ford
+            =*  cor  cor.bush
             ?~  grad.bush
               %+  slub  (slop (with-face cor+cor) zuse.bud)
               !,  *hoon
@@ -739,36 +732,36 @@
           ::
               %tube
             ~>  %memo./clay/ford
-            ?:  ?=(%| +<.bush)
+            ?@  p.bush
               ?-  p.bush
                 %same  same.bud
-                %moon  =>(zuse.bud !>(|=(m=mime q.q.m)))
+                %mime  =>(..zuse !>(|=(m=mime q.q.m)))
               ==
-            =*  from  from.p.nod
-            =*  to    to.p.nod
-            =/  old  (bush-to-vase bush.from)
-            ?:  (has-arm %grow mark.to old)
+            =/  a  a.p.bush
+            =/  b  b.p.bush
+            =/  old  (bush-to-vase bush.a)
+            ?:  (has-arm %grow mark.b old)
               %+  slub  (with-faces cor+old ~)
               ^-  hoon
               :+  %brcl  !,(*hoon v=+<.cor)
               :+  %sggr  
-                [%spin %cltr [%sand %t (crip "grow-{<a>}->{<b>}")] ~]
-              :+  %tsgl  limb/b
+                [%spin %cltr [%sand %t (crip "grow-{<mark.a>}->{<mark.b>}")] ~]
+              :+  %tsgl  limb/mark.b
               !,(*hoon ~(grow cor v))
-            =/  new  (bush-to-vase bush.to)
-            =/  arm=?  (has-arm %grab mark.old new)
+            =/  new  (bush-to-vase bush.b)
+            =/  arm=?  (has-arm %grab mark.a new)
             =/  rab
               %-  mule  |.
               %+  slap  new 
               ^-  hoon
               :+  %sggr  
-                [%spin %cltr [%sand %t (crip "grab-{<a>}->{<b>}")] ~]
-              tsgl/[limb/a limb/%grab]
+                [%spin %cltr [%sand %t (crip "grab-{<mark.a>}->{<mark.b>}")] ~]
+              tsgl/[limb/mark.a limb/%grab]
             ::
             ?:  &(arm ?=(%& -.rab) ?=(^ q.p.rab))
               p.rab
-            ?:  ?=(%noun mark.to)  same.bud
-            ~|(no-cast-between+[mark.from mark.to] !!)  ::  XX +jump arm, +grab with @tas product
+            ?:  ?=(%noun mark.b)  same.bud
+            ~|(no-cast-between+[mark.a mark.b] !!)  ::  XX +jump arm, +grab with @tas product
           ::
           ==
         --
@@ -776,175 +769,6 @@
     |=  args
     ~%  %ford-core  ..$  ~
     |%
-    ++  taut-to-node-kind
-      |=  prefix=term
-      |=  =taut
-      ^-  (pair (unit term) node-kind)
-      :-  face.taut
-      [%hoon (fit-path prefix pax.taut)]
-    ::
-    ++  pile-header-to-bush
-      |=  $:  sur=(list taut)
-              lib=(list taut)
-              raw=(list [face=term =path])
-              raz=(list [face=term =spec =path])
-              maz=(list [face=term =mark])
-              caz=(list [face=term =mars])
-              bar=(list [face=term =mark =path])
-          ==
-      ^-  (list (pair (unit term) node-kind))
-      %-  zing
-      ^-  (list (list (pair (unit term) node-kind)))
-      :~
-        (turn sur (taut-to-node-kind %sur))
-        (turn lib (taut-to-node-kind %lib))
-        (turn raw |=([face=term =path] [`face hoon+path]))
-        (turn raz |=([face=term =spec =path] [`face arch+[spec path]]))
-        (turn maz |=([face=term =mark] [`face mark+mark]))
-        (turn caz |=([face=term =mars] [`face tube+mars]))
-        (turn bar |=([face=term =mark =path] [`face file+[mark path]]))
-      ==
-    ::
-    ++  header-rule
-      =>  ..lull
-      =,  clay
-      %+  cook  pile-header-to-bush
-      %+  ifix
-        :_  gay
-        ::  parse optional /? and ignore
-        ::
-        ;~(plug gay (punt ;~(plug fas wut gap dem gap)))
-      |^
-      ;~  plug
-        %+  cook  (bake zing (list (list taut)))
-        %+  rune  hep
-        (most ;~(plug com gaw) taut-rule)
-      ::
-        %+  cook  (bake zing (list (list taut)))
-        %+  rune  lus
-        (most ;~(plug com gaw) taut-rule)
-      ::
-        %+  rune  tis
-        ;~(plug sym ;~(pfix gap stap))
-      ::
-        %+  rune  sig
-        ;~((glue gap) sym wyde:vast stap)
-      ::
-        %+  rune  cen
-        ;~(plug sym ;~(pfix gap ;~(pfix cen sym)))
-      ::
-        %+  rune  buc
-        ;~  (glue gap)
-          sym
-          ;~(pfix cen sym)
-          ;~(pfix cen sym)
-        ==
-      ::
-        %+  rune  tar
-        ;~  (glue gap)
-          sym
-          ;~(pfix cen sym)
-          ;~(pfix stap)
-        ==
-      ==
-      ::
-      ++  pant
-        |*  fel=^rule
-        ;~(pose fel (easy ~))
-      ::
-      ++  mast
-        |*  [bus=^rule fel=^rule]
-        ;~(sfix (more bus fel) bus)
-      ::
-      ++  rune
-        |*  [bus=^rule fel=^rule]
-        %-  pant
-        %+  mast  gap
-        ;~(pfix fas bus gap fel)
-      ::
-      ++  taut-rule
-        %+  cook  |=(taut +<)
-        ;~  pose
-          (stag ~ ;~(pfix tar sym))
-          ;~(plug (stag ~ sym) ;~(pfix tis sym))
-          (cook |=(a=term [`a a]) sym)
-        ==
-      --
-    ::
-    ++  parse-header
-      |=  [pax=path src=@t]
-      ^-  (list (pair (unit term) node-kind))
-      ~>  %memo./clay/ford
-      =*  out  (list (pair (unit term) node-kind))
-      =/  [=hair res=(unit [=out =nail])]
-        (header-rule [1 1] (trip src))
-      ?^  res  out.u.res
-      stub
-    ::
-    ++  build-bush  ::  XX check for cycles (that was kinda the point....)
-      |=  nod=$>(%hoon node-kind)
-      ^-  bush
-      ~>  %memo./clay/ford
-      =>  .(nod `node-kind`nod)
-      |-  ^-  bush
-      =*  bush-loop  $
-      ?-    -.nod
-          %file
-        =/  file=cage  (cast-path path.nod mark.nod)
-        leaf+file
-      ::
-          %hoon
-        =/  file=cage  (read-file path.nod)
-        ?>  =(%hoon p.cage)
-        =+  !<(src=@t q.cage)
-        =/  deps=(list (pair (unit term) node-kind))
-          (parse-header path.nod src)
-        ::
-        :^  %hoon  src
-          %+  turn  deps
-          |=  [u=(unit term) don=node-kind]
-          [u bush-loop(nod don)]
-        path.nod
-      ::
-          %mark
-        =/  cor=vase  (build-fit %mar mark.nod)
-        =/  gad=vase  (slap cor limb/%grad)
-        ?^  q.gad  [%mark ~ cor]
-        =/  deg  bush-loop(nod mark+q.gad)
-        =/  tub  bush-loop(nod tube+[mark.nod q.gad])
-        =/  but  bush-loop(nod tube+[q.gad mark.nod])
-        [%mark `[deg tub but] cor]
-      ::
-          %tube
-        ?:  =(p.mars.nod q.mars.nod)  tube+|+%same
-        ?:  =([%mime %hoon] [p.mars.nod q.mars.nod])  tube+|+%moon
-        :^  %tube  %&
-          p.mars.nod^bush-loop(nod mark+p.mars.nod)
-        q.mars.nod^bush-loop(nod mark+q.mars.nod)
-      ::
-          %arch
-        =/  fiz=(list @ta)
-          =/  len  (lent path.nod)
-          %+  murn  ~(tap by files)
-          |=  [pax=path *]
-          ^-  (unit @ta)
-          ?.  =(path.nod (scag len pax))
-            ~
-          =/  pat  (slag len pax)
-          ?:  ?=([@ %hoon ~] pat)
-            `i.pat
-          ~
-        ::
-        =|  rez=(map @ta bush)
-        |-
-        ?~  fiz
-          [%arch spec.nod rez path.nod]
-        =*  nom=@ta    i.fiz
-        =/  pax=path  (weld path.nod nom %hoon ~)
-        =/  res=bush  bush-loop(nod hoon+pax)
-        $(fiz t.fiz, rez (~(put by rez) nom res))
-      ::
-      ==
     ::  +read-file: retrieve marked, validated file contents at path
     ::
     ++  read-file
@@ -1144,15 +968,6 @@
       %+  slub
         (with-faces uno+uno dos+dos ~)
       !,(*hoon |=(_+<.uno (dos (uno +<))))
-    ::
-    ++  has-arm
-      |=  [arm=@tas =mark core=vase]
-      ^-  ?
-      =/  rib  (mule |.((slub core [%wing ~[arm]])))
-      ?:  ?=(%| -.rib)  %.n
-      =/  lab  (mule |.((slob mark p.p.rib)))
-      ?:  ?=(%| -.lab)  %.n
-      p.lab
     ::  +build-tube: produce a $tube mark conversion gate from .a to .b
     ::
     ++  build-tube
@@ -1220,6 +1035,70 @@
       =/  =pile  (parse-pile path txt)
       =.  hoon.pile  !,(*hoon .)
       (run-prelude pile)
+    ::
+    ++  build-bush  ::  XX check for cycles (that was kinda the point....)
+      |=  nod=$>(%hoon bush-node)
+      ^-  bush
+      ~>  %memo./clay/ford
+      =>  .(nod `bush-node`nod)
+      |-  ^-  bush
+      =*  bush-loop  $
+      ?-    -.nod
+          %file
+        =/  file=cage  (cast-path path.nod mark.nod)
+        [%file file]
+      ::
+          %hoon
+        =/  file=cage  (read-file path.nod)
+        ?>  =(%hoon p.file)
+        =+  !<(src=@t q.file)
+        =/  deps=(list (pair (unit term) bush-node))
+          (parse-header path.nod src)
+        ::
+        :^  %hoon  src
+          %+  turn  deps
+          |=  [u=(unit term) don=bush-node]
+          [u bush-loop(nod don)]
+        path.nod
+      ::
+          %mark
+        =/  cor=vase  (build-fit %mar mark.nod)
+        =/  gad=vase  (slap cor limb/%grad)
+        ?^  q.gad  [%mark ~ cor]
+        =/  deg  bush-loop(nod mark+q.gad)
+        =/  tub  bush-loop(nod tube+[mark.nod q.gad])
+        =/  but  bush-loop(nod tube+[q.gad mark.nod])
+        [%mark `[deg tub but] cor]
+      ::
+          %tube
+        ?:  =(a.mars.nod b.mars.nod)  tube+%same
+        ?:  =([%mime %hoon] [a.mars.nod b.mars.nod])  tube+%mime
+        :+  %tube
+          [a.mars.nod bush-loop(nod mark+a.mars.nod)]
+        [b.mars.nod bush-loop(nod mark+b.mars.nod)]
+      ::
+          %arch
+        =/  fiz=(list @ta)
+          =/  len  (lent path.nod)
+          %+  murn  ~(tap by files)
+          |=  [pax=path *]
+          ^-  (unit @ta)
+          ?.  =(path.nod (scag len pax))
+            ~
+          =/  pat  (slag len pax)
+          ?:  ?=([@ %hoon ~] pat)
+            `i.pat
+          ~
+        ::
+        =|  rez=(map @ta bush)
+        |-
+        ?~  fiz
+          [%arch spec.nod rez path.nod]
+        =*  nom=@ta   i.fiz
+        =/  pax=path  (weld path.nod nom %hoon ~)
+        =/  res=bush  bush-loop(nod hoon+pax)
+        $(fiz t.fiz, rez (~(put by rez) nom res))
+      ==
     ::
     ++  build-dependency
       ~/  %build-dep
@@ -1426,6 +1305,123 @@
           %|  p.file
         ==
       ==
+    ::
+    ++  pile-header-to-bush
+      |=  $:  sur=(list taut)
+              lib=(list taut)
+              raw=(list [face=term =path])
+              raz=(list [face=term =spec =path])
+              maz=(list [face=term =mark])
+              caz=(list [face=term =mars])
+              bar=(list [face=term =mark =path])
+          ==
+      ^-  (list (pair (unit term) bush-node))
+      %-  zing
+      ^-  (list (list (pair (unit term) bush-node)))
+      :~
+        (turn sur (taut-to-bush-node %sur))
+        (turn lib (taut-to-bush-node %lib))
+        (turn raw |=([face=term =path] [`face hoon+path]))
+        (turn raz |=([face=term =spec =path] [`face arch+[spec path]]))
+        (turn maz |=([face=term =mark] [`face mark+mark]))
+        (turn caz |=([face=term =mars] [`face tube+mars]))
+        (turn bar |=([face=term =mark =path] [`face file+[mark path]]))
+      ==
+    ::
+    ++  taut-to-bush-node
+      |=  prefix=term
+      |=  =taut
+      ^-  (pair (unit term) bush-node)
+      :-  face.taut
+      [%hoon (fit-path prefix pax.taut)]
+    ::
+    ++  parse-header
+      |=  [pax=path src=@t]
+      ^-  (list (pair (unit term) bush-node))
+      ~>  %memo./clay/ford
+      =*  out  (list (pair (unit term) bush-node))
+      =/  [=hair res=(unit [=out =nail])]
+        (header-rule [1 1] (trip src))
+      ?^  res  out.u.res
+      %-  mean
+      =/  lyn  p.hair
+      =/  col  q.hair
+      ^-  (list tank)
+      :~  leaf+"syntax error at [{<lyn>} {<col>}] in {<pax>}"
+        ::
+          =/  =wain  (to-wain:format src)
+          ?:  (gth lyn (lent wain))
+            '<<end of file>>'
+          (snag (dec lyn) wain)
+        ::
+          leaf+(runt [(dec col) '-'] "^")
+      ==
+    ::
+    ++  header-rule
+      =>  [..lull pile-header-to-bush]
+      =,  clay
+      %+  cook  pile-header-to-bush
+      %+  ifix
+        :_  gay
+        ::  parse optional /? and ignore
+        ::
+        ;~(plug gay (punt ;~(plug fas wut gap dem gap)))
+      |^
+      ;~  plug
+        %+  cook  (bake zing (list (list taut)))
+        %+  rune  hep
+        (most ;~(plug com gaw) taut-rule)
+      ::
+        %+  cook  (bake zing (list (list taut)))
+        %+  rune  lus
+        (most ;~(plug com gaw) taut-rule)
+      ::
+        %+  rune  tis
+        ;~(plug sym ;~(pfix gap stap))
+      ::
+        %+  rune  sig
+        ;~((glue gap) sym wyde:vast stap)
+      ::
+        %+  rune  cen
+        ;~(plug sym ;~(pfix gap ;~(pfix cen sym)))
+      ::
+        %+  rune  buc
+        ;~  (glue gap)
+          sym
+          ;~(pfix cen sym)
+          ;~(pfix cen sym)
+        ==
+      ::
+        %+  rune  tar
+        ;~  (glue gap)
+          sym
+          ;~(pfix cen sym)
+          ;~(pfix stap)
+        ==
+      ==
+      ::
+      ++  pant
+        |*  fel=^rule
+        ;~(pose fel (easy ~))
+      ::
+      ++  mast
+        |*  [bus=^rule fel=^rule]
+        ;~(sfix (more bus fel) bus)
+      ::
+      ++  rune
+        |*  [bus=^rule fel=^rule]
+        %-  pant
+        %+  mast  gap
+        ;~(pfix fas bus gap fel)
+      ::
+      ++  taut-rule
+        %+  cook  |=(taut +<)
+        ;~  pose
+          (stag ~ ;~(pfix tar sym))
+          ;~(plug (stag ~ sym) ;~(pfix tis sym))
+          (cook |=(a=term [`a a]) sym)
+        ==
+      --
     ::
     ++  soak-cage  |=(s=soak ?>(?=(%cage -.s) cage.s))
     ++  soak-vase  |=(s=soak ?>(?=(%vase -.s) vase.s))

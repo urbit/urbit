@@ -2480,6 +2480,21 @@
   +$  aeon  @ud                                         ::  version number
   +$  beam  [[p=ship q=desk r=case] s=path]             ::  global name
   +$  beak  [p=ship q=desk r=case]                      ::  path prefix
+  +$  bush
+    $%  [%file =cage]
+        [%hoon text=@t deps=(list (pair (unit term) bush)) =path]
+        [%arch =spec files=(map @ta bush) =path]
+        [%mark grad=(unit (trel bush bush bush)) cor=vase]
+        [%tube p=$^([a=[=mark =bush] b=[=mark =bush]] ?(%same %mime))]  ::  identity/mime -> hoon
+    ==
+  ::
+  +$  bush-node
+    $%  [%hoon =path]
+        [%file =mark =path]  :: leaf
+        [%mark =mark]
+        [%tube =mars]
+        [%arch =spec =path]
+    ==
   +$  cable                                             ::  lib/sur/mark ref
     $:  face=(unit term)                                ::
         file-path=term                                  ::
