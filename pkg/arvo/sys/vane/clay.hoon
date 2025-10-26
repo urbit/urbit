@@ -780,542 +780,10 @@
     |=  args
     ~%  %ford-core  ..$  ~
     |%
-    ::  +read-file: retrieve marked, validated file contents at path
+    ::  Chapter for constructing $bush (dependency graph of a file) given its
+    ::  desk-wide identifier
     ::
-    ++  read-file
-      ~/  %read-file
-      |=  =path
-      ^-  cage
-      ~>  %memo./clay/ford
-      ~|  %error-validating^path
-      %-  soak-cage
-      %-  (trace 1 |.("read file {(spud path)}"))
-      =/  file
-        ~|  %file-not-found^path
-        (~(got by files) path)
-      =/  page
-        ?:  ?=(%& -.file)
-          p.file
-        ~|  %tombstoned-file^path^p.file
-        (~(got by file-store) p.file)
-      =/  =cage  (validate-page path page)
-      [%cage cage]
-    ::
-    ::  +build-nave: build a statically typed mark core
-    ::
-    ++  build-nave
-      ~/  %build-nave
-      |=  mak=mark
-      ^-  vase
-      ~>  %memo./clay/ford
-      ~|  %error-building-mark^mak
-      %-  soak-vase
-      %-  (trace 1 |.("make mark {<mak>}"))
-      =/  cor=vase  (build-fit %mar mak)
-      =/  gad=vase  (slub cor limb/%grad)
-      ?@  q.gad
-        =+  !<(mok=mark gad)
-        =/  deg=vase  $(mak mok)
-        =/  tub=vase  (build-cast mak mok)
-        =/  but=vase  (build-cast mok mak)
-        :-  %vase
-        ^-  vase  ::  vase of nave
-        %+  slub
-          (with-faces deg+deg tub+tub but+but cor+cor nave+nave.bud ~)
-        !,  *hoon
-        =/  typ  _+<.cor
-        =/  dif  _*diff:deg
-        ^-  (nave typ dif)
-        |%
-        ++  diff
-          |=  [old=typ new=typ]
-          ^-  dif
-          (diff:deg (tub old) (tub new))
-        ++  form  form:deg
-        ++  join  join:deg
-        ++  mash  mash:deg
-        ++  pact
-          |=  [v=typ d=dif]
-          ^-  typ
-          (but (pact:deg (tub v) d))
-        ++  vale  noun:grab:cor
-        --
-      :-  %vase
-      ^-  vase  ::  vase of nave
-      %+  slub  (slop (with-face cor+cor) zuse.bud)
-      !,  *hoon
-      =/  typ  _+<.cor
-      =/  dif  _*diff:grad:cor
-      ^-  (nave:clay typ dif)
-      |%
-      ++  diff  |=([old=typ new=typ] (diff:~(grad cor old) new))
-      ++  form  form:grad:cor
-      ++  join
-        |=  [a=dif b=dif]
-        ^-  (unit (unit dif))
-        ?:  =(a b)
-          ~
-        `(join:grad:cor a b)
-      ++  mash
-        |=  [a=[=ship =desk =dif] b=[=ship =desk =dif]]
-        ^-  (unit dif)
-        ?:  =(dif.a dif.b)
-          ~
-        `(mash:grad:cor a b)
-      ++  pact  |=([v=typ d=dif] (pact:~(grad cor v) d))
-      ++  vale  noun:grab:cor
-      --
-    ::  +build-dais: build a dynamically typed mark definition
-    ::
-    ++  build-dais
-      ~/  %build-dais
-      |=  mak=mark
-      ^-  dais
-      ~>  %memo./clay/ford
-      ~|  %error-building-dais^mak
-      %-  soak-dais
-      =/  nav=vase  (build-nave mak)
-      %-  (trace 1 |.("make dais {<mak>}"))
-      :-  %dais
-      ^-  dais
-      =>  [nav=nav ..zuse]
-      |_  sam=vase
-      ++  diff
-        |=  new=vase
-        (slam (slub nav limb/%diff) (slop sam new))
-      ++  form  !<(mark (slub nav limb/%form))
-      ++  join
-        |=  [a=vase b=vase]
-        ^-  (unit (unit vase))
-        =/  res=vase  (slam (slub nav limb/%join) (slop a b))
-        ?~  q.res    ~
-        ?~  +.q.res  [~ ~]
-        ``(slub res !,(*hoon ?>(?=([~ ~ *] .) u.u)))
-      ++  mash
-        |=  [a=[=ship =desk diff=vase] b=[=ship =desk diff=vase]]
-        ^-  (unit vase)
-        =/  res=vase
-          %+  slam  (slub nav limb/%mash)
-          %+  slop
-            :(slop [[%atom %p ~] ship.a] [[%atom %tas ~] desk.a] diff.a)
-          :(slop [[%atom %p ~] ship.b] [[%atom %tas ~] desk.b] diff.b)
-        ?~  q.res
-          ~
-        `(slub res !,(*hoon ?>((^ .) u)))
-      ++  pact
-        |=  diff=vase
-        (slam (slub nav limb/%pact) (slop sam diff))
-      ++  vale
-        |:  noun=q:(slub nav !,(*hoon *vale))
-        (slam (slub nav limb/%vale) noun/noun)
-      --
-    ::  +build-cast: produce gate to convert mark .a to, statically typed
-    ::
-    ++  build-cast
-      ~/  %build-cast
-      |=  [a=mark b=mark]
-      ^-  vase
-      ~>  %memo./clay/ford
-      ~|  error-building-cast+[a b]
-      %-  soak-vase
-      ?:  =(a b)
-        %-  (trace 4 |.("identity shortcircuit"))
-        [%vase same.bud]
-      ?:  =([%mime %hoon] [a b])
-        %-  (trace 4 |.("%mime -> %hoon shortcircuit"))
-        [%vase =>(..zuse !>(|=(m=mime q.q.m)))]
-      ::  try +grow; is there a +grow core with a .b arm?
-      ::
-      %-  (trace 1 |.("make cast {<a>} -> {<b>}"))
-      =/  old=vase  (build-fit %mar a)
-      ?:  (has-arm %grow b old)
-        ::  +grow core has .b arm; use that
-        ::
-        %-  (trace 4 |.("{<a>} -> {<b>}: +{(trip b)}:grow:{(trip a)}"))
-        :-  %vase
-        %+  slub  (with-faces cor+old ~)
-        ^-  hoon
-        :+  %brcl  !,(*hoon v=+<.cor)
-        :+  %sggr  
-          [%spin %cltr [%sand %t (crip "grow-{<a>}->{<b>}")] ~]
-        :+  %tsgl  limb/b
-        !,(*hoon ~(grow cor v))
-      ::  try direct +grab
-      ::
-      =/  new=vase  (build-fit %mar b)
-      =/  arm=?  (has-arm %grab a new)
-      =/  rab 
-        %-  mule  |.
-        %+  slap  new 
-        ^-  hoon
-        :+  %sggr  
-          [%spin %cltr [%sand %t (crip "grab-{<a>}->{<b>}")] ~]
-        tsgl/[limb/a limb/%grab]
-      ?:  &(arm ?=(%& -.rab) ?=(^ q.p.rab))
-        %-  (trace 4 |.("{<a>} -> {<b>}: +{(trip a)}:grab:{(trip b)}"))
-        [%vase p.rab]
-      ::  try +jump
-      ::
-      =/  jum  (mule |.((slub old tsgl/[limb/b limb/%jump])))
-      ?:  &((has-arm %jump a old) ?=(%& -.jum))
-        =/  via  !<(mark p.jum)
-        %-  (trace 4 |.("{<a>} -> {<b>}: via {<via>} per +jump:{(trip a)}"))
-        (compose-casts a via b)
-      ?:  &(arm ?=(%& -.rab))
-        =/  via  !<(mark p.rab)
-        %-  (trace 4 |.("{<a>} -> {<b>}: via {<via>} per +grab:{(trip b)}"))
-        (compose-casts a via b)
-      ?:  ?=(%noun b)
-        %-  (trace 4 |.("{<a>} -> {<b>} default"))
-        [%vase same.bud]
-      ~|(no-cast-from+[a b] !!)
-    ::
-    ++  compose-casts
-      |=  [x=mark y=mark z=mark]
-      ^-  soak
-      =/  uno=vase  (build-cast x y)
-      =/  dos=vase  (build-cast y z)
-      :-  %vase
-      %+  slub
-        (with-faces uno+uno dos+dos ~)
-      !,(*hoon |=(_+<.uno (dos (uno +<))))
-    ::  +build-tube: produce a $tube mark conversion gate from .a to .b
-    ::
-    ++  build-tube
-      |=  [a=mark b=mark]
-      ^-  tube
-      ~>  %spin.[%build-tube]  ~>  %spin.[a]  ~>  %spin.[b]
-      ~>  %memo./clay/ford
-      ~|  error-building-tube+[a b]
-      %-  soak-tube
-      =/  gat=vase  (build-cast a b)
-      %-  (trace 1 |.("make tube {<a>} -> {<b>}"))
-      [%tube =>([gat=gat ..zuse] |=(v=vase (slam gat v)))]
-    ::
-    ++  validate-page
-      |=  [=path =page]
-      ^-  cage
-      ~|  validate-page-fail+path^from+p.page
-      =/  mak=mark  (head (flop path))
-      ?:  =(mak p.page)
-        (page-to-cage page)
-      =/  [mark vax=vase]  (page-to-cage page)
-      =/  =tube  (build-tube p.page mak)
-      [mak (tube vax)]
-    ::
-    ++  page-to-cage
-      |=  =page
-      ^-  cage
-      ?:  =(%hoon p.page)
-        [%hoon [%atom %t ~] q.page]
-      ?:  =(%mime p.page)
-        [%mime =>([;;(mime q.page) ..zuse] !>(-))]
-      =/  =dais  (build-dais p.page)
-      [p.page (vale:dais q.page)]
-    ::
-    ++  cast-path
-      |=  [=path mak=mark]
-      ^-  cage
-      =/  mok  (head (flop path))
-      ~|  error-casting-path+[path mok mak]
-      =/  cag=cage  (read-file path)
-      ?:  =(mok mak)
-        cag
-      =/  =tube  (build-tube mok mak)
-      ~|  error-running-cast+[path mok mak]
-      [mak (tube q.cag)]
-    ::
-    ++  run-pact
-      |=  [old=page diff=page]
-      ^-  cage
-      ?:  ?=(%hoon p.old)
-        =/  txt=wain  (to-wain:format ;;(@t q.old))
-        =+  ;;(dif=(urge cord) q.diff)
-        =/  new=@t  (of-wain:format (lurk:differ txt dif))
-        [%hoon =>([new ..zuse] !>(-))]
-      =/  dys=dais  (build-dais p.old)
-      =/  syd=dais  (build-dais p.diff)
-      [p.old (~(pact dys (vale:dys q.old)) (vale:syd q.diff))]
-    ::
-    ++  prelude
-      |=  =path
-      ^-  vase
-      =/  cag=cage  (read-file path)
-      ?>  =(%hoon p.cag)
-      =+  !<(txt=@t q.cag)
-      =/  =pile  (parse-pile path txt)
-      =.  hoon.pile  !,(*hoon .)
-      (run-prelude pile)
-    ::
-    ++  build-bush  ::  XX check for cycles (that was kinda the point....)
-      |=  nod=$>(%hoon bush-node)
-      ^-  bush
-      ~>  %memo./clay/ford
-      =>  .(nod `bush-node`nod)
-      |-  ^-  bush
-      =*  bush-loop  $
-      ?-    -.nod
-          %file
-        =/  file=cage  (cast-path path.nod mark.nod)
-        [%file file]
-      ::
-          %hoon
-        =/  file=cage  (read-file path.nod)
-        ?>  =(%hoon p.file)
-        =+  !<(src=@t q.file)
-        =/  deps=(list (pair (unit term) bush-node))
-          (parse-header path.nod src)
-        ::
-        :^  %hoon  src
-          %+  turn  deps
-          |=  [u=(unit term) don=bush-node]
-          [u bush-loop(nod don)]
-        path.nod
-      ::
-          %mark
-        =/  cor=vase  (build-fit %mar mark.nod)
-        =/  gad=vase  (slap cor limb/%grad)
-        ?^  q.gad  [%mark ~ cor]
-        =/  deg  bush-loop(nod mark+q.gad)
-        =/  tub  bush-loop(nod tube+[mark.nod q.gad])
-        =/  but  bush-loop(nod tube+[q.gad mark.nod])
-        [%mark `[deg tub but] cor]
-      ::
-          %tube
-        ?:  =(a.mars.nod b.mars.nod)  tube+%same
-        ?:  =([%mime %hoon] [a.mars.nod b.mars.nod])  tube+%mime
-        :+  %tube
-          [a.mars.nod bush-loop(nod mark+a.mars.nod)]
-        [b.mars.nod bush-loop(nod mark+b.mars.nod)]
-      ::
-          %arch
-        =/  fiz=(list @ta)
-          =/  len  (lent path.nod)
-          %+  murn  ~(tap by files)
-          |=  [pax=path *]
-          ^-  (unit @ta)
-          ?.  =(path.nod (scag len pax))
-            ~
-          =/  pat  (slag len pax)
-          ?:  ?=([@ %hoon ~] pat)
-            `i.pat
-          ~
-        ::
-        =|  rez=(map @ta bush)
-        |-
-        ?~  fiz
-          [%arch spec.nod rez path.nod]
-        =*  nom=@ta   i.fiz
-        =/  pax=path  (weld path.nod nom %hoon ~)
-        =/  res=bush  bush-loop(nod hoon+pax)
-        $(fiz t.fiz, rez (~(put by rez) nom res))
-      ==
-    ::
-    ++  build-dependency
-      ~/  %build-dep
-      |=  dep=(each [dir=path fil=path] path)
-      ^-  vase
-      ~>  %memo./clay/ford
-      =/  =path
-        ?:(?=(%| -.dep) p.dep fil.p.dep)
-      ~|  %error-building^path
-      %-  soak-vase
-      %-  (trace 1 |.("make file {(spud path)}"))
-      =/  cag=cage  (read-file path)
-      ?>  =(%hoon p.cag)
-      =+  !<(txt=@t q.cag)
-      =/  =pile  (parse-pile path txt)
-      =/  sut=vase  (run-prelude pile)
-      =/  res=vase  (slub sut hoon.pile)
-      [%vase res]
-    ::
-    ++  build-file
-      |=  =path
-      ^-  vase
-      (build-dependency |+path)
-    ::  +build-directory: builds files in top level of a directory
-    ::
-    ::    this excludes files directly at /path/hoon,
-    ::    instead only including files in the unix-style directory at /path,
-    ::    such as /path/file/hoon, but not /path/more/file/hoon.
-    ::
-    ++  build-directory
-      |=  =path
-      ^-  (map @ta vase)
-      ~>  %memo./clay/ford
-      %-  soak-arch
-      =/  fiz=(list @ta)
-        =/  len  (lent path)
-        %+  murn  ~(tap by files)
-        |=  [pax=^path *]
-        ^-  (unit @ta)
-        ?.  =(path (scag len pax))
-          ~
-        =/  pat  (slag len pax)
-        ?:  ?=([@ %hoon ~] pat)
-          `i.pat
-        ~
-      ::
-      =|  rez=(map @ta vase)
-      |-
-      ?~  fiz
-        [%arch rez]
-      =*  nom=@ta    i.fiz
-      =/  pax=^path  (weld path nom %hoon ~)
-      =/  res  (build-dependency &+[path pax])
-      $(fiz t.fiz, rez (~(put by rez) nom res))
-    ::
-    ++  run-prelude
-      |=  =pile
-      ^-  vase
-      =/  sut=vase  zuse.bud
-      =/  sut=vase  (run-tauts sut %sur sur.pile)
-      =/  sut=vase  (run-tauts sut %lib lib.pile)
-      =/  sut=vase  (run-raw sut raw.pile)
-      =/  sut=vase  (run-raz sut raz.pile)
-      =/  sut=vase  (run-maz sut maz.pile)
-      =/  sut=vase  (run-caz sut caz.pile)
-      =/  sut=vase  (run-bar sut bar.pile)
-      sut
-    ::
-    ++  run-tauts
-      |=  [sut=vase wer=?(%lib %sur) taz=(list taut)]
-      ^-  vase
-      ?~  taz  sut
-      =/  pin=vase  (build-fit wer pax.i.taz)
-      =?  p.pin  ?=(^ face.i.taz)  [%face u.face.i.taz p.pin]
-      $(sut (slop pin sut), taz t.taz)
-    ::
-    ++  run-raw
-      |=  [sut=vase raw=(list [face=term =path])]
-      ^-  vase
-      ?~  raw  sut
-      =/  pin=vase  (build-file (snoc path.i.raw %hoon))
-      =.  p.pin  [%face face.i.raw p.pin]
-      $(sut (slop pin sut), raw t.raw)
-    ::
-    ++  run-raz
-      |=  [sut=vase raz=(list [face=term =spec =path])]
-      ^-  vase
-      ?~  raz  sut
-      =/  res=(map @ta vase)
-        (build-directory path.i.raz)
-      =;  pin=vase
-        =.  p.pin  [%face face.i.raz p.pin]
-        $(sut (slop pin sut), raz t.raz)
-      ::
-      =/  =type  (~(play ut p.sut) [%kttr spec.i.raz])
-      ::  ensure results nest in the specified type,
-      ::  and produce a homogenous map containing that type.
-      ::
-      :-  %-  ~(play ut p.sut)
-          [%kttr %make [%wing ~[%map]] ~[[%base %atom %ta] spec.i.raz]]
-      |-
-      ?~  res  ~
-      ?.  (~(nest ut type) | p.q.n.res)
-        ~|  [%nest-fail path.i.raz p.n.res]
-        !!
-      :-  [p.n.res q.q.n.res]
-      [$(res l.res) $(res r.res)]
-    ::
-    ++  run-maz
-      |=  [sut=vase maz=(list [face=term =mark])]
-      ^-  vase
-      ?~  maz  sut
-      =/  pin=vase  (build-nave mark.i.maz)
-      =.  p.pin  [%face face.i.maz p.pin]
-      $(sut (slop pin sut), maz t.maz)
-    ::
-    ++  run-caz
-      |=  [sut=vase caz=(list [face=term =mars])]
-      ^-  vase
-      ?~  caz  sut
-      =/  pin=vase  (build-cast mars.i.caz)
-      =.  p.pin  [%face face.i.caz p.pin]
-      $(sut (slop pin sut), caz t.caz)
-    ::
-    ++  run-bar
-      |=  [sut=vase bar=(list [face=term =mark =path])]
-      ^-  vase
-      ?~  bar  sut
-      =/  =cage  (cast-path [path mark]:i.bar)
-      =.  p.q.cage  [%face face.i.bar p.q.cage]
-      $(sut (slop q.cage sut), bar t.bar)
-    ::
-    ::  +build-fit: build file at path, maybe converting '-'s to '/'s in path
-    ::
-    ++  build-fit
-      |=  [pre=@tas pax=@tas]
-      ^-  vase
-      (build-file (fit-path pre pax))
-    ::
-    ::  +fit-path: find path, maybe converting '-'s to '/'s
-    ::
-    ::    Try '-' before '/', applied left-to-right through the path,
-    ::    e.g. 'a-foo/bar' takes precedence over 'a/foo-bar'.
-    ::
-    ++  fit-path
-      |=  [pre=@tas pax=@tas]
-      ^-  path
-      =/  paz  (segments pax)
-      |-  ^-  path
-      ?~  paz
-        ~_(leaf/"clay: no files match /{(trip pre)}/{(trip pax)}/hoon" !!)
-      =/  pux=path  pre^(snoc i.paz %hoon)
-      ?:  (~(has by files) pux)
-        pux
-      $(paz t.paz)
-    ::
-    ++  all-fits
-      |=  [=term suf=term]
-      ^-  (list path)
-      %+  turn  (segments suf)
-      |=  seg=path
-      [term (snoc seg %hoon)]
-    ::
-    ::  Gets a map of the data at the given path and all children of it.
-    ::
-    ::    i.e. +dip:of for a map, except doesn't shorten paths
-    ::
-    ++  dip-hat
-      |=  pax=path
-      ^-  (map path (each page lobe))
-      %-  malt
-      %+  skim  ~(tap by files)
-      |=  [p=path *]
-      ?|  ?=(~ pax)
-          ?&  !?=(~ p)
-              =(-.pax -.p)
-              $(p +.p, pax +.pax)
-      ==  ==
-    ::
-    ++  trace
-      |=  [pri=@ print=(trap tape)]
-      (^trace verb pri print)
-    ::
-    ++  mist-to-pour
-      |=  =mist
-      ^-  pour
-      ?+    -.mist  mist
-          %vale
-        :+  %vale  path.mist
-        ~|  %file-not-found-mist^path.mist
-        =/  lob  (~(got by files) path.mist)
-        ?-  -.lob
-          %&  (page-to-lobe p.lob)
-          %|  p.lob
-        ==
-      ::
-          %arch
-        =/  dip  (dip-hat path.mist)
-        :+  %arch  path.mist
-        %-  ~(run by dip)
-        |=  file=(each page lobe)
-        ?-  -.file
-          %&  (page-to-lobe p.file)
-          %|  p.file
-        ==
-      ==
+    +|  %bush-construction
     ::
     ++  pile-header-to-bush
       |=  $:  sur=(list taut)
@@ -1434,11 +902,251 @@
         ==
       --
     ::
-    ++  soak-cage  |=(s=soak ?>(?=(%cage -.s) cage.s))
-    ++  soak-vase  |=(s=soak ?>(?=(%vase -.s) vase.s))
-    ++  soak-dais  |=(s=soak ?>(?=(%dais -.s) dais.s))
-    ++  soak-tube  |=(s=soak ?>(?=(%tube -.s) tube.s))
-    ++  soak-arch  |=(s=soak ?>(?=(%arch -.s) dir.s))
+    ++  build-bush
+      |=  nod=bush-node
+      ^-  bush
+      ~>  %memo./clay/ford
+      =|  cycle=(set bush-node)
+      |-  ^-  bush
+      =*  bush-loop  $
+      ?:  (~(has in cycle) nod)  ~|  %cycle  !!
+      =.  cycle  (~(put in cycle) nod)
+      ?-    -.nod
+          %file
+        ::  XX here in cast-path and later in read-file we reenter the build
+        ::  process to build marks, and we can't detect the top-level cycle
+        ::  without a more global cycle stack, which would make us miss cache
+        ::  entries.  OTOH the cycle involves a circular dependency of a mark on
+        ::  its file with the same mark, which is an exotic situation.
+        ::  %loop hint to the rescue?
+        ::
+        =/  file=cage  (cast-path path.nod mark.nod)
+        [%file file]
+      ::
+          %hoon
+        =/  file=cage  (read-file path.nod)
+        ?>  =(%hoon p.file)
+        =+  !<(src=@t q.file)
+        =/  deps=(list (pair (unit term) bush-node))
+          (parse-header path.nod src)
+        ::
+        :^  %hoon  src
+          %+  turn  deps
+          |=  [u=(unit term) don=bush-node]
+          [u bush-loop(nod don)]
+        path.nod
+      ::
+          %mark
+        =/  cor=vase  (build-fit %mar mark.nod)
+        =/  gad=vase  (slap cor limb/%grad)
+        ?^  q.gad  [%mark ~ cor]
+        =/  deg  bush-loop(nod mark+q.gad)
+        =/  tub  bush-loop(nod tube+[mark.nod q.gad])
+        =/  but  bush-loop(nod tube+[q.gad mark.nod])
+        [%mark `[deg tub but] cor]
+      ::
+          %tube
+        ?:  =(a.mars.nod b.mars.nod)  tube+%same
+        ?:  =([%mime %hoon] [a.mars.nod b.mars.nod])  tube+%mime
+        :+  %tube
+          [a.mars.nod bush-loop(nod mark+a.mars.nod)]
+        [b.mars.nod bush-loop(nod mark+b.mars.nod)]
+      ::
+          %arch
+        =/  fiz=(list @ta)
+          =/  len  (lent path.nod)
+          %+  murn  ~(tap by files)
+          |=  [pax=path *]
+          ^-  (unit @ta)
+          ?.  =(path.nod (scag len pax))
+            ~
+          =/  pat  (slag len pax)
+          ?:  ?=([@ %hoon ~] pat)
+            `i.pat
+          ~
+        ::
+        =|  rez=(map @ta bush)
+        |-
+        ?~  fiz
+          [%arch spec.nod rez path.nod]
+        =*  nom=@ta   i.fiz
+        =/  pax=path  (weld path.nod nom %hoon ~)
+        =/  res=bush  bush-loop(nod hoon+pax)
+        $(fiz t.fiz, rez (~(put by rez) nom res))
+      ==
+    ::
+    +|  %external-interface
+    ::
+    ::  +read-file: retrieve marked, validated file contents at path
+    ::
+    ++  read-file
+      ~/  %read-file
+      |=  =path
+      ^-  cage
+      ~>  %memo./clay/ford
+      ~|  %error-validating^path
+      %-  (trace 1 |.("read file {(spud path)}"))
+      =/  file
+        ~|  %file-not-found^path
+        (~(got by files) path)
+      =/  page
+        ?:  ?=(%& -.file)
+          p.file
+        ~|  %tombstoned-file^path^p.file
+        (~(got by file-store) p.file)
+      (validate-page path page)
+    ::
+    ::  +build-nave: build a statically typed mark core
+    ::
+    ++  build-nave
+      ~/  %build-nave
+      |=  mak=mark
+      ^-  vase
+      ~>  %memo./clay/ford
+      ~|  %error-building-mark^mak
+      (bush-to-vase (build-bush %mark mak) *vase)
+    ::  +build-dais: build a dynamically typed mark definition
+    ::
+    ++  build-dais
+      ~/  %build-dais
+      |=  mak=mark
+      ^-  dais
+      ~>  %memo./clay/ford
+      ~|  %error-building-dais^mak
+      =/  nav=vase  (build-nave mak)
+      %-  (trace 1 |.("make dais {<mak>}"))
+      ^-  dais
+      =>  [nav=nav ..zuse]
+      ~>  %memo./clay/ford
+      |_  sam=vase
+      ++  diff
+        |=  new=vase
+        (slam (slub nav limb/%diff) (slop sam new))
+      ++  form  !<(mark (slub nav limb/%form))
+      ++  join
+        |=  [a=vase b=vase]
+        ^-  (unit (unit vase))
+        =/  res=vase  (slam (slub nav limb/%join) (slop a b))
+        ?~  q.res    ~
+        ?~  +.q.res  [~ ~]
+        ``(slub res !,(*hoon ?>(?=([~ ~ *] .) u.u)))
+      ++  mash
+        |=  [a=[=ship =desk diff=vase] b=[=ship =desk diff=vase]]
+        ^-  (unit vase)
+        =/  res=vase
+          %+  slam  (slub nav limb/%mash)
+          %+  slop
+            :(slop [[%atom %p ~] ship.a] [[%atom %tas ~] desk.a] diff.a)
+          :(slop [[%atom %p ~] ship.b] [[%atom %tas ~] desk.b] diff.b)
+        ?~  q.res
+          ~
+        `(slub res !,(*hoon ?>((^ .) u)))
+      ++  pact
+        |=  diff=vase
+        (slam (slub nav limb/%pact) (slop sam diff))
+      ++  vale
+        |:  noun=q:(slub nav !,(*hoon *vale))
+        (slam (slub nav limb/%vale) noun/noun)
+      --
+    ::  +build-cast: produce gate to convert mark .a to, statically typed
+    ::
+    ++  build-cast
+      ~/  %build-cast
+      |=  [a=mark b=mark]
+      ^-  vase
+      ~>  %memo./clay/ford
+      ~|  error-building-cast+[a b]
+      (bush-to-vase (build-bush %tube a b) *vase)
+    ::  +build-tube: produce a $tube mark conversion gate from .a to .b
+    ::
+    ++  build-tube
+      |=  [a=mark b=mark]
+      ^-  tube
+      ~>  %spin.[%build-tube]  ~>  %spin.[a]  ~>  %spin.[b]
+      ~>  %memo./clay/ford
+      ~|  error-building-tube+[a b]
+      =/  gat=vase  (build-cast a b)
+      %-  (trace 1 |.("make tube {<a>} -> {<b>}"))
+      =>  [gat=gat ..zuse]
+      ~>  %memo./clay/ford
+      |=(v=vase (slam gat v))
+    ::
+    ++  validate-page
+      |=  [=path =page]
+      ^-  cage
+      ~|  validate-page-fail+path^from+p.page
+      =/  mak=mark  (head (flop path))
+      ?:  =(mak p.page)
+        (page-to-cage page)
+      =/  [mark vax=vase]  (page-to-cage page)
+      =/  =tube  (build-tube p.page mak)
+      [mak (tube vax)]
+    ::
+    ++  page-to-cage
+      |=  =page
+      ^-  cage
+      ?:  =(%hoon p.page)
+        [%hoon [%atom %t ~] ;;(@ q.page)]
+      ?:  =(%mime p.page)
+        [%mime =>([;;(mime q.page) ..zuse] !>(-))]
+      =/  =dais  (build-dais p.page)
+      :-  p.page
+      =>  [dais=dais dat=q.page]
+      ~>  %memo./clay/ford
+      (vale:dais dat)
+    ::
+    ++  cast-path
+      |=  [=path mak=mark]
+      ^-  cage
+      =/  mok  (head (flop path))
+      ~|  error-casting-path+[path mok mak]
+      =/  cag=cage  (read-file path)
+      ?:  =(mok mak)
+        cag
+      =/  =tube  (build-tube mok mak)
+      ~|  error-running-cast+[path mok mak]
+      [mak (tube q.cag)]
+    ::
+    ++  prelude
+      |=  =path
+      ^-  vase
+      =/  b2v  bush-to-vase
+      (b2v(only-prelude &) (build-bush %hoon path) *vase)
+    ::
+    ++  build-file
+      |=  =path
+      ^-  vase
+      ~>  %memo./clay/ford
+      (bush-to-vase (build-bush %hoon path) *vase)
+    ::  +build-fit: build file at path, maybe converting '-'s to '/'s in path
+    ::
+    ++  build-fit
+      |=  [pre=@tas pax=@tas]
+      ^-  vase
+      (build-file (fit-path pre pax))
+    ::
+    +|  %helpers
+    ::
+    ::  +fit-path: find path, maybe converting '-'s to '/'s
+    ::
+    ::    Try '-' before '/', applied left-to-right through the path,
+    ::    e.g. 'a-foo/bar' takes precedence over 'a/foo-bar'.
+    ::
+    ++  fit-path
+      |=  [pre=@tas pax=@tas]
+      ^-  path
+      =/  paz  (segments pax)
+      |-  ^-  path
+      ?~  paz
+        ~_(leaf/"clay: no files match /{(trip pre)}/{(trip pax)}/hoon" !!)
+      =/  pux=path  pre^(snoc i.paz %hoon)
+      ?:  (~(has by files) pux)
+        pux
+      $(paz t.paz)
+    ::
+    ++  trace
+      |=  [pri=@ print=(trap tape)]
+      (^trace verb pri print)
     --
   ::
   ++  trace
