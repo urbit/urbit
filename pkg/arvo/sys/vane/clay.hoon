@@ -646,40 +646,50 @@
         --
     =>  |%
         ++  bush-to-vase
-          =/  sut=vase  zuse.bud
-          |=  =bush
+          =/  only-prelude=?  |
+          |=  [=bush sut=vase]
           ^-  vase
           ?-    -.bush
               %file
-            =.  sut  *vase
-            ~>  %memo./clay/ford
             q.cage.bush
           ::
               %hoon
+            =.  sut  zuse.bud
             ~>  %memo./clay/ford
-            =/  =pile  (parse-pile path.bush text.bush)
             |-  ^-  vase
             ?^  deps.bush
-              =/  dep=vase  (bush-to-vase q.i.deps.bush)
+              =/  dep=vase  (bush-to-vase q.i.deps.bush sut)
               =?  p.dep  ?=(^ p.i.deps.bush)  [%face u.p.i.deps.bush p.dep]
               $(deps.bush t.deps.bush, sut (slop dep sut))
+            ?:  only-prelude  sut
+            =/  =pile  (parse-pile path.bush text.bush)
             (slub sut hoon.pile)
           ::
               %arch
             ~>  %memo./clay/ford
-            =/  res=(map @ta vase)  (~(run by files.bush) bush-to-vase)
-            =/  =type  (~(play ut p.sut) [%kttr spec.bush])
-            :-  %-  ~(play ut p.sut)
-                [%kttr %make [%wing ~[%map]] ~[[%base %atom %ta] spec.bush]]
+            =/  [type-val=type type-map=type]
+              =>  [sut=sut spec=spec.bush ..ut]
+              ~>  %memo./clay/ford
+              :-  (~(play ut p.sut) [%kttr spec])
+              %-  ~(play ut p.sut)
+              [%kttr %make [%wing ~[%map]] ~[[%base %atom %ta] spec]]
+            ::
+            =.  sut  *vase
+            ~>  %memo./clay/ford
+            =/  res=(map @ta vase)
+              (~(run by files.bush) (curr bush-to-vase *vase))
+            ::
+            :-  type-map
             |-
             ?~  res  ~
-            ?.  (~(nest ut type) | p.q.n.res)
+            ?.  (~(nest ut type-val) | p.q.n.res)
               ~|  [%nest-fail path.bush p.n.res]
               !!
             :-  [p.n.res q.q.n.res]
             [$(res l.res) $(res r.res)]
           ::
               %mark
+            =.  sut  *vase
             ~>  %memo./clay/ford
             =*  cor  cor.bush
             ?~  grad.bush
@@ -706,9 +716,9 @@
               ++  pact  |=([v=typ d=dif] (pact:~(grad cor v) d))
               ++  vale  noun:grab:cor
               --
-            =/  deg=vase  (bush-to-vase p.u.grad.bush)
-            =/  tub=vase  (bush-to-vase q.u.grad.bush)
-            =/  but=vase  (bush-to-vase r.u.grad.bush)
+            =/  deg=vase  (bush-to-vase p.u.grad.bush *vase)
+            =/  tub=vase  (bush-to-vase q.u.grad.bush *vase)
+            =/  but=vase  (bush-to-vase r.u.grad.bush *vase)
             %+  slub
               (with-faces deg+deg tub+tub but+but cor+cor nave+nave.bud ~)
             !,  *hoon
@@ -731,6 +741,7 @@
             --
           ::
               %tube
+            =.  sut  *vase
             ~>  %memo./clay/ford
             ?@  p.bush
               ?-  p.bush
@@ -739,7 +750,7 @@
               ==
             =/  a  a.p.bush
             =/  b  b.p.bush
-            =/  old  (bush-to-vase bush.a)
+            =/  old  (bush-to-vase bush.a *vase)
             ?:  (has-arm %grow mark.b old)
               %+  slub  (with-faces cor+old ~)
               ^-  hoon
@@ -748,7 +759,7 @@
                 [%spin %cltr [%sand %t (crip "grow-{<mark.a>}->{<mark.b>}")] ~]
               :+  %tsgl  limb/mark.b
               !,(*hoon ~(grow cor v))
-            =/  new  (bush-to-vase bush.b)
+            =/  new  (bush-to-vase bush.b *vase)
             =/  arm=?  (has-arm %grab mark.a new)
             =/  rab
               %-  mule  |.
