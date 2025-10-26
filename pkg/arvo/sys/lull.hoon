@@ -2485,7 +2485,7 @@
         [%hoon text=@t deps=(list (pair (unit term) bush)) =path]
         [%arch =spec files=(map @ta bush) =path]
         [%mark grad=(unit (trel bush bush bush)) cor=vase]
-        [%tube p=$^([a=[=mark =bush] b=[=mark =bush]] ?(%same %mime))]  ::  identity/mime -> hoon
+        [%tube p=$@(?(%same %mime) [a=[=mark =bush] b=[=mark =bush]])]  ::  identity/mime -> hoon
     ==
   ::
   +$  bush-node
