@@ -800,7 +800,7 @@
       :~
         (turn sur (taut-to-bush-node %sur))
         (turn lib (taut-to-bush-node %lib))
-        (turn raw |=([face=term =path] [`face hoon+path]))
+        (turn raw |=([face=term =path] [`face hoon+(snoc path %hoon)]))
         (turn raz |=([face=term =spec =path] [`face arch+[spec path]]))
         (turn maz |=([face=term =mark] [`face mark+mark]))
         (turn caz |=([face=term =mars] [`face tube+mars]))
