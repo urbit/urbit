@@ -949,8 +949,8 @@
         ?:  =(a.mars.nod b.mars.nod)  tube+%same
         ?:  =([%mime %hoon] [a.mars.nod b.mars.nod])  tube+%mime
         :+  %tube
-          [a.mars.nod bush-loop(nod mark+a.mars.nod)]
-        [b.mars.nod bush-loop(nod mark+b.mars.nod)]
+          [a.mars.nod bush-loop(nod hoon+(fit-path %mar a.mars.nod))]
+        [b.mars.nod bush-loop(nod hoon+(fit-path %mar b.mars.nod))]
       ::
           %arch
         =/  fiz=(list @ta)
