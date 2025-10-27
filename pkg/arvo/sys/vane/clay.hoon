@@ -624,17 +624,6 @@
     $(vaz t.vaz)
   ::
   ++  ford
-    ::  xternal interface:
-    ::    page-to-cage
-    ::    cast-path
-    ::    prelude
-    ::    build-file
-    ::    read-file
-    ::    build-nave
-    ::    build-dais
-    ::    build-cast
-    ::    build-tube
-    ::
     !:
     =>  |%
         +$  args
@@ -642,6 +631,22 @@
           $:  files=(map path (each page lobe))
               file-store=(map lobe page)
               verb=@
+          ==
+        ::
+        +$  bush
+          $%  [%file =cage]
+              [%hoon text=@t deps=(list (pair (unit term) bush)) =path]
+              [%arch =spec files=(map @ta bush) =path]
+              [%mark grad=(unit (trel bush bush bush)) cor=vase]
+              [%tube p=$@(?(%same %mime) [a=[=mark =bush] b=[=mark =bush]])]  ::  identity/mime -> hoon
+          ==
+        ::
+        +$  bush-node
+          $%  [%hoon =path]
+              [%file =mark =path]  :: leaf
+              [%mark =mark]
+              [%tube =mars]
+              [%arch =spec =path]
           ==
         --
     =>  |%
@@ -785,35 +790,6 @@
     ::
     +|  %bush-construction
     ::
-    ++  pile-header-to-bush
-      |=  $:  sur=(list taut)
-              lib=(list taut)
-              raw=(list [face=term =path])
-              raz=(list [face=term =spec =path])
-              maz=(list [face=term =mark])
-              caz=(list [face=term =mars])
-              bar=(list [face=term =mark =path])
-          ==
-      ^-  (list (pair (unit term) bush-node))
-      %-  zing
-      ^-  (list (list (pair (unit term) bush-node)))
-      :~
-        (turn sur (taut-to-bush-node %sur))
-        (turn lib (taut-to-bush-node %lib))
-        (turn raw |=([face=term =path] [`face hoon+(snoc path %hoon)]))
-        (turn raz |=([face=term =spec =path] [`face arch+[spec path]]))
-        (turn maz |=([face=term =mark] [`face mark+mark]))
-        (turn caz |=([face=term =mars] [`face tube+mars]))
-        (turn bar |=([face=term =mark =path] [`face file+[mark path]]))
-      ==
-    ::
-    ++  taut-to-bush-node
-      |=  prefix=term
-      |=  =taut
-      ^-  (pair (unit term) bush-node)
-      :-  face.taut
-      [%hoon (fit-path prefix pax.taut)]
-    ::
     ++  parse-header
       |=  [pax=path src=@t]
       ^-  (list (pair (unit term) bush-node))
@@ -837,15 +813,15 @@
       ==
     ::
     ++  header-rule
-      =>  [..lull pile-header-to-bush]
-      =,  clay
+      :: =>  ..lull  ::  XX doesn't compile, is it necessary?
+      :: =,  clay
+      |^
       %+  cook  pile-header-to-bush
       %+  ifix
         :_  gay
         ::  parse optional /? and ignore
         ::
         ;~(plug gay (punt ;~(plug fas wut gap dem gap)))
-      |^
       ;~  plug
         %+  cook  (bake zing (list (list taut)))
         %+  rune  hep
@@ -900,6 +876,35 @@
           ;~(plug (stag ~ sym) ;~(pfix tis sym))
           (cook |=(a=term [`a a]) sym)
         ==
+      ::
+      ++  pile-header-to-bush
+        |=  $:  sur=(list taut)
+                lib=(list taut)
+                raw=(list [face=term =path])
+                raz=(list [face=term =spec =path])
+                maz=(list [face=term =mark])
+                caz=(list [face=term =mars])
+                bar=(list [face=term =mark =path])
+            ==
+        ^-  (list (pair (unit term) bush-node))
+        %-  zing
+        ^-  (list (list (pair (unit term) bush-node)))
+        :~
+          (turn sur (taut-to-bush-node %sur))
+          (turn lib (taut-to-bush-node %lib))
+          (turn raw |=([face=term =path] [`face hoon+(snoc path %hoon)]))
+          (turn raz |=([face=term =spec =path] [`face arch+[spec path]]))
+          (turn maz |=([face=term =mark] [`face mark+mark]))
+          (turn caz |=([face=term =mars] [`face tube+mars]))
+          (turn bar |=([face=term =mark =path] [`face file+[mark path]]))
+        ==
+      ::
+      ++  taut-to-bush-node
+        |=  prefix=term
+        |=  =taut
+        ^-  (pair (unit term) bush-node)
+        :-  face.taut
+        [%hoon (fit-path prefix pax.taut)]
       --
     ::
     ++  build-bush
@@ -909,7 +914,7 @@
       =|  cycle=(set bush-node)
       |-  ^-  bush
       =*  bush-loop  $
-      ?:  (~(has in cycle) nod)  ~|  %cycle  !!
+      ?:  (~(has in cycle) nod)  ~|  [cycle+nod cycle]  !!
       =.  cycle  (~(put in cycle) nod)
       ?-    -.nod
           %file
@@ -1098,6 +1103,7 @@
     ++  cast-path
       |=  [=path mak=mark]
       ^-  cage
+      ~>  %memo./clay/ford
       =/  mok  (head (flop path))
       ~|  error-casting-path+[path mok mak]
       =/  cag=cage  (read-file path)
