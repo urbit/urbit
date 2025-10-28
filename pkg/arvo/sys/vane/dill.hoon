@@ -81,6 +81,7 @@
 --
 =|  all=axle
 |=  [now=@da eny=@uvJ rof=roof]                         ::  current invocation
+~>  %spin.[%dill]
 =>  ~%  %dill  ..part  ~
     |%
     ++  as                                              ::  per cause
@@ -256,6 +257,7 @@
           wrapped-task=(hobo task)
       ==
   ^+  [*(list move) ..^$]
+  ~>  %spin.[%call]
   =/  task=task
     ~|  wrapped-task
     ((harden task) wrapped-task)
@@ -417,6 +419,7 @@
 ::
 ++  load                                                ::  import old state
   =<  |=  old=any-axle
+      ~>  %spin.[%load]
       ?-  -.old
         %8  ..^$(all old)
         %7  $(old (axle-7-to-8 old))
@@ -526,6 +529,7 @@
   ^-  roon
   |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
+  ~>  %spin.[%scry]
   =*  ren  car
   =*  why=shop  &/p.bem
   =*  syd  q.bem
@@ -560,6 +564,7 @@
 ++  take                                                ::  process move
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^+  [*(list move) ..^$]
+  ~>  %spin.[%take]
   ?^  dud
     ~|(%dill-take-dud (mean tang.u.dud))
   ::

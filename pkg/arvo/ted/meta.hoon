@@ -8,15 +8,9 @@
 =/  m  (strand ,vase)
 ^-  form:m
 =+  !<([~ =spar:ames] arg)
-;<  ~                                   bind:m  (meta:strandio /meta spar)
-:: ;<  =sage:mess:ames  bind:m  (take-sage:strandio /meta)  :: restore in 409k
-;<  [=spar:ames roar=(unit roar:ames)]  bind:m  (take-tune:strandio /puek)
-;<  ~                                   bind:m  (yawn:strandio /meta spar)
-=/  =sage:mess:ames
-  :-  spar
-  ?~  roar  ~
-  ?~  q.dat.u.roar  ~
-  u.q.dat.u.roar
+;<  ~                bind:m  (meta:strandio /meta spar)
+;<  =sage:mess:ames  bind:m  (take-sage:strandio /meta)  :: restored in 409k
+;<  ~                bind:m  (yawn:strandio /meta spar)
 ?~  q.sage
   (pure:m !>([leaf+"... empty response ..." ~]))
 ?>  ?=(%message p.q.sage)
