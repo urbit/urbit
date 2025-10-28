@@ -125,7 +125,7 @@
 =>  ::  vane IO
     ::
     ::  (note: %tune and %turf unused; left for migration purposes;
-    ::  removing any of these $signs will break any migration prior 
+    ::  removing any of these $signs will break any migration prior
     ::  to ames-state-22)
     |%
     +$  sign
@@ -9447,9 +9447,12 @@
               ::
               =+  flow-state=[bone=bone seq=seq last=last-acked.rcv]
               ::
-              ?:  |(closing.state (~(has in corked.per) side))
+              ?:  |(halt.state closing.state (~(has in corked.per) side))
                 =+  ;;(mess=@tas +<.gage)
-                
+                ?:  halt.state
+                  %-  %+  ev-tace  odd.veb.bug.ames-state
+                      |.("skip {<mess>}; flow is halted flow={<bone>} ")
+                  fo-core
                 =/  is-cork-plea=?
                   ?:  ?=(%boon mess)  |
                   =+  ;;  =plea  +>.gage
