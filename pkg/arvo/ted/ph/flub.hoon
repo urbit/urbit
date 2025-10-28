@@ -22,35 +22,28 @@
 ::  sleep, so we give time to resend the /gf plea that whas dropped on first
 ::  contact
 ::
-;<  ~  bind:m  (sleep ~s5)
+;<  ~  bind:m  (sleep ~s5)  ::  XX look for the $plea resend
 ::  poke a non-running agent
 ::
 ;<  ~  bind:m  (dojo ~bud ":sub [%sub ~dev %pub]")
-::  check that remote flubs are received
-::
-;<  ~  bind:m  (sleep ~s1)  :: XX if this is not hear we scry into the future
-
-;<  ~  bind:m  (wait-for-flub ~bud ~dev %pub)
 ::  check that ~dev has halted this flow
 ::
-;<  ~  bind:m  (sleep ~s1)  :: XX if this is not hear we scry into the future
 ;<  ~  bind:m  (wait-for-has-halt ~dev ~bud %pub)  :: XX
+::  check that remote flubs are received
+::
+;<  ~  bind:m  (wait-for-flub ~bud ~dev %pub)
 ::  XX check that proding doesn't actually send the flubbed poke again
 ::
 ;<  ~  bind:m  (dojo ~bud "|pass [%a %prod [~dev]~]")
 ::
 ;<  ~  bind:m  (copy-file ~dev /app/pub/hoon pub-agent)
 ;<  ~  bind:m  (dojo ~dev "|start %pub")
-::   check that the %spur is sent
-::
-;<  ~  bind:m  (sleep ~s1)  :: XX if this is not hear we scry into the future
-;<  ~  bind:m  (wait-for-spur ~bud ~dev %pub)
-::   ... and that the flow is not halted anymore
-::
-;<  ~  bind:m  (dojo ~dev "|pass [%a %prod ~]")
-::  XX if we sleep we scry at full speed into the future
+::   check that the flow is not halted anymore
 ::
 ;<  ~  bind:m  (wait-for-del-halt ~dev ~bud %pub)
+::   check that the %spur is sent
+::
+;<  ~  bind:m  (wait-for-spur ~bud ~dev %pub)
 ::
 ;<  ~  bind:m  end
 (pure:m *vase)

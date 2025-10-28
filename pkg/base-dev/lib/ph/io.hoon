@@ -88,7 +88,6 @@
   ^-  form:m
   (pure:m ~)
 ::
-::
 ++  init
   =/  m  (strand ,~)
   ^-  form:m
@@ -216,14 +215,22 @@
   |=  [our=ship her=ship dap=term]
   =/  m  (strand ,~)
   ^-  form:m
+  ;<  =bowl:spider  bind:m  get-bowl
   |-  ^-  form:m
   =*  loop  $
-  ;<  =bowl:spider  bind:m  get-bowl
+  ;<  [from=^ship =unix-effect]  bind:m  take-unix-effect
+  ;<  now=@da                    bind:m  get-time
+  ?.  =(from our)
+    ::  our sends the $boon with the halted flow number, at this point
+    ::  gall has updated its state adding the app to gall's .halts map
+    ::  XX  search deeper in the .unix-effect?
+    ::
+    loop
   =/  aqua-pax
     :-  %i
-    /(scot %p our)/gg/(scot %p our)//(scot %da now.bowl)/[%$]/noun
+    /(scot %p our)/gg/(scot %p our)//(scot %da now)/[%$]/noun
   =+  ;;  flubs=(unit (jug ship term))
-    (scry-aqua:util noun our.bowl now.bowl aqua-pax)
+    (scry-aqua:util noun our.bowl now aqua-pax)
   ?~  flubs  loop
   ?.  (~(has ju u.flubs) her dap)
     loop
@@ -233,14 +240,22 @@
   |=  [our=ship her=ship dap=term]
   =/  m  (strand ,~)
   ^-  form:m
+  ;<  =bowl:spider  bind:m  get-bowl
   |-  ^-  form:m
   =*  loop  $
-  ;<  =bowl:spider  bind:m  get-bowl
+  ;<  [from=ship =unix-effect]  bind:m  take-unix-effect
+  ;<  now=@da                   bind:m  get-time
+  ?.  =(from our)
+    ::  our ack to the %spur $boon is sent, at this point
+    ::  gall has updated its state adding the app to gall's .flubs map
+    ::  XX  search deeper in the .unix-effect?
+    ::
+    loop
   =/  aqua-pax
     :-  %i
-    /(scot %p our)/gg/(scot %p our)//(scot %da now.bowl)/[%$]/noun
+    /(scot %p our)/gg/(scot %p our)//(scot %da now)/[%$]/noun
   =+  ;;  flubs=(unit (jug ship term))
-    (scry-aqua:util noun our.bowl now.bowl aqua-pax)
+    (scry-aqua:util noun our.bowl now aqua-pax)
   ?~  flubs  loop
   ?:  (~(has ju u.flubs) her dap)
     loop
@@ -250,14 +265,27 @@
   |=  [our=ship her=ship dap=term]
   =/  m  (strand ,~)
   ^-  form:m
+  ;<  =bowl:spider  bind:m  get-bowl
   |-  ^-  form:m
   =*  loop  $
-  ;<  =bowl:spider  bind:m  get-bowl
+  ;<  [from=ship =unix-effect]  bind:m  take-unix-effect
+  ;<  now=@da                   bind:m  get-time
+  ::  only %send or %push effects
+  ::
+  ?.  ?=(?(%send %push) -.q.unix-effect)
+    loop
+  ~&  >>  from^unix-effect
+  ?.  =(from our)
+    ::  wait until our ack for the %flub $boon is sent, at this point
+    ::  gall has updated its state adding the app to gall's .flubs map
+    ::  XX  search deeper in the .unix-effect?
+    ::
+    loop
   =/  aqua-pax
     :-  %i
-    /(scot %p our)/gh/(scot %p our)//(scot %da now.bowl)/[%$]/noun
+    /(scot %p our)/gh/(scot %p our)//(scot %da now)/[%$]/noun
   =+  ;;  halts=(unit (jug app=term [ship =duct]))
-    (scry-aqua:util noun our.bowl now.bowl aqua-pax)
+    (scry-aqua:util noun our.bowl now aqua-pax)
   ?~  halts  loop
   ?.  (~(has by u.halts) dap)  ::  XX check .her as well
     loop
@@ -267,14 +295,22 @@
   |=  [our=ship her=ship dap=term]
   =/  m  (strand ,~)
   ^-  form:m
+  ;<  =bowl:spider  bind:m  get-bowl
   |-  ^-  form:m
   =*  loop  $
-  ;<  =bowl:spider  bind:m  get-bowl
+  ;<  [from=ship =unix-effect]  bind:m  take-unix-effect
+  ;<  now=@da                   bind:m  get-time
+  ?.  =(from our)
+    ::  when the %spur $boon has been sent, gall has updated its state deleting
+    ::  the app from gall's .flubs map
+    ::  XX  search deeper in the .unix-effect?
+    ::
+    loop
   =/  aqua-pax
     :-  %i
-    /(scot %p our)/gh/(scot %p our)//(scot %da now.bowl)/[%$]/noun
+    /(scot %p our)/gh/(scot %p our)//(scot %da now)/[%$]/noun
   =+  ;;  halts=(unit (jug app=term [ship =duct]))
-    (scry-aqua:util noun our.bowl now.bowl aqua-pax)
+    (scry-aqua:util noun our.bowl now aqua-pax)
   ?~  halts  loop
   ?:  (~(has by u.halts) dap) ::  XX check .her as well
     loop
