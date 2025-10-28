@@ -19,13 +19,12 @@
 ::
 ;<  ~  bind:m  (copy-file ~bud /app/sub/hoon sub-agent)
 ;<  ~  bind:m  (dojo ~bud "|start %sub")
-::  sleep, so we give time to resend the /gf plea that whas dropped on first
-::  contact
-::
-;<  ~  bind:m  (sleep ~s5)  ::  XX look for the $plea resend
 ::  poke a non-running agent
 ::
 ;<  ~  bind:m  (dojo ~bud ":sub [%sub ~dev %pub]")
+::  %prod, so we resend the /gf plea that whas dropped on first contact
+::
+;<  ~  bind:m  (dojo ~bud "|pass [%a %prod [~dev]~]")
 ::  check that ~dev has halted this flow
 ::
 ;<  ~  bind:m  (wait-for-has-halt ~dev ~bud %pub)  :: XX
