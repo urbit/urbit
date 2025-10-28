@@ -224,7 +224,7 @@
       %-  (slog >%aqua-crash< >guest=who< p.poke-result)
       $
     =.  snap  +.p.poke-result
-    =.  ..abet-pe  (publish-event tym ue)
+    =.  ..abet-pe  (publish-event tym.pier-data ue)
     =.  ..abet-pe
       ~|  ova=-.p.poke-result
       (handle-effects ;;((list ovum) -.p.poke-result))
