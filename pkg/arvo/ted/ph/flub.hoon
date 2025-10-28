@@ -6,9 +6,17 @@
 ^-  thread:spider
 |=  vase
 =/  m  (strand ,vase)
+=/  cores=(list ?(%mesa %ames))  ~[%mesa %ames]
+|-  ^-  form:m
+?~  cores  (pure:m *vase)
 ;<  ~  bind:m  start-simple
-;<  ~  bind:m  (init-ship ~bud &)
-;<  ~  bind:m  (init-ship ~dev &)
+::
+=*  loop  $
+;<  ~  bind:m  (init-ship ~bud fake=&)
+;<  ~  bind:m  (dojo ~bud "|pass [%a %load {<i.cores>}]")
+;<  ~  bind:m  (init-ship ~dev fake=&)
+;<  ~  bind:m  (dojo ~dev "|pass [%a %load {<i.cores>}]")
+::
 ;<  ~  bind:m  (dojo ~bud "|ames/verb %fin %for %ges %kay %msg %odd %rcv %rot %snd %sun")
 ;<  ~  bind:m  (dojo ~dev "|ames/verb %fin %for %ges %kay %msg %odd %rcv %rot %snd %sun")
 ::
@@ -43,6 +51,9 @@
 ::   check that the %spur is sent
 ::
 ;<  ~  bind:m  (wait-for-spur ~bud ~dev %pub)
+:: XX we should scry into ~bud for no entries in the .pit
+::
+;<  ~  bind:m  (sleep ~s1)
 ::
 ;<  ~  bind:m  end
-(pure:m *vase)
+$(cores t.cores)
