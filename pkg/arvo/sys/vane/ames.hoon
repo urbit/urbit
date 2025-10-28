@@ -9438,6 +9438,8 @@
           =/  =bone
             ~|  goad-flow-missing/hen
             (~(got by by-duct.ossuary.per) hen)
+          %-  %+  ev-tace  sun.veb.bug.ames-state
+              |.("hear %goad; wake side=[{<bone>} %for]")
           =+  fo-core=(fo-abed:fo bone %for)
           ::  if the ack/payload is already in the .pit, it will assert it
           ::
@@ -12759,8 +12761,6 @@
       ?:  ?=(%ames -.ship-state)
         (call:am-core hen ~ soft+goad/ship)
       ?>  ?=([~ %known *] +.ship-state)
-      %-  %+  %*(ev-tace ev-core her ship)  sun.veb.bug.ames-state
-          |.("hear %goad; wake side=[{<bone>} %for]")
       =^  moves  ames-state
         =<  ev-abet
         ev-goad-flow:(ev-abed:ev-core hen ship +.u.ship-state)
