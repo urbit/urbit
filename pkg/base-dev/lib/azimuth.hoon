@@ -48,6 +48,7 @@
             crypto-suite=@ud
             key-revision=@ud
             continuity-number=@ud
+            fief=(unit fief)
         ==
       +$  deed
         $:  owner=address
@@ -277,6 +278,7 @@
       ::
         ?.  escape-requested  ~
         ``@p`escape-to
+        fief
     ==
   ::
   ::  spawn state
@@ -377,7 +379,7 @@
   ::
       %activated
     %_  pot
-      net  `[0 0 0 &^(^sein:title who.dif) ~]
+      net  `[0 0 0 &^(^sein:title who.dif) ~ ~]
       kid  ?.  ?=(?(%czar %king) (clan:title who.dif))  ~
             `[0x0 ~]
     ==
@@ -391,9 +393,10 @@
   ::
   ::  networking
   ::
-      ?(%keys %continuity %sponsor %escape)
+      ?(%keys %continuity %sponsor %escape %fief)
     ?>  ?=(^ net.pot)
     ?-  -.dif
+        %fief  pot(fief.u.net fief.dif)
         %keys
       pot(life.u.net life.dif, pass.u.net pass.dif)
     ::

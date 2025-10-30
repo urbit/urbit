@@ -38,10 +38,7 @@
   ++  galaxy-for
     |=  [=ship =bowl:gall]
     ^-  @p
-    =/  next  (sein:title our.bowl now.bowl ship)
-    ?:  ?=(%czar (clan:title next))
-      next
-    $(ship next)
+    (rear (saxo:title our.bowl now.bowl ship))
   ::
   ++  wait-card
     |=  [=wire now=@da]

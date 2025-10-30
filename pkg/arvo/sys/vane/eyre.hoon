@@ -1046,10 +1046,7 @@
   ++  galaxy-for
     |=  =ship
     ^-  @p
-    =/  next  (^^sein:title rof /eyre our now ship)
-    ?:  ?=(%czar (clan:title next))
-      next
-    $(ship next)
+    (rear (saxo:title our now ship))
   ::
   ++  handle-sponsor
     |=  [=identity =request:http]

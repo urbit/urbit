@@ -9,7 +9,9 @@
 +$  history     (map address:ethereum (tree hist-tx))
 +$  events      (list event-log:rpc:ethereum)
 +$  net         ?(%mainnet %ropsten %goerli %local %default)
-+$  snap-state  [%0 =id:block:jael nas=^state:naive =owners =sponsors]
++$  versioned-snap  $%(snap-state-0 snap-state)
++$  snap-state    [%1 =id:block:jael nas=^state:naive =owners =sponsors]
++$  snap-state-0  [%0 =id:block:jael nas=state-0:naive =owners =sponsors]
 ::
 +$  config
   $%  [%frequency frequency=@dr]

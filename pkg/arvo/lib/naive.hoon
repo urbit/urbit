@@ -104,7 +104,8 @@
 +$  dominion  ?(%l1 %l2 %spawn)
 +$  keys      [=life suite=@ud auth=@ crypt=@]
 ++  orm       ((on ship point) por)
-++  point
+++  orm-0     ((on ship point-0) por)
++$  point-0
   $:  ::  domain
       ::
       =dominion
@@ -129,6 +130,38 @@
       ==
   ==
 ::
++$  point
+  $:  ::  domain
+      ::
+      =dominion
+      ::
+      ::  ownership
+      ::
+      $=  own
+      $:  owner=[=address =nonce]
+          spawn-proxy=[=address =nonce]
+          management-proxy=[=address =nonce]
+          voting-proxy=[=address =nonce]
+          transfer-proxy=[=address =nonce]
+      ==
+      ::
+      ::  networking
+      ::
+      $=  net
+      $:  rift=@ud
+          =keys
+          sponsor=[has=? who=@p]
+          escape=(unit @p)
+          fief=(unit fief)
+      ==
+  ==
+::
++$  turf  (list @t)                                     ::  domain, tld first
++$  fief  $%  [%turf p=(list turf) q=@udE]
+              [%if p=@ifF q=@udE]
+              [%is p=@isH q=@udE]
+          ==
+::
 ++  diff
   $%  [%nonce =ship =proxy =nonce]
       [%tx =raw-tx err=(unit @tas)]
@@ -145,14 +178,24 @@
               [%voting-proxy =address]
               [%transfer-proxy =address]
               [%dominion =dominion]
+              [%fief fief=(unit fief)]
   ==  ==  ==
 ::
-+$  state
++$  state-0
   $:  %0
+      points=points-0
+      =operators
+      dns=(list @t)
+  ==
+::
++$  state
+  $:  %1
       =points
       =operators
       dns=(list @t)
   ==
++$  versioned-state  $%(state-0 state)
++$  points-0   (tree [ship point-0])
 +$  points     (tree [ship point])
 +$  operators  (jug address address)
 +$  effects    (list diff)
@@ -194,6 +237,21 @@
 --  =>
 ::
 |%
+++  load
+  |=  old=versioned-state
+  |^  ^-  state
+  ?-  -.old
+    %1  old
+    %0  old(- %1, points (run:orm-0 points.old point-0-to-1))
+  ==
+  ++  point-0-to-1
+    |=  point-0
+    ^-  point
+    %=    +<
+        net
+      [rift keys sponsor escape ~]:net
+    ==
+  --
 ++  debug
   |*  [meg=@t *]
   ?:  lac
@@ -744,7 +802,7 @@
         `net.point
       =/  =keys  [+(life.keys.net.point) 0 0 0]
       :-  [%point ship %keys keys]~
-      [rift.net.point keys sponsor.net.point escape.net.point]
+      [rift.net.point keys sponsor.net.point escape.net.point fief.net.point]
     =^  effects-3  rift.net.point
       ?:  =(0 life.keys.net.point)
         `rift.net.point

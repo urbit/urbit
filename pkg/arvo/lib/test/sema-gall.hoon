@@ -8,12 +8,14 @@
 ::
 |%
 ++  crypto-core
-  |%  ++  nec  (pit:nu:crub:crypto 512 (shaz 'nec'))
-      ++  bud  (pit:nu:crub:crypto 512 (shaz 'bud'))
+  |%  ++  nec  (pit:nu:cric:crypto 512 (shaz 'nec') %b ~)
+      ++  bud  (pit:nu:cric:crypto 512 (shaz 'bud') %b ~)
       ++  sign
         |=  [=ship data=@ux]
         %.  data
-        ?:(=(ship ~nec) sigh:as:nec sigh:as:bud)
+        ?:  =(ship ~nec)
+          (sign:ed:crypto data sgn:ven:ex:nec)
+        (sign:ed:crypto data sgn:ven:ex:bud)
   --
 ::
 ++  make-gall

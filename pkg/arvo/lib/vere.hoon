@@ -32,14 +32,14 @@
       $(tar t.tar, stars (~(put in stars) i.tar))
     ::
     |-  ^-  feed:jael
-    =/  cub=acru:ames  (pit:nu:crub:crypto 512 eny)
-    =/  who=ship  `@`fig:ex:cub
+    =/  cic  (pit:nu:cric:crypto 512 eny %c ~)
+    =/  who=ship  `@`fig:ex:cic
     ::  disallow 64-bit or smaller addresses
     ::
     ?.  ?=(%pawn (clan:title who))
       $(eny +(eny))
     ?:  (~(has in stars) (^sein:title who))
-      [[%2 ~] who 0 [1 sec:ex:cub]~]
+      [[%2 ~] who 0 [1 sec:ex:cic]~]
     $(eny +(eny))
   ::  |give:dawn: produce requests for pre-boot validation
   ::
@@ -151,7 +151,7 @@
           %-  some
           :+  own
             ?:  =(0 life)  ~
-            `[life pass rift sponsor ~]  ::NOTE  escape unknown ::TODO could be!
+            `[life pass rift sponsor ~ ~]  ::NOTE  escape unknown ::TODO could be!
           ?.  (gth who 0xffff)  ~
           `[spawn ~]  ::NOTE  spawned unknown
       ^-  $=  res
@@ -270,12 +270,12 @@
       ?~  kyz.feed  !!
       ?.  =(ship who.feed)  `%not-our-key
       =/  rac  (clan:title who.feed)
-      =/  cub  (nol:nu:crub:crypto key.i.kyz.feed)
+      =/  cic  (nol:nu:cric:crypto key.i.kyz.feed)
       ?-  rac
           %pawn
         ::  a comet address is the fingerprint of the keypair
         ::
-        ?.  =(who.feed `@`fig:ex:cub)
+        ?.  =(who.feed `@`fig:ex:cic)
           `%key-mismatch
         ::  a comet can never be breached
         ::
@@ -298,7 +298,7 @@
         =*  net  u.net.point
         ::  boot keys must match the contract
         ::
-        ?.  =(pub:ex:cub pass.net)
+        ?.  =(pub:ex:cic pass.net)
           `%key-mismatch
         ::  life must match the contract
         ::

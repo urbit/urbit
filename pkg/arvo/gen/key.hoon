@@ -15,9 +15,9 @@
 %+  parse   (boss 256 (star prn))
 |=  fra=@t
 =/  bur  (shaz (add who (shaz fra)))
-=/  cub  (pit:nu:crub:crypto 512 bur)
+=/  cic  (pit:nu:cric:crypto 512 bur)
 ::
-=/  pub=pass  pub:ex:cub
+=/  pub=pass  pub:ex:cic
 =/  mag=cord  (end 3 pub)
 ?>  =('b' mag)
 =/  bod=@  (rsh 3 pub)
@@ -28,5 +28,5 @@
 %+  print  leaf+"ethereum public keys:"
 ::
 =/  fed=feed:jael
-  [[%2 ~] who rift [life sec:ex:cub]~]
+  [[%2 ~] who rift [life sec:ex:cic]~]
 %-  produce  [%atom (scot %uw (jam fed))]
