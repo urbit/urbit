@@ -3,7 +3,7 @@
   ::                                                    ::    ::
 /?  309                                                 ::  arvo kelvin
 /-  *sole, lens                                         ::  console structures
-/+  sole, pprint, dprint,                               ::
+/+  sole, pprint,                                       ::
     auto=language-server-complete,                      ::
     easy-print=language-server-easy-print               ::
 ::                                                      ::  ::
@@ -12,7 +12,7 @@
 =>  |%                                                  ::  external structures
     +$  id  sole-id                                     ::  session id
     +$  house                                           ::  all state
-      $:  %9
+      $:  %10
           egg=@u                                        ::  command count
           hoc=(map id session)                          ::  conversations
           acl=(set ship)                                ::  remote access whitelist
@@ -54,7 +54,6 @@
               r=@t
           ==
           [%poke p=goal]                                ::  poke app
-          [%help p=(list term)]                                ::  doccords
           [%show p=?(%0 %1 %2 %3 %4 %5)]                ::  val/type/hoon/xray
           [%verb p=term]                                ::  store variable
       ==                                                ::
@@ -179,18 +178,6 @@
           (parse-variable (cold %lib lus) ;~(pfix gap (parse-cables %lib)))
           ;~(pfix tis gap (parse-variable sym ;~(pfix gap parse-path)))
           ;~(pfix cen gap (parse-variable sym ;~(pfix gap parse-mark)))
-        ==
-      ==
-    ::
-      ;~  pfix  hax
-        ;~  pose
-          ;~  pfix  ace
-            %+  cook
-              |=  a=(list term)
-              [[%help (flop a)] 0 %ex [%cnts p=~[[%.y p=1]] q=~]]
-            (most fas sym)
-          ==
-          (easy [[%help ~[%$]] 0 %ex [%cnts p=~[[%.y p=1]] q=~]])
         ==
       ==
     ::
@@ -642,9 +629,6 @@
         ++  maar  ?:  =(%noun p.cay)  ~
                   [[%rose [~ "    " ~] >p.cay< ~] ~]
         --
-      ::
-          %help
-        (dy-inspect p.p.mad p.q.cay)
       ==
     ::
     ++  dy-show  |=(cay=cage (dy-print cay ~))
@@ -685,19 +669,6 @@
           t=(turn `wain`?~(r.hit ~ (to-wain:format q.u.r.hit)) trip)
       ==
     ::
-    ++  dy-inspect
-      |=  [topics=(list term) sut=type]
-      %+  dy-rash  %mor
-      =+  to-display=(mule |.((find-item-in-type:dprint (flop topics) sut)))
-      ?:  ?=(%| -.to-display)
-        [%tan [%leaf "Could not find help A"] p.to-display]~
-      ?~  p.to-display
-        [%tan [%leaf "Could not find help B"]~]~
-      =/  item  (mule |.((print-item:dprint u.p.to-display)))
-      ?:  ?=(%| -.item)
-        [%tan [%leaf "Could not find help C"] p.item]~
-      p.item
-    ::
   ++  dy-show-type-noun
     |=  a=type  ^-  tank
     =-  >[-]<
@@ -718,9 +689,6 @@
                      [%know *]
                    ?@  p.q.p.a  [(cat 3 '#' mark.p.q.p.a)]~
                    [(rap 3 '#' auth.p.q.p.a '+' (spat type.p.q.p.a) ~)]~
-                 ::
-                     [%help *]
-                   [summary.crib.p.q.p.a]~
                  ==
       [%core ^]  `wain`/core
       [%hold *]  $(a (~(play ut p.a) q.a))
@@ -1693,29 +1661,61 @@
       =^  caz  old
         ?.  ?=(%8 -.old)  [~ old]
         (house-8-to-9 old)
-      ?>  ?=(%9 -.old)
+      =?  old  ?=(%9 -.old)
+        (house-9-to-10 old)
+      ?>  ?=(%10 -.old)
       [caz ..on-init(state old)]
   ::
-  +$  house-any  $%(house house-8 house-7 house-6 house-5)
+  +$  house-any  $%(house house-9 house-8 house-7 house-6 house-5)
+  ::
+  +$  cage-9  (cask vase:h137)
+  +$  house-9                                         ::  all state
+    $:  %9
+        egg=@u                                        ::  command count
+        hoc=(map id session-9)                        ::  conversations
+        acl=(set ship)                                ::  remote access whitelist
+    ==                                                ::
+  +$  session-9                                       ::  per conversation
+    $:  say=sole-share                                ::  command-line state
+        dir=beam                                      ::  active path
+        poy=(unit *)  ::  dojo-project-9              ::  working
+        $:  sur=(list cable:clay)
+            lib=(list cable:clay)
+        ==
+        var=(map term cage-9)                         ::  variable state
+        old=(set term)                                ::  used TLVs
+        buf=tape                                      ::  multiline buffer
+    ==                                                ::
+  ++  house-9-to-10
+    |=  old=house-9
+    ^-  house
+    =-  [%10 egg.old - acl.old]
+    %-  ~(run by hoc.old)
+    |=  s=session-9
+    ^-  session
+    %=  s
+      poy  ~  ::  drop work
+      var  (~(run by var.s) next-cage:a236)
+    ==
   ::
   +$  id-8  @tasession
   +$  house-8
       $:  %8
           egg=@u
-          hoc=(map id-8 session)
+          hoc=(map id-8 session-9)
           acl=(set ship)
       ==
   ++  house-8-to-9
     |=  old=house-8
-    ^-  (quip card:agent:gall house)
+    ^-  (quip card:agent:gall house-9)
     :-  %+  turn  ~(tap in ~(key by hoc.old))
         |=  id=@ta
         ^-  card:agent:gall
         [%give %kick ~[/sole/[id]] ~]
     =-  [%9 egg.old - acl.old]
-    %-  ~(gas by *(map sole-id session))
+    %-  ~(gas by *(map sole-id session-9))
     %+  murn  ~(tap by hoc.old)
-    |=  [id=@ta s=session]
+    |=  [id=@ta s=session-9]
     (bind (upgrade-id:sole id) (late s))
   ::
   +$  house-7        [%7 house-6-7]
@@ -1736,7 +1736,7 @@
             ::
             lib=(list cable:clay)
         ==
-        var=(map term cage)                           ::  variable state
+        var=(map term cage-9)                         ::  variable state
         old=(set term)                                ::  used TLVs
         buf=tape                                      ::  multiline buffer
     ==                                                ::
