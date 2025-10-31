@@ -42,9 +42,9 @@
 ::  $move: Arvo-level move
 ::
 +$  move  [=duct move=(wind note-arvo gift-arvo)]
-::  $state-17: overall gall state, versioned
+::  $state-18: overall gall state, versioned
 ::
-+$  state-17  [%17 state]
++$  state-18  [%18 state]
 ::  $state: overall gall state
 ::
 ::    system-duct: TODO document
@@ -390,12 +390,11 @@
       =bug
       leaves=(unit [=duct =wire date=@da])
   ==
-+$  spore-17  [%17 spore]
-+$  spore-16  [%16 spore]  ::  XX avoids having to support a %17 egg-any
++$  spore-18  [%18 spore]
 --
 ::  adult gall vane interface, for type compatibility with pupa
 ::
-=|  state=state-17
+=|  state=state-18
 |=  [now=@da eny=@uvJ rof=roof]
 =*  gall-payload  .
 ~%  %gall-top  ..part  ~
@@ -2464,11 +2463,12 @@
       =?  old  ?=(%14 -.old)  (spore-14-to-15 +.old)
       =?  old  ?=(%15 -.old)  (spore-15-to-16 +.old)
       =?  old  ?=(%16 -.old)  (spore-16-to-17 +.old)
-      ?>  ?=(%17 -.old)
+      =?  old  ?=(%17 -.old)  (spore-17-to-18 +.old)
+      ?>  ?=(%18 -.old)
       gall-payload(state old)
   ::
   +$  spore-any
-    $%  [%17 spore]
+    $%  [%18 spore]
         [%7 spore-7]
         [%8 spore-8]
         [%9 spore-9]
@@ -2479,15 +2479,45 @@
         [%14 spore-14]
         [%15 spore-15]
         [%16 spore-16]
+        [%17 spore-17]
     ==
-  +$  spore-16  spore
+  ::
+  +$  spore-17
+    $:  system-duct=duct
+        outstanding=(map [wire duct] (qeu remote-request))
+        contacts=(set ship)
+        eggs=(map term egg-16)
+        blocked=(map term (qeu blocked-move-17))
+        =bug
+        leaves=(unit [=duct =wire date=@da])
+    ==
+  +$  blocked-move-17  [=duct =routes move=(each deal-17 unto-17)]
+  +$  deal-17
+    $%  [%raw-poke =mark =noun]
+        [%watch =path]
+        [%watch-as =mark =path]
+        [%leave ~]
+        [%poke cage=cage-17]
+        [%poke-as =mark cage=cage-17]
+    ==
+  +$  unto-17
+    $%  [%raw-fact =mark =noun]
+        [%poke-ack p=(unit tang)]
+        [%watch-ack p=(unit tang)]
+        [%fact cage=cage-17]
+        [%kick ~]
+    ==
+  +$  cage-17  cage:a236
+  +$  vase-17  vase:h137
+  ::
+  +$  spore-16  spore-17
   +$  spore-15
     $+  spore-15
     $:  system-duct=duct
         outstanding=(map [wire duct] (qeu remote-request))
         contacts=(set ship)
         eggs=(map term egg-15)
-        blocked=(map term (qeu blocked-move))
+        blocked=(map term (qeu blocked-move-17))
         =bug
         leaves=(unit [=duct =wire date=@da])
     ==
@@ -2496,7 +2526,7 @@
         outstanding=(map [wire duct] (qeu remote-request))
         contacts=(set ship)
         eggs=(map term egg-15)
-        blocked=(map term (qeu blocked-move))
+        blocked=(map term (qeu blocked-move-17))
         =bug
     ==
   ::
@@ -2509,7 +2539,7 @@
         =bug
     ==
   ::
-  +$  blocked-move-13  [=duct routes=routes-13 move=(each deal unto)]
+  +$  blocked-move-13  [=duct routes=routes-13 move=(each deal-17 unto-17)]
   +$  routes-13
     $:  disclosing=(unit (set ship))
         attributing=ship
@@ -2533,7 +2563,7 @@
             =boat
             =boar
             code=~
-            old-state=[%| vase]
+            old-state=[%| vase-17]
             =beak
             marks=(map duct mark)
             sky=(map spur plot)
@@ -2555,7 +2585,7 @@
         =boat
         =boar
         code=~
-        old-state=[%| vase]
+        old-state=[%| vase-17]
         =beak
         marks=(map duct mark)
     ==
@@ -2576,7 +2606,7 @@
         =bitt
         =boat
         =boar
-        old-state=(each vase vase)
+        old-state=(each vase-17 vase-17)
         =beak
         marks=(map duct mark)
     ==
@@ -2604,7 +2634,7 @@
         live=?
         =stats
         watches=watches-8
-        old-state=(each vase vase)
+        old-state=(each vase-17 vase-17)
         =beak
         marks=(map duct mark)
     ==
@@ -2720,13 +2750,13 @@
     ^-  spore-14
     %=    old
         blocked
-      ^-  (map term (qeu blocked-move))
+      ^-  (map term (qeu blocked-move-17))
       %-  ~(run by blocked.old)
       |=  q=(qeu blocked-move-13)
-      %-  ~(gas to *(qeu blocked-move))
+      %-  ~(gas to *(qeu blocked-move-17))
       %+  turn  ~(tap to q)
       |=  blocked=blocked-move-13
-      ^-  blocked-move
+      ^-  blocked-move-17
       %=  blocked
         attributing.routes  [ship=attributing.routes.blocked path=/]
       ==
@@ -2748,7 +2778,7 @@
         eggs
       %-  ~(urn by eggs.old)
       |=  [=term e=egg-15]
-      ^-  egg
+      ^-  egg-16
       ?:  ?=(%nuke -.e)  [%nuke ~ ~]
       %=    e
           ken  [ken.e ~ ~]
@@ -2782,22 +2812,50 @@
   ::
   ++  spore-16-to-17
     |=  old=spore-16
-    ^-  spore-17
     :-  %17
+    ^-  spore-17
     %=    old
         blocked
       %-  ~(urn by blocked.old)
-      |=  [=term q=(qeu blocked-move)]
+      |=  [=term q=(qeu blocked-move-17)]
       ^+  q
       %-  ~(rep by q)
-      |=  [=blocked-move r=(qeu blocked-move)]
-      ?:  ?=(%| -.move.blocked-move)
+      |=  [b=blocked-move-17 r=(qeu blocked-move-17)]
+      ?:  ?=(%| -.move.b)
         r
       ::  /gall-use-wire will be dropped in mo-clear-queu
       ::
-      (~(put to r) blocked-move(duct [/gall-use-wire duct.blocked-move]))
+      (~(put to r) b(duct [/gall-use-wire duct.b]))
     ==
+  ::  +spore-17-to-18: type of type migration
   ::
+  ++  spore-17-to-18
+    |=  old=spore-17
+    ^-  spore-18
+    :-  %18
+    %=  old
+        eggs
+      %-  ~(run by eggs.old)
+      |=  e=egg-16
+      ^-  egg
+      ?.  ?=(%live -.e)  e
+      e(+.old-state (next-vase:h137 +.old-state.e))
+    ::
+        blocked
+      %-  ~(run by blocked.old)
+      |=  q=(qeu blocked-move-17)
+      ^-  (qeu blocked-move)
+      %-  ~(rep by q)
+      |=  [b=blocked-move-17 r=(qeu blocked-move)]
+      =;  n=blocked-move
+        (~(put to r) n)
+      :+  duct.b  routes.b
+      ?+  move.b  move.b
+        [%& %poke *]     move.b(cage.p (next-cage:a236 cage.p.move.b))
+        [%& %poke-as *]  move.b(cage.p (next-cage:a236 cage.p.move.b))
+        [%| %fact *]     move.b(cage.p (next-cage:a236 cage.p.move.b))
+      ==
+    ==
   --
 ::  +scry: standard scry
 ::
@@ -2911,7 +2969,7 @@
           p.agent.u.yok
         on-save:p.agent.u.yok
       ==
-    ``noun+!>(`egg-any`[-:*spore-16 egg]) :: XX spore-17 same as 16
+    ``noun+!>(`egg-any`[%18 egg])
   ::
   ?:  ?&  =(%w care)
           =([%$ %da now] coin)
@@ -3043,7 +3101,7 @@
 ::    TODO: superfluous? see +molt
 ::
 ++  stay
-  ^-  spore-17
+  ^-  spore-18
   =;  eggs=(map term egg)  state(yokes eggs)
   %-  ~(run by yokes.state)
   |=  =yoke
