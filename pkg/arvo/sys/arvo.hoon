@@ -3,7 +3,7 @@
 |%
 +|  %global
 ::
-++  arvo  %236
+++  arvo  %235
 ::
 ::  $arch: node identity
 ::  $axal: fundamental node, recursive (trie)
@@ -208,9 +208,11 @@
   ==
 +$  heir
   $%  $:  %grub
-          $%  [?(%240 %239 %238 %237 %236) =grub]
+          $%  [?(%240 %239 %238 %237 %236) =grub:a236]
+              [%235 =grub]
       ==  ==
-      [?(%240 %239 %238 %237 %236) =debt =soul]
+      [?(%240 %239 %238 %237 %236) =debt =soul:a236]
+      [%235 =debt =soul]
   ==
 +$  plan  (pair germ (list move))
 +$  soul
@@ -289,6 +291,101 @@
       [%whom p=ship]
   ==
 +$  wynn  (list weft)
+::
+++  a235  .
+++  a236
+  =,  h137
+  |%
+  +$  cage  (cask vase)
+  +$  grub
+    $:  ::  who: identity once we know it
+        ::  eny: entropy once we learn it
+        ::  lac: laconicity as we want it
+        ::  ver: the Outside as we see it
+        ::  fat: source when we attain it
+        ::  lul: %lull when we acquire it
+        ::  zus: %zuse once we receive it
+        ::  van: vanes while we desire it
+        ::
+        who=(unit ship)
+        eny=(unit @)
+        lac=?
+        ver=(unit vere)
+        fat=(unit (axal (cask)))
+        lul=(unit (trap vase))
+        zus=(unit (trap vase))
+        van=(map term (trap vase))
+    ==
+  +$  soul
+    $:  ::  identity, time, entropy
+        ::  fad: configuration
+        ::  zen: Outside knowledge
+        ::  mod: internal modules
+        ::
+        mien
+        $=  fad
+        $:  ::  lac: not verbose
+            ::
+            lac=?
+        ==
+        $=  zen
+        $:  ::  ver: runtime version
+            ::  lag: upgrade blocked
+            ::
+            ver=vere
+            lag=_|
+        ==
+        $=  mod
+        $:  ::  fat: filesystem
+            ::  lul: %lull
+            ::  zus: %zuse
+            ::  van: vanes
+            ::
+            fat=(axal (cask))
+            lul=vase
+            zus=vase
+            van=(map term vane)
+        ==
+    ==
+  +$  vane  [=vase =worm]
+  +$  worm
+    $:  ::  +nest, +play, and +mint
+        ::
+        nes=(set ^)
+        pay=(map (pair type hoon) type)
+        mit=(map (pair type hoon) (pair type nock))
+    ==
+  ::
+  ++  next-cage
+    |=  a=cage
+    ^-  cage:a235
+    a(q (next-vase q.a))
+  ::
+  ++  next-grub
+    |=  a=grub
+    ^-  grub:a235
+    %=  a
+      lul  (bind lul.a next-trap)
+      zus  (bind zus.a next-trap)
+      van  (~(run by van.a) next-trap)
+    ==
+  ++  next-trap
+    |=  a=(trap vase)
+    ^-  (trap vase:a235)
+    |.  ^-  vase:a235
+    (next-vase $:a)
+  ::
+  ++  next-soul
+    |=  a=soul
+    ^-  soul:a235
+    ::  clears vane compiler caches
+    ::
+    %=  a
+      lul.mod  (next-vase lul.mod.a)
+      zus.mod  (next-vase zus.mod.a)
+      van.mod  (~(run by van.mod.a) |=(a=vane [(next-vase vase.a) *worm:a235]))
+    ==
+  --
 --  =>
 ::
 ~%  %hex  ..ut  ~
@@ -1768,7 +1865,8 @@
   ::
   =.  sol
     ?-  -.hir
-      ?(%240 %239 %238 %237 %236)  soul.hir
+      ?(%240 %239 %238 %237 %236)  (next-soul:a236 soul.hir)
+      %235                         soul.hir
     ==
   ::  clear compiler caches
   ::
