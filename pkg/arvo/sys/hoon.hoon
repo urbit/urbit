@@ -2,11 +2,11 @@
 ::::    /sys/hoon                                       ::
   ::                                                    ::
 =<  ride
-=>  %137  =>
+=>  %136  =>
 ::                                                      ::
 ::::    0: version stub                                 ::
   ::                                                    ::
-~%  %k.137  ~  ~                                        ::
+~%  %k.136  ~  ~                                        ::
 |%
 ++  hoon-version  +
 --  =>
@@ -13858,4 +13858,519 @@
       ~
     ==
   ==
+::
+::    6f: older versions & migrations
++|  %hoon-history
+::
+++  h136  .
+++  h137
+  ::  hoon 137 had doccords, in $spec's %gist, $skin's and $note's %help,
+  ::  and in $tome. dropped types replaced with * below for brevity.
+  ::  migration helpers at the end of this core.
+  ::
+  |%
+  +$  abel  typo                                          ::  original sin: type
+  +$  alas  (list (pair term hoon))                       ::  alias list
+  +$  woof  $@(@ [~ p=hoon])                              ::  simple embed
+  +$  coil  $:  p=garb                                    ::  name, wet=dry, vary
+                q=type                                    ::  context
+                r=(pair seminoun (map term tome))         ::  chapters
+            ==                                            ::
+  +$  foot  $%  [%dry p=hoon]                             ::  dry arm, geometric
+                [%wet p=hoon]                             ::  wet arm, generic
+            ==                                            ::
+  +$  limb  $@  term                                      ::  wing element
+            $%  [%& p=axis]                               ::  by geometry
+                [%| p=@ud q=(unit term)]                  ::  by name
+            ==                                            ::
+  +$  null  ~                                             ::  null, nil, etc
+  +$  onyx  (list (pair type foot))                       ::  arm activation
+  +$  opal                                                ::  limb match
+            $%  [%& p=type]                               ::  leg
+                [%| p=axis q=(set [p=type q=foot])]       ::  arm
+            ==                                            ::
+  +$  pica  (pair ? cord)                                 ::  & prose, | code
+  +$  palo  (pair vein opal)                              ::  wing trace, match
+  +$  pock  (pair axis nock)                              ::  changes
+  +$  port  (each palo (pair type nock))                  ::  successful match
+  +$  spec                                                ::  structure definition
+            $~  [%base %null]                             ::
+            $%  [%base p=base]                            ::  base type
+                [%dbug p=spot q=spec]                     ::  set debug
+                [%gist p=[%help p=*] q=spec]  :: p.p=help ::  formal comment
+                [%leaf p=term q=@]                        ::  constant atom
+                [%like p=wing q=(list wing)]              ::  reference
+                [%loop p=term]                            ::  hygienic reference
+                [%made p=(pair term (list term)) q=spec]  ::  annotate synthetic
+                [%make p=hoon q=(list spec)]              ::  composed spec
+                [%name p=term q=spec]                     ::  annotate simple
+                [%over p=wing q=spec]                     ::  relative to subject
+            ::                                            ::
+                [%bcgr p=spec q=spec]                     ::  $>, filter: require
+                [%bcbc p=spec q=(map term spec)]          ::  $$, recursion
+                [%bcbr p=spec q=hoon]                     ::  $|, verify
+                [%bccb p=hoon]                            ::  $_, example
+                [%bccl p=[i=spec t=(list spec)]]          ::  $:, tuple
+                [%bccn p=[i=spec t=(list spec)]]          ::  $%, head pick
+                [%bcdt p=spec q=(map term spec)]          ::  $., read-write core
+                [%bcgl p=spec q=spec]                     ::  $<, filter: exclude
+                [%bchp p=spec q=spec]                     ::  $-, function core
+                [%bckt p=spec q=spec]                     ::  $^, cons pick
+                [%bcls p=stud q=spec]                     ::  $+, standard
+                [%bcfs p=spec q=(map term spec)]          ::  $/, write-only core
+                [%bcmc p=hoon]                            ::  $;, manual
+                [%bcpm p=spec q=hoon]                     ::  $&, repair
+                [%bcsg p=hoon q=spec]                     ::  $~, default
+                [%bctc p=spec q=(map term spec)]          ::  $`, read-only core
+                [%bcts p=skin q=spec]                     ::  $=, name
+                [%bcpt p=spec q=spec]                     ::  $@, atom pick
+                [%bcwt p=[i=spec t=(list spec)]]          ::  $?, full pick
+                [%bczp p=spec q=(map term spec)]          ::  $!, opaque core
+            ==                                            ::
+  +$  tent                                                ::  model builder
+            $%  [%| p=wing q=tent r=(list spec)]          ::  ~(p q r...)
+                [%& p=(list wing)]                        ::  a.b:c.d
+            ==                                            ::
+  +$  tiki                                                ::  test case
+            $%  [%& p=(unit term) q=wing]                 ::  simple wing
+                [%| p=(unit term) q=hoon]                 ::  named wing
+            ==                                            ::
+  +$  skin  $+  skin-137                                  ::  texture
+            $@  =term                                     ::  name/~[term %none]
+            $%  [%base =base]                             ::  base match
+                [%cell =skin =skin]                       ::  pair
+                [%dbug =spot =skin]                       ::  trace
+                [%leaf =aura =atom]                       ::  atomic constant
+                [%help help=* =skin]                      ::  describe
+                [%name =term =skin]                       ::  apply label
+                [%over =wing =skin]                       ::  relative to
+                [%spec =spec =skin]                       ::  cast to
+                [%wash depth=@ud]                         ::  strip faces
+            ==                                            ::
+  +$  tome  (pair * (map term hoon))  ::  p=what          ::  core chapter
+  +$  tope                                                ::  topographic type
+    $@  $?  %&                                            ::  cell or atom
+            %|                                            ::  atom
+        ==                                                ::
+    (pair tope tope)                                      ::  cell
+  ++  hoot                                                ::  hoon tools
+    |%
+    +$  beer  $@(char [~ p=hoon])                         ::  simple embed
+    +$  mane  $@(@tas [@tas @tas])                        ::  XML name+space
+    +$  manx  $~([[%$ ~] ~] [g=marx c=marl])              ::  dynamic XML node
+    +$  marl  (list tuna)                                 ::  dynamic XML nodes
+    +$  mart  (list [n=mane v=(list beer)])               ::  dynamic XML attrs
+    +$  marx  $~([%$ ~] [n=mane a=mart])                  ::  dynamic XML tag
+    +$  mare  (each manx marl)                            ::  node or nodes
+    +$  maru  (each tuna marl)                            ::  interp or nodes
+    +$  tuna                                              ::  maybe interpolation
+        $~  [[%$ ~] ~]
+        $^  manx
+        $:  ?(%tape %manx %marl %call)
+            p=hoon
+        ==
+    --                                                    ::
+  +$  hoon  $+  hoon-137                                  ::  hoon AST
+    $~  [%zpzp ~]                                         ::
+    $^  [p=hoon q=hoon]                                   ::
+    $%                                                    ::
+      [%$ p=axis]                                         ::  simple leg
+    ::                                                    ::
+      [%base p=base]                                      ::  base spec
+      [%bust p=base]                                      ::  bunt base
+      [%dbug p=spot q=hoon]                               ::  debug info in trace
+      [%eror p=tape]                                      ::  assembly error
+      [%hand p=type q=nock]                               ::  premade result
+      [%note p=note q=hoon]                               ::  annotate
+      [%fits p=hoon q=wing]                               ::  underlying ?=
+      [%knit p=(list woof)]                               ::  assemble string
+      [%leaf p=(pair term @)]                             ::  symbol spec
+      [%limb p=term]                                      ::  take limb
+      [%lost p=hoon]                                      ::  not to be taken
+      [%rock p=term q=*]                                  ::  fixed constant
+      [%sand p=term q=*]                                  ::  unfixed constant
+      [%tell p=(list hoon)]                               ::  render as tape
+      [%tune p=$@(term tune)]                             ::  minimal face
+      [%wing p=wing]                                      ::  take wing
+      [%yell p=(list hoon)]                               ::  render as tank
+      [%xray p=manx:hoot]                                 ::  ;foo; templating
+    ::                                            ::::::  cores
+      [%brbc sample=(lest term) body=spec]                ::  |$
+      [%brcb p=spec q=alas r=(map term tome)]             ::  |_
+      [%brcl p=hoon q=hoon]                               ::  |:
+      [%brcn p=(unit term) q=(map term tome)]             ::  |%
+      [%brdt p=hoon]                                      ::  |.
+      [%brkt p=hoon q=(map term tome)]                    ::  |^
+      [%brhp p=hoon]                                      ::  |-
+      [%brsg p=spec q=hoon]                               ::  |~
+      [%brtr p=spec q=hoon]                               ::  |*
+      [%brts p=spec q=hoon]                               ::  |=
+      [%brpt p=(unit term) q=(map term tome)]             ::  |@
+      [%brwt p=hoon]                                      ::  |?
+    ::                                            ::::::  tuples
+      [%clcb p=hoon q=hoon]                               ::  :_ [q p]
+      [%clkt p=hoon q=hoon r=hoon s=hoon]                 ::  :^ [p q r s]
+      [%clhp p=hoon q=hoon]                               ::  :- [p q]
+      [%clls p=hoon q=hoon r=hoon]                        ::  :+ [p q r]
+      [%clsg p=(list hoon)]                               ::  :~ [p ~]
+      [%cltr p=(list hoon)]                               ::  :* p as a tuple
+    ::                                            ::::::  invocations
+      [%cncb p=wing q=(list (pair wing hoon))]            ::  %_
+      [%cndt p=hoon q=hoon]                               ::  %.
+      [%cnhp p=hoon q=hoon]                               ::  %-
+      [%cncl p=hoon q=(list hoon)]                        ::  %:
+      [%cntr p=wing q=hoon r=(list (pair wing hoon))]     ::  %*
+      [%cnkt p=hoon q=hoon r=hoon s=hoon]                 ::  %^
+      [%cnls p=hoon q=hoon r=hoon]                        ::  %+
+      [%cnsg p=wing q=hoon r=(list hoon)]                 ::  %~
+      [%cnts p=wing q=(list (pair wing hoon))]            ::  %=
+    ::                                            ::::::  nock
+      [%dtkt p=spec q=hoon]                               ::  .^  nock 11
+      [%dtls p=hoon]                                      ::  .+  nock 4
+      [%dttr p=hoon q=hoon]                               ::  .*  nock 2
+      [%dtts p=hoon q=hoon]                               ::  .=  nock 5
+      [%dtwt p=hoon]                                      ::  .?  nock 3
+    ::                                            ::::::  type conversion
+      [%ktbr p=hoon]                                      ::  ^|  contravariant
+      [%ktdt p=hoon q=hoon]                               ::  ^.  self-cast
+      [%ktls p=hoon q=hoon]                               ::  ^+  expression cast
+      [%kthp p=spec q=hoon]                               ::  ^-  structure cast
+      [%ktpm p=hoon]                                      ::  ^&  covariant
+      [%ktsg p=hoon]                                      ::  ^~  constant
+      [%ktts p=skin q=hoon]                               ::  ^=  label
+      [%ktwt p=hoon]                                      ::  ^?  bivariant
+      [%kttr p=spec]                                      ::  ^*  example
+      [%ktcl p=spec]                                      ::  ^:  filter
+    ::                                            ::::::  hints
+      [%sgbr p=hoon q=hoon]                               ::  ~|  sell on trace
+      [%sgcb p=hoon q=hoon]                               ::  ~_  tank on trace
+      [%sgcn p=chum q=hoon r=tyre s=hoon]                 ::  ~%  general jet hint
+      [%sgfs p=chum q=hoon]                               ::  ~/  function j-hint
+      [%sggl p=$@(term [p=term q=hoon]) q=hoon]           ::  ~<  backward hint
+      [%sggr p=$@(term [p=term q=hoon]) q=hoon]           ::  ~>  forward hint
+      [%sgbc p=term q=hoon]                               ::  ~$  profiler hit
+      [%sgls p=@ q=hoon]                                  ::  ~+  cache=memoize
+      [%sgpm p=@ud q=hoon r=hoon]                         ::  ~&  printf=priority
+      [%sgts p=hoon q=hoon]                               ::  ~=  don't duplicate
+      [%sgwt p=@ud q=hoon r=hoon s=hoon]                  ::  ~?  tested printf
+      [%sgzp p=hoon q=hoon]                               ::  ~!  type on trace
+    ::                                            ::::::  miscellaneous
+      [%mcts p=marl:hoot]                                 ::  ;=  list templating
+      [%mccl p=hoon q=(list hoon)]                        ::  ;:  binary to nary
+      [%mcfs p=hoon]                                      ::  ;/  [%$ [%$ p ~] ~]
+      [%mcgl p=spec q=hoon r=hoon s=hoon]                 ::  ;<  bind
+      [%mcsg p=hoon q=(list hoon)]                        ::  ;~  kleisli arrow
+      [%mcmc p=spec q=hoon]                               ::  ;;  normalize
+    ::                                            ::::::  compositions
+      [%tsbr p=spec q=hoon]                               ::  =|  push bunt
+      [%tscl p=(list (pair wing hoon)) q=hoon]            ::  =:  q w= p changes
+      [%tsfs p=skin q=hoon r=hoon]                        ::  =/  typed variable
+      [%tsmc p=skin q=hoon r=hoon]                        ::  =;  =/(q p r)
+      [%tsdt p=wing q=hoon r=hoon]                        ::  =.  r with p as q
+      [%tswt p=wing q=hoon r=hoon s=hoon]                 ::  =?  conditional =.
+      [%tsgl p=hoon q=hoon]                               ::  =<  =>(q p)
+      [%tshp p=hoon q=hoon]                               ::  =-  =+(q p)
+      [%tsgr p=hoon q=hoon]                               ::  =>  q w=subject p
+      [%tskt p=skin q=wing r=hoon s=hoon]                 ::  =^  state machine
+      [%tsls p=hoon q=hoon]                               ::  =+  q w=[p subject]
+      [%tssg p=(list hoon)]                               ::  =~  hoon stack
+      [%tstr p=(pair term (unit spec)) q=hoon r=hoon]     ::  =*  new style
+      [%tscm p=hoon q=hoon]                               ::  =,  overload p in q
+    ::                                            ::::::  conditionals
+      [%wtbr p=(list hoon)]                               ::  ?|  loobean or
+      [%wthp p=wing q=(list (pair spec hoon))]            ::  ?-  pick case in q
+      [%wtcl p=hoon q=hoon r=hoon]                        ::  ?:  if=then=else
+      [%wtdt p=hoon q=hoon r=hoon]                        ::  ?.  ?:(p r q)
+      [%wtkt p=wing q=hoon r=hoon]                        ::  ?^  if p is a cell
+      [%wtgl p=hoon q=hoon]                               ::  ?<  ?:(p !! q)
+      [%wtgr p=hoon q=hoon]                               ::  ?>  ?:(p q !!)
+      [%wtls p=wing q=hoon r=(list (pair spec hoon))]     ::  ?+  ?-  w=default
+      [%wtpm p=(list hoon)]                               ::  ?&  loobean and
+      [%wtpt p=wing q=hoon r=hoon]                        ::  ?@  if p is atom
+      [%wtsg p=wing q=hoon r=hoon]                        ::  ?~  if p is null
+      [%wthx p=skin q=wing]                               ::  ?#  if q matches p
+      [%wtts p=spec q=wing]                               ::  ?=  if q matches p
+      [%wtzp p=hoon]                                      ::  ?!  loobean not
+    ::                                            ::::::  special
+      [%zpcm p=hoon q=hoon]                               ::  !,
+      [%zpgr p=hoon]                                      ::  !>
+      [%zpgl p=spec q=hoon]                               ::  !<
+      [%zpmc p=hoon q=hoon]                               ::  !;
+      [%zpts p=hoon]                                      ::  !=
+      [%zppt p=(list wing) q=hoon r=hoon]                 ::  !@
+      [%zpwt p=$@(p=@ [p=@ q=@]) q=hoon]                  ::  !?
+      [%zpzp ~]                                           ::  !!
+    ==                                                    ::
+  +$  tyre  (list [p=term q=hoon])                        ::
+  +$  tyke  (list (unit hoon))                            ::
+  ::                                                      ::::::  virtual nock
+  +$  nock  $^  [p=nock q=nock]                           ::  autocons
+            $%  [%1 p=*]                                  ::  constant
+                [%2 p=nock q=nock]                        ::  compose
+                [%3 p=nock]                               ::  cell test
+                [%4 p=nock]                               ::  increment
+                [%5 p=nock q=nock]                        ::  equality test
+                [%6 p=nock q=nock r=nock]                 ::  if, then, else
+                [%7 p=nock q=nock]                        ::  serial compose
+                [%8 p=nock q=nock]                        ::  push onto subject
+                [%9 p=@ q=nock]                           ::  select arm and fire
+                [%10 p=[p=@ q=nock] q=nock]               ::  edit
+                [%11 p=$@(@ [p=@ q=nock]) q=nock]         ::  hint
+                [%12 p=nock q=nock]                       ::  grab data from sky
+                [%0 p=@]                                  ::  axis select
+            ==                                            ::
+  +$  note                                                ::  type annotation
+            $%  [%help p=*]  ::  p=help                   ::  documentation
+                [%know p=stud]                            ::  global standard
+                [%made p=term q=(unit (list wing))]       ::  structure
+            ==                                            ::
+  +$  type  $+  type-137                                  ::
+            $~  %noun                                     ::
+            $@  $?  %noun                                 ::  any nouns
+                    %void                                 ::  no noun
+                ==                                        ::
+            $%  [%atom p=term q=(unit @)]                 ::  atom / constant
+                [%cell p=type q=type]                     ::  ordered pair
+                [%core p=type q=coil]                     ::  object
+                [%face p=$@(term tune) q=type]            ::  namespace
+                [%fork p=(set type)]                      ::  union
+                [%hint p=(pair type note) q=type]         ::  annotation
+                [%hold p=type q=hoon]                     ::  lazy evaluation
+            ==                                            ::
+  +$  tool  $@(term tune)                                 ::  type decoration
+  +$  tune                                                ::  complex
+            $~  [~ ~]                                     ::
+            $:  p=(map term (unit hoon))                  ::  aliases
+                q=(list hoon)                             ::  bridges
+            ==                                            ::
+  +$  typo  type                                          ::  old type
+  +$  vase  [p=type q=*]                                  ::  type-value pair
+  +$  vise  [p=typo q=*]                                  ::  old vase
+  ::
+  ++  next-vase
+    |=  a=vase
+    ^-  vase:h136
+    a(p (next-type p.a))
+  ::
+  ++  next-type
+    |=  a=type  ~+
+    ^-  type:h136
+    ?+  a  a
+      [%cell *]  [%cell $(a p.a) $(a q.a)]
+      [%core *]  [%core $(a p.a) (next-coil q.a)]
+      [%face *]  [%face ?@(p.a p.a (next-tune p.a)) $(a q.a)]
+      [%fork *]  [%fork (~(run in p.a) next-type)]
+      [%hint *]  ?:  ?=(%help -.q.p.a)  $(a q.a)  ::REVIEW
+                 [%hint [$(a p.p.a) q.p.a] $(a q.a)]
+      [%hold *]  [%hold $(a p.a) (next-hoon q.a)]
+    ==
+  ::
+  ++  next-coil
+    |=  a=coil
+    ^-  coil:h136
+    :+  p.a
+      (next-type q.a)
+    [p.r.a (~(run by q.r.a) next-tome)]
+  ::
+  ++  next-tome
+    |=  a=tome
+    ^-  tome:h136
+    (~(run by q.a) next-hoon)
+  ::
+  ++  next-tune
+    |=  a=tune
+    ^-  tune:h136
+    :-  (~(run by p.a) (curr bind next-hoon))
+    (turn q.a next-hoon)
+  ::
+  ++  next-manx
+    |=  a=manx:hoot
+    ^-  manx:hoot:h136
+    [(next-marx g.a) (next-marl c.a)]
+  ::
+  ++  next-marx
+    |=  a=marx:hoot
+    ^-  marx:hoot:h136
+    :-  n.a
+    %+  turn  a.a
+    |=  [n=mane:hoot v=(list beer:hoot)]
+    [n (turn v |=(b=beer:hoot ?@(b b `(next-hoon p.b))))]
+  ::
+  ++  next-marl
+    |=  a=marl:hoot
+    %+  turn  a
+    |=  a=tuna:hoot
+    ^-  tuna:hoot:h136
+    ?^  -.a  (next-manx a)
+    [-.a (next-hoon p.a)]
+  ::
+  ++  next-skin
+    |=  a=skin
+    ^-  skin:h136
+    ?+  a  a
+      [%cell *]  [%cell $(a +<.a) $(a +>.a)]
+      [%dbug *]  [%dbug spot.a $(a skin.a)]
+      [%help *]  $(a skin.a)  ::  drop
+      [%name *]  [%name term.a $(a skin.a)]
+      [%over *]  [%over wing.a $(a skin.a)]
+      [%spec *]  [%spec (next-spec spec.a) $(a skin.a)]
+    ==
+  ::
+  ++  next-spec
+    |=  a=spec  ~+
+    ^-  spec:h136
+    ?+  -.a  a
+      %dbug  [%dbug p.a $(a q.a)]
+      %gist  $(a q.a)  ::  drop
+      %made  [%made p.a $(a q.a)]
+      %make  [%make (next-hoon p.a) (turn q.a next-spec)]
+      %name  [%name p.a $(a q.a)]
+      %over  [%over p.a $(a q.a)]
+    ::
+      %bcgr  [%bcgr $(a p.a) $(a q.a)]
+      %bcbc  [%bcbc $(a p.a) (~(run by q.a) next-spec)]
+      %bcbr  [%bcbr $(a p.a) (next-hoon q.a)]
+      %bccb  [%bccb (next-hoon p.a)]
+      %bccl  [%bccl $(a i.p.a) (turn t.p.a next-spec)]
+      %bccn  [%bccn $(a i.p.a) (turn t.p.a next-spec)]
+      %bcdt  [%bcdt $(a p.a) (~(run by q.a) next-spec)]
+      %bcgl  [%bcgl $(a p.a) $(a q.a)]
+      %bchp  [%bchp $(a p.a) $(a q.a)]
+      %bckt  [%bckt $(a p.a) $(a q.a)]
+      %bcls  [%bcls p.a $(a q.a)]
+      %bcfs  [%bcfs $(a p.a) (~(run by q.a) next-spec)]
+      %bcmc  [%bcmc (next-hoon p.a)]
+      %bcpm  [%bcpm $(a p.a) (next-hoon q.a)]
+      %bcsg  [%bcsg (next-hoon p.a) $(a q.a)]
+      %bctc  [%bctc $(a p.a) (~(run by q.a) next-spec)]
+      %bcts  [%bcts (next-skin p.a) $(a q.a)]
+      %bcpt  [%bcpt $(a p.a) $(a q.a)]
+      %bcwt  [%bcwt $(a i.p.a) (turn t.p.a next-spec)]
+      %bczp  [%bczp $(a p.a) (~(run by q.a) next-spec)]
+    ==
+  ::
+  ++  next-hoon
+    |=  a=hoon  ~+
+    ^-  hoon:h136
+    ?+  a  a
+      [^ *]      [$(a p.a) $(a q.a)]
+    ::
+      [%dbug *]  [%dbug p.a $(a q.a)]
+      [%hand *]  [%hand (next-type p.a) q.a]
+      [%note *]  ?:  ?=(%help -.p.a)  $(a q.a)  ::  drop
+                 [%note p.a $(a q.a)]
+      [%fits *]  [%fits $(a p.a) q.a]
+      [%knit *]  [%knit (turn p.a |=(w=woof ?@(w w `^$(a p.w))))]
+      [%lost *]  [%lost $(a p.a)]
+      [%tell *]  [%tell (turn p.a next-hoon)]
+      [%tune *]  [%tune ?@(p.a p.a (next-tune p.a))]
+      [%yell *]  [%yell (turn p.a next-hoon)]
+      [%xray *]  [%xray (next-manx p.a)]
+    ::
+      [%brbc *]  [%brbc sample.a (next-spec body.a)]
+      [%brcb *]  [%brcb (next-spec p.a) (turn q.a |=([t=term h=hoon] [t (next-hoon h)])) (~(run by r.a) next-tome)]
+      [%brcl *]  [%brcl $(a p.a) $(a q.a)]
+      [%brcn *]  [%brcn p.a (~(run by q.a) next-tome)]
+      [%brdt *]  [%brdt $(a p.a)]
+      [%brkt *]  [%brkt $(a p.a) (~(run by q.a) next-tome)]
+      [%brhp *]  [%brhp $(a p.a)]
+      [%brsg *]  [%brsg (next-spec p.a) $(a q.a)]
+      [%brtr *]  [%brtr (next-spec p.a) $(a q.a)]
+      [%brts *]  [%brts (next-spec p.a) $(a q.a)]
+      [%brpt *]  [%brpt p.a (~(run by q.a) next-tome)]
+      [%brwt *]  [%brwt $(a p.a)]
+    ::
+      [%clcb *]  [%clcb $(a p.a) $(a q.a)]
+      [%clkt *]  [%clkt $(a p.a) $(a q.a) $(a r.a) $(a s.a)]
+      [%clhp *]  [%clhp $(a p.a) $(a q.a)]
+      [%clls *]  [%clls $(a p.a) $(a q.a) $(a r.a)]
+      [%clsg *]  [%clsg (turn p.a next-hoon)]
+      [%cltr *]  [%cltr (turn p.a next-hoon)]
+    ::
+      [%cncb *]  [%cncb p.a (turn q.a |=([w=wing h=hoon] [w (next-hoon h)]))]
+      [%cndt *]  [%cndt $(a p.a) $(a q.a)]
+      [%cnhp *]  [%cnhp $(a p.a) $(a q.a)]
+      [%cncl *]  [%cncl $(a p.a) (turn q.a next-hoon)]
+      [%cntr *]  [%cntr p.a $(a q.a) (turn r.a |=([w=wing h=hoon] [w (next-hoon h)]))]
+      [%cnkt *]  [%cnkt $(a p.a) $(a q.a) $(a r.a) $(a s.a)]
+      [%cnls *]  [%cnls $(a p.a) $(a q.a) $(a r.a)]
+      [%cnsg *]  [%cnsg p.a $(a q.a) (turn r.a next-hoon)]
+      [%cnts *]  [%cnts p.a (turn q.a |=([w=wing h=hoon] [w (next-hoon h)]))]
+    ::
+      [%dtkt *]  [%dtkt (next-spec p.a) $(a q.a)]
+      [%dtls *]  [%dtls $(a p.a)]
+      [%dttr *]  [%dttr $(a p.a) $(a q.a)]
+      [%dtts *]  [%dtts $(a p.a) $(a q.a)]
+      [%dtwt *]  [%dtwt $(a p.a)]
+    ::
+      [%ktbr *]  [%ktbr $(a p.a)]
+      [%ktdt *]  [%ktdt $(a p.a) $(a q.a)]
+      [%ktls *]  [%ktls $(a p.a) $(a q.a)]
+      [%kthp *]  [%kthp (next-spec p.a) $(a q.a)]
+      [%ktpm *]  [%ktpm $(a p.a)]
+      [%ktsg *]  [%ktsg $(a p.a)]
+      [%ktts *]  [%ktts (next-skin p.a) $(a q.a)]
+      [%ktwt *]  [%ktwt $(a p.a)]
+      [%kttr *]  [%kttr (next-spec p.a)]
+      [%ktcl *]  [%ktcl (next-spec p.a)]
+    ::
+      [%sgbr *]  [%sgbr $(a p.a) $(a q.a)]
+      [%sgcb *]  [%sgcb $(a p.a) $(a q.a)]
+      [%sgcn *]  [%sgcn p.a $(a q.a) (turn r.a |=([t=term h=hoon] [t (next-hoon h)])) $(a s.a)]
+      [%sgfs *]  [%sgfs p.a $(a q.a)]
+      [%sggl *]  [%sggl ?@(p.a p.a [p.p.a $(a q.p.a)]) $(a q.a)]
+      [%sggr *]  [%sggr ?@(p.a p.a [p.p.a $(a q.p.a)]) $(a q.a)]
+      [%sgbc *]  [%sgbc p.a $(a q.a)]
+      [%sgls *]  [%sgls p.a $(a q.a)]
+      [%sgpm *]  [%sgpm p.a $(a q.a) $(a r.a)]
+      [%sgts *]  [%sgts $(a p.a) $(a q.a)]
+      [%sgwt *]  [%sgwt p.a $(a q.a) $(a r.a) $(a s.a)]
+      [%sgzp *]  [%sgzp $(a p.a) $(a q.a)]
+    ::
+      [%mcts *]  [%mcts (next-marl p.a)]
+      [%mccl *]  [%mccl $(a p.a) (turn q.a next-hoon)]
+      [%mcfs *]  [%mcfs $(a p.a)]
+      [%mcgl *]  [%mcgl (next-spec p.a) $(a q.a) $(a r.a) $(a s.a)]
+      [%mcsg *]  [%mcsg $(a p.a) (turn q.a next-hoon)]
+      [%mcmc *]  [%mcmc (next-spec p.a) $(a q.a)]
+    ::
+      [%tsbr *]  [%tsbr (next-spec p.a) $(a q.a)]
+      [%tscl *]  [%tscl (turn p.a |=([w=wing h=hoon] [w (next-hoon h)])) $(a q.a)]
+      [%tsfs *]  [%tsfs (next-skin p.a) $(a q.a) $(a r.a)]
+      [%tsmc *]  [%tsmc (next-skin p.a) $(a q.a) $(a r.a)]
+      [%tsdt *]  [%tsdt p.a $(a q.a) $(a r.a)]
+      [%tswt *]  [%tswt p.a $(a q.a) $(a r.a) $(a s.a)]
+      [%tsgl *]  [%tsgl $(a p.a) $(a q.a)]
+      [%tshp *]  [%tshp $(a p.a) $(a q.a)]
+      [%tsgr *]  [%tsgr $(a p.a) $(a q.a)]
+      [%tskt *]  [%tskt (next-skin p.a) q.a $(a r.a) $(a s.a)]
+      [%tsls *]  [%tsls $(a p.a) $(a q.a)]
+      [%tssg *]  [%tssg (turn p.a next-hoon)]
+      [%tstr *]  [%tstr [p.p.a (bind q.p.a next-spec)] $(a q.a) $(a r.a)]
+      [%tscm *]  [%tscm $(a p.a) $(a q.a)]
+    ::
+      [%wtbr *]  [%wtbr (turn p.a next-hoon)]
+      [%wthp *]  [%wthp p.a (turn q.a |=([s=spec h=hoon] [(next-spec s) (next-hoon h)]))]
+      [%wtcl *]  [%wtcl $(a p.a) $(a q.a) $(a r.a)]
+      [%wtdt *]  [%wtdt $(a p.a) $(a q.a) $(a r.a)]
+      [%wtkt *]  [%wtkt p.a $(a q.a) $(a r.a)]
+      [%wtgl *]  [%wtgl $(a p.a) $(a q.a)]
+      [%wtgr *]  [%wtgr $(a p.a) $(a q.a)]
+      [%wtls *]  [%wtls p.a $(a q.a) (turn r.a |=([s=spec h=hoon] [(next-spec s) (next-hoon h)]))]
+      [%wtpm *]  [%wtpm (turn p.a next-hoon)]
+      [%wtpt *]  [%wtpt p.a $(a q.a) $(a r.a)]
+      [%wtsg *]  [%wtsg p.a $(a q.a) $(a r.a)]
+      [%wthx *]  [%wthx (next-skin p.a) q.a]
+      [%wtts *]  [%wtts (next-spec p.a) q.a]
+      [%wtzp *]  [%wtzp $(a p.a)]
+    ::
+      [%zpcm *]  [%zpcm $(a p.a) $(a q.a)]
+      [%zpgr *]  [%zpgr $(a p.a)]
+      [%zpgl *]  [%zpgl (next-spec p.a) $(a q.a)]
+      [%zpmc *]  [%zpmc $(a p.a) $(a q.a)]
+      [%zpts *]  [%zpts $(a p.a)]
+      [%zppt *]  [%zppt p.a $(a q.a) $(a r.a)]
+      [%zpwt *]  [%zpwt p.a $(a q.a)]
+    ==
+  --
 --
