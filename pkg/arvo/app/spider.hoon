@@ -27,12 +27,22 @@
       clean-slate-4
       clean-slate-5
       clean-slate-6
+      clean-slate-7
       clean-slate
   ==
 ::
 +$  clean-slate
-  $:  %7
+  $:  %8
       starting=(map yarn [=trying =vase])
+      running=(list yarn)
+      tid=(map tid yarn)
+      serving=(map tid [(unit [rid=@ta take=?(%json %noun)]) =mark =desk])
+      scrying=(jug tid [wire ship path])
+  ==
+::
++$  clean-slate-7
+  $:  %7
+      starting=(map yarn [=trying =vase:h137])
       running=(list yarn)
       tid=(map tid yarn)
       serving=(map tid [(unit [rid=@ta take=?(%json %noun)]) =mark =desk])
@@ -41,7 +51,7 @@
 ::
 +$  clean-slate-6
   $:  %6
-      starting=(map yarn [=trying =vase])
+      starting=(map yarn [=trying =vase:h137])
       running=(list yarn)
       tid=(map tid yarn)
       serving=(map tid [(unit @ta) =mark =desk])
@@ -50,7 +60,7 @@
 ::
 +$  clean-slate-5
   $:  %5
-      starting=(map yarn [=trying =vase])
+      starting=(map yarn [=trying =vase:h137])
       running=(list yarn)
       tid=(map tid yarn)
       serving=(map tid [(unit @ta) =mark =desk])
@@ -59,7 +69,7 @@
 ::
 +$  clean-slate-4
   $:  %4
-      starting=(map yarn [=trying =vase])
+      starting=(map yarn [=trying =vase:h137])
       running=(list yarn)
       tid=(map tid yarn)
       serving=(map tid [(unit @ta) =mark =desk])
@@ -67,7 +77,7 @@
 ::
 +$  clean-slate-3
   $:  %3
-      starting=(map yarn [=trying =vase])
+      starting=(map yarn [=trying =vase:h137])
       running=(list yarn)
       tid=(map tid yarn)
       serving=(map tid [@ta =mark =desk])
@@ -75,7 +85,7 @@
 ::
 +$  clean-slate-2
   $:  %2
-      starting=(map yarn [=trying =vase])
+      starting=(map yarn [=trying =vase:h137])
       running=(list yarn)
       tid=(map tid yarn)
       serving=(map tid [@ta =mark])
@@ -83,13 +93,13 @@
 ::
 +$  clean-slate-1
   $:  %1
-      starting=(map yarn [=trying =vase])
+      starting=(map yarn [=trying =vase:h137])
       running=(list yarn)
       tid=(map tid yarn)
   ==
 ::
 +$  clean-slate-ket
-  $:  starting=(map yarn [trying=?(%build %find %none) =vase])
+  $:  starting=(map yarn [trying=?(%build %find %none) =vase:h137])
       running=(list yarn)
       tid=(map tid yarn)
   ==
@@ -120,8 +130,8 @@
     ~[bind-eyre:sc]
   ++  on-save   clean-state:sc
   ++  on-load
-    |^
     |=  old-state=vase
+    |^
     =+  !<(any=clean-slate-any old-state)
     =?  any  ?=(^ -.any)  (old-to-1 any)
     =?  any  ?=(~ -.any)  (old-to-1 any)
@@ -132,7 +142,8 @@
     =.  any  (old-to-5 any)
     =.  any  (old-to-6 any)
     =.  any  (old-to-7 any)
-    ?>  ?=(%7 -.any)
+    =.  any  (old-to-8 any)
+    ?>  ?=(%8 -.any)
     ::
     =.  tid.state  tid.any
     =/  yarns=(list yarn)
@@ -154,13 +165,13 @@
     ++  old-to-1
       |=  old=clean-slate-ket
       ^-  clean-slate-1
-      1+old(starting (~(run by starting.old) |=([* v=vase] none+v)))
+      1+old(starting (~(run by starting.old) |=([* v=vase:h137] none+v)))
     ::
     ++  old-to-2
       |=  old=clean-slate-any
       ^-  (quip card clean-slate-any)
-      ?>  ?=(?(%1 %2 %3 %4 %5 %6 %7) -.old)
-      ?:  ?=(?(%2 %3 %4 %5 %6 %7) -.old)
+      ?>  ?=(?(%1 %2 %3 %4 %5 %6 %7 %8) -.old)
+      ?:  ?=(?(%2 %3 %4 %5 %6 %7 %8) -.old)
         `old
       :-  ~[bind-eyre:sc]
       :*  %2
@@ -173,8 +184,8 @@
     ++  old-to-3
       |=  old=clean-slate-any
       ^-  clean-slate-any
-      ?>  ?=(?(%2 %3 %4 %5 %6 %7) -.old)
-      ?:  ?=(?(%3 %4 %5 %6 %7) -.old)
+      ?>  ?=(?(%2 %3 %4 %5 %6 %7 %8) -.old)
+      ?:  ?=(?(%3 %4 %5 %6 %7 %8) -.old)
         old
       :*  %3
         starting.old
@@ -186,8 +197,8 @@
     ++  old-to-4
       |=  old=clean-slate-any
       ^-  clean-slate-any
-      ?>  ?=(?(%3 %4 %5 %6 %7) -.old)
-      ?:  ?=(?(%4 %5 %6 %7) -.old)
+      ?>  ?=(?(%3 %4 %5 %6 %7 %8) -.old)
+      ?:  ?=(?(%4 %5 %6 %7 %8) -.old)
         old
       :*  %4
         starting.old
@@ -199,15 +210,15 @@
     ++  old-to-5
       |=  old=clean-slate-any
       ^-  clean-slate-any
-      ?>  ?=(?(%4 %5 %6 %7) -.old)
-      ?:  ?=(?(%5 %6 %7) -.old)  old
+      ?>  ?=(?(%4 %5 %6 %7 %8) -.old)
+      ?:  ?=(?(%5 %6 %7 %8) -.old)  old
       [%5 +.old(serving [serving.old ~])]
     ::
     ++  old-to-6
       |=  old=clean-slate-any
       ^-  clean-slate-any
-      ?>  ?=(?(%5 %6 %7) -.old)
-      ?:  ?=(?(%6 %7) -.old)  old
+      ?>  ?=(?(%5 %6 %7 %8) -.old)
+      ?:  ?=(?(%6 %7 %8) -.old)  old
       :-  %6
       %=    +.old
           scrying
@@ -223,12 +234,22 @@
     ++  old-to-7
       |=  old=clean-slate-any
       ^-  clean-slate-any
-      ?>  ?=(?(%6 %7) -.old)
-      ?:  ?=(%7 -.old)  old
+      ?>  ?=(?(%6 %7 %8) -.old)
+      ?:  ?=(?(%7 %8) -.old)  old
       =-  old(- %7, serving -)
       %-  ~(run by serving.old)
       |=  [request=(unit @ta) =mark =desk]
       [(bind request (late %json)) mark desk]
+    ::
+    ++  old-to-8
+      |=  old=clean-slate-any
+      ^-  clean-slate-any
+      ?>  ?=(?(%7 %8) -.old)
+      ?:  ?=(%8 -.old)  old
+      =-  old(- %8, starting -)
+      %-  ~(run by starting.old)
+      |=  [=trying =vase:h137]
+      [trying (next-vase:h137 vase)]
     --
   ::
   ++  on-poke
@@ -745,7 +766,7 @@
 ::
 ++  clean-state
   !>  ^-  clean-slate
-  7+state(running (turn ~(tap of running.state) head))
+  8+state(running (turn ~(tap of running.state) head))
 ::
 ++  convert-tube
   |=  [from=mark to=mark =desk =bowl:gall]
