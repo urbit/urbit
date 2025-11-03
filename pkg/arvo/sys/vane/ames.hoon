@@ -4090,7 +4090,7 @@
           =/  =bone
             ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
           %-  %^  ev-trace  odd.veb  her
-              |.("%flubbing: agent={<agent>} bone={<bone>} {(spud wire)}")
+              |.("%flubbing: agent={<agent>} bone={<bone>}")
           abet:(on-take-flub:peer-core bone agent)
         ::  +on-take-spur: vane ready to process message
         ::
@@ -5273,7 +5273,6 @@
           =.  todos             (mutate todos)
           =.  peers.ames-state  (~(put by peers.ames-state) ship %alien todos)
           ?:  already-pending
-            ~&  already-pending/already-pending
             event-core
           ::
           ?:  =(%pawn (clan:title ship))
