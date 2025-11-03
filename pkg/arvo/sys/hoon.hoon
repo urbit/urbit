@@ -2,11 +2,11 @@
 ::::    /sys/hoon                                       ::
   ::                                                    ::
 =<  ride
-=>  %137  =>
+=>  %136  =>
 ::                                                      ::
 ::::    0: version stub                                 ::
   ::                                                    ::
-~%  %k.137  ~  ~                                        ::
+~%  %k.136  ~  ~                                        ::
 |%
 ++  hoon-version  +
 --  =>
@@ -99,7 +99,7 @@
   ~/  %lte
   ::    unsigned less than or equals
   ::
-  ::  returns whether {a >= b}.
+  ::  returns whether {a <= b}.
   ::
   ::  a: left hand operand (todo: name)
   ::  b: right hand operand
@@ -1034,20 +1034,18 @@
 +|  %insecure-hashing
 ::
 ++  muk                                                 ::  standard murmur3
-  ~%  %muk  ..muk  ~
-  =+  ~(. fe 5)
+  ~/  %muk
   |=  [syd=@ len=@ key=@]
+  ^-  @
+  =+  ~(. fe 5)
   =.  syd      (end 5 syd)
-  =/  pad      (sub len (met 3 key))
-  =/  data     (weld (rip 3 key) (reap pad 0))
   =/  nblocks  (div len 4)  ::  intentionally off-by-one
   =/  h1  syd
   =+  [c1=0xcc9e.2d51 c2=0x1b87.3593]
-  =/  blocks  (rip 5 key)
   =/  i  nblocks
   =.  h1  =/  hi  h1  |-
     ?:  =(0 i)  hi
-    =/  k1  (snag (sub nblocks i) blocks)  ::  negative array index
+    =/  k1  (cut 5 [(sub nblocks i) 1] key)  ::  negative array index
     =.  k1  (sit (mul k1 c1))
     =.  k1  (rol 0 15 k1)
     =.  k1  (sit (mul k1 c2))
@@ -1055,31 +1053,31 @@
     =.  hi  (rol 0 13 hi)
     =.  hi  (sum (sit (mul hi 5)) 0xe654.6b64)
     $(i (dec i))
-  =/  tail  (slag (mul 4 nblocks) data)
+  =/  tail  (rsh [3 (mul 4 nblocks)] key)
   =/  k1    0
   =/  tlen  (dis len 3)
   =.  h1
     ?+  tlen  h1  ::  fallthrough switch
-      %3  =.  k1  (mix k1 (lsh [0 16] (snag 2 tail)))
-          =.  k1  (mix k1 (lsh [0 8] (snag 1 tail)))
-          =.  k1  (mix k1 (snag 0 tail))
+      %3  =.  k1  (mix k1 (lsh [0 16] (cut 3 [2 1] tail)))
+          =.  k1  (mix k1 (lsh [0 8] (cut 3 [1 1] tail)))
+          =.  k1  (mix k1 (cut 3 [0 1] tail))
           =.  k1  (sit (mul k1 c1))
           =.  k1  (rol 0 15 k1)
           =.  k1  (sit (mul k1 c2))
           (mix h1 k1)
-      %2  =.  k1  (mix k1 (lsh [0 8] (snag 1 tail)))
-          =.  k1  (mix k1 (snag 0 tail))
+      %2  =.  k1  (mix k1 (lsh [0 8] (cut 3 [1 1] tail)))
+          =.  k1  (mix k1 (cut 3 [0 1] tail))
           =.  k1  (sit (mul k1 c1))
           =.  k1  (rol 0 15 k1)
           =.  k1  (sit (mul k1 c2))
           (mix h1 k1)
-      %1  =.  k1  (mix k1 (snag 0 tail))
+      %1  =.  k1  (mix k1 (cut 3 [0 1] tail))
           =.  k1  (sit (mul k1 c1))
           =.  k1  (rol 0 15 k1)
           =.  k1  (sit (mul k1 c2))
           (mix h1 k1)
     ==
-  =.  h1  (mix h1 len)
+  =.  h1  (mix h1 (end 5 len))
   |^  (fmix32 h1)
   ++  fmix32
     |=  h=@
@@ -4063,8 +4061,6 @@
 ~%    %qua
     +
   ==
-    %mure  mure
-    %mute  mute
     %show  show
   ==
 ::    layer-4
@@ -5979,13 +5975,14 @@
   ::
   ++  spot
     %+  sear  (soft iota)
+    =-  ;~(pose - (easy %$))
     %-  stew
     ^.  stet  ^.  limo
-    :~  :-  'a'^'z'  (stag %tas sym)
-        :-  '$'      (cold [%tas %$] buc)
+    :~  :-  'a'^'z'  sym
+        :-  '$'      (cold %$ buc)
         :-  '0'^'9'  bisk:so
         :-  '-'      tash:so
-        :-  '.'      zust:so
+        :-  '.'      ;~(pfix dot zust:so)
         :-  '~'      ;~(pfix sig ;~(pose crub:so (easy [%n ~])))
         :-  '\''     (stag %t qut)
     ==
@@ -6013,14 +6010,14 @@
 ++  mack
   |=  [sub=* fol=*]
   ^-  (unit)
-  =/  ton  (mink [sub fol] |~(^ ~))
+  =/  ton  (mink [sub fol] ~)
   ?.(?=(%0 -.ton) ~ `product.ton)
 ::  +mink: raw virtual nock
 ::
 ++  mink  !.
   ~/  %mink
   |=  $:  [subject=* formula=*]
-          scry=$-(^ (unit (unit)))
+          scry=$@(~ $-(^ (unit (unit))))
       ==
   =|  trace=(list [@ta *])
   |^  ^-  tone
@@ -6139,6 +6136,7 @@
         ?.  ?=(%0 -.ref)  ref
         =/  path  $(formula path.formula)
         ?.  ?=(%0 -.path)  path
+        ?~  scry  [%2 trace]
         =/  result  (scry product.ref product.path)
         ?~  result
           [%1 product.path]
@@ -6180,7 +6178,7 @@
 ::  +mock: virtual nock
 ::
 ++  mock
-  |=  [[sub=* fol=*] gul=$-(^ (unit (unit)))]
+  |=  [[sub=* fol=*] gul=$@(~ $-(^ (unit (unit))))]
   (mook (mink [sub fol] gul))
 ::  +mook: convert %tone to %toon, rendering stack frames
 ::
@@ -6251,14 +6249,6 @@
       ==
     ==
   --
-::  +mole: typed unitary virtual
-::
-++  mole
-  ~/  %mole
-  |*  tap=(trap)
-  ^-  (unit _$:tap)
-  =/  mur  (mure tap)
-  ?~(mur ~ `$:tap)
 ::  +mong: virtual slam
 ::
 ++  mong
@@ -6266,37 +6256,6 @@
   ^-  toon
   ?.  ?=([* ^] gat)  [%2 ~]
   (mock [gat(+< sam) %9 2 %0 1] gul)
-::  +mule: typed virtual
-::
-++  mule
-  ~/  %mule
-  |*  tap=(trap)
-  =/  mud  (mute tap)
-  ?-  -.mud
-    %&  [%& p=$:tap]
-    %|  [%| p=p.mud]
-  ==
-::  +mure: untyped unitary virtual
-::
-++  mure
-  |=  tap=(trap)
-  ^-  (unit)
-  =/  ton  (mink [tap %9 2 %0 1] |=(a=^ ``.*(a [%12 [%0 2] %0 3])))
-  ?.(?=(%0 -.ton) ~ `product.ton)
-::  +mute: untyped virtual
-::
-++  mute
-  |=  tap=(trap)
-  ^-  (each * (list tank))
-  =/  ton  (mock [tap %9 2 %0 1] |=(a=^ ``.*(a [%12 [%0 2] %0 3])))
-  ?-  -.ton
-    %0  [%& p.ton]
-  ::
-    %1  =/  sof=(unit path)  ((soft path) p.ton)
-        [%| ?~(sof leaf+"mute.hunk" (smyt u.sof)) ~]
-  ::
-    %2  [%| p.ton]
-  ==
 ::  +slum: slam a gate on a sample using raw nock, untyped
 ::
 ++  slum
@@ -6308,6 +6267,71 @@
 ++  soft
   |*  han=$-(* *)
   |=(fud=* (mole |.((han fud))))
+::  +vi: virtualization engine
+::
+++  vi
+  ~%  %vi  ..vi
+    ==
+      %mure  mure
+      %mute  mute
+    ==
+  ::  forward namespace?
+  ::
+  |_  for=?
+  ::  +mole: typed unitary virtual
+  ::
+  ++  mole
+    ~/  %mole
+    |*  tap=(trap)
+    ^-  (unit _$:tap)
+    =/  mur  (mure tap)
+    ?~(mur ~ `$:tap)
+  ::  +mule: typed virtual
+  ::
+  ++  mule
+    ~/  %mule
+    |*  tap=(trap)
+    =/  mud  (mute tap)
+    ?-  -.mud
+      %&  [%& p=$:tap]
+      %|  [%| p=p.mud]
+    ==
+  ::  +mure: untyped unitary virtual
+  ::
+  ++  mure
+    |=  tap=(trap)
+    ^-  (unit)
+    =/  gul
+      ?.  for  ~
+      =>  ~
+      |=(a=^ ``.*(a 12+[0+2 0+3]))
+    ::
+    =/  ton  (mink [tap %9 2 %0 1] gul)
+    ?.(?=(%0 -.ton) ~ `product.ton)
+  ::  +mute: untyped virtual
+  ::
+  ++  mute
+    |=  tap=(trap)
+    ^-  (each * (list tank))
+    =/  gul
+      ?.  for  ~
+      =>  ~
+      |=(a=^ ``.*(a 12+[0+2 0+3]))
+    ::
+    =/  ton  (mock [tap %9 2 %0 1] gul)
+    ?-  -.ton
+      %0  [%& p.ton]
+    ::
+      %1  =/  sof=(unit path)  ((soft path) p.ton)
+          [%| ?~(sof leaf+"mute.hunk" (smyt u.sof)) ~]
+    ::
+      %2  [%| p.ton]
+    ==
+  --
+::  aliases
+::
+++  mole  mole:vi
+++  mule  mule:vi
 ::
 ::    4o: molds and mold builders
 +|  %molds-and-mold-builders
@@ -7920,8 +7944,8 @@
         ^-  hoon
         :^    %zppt
             [[[%| 0 `%ruth] ~] ~]
-          [%cnls [%limb %ruth] [%sand %ta p.bas] fetch]
-        [%wtpt fetch-wing fetch [%zpzp ~]]
+          [%wtpt fetch-wing fetch [%zpzp ~]]
+        [%cnls [%limb %ruth] [%sand %ta p.bas] fetch]
       ::
           %cell
         :+  %ktls  example
@@ -8580,10 +8604,10 @@
     ::
         [%sgts *]  [%sggr [%germ p.gen] q.gen]
         [%sgwt *]
-      :+  %tsls  [%wtdt q.gen [%bust %null] [[%bust %null] r.gen]]
-      :^  %wtsg  [%& 2]~
-        [%tsgr [%$ 3] s.gen]
-      [%sgpm p.gen [%$ 5] [%tsgr [%$ 3] s.gen]]
+      :+  %tsls
+        :^  %wtcl  q.gen  [%sgpm p.gen r.gen %bust %null]
+        [%bust %null]
+      [%tsgr $+3 s.gen]
     ::
         [%mcts *]
       |-
@@ -10125,7 +10149,7 @@
       [typ val]
     ::
         [%zpts *]   [(nice %noun) [%1 q:$(vet |, gen p.gen)]]
-        [%zppt *]   ?:((feel p.gen) $(gen q.gen) $(gen r.gen))
+        [%zppt *]   ?.((feel p.gen) $(gen q.gen) $(gen r.gen))
     ::
         [%zpzp ~]  [%void [%0 0]]
         *
@@ -10289,7 +10313,7 @@
       =+  [(feel p.gen) (feel(sut dox) p.gen)]
       ?.  =(-< ->)
         ~>(%mean.'mull-bonk-f' !!)
-      ?:  -<
+      ?.  -<
         $(gen q.gen)
       $(gen r.gen)
     ::
@@ -10589,7 +10613,7 @@
       [%zpmc *]  (cell $(gen p.gen) $(gen q.gen))
       [%zpgl *]  (play [%kttr p.gen])
       [%zpts *]  %noun
-      [%zppt *]  ?:((feel p.gen) $(gen q.gen) $(gen r.gen))
+      [%zppt *]  ?.((feel p.gen) $(gen q.gen) $(gen r.gen))
       [%zpzp *]  %void
       *          =+  doz=~(open ap gen)
                  ?:  =(doz gen)
@@ -10840,34 +10864,37 @@
     (turn leg |=([p=type q=hoon] (play(sut p) q)))
   ::
   ++  sink
-    ~/  %sink
-    |^  ^-  cord
-    ?-  sut
-      %void      'void'
-      %noun      'noun'
-      [%atom *]  (rap 3 'atom ' p.sut ' ' ?~(q.sut '~' u.q.sut) ~)
-      [%cell *]  (rap 3 'cell ' (mup p.sut) ' ' (mup q.sut) ~)
-      [%face *]  (rap 3 'face ' ?@(p.sut p.sut (mup p.sut)) ' ' (mup q.sut) ~)
-      [%fork *]  (rap 3 'fork ' (mup p.sut) ~)
-      [%hint *]  (rap 3 'hint ' (mup p.sut) ' ' (mup q.sut) ~)
-      [%hold *]  (rap 3 'hold ' (mup p.sut) ' ' (mup q.sut) ~)
-    ::
-        [%core *]
-      %+  rap  3
-      :~  'core '
-          (mup p.sut)
-          ' '
-          ?~(p.p.q.sut '~' u.p.p.q.sut)
-          ' '
-          q.p.q.sut
-          ' '
-          r.p.q.sut
-          ' '
-          (mup q.q.sut)
-          ' '
-          (mup p.r.q.sut)
+    =<  $
+    ~%  %sink  ..sink  ~
+    |%
+    ++  $
+      ^-  cord
+      ?-  sut
+        %void      'void'
+        %noun      'noun'
+        [%atom *]  (rap 3 'atom ' p.sut ' ' ?~(q.sut '~' u.q.sut) ~)
+        [%cell *]  (rap 3 'cell ' (mup p.sut) ' ' (mup q.sut) ~)
+        [%face *]  (rap 3 'face ' ?@(p.sut p.sut (mup p.sut)) ' ' (mup q.sut) ~)
+        [%fork *]  (rap 3 'fork ' (mup p.sut) ~)
+        [%hint *]  (rap 3 'hint ' (mup p.sut) ' ' (mup q.sut) ~)
+        [%hold *]  (rap 3 'hold ' (mup p.sut) ' ' (mup q.sut) ~)
+      ::
+          [%core *]
+        %+  rap  3
+        :~  'core '
+            (mup p.sut)
+            ' '
+            ?~(p.p.q.sut '~' u.p.p.q.sut)
+            ' '
+            q.p.q.sut
+            ' '
+            r.p.q.sut
+            ' '
+            (mup q.q.sut)
+            ' '
+            (mup p.r.q.sut)
+        ==
       ==
-    ==
     ::
     ++  mup  |=(* (scot %p (mug +<)))
     --
@@ -11451,6 +11478,14 @@
   =+  gun=(~(mint ut p.vax) %noun gen)
   [p.gun .*(q.vax q.gun)]
 ::
+++  slub
+  |=  [vax=vase gen=hoon]  ^-  vase                     ::  memoized slap
+  =/  gun
+    =>  [vax=p=p.vax gen=gen ut=ut]
+    ~>  %memo./hoon/mint
+    (~(mint ut p.vax) %noun gen)
+  [p.gun .*(q.vax q.gun)]
+::
 ++  slog                                                ::  deify printf
   =|  pri=@                                             ::  priority level
   |=  a=tang  ^+  same                                  ::  .=  ~&(%a 1)
@@ -11844,7 +11879,8 @@
       ?@  iota  [%rock %tas iota]
       ?:  ?=(%hoon -.iota)  hoon.iota
       [%clhp [%rock %tas -.iota] [%sand iota]]
-    |^  %-  stew
+    |^  =-  ;~(pose - (easy %$))
+      %-  stew
       ^.  stet  ^.  limo
       :~  :-  'a'^'z'  ;~  pose
                          (spit (stag %cncl (ifix [pal par] (most ace wide))))
@@ -13213,9 +13249,15 @@
               [i (snoc t e)]
             ;~  plug
               %+  most  ;~(less ;~(plug fas tar) fas)
+              =-  ;~(pose - (easy [%leaf %tas %$]))
               %-  stew
               ^.  stet  ^.  limo
-              :~  :-  ['a' 'z']
+              :~  ::  /$
+                  ::
+                  :-  '$'
+                  (cold [%leaf %tas %$] buc)
+                ::
+                  :-  ['a' 'z']
                   ;~  pose
                     ::  /name=@aura
                     ::
@@ -13234,7 +13276,7 @@
                   ::
                     ::  /constant
                     ::
-                    (stag %leaf (stag %tas ;~(pose sym (cold %$ buc))))
+                    (stag %leaf (stag %tas sym))
                   ==
                 ::
                   ::  /@aura
