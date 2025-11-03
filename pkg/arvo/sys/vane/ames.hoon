@@ -5277,7 +5277,6 @@
           ::
           ?:  =(%pawn (clan:title ship))
             (request-attestation ship)
-          ~&  %ask-keys^ship
           ::  NB: we specifically look for this wire in +public-keys-give in
           ::  Jael.  if you change it here, you must change it there.
           ::
