@@ -622,123 +622,29 @@
     ==
     ;body:"{msg}"
   ==
-::  +build-inner-frame: render "negotiation script page"  xxtodo description
+::  +build-subdomain-negotiation: render "negotiation script page"  xxtodo description
 ::
-++  build-inner-frame
-  |=  [cookie=(unit identity) target-src=@t]
-  |^  ^-  octs
-      %-  as-octs:mimes:html
-      %-  crip
-      %-  en-xml:html
-      ;html
-        ;head
-          ;title:"Setting up... TODOxx"
-        ==
-        ;body
-          ;h1:"Authenticating..."
-          ;iframe#content;
-          ;script:"{vars} {(trip script)}"
-        ==
-      ==
-  ++  vars
-    =/  nom=tape
-      ?~  cookie  "null"
-      =;  who=@p  "'{(scow %p who)}'"
-      ?+(-.who.u.cookie who.who.u.cookie %ours our)
-    """
-    const host = '{(scow %p our)}';
-    const our = {nom};
-    const target = '{(trip target-src)}';
-    """
-  ++  script
-    '''
-    const frame = document.getElementById('content');
-    const parts = window.location.hostname.split('.');
-    let parentDomain = window.location.hostname;
-    if (parts.length > 2 || (parts.length === 2 && parts[1] === 'localhost'))
-      parentDomain = parts.slice(1).join('.');
-    const parentLocation =
-      window.location.protocol +
-      '//' +
-      parentDomain +
-      window.location.pathname +
-      window.location.search +
-      window.location.hash;
-    if (window.parent === window) {
-      //  if there is no outer frame, redirect to the outer frame if we can
-      if (parentLocation !== window.location.toString()) {
-        console.log('redirecting to root domain...');
-        location = parentLocation;
-      } else {
-        console.error('todoxx display error msg, we are already at top-level');
-      }
-    } else {
-      //  there is an outer frame, communicate with it.
-      //  send a msg to either check our identity, or ask for a fresh cookie.
-      const msg = {}
-      if (our) {
-        msg.tag = 'check-identity';
-        msg.our = our;
-      } else {
-        msg.tag = 'give-cookie';
-      }
-      window.parent.postMessage(msg, parentLocation);
-      //  await the response
-      console.log('awaiting response from parent...', parentLocation);
-      window.addEventListener('message', function handler(e) {
-        let tag = '';
-        if (event.data) tag = event.data.tag;
-        console.log('inner frame handling msg tag', tag);
-        switch (tag) {
-            case 'cookie-response':
-          console.log('received token', event.data.token);
-          //NOTE  max-age doesn't really matter. the moment after we set the
-          //      cookie here, we will reload(), which makes a request with
-          //      the cookie, and causes eyre to include a "refreshed" cookie
-          //      in the response.
-          const cookie = `urbauth-${host}=${event.data.token}; Path=/; Max-Age=300`;
-          console.log('setting cookie', cookie);
-          document.cookie = cookie;
-          window.removeEventListener('message', handler);  //REVIEW  superfluous?
-          //NOTE  intentionally no break, continue with setup
-        //
-            case 'good-identity':
-          console.log('good to go, setting content frame src to', target);
-          frame.src = target;
-          //TODOxx  figure out a way to get events on url/history change of content pane
-          setTimeout(() => {
-            console.log('histoory?', frame.contentWindow);
-            frame.contentWindow.addEventListener('popstate', (e) => {
-              console.log('windowxx: content src changed', frame.contentWindow.location, e);
-            });
-            frame.addEventListener('load', (e) => {
-              console.log('frame: content src changed', frame.contentWindow.location, e);
-            });
-            frame.addEventListener('hashchange', (e) => {
-              console.log('frame: content hash changed', frame.contentWindow.location, e);
-            });
-            frame.contentWindow.addEventListener('hashchange', (e) => {
-              console.log('window hashchange: ahconc changed', frame.contentWindow.location, e);
-            });
-            frame.contentWindow.addEventListener('popstate', (e) => {
-              console.log('window popstate', frame.contentWindow.location, e);
-            });
-            frame.contentWindow.onpopstate = (e) => {
-              console.log('window popstate2', frame.contentWindow.location, e);
-            };
-          }, 500);
-          break;
-        //
-            default:
-          console.log('unknown message', event.data);
-          //TODOxx  if the outer frame can't give us what we want,
-          //        maybe we want to leverage iframe's `allow-top-navigation`
-          //        to let us redirect the outer page somewhere else.
-        }
-      });
-    }
-    '''
-  --
+++  build-subdomain-negotiation
+  |=  [host=turf target-path=@t]
+  ^-  octs
+  =/  sub=@t    (rear host)
+  =/  top=turf  (snip host)
+  =/  target=tape
+    %-  trip
+    %+  rap  3
+    :~  '//'
+        (en-turf:html top)
+        '/~/xxauth/'  sub
+        target-path
+    ==
+  %-  as-octs:mimes:html
+  %-  crip
+  %-  en-xml:html
+  ;html
+    ;head
+      ;meta(http-equiv "refresh", content "0; url={target}");
+    ==
+  ==
 ::  +render-tang-to-marl: renders a tang and adds <br/> tags between each line
 ::
 ++  render-tang-to-marl
@@ -945,6 +851,7 @@
     ::               `[domain=~['io' 'np' 'mopfel'] desk=`%pals]
     ::
     ::TODOxx  better name.
+    ::TODOxx  better structure, explicate .desk being the tail of .domain
     =/  inner=(unit [[domain=turf port=(unit @ud)] desk=(unit desk)])
       ::REVIEW  should just parse earlier?
       =/  doom=(unit [port=(unit @ud) doom=(each turf @if)])
@@ -952,8 +859,7 @@
       ~&  doom=doom
       ?.  ?=([~ * %& *] doom)  ~  ::  only proper hostnames supported
       =.  domains.state  (~(put in domains.state) ~['localhost'])  ::TODOxx tmp
-      =-  ~&  next=-
-          ?:  =(hit *turf)  ~
+      =-  ?:  =(hit *turf)  ~
           %-  some
           :-  [hit port.u.doom]
           ?:  =(/ suffix)  ~
@@ -971,7 +877,9 @@
       ?:  (gte (lent u.res) (lent suffix))
         [ours u.res]
       nop
-    ~&  [host=host inner=inner]
+    ::  domain must be non-empty if we have it
+    ::
+    ~&  [host=host inner=inner url=url.request]
     ::  .pathowner: desk that the target path is bound to (~ for base/eyre)
     ::
     =/  pathowner=(unit desk)
@@ -996,7 +904,33 @@
         ?>  ?=([~ ~ %desk *] res)
         `!<(desk q.u.u.res)
       ==
+    ::  if the domain is known, but has no desk in the subdomain,
+    ::  this is the "homepage" case. redirect to the subdomain that "owns"
+    ::  the requested url/binding.
     ::
+    ?:  &(?=(^ pathowner) ?=([~ * ~] inner))
+      ::NOTE  some code duplication with below, but request handling deserves
+      ::      a refactor anyway
+      =.  connections.state
+        ::NOTE  required by +handle-response.
+        ::      the action & session we provide here don't actually exist.
+        ::      that's fine: we call +handle-response for this connection right
+        ::      away, that no-ops for the non-existing session, and then
+        ::      deletes the connection from state.
+        %+  ~(put by connections.state)  duct
+        ^-  outstanding-connection
+        [*action [| secure address request] [*@uv [[%fake *@p] ~]] ~ 0]
+      =/  target-url=@t
+        %+  rap  3
+        :~  '//'  u.pathowner  '.'
+            (en-turf:html domain.u.inner)  url.request
+        ==
+      %-  handle-response
+      :*  %start
+          [303 ['location' target-url]~]
+          ~
+          complete=%.y
+      ==
     =/  [=action suburl=@t]
       ::  if the domain is not known to us, we can't serve on it.
       ::
@@ -1011,17 +945,9 @@
       ?~  pathowner
         ::NOTE  per .pathowner implementation, this will always be an
         ::      "eyre endpoint", never %app or %gen
-        ::TODOxx  tmp
-        ?:  =('/~/frame' (end 3^8 url.request))
-          [[%iframe ~] (rsh 3^8 url.request)]
         (get-action-for-binding host url.request)
-      ::  if the domain is known, but has no desk in the subdomain,
-      ::  this is the "homepage" case.
-      ::  even if the requested path isn't bound, serve the iframe.
-      ::  the iframe will then contain the 404 (or real route if present).
-      ::
-      ?~  desk.u.inner
-        [[%iframe ~] url.request]
+      ::NOTE  should be handled directly above this
+      ?~  desk.u.inner  ~|(%eyre-confused-branching !!)
       ::  if the subdomain points to a desk that does not own the request path,
       ::  (a desk that did not bind that path,) we cannot resolve the request.
       ::
@@ -1046,16 +972,17 @@
     ::                provenance doesn't match the request target.
     ::    %have:      known and valid session.
     ::    %made       created a new session from whole cloth. (we will mint new
-    ::                guest sessions for auth-less requests to top-level domain.
+    ::                guest sessions for auth-less requests to top-level domain,
+    ::                or new scoped sessions for action=%xxauth on subdomains.)
     ::    %negotiate: request lacks auth but came in on a subdomain. if we
-    ::                serve it the +build-inner-frame it may be able to
+    ::                serve it the +build-subdomain-negotiation it may be able to
     ::                obtain auth automagically.
     ::
     =/  t
       $%  [%invalid session=@uv]
           [%have session=@uv =identity ~]
           [%made session=@uv =identity moves=(list move)]
-          [%negotiate ~]
+          [%negotiate subdomain=turf]
       ==
     =^  auth-state=t  state
       ?~  inner
@@ -1066,23 +993,50 @@
         ::      existent session-id).
         ?>  ?=(%four-oh-four -.action)
         [%made *@uv [fake+~fipfes-fipfes-fipfes-fipfes--fipfes-fipfes-fipfes-fipfes ~] ~]
+      =*  full-turf  (snoc domain.u.inner u.desk.u.inner)
       ?~  sid=(session-id-from-request:authentication request)
-        ?^  desk.u.inner  [[%negotiate ~] state]
+        ?^  desk.u.inner  [[%negotiate full-turf] state]
         [[%made -] +]:(start-session:authentication %guest)
       ?~  ses=(~(get by sessions.auth.state) u.sid)
-        ?:  &(?=(^ desk.u.inner) ?=(%iframe -.action))
-          [[%negotiate ~] state]
+        ?:  ?=(^ desk.u.inner)
+          [[%negotiate full-turf] state]
         [[%invalid u.sid] state]
       ?:  (gth now expiry-time.u.ses)
-        ?:  &(?=(^ desk.u.inner) ?=(%iframe -.action))
-          [[%negotiate ~] state]
+        ?:  ?=(^ desk.u.inner)
+          [[%negotiate full-turf] state]
         [[%invalid u.sid] state]
       ::  provenance doesn't match request target,
       ::  they shouldn't pass this cookie!
       ::
       ?.  =(desk.u.inner provenance.identity.u.ses)
-        [[%negotiate ~] state]
+        ::TODOxx  log? warn? weird case
+        [[%negotiate ?~(desk.u.inner domain.u.inner full-turf)] state]
       [[%have u.sid identity.u.ses ~] state]
+    ::  xx comment about special handling
+    ::  normally, %negotiate on a subdomain means that we _start_ auth
+    ::  negotiation. however, if the request binds to %xxauth, this means we're
+    ::  returning to the subdomain after having started negotiation through the
+    ::  top-level domain. in that case, we can turn auth-state into a %made
+    ::  instead by minting the cookie (xx invalid cases). the action handling
+    ::  further down will only have to serve the appropriate redirect.
+    ::
+    =^  auth-state=t  state
+      ?.  ?&  ?=(%negotiate -.auth-state)
+              ?=(%xxauth -.action)
+              ?=([~ * ^] inner)
+          ==
+        [auth-state state]
+      =/  [tmp-token=@uv target-url=tape]
+        %+  rash  url.request
+        ;~  pfix  (jest '/~/xxauth/')
+        ;~  plug
+          ;~(pfix (jest '0v') viz:ag)
+          (star next)
+        ==  ==
+      ::TODOxx  validate tmp-token and get deets out of state
+      ?>  =(tmp-token u.desk.u.inner)  ::TMP
+      ::TODOxx  use .identity retrieved from state
+      [[%made -] +]:(start-session:authentication [%local `u.desk.u.inner])
     ::
     ?:  ?=(%invalid -.auth-state)
       =*  session  session.auth-state
@@ -1114,6 +1068,8 @@
       ==
     ::
     ?:  ?=(%negotiate -.auth-state)
+      ::TODOxx  this is the equivalent of doing a [%xxauth %jump],
+      ::        can imagine implementing it as such, =. action or w/e
       :_  state
       =;  =http-event:http
         [duct %give %response http-event]~
@@ -1121,10 +1077,8 @@
         [200 ['content-type' 'text/html'] ~]
       :_  complete=&
       :-  ~
-      ?:  ?=([~ * ^] inner)
-        (build-inner-frame ~ suburl)
-      ~&  %wtf-negotiate-outer-frame
-      (build-outer-frame pathowner inner *identity request)
+      ::TODOxx  serve as 3xx instead
+      (build-subdomain-negotiation subdomain.auth-state url.request)
     ::
     ?>  ?=(?(%made %have) -.auth-state)
     =*  suv       session.auth-state
@@ -1232,21 +1186,56 @@
       (handle-cache-req authenticated request u.val.u.cached)
     ::
     ?-    -.action
-        %iframe
+        %xxauth
       ::TODOxx  this factoring smh
-      ?:  ?=([~ * ^] inner)
-        %^  return-static-data-on-duct  200  'text/html'
-        (build-inner-frame `identity suburl)
-      ?~  pathowner
-        ::  nobody has bound this path, the iframe would just contain a 404,
-        ::  so serve the 404 directly
+      ::NOTE  %jump case handled in %negotiate auth-state above
+      :: ?:  ?=([~ * ^] inner)
+      ::   %^  return-static-data-on-duct  200  'text/html'
+      ::   (build-subdomain-negotiation domain.u.inner suburl)
+      ?~  inner
+        ~&  %xxauth-hit-without-domain
+        ::  we don't know this domain, so can't reliably redirect to top or
+        ::  subdomain, so can't really do anything with this binding here
         ::
         %^  return-static-data-on-duct  404  'text/html'
-        ::TODO  consider: even w/ "real" auth flag, will leak 404.
-        ::      is eyre in the business of preventing service discovery y/n? (y!)
         (error-page 404 & url.request "no such route")
-      %^  return-static-data-on-duct  200  'text/html'
-      (build-outer-frame pathowner inner identity request)
+      ::  top domain, %sink case
+      ::
+      ?~  desk.u.inner
+        ::  at this point, we expect the url.request to be of the shape
+        ::  /~/xxauth/[scope]/[target-path]. get those values out.
+        ::
+        =/  [scope=@t target-url=tape]
+          %+  rash  url.request
+          ;~  pfix  (jest '/~/xxauth/')
+          ;~  plug
+            sym
+            (star next)  ::REVIEWxx  doesn't enforce slash separator after sym
+          ==  ==
+        =/  tmp-token=tape
+          ::TODOxx  real random
+          ::TODOxx  store in state alongside the identity.auth-state
+          (scow %uv scope)
+        =/  redirect-url=tape
+          "//{(trip scope)}.{(trip (en-turf:html domain.u.inner))}/~/xxauth/{tmp-token}{target-url}"
+        %-  handle-response
+        [%start [303 ['location' (crip redirect-url)]~] ~ &]
+      ::  subdomain, %gain case
+      ::
+      ::  at this point, we expect the url.request to be of the shape
+      ::  /~/xxauth/[tmp-token]/[target-path]. get those values out.
+      ::
+      =/  [tmp-token=@uv target-url=tape]
+        %+  rash  url.request
+        ;~  pfix  (jest '/~/xxauth/')
+        ;~  plug
+          ;~(pfix (jest '0v') viz:ag)
+          (star next)
+        ==  ==
+      =/  redirect-url=tape
+        "//{(trip u.host)}{target-url}"
+      %-  handle-response
+      [%start [303 ['location' (crip redirect-url)]~] ~ &]
     ::
         %gen
       =/  bek=beak  [our desk.generator.action da+now]
@@ -1675,7 +1664,7 @@
         %channel
       on-cancel-request:by-channel
     ::
-        ?(%scry %four-oh-four %name %host %ip %boot %sponsor %iframe)
+        ?(%scry %four-oh-four %name %host %ip %boot %sponsor %xxauth)
       ::  it should be impossible for these to be asynchronous
       ::
       !!
@@ -1696,109 +1685,6 @@
         data=[~ data]
         complete=%.y
     ==
-  ::  +build-outer-frame: outer frame
-  ::
-  ++  build-outer-frame
-    |=  $:  pathowner=(unit desk)
-            inner=(unit [[domain=turf port=(unit @ud)] desk=(unit desk)])
-            =identity
-            =request:http
-        ==
-    ^-  octs
-    ?>  ?=(^ pathowner)  ::TODOxx retarded factoring
-    ::  generate a page that contains an iframe which points to the requested
-    ::  path _under the appropriate subdomain_
-    ::
-    =/  inner  (need inner)
-    =/  target-domain=@t
-      %+  rap  3
-      :~  u.pathowner  ::  appropriate subdomain
-          '.'          ::  dot
-          (en-turf:html domain.inner)  ::  our hostname (shorted found match)
-      ==
-    =/  iframe-src=tape
-      %-  trip
-      %+  rap  3
-      :~  '//'         ::  same protocol
-          target-domain
-          ?~(port.inner '' (cat 3 ':' (crip (a-co:co u.port.inner))))
-          '/~/frame'
-          url.request  ::  original request target
-      ==
-    %-  as-octs:mimes:html
-    %-  crip
-    %-  en-xml:html
-    |^  ;html
-          ;head
-            ;title:"eyre outer frame"
-            ;style:"iframe \{ height: 100%; width: 100%; }"
-            ::TODOxx  appropriate meta etc
-          ==
-          ;body
-            ;iframe#portal@"{iframe-src}";
-            ;script:"{vars} {script}"
-          ==
-        ==
-    ::
-    ++  vars
-      """
-      const targetDomain = '{(trip target-domain)}';
-      const scope = '{(trip u.pathowner)}';
-      const our = '{(scow %p ?+(-.who.identity who.who.identity %ours our))}';
-      """
-    ++  script
-      %-  trip
-      '''
-      const inner = document.getElementById('portal');
-      inner.addEventListener('load', (e) => {
-        console.log('outer loaded inner', e);
-        //console.log('inner href', inner.contentWindow.location.href);
-      });
-      window.addEventListener('message', (e) => {
-        console.log('received', e);
-        //  ignore messages from unexpected origins
-        if (e.origin.split('//')[1] !== targetDomain) {
-          console.error('origin mismatch', e.origin, targetDomain);
-          return;
-        }
-        let tag = '';
-        if (e.data) tag = e.data.tag;
-        console.log('outer frame handling msg tag', tag);
-        switch (tag) {
-            case 'check-identity':
-          console.log('outer checking identity', e.data.our, 'against', our);
-          if (e.data.our === our) {
-            e.source.postMessage({ tag: 'good-identity' }, e.origin);
-            return;
-          }
-          //NOTE  intentionally don't break, want to send them a new cookie
-            case 'give-cookie':
-          console.log('fetching token for', scope);
-          window.fetch(new Request('/~/login', {
-            credentials: 'same-origin',
-            method: 'POST',
-            body: 'xxtokenflow&scope=' + scope,
-          })).then((res) => {
-            if (!res.ok) {
-              console.error('res not ok', res);
-              throw new Error('bad response');
-            }
-            res.text().then((token) => {
-              console.log('injecting token', token);
-              e.source.postMessage({ tag: 'cookie-response', token: token }, e.origin);
-            });
-          }).catch((e) => {
-            console.log('token fetch failure', e);
-          });
-          break;
-        //
-            default:
-          console.log('unknown message!', e.data);
-          return;
-        }
-      });
-      '''
-    --
   ::  +authentication: per-event authentication as this Urbit's owner
   ::
   ::    Right now this hard codes the authentication page using the old +code
@@ -2052,8 +1938,10 @@
     ::    but "us" needs to differentiate between "us as root", "us as app",
     ::    etc.
     ::
+    ::TODOxx  maybe should take a =duct arg so it can do the "associate the
+    ::        new session with ..." step
     ++  start-session
-      |=  kind=?([%local scope=(unit desk)] %guest [%eauth who=@p])
+      |=  kind=?([%local scope=(unit desk)] %guest [%eauth who=@p])  ::TODOxx  update for scoped guest & eauth
       ^-  [[session=@uv =identity moves=(list move)] server-state]
       =;  [key=@uv sid=identity]
         =/  timeout=@dr
@@ -4091,6 +3979,7 @@
           [[~ /~/ip] duct [%ip ~]]
           [[~ /~/boot] duct [%boot ~]]
           [[~ /~/sponsor] duct [%sponsor ~]]
+          [[~ /~/xxauth] duct [%xxauth ~]]
       ==
     [~ http-server-gate]
   ::  %trim: in response to memory pressure
@@ -4827,6 +4716,8 @@
     ==
   ::
       %~2025.1.31
+    =.  bindings.old
+      (insert-binding [[~ /~/xxauth] outgoing-duct.old [%xxauth ~]] bindings.old)
     http-server-gate(ax old)
   ::
   ==

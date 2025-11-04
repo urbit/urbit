@@ -3250,7 +3250,7 @@
             [%real who=@p]                              ::  authed cross-ship
         ==
       ::
-        provenance=(unit desk)
+        provenance=(unit desk)  ::TODOxx  scope
     ==
   ::  channel-state: state used in the channel system
   ::
@@ -3399,9 +3399,9 @@
         ::  respond with the default file not found page
         ::
         [%four-oh-four ~]
-        ::  xx
+        ::  xx-auth: %jump to top domain, %sink down to sub, %gain the cookie
         ::
-        [%iframe ~]
+        [%xxauth ~]
     ==
   ::  +generator: a generator on the local ship that handles requests
   ::
