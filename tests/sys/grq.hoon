@@ -35,6 +35,7 @@
       :-  ~[/use/sub/0w1.d6Isf/out/~bud/pub/1/sub-foo/~bud /init]
       [%deal [~nec ~bud /] %pub %watch /foo]
       :~  :-  ~[/init]  [%pass /sys/era %j %public-keys (sy ~bud ~)]
+          :-  ~[/init]  [%pass /sys/flu/~bud %a %plea ~bud %g /gf [%0 ~]]
           :-  ~[/use/sub/0w1.d6Isf/out/~bud/pub/1/sub-foo/~bud /init]
           [%pass /sys/way/~bud/pub %a %plea ~bud %g /ge/pub [%0 %s /foo]]
       ==

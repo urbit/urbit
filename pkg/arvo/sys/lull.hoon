@@ -4,7 +4,7 @@
 =>  ..part
 ~%  %lull  ..part  ~
 |%
-++  lull  %322
+++  lull  %321
 ::                                                      ::  ::
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
@@ -898,6 +898,8 @@
         [%whey =spar boq=@ud]       :: weight of noun bounded at .path.spar
                                     :: as measured by .boq
         [%gulp path]                :: like %plug, but for |mesa
+        $>(%halt deep)              :: halt flow after we hear a remote %flub
+        [%goad =ship]               :: re-start flow after remote agent is %live
     ==
   ::
   ::  $gift: effect from ames
@@ -1044,6 +1046,7 @@
         [%kill =ship =bone]
         [%ahoy =ship =bone]  :: XX remove bone; it's just next-bone.ossuary
         [%prun =ship =user=path =duct =ames=path]
+        [%halt =ship agent=term =bone] :: XX add [=agent=path cork=?]
     ==
   ::  $stun: STUN notifications, from unix
   ::
@@ -1171,6 +1174,7 @@
         keens=(map path keen-state)
         =chain
         tip=(jug =user=path [duct =ames=path])
+        halt=(set bone)
     ==
   +$  keen-state
     $+  keen-state
@@ -1586,6 +1590,17 @@
     ?:  (lte size 8)  [8 %0b10]
     [16 %0b11]
   ::
+  ::  $axle: state for entire vane
+  ::
+  ::    peers:       states of connections to other ships
+  ::    unix-duct:   handle to give moves to unix
+  ::    life:        our $life; how many times we've rekeyed
+  ::    rift:        our $rift
+  ::    bug:         debug printing configuration
+  ::    snub:        blocklist for incoming packets
+  ::    cong:        parameters for marking a flow as clogged
+  ::    dead:        dead flow consolidation timer and recork timer, if set
+  ::
   +$  axle
     $:  peers=(map ship ship-state)
         =unix=duct  ::  [//ames/0v0 ~]
@@ -1598,7 +1613,7 @@
         $:  flow=[%flow (unit dead-timer)]  ::  ... for |ames
             chum=[%chum (unit dead-timer)]  ::  ... for |mesa
             cork=[%cork (unit dead-timer)]  ::  ... for %nacked corks
-            rots=[%rots (unit dead-timer)]  ::  ... fir expiring direct routes
+            rots=[%rots (unit dead-timer)]  ::  ... for expiring direct routes
         ==
         ::
         =server=chain                       ::  for serving %shut requests
@@ -1708,6 +1723,11 @@
         ::  line: high-water mark for the last-acked message before migration
         ::
         line=@ud
+        ::  a flow halts when:
+        ::    - forward: %gall passes a %flub to %ames
+        ::    - backward: a %plea gets %flubbed over the wire
+        ::
+        halt=?(%.y %.n)
         ::  outbound %poke payloads, bounded in the ship's namespace
         ::  always and only for requests
         ::
@@ -3661,7 +3681,8 @@
     $%  [%boon payload=*]                               ::  ames response
         [%noon id=* payload=*]
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
-        [%flub ~]                                       ::  not ready to handle plea
+        [%flub agent=(unit term)]                       ::  refuse to take plea
+        [%spur ~]                                       ::  ready to take plea
         [%unto p=unto]                                  ::
     ==                                                  ::
   +$  task                                              ::  incoming request
@@ -3676,6 +3697,7 @@
         [%doff dude=(unit dude) ship=(unit ship)]       ::  kill subscriptions
         [%rake dude=(unit dude) all=?]                  ::  reclaim old subs
         [%lave subs=(list [?(%g %a) ship dude duct])]   ::  delete stale bitt(s)
+        $>(%halt deep:ames)                             ::  send remote %flub
         $>(%init vane-task)                             ::  set owner
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
@@ -3706,9 +3728,9 @@
         [%plot p=(unit plot) q=(map @ta farm)]
     ==
   ::
-  +$  egg                                               ::  migratory agent state
-    $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)] ::  see /sys/gall $yoke
-        $:  %live
+  +$  egg                                               ::  migratory agent
+    $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)] ::  state; see /sys/gall
+        $:  %live                                       ::  $yoke
             control-duct=duct
             run-nonce=@t
             sub-nonce=@

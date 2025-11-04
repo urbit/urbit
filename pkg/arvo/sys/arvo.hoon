@@ -3,7 +3,7 @@
 |%
 +|  %global
 ::
-++  arvo  %236
+++  arvo  %235
 ::
 ::  $arch: node identity
 ::  $axal: fundamental node, recursive (trie)
@@ -208,9 +208,9 @@
   ==
 +$  heir
   $%  $:  %grub
-          $%  [?(%240 %239 %238 %237 %236) =grub]
+          $%  [?(%240 %239 %238 %237 %236 %235) =grub]
       ==  ==
-      [?(%240 %239 %238 %237 %236) =debt =soul]
+      [?(%240 %239 %238 %237 %236 %235) =debt =soul]
   ==
 +$  plan  (pair germ (list move))
 +$  soul
@@ -779,6 +779,8 @@
       ~>  %slog.[0 leaf+"1-c (compiling compiler, wait a few minutes)"]
       =/  compiler-tool
         ~>  %bout
+        =>  [compiler-gate=compiler-gate log=hoon=hoon.log]
+        ~>  %memo./boot/brass
         .*([compiler-gate noun/hoon.log] [%9 2 %10 [6 %0 3] %0 2])
       ::
       ::  switch to the second-generation compiler.  we want to be
@@ -805,6 +807,8 @@
       ~>  %slog.[0 leaf+"1-f"]
       =/  kernel-tool
         ~>  %bout
+        =>  [compiler-gate=compiler-gate kernel-span=kernel-span log=arvo=arvo.log]
+        ~>  %memo./boot/brass
         .*([compiler-gate kernel-span arvo.log] [%9 2 %10 [6 %0 3] %0 2])
       ::
       ::  create the arvo kernel, whose subject is the kernel core.
@@ -1764,11 +1768,12 @@
   |=  hir=$<(%grub heir)
   ^-  ^
   ~|  %load
+  ~>  %spin.['load/arvo']
   ::  store persistent state
   ::
   =.  sol
     ?-  -.hir
-      ?(%240 %239 %238 %237 %236)  soul.hir
+      ?(%240 %239 %238 %237 %236 %235)  soul.hir
     ==
   ::  clear compiler caches
   ::
@@ -1801,6 +1806,7 @@
           ==
       ==
   ^-  (unit (cask))
+  ~>  %spin.['peek/arvo']
   =/  hap=(unit [pat=? omen])
     ?-  nom
       [%& *]        ?~(mon=(de-omen p.nom) ~ `[| u.mon])
@@ -1820,6 +1826,7 @@
 ++  poke                                                ::  +23
   |=  [now=@da ovo=ovum]
   ^-  ^
+  ~>  %spin.['poke/arvo']
   ::  this assertion is not yet viable, as vere's timestamps
   ::  are too unreliable. sad!
   ::
@@ -1843,6 +1850,7 @@
 ::
 ++  wish                                                ::  +10
   |=  txt=@
+  ~>  %spin.['wish/arvo']
   q:(slap zus.mod (ream txt))
 --  =>
 ::
@@ -1886,7 +1894,13 @@
             ~>  %slog.[0 leaf/"{cap}: {(scow uv+(mug txt))}"]
             %-  road  |.
             ~_  leaf/"{cap}: build failed"
-            (swat sub (rain pax txt))
+            =>  [tap=sub pax=pax txt=txt ..rain]
+            ~>  %memo./boot/brass
+            =/  gen  (rain pax txt)
+            ^-  (trap vase)
+            =/  gun  (~(mint ut p:$:tap) %noun gen)
+            |.  ~+
+            [p.gun .*(q:$:tap q.gun)]
           --
       ::
       |=  [grub fil=(list (pair path (cask)))]
@@ -1907,10 +1921,10 @@
       ::
       =^  job=oped:part  taf  (~(adorn adapt:part taf) del |)
       =?  lul  ?=(^ lul.job)
-       `(smit "lull" |.(pit) /sys/lull/hoon u.lul.job)
+        `(smit "lull" =>(pit=pit |.(pit)) /sys/lull/hoon u.lul.job)
       =?  zus  ?=(^ zus.job)
         ?.  ?=(^ lul)
-         ~|(%larval-need-lull !!)
+          ~|(%larval-need-lull !!)
         `(smit "zuse" u.lul /sys/zuse/hoon u.zus.job)
       =?  van  !=(~ van.job)    ::  XX TMI
         ?.  ?=(^ zus)
