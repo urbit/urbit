@@ -11099,9 +11099,6 @@
   ::
   ++  dish  !:
     |=  [ham=cape lum=*]  ^-  tank
-    ~|  [%dish-h ?@(q.ham q.ham -.q.ham)]
-    ~|  [%lump lum]
-    ~|  [%ham ham]
     %-  need
     =|  gil=(set [@ud *])
     |-  ^-  (unit tank)
