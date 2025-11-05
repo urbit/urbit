@@ -797,7 +797,7 @@
   =.  this  apex-aqua  =<  abet-aqua
   ?.  =(wen tym.azi.piers)
     this
-  =.  state  (spam-logs 10)
+  =.  state  (spam-logs ~sampel-palnet 10)
   start-azimuth-timer
 ::
 ++  start-azimuth-timer
