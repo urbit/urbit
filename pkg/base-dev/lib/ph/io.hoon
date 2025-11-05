@@ -124,6 +124,8 @@
       1
     +(+.old-rut)
   ;<  ~  bind:m  (send-azimuth-action %breach who)
+  ;<  ~  bind:m  ?~  old-rut  (sleep ~s20) :: XX don't wait if possible
+                 (wait-for-sunk her who)   :: wait only if previously talked
   |-  ^-  form:m
   =*  loop  $
   ;<  ~  bind:m  (sleep ~s10)
@@ -323,6 +325,13 @@
   ^-  form:m
   ;<  ~  bind:m  (dojo from "|hi {(scow %p to)}")
   (wait-for-output from "hi {(scow %p to)} successful")
+::
+::  Send "|hi" and wait for "not responding" message
+::
+++  wait-for-sunk
+  |=  [from=@p to=@p]
+  =/  m  (strand ,~)
+  (wait-for-output from "{(scow %p to)} has sunk")
 ::
 ::  Send "|hi" and wait for "not responding" message
 ::

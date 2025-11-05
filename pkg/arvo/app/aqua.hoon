@@ -624,8 +624,11 @@
             [/d/term/1 %hail ~]
           ::
             ?:  fake.ae  ~
-            =+  [%raw-poke %noun %refresh-rate ~s30]
-            [/g/aqua/reduce-refresh-rate %deal [. . /]:who.ae %azimuth -]~
+            :~  =+  [%raw-poke %noun %refresh-rate ~s30]
+                [/g/aqua/reduce-refresh-rate %deal [. . /]:who.ae %azimuth -]
+                =+  [%poke azimuth-poke/!>([%kick ~])]
+                [/g/aqua/watch %deal [. . /]:who.ae %azimuth -]
+            ==
         ==
       ==
     =.  this
@@ -813,17 +816,19 @@
     this
   %-  emit-cards
   [%pass /wait/(scot %da tym) %arvo %b %rest tym]~
+::  +spam-logs: fill out the logs with as many events as needed using a dummy ship
+::  (needed to advance the blocknumber in eth-wathcher)
 ::
 ++  spam-logs
-  |=  n=@
+  |=  [dummy=@p n=@]
   ^-  _state
   =*  loop  $
   ?:  =(n 0)
     state
   =/  new-state=_state
-    ?.  (~(has by lives.azi.piers) ~fes)
-      (spawn ~fes)
-    (cycle-keys ~fes)
+    ?.  (~(has by lives.azi.piers) dummy)
+      (spawn dummy)
+    (cycle-keys dummy)
   =.  state  new-state
   loop(n (dec n))
 ::
@@ -842,7 +847,7 @@
         1
         1
     ==
-  (spam-logs 10)
+  (spam-logs ~sampel-palnet 30)
 ::
 ++  cycle-keys
   |=  who=@p
@@ -874,7 +879,7 @@
   =.  logs.azi.piers
     %+  weld  logs.azi.piers
     [(broke-continuity:lo:aqua-azimuth who rut) ~]
-  (spam-logs 10)
+  (spam-logs ~sampel-palnet 30)
 ::
 ++  dawn
   |=  [who=ship feed=(unit feed:jael)]
