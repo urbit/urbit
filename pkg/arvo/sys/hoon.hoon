@@ -5479,8 +5479,8 @@
               =.  rep  ['.' (y-co s.t.yod)]
               =.  rep  ['.' (y-co m.t.yod)]
               ['.' '.' (y-co h.t.yod)]
-            =.  rep  ['.' (a-co d.t.yod)]
-            =.  rep  ['.' (a-co m.yod)]
+            =.  rep  ['.' (y-co d.t.yod)]
+            =.  rep  ['.' (y-co m.yod)]
             =?  rep  !a.yod  ['-' rep]
             ['~' (a-co y.yod)]
           ::
@@ -5872,8 +5872,8 @@
       %+  cook
         |=([a=@ b=?] [b a])
       ;~(plug dim:ag ;~(pose (cold | hep) (easy &)))
-      ;~(pfix dot mot:ag)   ::  month
-      ;~(pfix dot dip:ag)   ::  day
+      ;~(pfix dot (star (just '0')) mot:ag)   ::  month
+      ;~(pfix dot (star (just '0')) dip:ag)   ::  day
       ;~  pose
         ;~  pfix
           ;~(plug dot dot)
