@@ -845,7 +845,9 @@
       ::
       ?-  remote-request
         %watch-as  (mo-give %unto %watch-ack err)
-        %watch     (mo-give %unto %watch-ack err)
+        %watch     ?>  ?=([[%gall %use dap=@ @ %out @ @ @ @ *] *] hen)
+                   =+  dap=i.t.t.i.hen
+                   (mo-give:(mo-clear-queue dap) %unto %watch-ack err)
         %poke      (mo-give %unto %poke-ack err)
         %missing   ~>(%slog.[3 'gall: missing'] mo-core)
         ::
@@ -873,16 +875,39 @@
         ::  kill subscriptions which use the old wire format
         ::
         !!
+      =/  key  [[%sys wire] hen]
+      =+  outs=(~(gut by outstanding.state) key ~)
       =/  =ames-response  ;;(ames-response payload.sign-arvo)
+      =/  =unto
+        ?-  -.ames-response
+          %d  [%raw-fact mark.ames-response noun.ames-response]
+          %x  [%kick ~]
+        ==
+      ?^  outs
+        ::  if there are outstanding %pleas: no-op, enqueue the %boon, and wait
+        ::  for the ack, so %boons are not delivered before the subscription
+        ::  has been established
+        ::
+        ?>  ?=([[%gall %use dap=@ @ %out @ @ @ @ *] *] hen)
+        =+  dap=i.t.t.i.hen
+        :: XX  ?.(=(ship our) *path /gall/[foreign-agent])
+        ::
+        =/  prov=path  /gall/[foreign-agent]
+        =/  =routes  [disclosing=~ attributing=[ship prov]]
+        =/  blocked=(qeu blocked-move)
+          =/  waiting  (~(get by blocked.state) dap)
+          =/  deals  (fall waiting *(qeu blocked-move))
+          =/  deal  [hen routes |+unto]
+          (~(put to deals) deal)
+        =.  blocked.state  (~(put by blocked.state) dap blocked)
+        mo-core
       ::  %d: diff; ask clay to validate .noun as .mark
       ::  %x: kick; tell agent the publisher canceled the subscription, and
       ::      cork; tell ames to close the associated flow.
       ::
-      ?-  -.ames-response
-        %d  (mo-give %unto %raw-fact mark.ames-response noun.ames-response)
-        %x  =.  mo-core  (mo-give %unto %kick ~)
-            =/  key  [[%sys wire] hen]
-            =?  outstanding.state  =(~ (~(gut by outstanding.state) key ~))
+      =.  mo-core  (mo-give %unto unto)
+      ?+  -.ames-response  mo-core
+        %x  =?  outstanding.state  =(~ (~(gut by outstanding.state) key ~))
               (~(del by outstanding.state) key)
             (mo-pass sys+wire a/cork+ship)
       ==
@@ -1306,7 +1331,7 @@
       ::
       =?  halts.state  (~(has by flub-ducts.state) ship)
         ::  only add the app if we have received the /gf $plea
-        ::  
+        ::
         (~(put ju halts.state) agent-name ship hen)
       %+  mo-give  %flub
       ::  if we are waiting to hear the /gf $plea, only %flub the flow in %ames
@@ -2104,7 +2129,7 @@
           (on-bad-nonce nonce.u.got)
       ::
       ++  sub-key  [agent-wire dock]
-      ++  ingest   
+      ++  ingest
         ~>  %spin.[(crip "on-agent/{<agent-name>}")]
         (ap-ingest ~ |.((on-agent:ap-agent-core agent-wire sign)))
       ++  run-sign
