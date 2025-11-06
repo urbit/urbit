@@ -205,6 +205,7 @@
 =|  behn-state
 =*  state  -
 |=  [now=@da eny=@uvJ rof=roof]
+~>  %spin.[%behn]
 =*  behn-gate  .
 ^?
 |%
@@ -217,6 +218,7 @@
           wrapped-task=(hobo task)
       ==
   ^-  [(list move) _behn-gate]
+  ~>  %spin.[%call]
   =/  =task  ((harden task) wrapped-task)
   =/  event-core  (per-event [now hen] state)
   =^  moves  state
@@ -227,6 +229,7 @@
 ++  load
   |^  |=  old=$%(state-2 state-3)
       ^+  behn-gate
+      ~>  %spin.[%load]
       ?-  -.old
         %2  behn-gate(state (state-2-to-3 old))
         %3  behn-gate(state old)
@@ -243,12 +246,12 @@
     ==
   +$  drip-manager-2
       $:  count=@ud
-          movs=(map @ud vase:h137)
+          movs=(map @ud vase:h136)
       ==
   ++  state-2-to-3
     |=  s=state-2
     ^-  state-3
-    s(- %3, movs.drips (~(run by movs.drips.s) next-vase:h137))
+    s(- %3, movs.drips (~(run by movs.drips.s) next-vase:h136))
   --
 ::  +scry: view timer state
 ::
@@ -257,6 +260,7 @@
 ::
 ++  scry
   ^-  roon
+  ~>  %spin.[%scry]
   |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
   =*  ren  car
@@ -328,6 +332,7 @@
 ++  take
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^-  [(list move) _behn-gate]
+  ~>  %spin.[%take]
   ?^  dud
     ~|(%behn-take-dud (mean tang.u.dud))
   ::

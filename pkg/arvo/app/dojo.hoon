@@ -1668,7 +1668,7 @@
   ::
   +$  house-any  $%(house house-9 house-8 house-7 house-6 house-5)
   ::
-  +$  cage-9  (cask vase:h137)
+  +$  cage-9  (cask vase:h136)
   +$  house-9                                         ::  all state
     $:  %9
         egg=@u                                        ::  command count
@@ -1695,7 +1695,7 @@
     ^-  session
     %=  s
       poy  ~  ::  drop work
-      var  (~(run by var.s) next-cage:a236)
+      var  (~(run by var.s) next-cage:a235)
     ==
   ::
   +$  id-8  @tasession

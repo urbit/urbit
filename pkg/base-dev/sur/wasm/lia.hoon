@@ -1,6 +1,6 @@
 /-  wasm-engine
 =>  wasm-engine
-~%  %monad-sur-v0  +  ~
+~%  %monad-sur-v1  +  ~
 |%
 ++  lia-sur
   =,  wasm-sur
@@ -9,6 +9,8 @@
   ++  lia-value
     $~  [%i32 0]
     $%  [%octs octs]
+        [%noun *]
+        [%vase vase]
         $<(%ref coin-wasm)
     ==
   ::
@@ -52,6 +54,11 @@
       |=  s=m-sat
       :: ~&  !.(ret-sam+!=(sam))
       [0+arg s]
+    ::
+    ++  fail
+      ^-  form
+      |=  s=m-sat
+      [2+~ s]
     ::
     ++  try  ::  monadic bind
       |*  m-mond=mold
@@ -100,9 +107,9 @@
     ::
     $:
       module=octs
-      past=(script-raw-form (list lia-value) *)
+      past=(script-raw-form (list lia-value) vase)
       shop=(list (list lia-value))
-      import=(import *)
+      import=(import vase)
     ==
   --
 --  ::  |lia-sur

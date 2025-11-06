@@ -42,7 +42,7 @@
 ::
 +$  clean-slate-7
   $:  %7
-      starting=(map yarn [=trying =vase:h137])
+      starting=(map yarn [=trying =vase:h136])
       running=(list yarn)
       tid=(map tid yarn)
       serving=(map tid [(unit [rid=@ta take=?(%json %noun)]) =mark =desk])
@@ -51,7 +51,7 @@
 ::
 +$  clean-slate-6
   $:  %6
-      starting=(map yarn [=trying =vase:h137])
+      starting=(map yarn [=trying =vase:h136])
       running=(list yarn)
       tid=(map tid yarn)
       serving=(map tid [(unit @ta) =mark =desk])
@@ -60,7 +60,7 @@
 ::
 +$  clean-slate-5
   $:  %5
-      starting=(map yarn [=trying =vase:h137])
+      starting=(map yarn [=trying =vase:h136])
       running=(list yarn)
       tid=(map tid yarn)
       serving=(map tid [(unit @ta) =mark =desk])
@@ -69,7 +69,7 @@
 ::
 +$  clean-slate-4
   $:  %4
-      starting=(map yarn [=trying =vase:h137])
+      starting=(map yarn [=trying =vase:h136])
       running=(list yarn)
       tid=(map tid yarn)
       serving=(map tid [(unit @ta) =mark =desk])
@@ -77,7 +77,7 @@
 ::
 +$  clean-slate-3
   $:  %3
-      starting=(map yarn [=trying =vase:h137])
+      starting=(map yarn [=trying =vase:h136])
       running=(list yarn)
       tid=(map tid yarn)
       serving=(map tid [@ta =mark =desk])
@@ -85,7 +85,7 @@
 ::
 +$  clean-slate-2
   $:  %2
-      starting=(map yarn [=trying =vase:h137])
+      starting=(map yarn [=trying =vase:h136])
       running=(list yarn)
       tid=(map tid yarn)
       serving=(map tid [@ta =mark])
@@ -93,13 +93,13 @@
 ::
 +$  clean-slate-1
   $:  %1
-      starting=(map yarn [=trying =vase:h137])
+      starting=(map yarn [=trying =vase:h136])
       running=(list yarn)
       tid=(map tid yarn)
   ==
 ::
 +$  clean-slate-ket
-  $:  starting=(map yarn [trying=?(%build %find %none) =vase:h137])
+  $:  starting=(map yarn [trying=?(%build %find %none) =vase:h136])
       running=(list yarn)
       tid=(map tid yarn)
   ==
@@ -165,7 +165,7 @@
     ++  old-to-1
       |=  old=clean-slate-ket
       ^-  clean-slate-1
-      1+old(starting (~(run by starting.old) |=([* v=vase:h137] none+v)))
+      1+old(starting (~(run by starting.old) |=([* v=vase:h136] none+v)))
     ::
     ++  old-to-2
       |=  old=clean-slate-any
@@ -248,8 +248,8 @@
       ?:  ?=(%8 -.old)  old
       =-  old(- %8, starting -)
       %-  ~(run by starting.old)
-      |=  [=trying =vase:h137]
-      [trying (next-vase:h137 vase)]
+      |=  [=trying =vase:h136]
+      [trying (next-vase:h136 vase)]
     --
   ::
   ++  on-poke

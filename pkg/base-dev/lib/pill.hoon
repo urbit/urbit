@@ -2,6 +2,7 @@
 ::
 /-  dice
 ^?
+=<
 |%
 ::
 +$  pill
@@ -11,6 +12,14 @@
           boot-ova=(list)
           kernel-ova=(list unix-event)
           userspace-ova=(list unix-event)
+      ==
+      $:  %cash
+          $:  nam=term
+              boot-ova=(list)
+              kernel-ova=(list unix-event)
+              userspace-ova=(list unix-event)
+          ==
+          cache=(list)
   ==  ==
 ::
 +$  unix-event
@@ -98,6 +107,26 @@
 ::  +file-ovum2: electric boogaloo
 ::
 ++  file-ovum2  |=(z=[path (list spur)] `unix-event`[//arvo what/(user-files z)])
+::
+++  get-wynn
+  |=  [sys=path new-wynn=?]
+  ^-  wynn
+  ?.  new-wynn
+    :~  zuse+zuse
+        lull+lull
+        arvo+arvo
+        hoon+hoon-version
+    ==
+  ~>  %bout.[0 %get-wynn]
+  =+  .^(zus=vase %ca (welp sys /zuse/hoon))
+  =+  .^(lul=vase %ca (welp sys /lull/hoon))
+  =+  .^(arv=vase %ca (welp sys /arvo/hoon))
+  =+  .^(hun=vase %ca (welp sys /hoon/hoon))
+  :~  [%zuse ;;(@ud q:(slap zus limb+%zuse))]
+      [%lull ;;(@ud q:(slap lul limb+%lull))]
+      [%arvo ;;(@ud q:(slap arv limb+%arvo))]
+      [%hoon ;;(@ud q:(slap hun limb+%hoon-version))]
+  ==
 ::
 ++  prep-ovum
   |=  dez=(list path)
@@ -253,7 +282,7 @@
   ::  dez: secondary desks and their root paths
   ::  exc: list of desk folders to exclude
   ::
-  |=  [sys=path dez=(list [desk path]) prime=? exc=(list spur)]
+  |=  [sys=path dez=(list [desk path]) cache=? prime=? new-wynn=? exc=(list spur)]
   ^-  pill
   =/  bas=path  (scag 3 sys)
   ::  compiler-source: hoon source file producing compiler, `sys/hoon`
@@ -285,20 +314,54 @@
         compiler-source
         arvo-source
     ==
-  ::  a pill is a 3-tuple of event-lists: [boot kernel userspace]
   ::
-  :+  %pill  %brass
-  :+  boot-ova
+  =/  kernel-ova=(list unix-event)
     :~  (boot-ovum compiler-source arvo-source)
         (file-ovum2 [bas exc])
     ==
-  =.  dez  (snoc dez [%base bas])
-  %+  weld
-    %+  turn  dez
-    |=  [dek=desk bas=path]
-    (file-ovum [dek bas exc])
-  ?.  prime  ~
-  [(prep-ovum (turn dez tail))]~
+  ::
+  =/  userspace-ova
+    =.  dez  (snoc dez [%base bas])
+    ;:  weld
+      %+  turn  dez
+      |=  [dek=desk bas=path]
+      (file-ovum [dek bas exc])
+    ::
+      ?.  prime  ~
+      [(prep-ovum (turn dez tail))]~
+    ::
+      %+  turn  dez
+      |=  [dek=desk *]
+      ^-  unix-event
+      [/c/essential/[dek] %esse dek %.y]
+    ==
+  ::
+  =/  =wynn  (get-wynn sys new-wynn)
+  ::
+  =/  cache=(list)
+    ?.  cache  ~
+    %~  tap  by
+    =<  +
+    %-  mice
+    :_  [%2 [%0 3] %0 2]
+    ;:  weld
+      boot-ova
+      ^-  (list)
+      :~  [*@da //arvo %wack *@uvJ]
+          [*@da //arvo %whom *@p]
+          [*@da //arvo %wyrd [~.nonce /] wynn]
+      ==
+      `(list)`(turn kernel-ova (lead *@da))
+      `(list)`[*@da [/d/term/1 %boot & %fake *@p]]^~
+      `(list)`(turn userspace-ova (lead *@da))
+      `(list)`[*@da [/c/init-zest %zeal (turn dez |=([d=desk *] [d %live]))]]^~
+    ==
+  ::
+  ~>  %slog.[0 leaf+"brass: cache entries: {<(lent cache)>}"]
+  ::
+  :-  %cash
+  :_  cache
+  [%brass boot-ova kernel-ova userspace-ova]
 ::
 ++  ivory
   |=  sys=path
@@ -378,6 +441,178 @@
         `(prep-ovum (en-beam beak /) ~)
       ::
         `[/d/install/[as] [%seat as]]
+    ==
+  --
+--
+::
+~%  %non  ..part  ~
+::  +mice: %memo hint caching version of mink
+::
+|%
+++  mice  !.
+  ~/  %mice
+  |=  [subject=* formula=*]
+  =|  trace=(list [@ta *])
+  =|  memo=(map)
+  =;  [ton=tone mem=_memo]
+    ?.  ?=(%0 -.ton)
+      [ton ~]
+    [ton mem]
+  |^  ^-  [tone _memo]
+      ?+  formula  [[%2 trace] memo]
+          [^ *]
+        =^  head  memo  $(formula -.formula)
+        ?.  ?=(%0 -.head)  [head memo]
+        =^  tail  memo  $(formula +.formula)
+        :_  memo
+        ?.  ?=(%0 -.tail)  tail
+        [%0 product.head product.tail]
+      ::
+          [%0 axis=@]
+        :_  memo
+        =/  part  (frag axis.formula subject)
+        ?~  part  [%2 trace]
+        [%0 u.part]
+      ::
+          [%1 constant=*]
+        [[%0 constant.formula] memo]
+      ::
+          [%2 subject=* formula=*]
+        =^  subject  memo  $(formula subject.formula)
+        ?.  ?=(%0 -.subject)  [subject memo]
+        =^  formula  memo  $(formula formula.formula)
+        ?.  ?=(%0 -.formula)  [formula memo]
+        %=  $
+          subject  product.subject
+          formula  product.formula
+        ==
+      ::
+          [%3 argument=*]
+        =^  argument  memo  $(formula argument.formula)
+        :_  memo
+        ?.  ?=(%0 -.argument)  argument
+        [%0 .?(product.argument)]
+      ::
+          [%4 argument=*]
+        =^  argument  memo  $(formula argument.formula)
+        :_  memo
+        ?.  ?=(%0 -.argument)  argument
+        ?^  product.argument  [%2 trace]
+        [%0 .+(product.argument)]
+      ::
+          [%5 a=* b=*]
+        =^  a  memo  $(formula a.formula)
+        ?.  ?=(%0 -.a)  [a memo]
+        =^  b  memo  $(formula b.formula)
+        :_  memo
+        ?.  ?=(%0 -.b)  b
+        [%0 =(product.a product.b)]
+      ::
+          [%6 test=* yes=* no=*]
+        =^  result  memo  $(formula test.formula)
+        ?.  ?=(%0 -.result)  [result memo]
+        ?+  product.result  [[%2 trace] memo]
+          %&  $(formula yes.formula)
+          %|  $(formula no.formula)
+        ==
+      ::
+          [%7 subject=* next=*]
+        =^  subject  memo  $(formula subject.formula)
+        ?.  ?=(%0 -.subject)  [subject memo]
+        %=  $
+          subject  product.subject
+          formula  next.formula
+        ==
+      ::
+          [%8 head=* next=*]
+        =^  head  memo  $(formula head.formula)
+        ?.  ?=(%0 -.head)  [head memo]
+        %=  $
+          subject  [product.head subject]
+          formula  next.formula
+        ==
+      ::
+          [%9 axis=@ core=*]
+        =^  core  memo
+          $(formula core.formula)
+        ?.  ?=(%0 -.core)  [core memo]
+        =/  arm  (frag axis.formula product.core)
+        ?~  arm  [[%2 trace] memo]
+        %=  $
+          subject  product.core
+          formula  u.arm
+        ==
+      ::
+          [%10 [axis=@ value=*] target=*]
+        ?:  =(0 axis.formula)  [[%2 trace] memo]
+        =^  target  memo  $(formula target.formula)
+        ?.  ?=(%0 -.target)  [target memo]
+        =^  value  memo  $(formula value.formula)
+        :_  memo
+        ?.  ?=(%0 -.value)  value
+        =/  mutant=(unit *)
+          (edit axis.formula product.target product.value)
+        ?~  mutant  [%2 trace]
+        [%0 u.mutant]
+      ::
+          [%11 tag=@ next=*]
+        =^  next  memo  $(formula next.formula)
+        :_  memo
+        ?.  ?=(%0 -.next)  next
+        :-  %0
+        .*  subject
+        [11 tag.formula 1 product.next]
+      ::
+          [%11 [tag=@ clue=*] next=*]
+        =^  clue  memo  $(formula clue.formula)
+        ?.  ?=(%0 -.clue)  [clue memo]
+        ?:  ?=(%memo tag.formula)
+          ?^  hit=(~(get by memo) subject next.formula)
+            [[%0 u.hit] memo]
+          =^  ton  memo  $(formula next.formula)
+          ?.  ?=(%0 -.ton)
+            [ton memo]
+          [ton (~(put by memo) [subject next.formula] product.ton)]
+        =^  next  memo
+          =?    trace
+              ?=(?(%hunk %hand %lose %mean %spot) tag.formula)
+            [[tag.formula product.clue] trace]
+          $(formula next.formula)
+        :_  memo
+        ?.  ?=(%0 -.next)  next
+        :-  %0
+        .*  subject
+        [11 [tag.formula 1 product.clue] 1 product.next]
+      ==
+  ::
+  ++  frag
+    |=  [axis=@ noun=*]
+    ^-  (unit)
+    ?:  =(0 axis)  ~
+    |-  ^-  (unit)
+    ?:  =(1 axis)  `noun
+    ?@  noun  ~
+    =/  pick  (cap axis)
+    %=  $
+      axis  (mas axis)
+      noun  ?-(pick %2 -.noun, %3 +.noun)
+    ==
+  ::
+  ++  edit
+    |=  [axis=@ target=* value=*]
+    ^-  (unit)
+    ?:  =(1 axis)  `value
+    ?@  target  ~
+    =/  pick  (cap axis)
+    =/  mutant
+      %=  $
+        axis    (mas axis)
+        target  ?-(pick %2 -.target, %3 +.target)
+      ==
+    ?~  mutant  ~
+    ?-  pick
+      %2  `[u.mutant +.target]
+      %3  `[-.target u.mutant]
     ==
   --
 --
