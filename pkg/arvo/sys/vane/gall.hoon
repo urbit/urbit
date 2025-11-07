@@ -25,7 +25,7 @@
   ?.  =>  [dude=dude dudes=dudes in=in]
       ~+  |(=(~ dudes) (~(has in dudes) dude))
     same
-  (slog print)
+  (slog leaf/"gall:" print)
 ::
 ::  $bug: debug printing configuration
 ::
@@ -844,13 +844,9 @@
         (mo-pass sys+wire %a %cork ship)
       ::
       ?-    remote-request
-          %poke      (mo-give %unto %poke-ack err)
-          %missing   ~>(%slog.[3 'gall: missing'] mo-core)
-      ::
-          ?(%watch %watch-as)
-        ?>  ?=([[%gall %use dap=@ @ %out @ @ @ @ *] *] hen)
-        =>  [dap=i.t.t.i.hen (mo-give %unto %watch-ack err)]
-        (mo-clear-queue dap)
+          %poke                (mo-give %unto %poke-ack err)
+          %missing             ~>(%slog.[3 'gall: missing'] mo-core)
+          ?(%watch %watch-as)  (mo-give %unto %watch-ack err)
       ::
           %leave
         ::  if we get an %ack for a %leave, send %cork. otherwise,
@@ -879,38 +875,31 @@
       =/  key  [[%sys wire] hen]
       =+  outs=(~(gut by outstanding.state) key ~)
       =/  =ames-response  ;;(ames-response payload.sign-arvo)
+      ::  if there are outstanding $pleas and we get a %fact, assume that the %ack
+      ::  will be resend later on, and give the %watch-ack now.
+      ::
+      ::  when the actual ack for the $plea arrives, we won't deliver this second
+      ::  %ack to the agent and just no-op.
+      ::
+      ::  if the outstanding $plea is a %leave, the subcription should have been
+      ::  deleted from boat.yoke, and we would also no-op
+      ::
+      ::    (see +run-sign:ap-specific-take)
+      ::
+      =?  mo-core  ?=(^ outs)  (mo-give %unto %watch-ack ~)
       ::  %d: diff; ask clay to validate .noun as .mark
-      ::  %x: kick; tell agent the publisher canceled the subscription
+      ::  %x: kick; tell agent the publisher canceled the subscription and
+      ::      cork; tell ames to close the associated flow.
       ::
-      =/  =unto
-        ?-  -.ames-response
-          %d  [%raw-fact mark.ames-response noun.ames-response]
-          %x  [%kick ~]
-        ==
-      ?^  outs
-        ::  if there are outstanding %pleas: no-op, enqueue the %boon, and wait
-        ::  for the ack, so %boons are not delivered before the subscription
-        ::  has been established
-        ::
-        ?>  ?=([[%gall %use dap=@ @ %out @ @ @ @ *] *] hen)
-        =+  dap=i.t.t.i.hen
-        :: XX  ?.(=(ship our) *path /gall/[foreign-agent])
-        ::
-        =/  prov=path  /gall/[foreign-agent]
-        =/  =routes  [disclosing=~ attributing=[ship prov]]
-        =/  blocked=(qeu blocked-move)
-          =/  waiting  (~(get by blocked.state) dap)
-          =/  deals  (fall waiting *(qeu blocked-move))
-          =/  deal  [hen routes |+unto]
-          (~(put to deals) deal)
-        =.  blocked.state  (~(put by blocked.state) dap blocked)
-        mo-core
-      =.  mo-core  (mo-give %unto unto)
-      ::  %x: if kick -> cork; tell ames to close the associated flow.
-      ::
-      ?+  -.ames-response  mo-core
+      ?-  -.ames-response
+          %d  (mo-give %unto %raw-fact mark.ames-response noun.ames-response)
           %x
-        =.  outstanding.state  (~(del by outstanding.state) key)
+        =.  mo-core  (mo-give %unto %kick ~)
+        =?  outstanding.state  =(~ outs)
+          ::  if there is an outstanding $plea don't delete it from
+          ::  .outstanding to avoid a %gall-missing print
+          ::
+          (~(del by outstanding.state) key)
         (mo-pass sys+wire a/cork+ship)
       ==
     ::
@@ -2168,14 +2157,19 @@
             ==
           =?  boar.yoke  ?=(^ p.sign)  (~(del by boar.yoke) sub-key)
           ::
+          =/  [acked=? =path]  (~(got by boat.yoke) sub-key)
+          ?:  &(?=(~ p.sign) acked)
+            ::  if there's no error and the subscription has been acked, no-op
+            ::
+            %.  ap-core
+            %^  trace  &(odd.veb.bug.state)
+            leaf/"{<agent-name>} 2nd watch-ack on {<path>}"  ~
           =.  boat.yoke
             ?^  p.sign  (~(del by boat.yoke) sub-key)
             ::
             %+  ~(jab by boat.yoke)  sub-key
-            |=  val=[acked=? =path]
-            %.  val(acked &)
-            %^  trace  &(odd.veb.bug.state acked.val)
-            leaf/"{<agent-name>} 2nd watch-ack on {<val>}"  ~
+            |=  val=[acked=? =^path]
+            val(acked &)
           ::
           ingest-and-check-error
         ==
