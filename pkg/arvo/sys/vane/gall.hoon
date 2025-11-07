@@ -843,14 +843,15 @@
           ::
         (mo-pass sys+wire %a %cork ship)
       ::
-      ?-  remote-request
-        %watch-as  (mo-give %unto %watch-ack err)
-        %watch     ?>  ?=([[%gall %use dap=@ @ %out @ @ @ @ *] *] hen)
-                   =+  dap=i.t.t.i.hen
-                   (mo-give:(mo-clear-queue dap) %unto %watch-ack err)
-        %poke      (mo-give %unto %poke-ack err)
-        %missing   ~>(%slog.[3 'gall: missing'] mo-core)
-        ::
+      ?-    remote-request
+          %poke      (mo-give %unto %poke-ack err)
+          %missing   ~>(%slog.[3 'gall: missing'] mo-core)
+      ::
+          ?(%watch %watch-as)
+        ?>  ?=([[%gall %use dap=@ @ %out @ @ @ @ *] *] hen)
+        =>  [dap=i.t.t.i.hen (mo-give %unto %watch-ack err)]
+        (mo-clear-queue dap)
+      ::
           %leave
         ::  if we get an %ack for a %leave, send %cork. otherwise,
         ::  the /nacked-leaves timer will re-send the %leave eventually.
@@ -907,9 +908,9 @@
       ::
       =.  mo-core  (mo-give %unto unto)
       ?+  -.ames-response  mo-core
-        %x  =?  outstanding.state  =(~ (~(gut by outstanding.state) key ~))
-              (~(del by outstanding.state) key)
-            (mo-pass sys+wire a/cork+ship)
+          %x
+        =.  outstanding.state  (~(del by outstanding.state) key)
+        (mo-pass sys+wire a/cork+ship)
       ==
     ::
         [%ames %lost *]
