@@ -1062,16 +1062,7 @@
         ?>  ?=(^ duct)
         [+.duct %slip %g %deal sack dap p.blocker]
       [duct %give %unto p.blocker]
-    =.  moves  [move moves]
-    =^  moves  state
-      ?.  ?=([[%gall %use @ @ %out her=@ dap=@ @ @ *] *] duct)
-        moves^state
-      =/  =wire  [%way her=&6.i.duct dap=&7.i.duct ~]
-      =.  outstanding.state
-        (~(del by outstanding.state) key=[sys+wire duct])
-      :_  state
-      [[duct %pass wire a/cork+(slav %p &6.i.duct)] moves]
-    $
+    $(moves [move moves])
   ::
   ++  mo-give-halts
     |=  dap=term
