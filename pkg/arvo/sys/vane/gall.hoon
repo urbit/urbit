@@ -879,6 +879,9 @@
       =/  key  [[%sys wire] hen]
       =+  outs=(~(gut by outstanding.state) key ~)
       =/  =ames-response  ;;(ames-response payload.sign-arvo)
+      ::  %d: diff; ask clay to validate .noun as .mark
+      ::  %x: kick; tell agent the publisher canceled the subscription
+      ::
       =/  =unto
         ?-  -.ames-response
           %d  [%raw-fact mark.ames-response noun.ames-response]
@@ -902,11 +905,9 @@
           (~(put to deals) deal)
         =.  blocked.state  (~(put by blocked.state) dap blocked)
         mo-core
-      ::  %d: diff; ask clay to validate .noun as .mark
-      ::  %x: kick; tell agent the publisher canceled the subscription, and
-      ::      cork; tell ames to close the associated flow.
-      ::
       =.  mo-core  (mo-give %unto unto)
+      ::  %x: if kick -> cork; tell ames to close the associated flow.
+      ::
       ?+  -.ames-response  mo-core
           %x
         =.  outstanding.state  (~(del by outstanding.state) key)
@@ -1072,7 +1073,16 @@
         ?>  ?=(^ duct)
         [+.duct %slip %g %deal sack dap p.blocker]
       [duct %give %unto p.blocker]
-    $(moves [move moves])
+    =.  moves  [move moves]
+    =^  moves  state
+      ?.  ?=([[%gall %use @ @ %out her=@ dap=@ @ @ *] *] duct)
+        moves^state
+      =/  =wire  [%way her=&6.i.duct dap=&7.i.duct ~]
+      =.  outstanding.state
+        (~(del by outstanding.state) key=[sys+wire duct])
+      :_  state
+      [[duct %pass wire a/cork+(slav %p &6.i.duct)] moves]
+    $
   ::
   ++  mo-give-halts
     |=  dap=term
