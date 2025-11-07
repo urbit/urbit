@@ -416,7 +416,6 @@
 ::
 =|  state=state-18
 |=  [now=@da eny=@uvJ rof=roof]
-~>  %spin.[%gall]
 =*  gall-payload  .
 ~%  %gall-top  ..part  ~
 |%
@@ -2530,7 +2529,7 @@
   ~%  %gall-call  +>   ~
   |=  [=duct dud=(unit goof) hic=(hobo task)]
   ^-  [(list move) _gall-payload]
-  ~>  %spin.[%call]
+  ~>  %spin.['call/gall']
   ?^  dud
     ~|(%gall-call-dud (mean tang.u.dud))
   ::
@@ -2602,7 +2601,7 @@
 ::
 ++  load
   |^  |=  old=spore-any
-      ~>  %spin.[%load]
+      ~>  %spin.['load/gall']
       =?  old  ?=(%7 -.old)   (spore-7-to-8 +.old)
       =?  old  ?=(%8 -.old)   (spore-8-to-9 +.old)
       =?  old  ?=(%9 -.old)   (spore-9-to-10 +.old)
@@ -2977,7 +2976,7 @@
   ^-  roon
   |=  [lyc=gang pov=path care=term bem=beam]
   ^-  (unit (unit cage))
-  ~>  %spin.[%scry]
+  ~>  %spin.['scry/gall']
   =*  ship  p.bem
   =*  dap  q.bem
   =/  =coin  $/r.bem
@@ -3250,7 +3249,7 @@
   ~/  %gall-take
   |=  [=wire =duct dud=(unit goof) syn=sign-arvo]
   ^-  [(list move) _gall-payload]
-  ~>  %spin.[%take]
+  ~>  %spin.['take/gall']
   ?^  dud
     ~&(%gall-take-dud ((slog tang.u.dud) [~ gall-payload]))
   ?:  =(/nowhere wire)
