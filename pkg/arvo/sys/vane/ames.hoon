@@ -2365,7 +2365,6 @@
     ::
     ::
     |=  [now=@da eny=@ rof=roof]
-    ~>  %spin.[%ames]
     =*  larval-gate  .
     =*  adult-core   (adult-gate +<)
     ::  formal interface with no extra arms
@@ -4090,7 +4089,7 @@
           =/  =bone
             ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
           %-  %^  ev-trace  odd.veb  her
-              |.("%flubbing: agent={<agent>} bone={<bone>} {(spud wire)}")
+              |.("%flubbing: agent={<agent>} bone={<bone>}")
           abet:(on-take-flub:peer-core bone agent)
         ::  +on-take-spur: vane ready to process message
         ::
@@ -5276,12 +5275,10 @@
           =.  todos             (mutate todos)
           =.  peers.ames-state  (~(put by peers.ames-state) ship %alien todos)
           ?:  already-pending
-            ~&  already-pending/already-pending
             event-core
           ::
           ?:  =(%pawn (clan:title ship))
             (request-attestation ship)
-          ~&  %ask-keys^ship
           ::  NB: we specifically look for this wire in +public-keys-give in
           ::  Jael.  if you change it here, you must change it there.
           ::
@@ -8748,7 +8745,6 @@
           ::  through the message-builder core, so when retrieving the key from
           ::  chums.ames-state it's already been updated
           ::
-          ~&  hen/hen
           =.  chums.ames-state  (~(put by chums.ames-state) her %known per)
           =^  moves-peek  ames-state
             co-abet:(co-make-peek:(co-abed:co hen) space her path)
@@ -9243,7 +9239,6 @@
           %-  ~(rep by ints)
           |=  [int=^ints c=_core]
           ?@  int
-            ~&  hen
             %.  (ev-emit:c hen %give %sage her^path gage)
             (ev-tace fin.veb.bug.ames-state |.("give %sage={(spud path)}"))
           %.  (ev-emit:c hen %give %rate her^path ~)
@@ -9697,8 +9692,9 @@
                   %-  %+  ev-tace  odd.veb.bug.ames-state
                       |.("skip {<mess>}; flow is halted flow={<bone>} ")
                   fo-core
-                =+  ;;([%plea =plea] +.gage)
                 =/  is-cork-plea=?
+                  ?:  ?=(%boon mess)  |
+                  =+  ;;  =plea  +>.gage
                   &(?=([%cork ~] payload) ?=([%flow ~] path)):plea
                 ?.  closing.state
                   ?:  is-cork-plea
@@ -10910,7 +10906,6 @@
                   %.  [ship `@ux`spon]
                   ~(al-read-proof al(ames-state ames-state.core) ~[/ames])
                 (sy-emil:core al-moves)
-              ~&  retrieving-keys-again/ship
               %-  sy-emit:core
               [~[//keys] %pass /public-keys %j %public-keys ship ~ ~]
             ::
@@ -13055,7 +13050,7 @@
 ++  call
   |=  [hen=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _vane-gate]
-  ~>  %spin.[%call]
+  ~>  %spin.['call/ames']
   =*  sample  +<
   =+  me-core=mesa
   =+  am-core=(ames now eny rof)
@@ -13111,7 +13106,7 @@
 ++  take
   |=  [=wire =duct dud=(unit goof) =sign]
   ^-  [(list move) _vane-gate]
-  ~>  %spin.[%take]
+  ~>  %spin.['take/ames']
   =*  sample  +<
   =+  me-core=mesa
   =+  am-core=(ames now eny rof)
@@ -13158,13 +13153,13 @@
 ::
 ++  load
   |=  state=axle
-  ~>  %spin.[%load]
+  ~>  %spin.['load/ames']
   vane-gate(ames-state state)
 ::  +scry: dereference namespace
 ::
 ++  scry
   ^-  roon
-  ~>  %spin.[%scry]
+  ~>  %spin.['scry/ames']
   |=  [lyc=gang pov=path car=term bem=beam]
   =*  sample  +<
   =+  me-core=mesa
