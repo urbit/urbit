@@ -1506,7 +1506,7 @@
       ::                                                ::  ++fig:ex:cric:crypto
       ++  fig                                           ::  fingerprint
         ^-  @uvH
-        ?:  ?=(%b suite)  (shaf %bfig pub)
+        ?:  ?=(%b suite)  (shaf %bfig ^pub)
         (shaf %cfig sgn.^pub)
       ::                                                ::  ++pac:ex:cric:crypto
       ++  pac                                           ::  private fingerprint
