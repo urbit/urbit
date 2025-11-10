@@ -42,7 +42,7 @@
   =,  ames
   |=  [our=ship now=@da sndr=@p way=wire %push lan=(list lane:pact:ames) q=@]
   ^-  (list card:agent:gall)
-  =/  =pact:pact:ames  (parse-packet:ames-raw q) 
+  =/  =pact:pact:ames  (parse-packet:ames-raw q)
   =/  rcvr=ship
     ?-  +<.pact
       %peek  her.name.pact
@@ -50,7 +50,7 @@
       %page  ?>  ?=(^ lan)
              ?>  ?=(@ i.lan)
              `@p`i.lan
-    ==       
+    ==
   =/  lan=lane:pact:ames  ?:(?=(%page +<.pact) `@ux`rcvr `@ux`sndr)
   %+  emit-aqua-events  our
   [%event rcvr /a/newt/0v1n.2m9vh %heer lan q]~
@@ -67,7 +67,7 @@
     %|  =/  s  `ship``@`p.lane
         ?.  =(s 0xdead.beef.cafe)
           s
-        ~bosrym-podwyl-magnes-dacrys--pander-hablep-masrym-marbud
+        ~londeg-tirlys-somlyd-poltus--pintyn-tarbyl-bicnux-marbud
   ==
 ::  +ship-to-lane: encode a lane to look like it came from .ship
 ::
@@ -79,7 +79,7 @@
   ^-  lane:ames
   :-  %|
   ^-  address:ames  ^-  @
-  ?.  =(ship ~bosrym-podwyl-magnes-dacrys--pander-hablep-masrym-marbud)
+  ?.  =(ship ~londeg-tirlys-somlyd-poltus--pintyn-tarbyl-bicnux-marbud)
     ship
   0xdead.beef.cafe
 ::
