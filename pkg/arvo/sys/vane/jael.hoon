@@ -240,19 +240,9 @@
     +>.$(moz [move moz])
   ::
   ++  poke-watch
-    |=  [hen=duct app=term =purl:eyre]
+    |=  [hen=duct app=term pok=*]
     %-  emit
-    :*  hen
-        %pass
-        /[app]/poke
-        %g
-        %deal
-        [our our /jael]
-        app
-        %poke
-        %azimuth-poke
-        !>([%watch (crip (en-purl:html purl)) %default])
-    ==
+    [hen %pass /[app]/poke %g %deal [our our /jael] app %poke %noun !>(pok)]
   ::
   ++  sein                                              ::  sponsor
     |=  who=ship
@@ -290,6 +280,7 @@
     ::        turf=(list turf)
     ::        bloq=@ud
     ::        node=purl
+    ::        srcs=(list [p=term q=*])
     ::    ==
     ::
         %dawn
@@ -331,9 +322,13 @@
       ::  start subscriptions
       ::
       =.  +>.$
-        %^  poke-watch  hen  %azimuth
-        %+  fall  node.tac
-        (need (de-purl:html 'http://eth-mainnet.urbit.org:8545'))
+        ?:  =(~ srcs.tac)
+          %^  poke-watch  hen  %azimuth
+          !>([%watch 'http://eth-mainnet.urbit.org:8545/' %default])
+        |-  ^+  +>.^$
+        ?~  srcs.tac  +>.^$
+        =.  +>.^$  (poke-watch hen i.srcs.tac)
+        $(srcs.tac t.srcs.tac)
       ::
       =.  moz
         %+  weld  moz

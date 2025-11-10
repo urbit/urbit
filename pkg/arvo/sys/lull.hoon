@@ -4072,6 +4072,10 @@
           turf=(list turf)
           bloq=@ud
           node=(unit purl:eyre)
+          :: we can make q a mark too, but need to
+          :: specify desk too, and then delay
+          :: til they're installed
+          srcs=(list [p=term q=*])
       ==
     ::
     ++  to-latest
@@ -4110,6 +4114,10 @@
           turf.tac
           bloq.tac
           node.tac
+        ::
+          =<  [%azimuth %watch - %default]~
+          'http://eth-mainnet.urbit.org:8545'
+        ::
       ==
     --
   ::

@@ -1046,7 +1046,7 @@
   ++  galaxy-for
     |=  =ship
     ^-  @p
-    (rear (saxo:title our now ship))
+    (rear (^^saxo:title rof /ames our now ship))
   ::
   ++  handle-sponsor
     |=  [=identity =request:http]
