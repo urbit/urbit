@@ -996,7 +996,7 @@
       =*  full-turf  (snoc domain.u.inner u.desk.u.inner)
       ?~  sid=(session-id-from-request:authentication request)
         ?^  desk.u.inner  [[%negotiate full-turf] state]
-        [[%made -] +]:(start-session:authentication %guest)
+        [[%made -] +]:(start-session:authentication %new-guest)
       ?~  ses=(~(get by sessions.auth.state) u.sid)
         ?:  ?=(^ desk.u.inner)
           [[%negotiate full-turf] state]
@@ -1036,7 +1036,7 @@
       ::TODOxx  validate tmp-token and get deets out of state
       ?>  =(tmp-token u.desk.u.inner)  ::TMP
       ::TODOxx  use .identity retrieved from state
-      [[%made -] +]:(start-session:authentication [%local `u.desk.u.inner])
+      [[%made -] +]:(start-session:authentication [[%ours ~] `u.desk.u.inner])
     ::
     ?:  ?=(%invalid -.auth-state)
       =*  session  session.auth-state
@@ -1760,7 +1760,7 @@
       ::  initialize the new session
       ::
       ::TODOxx  get scope from auth params, not yet implemented
-      =^  fex  state  (start-session %local ~)
+      =^  fex  state  (start-session [%ours ~] ~)
       ::  associate the new session with the request that caused the login
       ::
       ::    if we don't do this here, +handle-response will include the old
@@ -1938,15 +1938,15 @@
     ::    but "us" needs to differentiate between "us as root", "us as app",
     ::    etc.
     ::
-    ::TODOxx  maybe should take a =duct arg so it can do the "associate the
-    ::        new session with ..." step
+    ::TODO  maybe should take a =duct arg so it can do the "associate the new
+    ::      session with ..." step
     ++  start-session
-      |=  kind=?([%local scope=(unit desk)] %guest [%eauth who=@p])  ::TODOxx  update for scoped guest & eauth
-      ^-  [[session=@uv =identity moves=(list move)] server-state]
-      =;  [key=@uv sid=identity]
+      |=  identity=?(%new-guest identity)
+      ^-  [[session=@uv =^identity moves=(list move)] server-state]
+      =;  [key=@uv sid=^identity]
         =/  timeout=@dr
           =,  session-timeout
-          ?:(?=(%guest kind) guest auth)
+          ?:(?=(%fake -.who.sid) guest auth)
         :-  :+  key  sid
             ::  if no session existed previously, we must kick off the
             ::  session expiry timer
@@ -1960,11 +1960,8 @@
       ::
       =/  sik=@uv  new-session-key
       :-  sik
-      ?:  ?=([%local *] kind)  [[%ours ~] scope.kind]
-      ::NOTE  non-local identities always have broadest possible provenance
-      ::TODOxx  revisit! interactions need to be scoped always.
-      :_  provenance=~
-      ?:  ?=([%eauth @] kind)  [%real who.kind]
+      ?.  ?=(%new-guest identity)  identity
+      :_  scope=~
       :-  %fake
       ::  pre-scramble our ship name into its displayed value, and
       ::  truncate it to be at most moon-length, so that we can overlay
@@ -2202,7 +2199,7 @@
           =^  moz1  state
             (close-session session-id:(~(got by connections.state) duct) |)
           =^  [sid=@uv * moz2=(list move)]  state
-            (start-session %eauth ship)
+            (start-session [%real ship] ~)
           =.  visitors.auth
             %+  ~(jab by visitors.auth)  nonce
             |=(v=visitor v(+ sid))
