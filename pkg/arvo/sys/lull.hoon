@@ -3148,6 +3148,9 @@
     $:  ::  sessions: a mapping of session cookies to session information
         ::
         sessions=(map @uv session)
+        ::  tokensxx: temporary tokens for authenticating into scopes
+        ::
+        tokensxx=(map @uv identity)
         ::  visitors: in-progress incoming eauth flows
         ::
         visitors=(map @uv visitor)

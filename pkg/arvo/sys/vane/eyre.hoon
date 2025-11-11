@@ -1012,7 +1012,6 @@
         ::TODOxx  log? warn? weird case
         [[%negotiate ?~(desk.u.inner domain.u.inner full-turf)] state]
       [[%have u.sid identity.u.ses ~] state]
-    ::  xx comment about special handling
     ::  normally, %negotiate on a subdomain means that we _start_ auth
     ::  negotiation. however, if the request binds to %xxauth, this means we're
     ::  returning to the subdomain after having started negotiation through the
@@ -1033,10 +1032,14 @@
           ;~(pfix (jest '0v') viz:ag)
           (star next)
         ==  ==
-      ::TODOxx  validate tmp-token and get deets out of state
-      ?>  =(tmp-token u.desk.u.inner)  ::TMP
-      ::TODOxx  use .identity retrieved from state
-      [[%made -] +]:(start-session:authentication [[%ours ~] `u.desk.u.inner])
+      ?~  new-id=(~(get by tokensxx.auth.state) tmp-token)
+        ::TODOxx  what to do about invalid tmp-token?
+        ~|(%unknown-tmp-token !!)
+      ?.  =(desk.u.inner scope.u.new-id)
+        ::TODOxx  again: mb serve response?
+        ~|(%invalid-tmp-token-scope !!)
+      =.  tokensxx.auth.state  (~(del by tokensxx.auth.state) tmp-token)
+      [[%made -] +]:(start-session:authentication u.new-id)
     ::
     ?:  ?=(%invalid -.auth-state)
       =*  session  session.auth-state
@@ -1212,10 +1215,11 @@
             sym
             (star next)  ::REVIEWxx  doesn't enforce slash separator after sym
           ==  ==
-        =/  tmp-token=tape
-          ::TODOxx  real random
-          ::TODOxx  store in state alongside the identity.auth-state
-          (scow %uv scope)
+        ::TODOxx  set timer for this token to expire it
+        =^  tmp-token=tape  tokensxx.auth.state
+          =+  t=(end 3^8 (shas %xxauth eny))
+          :-  (scow %uv t)
+          (~(put by tokensxx.auth.state) t identity(scope `scope))
         =/  redirect-url=tape
           "//{(trip scope)}.{(trip (en-turf:html domain.u.inner))}/~/xxauth/{tmp-token}{target-url}"
         %-  handle-response
@@ -1225,7 +1229,11 @@
       ::  at this point, we expect the url.request to be of the shape
       ::  /~/xxauth/[tmp-token]/[target-path]. get those values out.
       ::
-      =/  [tmp-token=@uv target-url=tape]
+      ::NOTE  tmp-token was already checked and turned into a new session
+      ::      in the %negotiate %xxauth logic above
+      ::REVIEWxx  comments for accuracy and clarity
+      ::
+      =/  [@uv target-url=tape]
         %+  rash  url.request
         ;~  pfix  (jest '/~/xxauth/')
         ;~  plug
