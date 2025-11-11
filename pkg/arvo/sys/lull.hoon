@@ -3250,7 +3250,7 @@
             [%real who=@p]                              ::  authed cross-ship
         ==
       ::
-        provenance=(unit desk)  ::TODOxx  scope
+        scope=(unit desk)
     ==
   ::  channel-state: state used in the channel system
   ::

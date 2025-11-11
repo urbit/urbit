@@ -969,7 +969,7 @@
     ::    auth-state: authentication detail for the incoming request
     ::
     ::    %invalid:   an invalid session was provided, or the session's
-    ::                provenance doesn't match the request target.
+    ::                scope doesn't match the request target.
     ::    %have:      known and valid session.
     ::    %made       created a new session from whole cloth. (we will mint new
     ::                guest sessions for auth-less requests to top-level domain,
@@ -1008,7 +1008,7 @@
       ::  provenance doesn't match request target,
       ::  they shouldn't pass this cookie!
       ::
-      ?.  =(desk.u.inner provenance.identity.u.ses)
+      ?.  =(desk.u.inner scope.identity.u.ses)
         ::TODOxx  log? warn? weird case
         [[%negotiate ?~(desk.u.inner domain.u.inner full-turf)] state]
       [[%have u.sid identity.u.ses ~] state]
@@ -1812,7 +1812,7 @@
       =/  token-id=@uv  new-session-key
       =.  sessions.auth.state
         %+  ~(put by sessions.auth.state)  token-id
-        :*  identity(provenance scope)
+        :*  identity(scope scope)
             timeout=(add now auth:session-timeout)
             channels=~
         ==
@@ -3715,7 +3715,7 @@
   ::    itself: the resulting provenance path is /eyre, and
   ::    gall _does not_ check permissions on the task.
   ::    passing a full-fledged $identity means eyre does the task on
-  ::    behalf of the desk inside of the provenance.identity: the
+  ::    behalf of the desk inside of the scope.identity: the
   ::    resulting path is /eyre/[desk] (or still /eyre for "root"), and
   ::    gall _does_ check permission on that task.
   ::
@@ -3727,8 +3727,8 @@
       ?+(-.who.identity who.who.identity %ours our)
     =/  sap=path
       ?@  identity  /eyre
-      ?~  provenance.identity  /eyre
-      /eyre/[u.provenance.identity]
+      ?~  scope.identity  /eyre
+      /eyre/[u.scope.identity]
     [duct %pass wire %g %deal [from ship sap] dude task]
   ::
   ++  trace
