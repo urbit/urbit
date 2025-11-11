@@ -25,9 +25,20 @@ let
       =/  =card:agent:gall  [%pass /poke %agent dock %poke cage]
       ;<  ~  bind:m  (send-raw-card card)
       (take-poke-ack /poke)
-    -- 
-    
+    --
   '';
+
+  dojoCommand = cmd:
+    pkgs.writeTextFile {
+      name = "dojo-${cmd}.hoon";
+      text = ''
+        ${poke}
+        =/  m  (strand ,vase)
+        ;<  [=ship =desk =case]  bind:m  get-beak
+        ;<  ok=?  bind:m  (poke [ship %dojo] %lens-command !>(['dojoCommand' %dojo '${cmd}']))
+        (pure:m !>(ok))
+      '';
+    };
   appThread = generator: app:
     pkgs.writeTextFile {
       name = ":${app}|${generator}.hoon";
@@ -71,7 +82,7 @@ in pkgs.stdenvNoCC.mkDerivation {
     ${../urbit} -d ./pier 1>&2 2> $out
 
     tail -F $out >&2 &
- 
+
     ${click} -k -p -i ${appThread "mass" "hood"} ./pier
 
     sleep 2
@@ -82,6 +93,27 @@ in pkgs.stdenvNoCC.mkDerivation {
     ${click} -k -p -i ${pokeApp "%generators" "noun" "test"} ./pier
     ${click} -k -p -i ${pokeApp "%marks" "noun" "test"} ./pier
     ${click} -k -p -i ${pokeApp "%threads" "noun" "test"} ./pier
+
+    # Start aqua app
+    echo "Starting aqua app..."
+    # ${click} -c ./pier '|start %aqua'
+    #
+    ${click} -k -p -i ${dojoCommand "|start %aqua"} ./pier
+
+    sleep 5
+
+    # Load brass pill into aqua; XX store/read brass pill in/from clay?
+    echo "Loading brass pill..."
+    ${click} -k -p -i ${dojoCommand ":aqua +pill/brass"} ./pier
+
+    sleep 10
+
+    # Run ph-all integration tests
+    echo "Running ph-all tests..."
+    ${click} -k -p -i ${dojoCommand "-ph-all ~"} ./pier
+
+    # XX  Wait for tests to complete (ph-all runs multiple tests)
+    # sleep 300
 
     ${click} -k -p -i ${appThread "mass" "hood"} ./pier
     sleep 2

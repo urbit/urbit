@@ -10,13 +10,31 @@
   ?-    group
       ~
     :~  %ph-add
-        %ph-hi
-        %ph-child-sync
-        %ph-breach-multiple
-        %ph-breach-sudden
-        %ph-breach-hi-cousin
-        %ph-hi-linnup-az
-        %ph-moon-az
+        :: %ph-boot-az
+        :: %ph-boot-planet
+        :: %ph-breach-hi
+        :: %ph-breach-hi-aqua
+        :: %ph-breach-hi-cousin
+        :: %ph-breach-multiple
+        :: %ph-breach-sudden
+        :: %ph-breach-sync
+        :: %ph-change-file
+        :: %ph-child-sync
+        :: %ph-child-update
+        :: %ph-flub
+        :: %ph-hi
+        :: %ph-hi-az
+        :: %ph-hi-comet-az
+        :: %ph-hi-cousin-az
+        :: %ph-hi-linnup-az
+        :: %ph-hi-linnup-az-backward
+        :: %ph-hi-marbud-az
+        :: %ph-hi-nephew-az
+        :: %ph-hi-uncle-az
+        :: %ph-moon-az
+        %ph-peek
+        :: %ph-second-cousin-hi
+        :: %ph-tend
     ==
   ::
       [%all ~]
@@ -35,9 +53,12 @@
 ?^  threads
   ?:  =(%ph-all i.threads)
     loop(threads t.threads)
+  ;<  now-1=@da       bind:m  get-time
   ;<  ~               bind:m  (flog-text "ph-all: {<i.threads>} started")
   ;<  =thread-result  bind:m  (await-thread i.threads *vase)
   ;<  ~               bind:m  (flog-text "ph-all: {<i.threads>} complete")
+  ;<  now-2=@da       bind:m  get-time
+  ~&  >>  took/`@dr`(sub now-2 now-1)
   loop(threads t.threads, results [[i.threads thread-result] results])
 ::
 |-
