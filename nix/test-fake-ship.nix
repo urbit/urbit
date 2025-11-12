@@ -28,14 +28,25 @@ let
     --
   '';
 
-  dojoCommand = cmd:
+  dojoCommand =generator: app: args:
     pkgs.writeTextFile {
-      name = "dojo-${cmd}.hoon";
+      name = ":${app}|${generator}.hoon";
       text = ''
         ${poke}
         =/  m  (strand ,vase)
         ;<  [=ship =desk =case]  bind:m  get-beak
-        ;<  ok=?  bind:m  (poke [ship %dojo] %lens-command !>(['dojoCommand' %dojo '${cmd}']))
+        ;<  ok=?  bind:m  (poke [ship %dojo] %lens-command !>([%$ [%dojo '+${app}/${generator} ${args}'] [%app %${app}]]))
+        (pure:m !>(ok))
+      '';
+    };
+  runThread = thread:
+    pkgs.writeTextFile {
+      name = "-ph-${thread}.hoon";
+      text = ''
+        ${poke}
+        =/  m  (strand ,vase)
+        ;<  [=ship =desk =case]  bind:m  get-beak
+        ;<  ok=?  bind:m  (poke [ship %dojo] %lens-command !>([%$ [%dojo '-ph-${thread} ~'] [%stdout ~]]))
         (pure:m !>(ok))
       '';
     };
@@ -59,6 +70,21 @@ let
         ;<  [=ship =desk =case]  bind:m  get-beak
         ;<  ok=?  bind:m  (poke [ship %${app}] %${mark} !>(${hoon}))
         (pure:m !>(ok))
+      '';
+    };
+  buildPillThread = pill:
+    pkgs.writeTextFile {
+      name = "build-${pill}.hoon";
+      text = ''
+        =/  m  (strand ,vase)
+        ;<  [=ship =desk =case]  bind:m  get-beak
+        ;<  ~  bind:m
+        %-  poke
+        :*  [ship %dojo]
+            %lens-command
+            !>([%$ [%dojo '+pill/${pill}'] [%app %aqua]])
+        ==
+        (pure:m !>(~))
       '';
     };
 in pkgs.stdenvNoCC.mkDerivation {
@@ -87,33 +113,29 @@ in pkgs.stdenvNoCC.mkDerivation {
 
     sleep 2
 
+    # Start aqua app
+    echo "Starting aqua app..."
+    ${click} -k -p -i ${dojoCommand "start" "hood" "%aqua"} ./pier
+    sleep 2
+
+    # Load brass pill into aqua; XX store/read brass pill in/from clay?
+    echo "Loading brass pill..."
+    ${click} -k -p -i ${buildPillThread "brass"} ./pier
+    sleep 120
+
+    # Run ph-all integration tests
+    echo "Running -ph-all ~ ..."
+    ${click} -k -p -i ${runThread "all"} ./pier
+
+    # XX  Wait for tests to complete (ph-all runs multiple tests)
+    sleep 10
+
     ${click} -c ./pier "[0 %fyrd [%base %test %noun %noun 0]]"
 
     ${click} -k -p -i ${pokeApp "%agents" "noun" "test"} ./pier
     ${click} -k -p -i ${pokeApp "%generators" "noun" "test"} ./pier
     ${click} -k -p -i ${pokeApp "%marks" "noun" "test"} ./pier
     ${click} -k -p -i ${pokeApp "%threads" "noun" "test"} ./pier
-
-    # Start aqua app
-    echo "Starting aqua app..."
-    # ${click} -c ./pier '|start %aqua'
-    #
-    ${click} -k -p -i ${dojoCommand "|start %aqua"} ./pier
-
-    sleep 5
-
-    # Load brass pill into aqua; XX store/read brass pill in/from clay?
-    echo "Loading brass pill..."
-    ${click} -k -p -i ${dojoCommand ":aqua +pill/brass"} ./pier
-
-    sleep 10
-
-    # Run ph-all integration tests
-    echo "Running ph-all tests..."
-    ${click} -k -p -i ${dojoCommand "-ph-all ~"} ./pier
-
-    # XX  Wait for tests to complete (ph-all runs multiple tests)
-    # sleep 300
 
     ${click} -k -p -i ${appThread "mass" "hood"} ./pier
     sleep 2
@@ -134,7 +156,7 @@ in pkgs.stdenvNoCC.mkDerivation {
   '';
 
   checkPhase = ''
-    if egrep "((FAILED|CRASHED|Failed|\[0 %avow 0 %noun 1\])|warn:)" $out >/dev/null; then
+    if egrep "((FAILED|CRASHED|Failed|\[0 %avow 0 %noun 1\]\[0 %avow 1\])|warn:)" $out >/dev/null; then
       exit 1
     fi
   '';
