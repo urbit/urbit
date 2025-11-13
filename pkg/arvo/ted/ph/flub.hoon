@@ -17,9 +17,6 @@
 ;<  ~  bind:m  (init-ship ~dev fake=&)
 ;<  ~  bind:m  (dojo ~dev "|pass [%a %load {<i.cores>}]")
 ::
-;<  ~  bind:m  (dojo ~bud "|ames/verb %fin %for %ges %kay %msg %odd %rcv %rot %snd %sun")
-;<  ~  bind:m  (dojo ~dev "|ames/verb %fin %for %ges %kay %msg %odd %rcv %rot %snd %sun")
-::
 ;<  ~  bind:m  (send-hi ~bud ~dev)
 ::
 ;<  ~  bind:m  (dojo ~bud "|mount %base")
