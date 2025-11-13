@@ -4479,7 +4479,6 @@
           ::  will be resent.
           ::
           ?.  ?=([~ %known *] sndr-state)
-            ~&  %enqueue-alien
             (enqueue-alien-todo sndr.shot sndr-state |=(alien-agenda +<))
           ::  decrypt packet contents using symmetric-key.channel
           ::
