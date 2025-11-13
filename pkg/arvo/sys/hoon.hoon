@@ -14146,22 +14146,6 @@
     ==                                                    ::
   +$  tyre  (list [p=term q=hoon])                        ::
   +$  tyke  (list (unit hoon))                            ::
-  ::                                                      ::::::  virtual nock
-  +$  nock  $^  [p=nock q=nock]                           ::  autocons
-            $%  [%1 p=*]                                  ::  constant
-                [%2 p=nock q=nock]                        ::  compose
-                [%3 p=nock]                               ::  cell test
-                [%4 p=nock]                               ::  increment
-                [%5 p=nock q=nock]                        ::  equality test
-                [%6 p=nock q=nock r=nock]                 ::  if, then, else
-                [%7 p=nock q=nock]                        ::  serial compose
-                [%8 p=nock q=nock]                        ::  push onto subject
-                [%9 p=@ q=nock]                           ::  select arm and fire
-                [%10 p=[p=@ q=nock] q=nock]               ::  edit
-                [%11 p=$@(@ [p=@ q=nock]) q=nock]         ::  hint
-                [%12 p=nock q=nock]                       ::  grab data from sky
-                [%0 p=@]                                  ::  axis select
-            ==                                            ::
   +$  note                                                ::  type annotation
             $%  [%help p=*]  ::  p=help                   ::  documentation
                 [%know p=stud]                            ::  global standard
@@ -14203,7 +14187,7 @@
       [%core *]  [%core $(a p.a) (next-coil q.a)]
       [%face *]  [%face ?@(p.a p.a (next-tune p.a)) $(a q.a)]
       [%fork *]  [%fork (~(run in p.a) next-type)]
-      [%hint *]  ?:  ?=(%help -.q.p.a)  $(a q.a)  ::REVIEW
+      [%hint *]  ?:  ?=(%help -.q.p.a)  $(a q.a)  ::  drop
                  [%hint [$(a p.p.a) q.p.a] $(a q.a)]
       [%hold *]  [%hold $(a p.a) (next-hoon q.a)]
     ==
