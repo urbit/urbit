@@ -64,6 +64,7 @@
 |-
 =*  loop  $
 ?~  results
+  ~&  "ph-all: all done"
   ;<  ~  bind:m  (flog-text "ph-all: all done")
   (pure:m !>(~))  ::TODO  maybe collate vases
 ?:  ?=(%& -.r.i.results)  loop(results t.results)
