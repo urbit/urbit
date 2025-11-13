@@ -121,7 +121,7 @@ in pkgs.stdenvNoCC.mkDerivation {
     # Load brass pill into aqua; XX store/read brass pill in/from clay?
     echo "Loading brass pill..."
     ${click} -k -p -i ${buildPillThread "brass"} ./pier
-    sleep 120
+    sleep 2
 
     # Run ph-all integration tests
     echo "Running -ph-all ~ ..."
