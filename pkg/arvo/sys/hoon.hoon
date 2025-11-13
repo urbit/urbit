@@ -7489,30 +7489,30 @@
 ::
 ++  loot
   ~/  %loot
-  |=  [cog=term dom=(map term (pair ~ tome))]  ::NOTE  ~ for jet-compat
+  |=  [cog=term dom=(map term tome)]
   =+  axe=1
   |-  ^-  (unit [p=axis q=hoon])
   ?-  dom
       ~  ~
   ::
       [* ~ ~]
-    %+  bind  (look cog q.q.n.dom)
+    %+  bind  (look cog q.n.dom)
     |=((pair axis hoon) [(peg axe p) q])
   ::
       [* ~ *]
-    =+  yep=(look cog q.q.n.dom)
+    =+  yep=(look cog q.n.dom)
     ?^  yep
       [~ (peg (peg axe 2) p.u.yep) q.u.yep]
     $(axe (peg axe 3), dom r.dom)
   ::
       [* * ~]
-    =+  yep=(look cog q.q.n.dom)
+    =+  yep=(look cog q.n.dom)
     ?^  yep
       [~ (peg (peg axe 2) p.u.yep) q.u.yep]
     $(axe (peg axe 3), dom l.dom)
   ::
       [* * *]
-    =+  yep=(look cog q.q.n.dom)
+    =+  yep=(look cog q.n.dom)
     ?^  yep
       [~ (peg (peg axe 2) p.u.yep) q.u.yep]
     =+  pey=$(axe (peg axe 6), dom l.dom)
@@ -9440,7 +9440,7 @@
                 [%core *]
               ?~  q.heg  here
               =^  zem  p.heg
-                  =+  zem=(loot u.q.heg (~(run by q.r.q.sut) (lead ~)))
+                  =+  zem=(loot u.q.heg q.r.q.sut)
                   ?~  zem  [~ p.heg]
                   ?:(=(0 p.heg) [zem 0] [~ (dec p.heg)])
               ?^  zem
