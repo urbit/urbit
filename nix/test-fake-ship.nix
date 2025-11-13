@@ -135,30 +135,27 @@ in pkgs.stdenvNoCC.mkDerivation {
     }
     echo "-ph tests finished"
 
-    # XX  Wait for tests to complete (ph-all runs multiple tests)
-    sleep 10
+    # ${click} -c ./pier "[0 %fyrd [%base %test %noun %noun 0]]"
 
-    ${click} -c ./pier "[0 %fyrd [%base %test %noun %noun 0]]"
+    # ${click} -k -p -i ${pokeApp "%agents" "noun" "test"} ./pier
+    # ${click} -k -p -i ${pokeApp "%generators" "noun" "test"} ./pier
+    # ${click} -k -p -i ${pokeApp "%marks" "noun" "test"} ./pier
+    # ${click} -k -p -i ${pokeApp "%threads" "noun" "test"} ./pier
 
-    ${click} -k -p -i ${pokeApp "%agents" "noun" "test"} ./pier
-    ${click} -k -p -i ${pokeApp "%generators" "noun" "test"} ./pier
-    ${click} -k -p -i ${pokeApp "%marks" "noun" "test"} ./pier
-    ${click} -k -p -i ${pokeApp "%threads" "noun" "test"} ./pier
+    # ${click} -k -p -i ${appThread "mass" "hood"} ./pier
+    # sleep 2
 
-    ${click} -k -p -i ${appThread "mass" "hood"} ./pier
-    sleep 2
+    # ${click} -k -p -i ${pokeApp "~" "helm-pack" "hood"} ./pier
 
-    ${click} -k -p -i ${pokeApp "~" "helm-pack" "hood"} ./pier
+    # ${click} -k -p -i ${appThread "trim" "hood"} ./pier
 
-    ${click} -k -p -i ${appThread "trim" "hood"} ./pier
+    # ${click} -k -p -i ${appThread "mass" "hood"} ./pier
 
-    ${click} -k -p -i ${appThread "mass" "hood"} ./pier
+    # ${click} -k -p -i ${appThread "meld" "hood"} ./pier
 
-    ${click} -k -p -i ${appThread "meld" "hood"} ./pier
+    # ${click} -k -p -i ${appThread "mass" "hood"} ./pier
 
-    ${click} -k -p -i ${appThread "mass" "hood"} ./pier
-
-    ${click} -k -p -i ${appThread "exit" "hood"} ./pier
+    # ${click} -k -p -i ${appThread "exit" "hood"} ./pier
 
     set +x
   '';
