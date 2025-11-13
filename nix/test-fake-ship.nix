@@ -127,6 +127,14 @@ in pkgs.stdenvNoCC.mkDerivation {
     echo "Running -ph-all ~ ..."
     ${click} -k -p -i ${runThread "all"} ./pier
 
+    # Wait for tests to complete (poll for completion message)
+    echo "Waiting for -ph-all to complete..."
+    timeout 240 bash -c 'while ! grep -q "ph-all: all done" '"$out"'; do sleep 1; done' || {
+      echo "Error: Timeout or failure waiting for -ph-all completion"
+      exit 1
+    }
+    echo "-ph tests finished"
+
     # XX  Wait for tests to complete (ph-all runs multiple tests)
     sleep 10
 
@@ -156,7 +164,7 @@ in pkgs.stdenvNoCC.mkDerivation {
   '';
 
   checkPhase = ''
-    if egrep "((FAILED|CRASHED|Failed|\[0 %avow 0 %noun 1\]\[0 %avow 1\])|warn:)" $out >/dev/null; then
+    if egrep "((FAILED|CRASHED|Failed|failed|\[0 %avow 0 %noun 1\]\[0 %avow 1\])|warn:)" $out >/dev/null; then
       exit 1
     fi
   '';

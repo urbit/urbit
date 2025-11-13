@@ -63,7 +63,9 @@
 ::
 |-
 =*  loop  $
-?~  results  (pure:m !>(~))  ::TODO  maybe collate vases
+?~  results
+  ;<  ~  bind:m  (flog-text "ph-all: all done")
+  (pure:m !>(~))  ::TODO  maybe collate vases
 ?:  ?=(%& -.r.i.results)  loop(results t.results)
 =*  name  n.i.results
 =*  mess  p.r.i.results
