@@ -207,10 +207,7 @@
       van=(map term (trap vase))
   ==
 +$  heir
-  $%  $:  %grub
-          $%  [?(%240 %239 %238 %237 %236 %235) =grub:a235]
-              [%234 =grub]
-      ==  ==
+  $%  [%grub %234 =grub]  ::NOTE  no old versions, unused
       [?(%240 %239 %238 %237 %236 %235) =debt =soul:a235]
       [%234 =debt =soul]
   ==
@@ -295,27 +292,9 @@
 ++  a234  .
 ++  a235
   =,  h136
+  =,  a234
   |%
   +$  cage  (cask vase)
-  +$  grub
-    $:  ::  who: identity once we know it
-        ::  eny: entropy once we learn it
-        ::  lac: laconicity as we want it
-        ::  ver: the Outside as we see it
-        ::  fat: source when we attain it
-        ::  lul: %lull when we acquire it
-        ::  zus: %zuse once we receive it
-        ::  van: vanes while we desire it
-        ::
-        who=(unit ship)
-        eny=(unit @)
-        lac=?
-        ver=(unit vere)
-        fat=(unit (axal (cask)))
-        lul=(unit (trap vase))
-        zus=(unit (trap vase))
-        van=(map term (trap vase))
-    ==
   +$  soul
     $:  ::  identity, time, entropy
         ::  fad: configuration
@@ -360,20 +339,6 @@
     |=  a=cage
     ^-  cage:a234
     a(q (next-vase q.a))
-  ::
-  ++  next-grub
-    |=  a=grub
-    ^-  grub:a234
-    %=  a
-      lul  (bind lul.a next-trap)
-      zus  (bind zus.a next-trap)
-      van  (~(run by van.a) next-trap)
-    ==
-  ++  next-trap
-    |=  a=(trap vase)
-    ^-  (trap vase:a234)
-    |.  ^-  vase:a234
-    (next-vase $:a)
   ::
   ++  next-soul
     |=  a=soul
