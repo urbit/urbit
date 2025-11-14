@@ -574,6 +574,11 @@
   ?-  -.ae
   ::
       %init-ship
+    ::  XX  caching ships is no longer needed thanks to the %brass pill
+    ::  fast boot capabilities. here we turn it off due to a crash in CI
+    ::  (possibly but not confirmed due to moves being routed to the _wrong_
+    ::  instance of a ship
+    ::
     :: ?:  &(fake.ae (~(has by fresh-piers) [who fake]:ae))
     ::   ~&  [%aqua %cached-init +.ae]
     ::   =.  this  abet-pe:(yaho fake):[ae (pe who.ae)]

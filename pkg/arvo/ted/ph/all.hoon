@@ -20,7 +20,7 @@
         :: %ph-breach-sync
         :: %ph-change-file
         :: %ph-child-sync
-        :: %ph-child-update
+        %ph-child-update
         %ph-flub
         :: %ph-hi
         :: %ph-hi-az
@@ -31,9 +31,9 @@
         :: %ph-hi-marbud-az
         :: %ph-hi-nephew-az
         :: %ph-hi-uncle-az
-        :: %ph-moon-az
+        %ph-moon-az
         %ph-peek
-        :: %ph-second-cousin-hi
+        %ph-second-cousin-hi
         %ph-tend
     ==
   ::
