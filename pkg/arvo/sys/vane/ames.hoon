@@ -2974,7 +2974,7 @@
       |^  ^+  [moz larval-core]
       ?~  cached-state  [~ larval-core]
       =*  old  u.cached-state
-      ?:  ?=(%28 -.old)
+      ?:  ?=(%29 -.old)
         ::  no state migrations left; update state, clear cache, and exit
         ::
         [(flop moz) larval-core(ames-state.adult-gate +.old, cached-state ~)]
@@ -5536,7 +5536,7 @@
             ::  if the peer is responding, and out default core is %mesa,
             ::  enqueue %ahoy $plea
             =?  peer-core  ?=(%mesa core.ames-state)
-              (pe-emit (poke-send-ahoy duct our her))
+              (pe-emit (poke-send-ahoy duct our her force=%.n))
             ::
             ?:  (is-halted bone)
               %-  %+  pe-trace  msg.veb
