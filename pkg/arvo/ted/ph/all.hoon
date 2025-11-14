@@ -13,7 +13,7 @@
         :: %ph-boot-az
         :: %ph-boot-planet
         :: %ph-breach-hi
-        %ph-breach-hi-aqua
+        :: %ph-breach-hi-aqua
         :: %ph-breach-hi-cousin
         %ph-breach-multiple
         :: %ph-breach-sudden
@@ -27,7 +27,7 @@
         %ph-hi-comet-az
         :: %ph-hi-cousin-az
         :: %ph-hi-linnup-az
-        %ph-hi-linnup-az-backward
+        :: %ph-hi-linnup-az-backward
         :: %ph-hi-marbud-az
         :: %ph-hi-nephew-az
         :: %ph-hi-uncle-az
