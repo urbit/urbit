@@ -574,18 +574,18 @@
   ?-  -.ae
   ::
       %init-ship
-    ?:  &(fake.ae (~(has by fresh-piers) [who fake]:ae))
-      ~&  [%aqua %cached-init +.ae]
-      =.  this  abet-pe:(yaho fake):[ae (pe who.ae)]
-      ?:  fake.ae  (pe who.ae)
-      ::  for real ships, make sure they have their latest keys
-      ::
-      %.  who.ae
-      =<  pe:abet-pe:plow
-      %-  push-events:(pe who.ae)
-      =/  =life  lyfe:(~(got by lives.azi.piers) who.ae)
-      =/  =ring  sec:ex:(get-keys:aqua-azimuth who.ae life)
-      [/j/aqua/rekey %rekey life ring]~
+    :: ?:  &(fake.ae (~(has by fresh-piers) [who fake]:ae))
+    ::   ~&  [%aqua %cached-init +.ae]
+    ::   =.  this  abet-pe:(yaho fake):[ae (pe who.ae)]
+    ::   ?:  fake.ae  (pe who.ae)
+    ::   ::  for real ships, make sure they have their latest keys
+    ::   ::
+    ::   %.  who.ae
+    ::   =<  pe:abet-pe:plow
+    ::   %-  push-events:(pe who.ae)
+    ::   =/  =life  lyfe:(~(got by lives.azi.piers) who.ae)
+    ::   =/  =ring  sec:ex:(get-keys:aqua-azimuth who.ae life)
+    ::   [/j/aqua/rekey %rekey life ring]~
     =.  this  abet-pe:(publish-effect:(pe who.ae) [/ %sleep ~])
     =/  initted
       =<  plow
