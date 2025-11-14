@@ -570,7 +570,7 @@
       =+  cay=(~(got by rez) p.q.mad)
       ?-    -.p.mad
           %verb
-        ?:  ?=(?(%eny %now %our) p.p.mad)
+        ?:  ?=(?(%eny %now %our %help) p.p.mad)
           (dy-rash %tan (cat 3 p.p.mad ' is immutable') ~)
         =.  var  (~(put by var) p.p.mad cay)
         ~|  bad-set+[p.p.mad p.q.cay]

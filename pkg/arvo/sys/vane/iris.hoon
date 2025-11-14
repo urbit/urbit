@@ -130,6 +130,10 @@
     ::
     =.  connection-by-duct.state
       (~(put by connection-by-duct.state) duct id)
+    :: if we don't have a duct yet just ignore the request, %born will
+    :: cancel it soon. this is not ideal to say the least.
+    ::
+    ?~  outbound-duct.state  [~ state]
     ::  start the download
     ::
     ::  the original eyre keeps track of the duct on %born and then sends a
@@ -152,7 +156,8 @@
       ~&  %iris-invalid-cancel
       [~ state]
     ::
-    :-  [outbound-duct.state %give %cancel-request u.cancel-id]~
+    :-  ?~  outbound-duct.state  ~
+      [outbound-duct.state %give %cancel-request u.cancel-id]~
     (cleanup-connection u.cancel-id)
   ::  +receive: receives a response to an http-request we made
   ::
@@ -334,14 +339,13 @@
 ::  a vane is activated with current date, entropy, and a namespace function
 ::
 |=  [now=@da eny=@uvJ rof=roof]
-~>  %spin.[%iris]
 ::  allow jets to be registered within this core
 ::
 ~%  %http-client  ..part  ~
 |%
 ++  call
   |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
-  ~>  %spin.[%call]
+  ~>  %spin.['call/iris']
   ^-  [(list move) _iris-gate]
   ::
   =/  task=task  ((harden task) wrapped-task)
@@ -404,7 +408,7 @@
 ++  take
   |=  [=wire =duct dud=(unit goof) sign=*]
   ^-  [(list move) _iris-gate]
-  ~>  %spin.[%take]
+  ~>  %spin.['take/iris']
   ?<  ?=(^ dud)
   !!
 ::
@@ -435,7 +439,7 @@
       --
   |=  old=axle-any
   ^+  iris-gate
-  ~>  %spin.[%load]
+  ~>  %spin.['load/iris']
   ?-    -.old
       %~2019.2.8
     %=  $
@@ -465,7 +469,7 @@
   ^-  roon
   |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
-  ~>  %spin.[%scry]
+  ~>  %spin.['scry/iris']
   =*  ren  car
   =*  why=shop  &/p.bem
   =*  syd  q.bem

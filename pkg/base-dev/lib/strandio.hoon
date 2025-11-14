@@ -182,22 +182,6 @@
       `[%done ~]
     `[%fail %timer-error u.error.sign-arvo.u.in.tin]
   ==
-::  XX deprecate in 409k
-::
-++  take-tune
-  |=  =wire
-  =/  m  (strand ,[spar:ames (unit roar:ames)])
-  ^-  form:m
-  |=  tin=strand-input:strand
-  ?+    in.tin  `[%skip ~]
-      ~  `[%wait ~]
-    ::
-      [~ %sign * %ames %tune ^ *]
-    ?.  =(wire wire.u.in.tin)
-      `[%skip ~]
-    `[%done +>.sign-arvo.u.in.tin]
-  ==
-::
 ++  take-whey
   |=  =wire
   =/  m  (strand ,[spar:ames fragment-size=@ud num-fragments=@ud])
