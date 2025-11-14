@@ -1327,6 +1327,9 @@
         ::  only add the app if we have received the /gf $plea
         ::
         (~(put ju halts.state) agent-name ship hen)
+      ::  before flubbing, check if system flow is established
+      ::
+      =.  mo-core  (mo-track-flubs ship)
       %+  mo-give  %flub
       ::  if we are waiting to hear the /gf $plea, only %flub the flow in %ames
       ::  and skip sending the %flub $boon
@@ -1352,6 +1355,9 @@
   ++  mo-handle-flub-plea
     |=  =ship
     =.  flub-ducts.state  (~(put by flub-ducts.state) ship hen)
+    ::  before acking the %flub $plea, check if the system flow is established
+    ::
+    =.  mo-core  (mo-track-flubs ship)
     (mo-give %done error=~)
   ::  +mo-spew: handle request to set verbosity toggles on debug output
   ::
