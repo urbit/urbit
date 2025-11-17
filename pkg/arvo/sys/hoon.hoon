@@ -10849,22 +10849,19 @@
       [%core *]   [%cell %noun p.sut]
       [%face *]   q.sut
       [%hint *]   q.sut
-      [%hold *]   (rest [[p.sut q.sut] ~])
+      [%hold *]   (rest +.sut)
       %noun       (fork [%atom %$ ~] [%cell %noun %noun] ~)
       *           ~>(%mean.'repo-fltt' !!)
     ==
   ::
   ++  rest
     ~/  %rest
-    |=  leg=(list [p=type q=hoon])
+    |=  leg=[p=type q=hoon]
     ^-  type
-    ?:  (lien leg |=([p=type q=hoon] (~(has in fan) [p q])))
+    ?:  (~(has in fan) leg)
       ~>(%mean.'rest-loop' !!)
-    =>  .(fan (~(gas in fan) leg))
-    %-  fork
-    %~  tap  in
-    %-  ~(gas in *(set type))
-    (turn leg |=([p=type q=hoon] (play(sut p) q)))
+    =.  fan  (~(put in fan) leg)
+    (play(sut p.leg) q.leg)
   ::
   ++  sink
     =<  $
