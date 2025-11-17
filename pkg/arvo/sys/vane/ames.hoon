@@ -12634,7 +12634,7 @@
         ::  handle %ames packet; keys will be asked and packet dropped
         ::
         =^  moves  vane-gate  (call:am-core hen dud %soft %hear lane blob)
-        (flop [(poke-send-ahoy hen our sndr.shot force=%.n) moves])^vane-gate
+        (snoc moves (poke-send-ahoy hen our sndr.shot force=%.n))^vane-gate
           ::  [%mesa ~ %alien *]
           ::
           ::    %mesa is our default network core. we might have outstanding
