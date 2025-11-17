@@ -4,7 +4,7 @@
 =>  ..part
 ~%  %lull  ..part  ~
 |%
-++  lull  %321
+++  lull  %320
 ::                                                      ::  ::
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
@@ -3747,7 +3747,7 @@
             pen=(jug spar:ames wire)
             gem=(jug coop [path page])
     ==  ==
-  +$  egg-any  $%([%15 egg-15] [%16 egg])
+  +$  egg-any  $%([%15 egg-15] [%16 egg-16] [%19 egg])
   +$  egg-15
     $%  [%nuke sky=(map spur @ud)]
     $:  %live
@@ -3759,11 +3759,30 @@
         =boat
         =boar
         code=~
-        old-state=[%| vase]
+        old-state=[%| vase:h136]
         =beak
         marks=(map duct mark)
         sky=(map spur plot)
         ken=(jug spar:ames wire)
+    ==  ==
+  +$  egg-16
+    $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)]
+        $:  %live
+            control-duct=duct
+            run-nonce=@t
+            sub-nonce=@
+            =stats
+            =bitt
+            =boat
+            =boar
+            code=~
+            old-state=[%| vase:h136]
+            =beak
+            marks=(map duct mark)
+            sky=farm
+            ken=(jug spar:ames wire)
+            pen=(jug spar:ames wire)
+            gem=(jug coop [path page])
     ==  ==
   ::
   +$  bowl                                              ::  standard app state
