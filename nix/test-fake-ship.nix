@@ -25,9 +25,31 @@ let
       =/  =card:agent:gall  [%pass /poke %agent dock %poke cage]
       ;<  ~  bind:m  (send-raw-card card)
       (take-poke-ack /poke)
-    -- 
-    
+    --
   '';
+
+  dojoCommand =generator: app: args:
+    pkgs.writeTextFile {
+      name = ":${app}|${generator}.hoon";
+      text = ''
+        ${poke}
+        =/  m  (strand ,vase)
+        ;<  [=ship =desk =case]  bind:m  get-beak
+        ;<  ok=?  bind:m  (poke [ship %dojo] %lens-command !>([%$ [%dojo '+${app}/${generator} ${args}'] [%app %${app}]]))
+        (pure:m !>(ok))
+      '';
+    };
+  runThread = thread:
+    pkgs.writeTextFile {
+      name = "-ph-${thread}.hoon";
+      text = ''
+        ${poke}
+        =/  m  (strand ,vase)
+        ;<  [=ship =desk =case]  bind:m  get-beak
+        ;<  ok=?  bind:m  (poke [ship %dojo] %lens-command !>([%$ [%dojo '-ph-${thread} ~'] [%stdout ~]]))
+        (pure:m !>(ok))
+      '';
+    };
   appThread = generator: app:
     pkgs.writeTextFile {
       name = ":${app}|${generator}.hoon";
@@ -48,6 +70,21 @@ let
         ;<  [=ship =desk =case]  bind:m  get-beak
         ;<  ok=?  bind:m  (poke [ship %${app}] %${mark} !>(${hoon}))
         (pure:m !>(ok))
+      '';
+    };
+  buildPillThread = pill:
+    pkgs.writeTextFile {
+      name = "build-${pill}.hoon";
+      text = ''
+        =/  m  (strand ,vase)
+        ;<  [=ship =desk =case]  bind:m  get-beak
+        ;<  ~  bind:m
+        %-  poke
+        :*  [ship %dojo]
+            %lens-command
+            !>([%$ [%dojo '+pill/${pill}'] [%app %aqua]])
+        ==
+        (pure:m !>(~))
       '';
     };
 in pkgs.stdenvNoCC.mkDerivation {
@@ -71,10 +108,32 @@ in pkgs.stdenvNoCC.mkDerivation {
     ${../urbit} -d ./pier 1>&2 2> $out
 
     tail -F $out >&2 &
- 
+
     ${click} -k -p -i ${appThread "mass" "hood"} ./pier
 
     sleep 2
+
+    # Start aqua app
+    echo "Starting aqua app..."
+    ${click} -k -p -i ${dojoCommand "start" "hood" "%aqua"} ./pier
+    sleep 2
+
+    # Load brass pill into aqua; XX store/read brass pill in/from clay?
+    echo "Loading brass pill..."
+    ${click} -k -p -i ${buildPillThread "brass"} ./pier
+    sleep 2
+
+    # Run ph-all integration tests
+    echo "Running -ph-all ~ ..."
+    ${click} -k -p -i ${runThread "all"} ./pier
+
+    # Wait for tests to complete (poll for completion message)
+    echo "Waiting for -ph-all to complete..."
+    timeout 1200 bash -c 'while ! grep -q "ph-all: all done" '"$out"'; do sleep 1; done' || {
+      echo "Error: Timeout or failure waiting for -ph-all completion"
+      exit 1
+    }
+    echo "-ph tests finished"
 
     ${click} -c ./pier "[0 %fyrd [%base %test %noun %noun 0]]"
 
@@ -102,7 +161,7 @@ in pkgs.stdenvNoCC.mkDerivation {
   '';
 
   checkPhase = ''
-    if egrep "((FAILED|CRASHED|Failed|\[0 %avow 0 %noun 1\])|warn:)" $out >/dev/null; then
+    if egrep "((FAILED|CRASHED|Failed|failed|\[0 %avow 0 %noun 1\]\[0 %avow 1\])|warn:)" $out >/dev/null; then
       exit 1
     fi
   '';

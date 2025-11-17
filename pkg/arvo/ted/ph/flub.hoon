@@ -6,11 +6,16 @@
 ^-  thread:spider
 |=  vase
 =/  m  (strand ,vase)
+=/  cores=(list ?(%mesa %ames))  ~[%mesa %ames]
+|-  ^-  form:m
+?~  cores  (pure:m *vase)
 ;<  ~  bind:m  start-simple
-;<  ~  bind:m  (init-ship ~bud &)
-;<  ~  bind:m  (init-ship ~dev &)
-;<  ~  bind:m  (dojo ~bud "|ames/verb %fin %for %ges %kay %msg %odd %rcv %rot %snd %sun")
-;<  ~  bind:m  (dojo ~dev "|ames/verb %fin %for %ges %kay %msg %odd %rcv %rot %snd %sun")
+::
+=*  loop  $
+;<  ~  bind:m  (init-ship ~bud fake=&)
+;<  ~  bind:m  (dojo ~bud "|pass [%a %load {<i.cores>}]")
+;<  ~  bind:m  (init-ship ~dev fake=&)
+;<  ~  bind:m  (dojo ~dev "|pass [%a %load {<i.cores>}]")
 ::
 ;<  ~  bind:m  (send-hi ~bud ~dev)
 ::
@@ -18,26 +23,34 @@
 ;<  ~  bind:m  (dojo ~dev "|mount %base")
 ::
 ;<  ~  bind:m  (copy-file ~bud /app/sub/hoon sub-agent)
-
 ;<  ~  bind:m  (dojo ~bud "|start %sub")
-::  XX wait until the /gf $plea has been acked
-::  this allows the retry /gf plea that whas dropped on 
-::  first contact to be resend
-::
-;<  ~  bind:m  (sleep ~s5) 
 ::  poke a non-running agent
 ::
 ;<  ~  bind:m  (dojo ~bud ":sub [%sub ~dev %pub]")
-:: ;<  ~  bind:m  (wait-for-has-halt ~dev ~bud %pub)  :: XX
+::  %prod, so we resend the /gf plea that whas dropped on first contact
+::
+;<  ~  bind:m  (dojo ~bud "|pass [%a %prod [~dev]~]")
+::  check that ~dev has halted this flow
+::
+;<  ~  bind:m  (wait-for-has-halt ~dev ~bud %pub)  :: XX
 ::  check that remote flubs are received
 ::
 ;<  ~  bind:m  (wait-for-flub ~bud ~dev %pub)
+::  XX check that proding doesn't actually send the flubbed poke again
+::
+;<  ~  bind:m  (dojo ~bud "|pass [%a %prod [~dev]~]")
+::
 ;<  ~  bind:m  (copy-file ~dev /app/pub/hoon pub-agent)
 ;<  ~  bind:m  (dojo ~dev "|start %pub")
-:: ;<  ~  bind:m  (wait-for-del-halt ~dev ~bud %pub)  :: XX
+::   check that the flow is not halted anymore
+::
+;<  ~  bind:m  (wait-for-del-halt ~dev ~bud %pub)
 ::   check that the %spur is sent
 ::
 ;<  ~  bind:m  (wait-for-spur ~bud ~dev %pub)
+:: XX we should scry into ~bud for no entries in the .pit
+::
+;<  ~  bind:m  (sleep ~s1)
 ::
 ;<  ~  bind:m  end
-(pure:m *vase)
+$(cores t.cores)

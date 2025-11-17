@@ -31,7 +31,6 @@
       $:  %0
           pil=$>(%pill pill-0)
           assembled=*
-          tym=@da
           fresh-piers=(map [=ship fake=?] [=pier boths=(list unix-both)])
           fleet-snaps=(map term fleet)
           piers=fleet
@@ -54,6 +53,7 @@
           next-events=(qeu unix-event)
           processing-events=?
           namespace=(map path (list yowl:ames))
+          tym=@da
       ==
     --
 ::
@@ -218,13 +218,13 @@
     =/  poke-arm  (mox +23.snap)
     ?>  ?=(%0 -.poke-arm)
     =/  poke  p.poke-arm
-    =.  tym  (max +(tym) now.hid)
-    =/  poke-result  (mule |.((slum poke tym ue)))
+    =.  tym.pier-data  (max +(tym.pier-data) now.hid)
+    =/  poke-result  (mule |.((slum poke tym.pier-data ue)))
     ?:  ?=(%| -.poke-result)
       %-  (slog >%aqua-crash< >guest=who< p.poke-result)
       $
     =.  snap  +.p.poke-result
-    =.  ..abet-pe  (publish-event tym ue)
+    =.  ..abet-pe  (publish-event tym.pier-data ue)
     =.  ..abet-pe
       ~|  ova=-.p.poke-result
       (handle-effects ;;((list ovum) -.p.poke-result))
@@ -574,18 +574,23 @@
   ?-  -.ae
   ::
       %init-ship
-    ?:  &(fake.ae (~(has by fresh-piers) [who fake]:ae))
-      ~&  [%aqua %cached-init +.ae]
-      =.  this  abet-pe:(yaho fake):[ae (pe who.ae)]
-      ?:  fake.ae  (pe who.ae)
-      ::  for real ships, make sure they have their latest keys
-      ::
-      %.  who.ae
-      =<  pe:abet-pe:plow
-      %-  push-events:(pe who.ae)
-      =/  =life  lyfe:(~(got by lives.azi.piers) who.ae)
-      =/  =ring  sec:ex:(get-keys:aqua-azimuth who.ae life)
-      [/j/aqua/rekey %rekey life ring]~
+    ::  XX  caching ships is no longer needed thanks to the %brass pill
+    ::  fast boot capabilities. here we turn it off due to a crash in CI
+    ::  (possibly but not confirmed due to moves being routed to the _wrong_
+    ::  instance of a ship
+    ::
+    :: ?:  &(fake.ae (~(has by fresh-piers) [who fake]:ae))
+    ::   ~&  [%aqua %cached-init +.ae]
+    ::   =.  this  abet-pe:(yaho fake):[ae (pe who.ae)]
+    ::   ?:  fake.ae  (pe who.ae)
+    ::   ::  for real ships, make sure they have their latest keys
+    ::   ::
+    ::   %.  who.ae
+    ::   =<  pe:abet-pe:plow
+    ::   %-  push-events:(pe who.ae)
+    ::   =/  =life  lyfe:(~(got by lives.azi.piers) who.ae)
+    ::   =/  =ring  sec:ex:(get-keys:aqua-azimuth who.ae life)
+    ::   [/j/aqua/rekey %rekey life ring]~
     =.  this  abet-pe:(publish-effect:(pe who.ae) [/ %sleep ~])
     =/  initted
       =<  plow
@@ -612,7 +617,7 @@
         :^  /d/term/1  %boot  &
         ?:  fake.ae
           [%fake who.ae]
-        [%dawn (dawn who.ae)]
+        [%dawn (dawn [who feed]:ae)]
         ::
         userspace-ova.pil  :: load os
         ::
@@ -624,8 +629,11 @@
             [/d/term/1 %hail ~]
           ::
             ?:  fake.ae  ~
-            =+  [%raw-poke %noun %refresh-rate ~s30]
-            [/g/aqua/reduce-refresh-rate %deal [. . /]:who.ae %azimuth -]~
+            :~  =+  [%raw-poke %noun %refresh-rate ~s30]
+                [/g/aqua/reduce-refresh-rate %deal [. . /]:who.ae %azimuth -]
+                =+  [%poke azimuth-poke/!>([%kick ~])]
+                [/g/aqua/watch %deal [. . /]:who.ae %azimuth -]
+            ==
         ==
       ==
     =.  this
@@ -794,7 +802,7 @@
   =.  this  apex-aqua  =<  abet-aqua
   ?.  =(wen tym.azi.piers)
     this
-  =.  state  (spam-logs 10)
+  =.  state  (spam-logs ~sampel-palnet 10)
   start-azimuth-timer
 ::
 ++  start-azimuth-timer
@@ -813,17 +821,19 @@
     this
   %-  emit-cards
   [%pass /wait/(scot %da tym) %arvo %b %rest tym]~
+::  +spam-logs: fill out the logs with as many events as needed using a dummy ship
+::  (needed to advance the blocknumber in eth-wathcher)
 ::
 ++  spam-logs
-  |=  n=@
+  |=  [dummy=@p n=@]
   ^-  _state
   =*  loop  $
   ?:  =(n 0)
     state
   =/  new-state=_state
-    ?.  (~(has by lives.azi.piers) ~fes)
-      (spawn ~fes)
-    (cycle-keys ~fes)
+    ?.  (~(has by lives.azi.piers) dummy)
+      (spawn dummy)
+    (cycle-keys dummy)
   =.  state  new-state
   loop(n (dec n))
 ::
@@ -842,7 +852,7 @@
         1
         1
     ==
-  (spam-logs 10)
+  (spam-logs ~sampel-palnet 30)
 ::
 ++  cycle-keys
   |=  who=@p
@@ -874,10 +884,10 @@
   =.  logs.azi.piers
     %+  weld  logs.azi.piers
     [(broke-continuity:lo:aqua-azimuth who rut) ~]
-  (spam-logs 10)
+  (spam-logs ~sampel-palnet 30)
 ::
 ++  dawn
-  |=  who=ship
+  |=  [who=ship feed=(unit feed:jael)]
   ^-  dawn-event:jael
   =/  clan  (clan:title who)
   ?>  ?=(?(%czar %king %duke %earl %pawn) clan)
@@ -903,11 +913,15 @@
       [a-point]~
     [a-point $(who ship)]
   =/  =feed:jael
+    ?^  feed  u.feed
     =/  life-rift=[lyfe=life rut=rift]
       ?:  ?=(?(%pawn %earl) clan)  [1 0]
       (~(got by lives.azi.piers) who)
     =/  =life  lyfe.life-rift
-    [who life sec:ex:(get-keys:aqua-azimuth who life) ~]
+    =/  =rift  rut.life-rift
+    :^  [%2 ~]  who  rift
+    ^-  (list [^life ring])
+    [life sec:ex:(get-keys:aqua-azimuth who life)]~
   :*  feed
       spon
       get-czars
