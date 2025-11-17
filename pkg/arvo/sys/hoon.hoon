@@ -5396,9 +5396,11 @@
   ++  bay  (ape (bass 16 ;~(plug qeb:ab (star ;~(pfix dog qib:ab)))))
   ++  bip  =+  tod=(ape qex:ab)
            (bass 0x1.0000 ;~(plug tod (stun [7 7] ;~(pfix dog tod))))
+  ++  dap  ;~(pose dub dip)
   ++  dem  (ape (bass 1.000 ;~(plug ted:ab (star ;~(pfix dog tid:ab)))))
   ++  dim  (ape dip)
   ++  dip  (bass 10 ;~(plug sed:ab (star sid:ab)))
+  ++  dub  ;~(pfix (just '0') sed:ab)
   ++  dum  (bass 10 (plus sid:ab))
   ++  fed  %+  cook  fynd:ob
            ;~  pose
@@ -5425,6 +5427,7 @@
                (just '1')
                (cook |=(a=@ (add 10 (sub a '0'))) (shim '0' '2'))
              ==
+             dub
              sed:ab
            ==
   ++  viz  (ape (bass 0x200.0000 ;~(plug pev:ab (star ;~(pfix dog piv:ab)))))
@@ -5479,8 +5482,8 @@
               =.  rep  ['.' (y-co s.t.yod)]
               =.  rep  ['.' (y-co m.t.yod)]
               ['.' '.' (y-co h.t.yod)]
-            =.  rep  ['.' (a-co d.t.yod)]
-            =.  rep  ['.' (a-co m.yod)]
+            =.  rep  ['.' (y-co d.t.yod)]
+            =.  rep  ['.' (y-co m.yod)]
             =?  rep  !a.yod  ['-' rep]
             ['~' (a-co y.yod)]
           ::
@@ -5873,7 +5876,7 @@
         |=([a=@ b=?] [b a])
       ;~(plug dim:ag ;~(pose (cold | hep) (easy &)))
       ;~(pfix dot mot:ag)   ::  month
-      ;~(pfix dot dip:ag)   ::  day
+      ;~(pfix dot dap:ag)   ::  day
       ;~  pose
         ;~  pfix
           ;~(plug dot dot)
@@ -10801,22 +10804,19 @@
       [%core *]   [%cell %noun p.sut]
       [%face *]   q.sut
       [%hint *]   q.sut
-      [%hold *]   (rest [[p.sut q.sut] ~])
+      [%hold *]   (rest +.sut)
       %noun       (fork [%atom %$ ~] [%cell %noun %noun] ~)
       *           ~>(%mean.'repo-fltt' !!)
     ==
   ::
   ++  rest
     ~/  %rest
-    |=  leg=(list [p=type q=hoon])
+    |=  leg=[p=type q=hoon]
     ^-  type
-    ?:  (lien leg |=([p=type q=hoon] (~(has in fan) [p q])))
+    ?:  (~(has in fan) leg)
       ~>(%mean.'rest-loop' !!)
-    =>  .(fan (~(gas in fan) leg))
-    %-  fork
-    %~  tap  in
-    %-  ~(gas in *(set type))
-    (turn leg |=([p=type q=hoon] (play(sut p) q)))
+    =.  fan  (~(put in fan) leg)
+    (play(sut p.leg) q.leg)
   ::
   ++  sink
     =<  $
