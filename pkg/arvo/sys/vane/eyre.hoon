@@ -629,25 +629,19 @@
 ::
 ++  build-subdomain-negotiation
   |=  [host=turf target-path=@t]
-  ^-  octs
+  ^-  http-event:http
   =/  sub=@t    (rear host)
   =/  top=turf  (snip host)
-  =/  target=tape
-    %-  trip
+  =/  target=@t
     %+  rap  3
     :~  '//'
         (en-turf:html top)
         '/~/xxauth/'  sub
         target-path
     ==
-  %-  as-octs:mimes:html
-  %-  crip
-  %-  en-xml:html
-  ;html
-    ;head
-      ;meta(http-equiv "refresh", content "0; url={target}");
-    ==
-  ==
+  :+  %start
+    [303 ['location' target]~]
+  [~ complete=&]
 ::  +render-tang-to-marl: renders a tang and adds <br/> tags between each line
 ::
 ++  render-tang-to-marl
@@ -1079,11 +1073,6 @@
       :_  state
       =;  =http-event:http
         [duct %give %response http-event]~
-      :+  %start
-        [200 ['content-type' 'text/html'] ~]
-      :_  complete=&
-      :-  ~
-      ::TODOxx  serve as 3xx instead
       (build-subdomain-negotiation subdomain.auth-state url.request)
     ::
     ?>  ?=(?(%made %have) -.auth-state)
