@@ -134,6 +134,9 @@
   ++  auth   ~d30
   ++  guest  ~d7
   --
+::  +tmp-token-timeout: the delay before a tmp subdomain auth token expires
+::
+++  tmp-token-timeout  ~s30
 ::  eauth-timeout: max time we wait for remote scry response before serving 504
 ::  eauth-cache-rounding: scry case rounding for cache hits & clock skew aid
 ::
@@ -1215,15 +1218,18 @@
             sym
             (star next)  ::REVIEWxx  doesn't enforce slash separator after sym
           ==  ==
-        ::TODOxx  set timer for this token to expire it
-        =^  tmp-token=tape  tokensxx.auth.state
+        =^  tmp-token=@uv  tokensxx.auth.state
           =+  t=(end 3^8 (shas %xxauth eny))
-          :-  (scow %uv t)
+          :-  t
           (~(put by tokensxx.auth.state) t identity(scope `scope))
+        =/  expire=move
+          [duct %pass /xx-auth/(scot %uv tmp-token) %b %wait (add now tmp-token-timeout)]
         =/  redirect-url=tape
-          "//{(trip scope)}.{(trip (en-turf:html domain.u.inner))}/~/xxauth/{tmp-token}{target-url}"
-        %-  handle-response
-        [%start [303 ['location' (crip redirect-url)]~] ~ &]
+          "//{(trip scope)}.{(trip (en-turf:html domain.u.inner))}/~/xxauth/{(scow %uv tmp-token)}{target-url}"
+        =^  moz=(list move)  state
+          %-  handle-response
+          [%start [303 ['location' (crip redirect-url)]~] ~ &]
+        [[expire moz] state]
       ::  subdomain, %gain case
       ::
       ::  at this point, we expect the url.request to be of the shape
@@ -4235,6 +4241,7 @@
         %run-app-request   run-app-request
         %watch-response    watch-response
         %sessions          sessions
+        %xx-auth           xx-auth
         %channel           channel
         %acme              acme-ack
         %conversion-cache  `http-server-gate
@@ -4386,6 +4393,13 @@
     |=  [[@uv session] next=@da]
     ?:  =(*@da next)  expiry-time
     (min next expiry-time)
+  ::
+  ++  xx-auth
+    ?>  ?=([@ ~] t.wire)
+    =/  token=@uv  (slav %uv i.t.wire)
+    =*  tokens  tokensxx.auth.server-state.ax
+    =.  tokens  (~(del by tokens) token)
+    [~ http-server-gate]
   ::
   ++  eauth
     =*  auth  auth.server-state.ax
