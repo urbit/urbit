@@ -628,7 +628,7 @@
 ::  +build-subdomain-negotiation: render "negotiation script page"  xxtodo description
 ::
 ++  build-subdomain-negotiation
-  |=  [host=turf target-path=@t]
+  |=  [host=turf target-path=@t expire=(unit @t)]
   ^-  http-event:http
   =/  sub=@t    (rear host)
   =/  top=turf  (snip host)
@@ -640,7 +640,10 @@
         target-path
     ==
   :+  %start
-    [303 ['location' target]~]
+    :-  303
+    :-  ['location' target]
+    ?~  expire  ~
+    ['set-cookie' u.expire]~
   [~ complete=&]
 ::  +render-tang-to-marl: renders a tang and adds <br/> tags between each line
 ::
@@ -979,7 +982,7 @@
       $%  [%invalid session=@uv]
           [%have session=@uv =identity ~]
           [%made session=@uv =identity moves=(list move)]
-          [%negotiate subdomain=turf]
+          [%negotiate subdomain=turf old-session=(unit @uv)]
       ==
     =^  auth-state=t  state
       ?~  inner
@@ -992,22 +995,22 @@
         [%made *@uv [fake+~fipfes-fipfes-fipfes-fipfes--fipfes-fipfes-fipfes-fipfes ~] ~]
       =*  full-turf  (snoc domain.u.inner u.desk.u.inner)
       ?~  sid=(session-id-from-request:authentication request)
-        ?^  desk.u.inner  [[%negotiate full-turf] state]
+        ?^  desk.u.inner  [[%negotiate full-turf ~] state]
         [[%made -] +]:(start-session:authentication %new-guest)
       ?~  ses=(~(get by sessions.auth.state) u.sid)
         ?:  ?=(^ desk.u.inner)
-          [[%negotiate full-turf] state]
+          [[%negotiate full-turf `u.sid] state]
         [[%invalid u.sid] state]
       ?:  (gth now expiry-time.u.ses)
         ?:  ?=(^ desk.u.inner)
-          [[%negotiate full-turf] state]
+          [[%negotiate full-turf `u.sid] state]
         [[%invalid u.sid] state]
       ::  provenance doesn't match request target,
       ::  they shouldn't pass this cookie!
       ::
       ?.  =(desk.u.inner scope.identity.u.ses)
         ::TODOxx  log? warn? weird case
-        [[%negotiate ?~(desk.u.inner domain.u.inner full-turf)] state]
+        [[%negotiate ?~(desk.u.inner domain.u.inner full-turf) ~] state]
       [[%have u.sid identity.u.ses ~] state]
     ::  normally, %negotiate on a subdomain means that we _start_ auth
     ::  negotiation. however, if the request binds to %xxauth, this means we're
@@ -1073,7 +1076,11 @@
       :_  state
       =;  =http-event:http
         [duct %give %response http-event]~
-      (build-subdomain-negotiation subdomain.auth-state url.request)
+      %-  build-subdomain-negotiation
+      :+  subdomain.auth-state
+        url.request
+      %+  bind  old-session.auth-state
+      (curr session-cookie-string:authentication ~)
     ::
     ?>  ?=(?(%made %have) -.auth-state)
     =*  suv       session.auth-state
@@ -1902,6 +1909,8 @@
       ::
       ?~  urbauth=(get-header:http (crip "urbauth-{(scow %p our)}") u.cookies)
         ~
+      ::TODO  consider returning a (list @uv) mb, there could be multiple
+      ::      relevant cookies in urbauth
       ::  if it's formatted like a valid session cookie, produce it
       ::
       `(unit @)`(rush u.urbauth ;~(pfix (jest '0v') viz:ag))
