@@ -3540,7 +3540,7 @@
       ++  state-27-to-28
         |=  old=axle-26-27
         ^-  axle
-        ~>  %slog.0^leaf/"ames: migrating from state %27 to %26"
+        ~>  %slog.0^leaf/"ames: migrating from state %27 to %28"
         %=    old
             peers
           %-  ~(run by peers.old)
