@@ -904,11 +904,11 @@
         ?>  ?=([~ ~ %desk *] res)
         `!<(desk q.u.u.res)
       ==
-    ::  if the domain is known, but has no desk in the subdomain,
-    ::  this is the "homepage" case. redirect to the subdomain that "owns"
-    ::  the requested url/binding.
+    ::  if the domain is known, but doesn't match the pathowner (either because
+    ::  it's requesting at the wrong subdomain, or at top-level for a subdomain
+    ::  path), redirect to the subdomain that "owns" the requested url/binding.
     ::
-    ?:  &(?=(^ pathowner) ?=([~ * ~] inner))
+    ?:  &(?=(^ pathowner) ?=(^ inner) !=(pathowner desk.u.inner))
       ::NOTE  some code duplication with below, but request handling deserves
       ::      a refactor anyway
       =.  connections.state
