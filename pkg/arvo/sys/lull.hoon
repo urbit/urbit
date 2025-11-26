@@ -3150,7 +3150,7 @@
         sessions=(map @uv session)
         ::  tokensxx: temporary tokens for authenticating into scopes
         ::
-        tokensxx=(map @uv identity)
+        tokensxx=(map @uv session=@uv)
         ::  visitors: in-progress incoming eauth flows
         ::
         visitors=(map @uv visitor)
@@ -3170,6 +3170,13 @@
     $:  ::  identity: authentication level & id of this session
         ::
         =identity
+        ::  scopes:
+        ::    %&  this is a root session, and these are its child tokens
+        ::    %|  this is a child token, this is its parent
+        ::
+        ::NOTE  ?=(~ scope.identity) should be %& here, and the inverse.
+        ::      if that's not the case, that's a bug!
+        scopes=(each (set @uv) @uv)
         ::  expiry-time: when this session expires
         ::
         ::    We check this server side, too, so we aren't relying on the browser

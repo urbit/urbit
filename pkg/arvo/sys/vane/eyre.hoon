@@ -996,7 +996,7 @@
       =*  full-turf  (snoc domain.u.inner u.desk.u.inner)
       ?~  sid=(session-id-from-request:authentication request)
         ?^  desk.u.inner  [[%negotiate full-turf ~] state]
-        [[%made -] +]:(start-session:authentication %new-guest)
+        [[%made -] +]:(start-session:authentication %new-guest ~)
       ?~  ses=(~(get by sessions.auth.state) u.sid)
         ?:  ?=(^ desk.u.inner)
           [[%negotiate full-turf `u.sid] state]
@@ -1032,14 +1032,17 @@
           ;~(pfix (jest '0v') viz:ag)
           (star next)
         ==  ==
-      ?~  new-id=(~(get by tokensxx.auth.state) tmp-token)
+      ?~  parent=(~(get by tokensxx.auth.state) tmp-token)
         ::TODOxx  what to do about invalid tmp-token?
+        ::NOTE  this will serve 500, adding token url into browser history,
+        ::      but the token apparently isn't valid, so that's fine
         ~|(%unknown-tmp-token !!)
-      ?.  =(desk.u.inner scope.u.new-id)
-        ::TODOxx  again: mb serve response?
-        ~|(%invalid-tmp-token-scope !!)
+      ?~  parent-session=(~(get by sessions.auth.state) u.parent)
+        ~|(%unknown-parent-session !!)
+      =/  new-id=identity
+        identity.u.parent-session(scope desk.u.inner)
       =.  tokensxx.auth.state  (~(del by tokensxx.auth.state) tmp-token)
-      [[%made -] +]:(start-session:authentication u.new-id)
+      [[%made -] +]:(start-session:authentication new-id parent)
     ::
     ?:  ?=(%invalid -.auth-state)
       =*  session  session.auth-state
@@ -1217,7 +1220,7 @@
         =^  tmp-token=@uv  tokensxx.auth.state
           =+  t=(end 3^8 (shas %xxauth eny))
           :-  t
-          (~(put by tokensxx.auth.state) t identity(scope `scope))
+          (~(put by tokensxx.auth.state) t suv)
         =/  expire=move
           [duct %pass /xx-auth/(scot %uv tmp-token) %b %wait (add now tmp-token-timeout)]
         =/  redirect-url=tape
@@ -1769,8 +1772,7 @@
         (close-session session-id |)
       ::  initialize the new session
       ::
-      ::TODOxx  get scope from auth params, not yet implemented
-      =^  fex  state  (start-session [%ours ~] ~)
+      =^  fex  state  (start-session [[%ours ~] ~] ~)
       ::  associate the new session with the request that caused the login
       ::
       ::    if we don't do this here, +handle-response will include the old
@@ -1823,6 +1825,7 @@
       =.  sessions.auth.state
         %+  ~(put by sessions.auth.state)  token-id
         :*  identity(scope scope)
+            |+session-id
             timeout=(add now auth:session-timeout)
             channels=~
         ==
@@ -1953,8 +1956,13 @@
     ::TODO  maybe should take a =duct arg so it can do the "associate the new
     ::      session with ..." step
     ++  start-session
-      |=  identity=?(%new-guest identity)
+      |=  [identity=?(%new-guest identity) parent=(unit @uv)]
       ^-  [[session=@uv =^identity moves=(list move)] server-state]
+      ?.  ?|  &(?=(%new-guest identity) ?=(~ parent))
+              &(?=(^ identity) ?=(~ scope.identity) ?=(~ parent))
+              &(?=(^ identity) ?=(^ scope.identity) ?=(^ parent))
+          ==
+        ~|(%eyre-session-with-without-parent !!)
       =;  [key=@uv sid=^identity]
         =/  timeout=@dr
           =,  session-timeout
@@ -1966,8 +1974,14 @@
             ?^  sessions.auth.state  ~
             [duct %pass /sessions/expire %b %wait (add now timeout)]~
         =-  state(sessions.auth -)
+        =?  sessions.auth.state  ?=(^ parent)
+          ~|  %eyre-session-orphan
+          %+  ~(jab by sessions.auth.state)  u.parent
+          |=  s=session
+          ?>  ?=(%& -.scopes.s)
+          s(p.scopes (~(put in p.scopes.s) key))
         %+  ~(put by sessions.auth.state)  key
-        [sid (add now timeout) ~]
+        [sid ?~(parent &+~ |+u.parent) (add now timeout) ~]
       ::  create a new session with a fake identity
       ::
       =/  sik=@uv  new-session-key
@@ -1994,48 +2008,70 @@
     ::    if this closes an %ours session, the caller is responsible for
     ::    also calling +give-session-tokens afterwards.
     ::
+    ::NOTE  the factoring here isn't perf-optimal, but it's legibility-optimal
     ++  close-session
       |=  [session-id=@uv all=?]
       ^-  [(list move) server-state]
       ?~  ses=(~(get by sessions.auth.state) session-id)
         [~ state]
-      ::  delete the session(s) and find the associated ids & channels
+      ::  close child sessions if we have them
       ::
-      =^  [siz=(list @uv) channels=(list @t)]  sessions.auth.state
-        =*  sessions  sessions.auth.state
-        ::  either delete just the specific session and its channels,
-        ::
-        ?.  all
-          :-  [[session-id]~ ~(tap in channels.u.ses)]
-          (~(del by sessions) session-id)
-        ::  or delete all sessions with the identity from :session-id
-        ::
-        %+  roll  ~(tap by sessions)
-        |=  $:  [sid=@uv s=session]
-                [[siz=(list @uv) caz=(list @t)] sez=(map @uv session)]
-            ==
-        ^+  [[siz caz] sez]
-        ?.  =(identity.s identity.u.ses)
-          ::  identity doesn't match, so re-store this session
-          ::
-          [[siz caz] (~(put by sez) sid s)]
-        ::  identity matches, so register this session as closed
-        ::
-        [[[sid siz] (weld caz ~(tap in channels.s))] sez]
+      =/  kiz=(list @uv)
+        ?.  ?=(%& -.scopes.u.ses)  ~
+        ~(tap in p.scopes.u.ses)
+      =|  moves=(list move)
+      |-
+      ?^  kiz
+        =^  moz=(list move)  state
+          (close-session i.kiz |)
+        $(moves (weld moves moz), kiz t.kiz)
+      ::  find .all sister parent ("aunt"?) sessions and close them
+      ::
+      =/  siz=(list @uv)
+        ?.  all  ~
+        %+  murn  ~(tap by sessions.auth.state)
+        |=  [sid=@uv s=session]
+        ^-  (unit _sid)
+        =-  ?:(- `sid ~)
+        ?&  !=(sid session-id)  ::  not ourselves just yet!
+            =(who.identity.s who.identity.u.ses)
+            ?=(%& -.scopes.s)
+        ==
+      |-
+      ?^  siz
+        =^  moz=(list move)  state
+          (close-session i.siz |)
+        $(moves (weld moves moz), siz t.siz)
+      ::  if we have a parent session that wasn't deleted above,
+      ::  update it to forget us
+      ::
+      =?  sessions.auth.state
+          ?&  ?=(%| -.scopes.u.ses)
+              (~(has by sessions.auth.state) p.scopes.u.ses)
+          ==
+        %+  ~(jab by sessions.auth.state)  p.scopes.u.ses
+        |=  s=session
+        ?>  ?=(%& -.scopes.s)
+        s(p.scopes (~(del in p.scopes.s) session-id))
+      ::  delete our session from state
+      ::
+      =.  sessions.auth.state
+        (~(del by sessions.auth.state) session-id)
       ::  close all affected channels and send their responses
       ::
-      =|  moves1=(list move)
+      =/  channels  ~(tap in channels.u.ses)
       |-  ^-  (quip move server-state)
       ?^  channels
         %-  %+  trace  1
             |.("{(trip i.channels)} discarding channel due to closed session")
         =^  moz  state
           (discard-channel:by-channel i.channels |)
-        $(moves1 (weld moves1 moz), channels t.channels)
-      ::  lastly, %real sessions require additional cleanup
+        $(moves (weld moves moz), channels t.channels)
+      ::  lastly, %real root sessions require additional cleanup
       ::
-      ?.  ?=(%real -.who.identity.u.ses)  [moves1 state]
-      =^  moves2  visitors.auth.state
+      ?.  &(?=(%real -.who.identity.u.ses) ?=(%& -.scopes.u.ses))
+        [moves state]
+      =^  moz=(list move)  visitors.auth.state
         %+  roll  ~(tap by visitors.auth.state)
         |=  [[nonce=@uv visa=visitor] [moz=(list move) viz=(map @uv visitor)]]
         ?^  +.visa  [moz (~(put by viz) nonce visa)]
@@ -2043,7 +2079,7 @@
         %+  weld  moz
         ?~  duct.visa  ~
         [(send-boon:server:eauth(duct u.duct.visa) %0 %shut nonce)]~
-      [(weld `(list move)`moves1 `(list move)`moves2) state]
+      [(weld moves moz) state]
     ::  +code: returns the same as |code
     ::
     ++  code
@@ -2211,7 +2247,7 @@
           =^  moz1  state
             (close-session session-id:(~(got by connections.state) duct) |)
           =^  [sid=@uv * moz2=(list move)]  state
-            (start-session [%real ship] ~)
+            (start-session [[%real ship] ~] ~)
           =.  visitors.auth
             %+  ~(jab by visitors.auth)  nonce
             |=(v=visitor v(+ sid))
