@@ -12300,7 +12300,12 @@
           =/  =side  [u.bone dire]
           =+  fo-core=(fo-abed:fo:ev-core side)
           ?.  (~(has by flows.per.fo-core) side)
-            ~
+            ::  if the flow doesn't exist check if the query is asking
+            ::  for corked flows
+            ::
+            ?+  qery.pat.tyl  ~
+              [%cork ~]  ?~(r=(fo-peek:fo-core %cork 0) ~ ``[%message !>(u.r)])
+            ==
           =,  state:fo-core
           ?+    qery.pat.tyl  ~
               ~          ``message/!>(sate/state:fo-core)
