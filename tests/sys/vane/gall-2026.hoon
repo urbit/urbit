@@ -123,6 +123,34 @@
     !>(resources.e)
   ==
 ::
+++  open-lick-socket
+  |=  [g=_setup-agent =name:lick]
+  ^-  [tang _g]
+  =/  old-e  (~(live-egg ga g) %mock)
+  =^  moz=(list move:gall)  g
+    =/  =card:agent:gall
+      [%pass /agent/wire %arvo %lick %spin name]
+    (~(deal ga g) %mock (make-poke card))
+  :_  g
+  ::
+  =/  ex-resource=arvo-resource:gall
+    [/agent/wire %lick %spin name]
+  =/  e  (~(live-egg ga g) %mock)
+  =/  gall-wire=wire
+    /use/mock/[run-nonce.e]/~dev//agent/wire
+  ;:  weld
+    %+  expect-eq
+      !>  ^-  (list move:gall)
+      :~  [duct:ga %give %unto %poke-ack ~]
+          [~[/sysduct] %pass gall-wire `note-arvo`[%l %spin [%mock name]]]
+      ==
+    !>(moz)
+  ::
+    %+  expect-eq
+      !>((~(gas by *(set arvo-resource:gall)) ex-resource ~))  ::TODO  bad
+    !>(resources.e)
+  ==
+::
 ::  tests
 ::
 ++  test-timer-tracking
@@ -139,4 +167,9 @@
     (expect-eq !>(~) !>(moz))
     (expect-eq !>(~) !>(resources.e))
   ==
+::
+++  test-lick-tracking
+  =/  g  setup-agent
+  =^  fail  g  (open-lick-socket g /mysocket)
+  fail
 --

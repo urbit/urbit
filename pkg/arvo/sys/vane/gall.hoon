@@ -98,7 +98,7 @@
   $%  [%poke =gill]
   ==  ==
 ::
-+$  arvo-resource  ::TODO  no $?, because they "are" the same "key"?
++$  arvo-resource
   $:  =wire
   $%  [%behn %wait =time]                       ::  1 gift, end
       :: [%clay %warp =ship =desk]                 ::  1+ gifts, could sometimes know end?
@@ -126,7 +126,7 @@
   $%  [%behn %wake =time]  ::REVIEW
       :: [%clay %read =riot:clay]
       [%iris %http-response =client-response:iris]
-      [%lick %soak =name:lick *]  ::TODO  make real
+      [%lick %soak =name:lick =mark =noun]
     ::
       [%syscall actual-kelvin=@ sign-arvo=*]
       [%unsupported ~]
@@ -1947,7 +1947,7 @@
                       ::
                       =;  deet=(unit *)
                         ?~(deet '' (crip ~(rend co %blob u.deet)))
-                      ?+  +.neet  !!
+                      ?+  +.neet  ~
                         [%behn *]  `time.neet
                       ==
                     wire
@@ -2164,12 +2164,15 @@
         ?:  ?=(%& -.agent.yoke)
           on-save:ap-agent-core
         p.agent.yoke
+      ::  re-start all of the agent's namespace read requests
+      ::  (+ap-idle stopped them)
+      ::
       =?  ap-core  &(?=(%| -.agent.yoke) ?=(^ ken.yoke))
         =-  +:(ap-ingest ~ |.([+< agent]))
         %-  zing
         %+  turn  ~(tap by `(jug spar:ames wire)`ken.yoke)
         |=  [=spar:ames wyz=(set wire)]
-        ::TODO  make typed!
+        ::TODO  make typed once we have full $user-task-v1
         (turn ~(tap in wyz) |=(=wire [%pass wire %arvo %syscall %a %keen ~ spar]))
       =^  error  ap-core
         (ap-install(agent.yoke &+agent) `old-state)
@@ -2639,7 +2642,7 @@
         [%iris %request *]              [& %iris %request]
         [%iris %cancel-request ~]       [| %iris %request]
         :: [%k ?(%fard %fyrd %lard) *]  [& %khan +<]:task
-        [%lick %spin *]                 [& %lick %spin name.task]  ::TODO  review for agent name prepending
+        [%lick %spin *]                 [& %lick %spin name.task]
         [%lick %shut *]                 [| %lick %spin name.task]
       ==
     ::  +ap-handle-resource-gift: update tracked resource based on gift
