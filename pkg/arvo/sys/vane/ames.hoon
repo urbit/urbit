@@ -11680,7 +11680,9 @@
           ::  so we can set up the comet lane which is not in state
           ::
           ?~  pact=(co-make-pact:co `spar`comet^path ~ rift=0)
-            !!
+            %-  %^  al-tace  odd.veb.bug.ames-state  comet
+                |.("peek for comet attestation failed")
+            al-core
           %-  %^  al-tace  fin.veb.bug.ames-state  comet
               |.("peek for comet attestation proof")
           (al-emit (push-pact comet u.pact (make-lanes comet `[0 lane] *qos)))
