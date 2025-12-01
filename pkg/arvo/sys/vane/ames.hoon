@@ -11006,32 +11006,6 @@
               ?:  =(~ unix-duct)
                 %.  ev-core:core
                 (slog leaf+"ames: unix-duct pending; retry %push" ~)
-              ::  if the flow is in closing, we are the forward side and we are
-              ::  resending the %cork $plea, the other side could have corked the
-              ::  flow so we try to peek for the %corked flow. as soon as either the
-              ::  %ack for the %cork $plea, or the %gone $page for the peek arrive,
-              ::  fo-abel will delete the flow and clean up any outstanding peeks
-              ::
-              =?  core  ?=(^ pay.req)
-                =/  ducs=(list duct)  ~(tap in ~(key by for.req))
-                ?~  ducs  core
-                ?.  ?=([[%ames %mesa %flow *] *] i.ducs)
-                  core
-                =>  .(i.i.ducs `(pole knot)`i.i.ducs)
-                ?.  ?=([@ @ @ %ack %for ship=@ rift=@ bone=@ ~] i.i.ducs)
-                  core
-                =+  fo-core=(fo-abed:fo:core bone=(slav %ud bone.i.i.ducs) %for)
-                ?.  ?&  closing.state.fo-core
-                        !pending-ack.rcv.fo-core
-                        =(1 (wyt:fo-mop:fo-core loads.snd.fo-core))
-                        ?~  first=(pry:fo-mop:fo-core loads.snd.fo-core)
-                          |
-                        ?=([%plea %$ [%flow ~] %cork ~] val.u.first)
-                    ==
-                  core
-                ::  XX fo-peek-cork(hen i.ducs)
-                ::
-                fo-abet:fo-peek-cork:fo-core
               %-  ev-emit:core
               (push-pact ship u.pact (make-lanes [her [lane qos]:per]:core))
             (sy-emil:core resend-moves)
