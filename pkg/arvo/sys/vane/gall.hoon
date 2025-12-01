@@ -81,10 +81,60 @@
       attributing=[=ship =path]
   ==
 +$  brood  [=coop =hutch]
+::
++$  task
+  $%  $<(?(%load %deal) task:gall)
+      [%load load]
+      [%deal p=sack q=term r=deal]
+  ==
++$  load  (list [=dude =beak =agent])
++$  deal
+  $%  [%raw-poke =mark =noun]
+      task:agent
+  ==
+::
++$  gall-resource
+  $:  =wire
+  $%  [%poke =gill]
+  ==  ==
+::
++$  arvo-resource  ::TODO  no $?, because they "are" the same "key"?
+  $:  =wire
+  $%  [%behn %wait =time]                       ::  1 gift, end
+      :: [%clay %warp =ship =desk]                 ::  1+ gifts, could sometimes know end?
+      :: [%eyre ?(%connect %serve) =binding:eyre]  ::  1 gift, know end mb
+      :: [%eyre %set-response url=@t]              ::  0 gifts
+      [%iris %request]                          ::  1+ gifts, know end
+      :: [%khan ?(%fard %fyrd %lard)]              ::  1 gift, end
+      [%lick %spin =name:lick]                  ::  0 gifts
+  ==  ==
+::
++$  task-user-v1
+  $%  [%behn %wait =time]
+      [%behn %rest =time]
+      :: [%clay %read id=@ =ship =desk read=(unit $<(%many rave:clay))]
+      [%iris %request =request:http =outbound-config:iris]
+      [%iris %cancel-request ~]
+      [%lick %spin =name:lick]
+      [%lick %shut =name:lick]
+      [%lick %spit =name:lick =mark =noun]
+    ::
+      [%syscall note-arvo=*]  ::NOTE  DO NOT DOCUMENT (;
+  ==
+::
++$  gift-user-v1
+  $%  [%behn %wake =time]  ::REVIEW
+      :: [%clay %read =riot:clay]
+      [%iris %http-response =client-response:iris]
+      [%lick %soak =name:lick *]  ::TODO  make real
+    ::
+      [%syscall actual-kelvin=@ sign-arvo=*]
+      [%unsupported ~]
+  ==
 ::  $yoke: agent runner state
 ::
 ::    control-duct: TODO document
-::    run-nonce: unique for each rebuild
+::    run-nonce: unique for each rebuild (really: nuke & restart)
 ::    sub-nonce: app-wide global %watch nonce
 ::    stats: TODO document
 ::    bitt: incoming subscriptions
@@ -107,6 +157,7 @@
           =bitt
           =boat
           =boar
+          resources=(set arvo-resource)
           code=*
           agent=(each agent vase)
           =beak
@@ -116,6 +167,104 @@
           pen=(jug spar:ames wire)
           gem=(jug coop [path page])
   ==  ==
+::
+++  agent
+  =<  form
+  |%
+  +$  step  (quip card form)
+  +$  card
+    $+  gall-agent-card
+    (wind note gift)
+  +$  note
+    $+  gall-agent-note
+    $%  [%agent [=ship name=term] =task]
+        [%arvo task-user-v1]
+    ==
+  +$  task
+    $+  gall-agent-task
+    $%  [%watch =path]
+        [%watch-as =mark =path]
+        [%leave ~]
+        [%poke =cage]
+        [%poke-as =mark =cage]
+    ==
+  +$  gift
+    $+  gall-agent-gift
+    $%  [%fact paths=(list path) =cage]
+        [%kick paths=(list path) ship=(unit ship)]
+        [%watch-ack p=(unit tang)]
+        [%poke-ack p=(unit tang)]
+    ==
+  +$  sign
+    $+  gall-agent-sign
+    $%  [%poke-ack p=(unit tang)]
+        [%watch-ack p=(unit tang)]
+        [%fact =cage]
+        [%kick ~]
+    ==
+  ++  form
+    $_  ^|
+    |_  bowl
+    ++  on-init
+      *(quip card _^|(..on-init))
+    ::
+    ++  on-save
+      *vase
+    ::
+    ++  on-load
+      |~  old-state=vase
+      *(quip card _^|(..on-init))
+    ::
+    ++  on-poke
+      |~  [mark vase]
+      *(quip card _^|(..on-init))
+    ::
+    ++  on-watch
+      |~  path
+      *(quip card _^|(..on-init))
+    ::
+    ++  on-leave
+      |~  path
+      *(quip card _^|(..on-init))
+    ::
+    ++  on-peek
+      |~  path
+      *(unit (unit cage))
+    ::
+    ++  on-agent
+      |~  [wire sign]
+      *(quip card _^|(..on-init))
+    ::
+    ++  on-arvo
+      |~  [wire gift-user-v1]
+      *(quip card _^|(..on-init))
+    ::
+    ++  on-fail
+      |~  [term tang]
+      *(quip card _^|(..on-init))
+    --
+  --
++$  egg                                               ::  migratory agent
+    $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)] ::  state; see /sys/gall
+        $:  %live                                       ::  $yoke
+            control-duct=duct
+            run-nonce=@t
+            sub-nonce=@
+            =stats
+            =bitt
+            =boat
+            =boar
+            resources=(set arvo-resource)
+            code=~
+            old-state=[%| vase]
+            =beak
+            marks=(map duct mark)
+            sky=farm
+            ken=(jug spar:ames wire)
+            pen=(jug spar:ames wire)
+            gem=(jug coop [path page])
+    ==  ==
+  +$  egg-any  $%([%15 egg-15] [%16 egg])
 ::
 ++  of-farm
   |_  =farm
@@ -1010,7 +1159,8 @@
       %-  (slog leaf+"gall: got old {<+<.sign-arvo>} for {<dap>}" ~)
       mo-core
     ::
-    ?.  ?=([?(%gall %behn) %unto *] sign-arvo)
+    ?.  ?=([%out @ @ *] t.t.wire)
+      ?>  ?=([@ *] t.t.t.wire)
       ?:  ?=(%| -.agent.u.yoke)
         %-  (slog leaf+"gall: {<dap>} dozing, dropping {<+<.sign-arvo>}" ~)
         mo-core
@@ -1018,10 +1168,14 @@
         =/  =ship  (slav %p i.t.t.wire)
         =/  =routes  [disclosing=~ attributing=[ship /[-.sign-arvo]]]
         (ap-abed:ap dap routes)
+      =/  deets=*
+        ?:  =('' i.t.t.t.wire)  ~
+        =+  c=(need (slay i.t.t.t.wire))
+        ?>(?=(%blob -.c) p.c)
       ::
-      =.  app  (ap-generic-take:app t.t.t.wire sign-arvo)
+      =.  app  (ap-generic-take:app deets t.t.t.t.wire sign-arvo)
       ap-abet:app
-    ?>  ?=([%out @ @ *] t.t.wire)
+    ?>  ?=([?(%gall %behn) %unto *] sign-arvo)
     =/  =ship  (slav %p i.t.t.t.wire)
     =/  other-agent  i.t.t.t.t.wire
     =/  prov=path  ?.(=(ship our) *path /gall/[other-agent])
@@ -1471,7 +1625,7 @@
         (welp /key/[agent-name]/[run-nonce.yoke]/bod/(scot %p ship) pole)
       (ap-move [hen %pass out %a %plea ship plea]~)
     ::
-    ++  ap-take-brood
+    ++  ap-take-brood  ::TODO  reevaluate wrt new userspace api
       |=  [=wire syn=sign-arvo]
       ^+  ap-core
       ~|  ap-take-brood/wire
@@ -1486,10 +1640,10 @@
           =.  pen.yoke  (~(del by pen.yoke) [ship t.wire])
           ap-core
         ?~  bod.bud
-          =.  ap-core  (ap-generic-take i.wis %ames %sage [ship t.wire] ~)
+          =.  ap-core  (ap-generic-take ~ i.wis %ames %sage [ship t.wire] ~)
           $(wis t.wis)
         =.  ap-core
-          (ap-pass i.wis %arvo %a %keen `[idx key]:hutch.u.bod.bud ship t.wire)
+          (ap-pass i.wis %arvo %syscall %a %keen `[idx key]:hutch.u.bod.bud ship t.wire)
         $(wis t.wis)
       ::
           [%ames %done *]
@@ -1500,7 +1654,7 @@
           =.  pen.yoke  (~(del by pen.yoke) [ship t.wire])
           ap-core
         =.  ap-core
-          %.  (ap-generic-take i.wis %ames %sage [ship t.wire] ~)
+          %.  (ap-generic-take ~ i.wis %ames %sage [ship t.wire] ~)
           %+  trace  odd.veb.bug.state
           [leaf/"bad brood res {<ship>} {<t.wire>}"]~
         $(wis t.wis)
@@ -1543,7 +1697,7 @@
       |=  [=spar:ames wyz=(set wire)]
       %+  turn  ~(tap in wyz)
       |=  =wire
-      [%pass wire %arvo %a %yawn spar]
+      [%pass wire %arvo %syscall %a %yawn spar]  ::REVIEW  lol
     ::
     ++  ap-idle
       ^+  ap-core
@@ -1585,7 +1739,7 @@
       ?:  secret
         (ap-request-brood wire spar)
       =.  ken.yoke  (~(put ju ken.yoke) spar wire)
-      (ap-pass wire %arvo %a %keen ~ spar)
+      (ap-pass wire %arvo %syscall %a %keen ~ spar)
     ::  +ap-tend: bind path in namespace, encrypted
     ::
     ++  ap-tend
@@ -1712,7 +1866,6 @@
     ::
     +$  carp  $+  carp  (wind neet gift:agent)
     +$  neet  $+  neet
-      $<  ?(%grow %tomb %cull %tend %germ %snip %keen)
       $%  note:agent
           [%agent [=ship name=term] task=[%raw-poke =mark =noun]]
           [%huck [=ship name=term] =note-arvo]
@@ -1778,32 +1931,46 @@
         =/  =duct  system-duct.state
         =/  =wire  p.card
         =/  =neet  q.card
-        ?:  ?=(%pyre -.neet)
-          %:  mean
-            leaf/"gall: %pyre from {<agent-name>}, killing event"
-            leaf/"wire: {<wire>}"
-            tang.neet
-          ==
+        :: ?:  ?=(%pyre -.neet)
+        ::   %:  mean
+        ::     leaf/"gall: %pyre from {<agent-name>}, killing event"
+        ::     leaf/"wire: {<wire>}"
+        ::     tang.neet
+        ::   ==
         =.  wire
           :^  %use  agent-name  run-nonce.yoke
           ?-  -.neet
             %agent  [%out (scot %p ship.neet) name.neet wire]
             %huck   [%out (scot %p ship.neet) name.neet wire]
-            %arvo   [(scot %p ship.attributing.agent-routes) wire]
+            %arvo   :+  (scot %p ship.attributing.agent-routes)  ::REVIEW  mb change?
+                      ::  pack identifying resource id details into the wire
+                      ::
+                      =;  deet=(unit *)
+                        ?~(deet '' (crip ~(rend co %blob u.deet)))
+                      ?+  +.neet  !!
+                        [%behn *]  `time.neet
+                      ==
+                    wire
           ==
         ::
         =/  =note-arvo
           =/  prov=path  /gall/[agent-name]
           ?-  -.neet
-            %arvo   ?.  ?=([%l *] +.neet)
-                      +.neet
-                    ?+  +.neet
-                      ~|(%nope !!)
-                      [%l ?(%spin %shut) *]  +.neet(name [agent-name name.+.neet])
-                      [%l %spit *]           +.neet(name [agent-name name.+.neet])
-                    ==
             %huck   note-arvo.neet
             %agent  [%g %deal [our ship.neet prov] [name task]:neet]
+          ::
+              %arvo
+            ?-  +.neet
+              [%behn *]        [%b +>.neet]
+              [%iris *]        [%i +>.neet]
+              [%lick %spit *]  [%l +>.neet(name [agent-name name.neet])]
+              [%lick *]        [%l +>.neet(name [agent-name name.neet])]
+            ::
+                [%syscall *]
+              ::NOTE  crash on malformed notes, syscall means no guard rails
+              ::REVIEW  perf?
+              ;;(note-arvo note-arvo.neet)
+            ==
           ==
         [duct %pass wire note-arvo]~
       ==
@@ -1951,12 +2118,20 @@
     ::  +ap-give: return result.
     ::
     ++  ap-give
-      |=  =gift:agent
+      |=  =gift:agent  ::TODO  make like +ap-pass if ever called with other than %kick
       (ap-move (ap-from-internal %give gift))
     ::  +ap-pass: request action.
     ::
+    ::NOTE  because this is only called inside of gall, with in-line defined
+    ::      neets, we want that to be type-checked even though the agent api
+    ::      isn't. replace that %syscall with a typed version.
+    ::
     ++  ap-pass
-      |=  [=path =neet]
+      |=  $:  =path
+              $=  neet
+              $%  $<([%arvo %syscall *] neet)
+                  [%arvo %syscall note-arvo]
+          ==  ==
       (ap-move (ap-from-internal %pass path neet))
     ::  +ap-construct-bowl: set up bowl.
     ::
@@ -1994,7 +2169,8 @@
         %-  zing
         %+  turn  ~(tap by `(jug spar:ames wire)`ken.yoke)
         |=  [=spar:ames wyz=(set wire)]
-        (turn ~(tap in wyz) |=(=wire [%pass wire %arvo %a %keen ~ spar]))
+        ::TODO  make typed!
+        (turn ~(tap in wyz) |=(=wire [%pass wire %arvo %syscall %a %keen ~ spar]))
       =^  error  ap-core
         (ap-install(agent.yoke &+agent) `old-state)
       ?~  error
@@ -2044,26 +2220,26 @@
         %+  ap-ingest  ~  |.
         (on-fail:ap-agent-core term (turn tang form))
       ap-core
-    ::  +ap-generic-take: generic take.
+    ::  +ap-generic-take: call agent with gift-user from sign-arvo
     ::
     ++  ap-generic-take
       ~/  %ap-generic-take
-      |=  [=wire =sign-arvo]
+      |=  [deets=* =wire =sign-arvo]
       ^+  ap-core
       ~>  %spin.[(crip "on-arvo/{<agent-name>}")]
-      =?  sign-arvo  ?=([%lick *] sign-arvo)
-        ?+  sign-arvo
-          ~|(%nope !!)
-        ::
-            [%lick %soak *]
-          =-  sign-arvo(name -)
-          ?>  &(?=(^ name.sign-arvo) =(agent-name i.name.sign-arvo))
-          t.name.sign-arvo
+      =/  gift=gift-user-v1
+        ?+  sign-arvo  [%syscall kelvin=zuse sign-arvo]
+          [%behn %wake *]           [%behn %wake ;;(time deets)]
+          [%iris %http-response *]  sign-arvo
+          [%lick %soak *]           ~|  [%gall-lick-bad-name name.sign-arvo]
+                                    ?>  &(?=(^ name.sign-arvo) =(agent-name i.name.sign-arvo))
+                                    sign-arvo(name (tail name.sign-arvo))
         ==
+      =.  resources.yoke  (ap-handle-resource-gift wire gift)
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
-        (on-arvo:ap-agent-core wire sign-arvo)
-      =?  ken.yoke   ?=([%ames %sage *] sign-arvo)
+        (on-arvo:ap-agent-core wire gift)
+      =?  ken.yoke   ?=([%ames %sage *] sign-arvo)  ::REVIEW  should be done before +on-arvo
         (~(del ju ken.yoke) p.sage.sign-arvo wire)
       ?^  maybe-tang
         (ap-error %arvo-response u.maybe-tang)
@@ -2434,10 +2610,51 @@
       ::
       =.  agent.yoke  &++.p.result
       =^  fex  ap-core  (ap-handle-sky -.p.result)
-      =.  ken.yoke    (ap-handle-ken fex)
-      =/  moves       (zing (turn fex ap-from-internal))
-      =.  bitt.yoke   (ap-handle-kicks moves)
+      ::TODO  call on moves instead?
+      ::      or roll into +ap-handle-resources?
+      =.  ken.yoke         (ap-handle-ken fex)
+      =.  resources.yoke   (ap-handle-resources -.p.result)
+      =/  moves            (zing (turn fex ap-from-internal))
+      =.  bitt.yoke        (ap-handle-kicks moves)
       (ap-handle-peers moves)
+    ::  +ap-handle-resources: track resources created/used by the agent
+    ::
+    ++  ap-handle-resources
+      |=  caz=(list card:agent)
+      ^+  resources.yoke
+      ?~  caz  resources.yoke
+      ?.  ?=([%pass * %arvo *] i.caz)  $(caz t.caz)
+      =;  $@(~ [add=? res=_+:*arvo-resource])
+        ?@  -  $(caz t.caz)
+        ?:  add
+          $(caz t.caz, resources.yoke (~(put in resources.yoke) p.i.caz res))
+        $(caz t.caz, resources.yoke (~(del in resources.yoke) p.i.caz res))
+      =*  task  +.q.i.caz
+      ?+  +.q.i.caz  ~
+        [%behn %wait *]                 [& %behn %wait time.task]
+        [%behn %rest *]                 [| %behn %wait time.task]
+        :: [%c %warp *]                 `[%clay %warp wer p.rif]:task
+        :: [%e ?(%connect %serve) *]    `[%eyre +< binding]:task
+        :: [%e %set-response *]         `[%eyre %set-response url.task]
+        [%iris %request *]              [& %iris %request]
+        [%iris %cancel-request ~]       [| %iris %request]
+        :: [%k ?(%fard %fyrd %lard) *]  [& %khan +<]:task
+        [%lick %spin *]                 [& %lick %spin name.task]  ::TODO  review for agent name prepending
+        [%lick %shut *]                 [| %lick %spin name.task]
+      ==
+    ::  +ap-handle-resource-gift: update tracked resource based on gift
+    ::
+    ++  ap-handle-resource-gift
+      |=  [=wire gift=gift-user-v1]
+      ^+  resources.yoke
+      =;  del=(unit _+:*arvo-resource)
+        ?~  del  resources.yoke
+        (~(del in resources.yoke) wire u.del)
+      ?+  gift  ~
+        [%behn *]  `[%behn %wait time.gift]
+        [%iris *]  `[%iris %request]
+        [%lick *]  ~
+      ==
     ::  +ap-handle-sky: apply effects to the agent's scry namespace
     ::
     ++  ap-handle-sky
@@ -2446,14 +2663,15 @@
       ^+  [fex ap-core]
       ?~  caz  [(flop fex) ap-core]
       ?-  i.caz
-        [%pass * %grow *]  $(caz t.caz, ap-core (ap-grow +.q.i.caz))
-        [%pass * %tomb *]  $(caz t.caz, ap-core (ap-tomb +.q.i.caz))
-        [%pass * %cull *]  $(caz t.caz, ap-core (ap-cull +.q.i.caz))
-        [%pass * %tend *]  $(caz t.caz, ap-core (ap-tend +.q.i.caz))
-        [%pass * %germ *]  $(caz t.caz, ap-core (ap-germ +.q.i.caz))
-        [%pass * %snip *]  $(caz t.caz, ap-core (ap-snip +.q.i.caz))
-        [%pass * %keen *]  $(caz t.caz, ap-core (ap-keen p.i.caz +.q.i.caz))
-        [%pass * ?(%agent %arvo %pyre) *]  $(caz t.caz, fex [i.caz fex])
+        :: [%pass * %grow *]  $(caz t.caz, ap-core (ap-grow +.q.i.caz))
+        :: [%pass * %tomb *]  $(caz t.caz, ap-core (ap-tomb +.q.i.caz))
+        :: [%pass * %cull *]  $(caz t.caz, ap-core (ap-cull +.q.i.caz))
+        :: [%pass * %tend *]  $(caz t.caz, ap-core (ap-tend +.q.i.caz))
+        :: [%pass * %germ *]  $(caz t.caz, ap-core (ap-germ +.q.i.caz))
+        :: [%pass * %snip *]  $(caz t.caz, ap-core (ap-snip +.q.i.caz))
+        :: [%pass * %keen *]  $(caz t.caz, ap-core (ap-keen p.i.caz +.q.i.caz))
+        :: [%pass * ?(%agent %arvo %pyre) *]  $(caz t.caz, fex [i.caz fex])
+        [%pass * ?(%agent %arvo) *]  $(caz t.caz, fex [i.caz fex])
         [%give *]  $(caz t.caz, fex [i.caz fex])
         [%slip *]  !!
       ==
@@ -2464,9 +2682,12 @@
       ^+  ken.yoke
       %+  roll  fex
       |=  [=carp ken=_ken.yoke]
+      ::TODO  these aren't typed, so we're forced to ;;
+      ::      ideally we roll this into our new api style cards so that these
+      ::      won't be %syscalls anymore
       ?+  carp  ken
-        [%pass * %arvo %a %keen @ spar=*]  (~(put ju ken) [spar.q p]:carp)
-        [%pass * %arvo %a %yawn spar=*]  (~(del ju ken) [spar.q p]:carp)
+        [%pass * %arvo %syscall %a %keen @ spar=*]  (~(put ju ken) ;;(spar:ames spar.note-arvo.q.carp) p.carp)
+        [%pass * %arvo %syscall %a %yawn spar=*]  (~(del ju ken) ;;(spar:ames spar.note-arvo.q.carp) p.carp)
       ==
     ::  +ap-handle-kicks: handle cancels of bitt.watches
     ::
@@ -2939,34 +3160,35 @@
       %-  ~(urn by eggs.old)
       |=  [=term e=egg-15]
       ^-  egg
-      ?:  ?=(%nuke -.e)  [%nuke ~ ~]
-      %=    e
-          ken  [ken.e ~ ~]
-      ::
-          sky
-        =|  =farm
-        =/  ski  ~(tap by sky.e)
-        |-  ^+  farm
-        ?~  ski
-          farm
-        =/  [=spur p=plot]  i.ski
-        =;  new
-          ?~  nex=(~(put-grow of-farm farm) spur new)
-            ~&  %weird
-            !!  :: shouldn't continue else loss of ref integrity
-            :: $(ski t.ski)
-          $(farm u.nex, ski t.ski)
-        :-  ~
-        =/  m  ~(val by fan.p)
-        %+  gas:on-path  *_fan.p
-        %+  turn
-          ^-  (list @)
-          =/  wit  ~(wyt by fan.p)
-          ?:  =(0 wit)  ~
-          (gulf 1 wit)
-        |=  a=@ud
-        [a (snag (dec a) m)]
-      ==
+      !!
+      :: ?:  ?=(%nuke -.e)  [%nuke ~ ~]
+      :: %=    e
+      ::     ken  [ken.e ~ ~]
+      :: ::
+      ::     sky
+      ::   =|  =farm
+      ::   =/  ski  ~(tap by sky.e)
+      ::   |-  ^+  farm
+      ::   ?~  ski
+      ::     farm
+      ::   =/  [=spur p=plot]  i.ski
+      ::   =;  new
+      ::     ?~  nex=(~(put-grow of-farm farm) spur new)
+      ::       ~&  %weird
+      ::       !!  :: shouldn't continue else loss of ref integrity
+      ::       :: $(ski t.ski)
+      ::     $(farm u.nex, ski t.ski)
+      ::   :-  ~
+      ::   =/  m  ~(val by fan.p)
+      ::   %+  gas:on-path  *_fan.p
+      ::   %+  turn
+      ::     ^-  (list @)
+      ::     =/  wit  ~(wyt by fan.p)
+      ::     ?:  =(0 wit)  ~
+      ::     (gulf 1 wit)
+      ::   |=  a=@ud
+      ::   [a (snag (dec a) m)]
+      :: ==
     ==
   ::  drop unto blocked moves;s
   ::
@@ -3266,14 +3488,15 @@
   |=  =yoke
   ^-  egg
   ?:  ?=(%nuke -.yoke)  yoke
-  %=    yoke
-      code   ~
-      agent
-    :-  %|
-    ?:  ?=(%| -.agent.yoke)
-      p.agent.yoke
-    on-save:p.agent.yoke
-  ==
+  !!  ::TMP
+  :: %=    yoke
+  ::     code   ~
+  ::     agent
+  ::   :-  %|
+  ::   ?:  ?=(%| -.agent.yoke)
+  ::     p.agent.yoke
+  ::   on-save:p.agent.yoke
+  :: ==
 ::  +take: response
 ::
 ++  take
