@@ -837,7 +837,7 @@
         %+  slub  (with-faces cor+old ~)
         ^-  hoon
         :+  %brcl  !,(*hoon v=+<.cor)
-        :+  %sggr  
+        :+  %sggr
           [%spin %cltr [%sand %t (crip "grow-{<a>}->{<b>}")] ~]
         :+  %tsgl  limb/b
         !,(*hoon ~(grow cor v))
@@ -845,11 +845,11 @@
       ::
       =^  new=vase  nub  (build-fit %mar b)
       =/  arm=?  (has-arm %grab a new)
-      =/  rab 
+      =/  rab
         %-  mule  |.
-        %+  slap  new 
+        %+  slap  new
         ^-  hoon
-        :+  %sggr  
+        :+  %sggr
           [%spin %cltr [%sand %t (crip "grab-{<a>}->{<b>}")] ~]
         tsgl/[limb/a limb/%grab]
       ?:  &(arm ?=(%& -.rab) ?=(^ q.p.rab))
@@ -1578,6 +1578,7 @@
     =/  =desk  p.riff
     =/  =wire  (request-wire %warp-index ship desk index)
     =/  =path  [%question desk (scot %ud index) ~]
+    ~&  >>  [%a %plea ship %c path `riff-any`[%1 riff]]
     (emit duct %pass wire %a %plea ship %c path `riff-any`[%1 riff])
   ::
   ++  send-over-scry
@@ -6320,6 +6321,7 @@
     ?:  ?=(%wris +<.hin)  ~&  %dropping-wris  `..^$
     ?>  ?=(%writ +<.hin)
     :_  ..^$
+    ~&  >>  `(unit rand)`(bind `riot`p.hin rant-to-rand)
     [hen %give %boon `(unit rand)`(bind `riot`p.hin rant-to-rand)]~
   ::
   ?:  ?=([%warp-index @ @ @ ~] tea)
