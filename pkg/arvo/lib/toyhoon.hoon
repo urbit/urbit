@@ -8,11 +8,11 @@
 ::    later, we will have a type that also has synthetic runes.
 ::
 +$  naty
-  $~  [%look [&+1]~]
+  $~  [%noun %noun 0]  ::[%look [&+1]~]
   $^  [naty naty]
   $%  ::  nock operations
       ::
-      [%look =wing]                               ::  %0
+      :: [%look =wing]                               ::  %0
       [%noun =type =noun]                         ::  %1
       [%dttr p=naty q=naty]                       ::  %2
       [%dtwt p=naty]                              ::  %3
@@ -21,7 +21,7 @@
       [%wtcl p=naty q=naty r=naty]                ::  %6
       [%tsgr p=naty q=naty]                       ::  %7
       [%tsls p=naty q=naty]                       ::  %8
-      [%pull =axis =naty]                         ::  %9
+      :: [%pull =axis =naty]                         ::  %9
       [%cnts =wing diff=(list (pair wing naty))]  ::  %10
       [%sggr tag=$@(@ (pair @ naty)) =naty]       ::  %11
     ::
@@ -362,7 +362,7 @@
     =/  r  $(naty +.naty, gol r.g)
     [[%cell -.l -.r] +.l +.r]
   ?-  -.naty
-      %look  !!
+      :: %look  !!
   ::
       %noun  [(nice gol type.naty) %1 noun.naty]
   ::
@@ -395,8 +395,8 @@
     :-  -.pro
     [%8 +.sub +.pro]
   ::
-      %pull
-    !!
+    ::   %pull
+    :: !!
   ::
       %cnts
     =/  [=vein =opal]  (find sut %read wing.naty)
