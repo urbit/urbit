@@ -146,6 +146,12 @@
 ::  utilities
 ::
 |%
+++  host-string
+  |=  [=turf port=(unit @ud)]
+  ^-  @t
+  =+  t=(en-turf:html turf)
+  ?~  port  t
+  (rap 3 t ':' (crip (a-co:co u.port)) ~)
 ::  +combine-octs: combine multiple octs into one
 ::
 ++  combine-octs
@@ -632,14 +638,14 @@
 ::  +build-subdomain-negotiation: render "negotiation script page"  xxtodo description
 ::
 ++  build-subdomain-negotiation
-  |=  [host=turf target-path=@t expire=(unit @t)]
+  |=  [[host=turf port=(unit @ud)] target-path=@t expire=(unit @t)]
   ^-  http-event:http
   =/  sub=@t    (rear host)
   =/  top=turf  (snip host)
   =/  target=@t
     %+  rap  3
     :~  '//'
-        (en-turf:html top)
+        (host-string top port)
         '/~/xxauth/'  sub
         target-path
     ==
@@ -929,7 +935,7 @@
       =/  target-url=@t
         %+  rap  3
         :~  '//'  u.pathowner  '.'
-            (en-turf:html domain.u.inner)  url.request
+            (host-string -.u.inner)  url.request
         ==
       %-  handle-response
       :*  %start
@@ -1086,7 +1092,7 @@
       =;  =http-event:http
         [duct %give %response http-event]~
       %-  build-subdomain-negotiation
-      :+  subdomain.auth-state
+      :+  [subdomain.auth-state port:(need inner)]
         url.request
       %+  bind  old-session.auth-state
       (curr session-cookie-string:authentication ~)
@@ -1230,7 +1236,7 @@
         =/  expire=move
           [duct %pass /xx-auth/(scot %uv tmp-token) %b %wait (add now tmp-token-timeout)]
         =/  redirect-url=tape
-          "//{(trip scope)}.{(trip (en-turf:html domain.u.inner))}/~/xxauth/{(scow %uv tmp-token)}{target-url}"
+          "//{(trip scope)}.{(trip (host-string -.u.inner))}/~/xxauth/{(scow %uv tmp-token)}{target-url}"
         =^  moz=(list move)  state
           %-  handle-response
           [%start [303 ['location' (crip redirect-url)]~] ~ &]
@@ -1740,7 +1746,7 @@
         =/  next=@t
           %+  rap  3
           :~  '//'
-              (en-turf:html domain.u.inner)
+              (host-string -.u.inner)
               '/~/login'
               '?desk='  u.desk.u.inner
               ?:(=(`& with-eauth) '&eauth' '')
@@ -1785,11 +1791,9 @@
         =/  base=(unit @t)
           ?~  inner  ~
           %-  some
-          %+  rap  3
-          :~  ?:(secure 'https://' 'http://')
-              (en-turf:html domain.u.inner)
-              ?~(port.u.inner '' (cat 3 ':' (crip (a-co:co u.port.u.inner))))
-          ==
+          %^  cat  3
+            ?:(secure 'https://' 'http://')
+          (host-string -.u.inner)
         (start:server:eauth u.ship base ?:(=(redirect '') '/' redirect))
       ::
       =.  with-eauth  (bind with-eauth |=(? |))
@@ -1826,7 +1830,7 @@
           ?|  ?=(~ auth.endpoint.auth.state)
               !=(~['localhost'] domain.u.inner)
           ==  ==
-        =/  host=@t  (en-turf:html domain.u.inner)
+        =/  host=@t  (host-string -.u.inner)
         %-  (trace 2 |.("eauth: storing endpoint at {(trip host)}"))
         =/  new-auth=(unit @t)
           `(cat 3 ?:(secure 'https://' 'http://') host)
@@ -1853,7 +1857,7 @@
         ?>  ?=(^ inner)
         %+  rap  3
         :~  '//'
-            (en-turf:html domain.u.inner)  ::TODOxx  helper for including port
+            (host-string -.u.inner)
             '/~/xxauth/'  u.actual-desk
             actual-redirect
         ==
