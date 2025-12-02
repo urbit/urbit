@@ -1578,7 +1578,6 @@
     =/  =desk  p.riff
     =/  =wire  (request-wire %warp-index ship desk index)
     =/  =path  [%question desk (scot %ud index) ~]
-    ~&  >>  [%a %plea ship %c path `riff-any`[%1 riff]]
     (emit duct %pass wire %a %plea ship %c path `riff-any`[%1 riff])
   ::
   ++  send-over-scry
@@ -6321,7 +6320,6 @@
     ?:  ?=(%wris +<.hin)  ~&  %dropping-wris  `..^$
     ?>  ?=(%writ +<.hin)
     :_  ..^$
-    ~&  >>  `(unit rand)`(bind `riot`p.hin rant-to-rand)
     [hen %give %boon `(unit rand)`(bind `riot`p.hin rant-to-rand)]~
   ::
   ?:  ?=([%warp-index @ @ @ ~] tea)
