@@ -57,6 +57,7 @@
       [%bcwt p=(map @ aura)]
       [%hold p=type q=naty]
   ==
++$  vase  (pair type noun)
 ::
 +$  vial  ?(%read %rite %both %free)
 +$  opal
@@ -346,7 +347,7 @@
 ::
 ++  mint
   |=  [sut=type gol=type =naty]
-  ^-  [type nock]
+  ^-  (pair type nock)
   ?^  -.naty
     =/  g
       =|  sog=(set type)
