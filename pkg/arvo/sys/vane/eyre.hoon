@@ -441,9 +441,12 @@
 ::  +login-page: internal page to login to an Urbit
 ::
 ++  login-page
-  |=  [redirect-url=(unit @t) our=@p =identity eauth=(unit ?) failed=?]
+  |=  $:  [target-desk=(unit @t) redirect-url=(unit @t)]
+          [our=@p =identity eauth=(unit ?) failed=?]
+      ==
   ^-  octs
   =+  redirect-str=?~(redirect-url "" (trip u.redirect-url))
+  =+  desk-str=?~(target-desk "" (trip u.target-desk))
   %-  as-octs:mimes:html
   %-  crip
   %-  en-xml:html
@@ -506,6 +509,7 @@
             =maxlength  "27"
             =pattern  "((?:[a-z]\{6}-)\{3}(?:[a-z]\{6}))";
           ;input(type "hidden", name "redirect", value redirect-str);
+          ;input(type "hidden", name "desk", value desk-str);
           ;+  ?.  failed  ;span;
             ;span.failed
               ;svg(xmlns "http://www.w3.org/2000/svg", viewBox "0 0 16 16")
@@ -839,6 +843,8 @@
       ::TODO  should send a 400, but don't want to go through the song & dance
       ::      of putting connection into state. should revisit this once
       ::      request handling has been refactored.
+      ::TODO  should also make all other logic that has host=(unit @t) just be
+      ::      host=@t, or better yet, host=turf
       !!
     ::  parse the hostname from the request, then
     ::  find the domain that we _know_ (.domains.state) that is the
@@ -1311,7 +1317,8 @@
       (request-to-app identity app.action inbound-request.connection)
     ::
         %authentication
-      (handle-request:authentication secure host address [suv identity] request)
+      %-  handle-request:authentication
+      [secure inner address [suv identity] request]
     ::
         %eauth
       (on-request:eauth:authentication [suv identity] request)
@@ -1709,15 +1716,37 @@
     ::  +handle-request: handles an http request for the login page
     ::
     ++  handle-request
-      |=  [secure=? host=(unit @t) =address [session-id=@uv =identity] =request:http]
+      |=  $:  secure=?
+              inner=(unit [[domain=turf port=(unit @ud)] desk=(unit desk)])  ::TODOxx  name
+              =address
+              [session-id=@uv =identity]
+              =request:http
+          ==
       ^-  [(list move) server-state]
       ::  parse the arguments out of request uri
       ::
       =+  request-line=(parse-request-line url.request)
-      =/  redirect    (get-header:http 'redirect' args.request-line)
+      =/  target-desk  (get-header:http 'desk' args.request-line)
+      =/  redirect     (get-header:http 'redirect' args.request-line)
       =/  with-eauth=(unit ?)
         ?:  =(~ eauth-url:eauth)  ~
         `?=(^ (get-header:http 'eauth' args.request-line))
+      ::  all /~/login requests on subdomains must redirect to root,
+      ::  which is the only legitimate place for authentication requests
+      ::
+      ?:  ?=([~ * ^] inner)
+        ::TODOxx  refactor redirects into dedicated arm?
+        %-  handle-response
+        =/  next=@t
+          %+  rap  3
+          :~  '//'
+              (en-turf:html domain.u.inner)
+              '/~/login'
+              '?desk='  u.desk.u.inner
+              ?:(=(`& with-eauth) '&eauth' '')
+              ?^(redirect (cat 3 '&redirect=' u.redirect) '')
+          ==
+        [%start [303 ['location' next]~] data=~ complete=&]
       ::  if we received a simple get: show the login page
       ::
       ::NOTE  we never auto-redirect, to avoid redirect loops with apps that
@@ -1725,47 +1754,53 @@
       ::
       ?:  =('GET' method.request)
         %^  return-static-data-on-duct  200  'text/html'
-        (login-page redirect our identity with-eauth %.n)
+        (login-page [target-desk redirect] our identity with-eauth %.n)
       ::  if we are not a post, return an error
       ::
       ?.  =('POST' method.request)
         %^  return-static-data-on-duct  405  'text/html'
-        (login-page ~ our identity with-eauth %.n)
+        (login-page [~ ~] our identity with-eauth %.n)
       ::  we are a post, and must process the body type as form data
       ::
       ?~  body.request
         %^  return-static-data-on-duct  400  'text/html'
-        (login-page ~ our identity with-eauth %.n)
+        (login-page [~ ~] our identity with-eauth %.n)
       ::
       =/  parsed=(unit (list [key=@t value=@t]))
         (rush q.u.body.request yquy:de-purl:html)
       ?~  parsed
         %^  return-static-data-on-duct  400  'text/html'
-        (login-page ~ our identity with-eauth %.n)
+        (login-page [~ ~] our identity with-eauth %.n)
       ::
-      =/  redirect=(unit @t)  (get-header:http 'redirect' u.parsed)
+      =/  target-desk=(unit @t)  (get-header:http 'desk' u.parsed)
+      =/  redirect=(unit @t)     (get-header:http 'redirect' u.parsed)
       ?^  (get-header:http 'xxtokenflow' u.parsed)
         (handle-token-flow-request [session-id identity] u.parsed)
       ?^  (get-header:http 'eauth' u.parsed)
         ?~  ship=(biff (get-header:http 'name' u.parsed) (cury slaw %p))
           %^  return-static-data-on-duct  400  'text/html'
-          (login-page redirect our identity `& %.n)
+          (login-page [target-desk redirect] our identity `& %.n)
         ::TODO  redirect logic here and elsewhere is ugly
         =/  redirect  (fall redirect '')
         =/  base=(unit @t)
-          ?~  host  ~
-          `(cat 3 ?:(secure 'https://' 'http://') u.host)
+          ?~  inner  ~
+          %-  some
+          %+  rap  3
+          :~  ?:(secure 'https://' 'http://')
+              (en-turf:html domain.u.inner)
+              ?~(port.u.inner '' (cat 3 ':' (crip (a-co:co u.port.u.inner))))
+          ==
         (start:server:eauth u.ship base ?:(=(redirect '') '/' redirect))
       ::
       =.  with-eauth  (bind with-eauth |=(? |))
       ?~  password=(get-header:http 'password' u.parsed)
         %^  return-static-data-on-duct  400  'text/html'
-        (login-page redirect our identity with-eauth %.n)
+        (login-page [target-desk redirect] our identity with-eauth %.n)
       ::  check that the password is correct
       ::
       ?.  =(u.password code)
         %^  return-static-data-on-duct  400  'text/html'
-        (login-page redirect our identity with-eauth %.y)
+        (login-page [target-desk redirect] our identity with-eauth %.y)
       ::  clean up the session they're changing out from
       ::
       =^  moz  state
@@ -1781,19 +1816,20 @@
       =.  connections.state
         %+  ~(jab by connections.state)  duct
         |=  o=outstanding-connection
-        o(session-id session.fex)
+        o(session-id session.fex)  ::TODOxx  doesn't update the identity!
       ::  store the hostname used for this login, later reuse it for eauth
       ::
       =?  endpoint.auth.state
           ::  avoid overwriting public domains with localhost
           ::
-          ?&  ?=(^ host)
+          ?&  ?=(^ inner)
           ?|  ?=(~ auth.endpoint.auth.state)
-              !=('localhost' (fall (rush u.host host-sans-port) ''))
+              !=(~['localhost'] domain.u.inner)
           ==  ==
-        %-  (trace 2 |.("eauth: storing endpoint at {(trip u.host)}"))
+        =/  host=@t  (en-turf:html domain.u.inner)
+        %-  (trace 2 |.("eauth: storing endpoint at {(trip host)}"))
         =/  new-auth=(unit @t)
-          `(cat 3 ?:(secure 'https://' 'http://') u.host)
+          `(cat 3 ?:(secure 'https://' 'http://') host)
         =,  endpoint.auth.state
         :+  user  new-auth
         ::  only update the timestamp if the derived endpoint visibly changed.
@@ -1808,7 +1844,19 @@
       ::      +handle-response does that for us.
       ?~  redirect
         (handle-response %start 204^~ ~ &)
-      =/  actual-redirect  ?:(=(u.redirect '') '/' u.redirect)
+      =/  actual-redirect=@t  ?:(=(u.redirect '') '/' u.redirect)
+      =/  actual-desk=(unit @t)
+        ?~  target-desk  ~
+        ?:  =('' u.target-desk)  ~
+        `u.target-desk
+      =?  actual-redirect  ?=(^ actual-desk)
+        ?>  ?=(^ inner)
+        %+  rap  3
+        :~  '//'
+            (en-turf:html domain.u.inner)  ::TODOxx  helper for including port
+            '/~/xxauth/'  u.actual-desk
+            actual-redirect
+        ==
       (handle-response %start 303^['location' actual-redirect]~ ~ &)
     ::  +handle-token-flow-request
     ::
@@ -2254,7 +2302,7 @@
           =.  connections.state
             %+  ~(jab by connections.state)  duct
             |=  o=outstanding-connection
-            o(session-id sid)
+            o(session-id sid)  ::TODOxx  doesn't update the identity
           =^  moz3  state
             =;  hed  (handle-response %start 303^hed ~ &)
             :~  ['location' last]

@@ -3209,7 +3209,7 @@
     $:  pend=(unit [http=duct keen=time])
         ship=ship
         base=(unit @t)
-        last=@t
+        last=@t  ::TODOxx  optional subdomain
         toke=(unit @uv)
     ==  ==
   ::  +logbook: record of outgoing eauth comms & state
