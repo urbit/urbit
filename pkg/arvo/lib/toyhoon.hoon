@@ -271,7 +271,10 @@
 ++  fire
   |=  [=axis =type var=?(%wet %dry) =naty]
   ^+  type
-  !!
+  ?<  ?=(%wet var)  ::TODO  do inside the type assertion? opal-shaped args mb vestigial
+  ?>  ?=([%core *] type)
+  ?>  (nest pay.type p.type)  ::TODO  add .vet to toggle this
+  [%hold type(p pay.type, var %gold) naty]
 ::
 ++  take
   |=  [sut=type =vein =type]
