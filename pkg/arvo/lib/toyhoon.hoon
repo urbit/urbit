@@ -46,6 +46,9 @@
       ==
   $%  [%atom p=term q=(unit @)]
       [%cell p=type q=type]
+      ::  .p: current payload type
+      ::  .pay: formal payload type
+      ::TODO  rename .cur and .for ?
       [%core p=type var=?(%wet ?(%gold %iron %lead)) pay=type bat=(map term naty)]
       [%face p=term q=type]
       [%bcpt tom=type cel=type]
@@ -252,12 +255,12 @@
     ::
         [%core *]
       =^  zem=(unit (pair axis naty))  p.heg
-        ?~  axe=(~(dig by bat.sut) u.q.heg)  [~ p.heg]
-        ?.  =(0 p.heg)                       [~ (dec p.heg)]
-        [`[u.axe (~(got by bat.sut) u.q.heg)] p.heg]
+        ?~  axe=(look u.q.heg bat.sut)  [~ p.heg]
+        ?.  =(0 p.heg)                  [~ (dec p.heg)]
+        [axe p.heg]
       ?^  zem
         :+  %pale  [`axe ~]
-        [%arm p.u.zem sut ?:(?=(%wet var.sut) %wet %dry) q.u.zem]
+        [%arm (peg 2 p.u.zem) sut ?:(?=(%wet var.sut) %wet %dry) q.u.zem]
       =/  pec=[sam=? con=?]
         ?:  |(?=(%gold var.sut) ?=(%wet var.sut) ?=(%free way))
           [& &]
@@ -433,15 +436,15 @@
   ::
     %brcn  =/  typ  (nice gol [%core sut var.naty sut bat.naty])
            :-  typ
-           =;  bat  [[%1 bat] %0 1]  ::TODO  better layout
+           =;  bat  [[%1 (make-battery bat)] %0 1]
            %-  ~(run by bat.naty)
-           |=(n=^naty ^$(sut typ, naty n))
+           |=(n=^naty +:^$(sut typ, naty n))
   ::
     %brpt  =/  typ  (nice gol [%core sut %wet sut bat.naty])
            :-  typ
-           =;  bat  [[%1 bat] %0 1]  ::TODO  better layout
+           =;  bat  [[%1 (make-battery bat)] %0 1]
            %-  ~(run by bat.naty)
-           |=(n=^naty ^$(sut typ, naty n))
+           |=(n=^naty +:^$(sut typ, naty n))
   ::
       %ktls
     =/  sam  $(naty p.naty, gol %noun)
@@ -468,6 +471,56 @@
            =+  n=$(naty n.naty, sut (take sut vein cell))
            :-  (make-union -.y -.n)
            [%6 [%3 %0 (peg (tend:ut vein) 2)] +.y +.n]
+  ==
+::
+++  slap
+  |=  [sut=vase gol=type =naty]
+  ^-  vase
+  =+  gun=(mint p.sut gol naty)
+  ~|  q.gun
+  [p.gun .*(q.sut q.gun)]
+::
+++  make-battery
+  |=  bat=(map term nock)
+  |-  ^-  noun
+  ?-  bat
+    ~        !!
+    [* ~ ~]  q.n.bat
+    [* * ~]  [q.n.bat $(bat l.bat)]
+    [* ~ *]  [q.n.bat $(bat r.bat)]
+    [* * *]  [q.n.bat $(bat l.bat) $(bat r.bat)]
+  ==
+::
+++  look
+  |=  [cog=term dab=(map term naty)]
+  =+  axe=1
+  |-  ^-  (unit [p=axis q=naty])
+  ?-  dab
+      ~  ~
+  ::
+      [* ~ ~]
+    ?:(=(cog p.n.dab) [~ axe q.n.dab] ~)
+  ::
+      [* ~ *]
+    ?:  =(cog p.n.dab)
+      [~ (peg axe 2) q.n.dab]
+    ?:  (gor cog p.n.dab)
+      ~
+    $(axe (peg axe 3), dab r.dab)
+  ::
+      [* * ~]
+    ?:  =(cog p.n.dab)
+      [~ (peg axe 2) q.n.dab]
+    ?:  (gor cog p.n.dab)
+      $(axe (peg axe 3), dab l.dab)
+    ~
+  ::
+      [* * *]
+    ?:  =(cog p.n.dab)
+      [~ (peg axe 2) q.n.dab]
+    ?:  (gor cog p.n.dab)
+      $(axe (peg axe 6), dab l.dab)
+    $(axe (peg axe 7), dab r.dab)
   ==
 ::  +xxxx: makes a union from two types, if possible
 ::  ?(%foo %bar) <- type union
