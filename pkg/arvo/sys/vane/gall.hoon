@@ -1737,6 +1737,8 @@
           [duct %give %unto %kick ~]
         ::
         ?.  ?=(%fact -.gift)
+          ?:  &(?=(^ duct) ?=([%$ *] i.duct))
+            [duct %give %unto %raw-fact p.cage.gift q.q.cage.gift]~
           [agent-duct %give %unto gift]~
         ::
         =/  ducts=(list duct)  (ap-ducts-from-paths paths.gift ~)
