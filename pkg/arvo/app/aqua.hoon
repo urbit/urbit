@@ -280,6 +280,11 @@
     ?~  effects
       ..abet-pe
     =.  ..abet-pe
+      ?:  ?&  ?=(%unto p.card.i.effects)
+              ?=(%fact -.q.card.i.effects)
+          ==
+        %+  publish-effect  wire.i.effects
+        [%raw-fact ;;(mark +<.q.card.i.effects) noun=+>+.q.card.i.effects]
       =/  sof  ((soft unix-effect) i.effects)
       ?~  sof
         ~?  aqua-debug=&  [who=who %unknown-effect i.effects]
@@ -323,7 +328,7 @@
 ++  abet-aqua
   ^-  (quip card:agent:gall _state)
   ::
-  ::  interecept %request effects to handle azimuth subscription
+  ::  intercept %request effects to handle azimuth subscription
   ::
   =.  this
     %-  emit-cards
@@ -627,6 +632,7 @@
             [/e/http-server/0v1n.2m9vh %live 8.080 `8.445]
             [/a/newt/0v1n.2m9vh %born ~]
             [/d/term/1 %hail ~]
+            :: [/d/term/1 %verb ~]  :: XX uncomment for verbose mode
           ::
             ?:  fake.ae  ~
             :~  =+  [%raw-poke %noun %refresh-rate ~s30]

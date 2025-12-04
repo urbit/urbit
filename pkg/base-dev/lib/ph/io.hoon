@@ -333,6 +333,23 @@
   =/  m  (strand ,~)
   (wait-for-output from "{(scow %p to)} has sunk")
 ::
+++  wait-for-fact
+  |=  [=ship =mark =wire gate=$-([mark noun] ?)]
+  =/  m  (strand ,noun)
+  ^-  form:m
+  ~&  >  "waiting for fact: {<mark>}"
+  |-  ^-  form:m
+  =*  loop  $
+  ;<  [her=^ship =unix-effect]  bind:m  take-unix-effect
+  ?.  =(her ship)
+    loop
+  ?.  ?&  ?=(%raw-fact -.q.unix-effect)
+          =(wire p.unix-effect)
+          =(mark mark.q.unix-effect)
+          (gate mark noun.q.unix-effect)
+      ==
+    loop
+  (pure:m noun.q.unix-effect)
 ::  Send "|hi" and wait for "not responding" message
 ::
 ++  send-hi-not-responding

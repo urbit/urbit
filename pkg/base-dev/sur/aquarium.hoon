@@ -83,5 +83,7 @@
       [%init ~]
       [%request id=@ud request=request:http]
       [%turf p=(list turf)]
+      [%unto =deal:gall]
+      [%raw-fact =mark =noun] :: XX transformed from a %deal
   ==
 --

@@ -1,4 +1,4 @@
-/-  spider
+/-  spider, aquarium
 /+  *ph-io
 /*  pub-agent  %hoon  /tests/app/pub/hoon
 /*  sub-agent  %hoon  /tests/app/sub/hoon
@@ -51,6 +51,24 @@
 :: XX we should scry into ~bud for no entries in the .pit
 ::
 ;<  ~  bind:m  (sleep ~s1)
+::  subscribe of ~dev for %pub gifts
+::
+=/  =aqua-event:aquarium
+  :+  %event  ~dev
+  [/g/aqua/watch/pub %deal [~dev ~dev /] %pub %watch /subs]
+;<  ~      bind:m  (send-events aqua-event ~)
+::  now we are going to give an initial fact and wait for it
+::
+;<  ~  bind:m  (dojo ~dev ":pub send+`(list [path @])`[/hola 45]~")
+=/  gate
+    |*  [typ=mold exp=noun]
+    |=  [=mark val=noun]
+    ~|  [exp val]
+    ?+  mark  %.n
+      %pub-fact  =(exp ;;(typ val))
+    ==
+;<  =noun  bind:m
+  (wait-for-fact ~dev %pub-fact /aqua/watch/pub (gate ,(list [path @]) [/hola 45]~))
 ::
 ;<  ~  bind:m  end
 $(cores t.cores)
