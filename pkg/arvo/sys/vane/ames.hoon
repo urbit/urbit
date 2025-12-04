@@ -125,7 +125,7 @@
 =>  ::  vane IO
     ::
     ::  (note: %tune and %turf unused; left for migration purposes;
-    ::  removing any of these $signs will break any migration prior 
+    ::  removing any of these $signs will break any migration prior
     ::  to ames-state-22)
     |%
     +$  sign
@@ -1819,14 +1819,14 @@
     ::
     +$  fren-state-26-27
       $:  azimuth-state
-          lane=(unit [hop=@ =lane:pact])  
+          lane=(unit [hop=@ =lane:pact])
           =qos
-          corked=(set side)  
-          =ossuary         
+          corked=(set side)
+          =ossuary
           flows=(map side flow-state-26-27)
-          pit=(map path request-state)          
-          =client=chain                          
-          tip=(jug =user=path [duct =ames=path]) 
+          pit=(map path request-state)
+          =client=chain
+          tip=(jug =user=path [duct =ames=path])
           weir=(jug side [tag=term data=*])
       ==
     ::
@@ -1834,9 +1834,9 @@
       $:  closing=?(%.y %.n)
           line=@ud
           $=  snd
-          $:  %outbound 
-              loads=((mop ,@ud mesa-message) lte) 
-              @  @  @ 
+          $:  %outbound
+              loads=((mop ,@ud mesa-message) lte)
+              @  @  @
               acks=((mop ,@ud ack) lte)
           ==
           rcv=[%incoming acked=@ud pending-ack=_`?`%.n nax=(map seq=@ud error)]
@@ -4090,7 +4090,7 @@
           =/  =bone
             ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
           %-  %^  ev-trace  odd.veb  her
-              |.("%flubbing: agent={<agent>} bone={<bone>} {(spud wire)}")
+              |.("%flubbing: agent={<agent>} bone={<bone>}")
           abet:(on-take-flub:peer-core bone agent)
         ::  +on-take-spur: vane ready to process message
         ::
@@ -4789,7 +4789,7 @@
           ++  prune-tip
             |=([=^duct =user=path =ames=path] (on-prune-tip:peer-core +<))
           ::  +halt-flow: mark flow as hallted; will drop incoming packets
-          ::  
+          ::
           ++  halt-flow
             |=  [=ship agent=term =bone]
             =.  halt.peer-state.peer-core
@@ -5273,12 +5273,10 @@
           =.  todos             (mutate todos)
           =.  peers.ames-state  (~(put by peers.ames-state) ship %alien todos)
           ?:  already-pending
-            ~&  already-pending/already-pending
             event-core
           ::
           ?:  =(%pawn (clan:title ship))
             (request-attestation ship)
-          ~&  %ask-keys^ship
           ::  NB: we specifically look for this wire in +public-keys-give in
           ::  Jael.  if you change it here, you must change it there.
           ::
@@ -5525,7 +5523,7 @@
                     +.meat.shut-packet
                   ::  don't print stack trace for /gf $pleas
                   ::
-                  ?:  ?&  =(num-fragments 1) 
+                  ?:  ?&  =(num-fragments 1)
                           =(fragment-num 0)
                           =/  blob=*  (cue (rep packet-size [fragment]~))
                           ?=(^ ;;((soft [%g [%gf ~] %0 ~]) blob))
@@ -8746,7 +8744,6 @@
           ::  through the message-builder core, so when retrieving the key from
           ::  chums.ames-state it's already been updated
           ::
-          ~&  hen/hen
           =.  chums.ames-state  (~(put by chums.ames-state) her %known per)
           =^  moves-peek  ames-state
             co-abet:(co-make-peek:(co-abed:co hen) space her path)
@@ -9241,7 +9238,6 @@
           %-  ~(rep by ints)
           |=  [int=^ints c=_core]
           ?@  int
-            ~&  hen
             %.  (ev-emit:c hen %give %sage her^path gage)
             (ev-tace fin.veb.bug.ames-state |.("give %sage={(spud path)}"))
           %.  (ev-emit:c hen %give %rate her^path ~)
@@ -9693,8 +9689,9 @@
                   %-  %+  ev-tace  odd.veb.bug.ames-state
                       |.("skip {<mess>}; flow is halted flow={<bone>} ")
                   fo-core
-                =+  ;;([%plea =plea] +.gage)
                 =/  is-cork-plea=?
+                  ?:  ?=(%boon mess)  |
+                  =+  ;;  =plea  +>.gage
                   &(?=([%cork ~] payload) ?=([%flow ~] path)):plea
                 ?.  closing.state
                   ?:  is-cork-plea
@@ -10906,7 +10903,6 @@
                   %.  [ship `@ux`spon]
                   ~(al-read-proof al(ames-state ames-state.core) ~[/ames])
                 (sy-emil:core al-moves)
-              ~&  retrieving-keys-again/ship
               %-  sy-emit:core
               [~[//keys] %pass /public-keys %j %public-keys ship ~ ~]
             ::
@@ -10929,7 +10925,13 @@
               ::  XX find the bone for the flow inspecting the duct and checking
               ::  if the flow is halted; add state to .req to track halt?
               ::
-              ?:  ?|  ?=(^ pay.req)
+              ?:  ?&  ?=(^ pay.req)  ::  only pokes can be halted
+                      ::  currently pokes are only associated with one listener
+                      ::  therefore the ~(rep by for.req) is not necessary but we
+                      ::  leave it here for future consideration, asserting only
+                      ::  one listener as of the current implementation
+                      ::
+                      ?>  =(1 ~(wyt by for.req))
                       %-  ~(rep by for.req)
                       |=  [[hen=duct *] found=?(%.y %.n)]
                       ?.  ?=([[%ames %mesa %flow *] *] hen)
@@ -11112,7 +11114,7 @@
             ::
             =.  chums.ames-state.core  (~(del by chums.ames-state.core) ship)
             ::
-            (sy-emil (weld peek-moves flow-moves))
+            (sy-emil:core (weld flow-moves peek-moves))
           ::
           ++  divide-bones
             |=  bones=(set side)
@@ -11781,14 +11783,14 @@
           ?:  =(~ unix-duct)
             %.  co-core
             (slog leaf+"ames: unix-duct pending; will retry %push" ~)
-          ::  vere should ignores any lanes attach to a %page, and use the one 
+          ::  vere should ignores any lanes attach to a %page, and use the one
           ::  it has stored in the pit to avoid breaking symmetric routing
-          ::    (we add the lane here as a hack to avoid having to deal with 
+          ::    (we add the lane here as a hack to avoid having to deal with
           ::     %aqua's lane management)
           ::
-          %-  co-emit 
-          %^  push-pact  ship 
-            [hop=0 %page name u.page next=~] 
+          %-  co-emit
+          %^  push-pact  ship
+            [hop=0 %page name u.page next=~]
           (make-lanes ship lane.sat qos.sat)
         ::
         ++  co-make-mess
@@ -12901,6 +12903,10 @@
           ::
           =|  per=fren-state
           =.  -.per  azimuth-state=+<.u.chum-state
+          ::  if galaxy, transfer lane
+          ::
+          =?  lane.per  =(%czar (clan:title her-pok))
+            `[0 `@ux`her-pok]
           =/  mesa-core  ::  XX temporary core
             ::  XX  don't put the regressed peer again in chums
             ::

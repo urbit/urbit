@@ -4687,7 +4687,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%15                                       ::  vane version
+    $:  ver=%16                                       ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
@@ -5057,9 +5057,14 @@
   ==
 ::
 ++  load
+  ::  latest $raft-* is equivalent to top-level $raft,
+  ::  save for the stubbing out of the cache types.
+  ::  +clear-cache inflates to $raft.
+  ::
   =>  |%
       +$  raft-any
-        $%  [%15 raft-15]
+        $%  [%16 raft-16]
+            [%15 raft-15]
             [%14 raft-14]
             [%13 raft-13]
             [%12 raft-12]
@@ -5070,10 +5075,17 @@
             [%7 raft-7]
             [%6 raft-6]
         ==
+      +$  raft-16  _%*(. *raft fad **, rom *room-16, hoy *(map ship rung-16))
+      +$  room-16  _%*(. *room dos *(map desk dojo-16))
+      +$  rung-16  _%*(. *rung rus *(map desk rede-16))
+      +$  rede-16  _%*(. *rede dom *dome-16)
+      +$  dojo-16  _%*(. *dojo dom *dome-16)
+      +$  dome-16  _%*(. *dome fod **)
+      ::
       +$  raft-15
         $+  raft-15
         $:  rom=room-15
-            hoy=(map ship rung-14)
+            hoy=(map ship rung-15)
             ran=rang
             fad=*
             mon=(map term beam)
@@ -5085,20 +5097,51 @@
             sad=(map ship @da)
             bug=[veb=@ mas=@]
         ==
+      +$  rung-15
+        $:  rus=(map desk rede-15)
+        ==
+      +$  rede-15
+        $:  lim=@da
+            ref=(unit rind-15)
+            qyx=cult-15
+            dom=dome-13
+            per=regs
+            pew=regs
+            fiz=melt
+        ==
       +$  room-15
         $:  hun=duct
             dos=(map desk dojo-15)
         ==
       +$  dojo-15
-        $:  qyx=cult
+        $:  qyx=cult-15
             dom=dome-13
             per=regs
             pew=regs
             fiz=melt
             ese=?
         ==
-      ::  We redefine the latest raft with * for the ford caches.
-      ::  +clear-cache upgrades to +raft
+      +$  rind-15
+        $:  nix=@ud
+            bom=(map @ud update-state)
+            fod=(map duct @ud)
+            haw=(map mood (unit cage-15))
+        ==
+      +$  cult-15  (jug wove-15 duct)
+      +$  wove-15  [for=(unit [=ship ver=@ud]) rove=rove-15]
+      +$  rove-15
+        $%  [%sing =mood]
+            [%next =mood aeon=(unit aeon) cach=cach-15]
+            $:  %mult
+                =mool
+                aeon=(unit aeon)
+                old-cach=(map [=care =path] cach-15)
+                new-cach=(map [=care =path] cach-15)
+            ==
+            [%many track=? =moat lobes=(map path lobe)]
+        ==
+      +$  cach-15  (unit (unit cage-15))
+      +$  cage-15  cage:a235
       ::
       +$  raft-14
         $+  raft-14
@@ -5121,7 +5164,7 @@
       +$  rede-14
         $:  lim=@da
             ref=(unit rind-14)
-            qyx=cult
+            qyx=cult-15
             dom=dome-13
             per=regs
             pew=regs
@@ -5131,7 +5174,7 @@
         $:  nix=@ud
             bom=(map @ud update-state)
             fod=(map duct @ud)
-            haw=(map mood (unit cage))
+            haw=(map mood (unit cage-15))
         ==
       ::
       +$  raft-13
@@ -5153,7 +5196,7 @@
             dos=(map desk dojo-13)
         ==
       +$  dojo-13
-        $:  qyx=cult
+        $:  qyx=cult-15
             dom=dome-13
             per=regs
             pew=regs
@@ -5177,7 +5220,7 @@
       +$  rede-13
         $:  lim=@da
             ref=(unit rind-11)
-            qyx=cult
+            qyx=cult-15
             dom=dome-13
             per=regs
             pew=regs
@@ -5214,7 +5257,7 @@
         ==
       +$  dojo-11
         $+  dojo-11
-        $:  qyx=cult
+        $:  qyx=cult-15
             dom=dome-11
             per=regs
             pew=regs
@@ -5238,7 +5281,7 @@
         $+  rede-11
         $:  lim=@da
             ref=(unit rind-11)
-            qyx=cult
+            qyx=cult-15
             dom=dome-11
             per=regs
             pew=regs
@@ -5249,7 +5292,7 @@
         $:  nix=@ud
             bom=(map @ud update-state-11)
             fod=(map duct @ud)
-            haw=(map mood (unit cage))
+            haw=(map mood (unit cage-15))
         ==
       +$  update-state-11
         $+  update-state-11
@@ -5298,7 +5341,7 @@
             mim=(map path mime)
             fod=*
         ==
-      +$  ankh-10  (axal [p=lobe q=cage])
+      +$  ankh-10  (axal [p=lobe q=cage-15])
       +$  rung-10
         $:  rus=(map desk rede-10)
         ==
@@ -5315,7 +5358,7 @@
         $:  nix=@ud
             bom=(map @ud update-state-10)
             fod=(map duct @ud)
-            haw=(map mood (unit cage))
+            haw=(map mood (unit cage-15))
         ==
       +$  update-state-10
         $:  =duct
@@ -5352,7 +5395,7 @@
             ==
             [%many track=? =moat lobes=(map path lobe)]
         ==
-      +$  cach-10  (unit (unit (each cage lobe)))
+      +$  cach-10  (unit (unit (each cage-15 lobe)))
       +$  raft-9
         $+  raft-9
         $:  rom=room-10
@@ -5486,7 +5529,8 @@
   =?  old  ?=(%12 -.old)  13+(raft-12-to-13 +.old)
   =?  old  ?=(%13 -.old)  14+(raft-13-to-14 +.old)
   =?  old  ?=(%14 -.old)  15+(raft-14-to-15 +.old)
-  ?>  ?=(%15 -.old)
+  =?  old  ?=(%15 -.old)  16+(raft-15-to-16 +.old)
+  ?>  ?=(%16 -.old)
   ..^^$(ruf (clear-cache +.old))
   ::
   ::  We clear the ford cache so we don't have to know how to upgrade
@@ -5494,23 +5538,23 @@
   ::  Also, many of the results would be different if zuse is different.
   ::
   ++  clear-cache
-    |=  raf=raft-15
+    |=  raf=raft-16
     ^-  raft
     %=    raf
         fad  *flow
         dos.rom
       %-  ~(run by dos.rom.raf)
-      |=  doj=dojo-15
+      |=  doj=dojo-16
       ^-  dojo
       doj(fod.dom *flue)
     ::
         hoy
       %-  ~(run by hoy.raf)
-      |=  =rung-14
-      %-  ~(run by rus.rung-14)
-      |=  =rede-14
+      |=  =rung-16
+      %-  ~(run by rus.rung-16)
+      |=  =rede-16
       ^-  rede
-      rede-14(dom dom.rede-14(fod *flue))
+      rede-16(dom dom.rede-16(fod *flue))
     ==
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
   ::
@@ -5604,7 +5648,7 @@
       ^-  dojo-11
       %=    dojo-10
           fiz  *melt
-          qyx  (cult-10-to-cult qyx.dojo-10)
+          qyx  (cult-10-to-cult-15 qyx.dojo-10)
           dom
         :*  let.dom.dojo-10
             hit.dom.dojo-10
@@ -5624,7 +5668,7 @@
       ^-  rede-11
       %=    rede-10
           fiz     *melt
-          qyx     (cult-10-to-cult qyx.rede-10)
+          qyx     (cult-10-to-cult-15 qyx.rede-10)
           dom
         :*  let.dom.rede-10
             hit.dom.rede-10
@@ -5678,12 +5722,12 @@
       ==
     ==
     ::
-    ++  cult-10-to-cult
+    ++  cult-10-to-cult-15
       |=  qyx=cult-10
-      ^-  cult
+      ^-  cult-15
       =/  qux=(list [=wove-10 ducts=(set duct)])  ~(tap by qyx)
       %-  malt
-      |-  ^-  (list [wove (set duct)])
+      |-  ^-  (list [wove-15 (set duct)])
       ?~  qux
         ~
       :_  $(qux t.qux)
@@ -5694,20 +5738,20 @@
             %many  rove-10.wove-10.i.qux
             %next
           %=  rove-10.wove-10.i.qux
-            cach-10  (cach-10-to-cach cach-10.rove-10.wove-10.i.qux)
+            cach-10  (cach-10-to-cach-15 cach-10.rove-10.wove-10.i.qux)
           ==
         ::
             %mult
           %=  rove-10.wove-10.i.qux
-            old-cach  (caches-10-to-caches old-cach.rove-10.wove-10.i.qux)
-            new-cach  (caches-10-to-caches new-cach.rove-10.wove-10.i.qux)
+            old-cach  (caches-10-to-caches-15 old-cach.rove-10.wove-10.i.qux)
+            new-cach  (caches-10-to-caches-15 new-cach.rove-10.wove-10.i.qux)
           ==
         ==
       ==
     ::
-    ++  cach-10-to-cach
+    ++  cach-10-to-cach-15
       |=  =cach-10
-      ^-  cach
+      ^-  cach-15
       ?~  cach-10
         ~
       ?~  u.cach-10
@@ -5717,10 +5761,10 @@
         %|  ~
       ==
     ::
-    ++  caches-10-to-caches
+    ++  caches-10-to-caches-15
       |=  caches-10=(map [=care =path] cach-10)
-      ^-  (map [=care =path] cach)
-      (~(run by caches-10) cach-10-to-cach)
+      ^-  (map [=care =path] cach-15)
+      (~(run by caches-10) cach-10-to-cach-15)
     --
   ::  +raft-11-to-12: add bug
   ::
@@ -5809,6 +5853,54 @@
       |=  d=dojo-13
       d(fiz [fiz.d ese=%.y])
     ==
+  ::  +raft-15-to-16: update type of type
+  ::
+  ++  raft-15-to-16
+    |=  raf=raft-15
+    |^  ^-  raft-16
+        %=  raf
+            dos.rom
+          %-  ~(run by dos.rom.raf)
+          |=  d=dojo-15
+          d(qyx (cult-15-to-cult qyx.d))
+        ::
+            hoy
+          %-  ~(run by hoy.raf)
+          |=  r=rung-15
+          %-  ~(run by rus.r)
+          |=  r=rede-15
+          r(ref (bind ref.r rind-15-to-rind), qyx (cult-15-to-cult qyx.r))
+        ==
+    ::
+    ++  cult-15-to-cult
+      |=  c=cult-15
+      ^-  cult
+      %-  ~(gas by *cult)
+      %+  turn  ~(tap by c)
+      |=  [w=wove-15 s=(set duct)]
+      ^-  [wove (set duct)]
+      [w(rove (rove-15-to-rove rove.w)) s]
+    ::
+    ++  rove-15-to-rove
+      |=  r=rove-15
+      ?+  -.r  r
+        %next  r(cach (cach-15-to-cach cach.r))
+        %mult  %=  r
+                 old-cach  (~(run by old-cach.r) cach-15-to-cach)
+                 new-cach  (~(run by new-cach.r) cach-15-to-cach)
+               ==
+      ==
+    ::
+    ++  rind-15-to-rind
+      |=  r=rind-15
+      ^-  rind
+      r(haw (~(run by haw.r) (curr bind next-cage:a235)))
+    ::
+    ++  cach-15-to-cach
+      |=  c=cach-15
+      ?.  ?=([~ ~ *] c)  c
+      ``(next-cage:a235 u.u.c)
+    --
   --
 ::
 ++  scry                                              ::  inspect
@@ -6014,7 +6106,7 @@
   =/  flo  ~
   =+  `flow`flo
   :-  ver
-  ^-  raft-15:load
+  ^-  raft-16:load
   %=    ruf
       fad  flo
       dos.rom
