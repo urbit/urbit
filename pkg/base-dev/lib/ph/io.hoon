@@ -343,13 +343,13 @@
   ;<  [her=^ship =unix-effect]  bind:m  take-unix-effect
   ?.  =(her ship)
     loop
-  ?.  ?&  ?=(%raw-fact -.q.unix-effect)
-          =(wire p.unix-effect)
-          =(mark mark.q.unix-effect)
-          (gate mark noun.q.unix-effect)
+  ?.  ?&  =(wire p.unix-effect)
+          ?=([%unto %raw-fact *] q.unix-effect)
+          =(mark mark.unto.q.unix-effect)
+          (gate mark noun.unto.q.unix-effect)
       ==
     loop
-  (pure:m noun.q.unix-effect)
+  (pure:m noun.unto.q.unix-effect)
 ::  Send "|hi" and wait for "not responding" message
 ::
 ++  send-hi-not-responding

@@ -280,11 +280,12 @@
     ?~  effects
       ..abet-pe
     =.  ..abet-pe
-      ?:  ?&  ?=(%unto p.card.i.effects)
-              ?=(%fact -.q.card.i.effects)
-          ==
+      ?:  ?=([%unto %fact *] card.i.effects)
         %+  publish-effect  wire.i.effects
-        [%raw-fact ;;(mark +<.q.card.i.effects) noun=+>+.q.card.i.effects]
+        %=    card.i.effects
+            q
+          [%raw-fact ;;(mark +<.q.card.i.effects) noun=+>+.q.card.i.effects]
+        ==
       =/  sof  ((soft unix-effect) i.effects)
       ?~  sof
         ~?  aqua-debug=&  [who=who %unknown-effect i.effects]

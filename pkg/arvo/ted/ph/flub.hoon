@@ -61,12 +61,12 @@
 ::
 ;<  ~  bind:m  (dojo ~dev ":pub send+`(list [path @])`[/hola 45]~")
 =/  gate
-    |*  [typ=mold exp=noun]
-    |=  [=mark val=noun]
-    ~|  [exp val]
-    ?+  mark  %.n
-      %pub-fact  =(exp ;;(typ val))
-    ==
+  |*  [typ=mold exp=noun]
+  |=  [=mark val=noun]
+  ~|  [exp val]
+  ?+  mark  %.n
+    %pub-fact  =(exp ;;(typ val))
+  ==
 ;<  =noun  bind:m
   (wait-for-fact ~dev %pub-fact /aqua/watch/pub (gate ,(list [path @]) [/hola 45]~))
 ::
