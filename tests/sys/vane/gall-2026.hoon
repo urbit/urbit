@@ -1,8 +1,38 @@
-/+  *test
+/+  test
 /=  gall-raw   /gall  ::  not the real gall!
 =/  gall       (gall-raw ~dev)  ::  intentionally shadow for new types
 ::
 |%
++$  state         [g=_make-gall now=@da eny=@uvJ =roof]
+++  default-duct  ~[//test]
+::
+++  form-raw    |$  [a]  $-(state (output-raw a))
+++  output-raw  |$  [a]  (each [out=a =state] tang)
+++  mare
+  |*  a=mold
+  |%
+  ++  form    (form-raw a)
+  ++  output  (output-raw a)
+  ++  pure    |=(arg=a `form`|=(=state [%& arg state]))
+  ++  bind
+    |*  b=mold
+    |=  [m-b=(form-raw b) fun=$-(b form)]
+    |=  =state
+    =+  r=(m-b state)
+    ?-  -.r
+      %&  ((fun out.p.r) state.p.r)
+      %|  [%| p.r]
+    ==
+  --
+++  m  (mare ,~)
+++  eval-mare
+  |=  f=form:m
+  ^-  tang
+  =/  res  (f make-gall ~2026.1.1 *@uvJ mock-roof)
+  ?:  ?=(%& -.res)  ~
+  ?^  p.res  p.res
+  ~['+eval-mare failure with empty trace']
+::
 ++  mock-agent
   ^-  agent:gall
   |_  =bowl:gall
@@ -34,142 +64,184 @@
   =+  [out g]=(call:core ~[/sysduct] ~ %init ~)
   g
 ::
-++  ga
-  =/  =duct     [/test]~
-  =/  now=@da   ~2026.1.1
-  =/  eny=@uvJ  *@uvJ
-  |_  g=_make-gall
-  +|  %reads
-  ++  inner
-    (g now eny mock-roof)
-  ::
-  ++  scry
-    |*  [=mold care=term =desk =path]
-    !<(mold q:(need (need (scry:inner `~ / care [our.g desk da+now.g] path))))
-  ::
-  ++  egg
-    |=  =dude:gall
-    ^-  egg:gall
-    =+  e=(scry egg-any:gall %v dude /$)
-    ?>(?=(%16 -.e) +.e)
-  ::
-  ++  live-egg
-    |=  =dude:gall
-    ^-  _+:*$>(%live egg:gall)
-    =+  e=(egg dude)
-    ?>(?=(%live -.e) +.e)
-  ::
-  +|  %writes
-  ::
-  ++  call
-    |=  =task:gall
-    (call:inner duct ~ task)
-  ::
-  ++  load
-    |=  [=dude:gall =agent:gall]
-    ^-  (quip move:gall _g)
-    (call %load [dude [our.g %desk da+now.g] agent]~)
-  ::
-  ++  deal
-    |=  [=dude:gall =deal:gall]
-    ^-  (quip move:gall _g)
-    (call %deal [our.g our.g /] dude deal)
-  ::
-  ++  take
-    |=  [=wire sign=sign-arvo]
-    ^-  (quip move:gall _g)
-    (take:inner wire duct ~ sign)
-  --
+::
+++  do
+  |=  f=$-(_*g:*state (quip move:gall _g:*state))
+  |=  state
+  =*  state  +<
+  =/  m  (mare (list move:gall))
+  ^-  output:m
+  =^  moz=(list move:gall)  g  (f (g now eny roof))
+  [%& moz state]
+::
+++  do-call
+  |=  [duct=?(~ duct) =task:gall]
+  =?  duct  =(~ duct)  default-duct
+  %-  do
+  |=  g=_(g:*state)
+  (call:g duct ~ task)
+  :: |=  state
+  :: =*  state  +<
+  :: =/  m  (mare (list move:gall))
+  :: ^-  output:m
+  :: =^  moz=(list move:gall)  g
+  ::   (call:(g now eny roof) duct ~ task)
+  :: [%& moz state]
+::
+++  do-load
+  |=  [=dude:gall =agent:gall]
+  %-  do
+  |=  g=_(g:*state)
+  (call:g default-duct ~ %load [dude [our.g %desk da+now.g] agent]~)
+::
+++  do-deal
+  |=  [=dude:gall =deal:gall]
+  %-  do
+  |=  g=_(g:*state)
+  (call:g default-duct ~ %deal [our.g our.g /] dude deal)
+::
+++  do-take
+  |=  [[=wire =duct] =sign-arvo:gall]  ::REVIEW  default duct awkard?
+  %-  do
+  |=  g=_(g:*state)
+  (take:g wire duct ~ sign-arvo)
+::
+++  get-scry
+  |*  [=mold care=term =desk =path]
+  =/  m  (mare mold)
+  ^-  form:m
+  |=  =state
+  =-  [%& - state]  ::  %-  pure:m
+  !<  mold
+  =<  q  %-  need  %-  need
+  %-  scry:(g.state +.state)
+  [`~ / care [our.g.state desk da+now.g.state] path]
+::
+++  get-our
+  |=  =state
+  [%& our.g.state state]
+::
+++  get-egg
+  |=  =dude:gall
+  =/  m  (mare egg:gall)
+  ^-  form:m
+  ;<  e=egg-any:gall  bind:m  (get-scry egg-any:gall %v dude /$)
+  (pure:m ?>(?=(%16 -.e) +.e))
+::
+++  get-live-egg
+  |=  =dude:gall
+  =/  m  (mare _+:*$>(%live egg:gall))
+  ^-  form:m
+  ;<  e=egg:gall  bind:m  (get-egg dude)
+  (pure:m ?>(?=(%live -.e) +.e))
+::
+::  expectations
+::
+++  ex-equal
+  |=  [actual=vase expected=vase]  ::NOTE  reverse order from /lib/test
+  =/  m  (mare ,~)
+  ^-  form:m
+  |=  s=state
+  =/  =tang  (expect-eq:test expected actual)
+  ?~(tang &+[~ s] |+tang)
+::
+++  ex-resources
+  |=  [=dude:gall rez=(list arvo-resource:gall)]
+  =/  m  (mare ,~)
+  ::NOTE  if only ;<  let us specify just a face...
+  ;<  e=_+:*$>(%live egg:gall)  bind:m  (get-live-egg dude)
+  (ex-equal !>(resources.e) !>((~(gas in *(set arvo-resource:gall)) rez)))
+::
+++  ex-moves
+  |=  [moz=(list move:gall) exes=(list $-(move:gall tang))]
+  =/  m  (mare ,~)
+  ^-  form:m
+  |=  s=state
+  =;  =tang
+    ?~(tang &+[~ s] |+tang)
+  |-  ^-  tang
+  ?~  exes
+    ?~  moz
+      ~
+    ['got more moves than expected' >moz< ~]
+  ?~  moz
+    ['expected more moves than got' ~]
+  %+  weld
+    (i.exes i.moz)
+  $(exes t.exes, moz t.moz)
+::
+++  ex-move
+  |=  mow=move:gall
+  |=  mov=move:gall
+  (expect-eq:test !>(mow) !>(mov))
 ::
 ::  setup
 ::
-++  setup-agent
-  =/  g  make-gall
-  =^  moz=(list move:gall)  g
-    (~(load ga g) %mock mock-agent)
-  ?>  =(& (~(scry ga g) ? %u %mock /$))
-  g
-::
-++  make-poke
+++  mock-card
   |=  =card:agent:gall
-  ^-  task:agent:gall
-  [%poke %test-card !>(card)]
+  (do-deal %mock %poke %test-card !>(card))
 ::
-++  set-timer
-  |=  g=_setup-agent
-  ^-  [tang _g]
-  =/  old-e  (~(live-egg ga g) %mock)
-  =^  moz=(list move:gall)  g
-    =/  =card:agent:gall
-      [%pass /agent/wire %arvo %behn %wait ~2026.2.2]
-    (~(deal ga g) %mock (make-poke card))
-  :_  g
-  ::
-  =/  ex-resource=arvo-resource:gall
-    [/agent/wire %behn %wait ~2026.2.2]
-  =/  e  (~(live-egg ga g) %mock)
-  =/  gall-wire=wire
-    /use/mock/[run-nonce.e]/~dev/[(crip ~(rend co %blob ~2026.2.2))]/agent/wire
-  ;:  weld
-    %+  expect-eq
-      !>  ^-  (list move:gall)
-      :~  [duct:ga %give %unto %poke-ack ~]
-          [~[/sysduct] %pass gall-wire `note-arvo`[%b %wait ~2026.2.2]]
-      ==
-    !>(moz)
-  ::
-    %+  expect-eq
-      !>((~(gas by *(set arvo-resource:gall)) ex-resource ~))  ::TODO  bad
-    !>(resources.e)
-  ==
-::
-++  open-lick-socket
-  |=  [g=_setup-agent =name:lick]
-  ^-  [tang _g]
-  =/  old-e  (~(live-egg ga g) %mock)
-  =^  moz=(list move:gall)  g
-    =/  =card:agent:gall
-      [%pass /agent/wire %arvo %lick %spin name]
-    (~(deal ga g) %mock (make-poke card))
-  :_  g
-  ::
-  =/  ex-resource=arvo-resource:gall
-    [/agent/wire %lick %spin name]
-  =/  e  (~(live-egg ga g) %mock)
-  =/  gall-wire=wire
-    /use/mock/[run-nonce.e]/~dev//agent/wire
-  ;:  weld
-    %+  expect-eq
-      !>  ^-  (list move:gall)
-      :~  [duct:ga %give %unto %poke-ack ~]
-          [~[/sysduct] %pass gall-wire `note-arvo`[%l %spin [%mock name]]]
-      ==
-    !>(moz)
-  ::
-    %+  expect-eq
-      !>((~(gas by *(set arvo-resource:gall)) ex-resource ~))  ::TODO  bad
-    !>(resources.e)
-  ==
+++  use-wire
+  |=  [=dude:gall =wire]
+  =/  m  (mare ,^wire)
+  ;<  o=ship  bind:m  get-our
+  ;<  e=_+:*$>(%live egg:gall)  bind:m  (get-live-egg dude)
+  (pure:m %use [dude] [run-nonce:e] (scot %p o) wire)
 ::
 ::  tests
 ::
 ++  test-timer-tracking
-  =/  g  setup-agent
-  =^  fail  g  (set-timer g)
-  ?^  fail  fail
+  %-  eval-mare
+  ;<  *  bind:m  (do-load %mock mock-agent)
+  ;<  moz=(list move:gall)  bind:m
+    (mock-card %pass /agent/wire %arvo %behn %wait ~2026.2.2)
+  ;<  gall-wire=wire        bind:m
+    (use-wire %mock /[(crip ~(rend co %blob ~2026.2.2))]/agent/wire)
+  ;<  ~  bind:m
+    %+  ex-moves  moz
+    :~  (ex-move default-duct %give %unto %poke-ack ~)
+        (ex-move ~[/sysduct] %pass gall-wire [%b %wait ~2026.2.2])
+    ==
+  ;<  ~  bind:m
+    %+  ex-resources  %mock
+    :~  [/agent/wire %behn %wait ~2026.2.2]
+    ==
   ::
-  =/  gall-wire=wire  ::TODO  from +set-timer
-    /use/mock/[run-nonce:(~(live-egg ga g) %mock)]/~dev/[(crip ~(rend co %blob ~2026.2.2))]/agent/wire
-  =^  moz=(list move:gall)  g
-    (~(take ga g) gall-wire %behn %wake ~)
-  =/  e  (~(live-egg ga g) %mock)
-  ;:  weld
-    (expect-eq !>(~) !>(moz))
-    (expect-eq !>(~) !>(resources.e))
-  ==
+  ;<  moz=(list move:gall)  bind:m
+    (do-take [gall-wire default-duct] %behn %wake ~)
+  ::TODO  check that +on-arvo got called?
+  ;<  e=_+:*$>(%live egg:gall)  bind:m  (get-live-egg %mock)
+  (ex-resources %mock ~)
 ::
-++  test-lick-tracking
-  =/  g  setup-agent
-  =^  fail  g  (open-lick-socket g /mysocket)
-  fail
+++  test-timer-cancellation
+  %-  eval-mare
+  ;<  *  bind:m  (do-load %mock mock-agent)
+  ;<  *  bind:m
+    (mock-card %pass /agent/wire %arvo %behn %wait ~2026.2.2)
+  ;<  moz=(list move:gall)  bind:m
+    (mock-card %pass /agent/wire %arvo %behn %rest ~2026.2.2)
+  ;<  gall-wire=wire        bind:m
+    (use-wire %mock /[(crip ~(rend co %blob ~2026.2.2))]/agent/wire)
+  ;<  ~  bind:m
+    %+  ex-moves  moz
+    :~  (ex-move default-duct %give %unto %poke-ack ~)
+        (ex-move ~[/sysduct] %pass gall-wire [%b %rest ~2026.2.2])
+    ==
+  (ex-resources %mock ~)
+::
+++  test-lick-socket
+  %-  eval-mare
+  ;<  *  bind:m  (do-load %mock mock-agent)
+  ;<  moz=(list move:gall)  bind:m
+    (mock-card %pass /agent/wire %arvo %lick %spin /mysocket)
+  ;<  gall-wire=wire        bind:m
+    (use-wire %mock //agent/wire)
+  ;<  ~  bind:m
+    %+  ex-moves  moz
+    :~  (ex-move default-duct %give %unto %poke-ack ~)
+        (ex-move ~[/sysduct] %pass gall-wire [%l %spin [%mock /mysocket]])
+    ==
+  %+  ex-resources  %mock
+  :~  [/agent/wire %lick %spin /mysocket]
+  ==
 --
