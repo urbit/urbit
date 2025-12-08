@@ -100,7 +100,8 @@
 ::
 +$  arvo-resource
   $:  =wire
-  $%  [%behn %wait =time]                       ::  1 gift, end
+  $%  ::REVIEW  what if this in place of .ken? [%ames %keen =spar:ames]
+      [%behn %wait =time]                       ::  1 gift, end
       :: [%clay %warp =ship =desk]                 ::  1+ gifts, could sometimes know end?
       :: [%eyre ?(%connect %serve) =binding:eyre]  ::  1 gift, know end mb
       :: [%eyre %set-response url=@t]              ::  0 gifts
@@ -110,11 +111,25 @@
   ==  ==
 ::
 +$  task-user-v1
-  $%  [%behn %wait =time]
+  $%  [%ames %keen secret=? =spar:ames]
+      [%ames %yawn =spar:ames]
+    ::
+      ::NOTE  not actually into %ames, just gall-side namespace management
+      [%ames %grow =spur =page]
+      [%ames %tomb =case =spur]
+      [%ames %cull =case =spur]
+      [%ames %tend =coop =path =page]
+      [%ames %germ =coop]
+      [%ames %snip =coop]
+    ::
+      [%behn %wait =time]
       [%behn %rest =time]
+    ::
       :: [%clay %read id=@ =ship =desk read=(unit $<(%many rave:clay))]
+    ::
       [%iris %request =request:http =outbound-config:iris]
       [%iris %cancel-request ~]
+    ::
       [%lick %spin =name:lick]
       [%lick %shut =name:lick]
       [%lick %spit =name:lick =mark =noun]
@@ -123,7 +138,8 @@
   ==
 ::
 +$  gift-user-v1
-  $%  [%behn %wake =time]  ::REVIEW
+  $%  [%ames %sage =sage:mess:ames]
+      [%behn %wake =time]  ::REVIEW
       :: [%clay %read =riot:clay]
       [%iris %http-response =client-response:iris]
       [%lick %soak =name:lick =mark =noun]
@@ -1165,6 +1181,7 @@
         %-  (slog leaf+"gall: {<dap>} dozing, dropping {<+<.sign-arvo>}" ~)
         mo-core
       =/  app
+        ::  .ship: ship.attributing.agent-routes from call-time
         =/  =ship  (slav %p i.t.t.wire)
         =/  =routes  [disclosing=~ attributing=[ship /[-.sign-arvo]]]
         (ap-abed:ap dap routes)
@@ -1619,13 +1636,14 @@
         %+  trace  odd.veb.bug.state
         [leaf+"brood request {<pole>} invalid, dropping"]~
       =.  pen.yoke  (~(put ju pen.yoke) [ship pole] wire)
+      ::NOTE  requests the key even if a request is already in-flight, ames de-dupes
       =/  =fine-request  [%0 rest.pole]
       =/  =plea:ames     [%g /gk/[app.pole] fine-request]
       =/  out=^wire
         (welp /key/[agent-name]/[run-nonce.yoke]/bod/(scot %p ship) pole)
       (ap-move [hen %pass out %a %plea ship plea]~)
     ::
-    ++  ap-take-brood  ::TODO  reevaluate wrt new userspace api
+    ++  ap-take-brood
       |=  [=wire syn=sign-arvo]
       ^+  ap-core
       ~|  ap-take-brood/wire
@@ -1639,11 +1657,17 @@
         ?~  wis
           =.  pen.yoke  (~(del by pen.yoke) [ship t.wire])
           ap-core
+        ::  if we are not given a key, tell the agent "no result" immediately
+        ::
         ?~  bod.bud
           =.  ap-core  (ap-generic-take ~ i.wis %ames %sage [ship t.wire] ~)
           $(wis t.wis)
-        =.  ap-core
-          (ap-pass i.wis %arvo %syscall %a %keen `[idx key]:hutch.u.bod.bud ship t.wire)
+        ::  now that we have the key, request the data
+        ::NOTE  we don't store the key, accounting for rekeys etc
+        ::NOTE  no de/multiplexing, one %keen per interested wire, ames de-dupes
+        ::
+        =.  ken.yoke  (~(put ju ken.yoke) [ship t.wire] i.wis)
+        =.  ap-core   (ap-pass i.wis %jump %a %keen `[idx key]:hutch.u.bod.bud ship t.wire)
         $(wis t.wis)
       ::
           [%ames %done *]
@@ -1697,7 +1721,12 @@
       |=  [=spar:ames wyz=(set wire)]
       %+  turn  ~(tap in wyz)
       |=  =wire
-      [%pass wire %arvo %syscall %a %yawn spar]  ::REVIEW  lol
+      ::NOTE  syscall because we don't want any card-processing logic to update
+      ::      .ken or other state to reflect this action. gall will revivify
+      ::      the keen when the agent comes back alive.
+      ::TODO  that is probably bad/wrong, don't want any signs to come into the
+      ::      agent at all
+      [%pass wire %arvo %syscall %a %yawn spar]
     ::
     ++  ap-idle
       ^+  ap-core
@@ -1739,7 +1768,14 @@
       ?:  secret
         (ap-request-brood wire spar)
       =.  ken.yoke  (~(put ju ken.yoke) spar wire)
-      (ap-pass wire %arvo %syscall %a %keen ~ spar)
+      (ap-pass wire %jump %a %keen ~ spar)
+    ::
+    ++  ap-yawn
+      |=  [=wire =spar:ames]
+      ^+  ap-core
+      =.  pen.yoke  (~(del ju pen.yoke) spar wire)
+      =.  ken.yoke  (~(del ju ken.yoke) spar wire)
+      (ap-pass wire %jump %a %yawn spar)
     ::  +ap-tend: bind path in namespace, encrypted
     ::
     ++  ap-tend
@@ -1864,11 +1900,14 @@
     ::    We accept %huck to "fake" being a message to a ship but
     ::    actually send it to a vane.
     ::
+    ::    "after the remote scry handling, but before other card transforms"
+    ::
     +$  carp  $+  carp  (wind neet gift:agent)
     +$  neet  $+  neet
-      $%  note:agent
-          [%agent [=ship name=term] task=[%raw-poke =mark =noun]]
-          [%huck [=ship name=term] =note-arvo]
+      $%  [%agent [=ship name=term] task=$%(task:agent [%raw-poke =mark =noun])]
+          [%arvo $<(%ames task-user-v1)]  ::  remote scry already processed
+          [%huck [=ship name=term] note-arvo=[%b %huck sign-arvo=[%gall %unto %kick ~]]]
+          [%jump =note-arvo]  ::  "out" for doing sys stuff post-post-processing on agent behalf
       ==
     ::
     ++  ap-from-internal
@@ -1942,7 +1981,9 @@
           ?-  -.neet
             %agent  [%out (scot %p ship.neet) name.neet wire]
             %huck   [%out (scot %p ship.neet) name.neet wire]
-            %arvo   :+  (scot %p ship.attributing.agent-routes)  ::REVIEW  mb change?
+            %jump   [(scot %p ship.attributing.agent-routes) wire]  ::  gall doing something
+            %arvo   ::TODO  need to disambiguate syscalls
+                    :+  (scot %p ship.attributing.agent-routes)  ::REVIEW  mb change?
                       ::  pack identifying resource id details into the wire
                       ::
                       =;  deet=(unit *)
@@ -1957,6 +1998,7 @@
           =/  prov=path  /gall/[agent-name]
           ?-  -.neet
             %huck   note-arvo.neet
+            %jump   note-arvo.neet
             %agent  [%g %deal [our ship.neet prov] [name task]:neet]
           ::
               %arvo
@@ -2110,7 +2152,7 @@
       =/  msg  "%{(trip agent-name)}: ".
                "peek failed tube from {(trip have)} to {(trip want)}"
       ((slog leaf+msg ~) ~)
-    ::  +ap-move: send move
+    ::  +ap-move: send move directly
     ::
     ++  ap-move
       |=  =(list move)
@@ -2120,7 +2162,7 @@
     ++  ap-give
       |=  =gift:agent  ::TODO  make like +ap-pass if ever called with other than %kick
       (ap-move (ap-from-internal %give gift))
-    ::  +ap-pass: request action.
+    ::  +ap-pass: request action as if the agent did it
     ::
     ::NOTE  because this is only called inside of gall, with in-line defined
     ::      neets, we want that to be type-checked even though the agent api
@@ -2172,8 +2214,8 @@
         %-  zing
         %+  turn  ~(tap by `(jug spar:ames wire)`ken.yoke)
         |=  [=spar:ames wyz=(set wire)]
-        ::TODO  make typed once we have full $user-task-v1
-        (turn ~(tap in wyz) |=(=wire [%pass wire %arvo %syscall %a %keen ~ spar]))
+        ::TODO  .ken needs to have [secret=? spar:ames] key so we can do this correctly
+        (turn ~(tap in wyz) |=(=wire [%pass wire %arvo %ames %keen secret=| spar]))
       =^  error  ap-core
         (ap-install(agent.yoke &+agent) `old-state)
       ?~  error
@@ -2227,11 +2269,13 @@
     ::
     ++  ap-generic-take
       ~/  %ap-generic-take
+      ::TODO  needs to take syscall=? so we can give appropriate sign/gift
       |=  [deets=* =wire =sign-arvo]
       ^+  ap-core
       ~>  %spin.[(crip "on-arvo/{<agent-name>}")]
       =/  gift=gift-user-v1
         ?+  sign-arvo  [%syscall kelvin=zuse sign-arvo]
+          [%ames %sage *]           sign-arvo
           [%behn %wake *]           [%behn %wake ;;(time deets)]
           [%iris %http-response *]  sign-arvo
           [%lick %soak *]           ~|  [%gall-lick-bad-name name.sign-arvo]
@@ -2239,11 +2283,11 @@
                                     sign-arvo(name (tail name.sign-arvo))
         ==
       =.  resources.yoke  (ap-handle-resource-gift wire gift)
+      =?  ken.yoke   ?=([%ames %sage *] sign-arvo)
+        (~(del ju ken.yoke) p.sage.sign-arvo wire)
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
         (on-arvo:ap-agent-core wire gift)
-      =?  ken.yoke   ?=([%ames %sage *] sign-arvo)  ::REVIEW  should be done before +on-arvo
-        (~(del ju ken.yoke) p.sage.sign-arvo wire)
       ?^  maybe-tang
         (ap-error %arvo-response u.maybe-tang)
       ap-core
@@ -2473,7 +2517,7 @@
         ::  we take care to include the nonce in the "kernel-facing" wire
         ::
         (ap-pass (ap-nonce-wire sub-wire dock) %agent dock %leave ~)
-      (ap-pass sub-wire %huck dock %b %huck `sign-arvo`[%gall %unto %kick ~])
+      (ap-pass sub-wire %huck dock %b %huck [%gall %unto %kick ~])
     ::  +ap-doff: kill old-style outgoing subscriptions
     ::
     ++  ap-doff
@@ -2612,13 +2656,14 @@
         `ap-core
       ::
       =.  agent.yoke  &++.p.result
-      =^  fex  ap-core  (ap-handle-sky -.p.result)
-      ::TODO  call on moves instead?
-      ::      or roll into +ap-handle-resources?
-      =.  ken.yoke         (ap-handle-ken fex)
       =.  resources.yoke   (ap-handle-resources -.p.result)
-      =/  moves            (zing (turn fex ap-from-internal))
-      =.  bitt.yoke        (ap-handle-kicks moves)
+      ::
+      =^  fex  ap-core  (ap-handle-sky -.p.result)
+      =/  moves         (zing (turn fex ap-from-internal))
+      ::TODO  why +ap-handle-kicks here, on .moves? those only result from
+      ::      formal %kick already present in the -.p.result cards
+      ::      same for +ap-handle-peers, none of the transforms above add/remove watches or leaves
+      =.  bitt.yoke     (ap-handle-kicks moves)
       (ap-handle-peers moves)
     ::  +ap-handle-resources: track resources created/used by the agent
     ::
@@ -2634,6 +2679,8 @@
         $(caz t.caz, resources.yoke (~(del in resources.yoke) p.i.caz res))
       =*  task  +.q.i.caz
       ?+  +.q.i.caz  ~
+        :: [%ames %keen *]                 [& %ames %keen spar.task]
+        :: [%ames %yawn *]                 [| %ames %keen spar.task]
         [%behn %wait *]                 [& %behn %wait time.task]
         [%behn %rest *]                 [| %behn %wait time.task]
         :: [%c %warp *]                 `[%clay %warp wer p.rif]:task
@@ -2666,31 +2713,22 @@
       ^+  [fex ap-core]
       ?~  caz  [(flop fex) ap-core]
       ?-  i.caz
-        :: [%pass * %grow *]  $(caz t.caz, ap-core (ap-grow +.q.i.caz))
-        :: [%pass * %tomb *]  $(caz t.caz, ap-core (ap-tomb +.q.i.caz))
-        :: [%pass * %cull *]  $(caz t.caz, ap-core (ap-cull +.q.i.caz))
-        :: [%pass * %tend *]  $(caz t.caz, ap-core (ap-tend +.q.i.caz))
-        :: [%pass * %germ *]  $(caz t.caz, ap-core (ap-germ +.q.i.caz))
-        :: [%pass * %snip *]  $(caz t.caz, ap-core (ap-snip +.q.i.caz))
-        :: [%pass * %keen *]  $(caz t.caz, ap-core (ap-keen p.i.caz +.q.i.caz))
+        ::  just state changes
+        [%pass * %arvo %ames %grow *]  $(caz t.caz, ap-core (ap-grow +>+.q.i.caz))
+        [%pass * %arvo %ames %tomb *]  $(caz t.caz, ap-core (ap-tomb +>+.q.i.caz))
+        [%pass * %arvo %ames %cull *]  $(caz t.caz, ap-core (ap-cull +>+.q.i.caz))
+        [%pass * %arvo %ames %tend *]  $(caz t.caz, ap-core (ap-tend +>+.q.i.caz))
+        [%pass * %arvo %ames %germ *]  $(caz t.caz, ap-core (ap-germ +>+.q.i.caz))
+        [%pass * %arvo %ames %snip *]  $(caz t.caz, ap-core (ap-snip +>+.q.i.caz))
+      ::
+        ::  state changes _and_ +ap-pass of the corresponding %jump
+        [%pass * %arvo %ames %keen *]  $(caz t.caz, ap-core (ap-keen p.i.caz +>+.q.i.caz))
+        [%pass * %arvo %ames %yawn *]  $(caz t.caz, ap-core (ap-yawn p.i.caz +>+.q.i.caz))
+      ::
         :: [%pass * ?(%agent %arvo %pyre) *]  $(caz t.caz, fex [i.caz fex])
         [%pass * ?(%agent %arvo) *]  $(caz t.caz, fex [i.caz fex])
         [%give *]  $(caz t.caz, fex [i.caz fex])
         [%slip *]  !!
-      ==
-    ::  +ap-handle-ken
-    ::
-    ++  ap-handle-ken
-      |=  fex=(list carp)
-      ^+  ken.yoke
-      %+  roll  fex
-      |=  [=carp ken=_ken.yoke]
-      ::TODO  these aren't typed, so we're forced to ;;
-      ::      ideally we roll this into our new api style cards so that these
-      ::      won't be %syscalls anymore
-      ?+  carp  ken
-        [%pass * %arvo %syscall %a %keen @ spar=*]  (~(put ju ken) ;;(spar:ames spar.note-arvo.q.carp) p.carp)
-        [%pass * %arvo %syscall %a %yawn spar=*]  (~(del ju ken) ;;(spar:ames spar.note-arvo.q.carp) p.carp)
       ==
     ::  +ap-handle-kicks: handle cancels of bitt.watches
     ::
