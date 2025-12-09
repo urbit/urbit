@@ -110,4 +110,36 @@
       [%brcn %gold [%$ [%noun numb:pre 42]] ~ ~]
     [%cnts `wing`[%| 0 `%$]~ ~]
   (test-slap [%noun ~] %noun naty numb:pre 42)
+::
+++  test-parse-nuck
+  ;:  weld
+    (expect-eq !>([%noun numb:pre 42]) !>((scan "42" nuck:parse:th)))
+    (expect-eq !>([%noun [%atom %ud `42] 42]) !>((scan "%42" nuck:parse:th)))
+  ::
+    (expect-eq !>([%noun %noun [1 2]]) !>((scan "~04hh" nuck:parse:th)))
+    (expect-eq !>([%noun [%cell [. .]:[%atom %$ ~]] [1 2]]) !>((scan "%~04hh" nuck:parse:th)))
+  ::
+    (expect-eq !>([%noun %noun 1]) !>((scan "._1__" nuck:parse:th)))
+    (expect-eq !>([%noun %noun [1 2]]) !>((scan "._1_2__" nuck:parse:th)))
+    (expect-eq !>([%noun %noun [1 2 3]]) !>((scan "._1_2_3__" nuck:parse:th)))
+    (expect-eq !>([%noun [%cell [%atom %ud `1] [%atom %ud `2]] [1 2]]) !>((scan "%._1_2__" nuck:parse:th)))
+  ==
+::
+++  test-parse-and-run-42
+  (expect-eq !>([numb:pre 42]) !>((parse-and-run:th '42')))
+::
+++  test-parse-and-run-constant-cell
+  (expect-eq !>([[%cell [. .]:numb:pre] [42 43]]) !>((parse-and-run:th '[42 43]')))
+::
+++  test-parse-and-run-dtls-41
+  (expect-eq !>([[%atom %$ ~] 42]) !>((parse-and-run:th '.+(41)')))
+::
+++  test-flatten-naty
+  %+  expect-eq
+    !>  ^-  naty:th
+    :*  [%noun [%cell [. .]:numb:pre] [1 2]]
+        [%dtls %noun numb:pre 3]
+        [%noun [%cell [. .]:numb:pre] [4 5]]
+    ==
+  !>((scan "[[1 2] .+(3) 4 5]" apex:parse:th))
 --

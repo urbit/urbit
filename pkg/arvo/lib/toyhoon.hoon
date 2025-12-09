@@ -683,4 +683,79 @@
                [a(q atom) a(q cell)]
     [%hold *]  $(a (drop a))  ::TODO  track!
   ==
+::
+++  noun-to-type
+  |=  =noun
+  ^-  type
+  ?@  noun  [%atom %$ ~]
+  [%cell $(noun -.noun) $(noun +.noun)]
+::
+++  parse-and-run
+  |=  code=@t
+  ^-  vase
+  =/  [=type =nock]
+    (mint %noun %noun (rash code apex:parse))
+  [type .*(~ nock)]
+::
+++  flatten-naty
+  |=  a=naty
+  ^-  naty
+  ?@  -.a  a
+  =+  b=$(a -.a)
+  =+  c=$(a +.a)
+  ?.  ?&(?=(%noun -.b) ?=(%noun -.c))  [b c]
+  [%noun [%cell type.b type.c] noun.b noun.c]
+::
+++  parse
+  |%
+  ++  apex  expr
+  ++  expr
+    %+  knee  *naty  |.  ~+
+    ;~  pose
+      (stag %dtls ;~(pfix dot lus (ifix [pal par] expr)))
+      cell
+      nuck
+    ==
+  ::
+  ++  cell
+    %+  cook
+      |=  nas=(lest naty)
+      %-  flatten-naty
+      |-  ^-  naty
+      ?~  t.nas  i.nas
+      [i.nas $(nas t.nas)]
+    (ifix [sel ser] (most ace expr))
+  ::
+  ++  nuck
+    %+  cook  ::TODO  +sear
+      |=  [const=? =coin]
+      |^  ^-  naty
+          [%noun coin-type coin-noun]
+      ++  coin-type
+        |-  ^-  type
+        ?-  -.coin
+          %$     [%atom p.p.coin ?:(const `q.p.coin ~)]
+          %blob  ?.  const  %noun
+                 (noun-to-type p.coin)
+          %many  ?.  const  %noun
+                 ?~  p.coin  !!  ::REVIEW
+                 |-  ^-  type
+                 ?~  t.p.coin  coin-type(coin i.p.coin)
+                 [%cell coin-type(coin i.p.coin) $(p.coin t.p.coin)]
+        ==
+      ++  coin-noun
+        ?-  -.coin
+          %$     q.p.coin
+          %blob  p.coin
+          %many  ?~  p.coin  !!  ::REVIEW
+                 |-
+                 ?~  t.p.coin  coin-noun(coin i.p.coin)
+                 [coin-noun(coin i.p.coin) $(p.coin t.p.coin)]
+        ==
+      --
+    ;~  pose
+      (stag %& ;~(pfix cen nuck:so))
+      (stag %| nuck:so)
+    ==
+  --
 --
