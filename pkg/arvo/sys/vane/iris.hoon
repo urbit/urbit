@@ -21,7 +21,7 @@
       ::
       card=(wind note gift)
   ==
-::  +note: private request from light to another vane
+::  +note: private request from iris to another vane
 ::
 +$  note
   $%  ::  %d: to dill
@@ -36,9 +36,9 @@
 ::
 |%
 +$  axle
-  $:  ::  date: date at which light's state was updated to this data structure
+  $:  ::  date: date at which iris state was updated to this data structure
       ::
-      date=%~2019.2.8
+      date=%~2025.7.17
       ::
       ::
       =state
@@ -86,6 +86,9 @@
       ::  expected-size: the expected content-length of the http request
       ::
       expected-size=(unit @ud)
+      ::  request: the original request, needed for handling redirects
+      ::
+      request=request:http
   ==
 --
 ::
@@ -122,7 +125,7 @@
     =.  connection-by-id.state
       %+  ~(put by connection-by-id.state)  id
       =,  outbound-config
-      [duct [redirects retries ~ ~ 0 ~]]
+      [duct [redirects retries ~ ~ 0 ~ request]]
     ::  keep track of the duct for cancellation
     ::
     =.  connection-by-duct.state
@@ -191,7 +194,17 @@
           `response-header:http-event
         ::
         [duct in-progress-http-request]
-      ::
+      =*  status-code=@ud  status-code.response-header.http-event
+      ?:  ?|  =(307 status-code)
+              =(303 status-code)
+              =(301 status-code)
+          ==
+          %:        handle-redirect
+                  id
+                http-event
+              remaining-redirects.in-progress-http-request.u.connection
+            request.in-progress-http-request.u.connection
+          ==
       ?:  complete.http-event
         (send-finished id data.http-event)
       ::
@@ -216,6 +229,29 @@
         ~
       ==
     ==
+  ::  +handle-redirect: transparently handle redirects if applicable
+  ::
+  ++  handle-redirect
+    |=  [id=@ud =http-event:http remaining-redirects=@ud =request:http]
+    ?>  ?=(%start -.http-event)
+    ?:  =(0 remaining-redirects)
+      ?:  complete.http-event
+        (send-finished id data.http-event)
+      (record-and-send-progress id data.http-event)
+    ?~  loc=(get-header:http 'location' headers.response-header.http-event)
+      ?:  complete.http-event
+        (send-finished id data.http-event)
+      (record-and-send-progress id data.http-event)
+    =.  connection-by-id.state
+      %+  ~(jab by connection-by-id.state)  id
+      |=  [duct=^duct =in-progress-http-request]
+      :-  duct
+      %=  in-progress-http-request
+          remaining-redirects
+        (dec remaining-redirects.in-progress-http-request)
+      ==
+    :_  state
+    [outbound-duct.state %give %request id request(url u.loc)]~
   ::  +record-and-send-progress: save incoming data and send progress report
   ::
   ++  record-and-send-progress
@@ -309,7 +345,8 @@
 |%
 ++  call
   |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
-  ^-  [(list move) _light-gate]
+  ~>  %spin.['call/iris']
+  ^-  [(list move) _iris-gate]
   ::
   =/  task=task  ((harden task) wrapped-task)
   ::
@@ -318,15 +355,15 @@
   ?^  dud
     =/  moves=(list move)
       [[duct %slip %d %flog %crud [-.task tang.u.dud]] ~]
-    [moves light-gate]
+    [moves iris-gate]
   ::  %trim: in response to memory pressure
   ::
   ?:  ?=(%trim -.task)
-    [~ light-gate]
+    [~ iris-gate]
   ::  %vega: notifies us of a completed kernel upgrade
   ::
   ?:  ?=(%vega -.task)
-    [~ light-gate]
+    [~ iris-gate]
   ::
   =/  event-args  [[eny duct now rof] state.ax]
   =/  client  (per-client-event event-args)
@@ -352,37 +389,77 @@
         outbound-duct.state.ax       duct
     ==
     ::
-    [moves light-gate]
+    [moves iris-gate]
   ::
       %request
     =^  moves  state.ax  (request:client +.task)
-    [moves light-gate]
+    [moves iris-gate]
   ::
       %cancel-request
     =^  moves  state.ax  cancel:client
-    [moves light-gate]
+    [moves iris-gate]
   ::
       %receive
     =^  moves  state.ax  (receive:client +.task)
-    [moves light-gate]
+    [moves iris-gate]
   ==
 ::  http-client issues no requests to other vanes
 ::
 ++  take
   |=  [=wire =duct dud=(unit goof) sign=*]
-  ^-  [(list move) _light-gate]
+  ^-  [(list move) _iris-gate]
+  ~>  %spin.['take/iris']
   ?<  ?=(^ dud)
   !!
 ::
-++  light-gate  ..$
+++  iris-gate  ..$
 ::  +load: migrate old state to new state (called on vane reload)
 ::
 ++  load
-  |=  old=axle
-  ^+  ..^$
-  ::
-  ~!  %loading
-  ..^$(ax old)
+  =>  |%
+      +$  axle-any
+        $%  [date=%~2019.2.8 state=state-0]
+            [date=%~2025.7.17 =state]
+        ==
+      ::
+      +$  state-0
+        $:  next-id=@ud
+            connection-by-id=(map @ud [=duct in-progress-http-request=in-progress-http-request-0])
+            connection-by-duct=(map duct @ud)
+            outbound-duct=duct
+        ==
+      +$  in-progress-http-request-0
+        $:  remaining-redirects=@ud
+            remaining-retries=@ud
+            response-header=(unit response-header:http)
+            chunks=(list octs)
+            bytes-read=@ud
+            expected-size=(unit @ud)
+        ==
+      --
+  |=  old=axle-any
+  ^+  iris-gate
+  ~>  %spin.['load/iris']
+  ?-    -.old
+      %~2019.2.8
+    %=  $
+      date.old  %~2025.7.17
+    ::
+      connection-by-id.state.old
+    %-  ~(run by connection-by-id.state.old)
+    |=  [d=duct r=in-progress-http-request-0]
+    ^-  [duct in-progress-http-request]
+    :-  d
+    ::  set remaining redirects to 0 because we don't have the original request.
+    ::  it's safe to bunt the .request because it only gets used if
+    ::  .remaining-redirects is non-zero.
+    ::
+    :-  remaining-redirects=0
+    +.r(expected-size [expected-size.r *request:http])
+    ==
+      %~2025.7.17
+    iris-gate(ax old)
+  ==
 ::  +stay: produce current state
 ::
 ++  stay  `axle`ax
@@ -392,6 +469,7 @@
   ^-  roon
   |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
+  ~>  %spin.['scry/iris']
   =*  ren  car
   =*  why=shop  &/p.bem
   =*  syd  q.bem

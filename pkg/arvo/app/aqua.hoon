@@ -2,10 +2,10 @@
 ::
 ::  usage:
 ::  |start %aqua
-::  /-  aquarium
-::  :aqua &pill .^(pill:aquarium %cx %/urbit/pill)
+::  /+  pill
+::  :aqua &pill .^(pill:pill %cx %/urbit/pill)
 ::    OR
-::  :aqua &pill +solid
+::  :aqua &pill +pill/solid
 ::
 ::  XX: update these examples
 ::  Then try stuff:
@@ -18,11 +18,10 @@
 ::  :aqua [%file ~[~bud ~dev] %/sys/vane]
 ::  :aqua [%pause-events ~[~bud ~dev]]
 ::
-::  We get ++unix-event and ++pill from /-aquarium
+::  We get ++unix-event from /-aquarium
 ::
 /-  aquarium
 /+  pill, azimuth, naive, default-agent, aqua-azimuth, dbug, verb
-=,  pill-lib=pill
 =,  aquarium
 =>  $~  |%
     +$  versioned-state
@@ -30,16 +29,23 @@
       ==
     +$  state-0
       $:  %0
-          pil=$>(%pill pill)
+          pil=$>(%pill pill-0)
           assembled=*
           tym=@da
           fresh-piers=(map [=ship fake=?] [=pier boths=(list unix-both)])
           fleet-snaps=(map term fleet)
           piers=fleet
       ==
-    ::  XX temporarily shadowed, fix and remove
     ::
-    +$  pill  pill:pill-lib
+    +$  pill-0
+      $%  [%ivory p=(list)]
+          $:  %pill
+              nam=term
+              boot-ova=(list)
+              kernel-ova=(list unix-event:pill)
+              userspace-ova=(list unix-event:pill)
+          ==
+      ==
     ::
     +$  fleet  [ships=(map ship pier) azi=az-state]
     +$  pier
@@ -62,7 +68,7 @@
       aqua-core  +>
       ac         ~(. aqua-core bowl)
       def        ~(. (default-agent this %|) bowl)
-  ++  on-init           `this
+  ++  on-init  `this
   ++  on-save  !>(state)
   ++  on-load
     |=  old-vase=vase
@@ -85,7 +91,7 @@
     =^  cards  state
       ?+  mark  ~|([%aqua-bad-mark mark] !!)
           %aqua-events     (poke-aqua-events:ac !<((list aqua-event) vase))
-          %pill            (poke-pill:ac !<(pill vase))
+          %pill            (poke-pill:ac !<(pill:pill vase))
           %noun            (poke-noun:ac !<(* vase))
           %azimuth-action  (poke-azimuth-action:ac !<(azimuth-action vase))
       ==
@@ -408,16 +414,19 @@
 ::  events.
 ::
 ++  poke-pill
-  |=  p=pill
+  |=  p=pill:pill
   ^-  (quip card:agent:gall _state)
-  ?<  ?=(%ivory -.p)
+  =?  p  ?=(%cash -.p)
+    ^-  $>(%pill pill:pill)
+    [%pill +<.p]
+  ?>  ?=(%pill -.p)
   =.  userspace-ova.p
     ::  if there is an azimuth-snapshot in the pill, we stub it out,
     ::  since it would interfere with aqua's azimuth simulation.
     ::
     ^+  userspace-ova.p
     %+  turn  userspace-ova.p
-    |=  e=unix-event:pill-lib
+    |=  e=unix-event:pill
     ^+  e
     ?.  ?=(%park -.q.e)   e
     ?.  ?=(%& -.yok.q.e)  e
@@ -468,12 +477,10 @@
   ::
   ?+  val  ~|(%bad-noun-arg !!)
       [%swap-vanes vs=*]
-    ?>  ?=(^ boot-ova.pil)
-    ?>  ?=([%7 * %1 installed=*] i.boot-ova.pil)
-    =.  installed.i.boot-ova.pil
+    ?>  ?=([aeon=^ boot-two=^ [%7 * %1 installed=*] *] boot-ova.pil)
+    =.  installed.i.t.t.boot-ova.pil
       %+  roll  (,(list term) vs.val)
-      |=  [v=term =_installed.i.boot-ova.pil]
-      %^  slum  installed  now.hid
+      |=  [v=term =_installed.i.t.t.boot-ova.pil]
       =/  vane
         ?+  v  ~|([%unknown-vane v] !!)
           %a  %ames
@@ -485,10 +492,12 @@
           %j  %jael
           %g  %gall
         ==
+      ~&  swaping/vane
       =/  pax
-        /(scot %p our.hid)/work/(scot %da now.hid)/sys/vane/[vane]
+        /(scot %p our.hid)/base/(scot %da now.hid)/sys/vane/[vane]
       =/  txt  .^(@ %cx (weld pax /hoon))
-      [/vane/[vane] [%veer v pax txt]]
+      %^  slum  installed  now.hid
+      [//arvo %what pax^hoon/txt ~]
     =>  .(this ^+(this this))
     =^  ms  state  (poke-pill pil)
     (emit-cards ms)
@@ -498,8 +507,8 @@
     =.  userspace-ova.pil
       ::  take all files from a userspace desk
       :_  ~
-      %-  unix-event:pill-lib
-      %-  file-ovum:pill-lib
+      %-  unix-event:pill
+      %-  file-ovum:pill
       [desk /(scot %p our.hid)/[desk]/(scot %da now.hid) ~]
     =^  ms  state  (poke-pill pil)
     (emit-cards ms)
@@ -871,7 +880,7 @@
   |=  who=ship
   ^-  dawn-event:jael
   =/  clan  (clan:title who)
-  ?>  ?=(?(%czar %king %duke %earl) clan)
+  ?>  ?=(?(%czar %king %duke %earl %pawn) clan)
   =/  spon=(list [ship point:azimuth])
     %-  flop
     |-  ^-  (list [ship point:azimuth])
@@ -895,7 +904,7 @@
     [a-point $(who ship)]
   =/  =feed:jael
     =/  life-rift=[lyfe=life rut=rift]
-      ?:  =(%earl clan)  [1 0]
+      ?:  ?=(?(%pawn %earl) clan)  [1 0]
       (~(got by lives.azi.piers) who)
     =/  =life  lyfe.life-rift
     [who life sec:ex:(get-keys:aqua-azimuth who life) ~]
