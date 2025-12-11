@@ -1,8 +1,8 @@
 import { Box, Row, Text } from '@tlon/indigo-react';
 import { omit } from 'lodash';
 import Mousetrap from 'mousetrap';
+import fuzzy from 'fuzzy';
 import _ from 'lodash';
-import f from 'lodash/fp';
 import React, {
   ReactElement, useCallback,
   useEffect, useMemo,
@@ -16,48 +16,55 @@ import defaultApps from '~/logic/lib/default-apps';
 import makeIndex, { OmniboxItem } from '~/logic/lib/omnibox';
 import { useOutsideClick } from '~/logic/lib/useOutsideClick';
 import { deSig } from '~/logic/lib/util';
+import useLocalState from '~/logic/state/local';
 import useContactState from '~/logic/state/contact';
 import useGroupState from '~/logic/state/group';
 import useHarkState from '~/logic/state/hark';
 import useInviteState from '~/logic/state/invite';
-import useLaunchState from '~/logic/state/launch';
-import { withLocalState } from '~/logic/state/local';
 import useMetadataState from '~/logic/state/metadata';
 import useSettingsState, { SettingsState } from '~/logic/state/settings';
 import { Portal } from '../Portal';
 import OmniboxInput from './OmniboxInput';
 import OmniboxResult from './OmniboxResult';
-
-interface OmniboxProps {
-  show: boolean;
-  toggle: () => void;
-  notifications: number;
-}
+import { selectLocalState } from '~/logic/state/local';
 
 const SEARCHED_CATEGORIES = [
   'commands',
   'ships',
   'other',
   'groups',
-  'subscriptions',
-  'apps'
+  'subscriptions'
 ];
 const settingsSel = (s: SettingsState) => s.leap;
 const CAT_LIMIT = 6;
 
-export function Omnibox(props: OmniboxProps): ReactElement {
+/**
+ * Flatten `catMap` according to ordering in `cats`
+ */
+function flattenCattegoryMap(cats: string[], catMap: Map<string, OmniboxItem[]>) {
+  let res = [] as OmniboxItem[];
+  cats.forEach((cat) => {
+    res = res.concat(_.take(catMap.get(cat), CAT_LIMIT));
+  });
+
+  return res;
+}
+
+const selOmnibox = selectLocalState(['omniboxShown', 'toggleOmnibox']);
+
+export function Omnibox(): ReactElement {
   const location = useLocation();
   const history = useHistory();
   const leapConfig = useSettingsState(settingsSel);
   const omniboxRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const { omniboxShown: show, toggleOmnibox: toggle } = useLocalState(selOmnibox);
 
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<[] | [string, string]>([]);
   const contactState = useContactState(state => state.contacts);
   const notificationCount = useHarkState(state => state.notificationsCount);
   const invites = useInviteState(state => state.invites);
-  const tiles = useLaunchState(state => state.tiles);
   const [leapCursor, setLeapCursor] = useState('pointer');
 
   const contacts = useMemo(() => {
@@ -83,25 +90,24 @@ export function Omnibox(props: OmniboxProps): ReactElement {
     return makeIndex(
       contacts,
       associations,
-      tiles,
       selectedGroup,
       groups,
       leapConfig
     );
-  }, [selectedGroup, leapConfig, contacts, associations, groups, tiles]);
+  }, [selectedGroup, leapConfig, contacts, associations, groups]);
 
   const onOutsideClick = useCallback(() => {
-    props.show && props.toggle();
-  }, [props.show, props.toggle]);
+    show && toggle();
+  }, [show, toggle]);
 
   useOutsideClick(omniboxRef, onOutsideClick);
 
   //  handle omnibox show
   useEffect(() => {
-    if (!props.show) {
+    if (!show) {
       return;
     }
-    Mousetrap.bind('escape', props.toggle);
+    Mousetrap.bind('escape', toggle);
     const touchstart = new Event('touchstart');
     // @ts-ignore ref typings
     inputRef?.current?.input?.dispatchEvent(touchstart);
@@ -111,7 +117,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
       Mousetrap.unbind('escape');
       setQuery('');
     };
-  }, [props.show]);
+  }, [show]);
 
   const initialResults = useMemo(() => {
     return new Map<string, OmniboxItem[]>(
@@ -127,34 +133,33 @@ export function Omnibox(props: OmniboxProps): ReactElement {
     );
   }, [index]);
 
-  const results = useMemo(() => {
+  const [results, categoryOrder] = useMemo(
+    (): [Map<string, OmniboxItem[]>, string[]]  => {
     if (query.length <= 1) {
-      return initialResults;
+      return [initialResults, ['other']];
     }
     const q = query.toLowerCase();
     const resultsMap = new Map<string, OmniboxItem[]>();
+    const categoryMaxes: Record<string, number> = {};
+
     SEARCHED_CATEGORIES.map((category) => {
       const categoryIndex = index.get(category);
-      resultsMap.set(
-        category,
-        categoryIndex.filter((result) => {
-          return (
-            result.title.toLowerCase().includes(q) ||
-            result.link.toLowerCase().includes(q) ||
-            result.app.toLowerCase().includes(q) ||
-            (result.host !== null
-              ? result.host.toLowerCase().includes(q)
-              : false)
-          );
-        })
-      );
+      const fuzzied = fuzzy
+        .filter(q, categoryIndex, { extract: res => res.title });
+      categoryMaxes[category] = fuzzied
+        .map(a => a.score)
+        .reduce((a,b) => Math.max(a,b), 0);
+      resultsMap.set(category, fuzzied.map(a => a.original));
     });
-    return resultsMap;
+    const order = Object.entries(categoryMaxes)
+      .sort(([,a],[,b]) => b - a)
+      .map(([id]) => id);
+    return [resultsMap, order];
   }, [query, index]);
 
   const navigate = useCallback(
     (app: string, link: string, shift: boolean) => {
-      props.toggle();
+      toggle();
       if (
         defaultApps.includes(app.toLowerCase()) ||
         app === 'profile' ||
@@ -168,16 +173,23 @@ export function Omnibox(props: OmniboxProps): ReactElement {
           // TODO: hacky, fix
           link = link.replace('~profile', '~landscape/messages/dm');
         }
-        history.push(link);
+
+        if(link.startsWith('?')) {
+          history.push({
+            search: link
+          });
+        } else {
+          history.push(link);
+        }
       } else {
         window.location.href = link;
       }
     },
-    [history, props.toggle]
+    [history, toggle]
   );
 
   const setPreviousSelected = useCallback(() => {
-    const flattenedResults = Array.from(results.values()).map(f.take(CAT_LIMIT)).flat();
+    const flattenedResults = flattenCattegoryMap(categoryOrder, results);
     const totalLength = flattenedResults.length;
     if (selected.length) {
       const currentIndex = flattenedResults.indexOf(
@@ -197,10 +209,10 @@ export function Omnibox(props: OmniboxProps): ReactElement {
       const { app, link } = flattenedResults[totalLength - 1];
       setSelected([app, link]);
     }
-  }, [results, selected]);
+  }, [results, categoryOrder, selected]);
 
   const setNextSelected = useCallback(() => {
-    const flattenedResults = Array.from(results.values()).map(f.take(CAT_LIMIT)).flat();
+    const flattenedResults = flattenCattegoryMap(categoryOrder, results);
     if (selected.length) {
       const currentIndex = flattenedResults.indexOf(
         // @ts-ignore unclear how to give this spread a return signature
@@ -219,7 +231,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
       const { app, link } = flattenedResults[0];
       setSelected([app, link]);
     }
-  }, [selected, results]);
+  }, [results, categoryOrder, selected]);
 
   const setSelection = (app, link) => {
     setLeapCursor('pointer');
@@ -232,8 +244,8 @@ export function Omnibox(props: OmniboxProps): ReactElement {
         if (query.length > 0) {
           setQuery('');
           return;
-        } else if (props.show) {
-          props.toggle();
+        } else if (show) {
+          toggle();
           return;
         }
       }
@@ -251,35 +263,37 @@ export function Omnibox(props: OmniboxProps): ReactElement {
       }
       if (evt.key === 'Enter') {
         evt.preventDefault();
+        const values = flattenCattegoryMap(categoryOrder, results);
         if (selected.length) {
           navigate(selected[0], selected[1], evt.shiftKey);
-        } else if (Array.from(results.values()).flat().length === 0) {
+        } else if (values.length === 0) {
           return;
         } else {
           navigate(
-            Array.from(results.values()).flat()[0].app,
-            Array.from(results.values()).flat()[0].link,
+            values[0].app,
+            values[0].link,
             evt.shiftKey
           );
         }
       }
     },
     [
-      props.toggle,
+      toggle,
       selected,
       navigate,
       query,
-      props.show,
+      show,
       results,
+      categoryOrder,
       setPreviousSelected,
       setNextSelected
     ]
   );
 
   useEffect(() => {
-    const flattenedResultLinks: [string, string][] = Array.from(results.values())
-      .flat()
-      .map(result => [result.app, result.link]);
+    const flattenedResultLinks: [string, string][] =
+      flattenCattegoryMap(categoryOrder, results)
+        .map(result => [result.app, result.link]);
     if (!flattenedResultLinks.includes(selected as [string, string])) {
       setSelected(flattenedResultLinks[0] || []);
     }
@@ -289,24 +303,6 @@ export function Omnibox(props: OmniboxProps): ReactElement {
     setQuery(event.target.value);
   }, []);
 
-  // Sort Omnibox results alphabetically
-  const sortResults = (
-    a: Record<'title', string>,
-    b: Record<'title', string>
-  ) => {
-    // Do not sort unless searching (preserves order of menu actions)
-    if (query === '') {
-      return 0;
-    }
-    if (a.title < b.title) {
-      return -1;
-    }
-    if (a.title > b.title) {
-      return 1;
-    }
-    return 0;
-  };
-
   const renderResults = useCallback(() => {
     return (
       <Box
@@ -315,10 +311,10 @@ export function Omnibox(props: OmniboxProps): ReactElement {
         borderBottomLeftRadius={2}
         borderBottomRightRadius={2}
       >
-        {SEARCHED_CATEGORIES.map(category =>
+        {categoryOrder.map(category =>
           ({
             category,
-            categoryResults: _.take(results.get(category).sort(sortResults), CAT_LIMIT)
+            categoryResults: _.take(results.get(category), CAT_LIMIT)
           })
         )
           .filter(category => category.categoryResults.length > 0)
@@ -370,7 +366,7 @@ export function Omnibox(props: OmniboxProps): ReactElement {
         top={0}
         right={0}
         zIndex={11}
-        display={props.show ? 'block' : 'none'}
+        display={show ? 'block' : 'none'}
       >
         <Row justifyContent='center'>
           <Box
@@ -400,5 +396,5 @@ export function Omnibox(props: OmniboxProps): ReactElement {
     </Portal>
   );
 }
-// @ts-ignore investigate zustand types
-export default withLocalState(Omnibox, ['toggleOmnibox', 'omniboxShown']);
+
+export default Omnibox;

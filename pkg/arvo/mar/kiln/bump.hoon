@@ -1,23 +1,13 @@
-|%
-+$  bump  [except=(set desk) force=_|]
---
-|_  b=bump
+|_  ~
 ++  grad  %noun
 ++  grab
   |%
-  ++  noun  bump
-  ++  json
-    ^-  $-(^json bump)
-    =,  dejs:format
-    %-  ot
-    :~  except+(as so)
-        force+bo
-    ==
+  ++  noun  ,~
+  ++  json  ul:dejs:format
   --
 ++  grow
   |%
-  ++  noun  b
+  ++  noun  ~
+  ++  json  ~
   --
 --
-        
-

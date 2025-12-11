@@ -9,6 +9,7 @@
       ::  refresh-rate: rate at which to check for updates
       ::  timeout-time: time an update check is allowed to take
       ::  from: oldest block number to look at
+      ::  to: optional newest block number to look at
       ::  contracts: contract addresses to look at
       ::  topics: event descriptions to look for
       ::
@@ -17,6 +18,7 @@
       refresh-rate=@dr
       timeout-time=@dr
       from=number:block
+      to=(unit number:block)
       contracts=(list address:ethereum)
       batchers=(list address:ethereum)
       =topics

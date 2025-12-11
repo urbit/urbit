@@ -36,7 +36,7 @@ const getNicknameForShips = (groups: Groups, contacts: Rolodex, selected: string
   const peerSet = new Set<string>();
   const nicknames = new Map<string, string[]>();
   _.forEach(groups, (group, path) => {
-    if (group.members.size > 0) {
+    if (group.members.length > 0) {
       const groupEntries = group.members.values();
       for (const member of groupEntries) {
         if(!selected.includes(member)) {
@@ -167,9 +167,11 @@ export function ShipSearch<I extends string, V extends Value<I>>(
       name={id}
       render={(arrayHelpers) => {
         const onAdd = (ship: string) => {
-          setFieldValue(name(), ship);
-          inputIdx.current += 1;
-          arrayHelpers.push('');
+          if (!pills.includes(ship)) {
+            setFieldValue(name(), ship);
+            inputIdx.current += 1;
+            arrayHelpers.push('');
+          }
         };
 
         const onRemove = (idx: number) => {
@@ -202,7 +204,7 @@ export function ShipSearch<I extends string, V extends Value<I>>(
               onChange={onChange}
               onSelect={onAdd}
             />
-            <Row minHeight="34px" flexWrap="wrap">
+            <Row overflowX="auto" maxHeight="192px" minHeight="34px" flexWrap="wrap">
               {pills.map((s, i) => (
                 <Row
                   fontFamily="mono"

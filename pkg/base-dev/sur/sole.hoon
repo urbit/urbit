@@ -3,8 +3,9 @@
   ::
 ^?
 |%
++$  sole-id  [who=@p ses=@ta]
 +$  sole-action                                         ::  sole to app
-  $:  id=@ta                                            ::  duct id
+  $:  id=sole-id                                        ::  session id
     $=  dat
     $%  ::  [%abo ~]                                    ::  reset interaction
         [%det sole-change]                              ::  command line edit

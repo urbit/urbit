@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import { uxToHex } from '~/logic/lib/util';
 import { getTitleFromWorkspace } from '~/logic/lib/workspace';
 import useMetadataState from '~/logic/state/metadata';
+import { useMedia } from '~/logic/lib/useMedia';
 import { Workspace } from '~/types/workspace';
 import { Dropdown } from '~/views/components/Dropdown';
 import { MetadataIcon } from './MetadataIcon';
@@ -76,6 +77,8 @@ export function GroupSwitcher(props: {
   isAdmin: any;
 }) {
   const { workspace, isAdmin } = props;
+  const isMobile = useMedia('(max-width: 639px)');
+  const path = isMobile ? '/popover' : '/popover/settings';
   const associations = useMetadataState(state => state.associations);
   const title = getTitleFromWorkspace(associations, workspace);
   const metadata = (workspace.type === 'home' || workspace.type  === 'messages')
@@ -114,7 +117,6 @@ export function GroupSwitcher(props: {
                 width="100%"
                 alignItems="stretch"
               >
-                {(props.baseUrl === '/~landscape/home') ?
                   <GroupSwitcherItem to="">
                   <Icon
                     mr={2}
@@ -124,16 +126,6 @@ export function GroupSwitcher(props: {
                   />
                   <Text>All Groups</Text>
                 </GroupSwitcherItem>
-                :
-                <GroupSwitcherItem to="/~landscape/home">
-                  <Icon
-                    mr={2}
-                    color="gray"
-                    display="block"
-                    icon="Home"
-                  />
-                  <Text>My Channels</Text>
-                </GroupSwitcherItem>}
                 <RecentGroups
                   recent={props.recentGroups}
                 />
@@ -155,7 +147,7 @@ export function GroupSwitcher(props: {
                       />
                       <Text> Participants</Text>
                     </GroupSwitcherItem>
-                    <GroupSwitcherItem to={navTo('/popover/settings')}>
+                    <GroupSwitcherItem to={navTo(path)}>
                       <Icon
                         mr={2}
                         color="gray"
@@ -192,7 +184,7 @@ export function GroupSwitcher(props: {
                     ml='12px'
                   />
                 </Link>)}
-                <Link to={navTo('/popover/settings')}>
+                <Link to={navTo(path)}>
                   <Icon color='gray' display="inline-block" ml={'12px'} icon="Gear" />
                 </Link>
               </>

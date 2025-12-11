@@ -1,4 +1,4 @@
-/-  resource, graph-store
+/-  hark=hark-store, resource, graph-store
 |%
 +$  provider-action
   $%  [%add service=term notify=@t binding=@t auth-token=@t =whitelist]
@@ -12,10 +12,10 @@
       [%remove-provider who=@p service=term]
   ==
 ::
++$  uid  @uvH
+::
 +$  notification
-  $:  =resource:resource
-      =index:graph-store
-  ==
+  [=bin:hark =body:hark]
 ::
 +$  whitelist
   $:  public=?
@@ -24,7 +24,8 @@
       groups=(set resource:resource)
   ==
 ::
++$  action  ?(%notify %dismiss)
+::
 +$  update
-  $%  [%notification =notification]
-  ==
+  [=uid =action]
 --

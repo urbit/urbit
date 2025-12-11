@@ -179,6 +179,12 @@
         ^-  (unit @ud)
         ?~  nonce=(~(get by params) 'nonce')  ~
         (ni u.nonce)
+      ::
+      ++  force
+        |=  params=(map @t json)
+        ^-  (unit ?)
+        ?~  force=(~(get by params) 'force')  ~
+        (bo u.force)
       --
     ::
     ++  to-json
@@ -520,15 +526,20 @@
 ++  process-rpc
   |=  [id=@t params=(map @t json) action=l2-tx over-quota=$-(@p ?)]
   ^-  [(unit cage) response:rpc]
-  ?.  =((lent ~(tap by params)) 4)
+  ?.  ?|  =((lent ~(tap by params)) 4)
+          =((lent ~(tap by params)) 5)
+      ==
     [~ ~(params error:json-rpc id)]
+  =?  params  =((lent ~(tap by params)) 4)
+    (~(put by params) 'force' b+|)
   =+  ^-  $:  sig=(unit @)
               from=(unit [=ship proxy:naive])
               addr=(unit @ux)
+              force=(unit ?)
           ==
     =,  from-json
-    [(sig params) (from params) (address params)]
-  ?:  |(?=(~ sig) ?=(~ from) ?=(~ addr))
+    [(sig params) (from params) (address params) (force params)]
+  ?:  |(?=(~ sig) ?=(~ from) ?=(~ addr) ?=(~ force))
     [~ ~(parse error:json-rpc id)]
   ?:  (over-quota ship.u.from)
     `[%error id '-32002' 'Max tx quota exceeded']
@@ -537,7 +548,7 @@
   =+  (gen-tx-octs:lib u.tx)
   :_  [%result id (hex:to-json 32 (hash-tx:lib p q))]
   %-  some
-  roller-action+!>([%submit | u.addr u.sig %don u.tx])
+  roller-action+!>([%submit u.force u.addr u.sig %don u.tx])
 ::
 ++  nonce
   |=  [id=@t params=(map @t json) scry=$-([ship proxy:naive] (unit @))]
@@ -599,7 +610,7 @@
     ~(parse error:json-rpc id)
   [%result id (tx-status:to-json (scry u.hash))]
 ::
-++  next-batch
+++  next-timer
   |=  [id=@t params=(map @t json) when=time]
   ^-  response:rpc
   ?.  =((lent ~(tap by params)) 0)
@@ -680,4 +691,25 @@
   ?.  =((lent ~(tap by params)) 0)
     ~(params error:json-rpc id)
   [%result id (azimuth-config:to-json azimuth-config)]
+::
+++  quota-remaining
+  |=  [id=@t params=(map @t json) quota-left=$-(@p @ud)]
+  ^-  response:rpc
+  ?.  =((lent ~(tap by params)) 1)
+    ~(params error:json-rpc id)
+  ?~  ship=(ship:from-json params)
+    ~(params error:json-rpc id)
+  [%result id (numb:enjs:format (quota-left u.ship))]
+::
+++  ship-allowance
+  |=  [id=@t params=(map @t json) allowance=$-(@p (unit @ud))]
+  ^-  response:rpc
+  ?.  =((lent ~(tap by params)) 1)
+    ~(params error:json-rpc id)
+  ?~  ship=(ship:from-json params)
+    ~(params error:json-rpc id)
+  :+  %result  id
+  ?^  allow=(allowance u.ship)
+    (numb:enjs:format u.allow)
+  s+(crip "No quota restrictions for {(scow %p u.ship)}")
 --

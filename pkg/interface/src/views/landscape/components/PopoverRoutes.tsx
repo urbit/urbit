@@ -1,10 +1,8 @@
+import _ from 'lodash';
 import { Box, Col, Text } from '@tlon/indigo-react';
-import { Group } from '@urbit/api/groups';
-import { deSig } from '@urbit/api';
-import { Association } from '@urbit/api/metadata';
+import { Association, deSig, Group, resourceFromPath } from '@urbit/api';
 import React, { ReactElement, useCallback, useRef } from 'react';
 import { Link, Route, RouteComponentProps, Switch } from 'react-router-dom';
-import { resourceFromPath } from '~/logic/lib/group';
 import { useHashLink } from '~/logic/lib/useHashLink';
 import { ModalOverlay } from '~/views/components/ModalOverlay';
 import { SidebarItem } from '~/views/landscape/components/SidebarItem';
@@ -28,11 +26,12 @@ export function PopoverRoutes(
 
   useHashLink();
 
-  const groupSize = props.group.members.size;
+  const groupSize = props.group.members.length;
   const ship = resourceFromPath(props.association?.group ?? '/ship/~zod/group').ship;
   const owner = deSig(ship) === window.ship;
 
-  const admin = props.group?.tags?.role?.admin.has(window.ship) || false;
+  const admins = props.group?.tags?.role?.admin;
+  const admin = (admins && _.includes(admins, window.ship)) || false;
 
   return (
     <Switch>

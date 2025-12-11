@@ -10,8 +10,6 @@
 ::  Short names are simply the first letter of each word plus `s` if
 ::  it's a list.
 ::
-/+  pill
-=,  pill-lib=pill
 |%
 +$  az-log  [topics=(lest @) data=@t]
 +$  az-state
@@ -24,14 +22,23 @@
       aqua-event
   ==
 ::
-+$  unix-event  unix-event:pill-lib
-+$  pill        pill:pill-lib
++$  unix-event  ::NOTE  like unix-event:pill-lib but for all tasks
+  %+  pair  wire
+  $%  [%wack p=@]
+      [%what p=(list (pair path (cask)))]
+      [%whom p=ship]
+      [%boot ? $%($>(%fake task:jael) $>(%dawn task:jael))]
+      [%wyrd p=vere]
+      [%verb p=(unit ?)]
+      task-arvo
+  ==
 ::
 +$  aqua-event
   $%  [%init-ship who=ship fake=?]
       [%pause-events who=ship]
       [%snap-ships lab=term hers=(list ship)]
       [%restore-snap lab=term]
+      [%read [from=[=ship life=@ubC] =path] for=[=lane:ames life=@ubC] num=@ud]
       [%event who=ship ue=unix-event]
   ==
 ::
@@ -64,6 +71,9 @@
   %+  pair  wire
   $%  [%blit p=(list blit:dill)]
       [%send p=lane:ames q=@]
+      [%push p=(list lane:pact:ames) q=@]
+      [%saxo sponsors=(list ship)]
+      [%nail =ship lanes=(list lane:ames)]
       [%doze p=(unit @da)]
       [%thus p=@ud q=(unit hiss:eyre)]
       [%ergo p=@tas q=mode:clay]
@@ -72,5 +82,6 @@
       [%kill ~]
       [%init ~]
       [%request id=@ud request=request:http]
+      [%turf p=(list turf)]
   ==
 --

@@ -66,8 +66,7 @@ export function GroupFeedSettings(props: {
             <Col>
               <Label>Enable Group Feed</Label>
               <Label gray mt={1}>
-                Disabling the Group Feed archives the content and is not
-                viewable to anyone
+                Disabling the Group Feed permanently removes its contents
               </Label>
             </Col>
           </BaseLabel>

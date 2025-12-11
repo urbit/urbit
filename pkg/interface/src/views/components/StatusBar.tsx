@@ -7,7 +7,9 @@ import {
   Row,
   Text
 } from '@tlon/indigo-react';
-import React from 'react';
+import Mousetrap from 'mousetrap';
+import 'mousetrap-global-bind';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Sigil } from '~/logic/lib/sigil';
 import { uxToHex } from '~/logic/lib/util';
@@ -18,13 +20,12 @@ import { Dropdown } from './Dropdown';
 import { ProfileStatus } from './ProfileStatus';
 import ReconnectButton from './ReconnectButton';
 import { StatusBarItem } from './StatusBarItem';
-import { StatusBarJoins } from './StatusBarJoins';
 import useHarkState from '~/logic/state/hark';
 
 const localSel = selectLocalState(['toggleOmnibox']);
 
-const StatusBar = (props) => {
-  const { ship } = props;
+const StatusBar = () => {
+  const ship = window.ship;
   const ourContact = useContactState(state => state.contacts[`~${ship}`]);
   const metaKey = window.navigator.platform.includes('Mac') ? '⌘' : 'Ctrl+';
   const { toggleOmnibox } = useLocalState(localSel);
@@ -47,6 +48,14 @@ const StatusBar = (props) => {
       <Sigil ship={ship} size={16} color={color} icon />
     );
 
+  useEffect(() => {
+    Mousetrap.bindGlobal(['command+/', 'ctrl+/'], (e) => {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      toggleOmnibox();
+    });
+  }, []);
+
   return (
     <Box
       display='grid'
@@ -65,7 +74,6 @@ const StatusBar = (props) => {
           borderColor='lightGray'
           mr={2}
           px={2}
-          {...props}
         >
           <Icon icon='Dashboard' color='black' />
         </Button>
@@ -83,7 +91,6 @@ const StatusBar = (props) => {
             </Box>
           )}
         </StatusBarItem>
-        <StatusBarJoins />
         <ReconnectButton />
       </Row>
       <Row justifyContent='flex-end'>

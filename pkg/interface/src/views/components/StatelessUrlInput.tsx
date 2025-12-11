@@ -9,8 +9,9 @@ type StatelessUrlInputProps = PropFunc<typeof BaseInput> & {
   focussed?: boolean;
   disabled?: boolean;
   onChange?: (value: string) => void;
-  promptUpload: () => Promise<string>;
+  promptUpload: (onError: (err: Error) => void) => Promise<string>;
   canUpload: boolean;
+  handleError: (err: Error) => void;
   center?: boolean;
 };
 
@@ -22,6 +23,7 @@ export function StatelessUrlInput(props: StatelessUrlInputProps) {
     onChange = () => {},
     promptUpload,
     canUpload,
+    handleError,
     center = false,
     ...rest
   } = props;
@@ -53,14 +55,14 @@ export function StatelessUrlInput(props: StatelessUrlInputProps) {
                   cursor="pointer"
                   color="blue"
                   style={{ pointerEvents: 'all' }}
-                  onClick={() => promptUpload().then(onChange)}
+                  onClick={() => promptUpload(handleError).then(onChange)}
                 >
                   upload
                 </Text>{' '}
-                a file, or paste a link here
+                a file, or paste a URL here
               </>
             ) : (
-              'Paste a link here'
+              'Paste a URL here'
             )}
           </Text>
         </Box>

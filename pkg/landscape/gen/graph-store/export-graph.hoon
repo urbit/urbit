@@ -10,5 +10,5 @@
 =/  who  (scot %p ship)
 ::
 .^  update:graph-store
-  /gx/[our]/graph-store/[wen]/archive/[who]/[graph]/graph-update
+  /gx/[our]/graph-store/[wen]/archive/[who]/[graph]/graph-update-3
 ==

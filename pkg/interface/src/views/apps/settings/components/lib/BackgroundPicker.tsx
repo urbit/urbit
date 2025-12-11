@@ -28,7 +28,7 @@ export function BackgroundPicker(): ReactElement {
           <ImageInput
             ml={5}
             id="bgUrl"
-            placeholder="Drop or upload a file, or paste a link here"
+            placeholder="Drop or upload a file, or paste an image URL here"
             name="bgUrl"
           />
         </Col>

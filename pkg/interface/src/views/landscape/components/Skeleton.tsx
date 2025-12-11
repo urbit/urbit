@@ -1,9 +1,10 @@
-import React, { ReactElement, ReactNode, useCallback, useState } from 'react';
+import React, { ReactElement, ReactNode, Suspense, useCallback, useState } from 'react';
 import { Sidebar } from './Sidebar/Sidebar';
 import { Workspace } from '~/types/workspace';
 import { Body } from '~/views/components/Body';
 import ErrorBoundary from '~/views/components/ErrorBoundary';
 import { useShortcut } from '~/logic/state/settings';
+import { Loading } from '~/views/components/Loading';
 
 interface SkeletonProps {
   children: ReactNode;
@@ -41,7 +42,7 @@ export const Skeleton = React.memo((props: SkeletonProps): ReactElement => {
           />
         )}
       </ErrorBoundary>
-      {props.children}
+      <Suspense fallback={Loading}>{props.children}</Suspense>
     </Body>
   );
 });

@@ -91,6 +91,11 @@ export interface VirtualScrollerProps<K,V> {
   */
   onBottomLoaded?: () => void;
   /*
+   * Callback to execute when finished loading from end
+  */
+  onTopLoaded?: () => void;
+
+  /*
    * equality function for the key type
    */
   keyEq: (a: K, b: K) => boolean;
@@ -412,6 +417,9 @@ export default class VirtualScroller<K,V> extends Component<VirtualScrollerProps
       });
       if(newer && this.props.onBottomLoaded) {
         this.props.onBottomLoaded();
+      }
+      if(!newer && this.props.onTopLoaded) {
+        this.props.onTopLoaded();
       }
     }
   };

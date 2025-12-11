@@ -41,7 +41,7 @@
   :_  this
   :_  ~
   =/  dms=(list resource)
-    ?.  .^(? %gu (scry:io %graph-store ~))
+    ?.  .^(? %gu (scry:io %graph-store /$))
       ~
     %+  skim  ~(tap in get-keys:gra)
     |=([ship name=term] ?=(^ (rush name ;~(pfix (jest 'dm--') fed:ag))))
@@ -203,11 +203,13 @@
     ?>  =(1 ~(wyt by nodes))
     =/  ship-screen  (~(get ju screened) src.bowl)
     =.  ship-screen  (~(uni in ship-screen) (normalize-incoming nodes))
-    :_  state(screened (~(put by screened) src.bowl ship-screen))
+    =/  should-notify=?     !(~(has by screened) src.bowl)
+    =.  screened  (~(put by screened) src.bowl ship-screen)
+    :_  state
     =/  =action:hook
       [%pendings ~(key by screened)]
     :-  (fact:io dm-hook-action+!>(action) ~[/updates])
-    ?:  (~(has by screened) src.bowl)  ~
+    ?.  should-notify  ~
     (notify-pending src.bowl)^~
   ::
   ++  dm-exists

@@ -16,8 +16,7 @@ import {
 import { useCallback } from 'react';
 import { reduceUpdate } from '../reducers/settings-update';
 import airlock from '~/logic/api';
-import { Contact, getDeskSettings, Value } from '@urbit/api';
-import { putEntry } from '@urbit/api/settings';
+import { Contact, getDeskSettings, putEntry, Value } from '@urbit/api';
 
 export interface ShortcutMapping {
   cycleForward: string;
@@ -41,6 +40,7 @@ export interface SettingsState {
     hideUnreads: boolean;
     hideGroups: boolean;
     hideUtilities: boolean;
+    disableSpellcheck: boolean;
   };
   keyboard: ShortcutMapping;
   remoteContentPolicy: RemoteContentPolicy;
@@ -73,7 +73,8 @@ const useSettingsState = createState<SettingsState>(
       hideAvatars: false,
       hideUnreads: false,
       hideGroups: false,
-      hideUtilities: false
+      hideUtilities: false,
+      disableSpellcheck: false
     },
     remoteContentPolicy: {
       imageShown: true,

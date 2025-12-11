@@ -1,5 +1,6 @@
 import {
   archive,
+  BigIntOrderedMap,
   HarkBin,
   markCountAsRead,
   NotificationGraphConfig,
@@ -15,7 +16,6 @@ import {
 import { Poke } from '@urbit/http-api';
 import { patp2dec } from 'urbit-ob';
 import _ from 'lodash';
-import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import api from '~/logic/api';
 import { useCallback, useMemo } from 'react';
 
@@ -35,7 +35,9 @@ export interface HarkState {
   doNotDisturb: boolean;
   poke: (poke: Poke<any>) => Promise<void>;
   getMore: () => Promise<boolean>;
+  getUnreads: () => Promise<void>;
   opened: () => void;
+  readCount: (path: string) => Promise<void>;
   // getTimeSubset: (start?: Date, end?: Date) => Promise<void>;
   unseen: Timebox;
   seen: Timebox;
@@ -44,7 +46,6 @@ export interface HarkState {
   notificationsGroupConfig: string[];
   unreads: Unreads;
   archiveNote: (bin: HarkBin, lid: HarkLid) => Promise<void>;
-  readCount: (path: string) => Promise<void>;
   readGraph: (graph: string) => Promise<void>;
   readGroup: (group: string) => Promise<void>;
 }
@@ -60,20 +61,20 @@ const useHarkState = createState<HarkState>(
     },
     readGraph: async (graph: string) => {
       const prefix = `/graph/${graph.slice(6)}`;
-      let counts = [] as string[];
-      let eaches = [] as [string, string][];
+      const counts = [] as string[];
+      const eaches = [] as [string, string][];
       Object.entries(get().unreads).forEach(([path, unreads]) => {
         if (path.startsWith(prefix)) {
           if(unreads.count > 0) {
             counts.push(path);
           }
-          unreads.each.forEach(unread => {
+          unreads.each.forEach((unread) => {
             eaches.push([path, unread]);
           });
         }
       });
-      get().set(draft => {
-        counts.forEach(path => {
+      get().set((draft) => {
+        counts.forEach((path) => {
           draft.unreads[path].count = 0;
         });
         eaches.forEach(([path, each]) => {
@@ -86,8 +87,7 @@ const useHarkState = createState<HarkState>(
       ].map(pok => api.poke(pok)));
     },
     readGroup: async (group: string) => {
-      const graphs = 
-        _.pickBy(useMetadataState.getState().associations.graph, a => a.group === group);
+      const graphs = _.pickBy(useMetadataState.getState().associations.graph, a => a.group === group);
       await Promise.all(Object.keys(graphs).map(get().readGraph));
     },
     readCount: async (path) => {
@@ -121,6 +121,13 @@ const useHarkState = createState<HarkState>(
       });
       reduceStateN(useHarkState.getState(), update, [reduce]);
       return get().archive?.size === oldSize;
+    },
+    getUnreads: async (): Promise<void> => {
+      const update = await api.scry({
+        app: 'hark-store',
+        path: '/all-stats'
+      });
+      reduceStateN(useHarkState.getState(), update, [reduce]);
     },
     unseen: {},
     seen: {},

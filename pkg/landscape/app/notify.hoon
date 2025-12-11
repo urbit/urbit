@@ -13,6 +13,7 @@
       clients=(map ship binding=(unit @t))
       =whitelist
   ==
+++  clear-interval  ~d7
 ::
 +$  client-state
   $:  providers=(jug @p term)
@@ -22,6 +23,10 @@
   $:  =provider-state
       =client-state
   ==
++$  base-state-2
+  $:  notifications=(map uid notification)
+      base-state-0
+  ==
 ::
 +$  state-0
   [%0 base-state-0]
@@ -29,14 +34,21 @@
 +$  state-1
   [%1 base-state-0]
 ::
++$  state-2
+  [%2 base-state-2]
++$  state-3
+  [%3 base-state-2]
+::
 +$  versioned-state
   $%  state-0
       state-1
+      state-2
+      state-3
   ==
 ::
 --
 ::
-=|  state-1
+=|  state-3
 =*  state  -
 ::
 %-  agent:dbug
@@ -53,7 +65,10 @@
   ::
   ++  on-init
     :_  this
-    [(~(watch-our pass:io /hark) %hark-store /notes)]~
+    :~  (~(watch-our pass:io /hark/notes) %hark-store /notes)
+        (~(watch-our pass:io /hark/updates) %hark-store /updates)
+        (~(wait pass:io /clear) (add now.bowl clear-interval))
+    ==
   ::
   ++  on-save   !>(state)
   ++  on-load
@@ -63,17 +78,28 @@
     =|  cards=(list card)
     |-
     ?-  -.old
-      %1  [(flop cards) this]
     ::
-        %0
-      %_    $
-          -.old  %1
-      ::
-          cards
-        %+  welp  cards
-        :~  (~(leave-our pass:io /hark) %hark-store)
-            (~(watch-our pass:io /hark) %hark-store /notes)
-        ==
+        %3
+      =/  upd=wire  /hark/updates
+      =/  not=wire  /hark/notes
+      =/  =dock  [our.bowl %hark-store]
+      =?  cards  !(~(has by wex.bowl) [upd dock])  :: rewatch updates
+        :_(cards [%pass upd %agent dock %watch /updates])
+      =?  cards  !(~(has by wex.bowl) [not dock])  ::  rewatch notes
+        :_(cards [%pass not %agent dock %watch /notes])
+      =.  notifications.old  ~
+      [(flop cards) this(state old)]
+    ::
+        %2
+      =.  cards  
+        :_  cards
+        (~(wait pass:io /clear) (add now.bowl clear-interval))
+      $(-.old %3)
+    ::
+        ?(%0 %1)
+      %_  $
+        -.old  %2
+        +.old  [~ +.old]
       ==
     ==
   ::
@@ -203,7 +229,17 @@
     ^-  (quip card _this)
     `this
   ::
-  ++  on-peek   on-peek:def
+  ++  on-peek
+    |=  =path
+    ^-  (unit (unit cage))
+    =/  =(pole knot)  path
+    ?+  pole  [~ ~]
+    ::
+        [%x %note uid=@t ~]
+      =/  =uid  (slav %ux uid.pole)
+      =/  note=notification  (~(got by notifications) uid)
+      ``hark-note+!>(note)
+    ==
   ::
   ++  on-agent
     |=  [=wire =sign:agent:gall]
@@ -212,22 +248,20 @@
     ::
     ::  subscription from client to their own hark-store
     ::
-        [%hark ~]
+        [%hark @ ~]
       ?+  -.sign  (on-agent:def wire sign)
           %fact
-        :_  this
         ?.  ?=(%hark-update p.cage.sign)
-          ~
+          `this
         =+  !<(hark-update=update:hark-store q.cage.sign)
-        ?~  not=(filter-notifications:do hark-update)  ~
-        ::  only send the last one, since hark accumulates notifcations
-        =/  =update  [%notification u.not]
-        =/  card=(unit card)   ~  ::(fact-all:io %notify-update !>(update))
-        (drop card)
+        =^  upds  notifications
+          (filter-notifications:do hark-update)
+        :_  this
+        (murn upds |=(=update (fact-all:io %notify-update !>(update))))
       ::
           %kick
         :_  this
-        [%pass /hark %agent [our.bowl %hark-store] %watch /updates]~
+        [%pass wire %agent [our.bowl %hark-store] %watch t.wire]~
       ==
     ::
     ::  subscription from provider to client
@@ -240,13 +274,10 @@
         ?>  ?=(%notify-update p.cage.sign)
         =+  !<(=update q.cage.sign)
         :_  this
-        ?-  -.update
-            %notification
-          =/  entry=(unit provider-entry)  (~(get by provider-state) service)
-          ?~  entry
-            ~
-          [(send-notification:do u.entry who notification.update)]~
-        ==
+        =/  entry=(unit provider-entry)  (~(get by provider-state) service)
+        ?~  entry
+          ~
+        [(send-notification:do u.entry who update)]~
       ::
           %kick
         :_  this
@@ -274,7 +305,7 @@
       =/  =mime-data:iris  u.full-file.client-response.sign-arvo
       ?>  =('application/json' type.mime-data)
       =/  jon=json
-        (fall (rush (@t q.data.mime-data) apex:de-json:html) *json)
+        (fall (de:json:html (@t q.data.mime-data)) *json)
       =/  [sid=@t message=@t]
         %.  jon
         %-  ot:dejs:format
@@ -289,11 +320,27 @@
       =.  clients.u.entry  (~(put by clients.u.entry) who `sid)
       this(provider-state (~(put by provider-state) service u.entry))
     ::
-        [%remove-binding *]
-      `this
+        [%remove-binding *]  `this
     ::
         [%send-notification *]
-      `this
+      ?>  ?=(%iris -.sign-arvo)
+      ?>  ?=(%http-response +<.sign-arvo)
+      =*  res  client-response.sign-arvo
+      ?>  ?=(%finished -.res)
+      %.  `this  
+      =*  status  status-code.response-header.res
+      ?:  =(200 status)  same
+      %+  slog  
+        leaf/"Error sending notfication, status: {(scow %ud status)}"
+      ?~  full-file.res  ~
+      ~[leaf/(trip `@t`q.data.u.full-file.res)]
+    ::
+        [%clear ~]
+      ?>  ?=([%behn %wake *] sign-arvo)
+      =.  notifications  ~
+      ~&  "notify/debug: cleared notifications"
+      :_  this
+      ~[(~(wait pass:io /clear) (add now.bowl clear-interval))]
     ==
   ::
   ++  on-fail   on-fail:def
@@ -302,27 +349,71 @@
 +*  gra  ~(. graphlib bowl)
 ::
 ++  filter-notifications
-  |=  =update:hark-store
-  ^-  (unit notification)
-  ?.  ?=(%add-note -.update)  ~
-  =*  place  place.bin.update
-  ?.  ?=(%landscape desk.place)  ~
-  ?.  ?=([%graph *] path.place)  ~
-  =/  link=path  link.body.update
-  ?.  ?=([@ @ @ *] link)  ~
-  ?~  ship=(slaw %p i.t.link)  ~
-  =*  name  i.t.t.link
-  =/  =resource:resource  [u.ship name]
-  =/  =index:graph-store
-    (turn t.t.t.link (curr rash dim:ag))
-  `[resource index]
+  |=  upd=update:hark-store
+  ^-  (quip update _notifications)
+  ?+    -.upd  `notifications
+  ::
+      %more
+    =|  upds=(list update)
+    |-
+    ?~  more.upd  [upds notifications]
+    =^  us  notifications
+      (filter-notifications i.more.upd)
+    $(upds (welp upds us), more.upd t.more.upd)
+  ::
+      %read-count
+    `notifications
+    ::  TODO: re-enable if/when fixed
+    ::=/  uids  ~(tap in (uids-for-place place.upd))
+    :: =|  upds=(list update)
+    ::|-  
+    ::?~  uids 
+    :: [upds notifications]
+    ::%_  $
+      :: notifications  (~(del by notifications) i.uids)
+      ::upds           :_(upds [i.uids %dismiss])
+      ::uids           t.uids
+    :: ==
+  ::
+      %add-note
+    =/  note=notification  +.upd
+    ?.  (should-notify note)  `notifications
+    =/  =uid  (shas %notify-uid eny.bowl)
+    :_  (~(put by notifications) uid note)
+    [uid %notify]~
+  ==
+::
+++  should-notify
+  |=  note=notification
+  ^-  ?
+  ?.  ?=([%graph @ @ *] path.place.bin.note)
+    |
+  =/  s=(unit ship)  (slaw %p i.t.path.place.bin.note)
+  ?~  s  |
+  =/  =resource:resource
+    [u.s i.t.t.path.place.bin.note]
+  ?&  ?=(%landscape desk.place.bin.note)
+  ?|  ?=([%graph-validator-dm *] link.body.note)
+      ?&  (group-is-hidden resource)
+          ?=([%graph-validator-chat *] link.body.note)
+      ==
+  ==  ==
+::
+++  uids-for-place
+  |=  =place:hark
+  %-  ~(gas in *(set uid))
+  %+  murn  ~(tap by notifications)
+  |=  [=uid =notification]
+  ^-  (unit ^uid)
+  ?.  =(place.bin.notification place)  ~
+  `uid
 ::
 ++  group-is-hidden
   |=  =resource:resource
-  ^-  (unit ?)
+  ^-  ?
   =/  grp=(unit group:group)  (~(scry-group group bowl) resource)
-  ?~  grp  ~
-  `hidden.u.grp
+  ?~  grp  |
+  hidden.u.grp
 ::
 ++  is-whitelisted
   |=  [who=@p entry=provider-entry]
@@ -357,6 +448,12 @@
 ++  post-form
   |=  [=wire url=@t auth=@t params=(list [@t @t])]
   ^-  card
+  =/  esc=$-(@t @t)
+    |=(t=@t (crip (en-urlt:html (trip t))))
+  =.  params
+    %+  turn  params
+    |=  [p=@t q=@t]
+    [(esc p) (esc q)]
   =/  data
     %+  roll
       %+  sort  params
@@ -385,16 +482,12 @@
   (rap 3 out '&' p '=' q ~)
 ::
 ++  send-notification
-  |=  [entry=provider-entry who=@p =notification]
+  |=  [entry=provider-entry who=@p =update]
   ^-  card
   =/  params=(list [@t @t])
     :~  identity+(rsh [3 1] (scot %p who))
-        ship+(rsh [3 1] (scot %p entity.resource.notification))
-        graph+name.resource.notification
-        :-  %node
-        %+  roll  index.notification
-        |=  [in=@ out=@t]
-        (rap 3 out '/' (scot %ud in) ~)
+        action+`@t`action.update
+        uid+(scot %ux uid.update)
     ==
   %:  post-form
       /send-notification/(scot %uv (sham eny.bowl))

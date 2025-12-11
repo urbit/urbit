@@ -4,8 +4,7 @@ import { withDesign } from 'storybook-addon-designs';
 
 import { Box } from '@tlon/indigo-react';
 import { LinkDetail } from '~/views/apps/links/components/LinkDetail';
-import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
-import { GraphNode } from '@urbit/api';
+import { BigIntOrderedMap, GraphNode } from '@urbit/api';
 import useMetadataState from '~/logic/state/metadata';
 import { makeComment } from '~/logic/lib/fixtures';
 

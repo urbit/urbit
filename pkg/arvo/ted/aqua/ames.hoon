@@ -7,6 +7,7 @@
 ::
 /-  aquarium, spider
 /+  aqua-vane-thread
+/=  ames-raw  /sys/vane/ames
 =,  aquarium
 |%
 ++  emit-aqua-events
@@ -21,12 +22,38 @@
   [%event who [/a/newt/0v1n.2m9vh %born ~]]~
 ::
 ++  handle-send
-  |=  [our=ship now=@da sndr=@p way=wire %send lan=lane:ames pac=@]
+  =,  ames
+  |=  [our=ship now=@da sndr=@p way=wire %send lan=lane pac=@]
   ^-  (list card:agent:gall)
   =/  rcvr=ship  (lane-to-ship lan)
   =/  hear-lane  (ship-to-lane sndr)
+  =/  =shot      (sift-shot pac)
+  ?:  &(!sam.shot req.shot)  :: is fine request
+    =/  [%0 =peep]  (sift-wail `@ux`content.shot)
+    %+  emit-aqua-events  our
+    :_  ~
+    :-  %read
+    [[[rcvr rcvr-tick.shot] path.peep] [hear-lane sndr-tick.shot] num.peep]
   %+  emit-aqua-events  our
   [%event rcvr /a/newt/0v1n.2m9vh %hear hear-lane pac]~
+::  XX  this should use the (TODO) message layer in %ames
+::
+++  handle-push
+  =,  ames
+  |=  [our=ship now=@da sndr=@p way=wire %push lan=(list lane:pact:ames) q=@]
+  ^-  (list card:agent:gall)
+  =/  =pact:pact:ames  (parse-packet:ames-raw q) 
+  =/  rcvr=ship
+    ?-  +<.pact
+      %peek  her.name.pact
+      %poke  her.ack.pact
+      %page  ?>  ?=(^ lan)
+             ?>  ?=(@ i.lan)
+             `@p`i.lan
+    ==       
+  =/  lan=lane:pact:ames  ?:(?=(%page +<.pact) `@ux`rcvr `@ux`sndr)
+  %+  emit-aqua-events  our
+  [%event rcvr /a/newt/0v1n.2m9vh %heer lan q]~
 ::  +lane-to-ship: decode a ship from an aqua lane
 ::
 ::    Special-case one comet, since its address doesn't fit into a lane.
@@ -55,9 +82,10 @@
   ?.  =(ship ~bosrym-podwyl-magnes-dacrys--pander-hablep-masrym-marbud)
     ship
   0xdead.beef.cafe
+::
 --
 ::
-%+  aqua-vane-thread  ~[%restore %send]
+%+  aqua-vane-thread  ~[%restore %send %push]
 |_  =bowl:spider
 +*  this  .
 ++  handle-unix-effect
@@ -67,8 +95,9 @@
     ?+  -.q.ue  ~
       %restore  (handle-restore our.bowl who)
       %send     (handle-send our.bowl now.bowl who ue)
+      %push     (handle-push our.bowl now.bowl who ue)
     ==
   [cards this]
 ::
-++  handle-arvo-response  _!!
+++  handle-arvo-response  |=(* !!)
 --

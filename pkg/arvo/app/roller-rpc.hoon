@@ -45,7 +45,6 @@
     |=  [=mark =vase]
     ^-  (quip card _this)
     |^
-    ?>  (team:title our.bowl src.bowl)
     ?+  mark  (on-poke:def mark vase)
         %handle-http-request
       =+  !<([id=@ta req=inbound-request:eyre] vase)
@@ -53,6 +52,7 @@
       (handle-http-request id req)
     ::
         %azimuth-action
+      ?>  (team:title our.bowl src.bowl)
       =+  !<([%disconnect bind=binding:eyre] vase)
       ~&  >>>  "disconnecting at {<bind>}"
       :_  this
@@ -89,7 +89,6 @@
   ++  on-watch
     |=  =path
     ^-  (quip card _this)
-    ?>  (team:title our.bowl src.bowl)
     ?+  path  (on-watch:def path)
         [%http-response *]  [~ this]
     ==
@@ -151,12 +150,16 @@
     ?:  ?=(l2-tx method)
       (process-rpc id +.params method over-quota:scry)
     ?+  method  [~ ~(method error:json-rpc id)]
+      %cancel-transaction      (cancel-tx id +.params)
+      %when-next-batch         `(next-timer id +.params next-batch:scry)
+      %when-next-slice         `(next-timer id +.params next-slice:scry)
+      %spawns-remaining        `(spawns-remaining id +.params unspawned:scry)
+      %get-remaining-quota     `(quota-remaining id +.params ship-quota:scry)
+      %get-allowance           `(ship-allowance id +.params allowance:scry)
       %get-point               `(get-point id +.params point:scry)
       %get-ships               `(get-ships id +.params ships:scry)
-      %cancel-transaction      (cancel-tx id +.params)
       %get-spawned             `(get-spawned id +.params spawned:scry)
       %get-unspawned           `(get-spawned id +.params unspawned:scry)
-      %spawns-remaining        `(spawns-remaining id +.params unspawned:scry)
       %get-sponsored-points    `(sponsored-points id +.params sponsored:scry)
       %get-owned-points        `(get-ships id +.params owned:scry)
       %get-transferring-for    `(get-ships id +.params transfers:scry)
@@ -168,18 +171,13 @@
       %get-pending-by-address  `(addr:pending id +.params addr:pending:scry)
       %get-pending-tx          `(hash:pending id +.params hash:pending:scry)
       %get-transaction-status  `(status id +.params tx-status:scry)
-      %when-next-batch         `(next-batch id +.params next-batch:scry)
+      %get-predicted-state     `(get-naive id +.params predicted:scry)
       %get-nonce               `(nonce id +.params nonce:scry)
       %get-history             `(history id +.params addr:history:scry)
       %get-roller-config       `(get-config id +.params config:scry)
-      %prepare-for-signing     `(hash-transaction id +.params chain:scry | &)
       %get-unsigned-tx         `(hash-transaction id +.params chain:scry & |)
-      %get-predicted-state     `(get-naive id +.params predicted:scry)
+      %prepare-for-signing     `(hash-transaction id +.params chain:scry | &)
       %hash-raw-transaction    `(hash-raw-transaction id +.params)
-      :: TODO: deprecated, remove (used together with personal_sign)
-      ::
-      %hash-transaction        ::`(hash-transaction id +.params chain:scry | &)
-                               `(hash-transaction id +.params chain:scry & |)
     ==
   --
 ::
@@ -307,7 +305,13 @@
   ++  next-batch
     .^  time
         %gx
-        (~(scry agentio bowl) %roller /next-batch/noun)
+        (~(scry agentio bowl) %roller /next-batch/atom)
+    ==
+  ::
+  ++  next-slice
+    .^  time
+        %gx
+        (~(scry agentio bowl) %roller /next-slice/atom)
     ==
   ::
   ++  nonce
@@ -354,6 +358,20 @@
     .^  ?
         %gx
         (~(scry agentio bowl) %roller /over-quota/(scot %p ship)/atom)
+    ==
+  ::
+  ++  ship-quota
+    |=  =ship
+    .^  @ud
+        %gx
+        (~(scry agentio bowl) %roller /ship-quota/(scot %p ship)/atom)
+    ==
+  ::
+  ++  allowance
+    |=  =ship
+    .^  (unit @ud)
+        %gx
+        (~(scry agentio bowl) %roller /allowance/(scot %p ship)/noun)
     ==
   ::
   ++  ready

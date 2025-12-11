@@ -11,7 +11,7 @@
 ::
 ++  network
   $?  %mainnet
-      %ropsten
+      %goerli
       %fakenet
       [%other id=@]
   ==
@@ -66,8 +66,14 @@
       [%adopt who=ship]
       [%start-document-poll gal=ship hash=@]
       [%cast-document-vote gal=ship hash=@ vote=?]
+      [%start-upgrade-poll gal=ship =address]
+      [%cast-upgrade-vote gal=ship =address vote=?]
     ::
       [%send-point as=ship point=ship to=address]
+    ::
+      [%approve-batch-transfer to=address]
+      [%transfer-batch from=address]
+      [%withdraw to=address]
   ==
 ::
 ++  prep-result

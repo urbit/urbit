@@ -319,12 +319,18 @@
       |=  =path
       ^-  [(list card:agent:gall) agent:gall]
       ?>  (team:title our.bowl src.bowl)
-      ?.  ?=([%tracking ~] path)
+      ?+    path
+      ::  forward by default
         =^  cards  pull-hook
           (on-watch:og path)
         [cards this]
-      :_  this
-      ~[give-update]
+      ::
+        [%nack ~]  `this
+      ::
+          [%tracking ~]
+        :_  this
+        ~[give-update]
+      ==
     ::
     ++  on-agent
       |=  [=wire =sign:agent:gall]
@@ -426,7 +432,7 @@
     ::
     ++  tr-emis
       |=  caz=(list card)
-      tr-core(cards (welp (flop cards) cards))
+      tr-core(cards (welp (flop caz) cards))
     ::
     ++  tr-ap-og
       |=  ap=_^?(|.(*(quip card _pull-hook)))
@@ -455,7 +461,8 @@
         |=  tan=(unit tang)
         ?~  tan  tr-core
         ?.  versioned
-          (tr-ap-og:tr-cleanup |.((on-pull-nack:og rid u.tan)))
+          %-  tr-ap-og:tr-cleanup:tr-give-nack 
+          |.((on-pull-nack:og rid u.tan))
         %-  (slog leaf+"versioned nack for {<rid>} in {<dap.bowl>}" u.tan)
         =/  pax
           (kick-mule:virt rid |.((on-pull-kick:og rid)))
@@ -568,6 +575,9 @@
     ::
     ::  +|  %subscription: subscription cards
     ::
+    ::
+    ++  tr-give-nack
+      (tr-emit (fact:io resource+!>(rid) /nack ~))
     ::
     ++  tr-ver-wire
       (make-wire /version)

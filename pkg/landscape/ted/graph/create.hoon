@@ -24,6 +24,8 @@
   ;<  ~  bind:m    
     (poke-our %metadata-push-hook push-hook-act)
   ;<  ~  bind:m
+    (poke-our %contact-push-hook push-hook-act)
+  ;<  ~  bind:m
      %+  poke-our  %group-store
      :-  %group-update-0
      !>  ^-  update:group-store
@@ -33,6 +35,8 @@
     (poke-our %group-store group-update-0+!>([%add-members rid (sy our.bowl ~)]))
   ;<  ~  bind:m
     (poke-our %group-push-hook push-hook-act)
+  ;<  ~  bind:m
+    (poke-our %hark-graph-hook hark-graph-hook-action+!>([%listen rid /]))
   (pure:m rid)
 --
 ::

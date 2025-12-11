@@ -20,6 +20,7 @@ interface FormSchema {
   audioShown: boolean;
   oembedShown: boolean;
   videoShown: boolean;
+  disableSpellcheck: boolean;
 }
 
 const settingsSel = (s: SettingsState): FormSchema => ({
@@ -28,10 +29,11 @@ const settingsSel = (s: SettingsState): FormSchema => ({
   hideUnreads: s.calm.hideUnreads,
   hideGroups: s.calm.hideGroups,
   hideUtilities: s.calm.hideUtilities,
+  disableSpellcheck: s.calm.disableSpellcheck,
   imageShown: !s.remoteContentPolicy.imageShown,
   videoShown: !s.remoteContentPolicy.videoShown,
   oembedShown: !s.remoteContentPolicy.oembedShown,
-  audioShown: !s.remoteContentPolicy.audioShown
+  audioShown: !s.remoteContentPolicy.audioShown,
 });
 
 export function CalmPrefs() {
@@ -107,6 +109,12 @@ export function CalmPrefs() {
             label="Disable embedded content"
             id="oembedShown"
             caption="Embedded content may contain scripts that can track you"
+          />
+          <Text fontWeight="medium">Input settings</Text>
+          <Toggle
+            label="Disable spellcheck"
+            id="disableSpellcheck"
+            caption="Disable browser spellcheck"
           />
         </Col>
       </Form>

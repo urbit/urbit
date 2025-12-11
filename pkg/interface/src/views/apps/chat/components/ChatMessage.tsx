@@ -284,69 +284,69 @@ const MessageActionItem = (props) => {
 const MessageActions = ({ onReply, onDelete, msg, isAdmin, permalink }) => {
   const isOwn = () => msg.author === window.ship;
   const { doCopy, copyDisplay } = useCopy(permalink, 'Copy Message Link');
+  const showCopyMessageLink = Boolean(permalink);
+  const showDelete = (isAdmin || isOwn()) && onDelete;
+  const showDropdown = showCopyMessageLink || showDelete;
 
   return (
     <Box
-      borderRadius={1}
+      borderRadius={2}
       backgroundColor='white'
       border='1px solid'
       borderColor='lightGray'
       position='absolute'
-      top='-12px'
+      top='-16px'
       right={2}
     >
       <Row>
         <Box
-          padding={1}
-          size={'24px'}
+          padding={2}
+          size={5}
           cursor='pointer'
           onClick={() => onReply(msg)}
         >
           <Icon icon='Chat' size={3} />
         </Box>
-        <Dropdown
-          dropWidth='250px'
-          width='auto'
-          alignY='top'
-          alignX='right'
-          flexShrink={0}
-          offsetY={8}
-          offsetX={-24}
-          options={
-            <Col
-              py={2}
-              backgroundColor='white'
-              color='washedGray'
-              border={1}
-              borderRadius={2}
-              borderColor='lightGray'
-              boxShadow='0px 0px 0px 3px'
-            >
-              <MessageActionItem onClick={() => onReply(msg)}>
-                Reply
-              </MessageActionItem>
-              {permalink ? (
-                <MessageActionItem onClick={doCopy}>
-                  {copyDisplay}
+        {showDropdown && (
+          <Dropdown
+            dropWidth='250px'
+            width='auto'
+            alignY='top'
+            alignX='right'
+            flexShrink={0}
+            offsetY={8}
+            offsetX={-24}
+            options={
+              <Col
+                py={2}
+                backgroundColor='white'
+                color='washedGray'
+                border={1}
+                borderRadius={2}
+                borderColor='lightGray'
+                boxShadow='0px 0px 0px 3px'
+              >
+                <MessageActionItem onClick={() => onReply(msg)}>
+                  Reply
                 </MessageActionItem>
-              ) : null }
-              {(isAdmin || isOwn()) ? (
-                <MessageActionItem onClick={e => onDelete(msg)} color='red'>
-                  Delete Message
-                </MessageActionItem>
-              ) : null}
-              {false && (
-                <MessageActionItem onClick={e => console.log(e)}>
-                  View Signature
-                </MessageActionItem>
-              )}
-            </Col>
-          }
-        >
-          <Box padding={1} size={'24px'} cursor='pointer'>
-            <Icon icon='Menu' size={3} />
-          </Box>
-        </Dropdown>
+                {showCopyMessageLink && (
+                  <MessageActionItem onClick={doCopy}>
+                    {copyDisplay}
+                  </MessageActionItem>
+                )}
+                {showDelete && (
+                  <MessageActionItem onClick={e => onDelete(msg)} color='red'>
+                    Delete Message
+                  </MessageActionItem>
+                )}
+              </Col>
+            }
+          >
+            <Box padding={2} size={5} cursor='pointer'>
+              <Icon icon='Menu' size={3} />
+            </Box>
+          </Dropdown>
+        )}
       </Row>
     </Box>
   );
@@ -418,7 +418,7 @@ function ChatMessage(props: ChatMessageProps) {
   }
 
   const onReply = props?.onReply || emptyCallback;
-  const onDelete = props?.onDelete || emptyCallback;
+  const onDelete = props?.onDelete; // If missing hide delete action
   const transcluded = props?.transcluded || 0;
   const renderSigil = props.renderSigil || (Boolean(nextMsg && msg.author !== nextMsg.author) ||
         !nextMsg
@@ -513,111 +513,3 @@ function ChatMessage(props: ChatMessageProps) {
 export default React.memo(React.forwardRef((props: Omit<ChatMessageProps, 'innerRef'>, ref: any) => (
   <ChatMessage {...props} innerRef={ref} />
 )));
-
-export const MessagePlaceholder = ({
-  height,
-  index,
-  className = '',
-  style = {},
-  ...props
-}) => (
-  <Box
-    width='100%'
-    fontSize={2}
-    pl={3}
-    pt={4}
-    pr={3}
-    display='flex'
-    lineHeight='tall'
-    className={className}
-    style={{ height, ...style }}
-    {...props}
-  >
-    <Box
-      pr={3}
-      verticalAlign='top'
-      backgroundColor='white'
-      style={{ float: 'left' }}
-    >
-      <Text
-        display='block'
-        background='washedGray'
-        width='24px'
-        height='24px'
-        borderRadius='50%'
-        style={{
-          visibility: index % 5 == 0 ? 'initial' : 'hidden'
-        }}
-      ></Text>
-    </Box>
-    <Box
-      style={{ float: 'right', flexGrow: 1 }}
-      color='black'
-      className='clamp-message'
-    >
-      <Box
-        className='hide-child'
-        paddingTop={4}
-        style={{ visibility: index % 5 == 0 ? 'initial' : 'hidden' }}
-      >
-        <Text
-          display='inline-block'
-          verticalAlign='middle'
-          fontSize={0}
-          color='washedGray'
-          cursor='default'
-        >
-          <Text maxWidth='32rem' display='block'>
-            <Text
-              backgroundColor='washedGray'
-              borderRadius={2}
-              display='block'
-              width='100%'
-              height='100%'
-            ></Text>
-          </Text>
-        </Text>
-        <Text
-          display='inline-block'
-          mono
-          verticalAlign='middle'
-          fontSize={0}
-          color='washedGray'
-        >
-          <Text
-            background='washedGray'
-            borderRadius={2}
-            display='block'
-            height='1em'
-            style={{ width: `${((index % 3) + 1) * 3}em` }}
-          ></Text>
-        </Text>
-        <Text
-          mono
-          verticalAlign='middle'
-          fontSize={0}
-          ml={2}
-          color='washedGray'
-          borderRadius={2}
-          display={['none', 'inline-block']}
-          className='child'
-        >
-          <Text
-            backgroundColor='washedGray'
-            borderRadius={2}
-            display='block'
-            width='100%'
-            height='100%'
-          ></Text>
-        </Text>
-      </Box>
-      <Text
-        display='block'
-        backgroundColor='washedGray'
-        borderRadius={2}
-        height='1em'
-        style={{ width: `${(index % 5) * 20}%` }}
-      ></Text>
-    </Box>
-  </Box>
-);

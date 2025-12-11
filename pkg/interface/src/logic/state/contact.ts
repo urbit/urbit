@@ -69,5 +69,4 @@ export const favicon = () => {
   return svg;
 };
 
-
 export default useContactState;

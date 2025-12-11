@@ -1,5 +1,6 @@
-import { acceptDm, cite, Content, declineDm, deSig, Post, removeDmMessage } from '@urbit/api';
+import { acceptDm, cite, Content, declineDm, deSig, Post } from '@urbit/api';
 import React, { useCallback, useEffect } from 'react';
+import Helmet from 'react-helmet';
 import _ from 'lodash';
 import bigInt from 'big-integer';
 import { Box, Row, Col, Text, Center } from '@tlon/indigo-react';
@@ -49,6 +50,21 @@ function quoteReply(post: Post) {
   return `${reply}\n\n~${post.author}:`;
 }
 
+export function DmHelmet(props: DmHelmetProps) {
+  const { ship } = props;
+  const hark = useHarkDm(ship);
+  const unreadCount = hark.count;
+  const contact = useContact(ship);
+  const { hideNicknames } = useSettingsState(selectCalmState);
+  const showNickname = !hideNicknames && Boolean(contact);
+  const nickname = showNickname ? contact!.nickname : cite(ship) ?? ship;
+  return(
+    <Helmet defer={false}>
+      <title>{unreadCount ? `(${String(unreadCount)}) ` : ''}{ nickname }</title>
+    </Helmet>
+  );
+}
+
 export function DmResource(props: DmResourceProps) {
   const { ship } = props;
   const dm = useDM(ship);
@@ -77,8 +93,10 @@ export function DmResource(props: DmResourceProps) {
   );
 
   useEffect(() => {
-    getNewest(`~${window.ship}`, 'dm-inbox', 100, `/${patp2dec(ship)}`);
-  }, [ship]);
+    if(dm.size === 0 && !pending) {
+      getNewest(`~${window.ship}`, 'dm-inbox', 100, `/${patp2dec(ship)}`);
+    }
+  }, [ship, dm]);
 
   const fetchMessages = useCallback(
     async (newer: boolean) => {
@@ -125,10 +143,6 @@ export function DmResource(props: DmResourceProps) {
     [ship, addDmMessage]
   );
 
-  const onDelete = useCallback((msg: Post) => {
-    airlock.poke(removeDmMessage(`~${window.ship}`, msg.index));
-  }, []);
-
   const onAccept = async () => {
     await airlock.poke(acceptDm(ship));
   };
@@ -136,6 +150,7 @@ export function DmResource(props: DmResourceProps) {
     history.push('/~landscape/messages');
     await airlock.poke(declineDm(ship));
   };
+
   return (
     <Col width="100%" height="100%" overflow="hidden">
       <Row
@@ -206,7 +221,6 @@ export function DmResource(props: DmResourceProps) {
           onReply={quoteReply}
           fetchMessages={fetchMessages}
           dismissUnread={dismissUnread}
-          onDelete={onDelete}
           getPermalink={() => undefined}
           isAdmin={false}
           onSubmit={onSubmit}

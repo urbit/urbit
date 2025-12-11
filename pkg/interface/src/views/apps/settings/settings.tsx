@@ -11,7 +11,6 @@ import DisplayForm from './components/lib/DisplayForm';
 import { LeapSettings } from './components/lib/LeapSettings';
 import { NotificationPreferences } from './components/lib/NotificationPref';
 import S3Form from './components/lib/S3Form';
-import SecuritySettings from './components/lib/Security';
 import { DmSettings } from './components/lib/DmSettings';
 import ShortcutSettings from './components/lib/ShortcutSettings';
 
@@ -68,7 +67,7 @@ function SettingsItem(props: { children: ReactNode }) {
   );
 }
 
-export default function SettingsScreen(props: any) {
+export default function SettingsScreen() {
   const location = useLocation();
   const hash = location.hash.slice(1);
   const notificationsCount = useHarkState(state => state.notificationsCount);
@@ -117,28 +116,17 @@ return;
             <SidebarItem icon='Messages' text='Direct Messages' hash='dm' />
             <SidebarItem icon='Node' text='CalmEngine' hash='calm' />
             <SidebarItem icon='EastCarat' text='Shortcuts' hash='shortcuts' />
-            <SidebarItem
-              icon='Locked'
-              text='Devices + Security'
-              hash='security'
-            />
           </Col>
         </Col>
         <Col flexGrow={1} overflowY='auto'>
           <SettingsItem>
-            {hash === 'notifications' && (
-              <NotificationPreferences
-                {...props}
-                graphConfig={props.notificationsGraphConfig}
-              />
-            )}
+            {hash === 'notifications' && <NotificationPreferences />}
             {hash === 'display' && <DisplayForm />}
             {hash === 'dm' && <DmSettings />}
             {hash === 'shortcuts' && <ShortcutSettings />}
             {hash === 's3' && <S3Form  />}
             {hash === 'leap' && <LeapSettings />}
             {hash === 'calm' && <CalmPrefs />}
-            {hash === 'security' && <SecuritySettings />}
             {hash === 'debug' && <DebugPane />}
           </SettingsItem>
         </Col>

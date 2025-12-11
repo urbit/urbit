@@ -1,9 +1,8 @@
 import { Action, Box, Col, Row, Text } from '@tlon/indigo-react';
-import { Association, Graph, GraphNode, Group, markEachAsRead, removePosts } from '@urbit/api';
+import { Association, Graph, GraphNode, Group, markEachAsRead, removePosts, roleForShip } from '@urbit/api';
 import bigInt from 'big-integer';
 import React, { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { roleForShip } from '~/logic/lib/group';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
 import { getComments, getLatestRevision } from '~/logic/lib/publish';
 import { useCopy } from '~/logic/lib/useCopy';
@@ -27,6 +26,7 @@ interface NoteProps {
 }
 
 export function NoteContent({ post }) {
+  console.log(post.contents);
   return (
       <Box color="black" className="md" style={{ overflowWrap: 'break-word', overflow: 'hidden' }}>
         <GraphContent tall={true} contents={post.contents.slice(1)} showOurContact />
@@ -46,13 +46,6 @@ export function Note(props: NoteProps & RouteComponentProps) {
     props.history.push(rootUrl);
   };
 
-  if (typeof note.post === 'string' || !note.post) {
-    return (
-      <Box width="100%"  pt="2" textAlign="center">
-        <Text gray>This note has been deleted.</Text>
-      </Box>
-    );
-  }
 
   const comments = getComments(note);
   const [, title, , post] = getLatestRevision(note);
@@ -148,4 +141,16 @@ export function Note(props: NoteProps & RouteComponentProps) {
   );
 }
 
-export default Note;
+export default function(props: NoteProps & RouteComponentProps) {
+  const { note } = props;
+
+  if (typeof note.post === 'string' || !note.post) {
+    return (
+      <Box width="100%"  pt="2" textAlign="center">
+        <Text gray>This note has been deleted.</Text>
+      </Box>
+    );
+  }
+
+  return (<Note {...props} />);
+}

@@ -1,0 +1,28 @@
+name: 'ota'
+description: 'perform an OTA update of arvo on a remote ship'
+inputs:
+  ship:
+    description: "target ship"
+    required: true
+  credentials:
+    description: "base64-encoded GCP Service Account credentials"
+    required: true
+  ssh-sec-key:
+    description: "base64-encoded SSH secret key for the container to use"
+    required: true
+  ssh-pub-key:
+    description: "base64-encoded corresponding SSH public key"
+    required: true
+  ref:
+    description: "git ref of arvo source to check out"
+    required: false
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.ship }}
+    - ${{ inputs.credentials }}
+    - ${{ inputs.ssh-sec-key }}
+    - ${{ inputs.ssh-pub-key }}
+    - ${{ inputs.ref }}

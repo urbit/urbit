@@ -5,12 +5,11 @@
 ::
 =,  eyre
 =,  format
-=,  html
 |_  hit=httr
 ++  grad  %noun
 ++  grow  |%  ++  wall  (turn wain trip)
               ++  wain  (to-wain cord)
-              ++  json  (need (de-json cord))
+              ++  json  (need (de:json:html cord))
               ++  cord  q:octs
               ++  noun  hit
               ++  octs

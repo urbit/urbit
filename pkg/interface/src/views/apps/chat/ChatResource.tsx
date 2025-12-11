@@ -1,23 +1,23 @@
-import { Content, createPost, fetchIsAllowed, Post, removePosts, deSig } from '@urbit/api';
-import { Association } from '@urbit/api/metadata';
+import { Association, Content, createPost, deSig, fetchIsAllowed, isWriter, Post, removePosts, resourceFromPath } from '@urbit/api';
 import { BigInteger } from 'big-integer';
+import _ from 'lodash';
 import React, {
-  ReactElement, useCallback,
+  ReactElement,
+  useCallback,
   useEffect,
-
-  useMemo, useState
+  useMemo,
+  useState
 } from 'react';
-import { isWriter, resourceFromPath } from '~/logic/lib/group';
+import shallow from 'zustand/shallow';
+import airlock from '~/logic/api';
+import { disallowedShipsForOurContact } from '~/logic/lib/contact';
 import { getPermalinkForGraph } from '~/logic/lib/permalinks';
+import { toHarkPath } from '~/logic/lib/util';
 import useGraphState, { useGraphForAssoc } from '~/logic/state/graph';
 import { useGroupForAssoc } from '~/logic/state/group';
 import useHarkState, { useHarkStat } from '~/logic/state/hark';
 import { Loading } from '~/views/components/Loading';
 import { ChatPane } from './components/ChatPane';
-import airlock from '~/logic/api';
-import { disallowedShipsForOurContact } from '~/logic/lib/contact';
-import shallow from 'zustand/shallow';
-import { toHarkPath } from '~/logic/lib/util';
 
 const getCurrGraphSize = (ship: string, name: string) => {
   const { graphs } = useGraphState.getState();
@@ -38,7 +38,7 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
   const graph = useGraphForAssoc(association);
   const stats = useHarkStat(toHarkPath(association.resource));
   const unreadCount = stats.count;
-  const canWrite = group ? isWriter(group, resource) : false;
+  const canWrite = group ? isWriter(group, resource, window.ship) : false;
   const [
     getNewest,
     getOlderSiblings,
@@ -90,7 +90,7 @@ const ChatResource = (props: ChatResourceProps): ReactElement => {
   );
 
   const isAdmin = useMemo(
-    () => (group ? group.tags.role.admin.has(`~${window.ship}`) : false),
+    () => (group ? _.includes(group.tags.role.admin, deSig(window.ship)) : false),
     [group]
   );
 

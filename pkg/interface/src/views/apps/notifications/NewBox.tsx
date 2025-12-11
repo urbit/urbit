@@ -1,7 +1,7 @@
 import { Box, Center, Col, Text } from '@tlon/indigo-react';
 import React from 'react';
 import useHarkState, { HarkState } from '~/logic/state/hark';
-import { harkBinToId, HarkLid, Timebox } from '../../../../../npm/api/dist';
+import { harkBinToId, HarkLid, Timebox } from '@urbit/api';
 import { Notification } from './notification';
 
 const unseenLid = { unseen: null };

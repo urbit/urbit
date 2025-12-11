@@ -11,8 +11,7 @@ export function getTitleFromWorkspace(
     case 'messages':
       return 'Messages';
     case 'group':
-      const association = associations.groups[workspace.group];
-      return association?.metadata?.title || '';
+      return associations.groups[workspace.group]?.metadata?.title || 'Groups';
   }
 }
 

@@ -31,14 +31,16 @@
 ::
 |%
 +$  app-state
-  $:  %2
+  $:  %6
       ::  pending: the next l2 txs to be sent
       ::  sending: l2 txs awaiting l2 confirmation, ordered by nonce
       ::  finding: sig+raw-tx hash reverse lookup for txs in sending map
       ::  history: status of l2 txs by ethereum address, timestamp sorted
       ::  ship-quota: number of txs submited per ship in the current slice
+      ::  allowances: specific no of allowed transactions per given ship
       ::  next-nonce: next l1 nonce to use
       ::  next-batch: when then next l2 batch will be sent
+      ::  next-slice: when the global quota will be reset
       ::  pre: predicted l2 state
       ::  own: ownership of azimuth points
       ::  spo: residents and escapees, per sponsor
@@ -48,8 +50,10 @@
       finding=(map keccak ?(%confirmed %failed [=time l1-tx-pointer]))
       history=(map address:ethereum (tree hist-tx))
       ship-quota=(map ship @ud)
+      allowances=(map ship (unit @ud))
       next-nonce=(unit @ud)
       next-batch=time
+      next-slice=time
       pre=^state:naive
       own=owners
       spo=sponsors
@@ -61,9 +65,10 @@
       ::  frequency: time to wait between sending batches (TODO fancier)
       ::  endpoint: ethereum rpc endpoint to use
       ::  contract: ethereum contract address
-      ::  chain-id: mainnet, ropsten, local (https://chainid.network/)
+      ::  chain-id: mainnet, goerli, local (https://chainid.network/)
       ::  resend-time: time to resend a batch with higher gas prie
       ::  update-rate: frequency to update the roller's predicted state
+      ::  fallback-gas-price: default batch gas price
       ::
       pk=@
       slice=@dr
@@ -75,36 +80,140 @@
       chain-id=@
       resend-time=@dr
       update-rate=@dr
+      fallback-gas-price=@ud
   ==
-::  orp: ordered points in naive state by parent ship
-::
-++  orp  ((on ship point:naive) por:naive)
-::  ors: ordered sending map by (increasing) L1 nonce
-::
-++  ors  ((on l1-tx-pointer send-tx) nonce-order:dice)
-::  orh: ordered tx history by (decreasing) timestamp
-::
-++  orh  ((on time roll-tx) gth)
 ::
 +$  action
-  $%  ::  we need to include the address in submit so pending txs show up
-      ::  in the tx history, but because users can send the wrong
-      ::  address, in +apply-tx:predicted state, we just replace
-      ::  the provided address, with the one used when the message was signed;
-      ::
-      ::  we need to do it there to know the correct nonce that the signed
-      ::  message should have included.
+  $%  ::  submit: request to add a l2 tx to the pending queue
       ::
       [%submit force=? =address:naive sig=@ tx=part-tx]
+      ::  cancel: cancels a pending transaction
+      ::
+      ::   a signed message ("cancel: 0xkeccak") is used as ownership validation
+      ::
       [%cancel sig=@ keccak=@ =l2-tx =ship]
-      [%commit ~]  ::TODO  maybe pk=(unit @) later
+      ::  commit: manually commit a batch of pending txs
+      ::
+      ::   TODO: maybe pk=(unit @) later
+      ::
+      [%commit ~]
+      ::  config: configure the roller
+      ::
       [%config config]
+      ::  assign: assign an allowance to a ship for submitting l2 txs
+      ::
+      [%assign =ship quota=(unit @ud)]
+      ::  refuel: bumps the next-gas-price of a sending tx
+      ::
+      [%refuel nonce=@ address=(unit address:ethereum) gas=@ud]
   ==
 ::
-+$  card  card:agent:gall
-::
++$  card   card:agent:gall
 ++  lverb  &
 --
+::  Helpers
+::
+=>  |%
+    ::  TODO  /lib/sys.hoon?
+    ::
+    ++  sys
+      |%
+      ++  b
+        |%
+        ++  wait
+          |=  [=wire =time]
+          ^-  card
+          [%pass wire %arvo %b %wait time]
+        --
+      --
+    ::  TODO  /lib/spider.hoon?
+    ::
+    ++  spider
+      |%
+      ++  start-thread
+        |=  [=bowl:gall =wire thread=term arg=vase]
+        ^-  (list card)
+        =/  =beak    byk.bowl(r da+now.bowl)
+        =/  tid=@ta  (rap 3 thread '--' (scot %uv eny.bowl) ~)
+        =/  args     [~ `tid beak thread arg]
+        :~  [%pass wire %agent [our.bowl %spider] %watch /thread-result/[tid]]
+            [%pass wire %agent [our.bowl %spider] %poke %spider-start !>(args)]
+        ==
+      ::
+      ++  leave
+        |=  [agent=@p =path]
+        ^-  card
+        [%pass path %agent [agent %spider] %leave ~]
+      --
+    ::
+    ++  get-l1-address
+      |=  [=tx:naive nas=^state:naive]
+      ^-  (unit address:ethereum)
+      ?~  point=(get:orp:dice points.nas ship.from.tx)  ~
+      =<  `address
+      (proxy-from-point:naive proxy.from.tx u.point)
+    ::
+    ++  timer
+      |%
+      ::  +set-roller: %wait until next whole frequency
+      ::
+      ++  set-roller
+        |=  [frequency=@dr now=@da]
+        ^-  [=card =time]
+        =+  time=(mul +((div now frequency)) frequency)
+        [(wait:b:sys /timer time) time]
+      ::  +set-roller: %wait until next whole :slice
+      ::
+      ++  set-quota
+        |=  [slice=@dr now=@da]
+        ^-  [=card =time]
+        =+  time=(mul +((div now slice)) slice)
+        [(wait:b:sys /quota-timer time) time]
+      --
+    ::  TODO: move address to state?
+    ::
+    ++  get-address
+      |=  pk=@
+      ^-  address:ethereum
+      (address-from-prv:key:ethereum pk)
+    --
+::  Cards
+::
+=>  |%
+    ++  emit
+      |=  updates=(list update)
+      =|  cards=(list card)
+      |-  ^-  (list card)
+      ?~  updates  (flop cards)
+      =*  up  i.updates
+      =/  [address=@t last-owner=(unit @t)]
+        ?-    -.up
+            %tx
+          :_  ~
+          (scot %ux address.pend-tx.up)
+        ::
+            %point
+        :-  (scot %ux address.to.up)
+        ?~(from.up ~ `(scot %ux address.u.from.up))
+        ==
+      =.  cards
+        %+  welp
+          ^-  (list card)
+          ?-  -.i.updates
+              %tx
+            [%give %fact ~[/txs/[address]] tx+!>(up)]~
+          ::
+              %point
+            =/  =cage  point+!>(up)
+            %+  weld
+              [%give %fact ~[/points/[address]] cage]~
+            ?~  last-owner  ~
+            [%give %fact ~[/points/[u.last-owner]] cage]~
+          ==
+        cards
+      ::
+      $(updates t.updates)
+    --
 ::
 =|  app-state
 =*  state  -
@@ -121,18 +230,20 @@
   ::
   ++  on-init
     ^-  (quip card _this)
-    =:  frequency    ~h1
-        quota        7
-        slice        ~d7
-        resend-time  ~m5
-        update-rate  ~m5
-        contract     naive:local-contracts:azimuth
-        chain-id     chain-id:local-contracts:azimuth
+    =:  frequency           ~h1
+        quota               25
+        slice               ~d7
+        resend-time         ~m5
+        update-rate         ~m5
+        contract            naive:local-contracts:azimuth
+        chain-id            chain-id:local-contracts:azimuth
+        fallback-gas-price  10.000.000.000
       ==
-    =^  card  next-batch  set-roller:timer
+    =^  card-1  next-batch  (set-roller:timer frequency now.bowl)
+    =^  card-2  next-slice  (set-quota:timer slice now.bowl)
     :_  this
-    :~  card
-        (set-quota:timer slice)
+    :~  card-1
+        card-2
         [%pass /azimuth-events %agent [our.bowl %azimuth] %watch /event]
     ==
   ::
@@ -141,25 +252,26 @@
     |=  old=vase
     ^-  (quip card _this)
     =|  cards=(list card)
-    ::  new additions to app-state
-    ::
-    =|  spo=(map ship [residents=(set ship) requests=(set ship)])
     |^
     =+  !<(old-state=app-states old)
     =?  cards  ?=(%0 -.old-state)
-      [(set-quota:timer slice)]~
+      [card:(set-quota:timer slice now.bowl)]~
     =?  old-state  ?=(%0 -.old-state)
       ^-  state-1
+      =|  ship-quota=(map ship @ud)
+      =/  [slice=@dr quota=@ud resend-time=@dr update-rate=@dr]
+        [~d7 7 ~m5 ~m1]
       =,  old-state
       :*  %1
-          pending  sending  finding  history
-          ship-quota  next-nonce  next-batch
+          pending  ^-((tree [l1-tx-pointer old-send-tx-4]) sending)
+          finding  history  ship-quota  next-nonce  next-batch
           pre  own  pk  slice  quota  derive
           frequency  endpoint  contract  chain-id
           resend-time  update-rate
       ==
     =?  old-state  ?=(%1 -.old-state)
-      ^-  app-state
+      ^-  state-2
+      =|  spo=(map ship [residents=(set ship) requests=(set ship)])
       =,  old-state
       :*  %2
           pending  sending  finding  history
@@ -168,14 +280,90 @@
           frequency  endpoint  contract  chain-id
           resend-time  update-rate
       ==
-    ?>  ?=(%2 -.old-state)
+    =?  old-state  ?=(%2 -.old-state)
+      ^-  state-3
+      =,  old-state
+      =|  allowances=(map ship (unit @ud))
+      =/  next-slice=time  (mul +((div now.bowl slice)) slice)
+      :*  %3
+          pending  sending  finding  history
+          ship-quota  allowances
+          next-nonce  next-batch  next-slice
+          pre  own  spo  pk  slice  quota  derive
+          frequency  endpoint  contract  chain-id
+          resend-time  update-rate
+      ==
+    =?  old-state  ?=(%3 -.old-state)
+      ^-  state-4
+      =,  old-state
+      =/  fallback-gas-price=@ud  10.000.000.000
+      :*  %4
+          pending  sending  finding  history
+          ship-quota  allowances
+          next-nonce  next-batch  next-slice
+          pre  own  spo  pk  slice  quota  derive
+          frequency  endpoint  contract  chain-id
+          resend-time  update-rate  fallback-gas-price
+      ==
+    =?  old-state  ?=(%4 -.old-state)
+      ^-  state-5
+      =/  new-sending=(tree [l1-tx-pointer old-send-tx-5])
+        %+  run:ors:dice  sending.old-state
+        |=  old=old-send-tx-4
+        ^-  old-send-tx-5
+        old(txs (turn txs.old (lead |)))
+      =,  old-state
+      :*  %5
+          pending  new-sending  finding  history
+          ship-quota  allowances
+          next-nonce  next-batch  next-slice
+          pre  own  spo  pk  slice  quota  derive
+          frequency  endpoint  contract  chain-id
+          resend-time  update-rate  fallback-gas-price
+      ==
+    =?  old-state  ?=(%5 -.old-state)
+      ^-  app-state
+      =/  new-sending=(tree [l1-tx-pointer send-tx])
+        %+  run:ors:dice  sending.old-state
+        |=  old=old-send-tx-5
+        ^-  send-tx
+        %=    old
+            txs
+          %+  turn  txs.old
+          |=  [force=? =raw-tx:naive]
+          =/  sign-address=(unit @ux)
+            (extract-address:lib raw-tx pre chain-id)
+          :_  [force raw-tx]
+          ?.  ?=(^ sign-address)
+            0x0
+          u.sign-address
+        ==
+      =,  old-state
+      :*  %6
+          pending  new-sending  finding  history
+          ship-quota  allowances
+          next-nonce  next-batch  next-slice
+          pre  own  spo  pk  slice  quota  derive
+          frequency  endpoint  contract  chain-id
+          resend-time  update-rate  fallback-gas-price
+      ==
+    ?>  ?=(%6 -.old-state)
     [cards this(state old-state)]
     ::
-    ++  app-states  $%(state-0 state-1 app-state)
+    ++  app-states
+      $%  state-0
+          state-1
+          state-2
+          state-3
+          state-4
+          state-5
+          app-state
+      ==
+    ::
     ++  state-0
       $:  %0
           pending=(list pend-tx)
-          sending=(tree [l1-tx-pointer send-tx])
+          sending=(tree [l1-tx-pointer old-send-tx-4])
           finding=(map keccak ?(%confirmed %failed [=time l1-tx-pointer]))
           history=(map address:ethereum (tree hist-tx))
           next-nonce=(unit @ud)
@@ -193,7 +381,7 @@
     ++  state-1
       $:  %1
           pending=(list pend-tx)
-          sending=(tree [l1-tx-pointer send-tx])
+          sending=(tree [l1-tx-pointer old-send-tx-4])
           finding=(map keccak ?(%confirmed %failed [=time l1-tx-pointer]))
           history=(map address:ethereum (tree hist-tx))
           ship-quota=(map ship @ud)
@@ -212,6 +400,115 @@
           resend-time=@dr
           update-rate=@dr
       ==
+    ::
+    ++  state-2
+      $:  %2
+          pending=(list pend-tx)
+          sending=(tree [l1-tx-pointer old-send-tx-4])
+          finding=(map keccak ?(%confirmed %failed [=time l1-tx-pointer]))
+          history=(map address:ethereum (tree hist-tx))
+          ship-quota=(map ship @ud)
+          next-nonce=(unit @ud)
+          next-batch=time
+          pre=^state:naive
+          own=owners
+          spo=sponsors
+          pk=@
+          slice=@dr
+          quota=@ud
+          derive=?
+          frequency=@dr
+          endpoint=(unit @t)
+          contract=@ux
+          chain-id=@
+          resend-time=@dr
+          update-rate=@dr
+      ==
+    ::
+    ++  state-3
+      $:  %3
+          pending=(list pend-tx)
+          sending=(tree [l1-tx-pointer old-send-tx-4])
+          finding=(map keccak ?(%confirmed %failed [=time l1-tx-pointer]))
+          history=(map address:ethereum (tree hist-tx))
+          ship-quota=(map ship @ud)
+          allowances=(map ship (unit @ud))
+          next-nonce=(unit @ud)
+          next-batch=time
+          next-slice=time
+          pre=^state:naive
+          own=owners
+          spo=sponsors
+          pk=@
+          slice=@dr
+          quota=@ud
+          derive=?
+          frequency=@dr
+          endpoint=(unit @t)
+          contract=@ux
+          chain-id=@
+          resend-time=@dr
+          update-rate=@dr
+      ==
+    ::
+    +$  old-send-tx-4  [next-gas-price=@ud sent=? txs=(list =raw-tx:naive)]
+    ::
+    ++  state-4
+      $:  %4
+          pending=(list pend-tx)
+          sending=(tree [l1-tx-pointer old-send-tx-4])
+          finding=(map keccak ?(%confirmed %failed [=time l1-tx-pointer]))
+          history=(map address:ethereum (tree hist-tx))
+          ship-quota=(map ship @ud)
+          allowances=(map ship (unit @ud))
+          next-nonce=(unit @ud)
+          next-batch=time
+          next-slice=time
+          pre=^state:naive
+          own=owners
+          spo=sponsors
+          pk=@
+          slice=@dr
+          quota=@ud
+          derive=?
+          frequency=@dr
+          endpoint=(unit @t)
+          contract=@ux
+          chain-id=@
+          resend-time=@dr
+          update-rate=@dr
+          fallback-gas-price=@ud
+      ==
+    ::
+    +$  old-send-tx-5
+      [next-gas-price=@ud sent=? txs=(list [force=? =raw-tx:naive])]
+    ::
+    ++  state-5
+      $:  %5
+          pending=(list pend-tx)
+          sending=(tree [l1-tx-pointer old-send-tx-5])
+          finding=(map keccak ?(%confirmed %failed [=time l1-tx-pointer]))
+          history=(map address:ethereum (tree hist-tx))
+          ship-quota=(map ship @ud)
+          allowances=(map ship (unit @ud))
+          next-nonce=(unit @ud)
+          next-batch=time
+          next-slice=time
+          pre=^state:naive
+          own=owners
+          spo=sponsors
+          pk=@
+          slice=@dr
+          quota=@ud
+          derive=?
+          frequency=@dr
+          endpoint=(unit @t)
+          contract=@ux
+          chain-id=@
+          resend-time=@dr
+          update-rate=@dr
+          fallback-gas-price=@ud
+      ==
     --
   ::
   ++  on-poke
@@ -229,13 +526,14 @@
   ::    /x/pending                     ->  %noun  (list pend-tx)
   ::    /x/pending/[~ship]             ->  %noun  (list pend-tx)
   ::    /x/pending/[0xadd.ress]        ->  %noun  (list pend-tx)
-  ::    /x/tx/[0xke.ccak]/[@ud]status  ->  %noun  tx-status
+  ::    /x/tx/[0xke.ccak]/status       ->  %noun  tx-status
   ::    /x/history/[0xadd.ress]        ->  %noun  (list hist-tx)
   ::    /x/nonce/[~ship]/[proxy]       ->  %noun  (unit @)
   ::    /x/spawned/[~star]             ->  %noun  (list ship)
   ::    /x/unspawned/[~star]           ->  %noun  (list ship)
   ::    /x/sponsored/[~point]          ->  %noun  [(list ship) (list ship)]
   ::    /x/next-batch                  ->  %atom  time
+  ::    /x/next-slice                  ->  %atom  time
   ::    /x/point/[~ship]               ->  %noun  point:naive
   ::    /x/ships/[0xadd.ress]          ->  %noun  (list ship)
   ::    /x/config                      ->  %noun  config
@@ -249,209 +547,44 @@
   ::    /x/quota                       ->  %atom  @ud
   ::    /x/slice                       ->  %atom  @dr
   ::    /x/over-quota/[~ship]          ->  %atom  ?
+  ::    /x/ship-quota/[~ship]          ->  %atom  @ud
+  ::    /x/allowances                  ->  %noun  (map @p (unit @ud))
+  ::    /x/allowance/[~ship]           ->  %noun  (unit @ud)
   ::    /x/ready                       ->  %atom  ?
   ::
   ++  on-peek
     |=  =path
     ^-  (unit (unit cage))
-    |^
     ?+  path  ~
       [%x %pending ~]         ``noun+!>(pending)
-      [%x %pending @ ~]       (pending-by i.t.t.path)
-      [%x %tx @ %status ~]    (status i.t.t.path)
-      [%x %pending-tx @ ~]    (transaction i.t.t.path)
-      [%x %history @ ~]       (history i.t.t.path)
-      [%x %nonce @ @ ~]       (nonce i.t.t.path i.t.t.t.path)
-      [%x %spawned @ ~]       (spawned i.t.t.path)
-      [%x %unspawned @ ~]     (unspawned i.t.t.path)
-      [%x %sponsored @ ~]     (sponsored i.t.t.path)
+      [%x %pending @ ~]       (pending-by:on-peek:do i.t.t.path)
+      [%x %tx @ %status ~]    (status:on-peek:do i.t.t.path)
+      [%x %pending-tx @ ~]    (transaction:on-peek:do i.t.t.path)
+      [%x %history @ ~]       (history:on-peek:do i.t.t.path)
+      [%x %nonce @ @ ~]       (nonce:on-peek:do i.t.t.path i.t.t.t.path)
+      [%x %spawned @ ~]       (spawned:on-peek:do i.t.t.path)
+      [%x %unspawned @ ~]     (unspawned:on-peek:do i.t.t.path)
+      [%x %sponsored @ ~]     (sponsored:on-peek:do i.t.t.path)
       [%x %next-batch ~]      ``atom+!>(next-batch)
-      [%x %point @ ~]         (point i.t.t.path)
-      [%x %ships @ ~]         (ships i.t.t.path)
-      [%x %config ~]          config
+      [%x %next-slice ~]      ``atom+!>(next-slice)
+      [%x %point @ ~]         (point:on-peek:do i.t.t.path)
+      [%x %ships @ ~]         (ships:on-peek:do i.t.t.path)
+      [%x %config ~]          config:on-peek:do
       [%x %chain-id ~]        ``atom+!>(chain-id)
-      [%x %owned @ ~]         (points-proxy %own i.t.t.path)
-      [%x %transfers @ ~]     (points-proxy %transfer i.t.t.path)
-      [%x %manager @ ~]       (points-proxy %manage i.t.t.path)
-      [%x %voting @ ~]        (points-proxy %vote i.t.t.path)
-      [%x %spawning @ ~]      (points-proxy %spawn i.t.t.path)
+      [%x %owned @ ~]         (points-proxy:on-peek:do %own i.t.t.path)
+      [%x %transfers @ ~]     (points-proxy:on-peek:do %transfer i.t.t.path)
+      [%x %manager @ ~]       (points-proxy:on-peek:do %manage i.t.t.path)
+      [%x %voting @ ~]        (points-proxy:on-peek:do %vote i.t.t.path)
+      [%x %spawning @ ~]      (points-proxy:on-peek:do %spawn i.t.t.path)
       [%x %predicted ~]       ``noun+!>(pre)
       [%x %quota ~]           ``atom+!>(quota)
       [%x %slice ~]           ``atom+!>(slice)
-      [%x %over-quota @ ~]    (over-quota i.t.t.path)
+      [%x %over-quota @ ~]    (over-quota:on-peek:do i.t.t.path)
+      [%x %ship-quota @ ~]    (ship-quota:on-peek:do i.t.t.path)
+      [%x %allowances ~]      ``noun+!>(allowances)
+      [%x %allowance @ ~]     (allowance:on-peek:do i.t.t.path)
       [%x %ready ~]           ``atom+!>(?=(^ points.pre))
     ==
-    ::
-    ++  pending-by
-      |=  wat=@t
-      ?~  who=(slaw %p wat)
-        ::  by-address
-        ::
-        ?~  wer=(slaw %ux wat)
-          [~ ~]
-        =;  pending=(list pend-tx)
-          ``noun+!>(pending)
-        %+  skim  pending
-        |=  pend-tx
-        ::  TODO: use this instead? =(u.wer address)
-        ::
-        ?~  addr=(get-l1-address tx.raw-tx pre)  |
-        =(u.wer u.addr)
-      ::  by-ship
-      ::
-      =;  pending=(list pend-tx)
-        ``noun+!>(pending)
-      %+  skim  pending
-      |=  pend-tx
-      =(u.who ship.from.tx.raw-tx)
-    ::
-    ++  status
-      |=  wat=@t
-      ?~  keccak=(slaw %ux wat)
-        [~ ~]
-      :+  ~  ~
-      :-  %noun
-      !>  ^-  tx-status
-      ?^  status=(~(get by finding) u.keccak)
-        ?@  u.status  [u.status ~]
-        [%sending `+.u.status]
-      :: TODO: potentially slow!
-      =;  known=?
-        [?:(known %pending %unknown) ~]
-      %+  lien  pending
-      |=  pend-tx
-      =(u.keccak (hash-raw-tx:lib raw-tx))
-    ::
-    ++  transaction
-      |=  wat=@t
-      ?~  keccak=(slaw %ux wat)
-        [~ ~]
-      :+  ~  ~
-      :-  %noun
-      !>  ^-  (unit pend-tx)
-      :: TODO: potentially slow!
-      |-
-      ?~  pending  ~
-      =*  tx  i.pending
-      ?:  =(u.keccak (hash-tx:lib raw.raw-tx.tx))
-        `tx
-      $(pending t.pending)
-    ::
-    ++  history
-      |=  wat=@t
-      :+  ~  ~
-      :-  %noun
-      !>  ^-  (list hist-tx)
-      ?~  addr=(slaw %ux wat)  ~
-      ?~  hist=(~(get by ^history) u.addr)  ~
-      (tap:orh u.hist)
-    ::
-    ++  nonce
-      |=  [who=@t proxy=@t]
-      ?~  who=(slaw %p who)
-        [~ ~]
-      ?.  ?=(proxy:naive proxy)
-        [~ ~]
-      :+  ~  ~
-      :-  %noun
-      !>  ^-  (unit @)
-      ?~  point=(get:orp points.pre u.who)
-        ~
-      =<  `nonce
-      (proxy-from-point:naive proxy u.point)
-    ::
-    ++  spawned
-      |=  wat=@t
-      :+  ~  ~
-      :-  %noun
-      !>  ^-  (list @p)
-      ?~  star=(slaw %p wat)  ~
-      =;  range
-        (turn range head)
-      ::  range exclusive [star first-moon-last-planet]
-      ::
-      %-  tap:orp
-      (lot:orp points.pre [`u.star `(cat 3 u.star 0x1.ffff)])
-    ::
-    ++  unspawned
-      |=  wat=@t
-      :+  ~  ~
-      :-  %noun
-      !>  ^-  (list @p)
-      ?~  star=(slaw %p wat)  ~
-      =/  spawned=(set @p)
-        =;  points
-          (~(gas in *(set @p)) (turn points head))
-        %-  tap:orp
-        (lot:orp points.pre [`u.star `(cat 3 u.star 0x1.ffff)])
-      =/  children=(list @p)
-        (turn (gulf 0x1 0xffff) |=(a=@ (cat 3 u.star a)))
-      %+  murn  children
-      |=  =ship
-      ?:  (~(has in spawned) ship)  ~
-      `ship
-    ::
-    ++  sponsored
-      |=  wat=@t
-      :+  ~  ~
-      :-  %noun
-      !>  ^-  [(list ship) (list ship)]
-      ?~  who=(slaw %p wat)  [~ ~]
-      ?~  sponsor=(~(get by spo) u.who)
-        [~ ~]
-      :-  ~(tap in residents.u.sponsor)
-      ~(tap in requests.u.sponsor)
-    ::
-    ++  point
-      |=  wat=@t
-      ?~  ship=(rush wat ;~(pfix sig fed:ag))
-        ``noun+!>(*(unit point:naive))
-      ``noun+!>((get:orp points.pre u.ship))
-    ::
-    ++  ships
-      |=  wat=@t
-      :+  ~  ~
-      :-  %noun
-      !>  ^-  (list ship)
-      ?~  addr=(slaw %ux wat)
-        ~
-      =/  proxies=(list proxy:naive)
-        ~[%own %spawn %manage %vote %transfer]
-      %+  roll  proxies
-      |=  [=proxy:naive ships=(list ship)]
-      %+  weld  ships
-      ~(tap in (~(get ju own) [proxy u.addr]))
-    ::
-    ++  config
-      :+  ~  ~
-      :-  %noun
-      !>  ^-  roller-config
-      :*  next-batch
-          frequency
-          resend-time
-          update-rate
-          contract
-          chain-id
-          slice
-          quota
-      ==
-    ::
-    ++  points-proxy
-      |=  [=proxy:naive wat=@t]
-      :+  ~  ~
-      :-  %noun
-      !>  ^-  (list ship)
-      ?~  addr=(slaw %ux wat)
-        ~
-      ~(tap in (~(get ju own) [proxy u.addr]))
-    ::
-    ++  over-quota
-      |=  wat=@t
-      ?~  who=(slaw %p wat)  [~ ~]
-      =/  [exceeded=? *]  (quota-exceeded u.who)
-      ``atom+!>(exceeded)
-    ::
-    --
   ::
   ++  on-arvo
     |=  [=wire =sign-arvo]
@@ -459,7 +592,7 @@
     ?+    wire  (on-arvo:def wire sign-arvo)
         [%timer ~]
       ?+  +<.sign-arvo  (on-arvo:def wire sign-arvo)
-        %wake  =^(cards state on-timer:do [cards this])
+        %wake  =^(cards state (on-timer:do &) [cards this])
       ==
         [%quota-timer ~]
       ?+  +<.sign-arvo  (on-arvo:def wire sign-arvo)
@@ -469,17 +602,27 @@
         [%predict ~]
       ?+    +<.sign-arvo  (on-arvo:def wire sign-arvo)
           %wake
-        =.  own.state  canonical-owners:do
         =^  effects  state
-          (predicted-state canonical-state):do
+          (predicted-state canonical):do
         [(emit effects) this(derive &)]
       ==
     ::
         [%resend @ @ ~]
       =/  [address=@ux nonce=@ud]
-        [(slav %ux i.t.wire) (rash i.t.t.wire dem)]
-      ?+  +<.sign-arvo  (on-arvo:def wire sign-arvo)
-        %wake  [(send-roll:do address nonce) this]
+        [(slav %ux i.t.wire) (slav %ud i.t.t.wire)]
+      ?+    +<.sign-arvo  (on-arvo:def wire sign-arvo)
+          %wake
+        =/  cards=(list card)  (send-roll:do address nonce)
+        =?  sending
+          ?&  ?=(~ cards)
+              (has:ors:dice sending [address nonce])
+              =(0 (lent txs:(got:ors:dice sending [address nonce])))
+          ==
+          ~&  >  "empty sending, removing {<[nonce address]>}"
+          =^  *  sending
+            (del:ors:dice sending [address nonce])
+          sending
+        [cards this]
       ==
     ==
   ::
@@ -494,35 +637,44 @@
     :_  this
     |^
     ?+  path  (on-watch:def path)
-        [%txs @ ~]     [%give %fact ~ (give-txs i.t.path)]~
-        [%points @ ~]  [%give %fact ~ (give-points i.t.path)]~
+        [%txs @ ~]      ?>(?=(^ (slaw %ux i.t.path)) ~)
+        [%points @ ~]   ?>(?=(^ (slaw %ux i.t.path)) ~)
+        [%connect @ ~]  [%give %fact ~ (init i.t.path)]~
     ==
     ::
-    ++  give-points
+    ++  init
       |=  wat=@t
       ^-  cage
-      :-  %points
-      !>  ^-  (list [ship point:naive])
-      ?~  addr=(slaw %ux wat)  ~
-      =/  proxies=(list proxy:naive)
-        ~[%own %spawn %manage %vote %transfer]
-      %+  roll  proxies
-      |=  [=proxy:naive points=(list [ship point:naive])]
-      %+  weld  points
-      ::
-      %+  roll  ~(tap in (~(get ju own) [proxy u.addr]))
-      |=  [=ship points=_points]
-      %+  snoc  points
-      [ship (need (get:orp points.pre ship))]
+      :-  %roller-data
+      !>  ^-  roller-data
+      ?~  addr=(slaw %ux wat)  !!
+      =/  [=owners =sponsors =points:naive]
+       (give-points u.addr)
+      =/  txs=(tree hist-tx)   (give-history u.addr)
+      [chain-id points txs owners sponsors]
     ::
-    ++  give-txs
-      |=  wat=@t
-      ^-  cage
-      :-  %txs
-      !>  ^-  (list hist-tx)
-      ?~  addr=(slaw %ux wat)  ~
-      ?~  hist=(~(get by history) u.addr)  ~
-      (tap:orh u.hist)
+    ++  give-points
+      |=  =address:ethereum
+      ^-  [owners sponsors points:naive]
+      =/  controlled=(list [proxy:naive ship])
+        (controlled-ships:dice address own)
+      %+  roll  controlled
+      |=  [[=proxy:naive =ship] =owners =sponsors =points:naive]
+      =/  sponsoring  (~(get by spo.state) ship)
+      :+  (~(put ju owners) [proxy address] ship)
+        ::
+        ?~  sponsoring  sponsors
+        (~(put by sponsors) ship u.sponsoring)
+      ::
+      %+  put:orp:dice  points
+      [ship (need (get:orp:dice points.pre ship))]
+    ::
+    ++  give-history
+      |=  =address:ethereum
+      ^-  (tree hist-tx)
+      ?~  hist=(~(get by history) address)
+        ~
+      u.hist
     --
   ::
   ++  on-leave  on-leave:def
@@ -542,7 +694,7 @@
       |=  [address=@t nonce=@t =sign:agent:gall]
       ^-  (quip card _this)
       =/  [address=@ux nonce=@ud]
-        [(slav %ux address) (rash nonce dem)]
+        [(slav %ux address) (slav %ud nonce)]
       ?-  -.sign
           %poke-ack
         ?~  p.sign
@@ -550,7 +702,7 @@
           [~ this]
         %-  (slog leaf+"{(trip dap.bowl)} couldn't start thread" u.p.sign)
         :_  this
-        [(leave:spider:do wire)]~
+        [(leave:spider:do our.bowl wire)]~
       ::
           %watch-ack
         ?~  p.sign
@@ -568,11 +720,11 @@
           =+  !<([=term =tang] q.cage.sign)
           %-  (slog leaf+"{(trip dap.bowl)} failed" leaf+<term> tang)
           =^  cards  state
-            (on-batch-result:do address nonce %.n^[%error 'thread failed'])
+            (on-batch-result:do address nonce %.n^[%crash 'thread failed'])
           [cards this]
         ::
             %thread-done
-          =+   !<(result=(each @ud [term @t]) q.cage.sign)
+          =+   !<(result=(each [@ud @ud] [term @t]) q.cage.sign)
           =^  cards  state
             (on-batch-result:do address nonce result)
           [cards this]
@@ -599,14 +751,9 @@
         ::
             %naive-state
           ~&  >  %received-azimuth-state
-          ::  cache naive and ownership state
-          ::
-          =+  !<([nas=^state:naive own=owners spo=sponsors] q.cage.sign)
-          =:  own.state  own
-              spo.state  spo
-            ==
+          =+  !<([nas=^state:naive =indices] q.cage.sign)
           =^  effects  state
-            (predicted-state:do nas)
+            (predicted-state:do nas indices)
           [(emit effects) this]
         ==
       ==
@@ -621,7 +768,7 @@
           [~ this]
         %-  (slog leaf+"{(trip dap.bowl)} couldn't start thread" u.p.sign)
         :_  this
-        [(leave:spider:do wire)]~
+        [(leave:spider:do our.bowl wire)]~
       ::
           %watch-ack
         ?~  p.sign
@@ -649,7 +796,7 @@
     ++  refresh
       |=  [nonce=@t =sign:agent:gall]
       ^-  (quip card _this)
-      =/  failed-nonce=@ud  (rash nonce dem)
+      =/  failed-nonce=@ud  (slav %ud nonce)
       ?-  -.sign
           %poke-ack
         ?~  p.sign
@@ -657,7 +804,7 @@
           [~ this]
         %-  (slog leaf+"{(trip dap.bowl)} couldn't start thread" u.p.sign)
         :_  this
-        [(leave:spider:do wire)]~
+        [(leave:spider:do our.bowl wire)]~
       ::
           %watch-ack
         ?~  p.sign
@@ -687,122 +834,49 @@
   --
 ::
 |_  =bowl:gall
-::TODO  /lib/sys.hoon?
-++  sys
-  |%
-  ++  b
-    |%
-    ++  wait
-      |=  [=wire =time]
-      ^-  card
-      [%pass wire %arvo %b %wait time]
-    --
-  --
-::TODO  /lib/spider.hoon?
-++  spider
-  |%
-  ++  start-thread
-    |=  [=wire thread=term arg=vase]
-    ^-  (list card)
-    =/  =beak    byk.bowl(r da+now.bowl)
-    =/  tid=@ta  (rap 3 thread '--' (scot %uv eny.bowl) ~)
-    =/  args     [~ `tid beak thread arg]
-    :~  [%pass wire %agent [our.bowl %spider] %watch /thread-result/[tid]]
-        [%pass wire %agent [our.bowl %spider] %poke %spider-start !>(args)]
+::  +canonical: current naive, ownership, and sponsorship state
+::
+++  canonical
+  |^  nas^own^spo
+  ::
+  ++  nas
+    .^  ^state:naive
+      %gx
+      (scot %p our.bowl)
+      %azimuth
+      (scot %da now.bowl)
+      /nas/noun
     ==
   ::
-  ++  leave
-    |=  =path
-    ^-  card
-    [%pass path %agent [our.bowl %spider] %leave ~]
-  --
-::
-::
-++  emit
-  |=  updates=(list update)
-  |-  ^-  (list card)
-  ?~  updates  ~
-  =*  up          i.updates
-  =/  [address=@t last-owner=(unit @t)]
-    ?-    -.up
-        %tx
-      :_  ~
-      (scot %ux address.up)
-    ::
-        %point
-    :-  (scot %ux address.new.up)
-    ?~(old.up ~ `(scot %ux address.u.old.up))
+  ++  own
+    .^  owners
+      %gx
+      (scot %p our.bowl)
+      %azimuth
+      (scot %da now.bowl)
+      /own/noun
     ==
-  %+  weld
-    $(updates t.updates)
-  ^-  (list card)
-  ?-  -.i.updates
-      %tx
-    [%give %fact ~[/txs/[address]] tx+!>(roll-tx.up)]~
   ::
-      %point
-    %+  weld
-      [%give %fact ~[/points/[address]] point+!>([ship point]:up)]~
-    ?~  last-owner  ~
-    [%give %fact ~[/points/[u.last-owner]] point+!>([ship point]:up)]~
-  ==
-::
-++  part-tx-to-full
-  |=  =part-tx
-  ^-  [octs tx:naive]
-  ?-    -.part-tx
-      %raw
-    ?~  batch=(parse-raw-tx:naive 0 q.raw.part-tx)
-      ~?  lverb  [dap.bowl %parse-failed]
-      ::  TODO: maybe return a unit if parsing fails?
-      ::
-      !!
-    [raw tx]:-.u.batch
-  ::
-    %don  [(gen-tx-octs:lib +.part-tx) +.part-tx]
-    %ful  +.part-tx
-  ==
-::  +canonical-state: current l2 state from /app/azimuth
-::
-++  canonical-state
-  .^  ^state:naive
-    %gx
-    (scot %p our.bowl)
-    %azimuth
-    (scot %da now.bowl)
-    /nas/noun
-  ==
-::  +canonical-owners: current azimuth point ownership
-::
-++  canonical-owners
-  .^  owners
-    %gx
-    (scot %p our.bowl)
-    %azimuth
-    (scot %da now.bowl)
-    /own/noun
-  ==
-::  +canonical-sponsors: current azimuth sponsorship
-::
-++  canonical-sponsors
-  .^  sponsors
-    %gx
-    (scot %p our.bowl)
-    %azimuth
-    (scot %da now.bowl)
-    /spo/noun
-  ==
+  ++  spo
+    .^  sponsors
+      %gx
+      (scot %p our.bowl)
+      %azimuth
+      (scot %da now.bowl)
+      /spo/noun
+    ==
+  --
 ::  +predicted-state
 ::
 ::    derives predicted state from applying pending & sending txs to
 ::    the provided naive state, discarding invalid txs in the process
 ::
 ++  predicted-state
-  |=  nas=^state:naive
+  |=  [nas=^state:naive =indices]
   ^-  (quip update _state)
   =:  pre  nas
-      own  canonical-owners
-      spo  canonical-sponsors
+      own  own.indices
+      spo  spo.indices
     ==
   |^
   =^  [nes=_sending updates-1=(list update)]  state
@@ -818,85 +892,82 @@
   ++  apply-sending
     =|  ups=(list update)
     =/  valid=_sending  ~
-    =+  sorted=(tap:ors sending)
+    =+  sorted=(tap:ors:dice sending)
     |-  ^+  [[valid ups] state]
     ?~  sorted  [[valid ups] state]
     ::
     =*  key  key.i.sorted
     =*  val  val.i.sorted
-    =+  txs=(turn txs.val |=(=raw-tx:naive [| 0x0 *time raw-tx]))
+    =/  txs=(list pend-tx)
+      %+  turn  txs.val
+      |=([addr=@ux force=? =raw-tx:naive] force^addr^*time^raw-tx)
     =^  [new-valid=_txs nups=_ups]  state
       (apply-txs txs %sending `nonce.key)
+    =/  new-sending
+     (turn new-valid |=([force=? addr=@ux * =raw-tx:naive] addr^force^raw-tx))
     ::  we only hear updates for this nonce if it has been sent
     ::
     =.  valid  ::=?  valid  sent.val
-      %^  put:ors  valid
-        key
-      ::  TODO: too much functional hackery?
-      val(txs (turn new-valid (cork tail (cork tail tail))))
+      (put:ors:dice valid key val(txs new-sending))
     $(sorted t.sorted, ups (welp ups nups))
   ::
   ++  apply-txs
     |=  [txs=(list pend-tx) type=?(%pending %sending) nonce=(unit @ud)]
     =/  valid=_txs  ~
-    =|  ups=(list update)
-    |-  ^+  [[valid ups] state]
-    ?~  txs  [[(flop valid) ups] state]
+    =|  updates=(list update)
+    |-  ^+  [[valid updates] state]
+    ?~  txs
+      :_  state
+      [(flop valid) (flop updates)]
     ::
     =*  tx       i.txs
     =*  raw-tx   raw-tx.i.txs
     =*  ship     ship.from.tx.raw-tx.i.txs
     =/  =keccak  (hash-raw-tx:lib raw-tx)
-    =/  sign-address=(unit @ux)
-      (extract-address:lib raw-tx pre chain-id)
-    =^  [gud=? nups=_ups]  state
+    =^  [gud=? up-1=_updates]  state
       (try-apply pre force.tx raw-tx)
-    ::  TODO: only replace address if !=(address.tx sign-address)?
-    ::
-    =?  tx  &(gud ?=(^ sign-address))
-      tx(address u.sign-address)
     =/  =roll-tx  [ship type keccak (l2-tx +<.tx.raw-tx)]
-    =?  nups  !gud
-      %+  snoc  nups
-      [%tx address.tx roll-tx(status %failed)]
     =?  valid     gud  [tx valid]
-    =?  history  !gud
-      =/  =time
+    =^  up-2  history
+      ?:  gud  [~ history]
+      =.  time.tx
         ?:  ?=(%pending type)  time.tx
-        =+  wer=(~(got by finding) keccak)
-        ?>(?=(^ wer) time.wer)
-      =+  txs=(~(got by history) address.tx)
-      =.  txs  +:(del:orh txs time)
-      %+  ~(put by history)  address.tx
-      %+  put:orh  txs
-      [time roll-tx(status %failed)]
+        ?~  wer=(~(get by finding) keccak)
+          ~&  >>>  "missing %sending tx in finding"^[ship raw-tx]
+          now.bowl
+        ?@  u.wer
+          ~&  >>>  "weird tx in finding gud: {<gud>} {<u.wer>}"^[ship raw-tx]
+          now.bowl
+        time.u.wer
+      ~?  =(0x0 address.tx)  %weird-null-tx-address^'apply-txs'
+      (update-history:dice history [tx]~ %failed)
     =?  finding  !gud  (~(put by finding) keccak %failed)
-    $(txs t.txs, ups (weld ups nups))
+    =.  updates  :(welp up-2 up-1 updates)
+    $(txs t.txs)
   --
 ::  +try-apply: maybe apply the given l2 tx to the naive state
 ::
 ++  try-apply
   |=  [nas=^state:naive force=? =raw-tx:naive]
   ^-  [[? ups=(list update)] _state]
-  =/  [success=? ups=(list update) predicted=_nas owners=_own sponsors=_spo]
+  =/  [success=? updates=(list update) predicted=_nas =indices]
     (apply-raw-tx:dice force chain-id raw-tx nas own spo)
-  :-  [success ups]
-  state(pre predicted, own owners, spo sponsors)
-::
-++  get-l1-address
-  |=  [=tx:naive nas=^state:naive]
-  ^-  (unit address:ethereum)
-  ?~  point=(get:orp points.nas ship.from.tx)  ~
-  =<  `address
-  (proxy-from-point:naive proxy.from.tx u.point)
+  =:  pre  predicted
+      own  own.indices
+      spo  spo.indices
+    ==
+  [[success updates] state]
 ::
 ++  on-action
   |=  =action
   ^-  (quip card _state)
   =+  local=(team:title our.bowl src.bowl)
+  |^
   ?-  -.action
-    %commit  ?>(local on-timer)
+    %commit  ?>(local (on-timer |))
     %config  ?>(local (on-config +.action))
+    %assign  ?>(local `state(allowances (~(put by allowances) +.action)))
+    %refuel  ?>(local (refuel-tx +.action))
     %cancel  (cancel-tx +.action)
   ::
       %submit
@@ -912,12 +983,30 @@
         (part-tx-to-full tx.action)
     ==
   ==
+  ::
+  ++  part-tx-to-full
+    |=  =part-tx
+    ^-  [octs tx:naive]
+    ?-    -.part-tx
+        %raw
+      ?~  batch=(parse-raw-tx:naive 0 q.raw.part-tx)
+        ~?  lverb  [dap.bowl %parse-failed]
+        ::  TODO: maybe return a unit if parsing fails?
+        ::
+        !!
+      [raw tx]:-.u.batch
+    ::
+      %don  [(gen-tx-octs:lib +.part-tx) +.part-tx]
+      %ful  +.part-tx
+    ==
+  --
 ::
 ++  on-config
   |=  =config
   ^-  (quip card _state)
   ?-  -.config
     %frequency    [~ state(frequency frequency.config)]
+    %fallback     [~ state(fallback-gas-price gas.config)]
     %resend-time  [~ state(resend-time time.config)]
     %update-rate  [~ state(update-rate rate.config)]
     %slice        [~ state(slice slice.config)]
@@ -928,9 +1017,9 @@
     =/  [contract=@ux chain-id=@]
       =<  [naive chain-id]
       =,  azimuth
-      ?-  net.config
+      ?+  net.config  !!
         %mainnet  mainnet-contracts
-        %ropsten  ropsten-contracts
+        %goerli   goerli-contracts
         %local    local-contracts
         %default  contracts
       ==
@@ -941,15 +1030,12 @@
     ==
   ::
       %setkey
+    =?  pk.config  =((end [3 2] pk.config) '0x')
+      (rsh [3 2] pk.config)
     ?~  pk=(de:base16:mimes:html pk.config)
       `state
     [(get-nonce q.u.pk /nonce) state(pk q.u.pk)]
   ==
-::  TODO: move address to state?
-::
-++  get-address
-  ^-  address:ethereum
-  (address-from-prv:key:ethereum pk)
 ::  +cancel-tx: cancel a pending transaction
 ::
 ++  cancel-tx
@@ -987,12 +1073,27 @@
   %_    state
       history
     =+  txs=(~(got by history) u.addr)
-    =.  txs  +:(del:orh txs u.time)
+    =.  txs  +:(del:orh:dice txs u.time)
     %+  ~(put by history)  u.addr
-    %^  put:orh  txs
+    %^  put:orh:dice  txs
       u.time
     [ship %cancelled keccak l2-tx]
   ==
+::  +refuel-tx: bumps the gas price for a sending tx
+::
+++  refuel-tx
+  |=  [nonce=@ud address=(unit address:ethereum) gas=@ud]
+  ^-  (quip card _state)
+  =/  batch=[address:ethereum @ud]
+    :_  nonce
+    ?^(address u.address (get-address pk.state))
+  =.  sending
+    ?~  send-tx=(get:ors:dice sending batch)
+      sending
+    %^  put:ors:dice  sending
+      batch
+    u.send-tx(next-gas-price gas)
+  `state
 ::  +take-tx: accept submitted l2 tx into the :pending list
 ::
 ++  take-tx
@@ -1001,10 +1102,14 @@
   =*  ship  ship.from.tx.raw-tx.pend-tx
   =/  [exceeded=? next-quota=@]  (quota-exceeded ship)
   ?:  exceeded  [~ state]
+  =/  sign-address=(unit @ux)
+    (extract-address:lib raw-tx.pend-tx pre chain-id)
+  =?  address.pend-tx  ?=(^ sign-address)
+    (need sign-address)
   =^  [gud=? cards-1=(list update)]  state
-   (try-apply pre [force raw-tx]:pend-tx)
+    (try-apply pre [force raw-tx]:pend-tx)
   =^  cards-2  history
-    (update-history [pend-tx]~ ?:(gud %pending %failed))
+    (update-history:dice history [pend-tx]~ ?:(gud %pending %failed))
   ?.  gud
     :_  state
     ::  %point and (%failed) %tx updates
@@ -1021,33 +1126,17 @@
     (emit cards-2)  :: %tx updates
   ::
     ?.  derive  ~
-    ::  defer updating predicted naive/ownership state from canonical
+    ::  defer updating predicted state from canonical
     ::
     [(wait:b:sys /predict (add update-rate now.bowl))]~
   ==
-::
-++  timer
-  |%
-  ::  +set-roller: %wait until next whole :frequency
-  ::
-  ++  set-roller
-    ^-  [=card =time]
-    =+  time=(mul +((div now.bowl frequency)) frequency)
-    [(wait:b:sys /timer time) time]
-  ::  +set-roller: %wait until next whole :slice
-  ::
-  ++  set-quota
-    |=  slice=@dr
-    ^-  card
-    =+  time=(mul +((div now.bowl slice)) slice)
-    (wait:b:sys /quota-timer time)
-  --
 ::  +on-timer: every :frequency, freeze :pending txs roll and start sending it
 ::
 ++  on-timer
+  |=  new=?
   ^-  (quip card _state)
   =^  updates-1  state
-    (predicted-state canonical-state)
+    (predicted-state canonical)
   =^  cards  state
     ?:  =(~ pending)  [~ state]
     ?~  next-nonce
@@ -1056,21 +1145,23 @@
     ::  when the thread that's sending the previous batch
     ::  has come back and confirms that it was sent to L1
     ::
-    ?:  out-of-sync
+    ?:  pending-batch
       ::  this would postpone sending the batch for a whole "frequency"
       ::  TODO: set up a timer to retry this in ~mX ?
       ::
       ~?  lverb  [dap.bowl %nonce-out-sync]  [~ state]
-    =/  nonce=@ud   u.next-nonce
-    =^  updates-2  history  (update-history pending %sending)
+    =/  nonce=@ud  u.next-nonce
+    =^  updates-2  history  (update-history:dice history pending %sending)
+    =/  =address:ethereum   (get-address pk)
     =:  pending     ~
         derive      &
         next-nonce  `+(u.next-nonce)
       ::
           sending
-        %^  put:ors  sending
-          [get-address nonce]
-        [0 | (turn pending (cork tail (cork tail tail)))]
+        %^  put:ors:dice  sending
+          [address nonce]
+        :+  0  |
+        (turn pending |=([force=? addr=@ux * =raw-tx:naive] addr^force^raw-tx))
       ::
           finding
         %-  ~(gas by finding)
@@ -1082,68 +1173,77 @@
     ;:  welp
       (emit updates-1)
       (emit updates-2)
-      (send-roll get-address nonce)
+      (send-roll address nonce)
     ==
-  =^  card  next-batch  set-roller:timer
-  [[card cards] state]
+  ?.  new   cards^state
+  =^  card  next-batch
+    (set-roller:timer frequency now.bowl)
+  [card cards]^state
 ::  +on-quota-timer: resets tx quota for all ships
 ::
 ++  on-quota-timer
   ^-  (quip card _state)
-  :-  [(set-quota:timer slice)]~
+  =^  card  next-slice  (set-quota:timer slice now.bowl)
+  :-  [card]~
   state(ship-quota *(map ship @ud))
-::
-++  update-history
-  |=  [txs=(list pend-tx) =status]
-  ^-  [(list update) _history]
-  %+  roll  txs
-  |=  [pend-tx ups=(list update) sih=_history]
-  =/  =roll-tx
-    :*  ship.from.tx.raw-tx
-        status
-        (hash-raw-tx:lib raw-tx)
-        (l2-tx +<.tx.raw-tx)
-    ==
-  =/  txs=(tree hist-tx)
-    ?~  txs=(~(get by sih) address)  ~
-    u.txs
-  =?  txs  ?=(^ txs)  +:(del:orh txs time)
-  :-  (snoc ups tx+[address roll-tx])
-  %+  ~(put by sih)  address
-  (put:orh txs [time roll-tx])
 ::  +get-nonce: retrieves the latest nonce
 ::
 ++  get-nonce
   |=  [pk=@ =wire]
   ^-  (list card)
   ?~  endpoint  ~?(lverb [dap.bowl %no-endpoint] ~)
-  (start-thread:spider wire [%roller-nonce !>([u.endpoint pk])])
+  (start-thread:spider bowl wire [%roller-nonce !>([u.endpoint pk])])
 ::
 ++  quota-exceeded
   |=  =ship
-  ^-  [? @ud]
-  ?~  quota=(~(get by ship-quota) ship)
-    [| 1]
-  [(gte u.quota quota.state) +(u.quota)]
-::  +out-of-sync: checks if the previous nonce has been sent
+  ^-  [exceeded=? next-quota=@ud]
+  =/  quota=(unit @ud)         (~(get by ship-quota) ship)
+  =/  allow=(unit (unit @ud))  (~(get by allowances) ship)
+  ?~  quota
+    :_  1
+    ?~  allow  |
+    ?~(u.allow | =(u.u.allow 0))
+  :_  +(u.quota)
+  ?~  allow
+    (gte u.quota quota.state)
+  ::  ship has been whitelisted ("?~ u.allow" means no quota restrictions)
+  ::
+  ?~(u.allow | (gte u.quota u.u.allow))
+::  +pending-batch: checks if the previous nonce has been sent
 ::
-++  out-of-sync
+::    If %.y, the roller has been trying to send a batch for a whole frequency.
+::
+::    The cause of not sending the previous batch can happen because
+::    of thread failure or because the private key loaded onto
+::    the roller was used for something other than signing L2 batches right
+::    after the send-batch thread started.
+::
+::    After reaching this state, any subsequents attempts have failed
+::    (prior to updating the sending nonce if we hit the on-out-of-sync case)
+::    which would possibly require a manual intervention (e.g. changing the
+::    ethereum node URL, adding funds to the roller's address, manually bumping
+::    the fall-back-gas-price or refueling the current batch with higher gas)
+::
+++  pending-batch
   ^-  ?
-  ?~  newest-batch=(ram:ors sending)  |
+  ?~  newest-batch=(ram:ors:dice sending)  |
   !=(sent.val.u.newest-batch &)
-::  +on-out-of-sync
+::  +on-out-of-sync: handles a mismatch between current and expected l1 nonce
 ::
 ++  on-out-of-sync
   |=  [nonce=@ud failed-nonce=@ud]
-  ::  we only care about nonces >= than the one that failed
+  ^-  (quip card _state)
+  ~&  >  %begin-on-out-of-sync
+  =/  =address:ethereum   (get-address pk)
+  ::  we only consider nonces >= than the one that failed
   ::
   =/  failed-sending=(list [l1-tx-pointer send-tx])
-    %-  tap:ors
+    %-  tap:ors:dice
     ::  (range exclusive)
     ::
-    (lot:ors sending [`[get-address (dec failed-nonce)] ~])
+    (lot:ors:dice sending [`[address (dec failed-nonce)] ~])
   =/  confirmed-sending=_sending
-    (lot:ors sending [~ `[get-address failed-nonce]])
+    (lot:ors:dice sending [~ `[address failed-nonce]])
   =/  [nes=_sending nif=_finding sih=_history]
     %-  tail
     %+  roll  failed-sending
@@ -1158,41 +1258,41 @@
     =*  txs    txs.q
     ::  TODO: this shouldn't be needed
     ?:  (lth nonce.p failed-nonce)
-      ~&  ["weird case" nonce+nonce.p]
+      ~&  >>>  [%on-out-of-sync nonce+nonce.p failed+failed-nonce]
       [new-nonce sending finding history]
     :+  +(new-nonce)
-      update-sending
+      fix-sending
     process-l2-txs
     ::
-    ++  update-sending
-      (put:ors sending [p(nonce new-nonce) q(sent %.n)])
+    ++  fix-sending
+      (put:ors:dice sending [p(nonce new-nonce) q(sent %.n)])
     ::
     ++  process-l2-txs
       %+  roll  txs.q
-      |=  [=raw-tx:naive nif=_finding sih=_history]
+      |=  [[@ @ =raw-tx:naive] nif=_finding sih=_history]
       =/  =keccak  (hash-raw-tx:lib raw-tx)
       |^
       ?~  val=(~(get by nif) keccak)
         [nif sih]
       ?.  ?=(^ u.val)  [nif sih]
-      :-  (update-finding u.val)
-      (update-history time.u.val address.u.val)
+      :-  (fix-finding u.val)
+      (fix-history time.u.val address.u.val)
       ::
-      ++  update-finding
+      ++  fix-finding
         |=  val=[time l1-tx-pointer]
         ^+  nif
         (~(put by nif) keccak val(nonce.+ new-nonce))
       ::
-      ++  update-history
+      ++  fix-history
         |=  [=time =address:ethereum]
         ^+  sih
         =*  ship      ship.from.tx.raw-tx
         =/  l2-tx     (l2-tx +<.tx.raw-tx)
         =/  =roll-tx  [ship %sending keccak l2-tx]
         =+  txs=(~(got by sih) address)
-        =.  txs  +:(del:orh txs time)
+        =.  txs  +:(del:orh:dice txs time)
         %+  ~(put by sih)  address
-        (put:orh txs [time roll-tx])
+        (put:orh:dice txs [time roll-tx])
       --
     --
   =:  sending     nes
@@ -1200,24 +1300,31 @@
       history     sih
       next-nonce  `+(nonce)
     ==
-  [(send-roll get-address nonce) state]
+  ~&  >  %end-on-out-of-sync
+  [(send-roll address nonce) state]
 ::  +send-roll: start thread to submit roll from :sending to l1
 ::
 ++  send-roll
   |=  [=address:ethereum =nonce:naive]
   ^-  (list card)
-  ::  if this nonce isn't in the sending queue anymore, it's done
-  ::
-  ?.  (has:ors sending [address nonce])
-    ~?  lverb  [dap.bowl %done-sending [address nonce]]
-    ~
   ?~  endpoint
     ~?  lverb  [dap.bowl %no-endpoint]
+    ~
+  ::  if this nonce isn't in the sending queue anymore, it's done
+  ::
+  ?.  (has:ors:dice sending [address nonce])
+    ~?  lverb  [dap.bowl %done-sending [address nonce]]
+    ~
+  ::  if there are no txs for this nonce, don't send it
+  ::
+  ?:  =(0 (lent txs:(got:ors:dice sending [address nonce])))
+    ~&  >>>  [dap.bowl %empty-nonce]
     ~
   ::  start the thread, passing in the l2 txs to use
   ::  TODO  should go ahead and set resend timer in case thread hangs, or nah?
   ::
-  %+  start-thread:spider
+  %^    start-thread:spider
+      bowl
     /send/(scot %ux address)/(scot %ud nonce)
   :-  %roller-send
   !>  ^-  rpc-send-roll
@@ -1226,50 +1333,137 @@
       chain-id
       pk
       nonce
+      fallback-gas-price
     ::
-      =<  [next-gas-price txs]
-      (got:ors sending [address nonce])
+      =<  [next-gas-price (turn txs (cork tail tail))]
+      [. (got:ors:dice sending [address nonce])]
   ==
 ::  +on-batch-result: await resend after thread success or failure
 ::
 ++  on-batch-result
-  |=  [=address:ethereum nonce=@ud result=(each @ud [term @t])]
+  |=  [=address:ethereum nonce=@ud result=(each [@ud @ud] [term @t])]
   ^-  (quip card _state)
+  |^
   ::  print error if there was one
   ::
-  ~?  ?=(%| -.result)  [dap.bowl %send-error +.p.result]
-  =/  =send-tx  (got:ors sending [address nonce])
-  =?  sending  ?=(%& -.result)
-    %^  put:ors  sending
+  ~?  ?=(%| -.result)  [dap.bowl %send-error nonce+nonce +.p.result]
+  ::  if this nonce was removed from the queue by a
+  ::  previous resend-with-higher-gas thread, it's done
+  ::
+  ?.  (has:ors:dice sending [address nonce])
+    ~?  lverb  [dap.bowl %done-sending [address nonce]]
+    `state
+  ?:  ?=([%| %not-sent %batch-parse-error] result)
+    ::  if we tried to send a malformed batch, remove it from the queue
+    ::
+    ~&  >>>  [dap.bowl %removing-malformed-batch]
+    =^  *  sending
+      (del:ors:dice sending [address nonce])
+    `state
+  =/  =send-tx  (got:ors:dice sending [address nonce])
+  ::  if the number of txs sent is less than the ones in sending, we remove
+  ::  them from the latest sending batch and add them on top of the pending list
+  ::
+  =/  n-txs=@ud  ?:(?=(%& -.result) -.p.result (lent txs.send-tx))
+  =/  not-sent=(list [=address:naive force=? =raw-tx:naive])
+    (slag n-txs txs.send-tx)
+  =/  partial-send=?  &(?=(%& -.result) (lth n-txs (lent txs.send-tx)))
+  =?  txs.send-tx   partial-send
+    (oust [n-txs (lent txs.send-tx)] txs.send-tx)
+  =?  pending       partial-send
+    (fix-not-sent-pending not-sent)
+  =/  [nif=_finding sih=_history]
+    (fix-not-sent-status not-sent)
+  =:  finding  nif
+      history  sih
+    ==
+  ~?  partial-send  [%extracting-txs-from-batch (lent not-sent)]
+  ::
+  =?  sending  ?|  ?=(%& -.result)
+                   ?=([%| %crash *] result)
+               ==
+    %^  put:ors:dice  sending
       [address nonce]
     ::  update gas price for this tx in state
-    ::  and set it as sent to L1
     ::
-    send-tx(next-gas-price p.result, sent &)
+    ?:  ?=(%& -.result)
+      send-tx(next-gas-price +.p.result, sent &)
+    ::  if the thread crashed, we don't know the gas used, so we udpate it
+    ::  manually, same as the thread would do. this has the problem of causing
+    ::  the batch to be blocked if the thread keeps crashing, and we don't have
+    ::  enough funds to pay.
+    ::
+    ::  on the other hand if the thread fails because +fetch-gas-price fails
+    ::  (e.g. API change), and our fallback gas price is too low, the batch will
+    ::  also be blocked, if we don't increase the next-gas-price, so either way
+    ::  the batch will be stuck because of another underlying issue.
+    ::
+    %_    send-tx
+        next-gas-price
+      ?:  =(0 next-gas-price.send-tx)
+        fallback-gas-price
+      (add next-gas-price.send-tx 5.000.000.000)
+    ==
   :_  state
-  ?:  ?|  ?=(%& -.result)
-        ::  a general error shouldn't innitiate
-        ::  the out-of-sync nonce thread
-        ::
-          ?=([%| %error *] result)
-        ::  this accounts for a resend with higher gas
-        ::  for a previous nonce, so we shouldn't start
-        ::  the out-of-sync nonce thread
-        ::
-          ?&  sent.send-tx
-              ?=([%| %not-sent *] result)
-      ==  ==
-    :_  ~
-    ::  resend the l1 tx in five minutes
+  ?:  ?&  !sent.send-tx
+          ?=([%| %not-sent %behind-nonce] result)
+      ==
+    ::  start out-of-sync flow if our L1 nonce is behind
+    ::  and this transaction hasn't been sent out yet
     ::
-    %+  wait:b:sys
-      /resend/(scot %ux address)/(scot %ud nonce)
-    (add resend-time now.bowl)
-  ::  TODO: this only accounts for the case where the nonce is out of sync,
-  ::  reaching this because of lower funds needs to be addressed manually
+    ~&  >  [dap.bowl %start-refresh-nonce-thread]
+    (get-nonce pk.state /refresh-nonce/(scot %ud nonce))
+  ::  resend the l1 tx in five minutes if:
   ::
-  ?>  ?=(%not-sent -.p.result)
-  (get-nonce pk.state /refresh-nonce/(scot %ud nonce))
+  ::  - the thread succeeds and returns the next gas price
+  ::  - the thread failed because:
+  ::    - the roll's eth addres doesn't have enough funds to pay
+  ::    - the thread crashes
+  ::    - the sending L1 nonce is ahead of the expected one
+  ::    - a general ethereum error
+  ::
+  :_  ~
+  %+  wait:b:sys
+    /resend/(scot %ux address)/(scot %ud nonce)
+  (add resend-time now.bowl)
+  ::
+  ++  fix-not-sent-pending
+    |=  not-sent=(list [=address:naive force=? =raw-tx:naive])
+    =;  txs=(list pend-tx)
+      (weld txs pending)
+    ::  TODO: this would not be needed if txs.send-tx was a (list pend-tx)
+    ::
+    %+  murn  not-sent
+    |=  [=address:naive force=? =raw-tx:naive]
+    =/  =keccak  (hash-raw-tx:lib raw-tx)
+    ?~  wer=(~(get by finding) keccak)
+      ~&  >>>  %missing-tx-in-finding
+      ~
+    ?@  u.wer
+      ~&  >>>  %missing-tx-in-finding
+      ~
+    `[force address time.u.wer raw-tx]
+  ::
+  ++  fix-not-sent-status
+    |=  not-sent=(list [=address:naive force=? =raw-tx:naive])
+    %+  roll  not-sent
+    |=  [[@ @ =raw-tx:naive] nif=_finding sih=_history]
+    =/  =keccak  (hash-raw-tx:lib raw-tx)
+    ?~  val=(~(get by nif) keccak)
+      [nif sih]
+    ?.  ?=(^ u.val)
+      [nif sih]
+    =*  time      time.u.val
+    =*  address   address.u.val
+    =*  ship      ship.from.tx.raw-tx
+    =/  l2-tx     (l2-tx +<.tx.raw-tx)
+    =/  =roll-tx  [ship %pending keccak l2-tx]
+    =+  txs=(~(got by sih) address)
+    =.  txs  +:(del:orh:dice txs time)
+    :-  (~(del by nif) keccak)
+    %+  ~(put by sih)  address
+    (put:orh:dice txs [time roll-tx])
+  --
 ::  +on-naive-diff: process l2 tx confirmations
 ::
 ++  on-naive-diff
@@ -1281,7 +1475,7 @@
     :_  state(derive ?:(derive | derive))
     %+  weld  cards
     ?.  derive  ~
-    ::  defer updating predicted naive/ownership state from canonical
+    ::  defer updating state from canonical
     ::
     [(wait:b:sys /predict (add update-rate now.bowl))]~
   ::
@@ -1296,29 +1490,31 @@
     ~?  &(?=(%confirmed u.wer) ?=(~ err.diff))
       [dap.bowl %weird-double-confirm from.tx.raw-tx.diff]
     [~ state]
-  =*  nonce    nonce.u.wer
-  =*  address  address.u.wer
-  =*  ship     ship.from.tx.raw-tx.diff
-  =*  time     time.u.wer
-  =*  tx       tx.raw-tx.diff
-  =/  l2-tx    (l2-tx +<.tx)
+  =*  nonce       nonce.u.wer
+  =*  tx-address  address.u.wer
+  =*  ship        ship.from.tx.raw-tx.diff
+  =*  time        time.u.wer
+  =*  tx          tx.raw-tx.diff
+  =/  l2-tx       (l2-tx +<.tx)
   ::  remove the tx from the sending map
   ::
   =.  sending
-    ?~  sen=(get:ors sending [get-address nonce])
+    =/  =address:ethereum   (get-address pk)
+    ?~  sen=(get:ors:dice sending [address nonce])
       ~?  lverb  [dap.bowl %weird-double-remove nonce+nonce]
       sending
-    ?~  nin=(find [raw-tx.diff]~ txs.u.sen)
+    ?~  nin=(find [raw-tx.diff]~ (turn txs.u.sen (cork tail tail)))
       ~?  lverb  [dap.bowl %weird-unknown nonce+nonce]
       sending
     =.  txs.u.sen  (oust [u.nin 1] txs.u.sen)
     ?~  txs.u.sen
-      ~?  lverb  [dap.bowl %done-with-nonce [get-address nonce]]
+      ~?  lverb
+       [dap.bowl %done-with-nonce [address nonce]]
       =^  *  sending
-        (del:ors sending [get-address nonce])
+        (del:ors:dice sending [address nonce])
       sending
     ^+  sending
-    (put:ors sending [get-address nonce] u.sen)
+    (put:ors:dice sending [address nonce] u.sen)
   ::  update the finding map with the new status
   ::
   =.  finding
@@ -1329,10 +1525,203 @@
     ::  ~?  !forced  [dap.bowl %aggregated-tx-failed-anyway err.diff]
     %failed
   ::
+  ~?  =(0x0 tx-address)  %weird-null-tx-address^'on-naive-diff'
   =^  updates  history
-    %+  update-history
-      [| address time raw-tx.diff]~
-    ?~(err.diff %confirmed %failed)
+    %^    update-history:dice
+        history
+    [| tx-address time raw-tx.diff]~
+  ?~(err.diff %confirmed %failed)
   [(emit updates) state]
 ::
+++  on-peek
+  |%
+  ++  pending-by
+    |=  wat=@t
+    ?~  who=(slaw %p wat)
+      ::  by-address
+      ::
+      ?~  wer=(slaw %ux wat)
+        [~ ~]
+      =;  pending=(list pend-tx)
+        ``noun+!>(pending)
+      %+  skim  pending
+      |=  pend-tx
+      ::  TODO: use this instead? =(u.wer address)
+      ::
+      ?~  addr=(get-l1-address tx.raw-tx pre)  |
+      =(u.wer u.addr)
+    ::  by-ship
+    ::
+    =;  pending=(list pend-tx)
+      ``noun+!>(pending)
+    %+  skim  pending
+    |=  pend-tx
+    =(u.who ship.from.tx.raw-tx)
+  ::
+  ++  status
+    |=  wat=@t
+    ?~  keccak=(slaw %ux wat)
+      [~ ~]
+    :+  ~  ~
+    :-  %noun
+    !>  ^-  tx-status
+    ?^  status=(~(get by finding) u.keccak)
+      ?@  u.status  [u.status ~]
+      [%sending `+.u.status]
+    :: TODO: potentially slow!
+    =;  known=?
+      [?:(known %pending %unknown) ~]
+    %+  lien  pending
+    |=  pend-tx
+    =(u.keccak (hash-raw-tx:lib raw-tx))
+  ::
+  ++  transaction
+    |=  wat=@t
+    ?~  keccak=(slaw %ux wat)
+      [~ ~]
+    :+  ~  ~
+    :-  %noun
+    !>  ^-  (unit pend-tx)
+    :: TODO: potentially slow!
+    |-
+    ?~  pending  ~
+    =*  tx  i.pending
+    ?:  =(u.keccak (hash-tx:lib raw.raw-tx.tx))
+      `tx
+    $(pending t.pending)
+  ::
+  ++  history
+    |=  wat=@t
+    :+  ~  ~
+    :-  %noun
+    !>  ^-  (list hist-tx)
+    ?~  addr=(slaw %ux wat)  ~
+    ?~  hist=(~(get by ^history) u.addr)  ~
+    (tap:orh:dice u.hist)
+  ::
+  ++  nonce
+    |=  [who=@t proxy=@t]
+    ?~  who=(slaw %p who)
+      [~ ~]
+    ?.  ?=(proxy:naive proxy)
+      [~ ~]
+    :+  ~  ~
+    :-  %noun
+    !>  ^-  (unit @)
+    ?~  point=(get:orp:dice points.pre u.who)
+      ~
+    =<  `nonce
+    (proxy-from-point:naive proxy u.point)
+  ::
+  ++  spawned
+    |=  wat=@t
+    :+  ~  ~
+    :-  %noun
+    !>  ^-  (list @p)
+    ?~  star=(slaw %p wat)  ~
+    =;  range
+      (turn range head)
+    ::  range exclusive [star first-moon-last-planet]
+    ::
+    %-  tap:orp:dice
+    (lot:orp:dice points.pre [`u.star `(cat 3 u.star 0x1.ffff)])
+  ::
+  ++  unspawned
+    |=  wat=@t
+    :+  ~  ~
+    :-  %noun
+    !>  ^-  (list @p)
+    ?~  star=(slaw %p wat)  ~
+    =/  spawned=(set @p)
+      =;  points
+        (~(gas in *(set @p)) (turn points head))
+      %-  tap:orp:dice
+      (lot:orp:dice points.pre [`u.star `(cat 3 u.star 0x1.ffff)])
+    =/  children=(list @p)
+      (turn (gulf 0x1 0xffff) |=(a=@ (cat 3 u.star a)))
+    %+  murn  children
+    |=  =ship
+    ?:  (~(has in spawned) ship)  ~
+    `ship
+  ::
+  ++  sponsored
+    |=  wat=@t
+    :+  ~  ~
+    :-  %noun
+    !>  ^-  [(list ship) (list ship)]
+    ?~  who=(slaw %p wat)  [~ ~]
+    ?~  sponsor=(~(get by spo) u.who)
+      [~ ~]
+    :-  ~(tap in residents.u.sponsor)
+    ~(tap in requests.u.sponsor)
+  ::
+  ++  point
+    |=  wat=@t
+    ?~  ship=(rush wat ;~(pfix sig fed:ag))
+      ``noun+!>(*(unit point:naive))
+    ``noun+!>((get:orp:dice points.pre u.ship))
+  ::
+  ++  ships
+    |=  wat=@t
+    :+  ~  ~
+    :-  %noun
+    !>  ^-  (list ship)
+    ?~  addr=(slaw %ux wat)  ~
+    (turn (controlled-ships:dice u.addr own) tail)
+  ::
+  ++  config
+    :+  ~  ~
+    :-  %noun
+    !>  ^-  roller-config
+    :*  next-batch
+        frequency
+        resend-time
+        update-rate
+        contract
+        chain-id
+        slice
+        quota
+    ==
+  ::
+  ++  points-proxy
+    |=  [=proxy:naive wat=@t]
+    :+  ~  ~
+    :-  %noun
+    !>  ^-  (list ship)
+    ?~  addr=(slaw %ux wat)
+      ~
+    ~(tap in (~(get ju own) [proxy u.addr]))
+  ::
+  ++  over-quota
+    |=  wat=@t
+    ?~  who=(slaw %p wat)  [~ ~]
+    =/  [exceeded=? *]  (quota-exceeded u.who)
+    ``atom+!>(exceeded)
+  ::
+  ++  ship-quota
+    |=  wat=@t
+    ?~  who=(slaw %p wat)  [~ ~]
+    =/  [exceeded=? next-quota=@ud]  (quota-exceeded u.who)
+    =/  allow=(unit (unit @ud))      (~(get by allowances) u.who)
+    :+  ~  ~
+    :-  %atom
+    !>  ^-  @ud
+    ?:  exceeded     0
+    =/  max-quota=@  quota.state
+    ?:  &(?=(^ allow) ?=(~ u.allow))
+      max-quota
+    =?  max-quota  &(?=(^ allow) ?=(^ u.allow))
+      u.u.allow
+    (sub max-quota (dec next-quota))
+  ::
+  ++  allowance
+    |=  wat=@t
+    ?~  who=(slaw %p wat)  [~ ~]
+    :+  ~  ~
+    :-  %noun
+    !>  ^-  (unit @ud)
+    ?^  allow=(~(get by allowances) u.who)
+      u.allow
+    `quota.state
+  --
 --

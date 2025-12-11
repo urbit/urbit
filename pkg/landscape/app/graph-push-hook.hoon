@@ -67,7 +67,7 @@
 ::
 ++  on-init   on-init:def
 ++  on-save   !>(-.state)
-++  on-load   
+++  on-load
   |=  =vase
   =+  !<(old=versioned-state vase)
   =?  old  ?=(~ old)
@@ -95,7 +95,7 @@
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
-++  on-arvo   
+++  on-arvo
   |=  [=wire =sign-arvo]
   ^-  (quip card _this)
   ?+  wire  (on-arvo:def wire sign-arvo)
@@ -220,10 +220,11 @@
       ~
     `vas
   ::
+    %add-signatures     ``vas
+    %remove-signatures  ``vas
+  ::
     %add-graph          [~ ~]
     %remove-graph       [~ ~]
-    %add-signatures     [~ ~]
-    %remove-signatures  [~ ~]
     %archive-graph      [~ ~]
     %unarchive-graph    [~ ~]
     %add-tag            [~ ~]
@@ -362,14 +363,14 @@
 ::
 ++  is-allowed-add
   ~/  %is-allowed-add
-  |=  [=resource:res nodes=(map index:store node:store)] 
+  |=  [=resource:res nodes=(map index:store node:store)]
   ^-  [? (list card)]
   |^
   %-  (bond |.([%.n ~]))
   %+  biff  (get-roles-writers-variation resource)
   |=  [is-admin=? writers=(set ship) vip=vip-metadata:metadata]
   ^-  (unit [? (list card)])
-  %-  some  
+  %-  some
   =/  a  ~(tap by nodes)
   =|  cards=(list card)
   |-  ^-  [? (list card)]

@@ -23,7 +23,7 @@
 ::  the type that was analyzed and one node for every type referenced
 ::  within that type.
 ::
-::  The `next` field is the the next available xkey (used when inserting
+::  The `next` field is the next available xkey (used when inserting
 ::  new xrays), `xrays` maps keys to graph nodes and `type-map` gives
 ::  the xkey corresponding to a type.
 ::
@@ -49,7 +49,6 @@
 ::  - `recipes` contains information about how a type was
 ::     constructed. It's used to get much nicer output when printing types.
 ::  - `studs` contains "standards names". I actually don't know what this is.
-::  - `helps` contains all the documentation about a type.
 ::  - `loop` indicates whether or not a node references itself. The list
 ::    type is cyclical, for example. This is used when printing an
 ::    `ximage`.
@@ -62,7 +61,6 @@
       pats=(unit xpat)
       studs=(set stud)
       recipes=(set recipe)
-      helps=(set help)
       xshape=(unit xshape)
       loop=(unit ?)
   ==
@@ -139,7 +137,7 @@
 ::  It's a map from chapter names to the documentation and arms within
 ::  that chapter.
 ::
-+$  xbat  (map term (pair what (map term xkey)))
++$  xbat  (map term (map term xkey))
 ::
 ::  A recipe tells us how a type was constructed.
 ::

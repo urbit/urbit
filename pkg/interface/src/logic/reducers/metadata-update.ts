@@ -1,4 +1,4 @@
-import { MetadataUpdate, Associations, ResourceAssociations } from '@urbit/api/metadata';
+import { MetadataUpdate, Associations, ResourceAssociations } from '@urbit/api';
 import _ from 'lodash';
 import { Cage } from '~/types/cage';
 import { BaseState } from '../state/base';
@@ -39,6 +39,7 @@ const associations = (json: MetadataUpdate, state: MetadataState): MetadataState
   if (data) {
     state.associations = normalizeAssociations(data);
     state.loaded = true;
+    state.onLoad();
   }
   return state;
 };

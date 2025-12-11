@@ -1,12 +1,10 @@
 import _ from 'lodash';
 import { Box, Col, Icon, Text } from '@tlon/indigo-react';
-import { Association } from '@urbit/api/metadata';
-import { AppName } from '@urbit/api';
+import { AppName, Association, isWriter } from '@urbit/api';
 import React, { ReactElement, ReactNode, useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import urbitOb from 'urbit-ob';
-import { isWriter } from '~/logic/lib/group';
 import { useResize } from '~/logic/lib/useResize';
 import { getItemTitle } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
@@ -104,7 +102,7 @@ export function ResourceSkeleton(props: ResourceSkeletonProps): ReactElement {
   const isOwn = `~${window.ship}` === ship;
   let canWrite = (app === 'publish') ? true : false;
 
-  if (!isWriter(group, association.resource)) {
+  if (!isWriter(group, association.resource, window.ship)) {
     canWrite = isOwn;
   }
 

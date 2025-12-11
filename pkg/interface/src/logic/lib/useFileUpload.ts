@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { useState, ClipboardEvent } from 'react';
+import { useState, ClipboardEvent, useCallback } from 'react';
 import { useFileDrag } from './useDrag';
 import useStorage, { IuseStorage } from './useStorage';
 
@@ -32,20 +32,9 @@ export function useFileUpload({ multiple = true, ...params }: useFileUploadParam
     canUpload, uploadDefault
   } = storage;
   const [source, setSource] = useState<FileUploadSource>('paste');
-  const drag = useFileDrag(f => uploadFiles(f, 'drag'));
 
-  function onPaste(event: ClipboardEvent) {
-    if (!event.clipboardData || !event.clipboardData.files.length) {
-      return;
-    }
 
-    event.preventDefault();
-    event.stopPropagation();
-
-    uploadFiles(event.clipboardData.files, 'paste');
-  }
-
-  function uploadFiles(files: FileList | File[], uploadSource: FileUploadSource) {
+  const uploadFiles = useCallback((files: FileList | File[], uploadSource: FileUploadSource) => {
     if (isFileUploadHandler(params)) {
       return params.onFiles(files, storage, uploadSource);
     }
@@ -67,6 +56,19 @@ export function useFileUpload({ multiple = true, ...params }: useFileUploadParam
           onError && onError(err);
         });
     });
+  }, [canUpload, storage, params]);
+
+  const drag = useFileDrag(f => uploadFiles(f, 'drag'));
+
+  function onPaste(event: ClipboardEvent) {
+    if (!event.clipboardData || !event.clipboardData.files.length) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    uploadFiles(event.clipboardData.files, 'paste');
   }
 
   return {

@@ -31,6 +31,7 @@
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
+    ?>  (team:title [our src]:bowl)
     ?.  ?=(%noun mark)  [~ this]
     ?^  in-progress
       ~&  %still-running-please-try-again-later
@@ -185,7 +186,7 @@
     ::
       ?-  network
         %mainnet    0x1
-        %ropsten    0x3
+        %goerli     0x5
         %fakenet    `@ux``@`1.337
         [%other *]  id.network
       ==
@@ -200,6 +201,9 @@
   =/  contracts  (get-contracts network)
   ?+  -.call  ecliptic:contracts
     %send-point  delegated-sending:contracts
+  ::
+      ?(%approve-batch-transfer %transfer-batch %withdraw)
+    linear-star-release:contracts
   ==
 ::
 ++  deed
@@ -266,7 +270,7 @@
   |=  reg=cord
   ^-  (list [=ship rights])
   ~|  %registration-json-insane
-  =+  jon=(need (de-json:html reg))
+  =+  jon=(need (de:json:html reg))
   ~|  %registration-json-invalid
   ?>  ?=(%o -.jon)
   =.  p.jon  (~(del by p.jon) 'idCode')
@@ -379,7 +383,7 @@
           ?>  =(%king (clan:title s))
           (~(put in ss) (^sein:title s))
         |-
-        ?~  parents  txs
+        ?~  parents  !! ::txs
         =.  txs
           %+  do-here  ecliptic:mainnet-contracts
           (set-spawn-proxy:dat i.parents lockup-contract)
@@ -394,15 +398,18 @@
         =.  txs
           %+  do-here  ecliptic:mainnet-contracts
           (set-transfer-proxy:dat i.what lockup-contract)
+        =.  txs
+          %+  do-here  lockup-contract
+          (deposit:dat to i.what)
         $(what t.what)
       ==
     ::  depositing
     ::
     |-
     ?~  what  txs
-    =.  txs
-      %+  do-here  lockup-contract
-      (deposit:dat to i.what)
+    :: =.  txs
+    ::   %+  do-here  lockup-contract
+    ::   (deposit:dat to i.what)
     $(what t.what)
   ++  do-here
     |=  [contract=address dat=tape]

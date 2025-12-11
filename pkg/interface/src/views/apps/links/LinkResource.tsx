@@ -1,6 +1,5 @@
 import { Box, Center, Col, LoadingSpinner, Text } from '@tlon/indigo-react';
-import { deSig, Group } from '@urbit/api';
-import { Association } from '@urbit/api/metadata';
+import { Association, deSig, Group } from '@urbit/api';
 import bigInt from 'big-integer';
 import React, { useEffect } from 'react';
 import { Link, Route, Switch, useLocation } from 'react-router-dom';

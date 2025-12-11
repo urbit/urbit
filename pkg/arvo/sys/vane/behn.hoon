@@ -20,7 +20,7 @@
       ==
     ::
     +$  behn-state
-      $:  %2
+      $:  %3
           timers=(tree [key=@da val=(qeu duct)])
           unix-duct=duct
           next-wake=(unit @da)
@@ -45,161 +45,111 @@
   |=  [[now=@da =duct] state=behn-state]
   ::
   |%
-  ::  %entry-points
   ::
-  ::  +born: urbit restarted; refresh :next-wake and store wakeup timer duct
+  +|  %helpers
   ::
-  ++  born  set-unix-wake(next-wake.state ~, unix-duct.state duct)
-  ::  +crud: handle failure of previous arvo event
-  ::
-  ++  crud
-    |=  [tag=@tas error=tang]
+  ++  this  .
+  ++  emit  |=(m=move this(moves [m moves]))
+  ++  abet
     ^+  [moves state]
-    ::  behn must get activated before other vanes in a %wake
+    ::  moves are statefully pre-flopped to ensure that
+    ::  any prepended %doze is emitted first
     ::
-    ?.  =(%wake tag)
-      ~&  %behn-crud-not-wake^tag
-      [[duct %slip %d %flog %crud tag error]~ state]
+    =.  moves  (flop moves)
+    =/  new=(unit @da)  (bind (pry:timer-map timers.state) head)
+    ::  emit %doze if needed
     ::
-    ?:  =(~ timers.state)
-      ~|(%behn-crud-no-timer^tag^error !!)
+    =?    ..this
+        ?~  unix-duct.state  |
+        =/  dif=[old=(unit @da) new=(unit @da)]  [next-wake.state new]
+        ?+  dif  ~|([%unpossible dif] !!)
+          [~ ~]  |                        :: no-op
+          [~ ^]  &                        :: set
+          [^ ~]  &                        :: clear
+          [^ ^]  !=(u.old.dif u.new.dif)  :: set if changed
+        ==
+      (emit(next-wake.state new) [unix-duct.state %give %doze new])
     ::
-    (wake `error)
-  ::  +rest: cancel the timer at :date, then adjust unix wakeup
-  ::  +wait: set a new timer at :date, then adjust unix wakeup
+    [moves state]
   ::
-  ++  rest  |=(date=@da set-unix-wake(timers.state (unset-timer [date duct])))
-  ++  wait  |=(date=@da set-unix-wake(timers.state (set-timer [date duct])))
-  ::  +huck: give back immediately
+  +|  %entry-points
   ::
-  ::    Useful if you want to continue working after other moves finish.
+  ++  call
+    |=  [=task error=(unit tang)]
+    ^+  this
+    ?:  ?&  ?=(^ error)
+            !?=(%wake -.task)
+        ==
+      ::  XX more and better error handling
+      ::
+      ~&  %behn-crud-not-wake^-.task
+      (emit [duct %slip %d %flog %crud -.task u.error])
+    ::
+    ?-  -.task
+      %born  this(next-wake.state ~, unix-duct.state duct)
+      %drip  (drip p.task)
+      %huck  (emit [duct %give %heck syn.task])
+      %rest  this(timers.state (unset-timer [p.task duct]))
+      %trim  this
+      %vega  this
+      %wait  this(timers.state (set-timer [p.task duct]))
+      %wake  (wake(next-wake.state ~) error)
+    ==
   ::
-  ++  huck
-    |=  syn=sign-arvo
-    =<  [moves state]
-    event-core(moves [duct %give %heck syn]~)
-  ::  +drip:  XX
-  ::
-  ++  drip
-    |=  mov=vase
-    =<  [moves state]
-    ^+  event-core
-    =.  moves
-      [duct %pass /drip/(scot %ud count.drips.state) %b %wait +(now)]~
-    =.  movs.drips.state
-      (~(put by movs.drips.state) count.drips.state mov)
-    =.  count.drips.state  +(count.drips.state)
-    event-core
-  ::  +take-drip:  XX
+  ::  +take-drip: the future is now, %give the deferred move
   ::
   ++  take-drip
     |=  [num=@ud error=(unit tang)]
-    =<  [moves state]
-    ^+  event-core
+    ^+  this
     =/  drip  (~(got by movs.drips.state) num)
-    =.  movs.drips.state  (~(del by movs.drips.state) num)
-    =/  =move
-      =/  card  [%give %meta drip]
-      ?~  error
-        [duct card]
-      =/  =tang
-        (weld u.error `tang`[leaf/"drip failed" ~])
-      ::  XX should be
-      ::  [duct %hurl fail/tang card]
-      ::
-      [duct %pass /drip-slog %d %flog %crud %drip-fail tang]
-    event-core(moves [move moves])
-  ::  +trim: in response to memory pressue
+    %-  emit(movs.drips.state (~(del by movs.drips.state) num))
+    =/  card  [%give %meta drip]
+    ?~  error
+      [duct card]
+    =/  =tang
+      (weld u.error `tang`[leaf/"drip failed" ~])
+    ::  XX we don't know the mote due to the %wake pattern
+    ::
+    [duct %hurl fail/tang card]
   ::
-  ++  trim  [moves state]
-  ::  +vega: learn of a kernel upgrade
+  +|  %tasks
   ::
-  ++  vega  [moves state]
-  ::  +wake: unix says wake up; process the elapsed timer and set :next-wake
+  ::  +drip: enqueue a future gift (as a vase), %pass ourselves a %wait
+  ::
+  ++  drip
+    |=  vax=vase
+    ^+  this
+    %.  [duct %pass /drip/(scot %ud count.drips.state) %b %wait +(now)]
+    %=  emit
+      movs.drips.state   (~(put by movs.drips.state) count.drips.state vax)
+      count.drips.state  +(count.drips.state)
+    ==
+  ::
+  ::  +wake: unix says wake up; process the elapsed timer (or forward error)
   ::
   ++  wake
     |=  error=(unit tang)
-    ^+  [moves state]
-    ::  no-op on spurious but innocuous unix wakeups
-    ::
+    ^+  this
     ?:  =(~ timers.state)
+      ::  no-op on spurious but innocuous unix wakeups
+      ::
       ~?  ?=(^ error)  %behn-wake-no-timer^u.error
-      [moves state]
-    ::  if we errored, pop the timer and notify the client vane of the error
-    ::
-    ?^  error
-      =<  set-unix-wake
-      =^  =timer  timers.state  pop-timer
-      (emit-vane-wake duct.timer error)
-    ::  if unix woke us too early, retry by resetting the unix wakeup timer
-    ::
+      this
     =/  [=timer later-timers=_timers.state]  pop-timer
     ?:  (gth date.timer now)
-      set-unix-wake(next-wake.state ~)
-    ::  pop first timer, tell vane it has elapsed, and adjust next unix wakeup
+      ::  no-op if timer is early, (+abet will reset)
+      ::
+      this
+    ::  pop the first timer and notify client vane,
+    ::  forwarding error if present
     ::
-    =<  set-unix-wake
-    (emit-vane-wake(timers.state later-timers) duct.timer ~)
-  ::  %utilities
+    ::    XX %wake errors should be signaled out-of-band
+    ::    [duct.timer %hurl goof %give %wake ~]
+    ::
+    (emit(timers.state later-timers) [duct.timer %give %wake error])
   ::
-  ::+|
+  +|  %implementation
   ::
-  ++  event-core  .
-  ::  +emit-vane-wake: produce a move to wake a vane; assumes no prior moves
-  ::
-  ++  emit-vane-wake
-    |=  [=^duct error=(unit tang)]
-    event-core(moves [duct %give %wake error]~)
-  ::  +emit-doze: set new unix wakeup timer in state and emit move to unix
-  ::
-  ::    We prepend the unix %doze event so that it is handled first. Arvo must
-  ::    handle this first because the moves %behn emits will get handled in
-  ::    depth-first order. If we're handling a %wake which causes a move to a
-  ::    different vane and a %doze event to send to unix, Arvo needs to process
-  ::    the %doze first because otherwise if the move to the other vane calls
-  ::    back into %behn and emits a second %doze, the second %doze would be
-  ::    handled by unix first which is incorrect.
-  ::
-  ++  emit-doze
-    |=  =date=(unit @da)
-    ^+  event-core
-    ::  no-op if .unix-duct has not yet been set
-    ::
-    ?~  unix-duct.state
-      event-core
-    ::  make sure we don't try to wake up in the past
-    ::
-    =?  date-unit  ?=(^ date-unit)  `(max now u.date-unit)
-    ::
-    %_  event-core
-      next-wake.state  date-unit
-      moves            [[unix-duct.state %give %doze date-unit] moves]
-    ==
-  ::  +set-unix-wake: set or unset next unix wakeup timer based on :i.timers
-  ::
-  ++  set-unix-wake
-    =<  [moves state]
-    ~%  %set-unix-wake  ..part  ~  |-
-    ^+  event-core
-    ::
-    =*  next-wake  next-wake.state
-    =*  timers     timers.state
-    ::  if no timers, cancel existing wakeup timer or no-op
-    ::
-    =/  first=(unit [date=@da *])  (pry:timer-map timers.state)
-    ?~  first
-      ?~  next-wake
-        event-core
-      (emit-doze ~)
-    ::  if :next-wake is in the past or not soon enough, reset it
-    ::
-    ?^  next-wake
-      ?:  &((gte date.u.first u.next-wake) (lte now u.next-wake))
-        event-core
-      (emit-doze `date.u.first)
-    ::  there was no unix wakeup timer; set one
-    ::
-    (emit-doze `date.u.first)
   ::  +pop-timer: dequeue and produce earliest timer
   ::
   ++  pop-timer
@@ -255,6 +205,7 @@
 =|  behn-state
 =*  state  -
 |=  [now=@da eny=@uvJ rof=roof]
+~>  %spin.[%behn]
 =*  behn-gate  .
 ^?
 |%
@@ -267,34 +218,41 @@
           wrapped-task=(hobo task)
       ==
   ^-  [(list move) _behn-gate]
-  ::
+  ~>  %spin.[%call]
   =/  =task  ((harden task) wrapped-task)
   =/  event-core  (per-event [now hen] state)
-  ::
   =^  moves  state
-    ::
-    ::  handle error notifications
-    ::
-    ?^  dud
-      (crud:event-core -.task tang.u.dud)
-    ::
-    ?-  -.task
-      %born  born:event-core
-      %rest  (rest:event-core date=p.task)
-      %drip  (drip:event-core move=p.task)
-      %huck  (huck:event-core syn.task)
-      %trim  trim:event-core
-      %vega  vega:event-core
-      %wait  (wait:event-core date=p.task)
-      %wake  (wake:event-core error=~)
-    ==
+    abet:(call:event-core task ?~(dud ~ `tang.u.dud))
   [moves behn-gate]
 ::  +load: migrate an old state to a new behn version
 ::
 ++  load
-  |=  old=behn-state
-  ^+  behn-gate
-  behn-gate(state old)
+  |^  |=  old=$%(state-2 state-3)
+      ^+  behn-gate
+      ~>  %spin.[%load]
+      ?-  -.old
+        %2  behn-gate(state (state-2-to-3 old))
+        %3  behn-gate(state old)
+      ==
+  ::
+  +$  state-3  behn-state
+  ::
+  +$  state-2
+    $:  %2
+        timers=(tree [key=@da val=(qeu duct)])
+        unix-duct=duct
+        next-wake=(unit @da)
+        drips=drip-manager-2
+    ==
+  +$  drip-manager-2
+      $:  count=@ud
+          movs=(map @ud vase:h136)
+      ==
+  ++  state-2-to-3
+    |=  s=state-2
+    ^-  state-3
+    s(- %3, movs.drips (~(run by movs.drips.s) next-vase:h136))
+  --
 ::  +scry: view timer state
 ::
 ::    TODO: not referentially transparent w.r.t. elapsed timers,
@@ -302,7 +260,8 @@
 ::
 ++  scry
   ^-  roon
-  |=  [lyc=gang car=term bem=beam]
+  ~>  %spin.[%scry]
+  |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
   =*  ren  car
   =*  why=shop  &/p.bem
@@ -310,20 +269,15 @@
   =*  lot=coin  $/r.bem
   =*  tyl  s.bem
   ::
-  ::TODO  don't special-case whey scry
-  ::
-  ?:  &(=(ren %$) =(tyl /whey))
-    =/  maz=(list mass)
-      :~  timers+&+timers.state
-      ==
-    ``mass+!>(maz)
-  ::  only respond for the local identity, %$ desk, current timestamp
+  ::  only respond for the local identity, %$ desk, current timestamp, root gang
   ::
   ?.  ?&  =(&+our why)
           =([%$ %da now] lot)
           =(%$ syd)
+          =([~ ~] lyc)
       ==
     ~
+  ::  /bx//whey         (list mass)        memory usage labels
   ::  /bx/debug/timers  (list [@da duct])  all timers and their ducts
   ::  /bx/timers        (list @da)         all timer timestamps
   ::  /bx/timers/next   (unit @da)         the very next timer to fire
@@ -331,6 +285,12 @@
   ::
   ?.  ?=(%x ren)  ~
   ?+  tyl  [~ ~]
+      [%$ %whey ~]
+    =/  maz=(list mass)
+      :~  timers+&+timers.state
+      ==
+    ``mass+!>(maz)
+  ::
       [%debug %timers ~]
     :^  ~  ~  %noun
     !>  ^-  (list [@da duct])
@@ -372,12 +332,13 @@
 ++  take
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^-  [(list move) _behn-gate]
+  ~>  %spin.[%take]
   ?^  dud
     ~|(%behn-take-dud (mean tang.u.dud))
   ::
   ?>  ?=([%drip @ ~] tea)
   =/  event-core  (per-event [now hen] state)
   =^  moves  state
-    (take-drip:event-core (slav %ud i.t.tea) error.hin)
+    abet:(take-drip:event-core (slav %ud i.t.tea) error.hin)
   [moves behn-gate]
 --

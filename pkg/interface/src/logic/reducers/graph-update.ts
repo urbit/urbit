@@ -1,9 +1,4 @@
-import { GraphNode } from '@urbit/api';
-import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
-import BigIntArrayOrderedMap, {
-  arrToString,
-  stringToArr
-} from '@urbit/api/lib/BigIntArrayOrderedMap';
+import { arrToString, stringToArr, BigIntOrderedMap, BigIntArrayOrderedMap, GraphNode } from '@urbit/api';
 import bigInt, { BigInteger } from 'big-integer';
 import produce from 'immer';
 import _ from 'lodash';

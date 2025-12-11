@@ -136,4 +136,28 @@
   =+  dat=(transmute [%mor leg] [%ins pos `@c`0])
   ?>  ?=(%ins -.dat)
   p.dat
+::
+::
+++  path-to-id
+  |=  =path
+  ^-  (unit sole-id)
+  ?.  ?=([%sole @ ?(~ [@ ~])] path)  ~
+  ?~  who=(slaw %p i.t.path)  ~
+  `[u.who ?~(t.t.path %$ i.t.t.path)]
+::
+++  id-to-path
+  |=  sole-id
+  ^-  path
+  ::TODO  this whole "no empty path ending" business feels icky.
+  ::      do we want default session to be ~.~ ?
+  ::      concern here is that outsiders cannot subscribe to the default
+  ::      session, because /sole/~zod/ isn't a valid path...
+  [%sole (scot %p who) ?~(ses ~ /[ses])]
+::
+++  upgrade-id
+  |=  old=@ta
+  ^-  (unit sole-id)
+  %+  rush  old
+  %+  cook  (late %$)
+  ;~(pfix (jest 'drum_~') fed:ag)
 --

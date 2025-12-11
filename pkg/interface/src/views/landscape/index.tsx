@@ -7,10 +7,10 @@ import useHarkState from '~/logic/state/hark';
 import { Workspace } from '~/types/workspace';
 import { Body } from '../components/Body';
 import { GroupsPane } from './components/GroupsPane';
-import { JoinGroup } from './components/JoinGroup';
-import { NewGroup } from './components/NewGroup';
 import './css/custom.css';
 import _ from 'lodash';
+
+const NewGroup = React.lazy(() => import('./components/NewGroup').then(module => ({ default: module.NewGroup })));
 
 moment.updateLocale('en', {
   relativeTime : {
@@ -75,22 +75,6 @@ export default function Landscape() {
             </Box>
           </Body>
         </Route>
-        <Route path="/~landscape/join/:ship?/:name?"
-          render={(routeProps) => {
-            const { ship, name } = routeProps.match.params;
-            const autojoin = ship && name ? `${ship}/${name}` : undefined;
-            return (
-              <Body>
-                <Box maxWidth="300px">
-                  <JoinGroup
-                    autojoin={autojoin}
-                    {...routeProps}
-                  />
-                </Box>
-              </Body>
-            );
-          }}
-        />
       </Switch>
     </>
   );

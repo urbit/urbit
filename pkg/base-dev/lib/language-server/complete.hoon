@@ -3,14 +3,15 @@
 ::
 =/  debug  |
 |%
-+*  option  [item]
+++  option
+  |$  [item]
   [term=cord detail=item]
 ::
 ::  Like +rose except also produces line number
 ::
 ++  lily
   |*  [los=tape sab=rule]
-  =+  vex=(sab [[1 1] (crip los)])
+  =+  vex=(sab [[1 1] los])
   ?~  q.vex
     [%| p=p.vex(q (dec q.p.vex))]
   ?.  =(~ q.q.u.q.vex)
@@ -42,7 +43,7 @@
     %+  turn  ~(tap by q.r.q.ty)
     |=  [term =tome]
     %+  turn
-      ~(tap by q.tome)
+      ~(tap by tome)
     |=  [name=term =hoon]
     ^-  (pair term type)
     ~|  term=term
@@ -226,7 +227,7 @@
     =*  outer-loop  $
     ?~  tomes
       ~
-    =/  arms  ~(tap by q.q.i.tomes)
+    =/  arms  ~(tap by q.i.tomes)
     |-  ^-  (unit [term type])
     =*  inner-loop  $
     ?~  arms

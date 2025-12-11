@@ -1,4 +1,4 @@
-import { Association, Group, hideGroup, JoinRequests } from '@urbit/api';
+import { Association, Group, JoinRequests, abortJoin } from '@urbit/api';
 import { useCallback } from 'react';
 import { reduce } from '../reducers/group-update';
 import _ from 'lodash';
@@ -15,7 +15,8 @@ export interface GroupState {
     [group: string]: Group;
   };
   pendingJoin: JoinRequests;
-  hidePending: (group: string) => Promise<void>;
+  abortJoin: (group: string) => Promise<void>;
+  doneJoin: (group: string) => Promise<void>;
 }
 
 // @ts-ignore investigate zustand types
@@ -24,14 +25,23 @@ const useGroupState = createState<GroupState>(
   (set, get) => ({
     groups: {},
     pendingJoin: {},
-    hidePending: async (group) => {
+    abortJoin: async (group) => {
       get().set((draft) => {
         delete draft.pendingJoin[group];
       });
-      await api.poke(hideGroup(group));
-    }
+      await api.poke(abortJoin(group));
+    },
+    doneJoin: async (group) => {
+      get().set((draft) => {
+        delete draft.pendingJoin[group];
+      });
+      await api.poke({ app: 'group-view', mark: 'group-view-action', json: {
+        done: group
+      }});
+    },
+
   }),
-  ['groups'],
+  [],
   [
     (set, get) =>
       createSubscription('group-store', '/groups', (e) => {

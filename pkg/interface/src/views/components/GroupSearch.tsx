@@ -6,13 +6,11 @@ import {
     ErrorLabel, Icon, Label,
     Row, Text
 } from '@tlon/indigo-react';
-import { OpenPolicy } from '@urbit/api';
-import { Association } from '@urbit/api/metadata';
+import { Association, OpenPolicy, roleForShip } from '@urbit/api';
 import { FieldArray, useFormikContext } from 'formik';
 import _ from 'lodash';
 import React, { ReactElement, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { roleForShip } from '~/logic/lib/group';
 import useGroupState from '~/logic/state/group';
 import useMetadataState from '~/logic/state/metadata';
 import { DropdownSearch } from './DropdownSearch';

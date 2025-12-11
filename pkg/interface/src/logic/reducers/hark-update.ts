@@ -1,11 +1,11 @@
 import {
+  BigIntOrderedMap,
   HarkPlace,
   Timebox,
   HarkStats,
   harkBinToId,
   makePatDa
 } from '@urbit/api';
-import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
 import _ from 'lodash';
 import { compose } from 'lodash/fp';
 import { BaseState } from '../state/base';
@@ -210,6 +210,9 @@ function more(json: any, state: HarkState): HarkState {
 function added(json: any, state: HarkState): HarkState {
   if('added' in json) {
     const { bin } = json.added;
+    if(bin.place.desk !== window.desk) {
+      return state;
+    }
     const binId = harkBinToId(bin);
     state.unseen[binId] = json.added;
   }
@@ -239,6 +242,9 @@ function timebox(json: any, state: HarkState): HarkState {
         const time = makePatDa(lid.archive);
         const old = state.archive.get(time) || {};
         notifications.forEach((note: any) => {
+          if(note.bin.place.desk !== window.desk) {
+            return;
+          }
           const binId = harkBinToId(note.bin);
           old[binId] = note;
         });
@@ -246,6 +252,9 @@ function timebox(json: any, state: HarkState): HarkState {
     } else {
         const seen = 'seen' in lid ? 'seen' : 'unseen';
         notifications.forEach((note: any) => {
+          if(note.bin.place.desk !== window.desk) {
+            return;
+          }
           const binId = harkBinToId(note.bin);
           state[seen][binId] = note;
         });

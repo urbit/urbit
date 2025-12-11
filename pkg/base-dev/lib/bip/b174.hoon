@@ -56,6 +56,8 @@
         1^0x0
           %testnet
         1^0x1
+          %regtest
+        1^0x1
       ==
     :-  (cat:byt ~[1^typ pubkey.h])
     %-  cat:byt

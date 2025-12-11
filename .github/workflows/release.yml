@@ -1,44 +1,34 @@
-name: release
+name: Push to release branch
 
 on:
-  release: null
   push:
-    tags: ['*']
+    branches:
+      - 'release/*'
+    paths:
+      - '.github/workflows/feature.yml'
+      - '.github/workflows/develop.yml'
+      - '.github/workflows/release.yml'
+      - '.github/workflows/master.yml'
+      - '.github/workflows/shared.yml'
+      - 'pkg/arvo/**'
+      - 'pkg/docker-image/**'
+      - 'pkg/ent/**'
+      - 'pkg/ge-additions/**'
+      - 'pkg/libaes_siv/**'
+      - 'pkg/urbit/**'
+      - 'pkg/urcrypt/**'
+      - 'tests/**'
+      - 'bin/**'
+      - 'nix/**'
+      - 'default.nix'
 
 jobs:
-  upload:
-    strategy:
-      matrix:
-        include:
-          - { os: ubuntu-latest, system: x86_64-linux }
-          - { os: macos-latest, system: x86_64-darwin }
-
-    runs-on: ${{ matrix.os }}
-
-    steps:
-      - uses: actions/checkout@v2
-      - uses: cachix/install-nix-action@v13
-      - uses: cachix/cachix-action@v10
-        with:
-          name: ${{ secrets.CACHIX_NAME }}
-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
-
-      - uses: google-github-actions/setup-gcloud@v0.2.0
-        with:
-          version: '290.0.1'
-          service_account_key: ${{ secrets.GCS_SERVICE_ACCOUNT_KEY }}
-          project_id: ${{ secrets.GCS_PROJECT }}
-          export_default_credentials: true
-
-      - run: nix-build -A tarball --arg enableStatic true
-
-      - name: Run upload to bootstrap.urbit.org
-        run: |
-          version="$(cat ./pkg/urbit/version)"
-          system="$(nix-instantiate --eval --expr 'builtins.currentSystem')"
-          system=${system:1:${#system}-2}
-          target="gs://bootstrap.urbit.org/ci/urbit-v${version}-${system}-${GITHUB_SHA:0:9}.tgz"
-
-          gsutil cp -n ./result "$target"
-
-          echo "upload to $target complete."
+  call-vere:
+    uses: ./.github/workflows/shared.yml
+    with:
+      pace: 'soon'
+      upload: >-
+        ${{
+        (github.ref_name == 'next/vere' && github.ref_type == 'branch')
+        }}
+    secrets: inherit

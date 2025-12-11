@@ -1,5 +1,5 @@
 # A repository wide shell.nix containing all tools, formatters, and inputs
-# required to build any of the C or Haskell packages.
+# required to build any of the C packages.
 #
 # Entering a nix-shell using this derivation will allow you to cd anywhere
 # in the ./pkg directory and run the appropriate build tooling.
@@ -14,48 +14,25 @@ let
 
   pkgsLocal = import ./default.nix { };
 
-  # The non-Haskell packages which build inputs (dependencies) will be
-  # propagated into the shell. This combines nixpkgs' mkShell behaviour
-  # with Haskell.nix's shellFor.
+  # The packages from which build inputs (dependencies) will be propagated into
+  # the shell.
   #
   # For example, adding urbit here results in gmp, h2o, zlib, etc. being
   # made available, so you can just run make.
-  # 
+  #
   # Typically the inputs listed here also have a shell.nix in their respective
-  # source directory you can use, to avoid the Haskell/GHC dependencies.
-  inputsFrom = with pkgsLocal; [ ent herb urbit urcrypt ];
+  # source directory you can use directly.
+  inputsFrom = with pkgsLocal; [ ent urbit urcrypt ];
 
   # Collect the named attribute from all dependencies listed in inputsFrom.
   mergeFrom = name: pkgs.lib.concatLists (pkgs.lib.catAttrs name inputsFrom);
 
-in pkgsLocal.hs.shellFor {
-  # Haskell packages from the stackProject which will have their
-  # dependencies available in the shell.
-  packages = ps:
-    with ps; [
-      racquire
-      terminal-progress-bar
-      urbit-atom
-      urbit-azimuth
-      urbit-eventlog-lmdb
-      urbit-king
-      urbit-noun
-      urbit-noun-core
-      urbit-termsize
-    ];
-
-  # Haskell tools to make available on the shell's PATH.
-  tools = {
-    shellcheck = "0.7.1";
-    ormolu = "0.1.3.0";
-  };
-
+in pkgs.mkShell {
   # Nixpkgs tools to make available on the shell's PATH.
   buildInputs = [
     pkgs.cacert
-    pkgs.nixfmt
+    pkgs.nixpkgs-fmt
     pkgs.shfmt
-    pkgs.stack
     (import pkgs.sources.niv { }).niv
   ] ++ mergeFrom "buildInputs";
 

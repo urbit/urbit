@@ -1,8 +1,7 @@
+::  %drum-put: download into host system
 ::
-::::  /hoon/do-claim/womb/mar
-  ::
 /?    310
-|_  [path @]
+|_  [path $@(@ [@ta @])]
 ::
 ++  grad  %noun
 ++  grow
@@ -11,6 +10,6 @@
   --
 ++  grab                                                ::  convert from
   |%
-  +$  noun  [path @]                                    ::  clam from %noun
+  +$  noun  [path $@(@ [@ta @])]                        ::  clam from %noun
   --
 --

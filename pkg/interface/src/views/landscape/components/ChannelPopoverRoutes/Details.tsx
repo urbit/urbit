@@ -47,7 +47,7 @@ export function ChannelDetails(props: ChannelDetailsProps) {
     <Formik initialValues={initialValues} onSubmit={onSubmit}>
       <Form style={{ display: 'contents' }}>
         <FormGroupChild id="details" />
-        <Col mx={4} mb={4} flexShrink={0} gapY={4}>
+        <Col mx={4} mb={4} flexShrink={0} gapY={4} maxWidth="512px">
           <Col mb={3}>
             <Text id="details" fontSize={2} fontWeight="bold">
               Channel Details

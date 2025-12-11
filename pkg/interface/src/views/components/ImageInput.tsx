@@ -42,7 +42,7 @@ const prompt = (
         style={{ pointerEvents: 'none' }}
         onSelect={e => e.preventDefault}
       >
-        Paste a link here
+        Paste an image URL here
         {canUpload ? (
           <>
             , or

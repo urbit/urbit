@@ -127,7 +127,7 @@
   ++  hark-graph-migrate
     |=  old=state-7:hist
     =|  cards=(list card)
-    |^ 
+    |^
     [(flop get-places) state]
     ::
     ++  hark
@@ -225,7 +225,7 @@
     ?+    -.q.update  `state
         %add-graph  (add-graph resource.q.update)
       ::
-        ?(%remove-graph %archive-graph)  
+        ?(%remove-graph %archive-graph)
       (remove-graph resource.q.update)
     ::
         %remove-posts
@@ -258,20 +258,20 @@
       %+  skim  ~(tap in watching)
       |=  [r=resource idx=index:graph-store]
       =(r rid)
-    :_  
+    :_
       %_  state
         watching  (~(dif in watching) unwatched)
         places    (~(del by places) rid)
       ==
     %+  turn  ~(tap in (~(get ju places) rid))
     |=  =place:store
-    (poke-hark %del-place place) 
+    (poke-hark %del-place place)
     ::  XX: fix
   ::
   ++  add-graph
     |=  rid=resource
     ^-  (quip card _state)
-    =/  graph=graph:graph-store  :: graph in subscription is bunted 
+    =/  graph=graph:graph-store  :: graph in subscription is bunted
       (get-graph-mop:gra rid)
     =/  node=(unit node:graph-store)
       (bind (pry:orm:graph-store graph) |=([@ =node:graph-store] node))
@@ -294,7 +294,7 @@
 ++  on-peek  on-peek:def
 ::
 ++  on-leave  on-leave:def
-++  on-arvo  
+++  on-arvo
   |=  [=wire =sign-arvo]
   ^-  (quip card _this)
   ?+  wire  (on-arvo:def wire sign-arvo)
@@ -317,7 +317,7 @@
 ::
 ++  get-place
   |=  [rid=resource =index:graph-store]
-  :-  q.byk.bowl 
+  :-  q.byk.bowl
   %+  welp  /graph/(scot %p entity.rid)/[name.rid]
   (graph-index-to-path index)
 ::
@@ -372,7 +372,7 @@
     ^-  (unit _update-core)
     =/  m=(unit ^mark)
       (get-mark:gra r)
-    ?~  m  ~  
+    ?~  m  ~
     :-  ~
     %_  update-core
       rid      r
@@ -394,7 +394,7 @@
     ^-  (list card)
     %+  welp  (turn (flop hark-pokes) poke-hark)
     %-  zing
-    %+  turn  (flop new-watches) 
+    %+  turn  (flop new-watches)
     |=(=index:graph-store (give ~[/updates] [%listen rid index]))
   ::
   ++  hark
@@ -409,7 +409,7 @@
     ?~  updates  update-core
     =/  cor=(unit _post-core)
       (abed:post-core i.updates)
-    ?~  cor  $(updates t.updates) 
+    ?~  cor  $(updates t.updates)
     $(updates t.updates, update-core abet:added:u.cor)
   ::
   ++  remove-posts
@@ -428,7 +428,7 @@
   ++  post-core
     |_  [kind=notif-kind:hook =post:graph-store]
     ++  post-core  .
-    ++  abet  
+    ++  abet
       =.  places  (~(put ju places) rid place)
       update-core
     ++  abed
@@ -471,6 +471,7 @@
       ^+  post-core
       ?.  should-notify  post-core
       =/  title=(list content:store)
+        ?:  =(title (crip "{(scow %p our.bowl)}/dm-inbox"))  title.kind
         ?.  is-mention   title.kind
         ~[text/(rap 3 'You were mentioned in ' title ~)]
       =/  link=path
@@ -484,7 +485,7 @@
       ^+  post-core
       %_  post-core
           update-core
-        ?-  mode.kind 
+        ?-  mode.kind
           %count  (hark %unread-count place %.y 1)
           %each   (hark %unread-each place /(rsh 4 (scot %ui (rear self-idx))))
           %none   update-core
@@ -495,7 +496,7 @@
       ^+  post-core
       %_  post-core
           update-core
-        ?-  mode.kind 
+        ?-  mode.kind
           %count  (hark %unread-count place %.n 1)
           %each   (hark %read-each place /(rsh 4 (scot %ui (rear self-idx))))
           %none   update-core
@@ -535,12 +536,13 @@
   ++  notif-kind
     |=  p=post:graph-store
     ^-  (unit notif-kind:hook)
-    |^ 
+    |^
     ?+  mark  ~
       %graph-validator-chat     chat
       %graph-validator-publish  publish
       %graph-validator-link     link
       %graph-validator-dm       dm
+      %graph-validator-post     post
     ==
     ::
     ++  chat
@@ -572,7 +574,7 @@
     ++  link
       ^-  (unit notif-kind:hook)
       ?+  index.p  ~
-          [@ ~]       
+          [@ ~]
         :-  ~
         :*  [text+(rap 3 'New links in ' title ~)]~
             [ship+author.p text+': ' (hark-contents:graph-store contents.p)]
@@ -599,7 +601,7 @@
     ::
     ++  dm
       ?+  index.p  ~
-          [@ @ ~]  
+          [@ @ ~]
         :-  ~
         :*  ~[text+'New messages from ' ship+author.p]
             (hark-contents:graph-store contents.p)

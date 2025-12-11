@@ -108,7 +108,6 @@ function useInviteAccept(resource: string, app?: string, uid?: string) {
         return false;
       }
 
-      await airlock.poke(join(ship, name));
       await waiter((p) => {
         return (
           (resource in p.groups &&

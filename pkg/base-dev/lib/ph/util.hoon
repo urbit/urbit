@@ -16,9 +16,11 @@
 ::  Start a ship (low-level; prefer +raw-ship)
 ::
 ++  init
-  |=  [who=ship fake=?]
+  |=  [who=ship fake=? core=?(%mesa %ames)]
   ^-  (list aqua-event)
-  [%init-ship who fake]~
+  :~  [%init-ship who fake]
+      [%event who [/a/aqua/load %load core]]
+  ==
 ::
 ::  Send dojo command
 ::
@@ -28,8 +30,8 @@
   %+  send-events-to  who
   ^-  (list unix-event)
   :~
-    [/d/term/1 %belt %ctl `@c`%e]
-    [/d/term/1 %belt %ctl `@c`%u]
+    [/d/term/1 %belt %mod %ctl `@c`%e]
+    [/d/term/1 %belt %mod %ctl `@c`%u]
     [/d/term/1 %belt %txt ((list @c) what)]
     [/d/term/1 %belt %ret ~]
   ==
@@ -40,7 +42,7 @@
   |=  [who=ship what=term]
   ^-  (list ph-event)
   %+  send-events-to  who
-  :~  [/d/term/1 %belt %ctl (,@c what)]
+  :~  [/d/term/1 %belt %mod %ctl (,@c what)]
   ==
 ::
 ::  Inject a file into a ship
@@ -59,18 +61,29 @@
 ::
 ::  Checks whether the given event is a dojo output blit containing the
 ::  given tape
-::
+::TODO  should be rename -dill-output
 ++  is-dojo-output
   |=  [who=ship her=ship uf=unix-effect what=tape]
+  |^
   ?&  =(who her)
       ?=(%blit -.q.uf)
-    ::
-      %+  lien  p.q.uf
-      |=  =blit:dill
-      ?.  ?=(%lin -.blit)
-        |
-      !=(~ (find what p.blit))
+       (lien p.q.uf handle-blit)
   ==
+  ::
+  ++  handle-blit
+    |=  =blit:dill
+    ^-  ?
+    ?:  ?=(%mor -.blit)
+      (lien p.blit handle-blit)
+    ?+  -.blit  |
+      %put  !=(~ (find what p.blit))
+    ::
+        %klr
+      %+  lien  p.blit
+      |=  [* q=(list @c)]
+      !=(~ (find what q))
+    ==
+  --
 ::
 ::  Test is successful if +is-dojo-output
 ::

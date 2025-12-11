@@ -293,7 +293,8 @@
 ::  +acme: complete app state
 ::
 +$  acme
-  $:  ::  dir: ACME service directory
+  $:  %1
+      ::  dir: ACME service directory
       ::
       dir=directory
       ::  act: ACME service account
@@ -311,9 +312,9 @@
       ::  rod: active, in-progress order
       ::
       rod=(unit order)
-      ::  next-order: queued domains for validation
+      ::  next-order: queued domains
       ::
-      next-order=(unit [try=@ud dom=(map turf [idx=@ud valid=?])])
+      next-order=(unit [try=@ud dom=(set turf)])
       ::  cey: certificate key XX move?
       ::
       cey=key:rsa
@@ -342,10 +343,45 @@
     [[card ~] this]
   ::
   ++  on-save   !>(state)
-  ++  on-load   |=(old=vase `this(state !<(acme old)))
+  ++  on-load
+    |=  =vase
+    |^  ^-  (quip card _this)
+    =+  !<(old=versioned vase)
+    ?@  -.old
+      ?-  -.old
+        %1  `this(state old)
+      ==
+    =.  state
+      [%1 dir act liv hit nonces rod ~ cey challenges]:old
+    ?~  next-order.old
+      `this
+    =/  next=(set turf)  ~(key by dom.u.next-order.old)
+    =^  cards=(list card)  state
+      abet:(add-order next)
+    [cards this]
+    ::
+    +$  versioned
+      $^  acme-0
+      $%  acme
+      ==
+    ::
+    +$  acme-0
+      $:  dir=directory
+          act=acct
+          liv=(unit config)
+          hit=history
+          nonces=(list @t)
+          rod=(unit order)
+          next-order=(unit [try=@ud dom=(map turf [idx=@ud valid=?])])
+          cey=key:rsa
+          challenges=(set @t)
+      ==
+    --
+  ::
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card _this)
+    ?>  (team:title [our src]:bowl)
     =^  cards  state
       ?+  mark  (on-poke:def mark vase)
         %acme-order  (poke-acme-order:ac !<((set turf) vase))
@@ -460,7 +496,7 @@
   :-  ~
   ^-  octs
   =;  pro=json
-    (as-octt:mimes:html (en-json:html (sign:jws key.act pro bod)))
+    (as-octs:mimes:html (en:json:html (sign:jws key.act pro bod)))
   :-  %o  %-  my  :~
     nonce+s+non
     url+s+(crip (en-purl:html url))
@@ -487,7 +523,7 @@
   ::
   ?.  =(400 p.rep)  |
   ?~  r.rep  |
-  =/  jon=(unit json)  (de-json:html q.u.r.rep)
+  =/  jon=(unit json)  (de:json:html q.u.r.rep)
   ?~  jon  |
   =('urn:ietf:params:acme:error:badNonce' type:(error:grab u.jon))
 ::  +rate-limited: handle Acme service rate-limits
@@ -496,7 +532,7 @@
   |=  [try=@ud act=@tas spur=wire bod=(unit octs)]
   ^+  this
   =/  jon=(unit json)
-    ?~(bod ~ (de-json:html q.u.bod))
+    ?~(bod ~ (de:json:html q.u.bod))
   ?~  jon
     ::  no details, back way off
     ::  XX specifically based on wire
@@ -569,29 +605,6 @@
   ::  +try: this effect attempt number
   ::
   ++  try  (fall try-count 1)
-  ::  +validate-domain: confirm that a pending domain resolves to us
-  ::
-  ++  validate-domain
-    |=  idx=@ud
-    ^+  this
-    ~|  %validate-domain-effect-fail
-    ?.  ?=(^ next-order)  ~|(%no-next-order !!)
-    =/  pending
-      (skip ~(tap by dom.u.next-order) |=([turf @ud valid=?] valid))
-    ?:  =(~ pending)
-      new-order:effect
-    =/  next=[=turf idx=@ud valid=?]
-      ~|  [%no-next-domain idx=idx]
-      (head (skim pending |=([turf idx=@ud ?] =(idx ^idx))))
-    ::  XX should confirm that :turf points to us
-    ::  confirms that domain exists (and an urbit is on :80)
-    ::
-    =/  =purl
-        :-  [sec=| por=~ host=[%& turf.next]]
-        [[ext=~ path=/'~debug'] query=~]
-    =/  =wire
-      (acme-wire try %validate-domain /idx/(scot %ud idx.next))
-    (emit (request wire purl %get ~ ~))
   ::  +directory: get ACME service directory
   ::
   ++  directory
@@ -623,7 +636,7 @@
     ?.  =(~ reg.act)
       ?:  =(~ next-order)
         this
-      (validate-domain:effect 0)
+      new-order:effect
     =/  =json  [%o (my [['termsOfServiceAgreed' b+&] ~])]
     ::  XX date in wire?
     ::
@@ -637,7 +650,7 @@
     ?.  ?=(^ reg.act)  ~|(%no-account !!)
     ?.  ?=(^ liv)      ~|(%no-live-config !!)
     =<  new-order:effect
-    (queue-next-order 1 & dom.u.liv)
+    (queue-next-order 1 dom.u.liv)
   ::  +new-order: create a new certificate order
   ::
   ++  new-order
@@ -646,13 +659,10 @@
     ?.  ?=(^ reg.act)  ~|(%no-account !!)
     ?.  ?=([~ ^] next-order)  ~|(%no-domains !!)
     =/  =json
-      :-  %o  %-  my  :~
-        :-  %identifiers
-        :-  %a
-        %+  turn
-          ~(tap in ~(key by `(map turf *)`dom.u.next-order))
-        |=(a=turf [%o (my type+s+'dns' value+s+(en-turf:html a) ~)])
-      ==
+      %+  frond:enjs:format  'identifiers'
+      :-  %a
+      %+  turn  ~(tap in dom.u.next-order)
+      |=(a=turf [%o (my type+s+'dns' value+s+(en-turf:html a) ~)])
     =/  wire-params  [try %new-order /(scot %da now.bow)]
     (stateful-request wire-params new-order.dir json)
   ::  +cancel-order: cancel failed order, set retry timer
@@ -672,7 +682,7 @@
     =.  ..emit  (retry:effect try %new-order / lul)
     ::  domains might already be validated
     ::
-    =.  ..emit  (queue-next-order +(try.order) & dom.order)
+    =.  ..emit  (queue-next-order +(try.order) dom.order)
     cancel-current-order
   ::  +finalize-order: finalize completed order
   ::
@@ -739,30 +749,6 @@
     =/  =wire
       (acme-wire try %get-authz /(scot %da now.bow))
     (emit (request wire i.pending.aut.u.rod %get ~ ~))
-  ::  XX check/finalize-authz ??
-  ::
-  ::  +test-trial: confirm that ACME domain validation challenge is available
-  ::
-  ++  test-trial
-    ^+  this
-    ~|  %test-trial-effect-fail
-    ?.  ?=(^ reg.act)  ~|(%no-account !!)
-    ?.  ?=(^ rod)      ~|(%no-active-order !!)
-    ?.  ?=(^ active.aut.u.rod)  ~|(%no-active-authz !!)
-    ::  XX revisit wrt rate limits
-    ::
-    ?>  ?=(%wake sas.u.rod)
-    =*  aut  u.active.aut.u.rod
-    =/  pat=path  /'.well-known'/acme-challenge/[tok.cal.aut]
-    ::  note: requires port 80, just as the ACME service will
-    ::
-    =/  url=purl  [[sec=| por=~ hos=[%& dom.aut]] [ext=~ pat] hed=~]
-    ::  =/  url=purl  [[sec=| por=`8.081 hos=[%& /localhost]] [ext=~ pat] hed=~]
-    ::  XX idx in wire?
-    ::
-    =/  =wire
-      (acme-wire try %test-trial /(scot %da now.bow))
-    (emit (request wire url %get ~ ~))
   ::  +finalize-trial: notify ACME service that challenge is ready
   ::
   ++  finalize-trial
@@ -796,40 +782,6 @@
 ::
 ++  event
   |_  try=@ud
-  ::  +validate-domain: accept a pending domain confirmation response
-  ::
-  ++  validate-domain
-    |=  [=wire rep=httr]
-    ^+  this
-    ?>  ?=([%idx @ *] wire)
-    ?.  ?=(^ next-order)
-      this
-    =/  idx  (slav %ud i.t.wire)
-    =/  valid  |(=(200 p.rep) =(307 p.rep))
-    =/  item=(list [=turf idx=@ud valid=?])
-      (skim ~(tap by dom.u.next-order) |=([turf idx=@ud ?] =(^idx idx)))
-    ?.  ?&  ?=([^ ~] item)
-            !valid.i.item
-        ==
-      this
-    =.  dom.u.next-order
-      (~(put by dom.u.next-order) turf.i.item [idx valid])
-    ?.  valid
-      ?:  (lth try 10)
-        =/  lul=@dr  (min ~h1 (backoff try))
-        (retry:effect try %validate-domain /idx/(scot %ud idx) lul)
-      ::  XX remove next-order, cancel pending requests
-      ::  XX include suggestion to fix
-      ::
-      =/  msg=cord
-        %+  rap  3
-        :~  'unable to reach '  (scot %p our.bow)
-            ' via http at '  (en-turf:html turf.i.item)  ':80'
-        ==
-      (emil(next-order ~) (notify msg [(sell !>(rep)) ~]))
-    ?:  ?=(~ (skip ~(val by dom.u.next-order) |=([@ud valid=?] valid)))
-      new-order:effect
-    (validate-domain:effect +(idx))
   ::  +directory: accept ACME service directory, trigger registration
   ::
   ++  directory
@@ -839,7 +791,7 @@
       ?:  (lth try 10)
         (retry:effect try %directory / (min ~m30 (backoff try)))
       (emil (notify (failure-message directory-base) [(sell !>(rep)) ~]))
-    =.  dir  (directory:grab (need (de-json:html q:(need r.rep))))
+    =.  dir  (directory:grab (need (de:json:html q:(need r.rep))))
     ?~(reg.act register:effect this)
   ::  +nonce: accept new nonce and trigger next effect
   ::
@@ -883,13 +835,13 @@
       ?~  r.rep
         (scot %da now.bow)
       =/  bod=acct:body
-        (acct:grab (need (de-json:html q.u.r.rep)))
+        (acct:grab (need (de:json:html q.u.r.rep)))
       ?>  ?=(%valid sas.bod)
       wen.bod
     =.  reg.act  `[wen loc]
     ?:  =(~ next-order)
       this
-    (validate-domain:effect 0)
+    new-order:effect
   ::  XX rekey
   ::
   ::  +new-order: order created, begin processing authorizations
@@ -913,13 +865,12 @@
     ::  XX check status
     ::
     =/  bod=order:body
-      (order:grab (need (de-json:html q:(need r.rep))))
-    =/  dom=(set turf)  ~(key by dom.u.next-order)
+      (order:grab (need (de:json:html q:(need r.rep))))
     ::  XX maybe generate key here?
     ::
-    =/  csr=@ux  +:(en:der:pkcs10 cey ~(tap in dom))
+    =/  csr=@ux  +:(en:der:pkcs10 cey ~(tap in dom.u.next-order))
     =/  dor=order
-      :*  dom
+      :*  dom.u.next-order
           try.u.next-order
           sas=%wake
           exp.bod
@@ -956,7 +907,7 @@
       ::
       (emil (notify (failure-message ego.u.rod) [(sell !>(rep)) ~]))
     =/  bod=order:body
-      (order:grab (need (de-json:html q:(need r.rep))))
+      (order:grab (need (de:json:html q:(need r.rep))))
     ?+  sas.bod
       ~&  [%check-order-status-unknown sas.bod]
       this
@@ -1063,7 +1014,7 @@
       ::
       (emil (notify (failure-message i.pending.aut.u.rod) [(sell !>(rep)) ~]))
     =/  bod=auth:body
-      (auth:grab (need (de-json:html q:(need r.rep))))
+      (auth:grab (need (de:json:html q:(need r.rep))))
     =/  cal=trial
        ::  XX parse token to verify url-safe base64?
        ::
@@ -1082,47 +1033,7 @@
     ::  XX space leak, should be pruned on order completion or timeout
     ::
     =.  challenges  (~(put in challenges) tok.cal)
-    test-trial:effect(aut.u.rod rod-aut)
-  ::  XX check/finalize-authz ??
-  ::
-  ::  +test-trial: accept response from challenge test
-  ::
-  ++  test-trial
-    |=  [wir=wire rep=httr]
-    ~|  [%strange-test-trial wir]
-    ?>  ?=(^ rod)
-    ?>  ?=(^ active.aut.u.rod)
-    =*  aut  u.active.aut.u.rod
-    ^+  this
-    ?.  =(200 p.rep)
-      ?:  (lth try 10)
-        (retry:effect try %test-trial / (min ~m10 (backoff try)))
-      ::  XX next steps, check connectivity, etc. ??
-      ::
-      =<  cancel-order:effect
-      =/  msg=cord
-        %+  rap  3
-        :~  'unable to retrieve self-hosted domain validation token '
-            'via '  (en-turf:html dom.aut)  '. '
-            'please confirm your urbit has network connectivity.'
-        ==
-      (emil (notify msg [(sell !>(rep)) ~]))
-    =/  bod
-      %-  as-octs:mimes:html
-      (rap 3 [tok.cal.aut '.' (pass:thumb:jwk key.act) ~])
-    ?.  ?&  ?=(^ r.rep)
-            =(bod u.r.rep)
-        ==
-      ::  XX probably a DNS misconfiguration
-      ::
-      =/  =tang
-        :~  ?~(r.rep leaf+"~" (sell !>(u.r.rep)))
-            leaf+"actual:"
-            (sell !>((some bod)))
-            leaf+"expected:"
-        ==
-      (emil (notify 'domain validation value is wrong' tang))
-    finalize-trial:effect
+    finalize-trial:effect(aut.u.rod rod-aut)
   ::  +finalize-trial:
   ::
   ++  finalize-trial
@@ -1147,7 +1058,7 @@
       ::  XX get challenge, confirm urn:ietf:params:acme:error:connection
       ::
       ::  =/  err=error:body
-      ::    (error:grab (need (de-json:html q:(need r.rep))))
+      ::    (error:grab (need (de:json:html q:(need r.rep))))
       ::  ?:  =('urn:ietf:params:acme:error:malformed' status.err)
       ::
       =<  cancel-order:effect
@@ -1155,7 +1066,7 @@
        'unable to finalize domain validation challenge'
       (emil (notify msg [(sell !>(rep)) ~]))
     =/  bod=challenge:body
-      (challenge:grab (need (de-json:html q:(need r.rep))))
+      (challenge:grab (need (de:json:html q:(need r.rep))))
     ::  XX check for other possible values in 200 response
     ::  note: may have already been validated
     ::
@@ -1179,9 +1090,6 @@
     =*  spur  t.t.t.wire
     ?+  act
         ~&([%unknown-retry act] this)
-      %validate-domain
-                       ?>  ?=([%idx @ ~] spur)
-                       (validate-domain:fec (slav %ud i.t.spur))
       %directory       directory:fec
       %nonce           ?>  ?=(^ spur)
                        (nonce:fec t.spur)
@@ -1192,7 +1100,6 @@
       %check-order     check-order:fec
       %certificate     check-order:fec :: intentional
       %get-authz       get-authz:fec
-      %test-trial      test-trial:fec
       %finalize-trial  finalize-trial:fec
     ==
   --
@@ -1235,8 +1142,6 @@
   %.  [spur rep]
   ?+  act
       ~&([%unknown-http-response act] !!)
-    %validate-domain
-                     validate-domain:ven
     %directory       directory:ven
     %nonce           nonce:ven
     %register        register:ven
@@ -1249,7 +1154,6 @@
     %get-authz       get-authz:ven
     ::  XX check/finalize-authz ??
     ::
-    %test-trial      test-trial:ven
     %finalize-trial  finalize-trial:ven
     ::  XX delete-trial?
     ::
@@ -1364,16 +1268,9 @@
 ::  +queue-next-order: enqueue domains for validation
 ::
 ++  queue-next-order
-  |=  [try=@ud valid=? dom=(set turf)]
+  |=  [try=@ud dom=(set turf)]
   ^+  this
-  %=  this  next-order
-    :+  ~
-      try
-    %+  roll
-      ~(tap in dom)
-    |=  [=turf state=(map turf [idx=@ud valid=?])]
-    (~(put by state) turf [~(wyt by state) valid])
-  ==
+  this(next-order `[try dom])
 ::  +cancel-current-order: and archive failure for future autopsy
 ::
 ::    XX we may have pending moves out for this order
@@ -1394,7 +1291,7 @@
   ^+  this
   ?:  =(~ dom)
     ~|(%acme-empty-certificate-order !!)
-  =.  ..emit  (queue-next-order 1 | dom)
+  =.  ..emit  (queue-next-order 1 dom)
   =.  ..emit  cancel-current-order
   ::  notify %dill
   ::
@@ -1408,7 +1305,7 @@
   ::  if registered, create order
   ::
   ?^  reg.act
-    (validate-domain:effect 0)
+    new-order:effect
   ::  if initialized, defer
   ::
   ?.(=(act *acct) this init)

@@ -73,21 +73,23 @@
   ^-  form:m
   |=  tin=strand-input:strand
   ?+  in.tin  `[%skip ~]
-      ~  `[%wait ~]
+      ~
+    `[%wait ~]
+  ::
       [~ %poke @ *]
     ?.  =(mark p.cage.u.in.tin)
       `[%skip ~]
     `[%done q.cage.u.in.tin]
   ==
 ::
-::
-::
 ++  take-sign-arvo
   =/  m  (strand ,[wire sign-arvo])
   ^-  form:m
   |=  tin=strand-input:strand
   ?+  in.tin  `[%skip ~]
-      ~  `[%wait ~]
+      ~
+    `[%wait ~]
+  ::
       [~ %sign *]
     `[%done [wire sign-arvo]:u.in.tin]
   ==
@@ -179,6 +181,53 @@
     ?~  error.sign-arvo.u.in.tin
       `[%done ~]
     `[%fail %timer-error u.error.sign-arvo.u.in.tin]
+  ==
+++  take-whey
+  |=  =wire
+  =/  m  (strand ,[spar:ames fragment-size=@ud num-fragments=@ud])
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+    in.tin  `[%skip ~]
+      ~  `[%wait ~]
+    ::
+      [~ %sign * %ames %sage sage=*]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    =/  =sage:mess:ames  sage.sign-arvo.u.in.tin
+    :^  ~  %done  spar=p.sage
+    ?~  q.sage
+      [boq=13 tot=0]
+    =<  [boq tot]
+    ;;([%whey boq=@ud tot=@ud] q.sage)
+  ==
+::
+++  take-sage
+  |=  =wire
+  =/  m  (strand ,sage:mess:ames)
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+    in.tin  `[%skip ~]
+      ~  `[%wait ~]
+    ::
+      [~ %sign * %ames %sage sage=*]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    `[%done sage.sign-arvo.u.in.tin]
+  ==
+::  XX deprecate in 409k
+::
+++  take-near
+  |=  =wire
+  =/  m  (strand ,[spar:ames (unit (unit page))])
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+    in.tin  `[%skip ~]
+      ~  `[%wait ~]
+    ::
+      [~ %sign * %ames %near ^ *]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    `[%done +>.sign-arvo.u.in.tin]
   ==
 ::
 ++  take-poke-ack
@@ -315,6 +364,81 @@
   ;<  ~  bind:m  (send-wait until)
   (take-wake `until)
 ::
+++  mass
+  =/  m  (strand ,(list quac:dill))
+  ^-  form:m
+  =/  =card:agent:gall  [%pass /mass %arvo %d %mass ~]
+  ;<  ~  bind:m  (send-raw-card card)
+  ;<  quz=(list quac:dill)  bind:m  take-meme
+  (pure:m quz)
+::
+++  take-meme
+  =/  m  (strand ,(list quac:dill))
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+  in.tin  `[%skip ~]
+    ~  `[%wait ~]
+      [~ %sign [%mass ~] %dill %meme *]
+    `[%done p.sign-arvo.u.in.tin]
+  ==
+::
+++  keen
+  |=  [=wire =spar:ames sec=(unit [@ @])]
+  =/  m  (strand ,~)
+  ^-  form:m
+  (send-raw-card %pass wire %arvo %a %keen sec spar)
+::
+++  chum
+  |=  [=wire =spar:ames]
+  =/  m  (strand ,~)
+  ^-  form:m
+  (send-raw-card %pass wire %arvo %a %chum spar)
+::
+++  keen-shut
+  |=  [=wire =spar:ames]
+  =/  m  (strand ,~)
+  ^-  form:m
+  (send-raw-card %pass wire %keen & spar)
+::
+++  yawn
+  |=  [=wire =spar:ames]
+  =/  m  (strand ,~)
+  ^-  form:m
+  (send-raw-card %pass wire %arvo %a %yawn spar)
+::
+++  whey
+  |=  [=wire boq=@ud =spar:ames]
+  =/  m  (strand ,~)
+  ^-  form:m
+  ::  encrypted using %chum namespace
+  ::
+  ;<  our=@p  bind:m  get-our
+  =.  path.spar
+    [%a %x '1' %$ %whey (scot %ud boq) (scot %p our) path.spar]
+  (chum wire spar)
+::
+++  meta
+  |=  [=wire =spar:ames]
+  =/  m  (strand ,~)
+  ^-  form:m
+  ?+    path.spar  !!
+      $%  [%ames bone=@ ?(%clos %cork %next %last %curr) ~]
+          [%flow bone=@ =dire:ames ~]
+          [%flow bone=@ =dire:ames ?(%clos %cork %line %lods %next %last) ~]
+          :: XX rewrite in terms of %whey namespace
+          ::
+          [%flow bone=@ =dire:ames %whey boq=@ ~]
+          [%flow bone=@ =dire:ames seq=@ %naxp ~]
+      ==
+    ::  encrypted using %chum namespace
+    ::
+    ;<  our=@p  bind:m  get-our
+    %-  send-raw-card
+    :*  %pass  wire  %arvo  %a  %chum
+        spar(path [%a %x '1' %$ %meta (scot %p our) path.spar])
+    ==
+  ==
+::
 ++  sleep
   |=  for=@dr
   =/  m  (strand ,~)
@@ -433,7 +557,6 @@
   %-  pure:m
   ?~  full-file.client-response  ''
   q.data.u.full-file.client-response
-
 ::
 ++  fetch-cord
   |=  url=tape
@@ -449,7 +572,7 @@
   =/  m  (strand ,json)
   ^-  form:m
   ;<  =cord  bind:m  (fetch-cord url)
-  =/  json=(unit json)  (de-json:html cord)
+  =/  json=(unit json)  (de:json:html cord)
   ?~  json
     (strand-fail %json-parse-error ~)
   (pure:m u.json)
@@ -474,6 +597,18 @@
     (pure:m ~)
   ?>  =(%vase p.r.u.riot)
   (pure:m (some !<(vase q.r.u.riot)))
+::
+++  build-file-hard
+  |=  [[=ship =desk =case] =spur]
+  =*  arg  +<
+  =/  m  (strand ,vase)
+  ^-  form:m
+  ;<    =riot:clay
+      bind:m
+    (warp ship desk ~ %sing %a case spur)
+  ?>  ?=(^ riot)
+  ?>  ?=(%vase p.r.u.riot)
+  (pure:m !<(vase q.r.u.riot))
 ::  +build-mark: build a mark definition to a $dais
 ::
 ++  build-mark
@@ -537,7 +672,7 @@
   (take-writ /warp)
 ::
 ++  read-file
-  |=  [[=ship =desk =case:clay] =spur]
+  |=  [[=ship =desk =case] =spur]
   =*  arg  +<
   =/  m  (strand ,cage)
   ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %x case spur)
@@ -546,13 +681,14 @@
   (pure:m r.u.riot)
 ::
 ++  check-for-file
-  |=  [[=ship =desk =case:clay] =spur]
+  |=  [[=ship =desk =case] =spur]
   =/  m  (strand ,?)
-  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %x case spur)
-  (pure:m ?=(^ riot))
+  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %u case spur)
+  ?>  ?=(^ riot)
+  (pure:m !<(? q.r.u.riot))
 ::
 ++  list-tree
-  |=  [[=ship =desk =case:clay] =spur]
+  |=  [[=ship =desk =case] =spur]
   =*  arg  +<
   =/  m  (strand ,(list path))
   ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %t case spur)
@@ -560,6 +696,14 @@
     (strand-fail %list-tree >arg< ~)
   (pure:m !<((list path) q.r.u.riot))
 ::
+++  list-desk
+  |=  [[=ship =desk =case] =spur]
+  =*  arg  +<
+  =/  m  (strand arch)
+  ;<  =riot:clay  bind:m  (warp ship desk ~ %sing %y case spur)
+  ?~  riot
+    (strand-fail %list-desk >arg< ~)
+  (pure:m !<(arch q.r.u.riot))
 ::  Take Clay read result
 ::
 ++  take-writ
@@ -585,6 +729,23 @@
   ;<  ~  bind:m
     (poke [who %hood] %helm-hi !>(~))
   (pure:m ~)
+::
+++  eval-hoon
+  |=  [gen=hoon bez=(list beam)]
+  =/  m  (strand ,vase)
+  ^-  form:m
+  =/  sut=vase  !>(..zuse)
+  |-
+  ?~  bez
+    (pure:m (slap sut gen))
+  ;<  vax=vase  bind:m  (build-file-hard i.bez)
+  $(bez t.bez, sut (slop vax sut))
+::
+++  send-thread
+  |=  [=bear:khan =shed:khan =wire]
+  =/  m  (strand ,~)
+  ^-  form:m
+  (send-raw-card %pass wire %arvo %k %lard bear shed)
 ::
 ::  Queue on skip, try next on fail %ignore
 ::
@@ -734,7 +895,7 @@
   ;<  =bowl:spider  bind:m  get-bowl
   =/  tid
     (scot %ta (cat 3 (cat 3 'strand_' file) (scot %uv (sham file eny.bowl))))
-  =/  poke-vase  !>([`tid.bowl `tid beak file args])
+  =/  poke-vase  !>(`start-args:spider`[`tid.bowl `tid beak file args])
   ;<  ~  bind:m  (poke-our %spider %spider-start poke-vase)
   ;<  ~  bind:m  (sleep ~s0)  ::  wait for thread to start
   (pure:m tid)
@@ -748,7 +909,7 @@
   ^-  form:m
   ;<  =bowl:spider  bind:m  get-bowl
   =/  tid  (scot %ta (cat 3 'strand_' (scot %uv (sham file eny.bowl))))
-  =/  poke-vase  !>([`tid.bowl `tid file args])
+  =/  poke-vase  !>(`start-args:spider`[`tid.bowl `tid byk.bowl file args])
   ;<  ~      bind:m  (watch-our /awaiting/[tid] %spider /thread-result/[tid])
   ;<  ~      bind:m  (poke-our %spider %spider-start poke-vase)
   ;<  ~      bind:m  (sleep ~s0)  ::  wait for thread to start

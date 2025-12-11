@@ -12,11 +12,13 @@
 ;<  ~  bind:m  (init-ship ~bud |)
 ;<  ~  bind:m  (init-ship ~marbud |)
 ;<  ~  bind:m  (init-ship ~linnup-torsyx |)
-;<  ~  bind:m  (init-ship ~linnup-torsyx-linnup-torsyx |)
-;<  ~  bind:m  (send-hi ~bud ~linnup-torsyx-linnup-torsyx)
-;<  ~  bind:m  (send-hi ~linnup-torsyx-linnup-torsyx ~marbud)
+::NOTE  only shortmoons supported, see also /ted/aqua/ames +lane-to-ship
+;<  ~  bind:m  (init-moon ~torsyx-linnup-torsyx |)
+;<  ~  bind:m  (send-hi ~bud ~torsyx-linnup-torsyx)
+;<  ~  bind:m  (send-hi ~torsyx-linnup-torsyx ~marbud)
 ;<  ~  bind:m  (init-ship ~dev |)
-;<  ~  bind:m  (send-hi ~linnup-torsyx-linnup-torsyx ~dev)
-;<  ~  bind:m  (send-hi ~dev ~linnup-torsyx-linnup-torsyx)
+::TODO  these hi's never come through!
+;<  ~  bind:m  (send-hi ~torsyx-linnup-torsyx ~dev)
+;<  ~  bind:m  (send-hi ~dev ~torsyx-linnup-torsyx)
 ;<  ~  bind:m  end
 (pure:m *vase)

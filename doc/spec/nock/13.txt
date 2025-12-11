@@ -1,0 +1,71 @@
+Author: Curtis Yarvin (curtis.yarvin@gmail.com)
+Date: 3/8/2008
+Version: 0.13
+
+1. Manifest
+
+    This file defines one Turing-complete function, "nock."
+
+    nock is in the public domain.  So far as I know, it is
+    neither patentable nor patented.  Use it at your own risk.
+ 
+2. Data
+
+    Both the domain and range of nock are "nouns."
+
+    A "noun" is either an "atom" or a "cell."  An "atom" is an unsigned 
+    integer of any size.  A "cell" is an ordered pair of any two nouns,
+    the "head" and "tail."
+
+3. Pseudocode
+
+    nock is defined in a pattern-matching pseudocode.
+
+    Match precedence is top-down.  Operators are prefix.  Parens
+    denote cells, and group right: (a b c) is (a (b c)).  
+
+4. Definition
+
+4.1 Transformations
+
+      *(a 0 b c)   => *(*(a b) c)
+      *(a 0 b)     => /(b a)
+      *(a 1 b)     => (b)
+      *(a 2 b)     => **(a b)
+      *(a 3 b)     => &*(a b)
+      *(a 4 b)     => ^*(a b)
+      *(a 5 b)     => =*(a b)
+      *(a 6 b c d) => *(a 2 (0 1) 2 (1 c d) (1 0) 2 (1 2 3) (1 0) 4 4 b)
+      *(a b c)     => (*(a b) *(a c))
+      *(a)         => *(a)
+
+4.2 Operators
+
+4.2.1 Goto (*)
+
+      *(a)             -> nock(a)
+
+4.2.2 Deep (&)
+    
+      &(a b)           -> 0
+      &(a)             -> 1
+ 
+4.2.3 Bump (^)
+
+      ^(a b)           -> ^(a b)
+      ^(a)             -> a + 1
+
+4.2.4 Same (=)
+
+      =(a a)           -> 0
+      =(a b)           -> 1
+      =(a)             -> =(a)
+
+4.2.5 Snip (/)
+
+      /(1 a)           -> a
+      /(2 a b)         -> a
+      /(3 a b)         -> b
+      /((a + a) b)     -> /(2 /(a b))
+      /((a + a + 1) b) -> /(3 /(a b))
+      /(a)             -> /(a)

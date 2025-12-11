@@ -5,8 +5,8 @@
 :-  %aqua-events
 %+  turn
   ^-  (list unix-event)
-  :~  [/d/term/1 %belt %ctl `@c`%e]
-      [/d/term/1 %belt %ctl `@c`%u]
+  :~  [/d/term/1 %belt %mod %ctl `@c`%e]
+      [/d/term/1 %belt %mod %ctl `@c`%u]
       [/d/term/1 %belt %txt ((list @c) command)]
       [/d/term/1 %belt %ret ~]
   ==

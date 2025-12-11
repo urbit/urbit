@@ -1,10 +1,7 @@
 import { Box, Button, Col, Text } from '@tlon/indigo-react';
-import { deSig } from '@urbit/api';
-import { Group } from '@urbit/api/groups';
-import { Association } from '@urbit/api/metadata';
+import { Association, deSig, Group, resourceFromPath, roleForShip } from '@urbit/api';
 import React, { useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
-import { resourceFromPath, roleForShip } from '~/logic/lib/group';
 import { GroupAdminSettings } from './Admin';
 import { GroupChannelSettings } from './Channels';
 import { GroupFeedSettings } from './GroupFeed';

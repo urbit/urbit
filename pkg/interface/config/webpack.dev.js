@@ -1,7 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-// const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const urbitrc = require('./urbitrc');
 const _ = require('lodash');
 const { execSync } = require('child_process');
@@ -9,15 +9,14 @@ const { execSync } = require('child_process');
 const GIT_DESC = execSync('git describe --always', { encoding: 'utf8' }).trim();
 
 let devServer = {
-  contentBase: path.join(__dirname, '../public'),
   hot: true,
   port: 9000,
   host: '0.0.0.0',
   disableHostCheck: true,
   historyApiFallback: {
+    index: '/apps/landscape/index.html',
     disableDotRule: true
-  },
-  publicPath: '/apps/landscape/'
+  }
 };
 
 const router =  _.mapKeys(urbitrc.FLEET || {}, (value, key) => `${key}.localhost:9000`);
@@ -25,7 +24,6 @@ const router =  _.mapKeys(urbitrc.FLEET || {}, (value, key) => `${key}.localhost
 if(urbitrc.URL) {
   devServer = {
     ...devServer,
-    index: 'index.html',
     // headers: {
     //   'Service-Worker-Allowed': '/'
     // },
@@ -49,7 +47,7 @@ if(urbitrc.URL) {
 module.exports = {
   mode: 'development',
   entry: {
-    app: './src/index.js'
+    app: './src/index.tsx'
     // serviceworker: './src/serviceworker.js'
   },
   module: {
@@ -61,19 +59,18 @@ module.exports = {
           options: {
             presets: ['@babel/preset-env', '@babel/typescript', ['@babel/preset-react', {
               runtime: 'automatic',
-              development: true,
-              importSource: '@welldone-software/why-did-you-render'
+              development: true
             }]],
             plugins: [
               '@babel/transform-runtime',
               '@babel/plugin-proposal-object-rest-spread',
               '@babel/plugin-proposal-optional-chaining',
               '@babel/plugin-proposal-class-properties',
-              'react-hot-loader/babel'
+              process.env.NODE_ENV !== 'production' && 'react-refresh/babel'
             ]
           }
         },
-        exclude: /node_modules\/(?!(@tlon\/indigo-dark|@tlon\/indigo-light|@tlon\/indigo-react)\/).*/
+        exclude: /node_modules\/(?!(@tlon\/indigo-dark|@tlon\/indigo-light|@tlon\/indigo-react|@urbit\/api)\/).*/
       },
       {
         test: /\.css$/i,
@@ -110,14 +107,15 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env.LANDSCAPE_SHORTHASH': JSON.stringify(GIT_DESC),
       'process.env.LANDSCAPE_STORAGE_VERSION': JSON.stringify(Date.now()),
-      'process.env.LANDSCAPE_LAST_WIPE': JSON.stringify('2021-10-20'),
+      'process.env.LANDSCAPE_LAST_WIPE': JSON.stringify('2021-10-20')
     }),
 
     // new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       title: 'Groups',
       template: './public/index.html'
-    })
+    }),
+    process.env.NODE_ENV !== 'production' && new ReactRefreshWebpackPlugin()
   ],
   watch: true,
   output: {

@@ -5,9 +5,10 @@ import 'codemirror/addon/hint/show-hint';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/markdown/markdown';
 import React, { useRef, ClipboardEvent, useEffect, useImperativeHandle } from 'react';
-import { Controlled as CodeEditor } from 'react-codemirror2';
+import { Controlled as CodeEditor } from 'react-codemirror2-react-17';
 import styled from 'styled-components';
 import { MOBILE_BROWSER_REGEX } from '~/logic/lib/util';
+import useSettingsState from '~/logic/state/settings';
 import '../css/custom.css';
 import { useChatStore } from './ChatPane';
 
@@ -131,6 +132,8 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({ inCodeMo
   useImperativeHandle(ref, () => editorRef.current);
   const editor = editorRef.current;
 
+  const disableSpellcheck = useSettingsState(s => s.calm.disableSpellcheck);
+
   const {
     message,
     setMessage
@@ -234,6 +237,7 @@ const ChatEditor = React.forwardRef<CodeMirrorShim, ChatEditorProps>(({ inCodeMo
               fontFamily={inCodeMode ? 'Source Code Pro' : 'Inter'}
               fontSize={1}
               lineHeight="tall"
+              spellCheck={!disableSpellcheck}
               value={message}
               rows={1}
               style={{ width: '100%', background: 'transparent', color: 'currentColor' }}

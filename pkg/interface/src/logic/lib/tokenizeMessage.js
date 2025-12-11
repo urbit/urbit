@@ -19,7 +19,7 @@ export const isUrl = (str) => {
 
 const raceRegexes = (str) => {
   let link = str.match(URL_REGEX);
-  while(link?.[1]?.endsWith('(')) {
+  while(link?.[1]?.endsWith('(') || link?.[1].endsWith('[')) {
     const resumePos = link[1].length + link[2].length;
     const resume = str.slice(resumePos);
     link = resume.match(URL_REGEX);

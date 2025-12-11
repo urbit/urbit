@@ -1,9 +1,0 @@
-:~  title+'Groups'
-    info+'A suite of applications to communicate on Urbit'
-    color+0xee.5432
-    glob-http+['https://bootstrap.urbit.org/glob-0v2.fn2uu.2iu5q.ddmsu.01br7.8uaft.glob' 0v2.fn2uu.2iu5q.ddmsu.01br7.8uaft]
-    base+'landscape'
-    version+[1 0 2]
-    website+'https://tlon.io'
-    license+'MIT'
-==

@@ -34,6 +34,76 @@ interface GraphMentionNode {
   ship: string;
 }
 
+const addEmphasisToMention = (
+  contents: Content[],
+  content: Content,
+  index: number
+) => {
+  const prevContent = contents[index - 1];
+  const nextContent = contents[index + 1];
+
+  if (
+    'text' in content &&
+    (content.text.trim() === '**' || content.text.trim() === '*')
+  ) {
+    return {
+      text: ''
+    };
+  }
+  if (
+    'text' in content &&
+    content.text.endsWith('*') &&
+    !content.text.startsWith('*') &&
+    nextContent !== undefined &&
+    'mention' in nextContent
+  ) {
+    if (content.text.charAt(content.text.length - 2) === '*') {
+      return { text: content.text.slice(0, content.text.length - 2) };
+    }
+    return { text: content.text.slice(0, content.text.length - 1) };
+  }
+  if (
+    'text' in content &&
+    content.text.startsWith('*') &&
+    !content.text.endsWith('*') &&
+    prevContent !== undefined &&
+    'mention' in contents[index - 1]
+  ) {
+    if (content.text.charAt(1) === '*') {
+      return { text: content.text.slice(2, content.text.length) };
+    }
+    return { text: content.text.slice(1, content.text.length) };
+  }
+  if (
+    'mention' in content &&
+    prevContent !== undefined &&
+    'text' in prevContent &&
+    // @ts-ignore type guard above covers this.
+    prevContent.text.endsWith('*') &&
+    nextContent !== undefined &&
+    'text' in contents[index + 1] &&
+    // @ts-ignore type guard above covers this.
+    nextContent.text.startsWith('*')
+  ) {
+    if (
+      // @ts-ignore covered by typeguard in conditions
+      prevContent.text.charAt(prevContent.text.length - 2) === '*' &&
+      // @ts-ignore covered by typeguard in conditions
+      nextContent.text.charAt(nextContent.text[1]) === '*'
+    ) {
+      return {
+        mention: content.mention,
+        emphasis: 'bold'
+      };
+    }
+    return {
+      mention: content.mention,
+      emphasis: 'italic'
+    };
+  }
+  return content;
+};
+
 const codeToMdAst = (content: CodeContent) => {
   return {
     type: 'root',
@@ -50,77 +120,99 @@ const codeToMdAst = (content: CodeContent) => {
   };
 };
 
-const contentToMdAst = (tall: boolean) => (
-  content: Content
-): [StitchMode, any] => {
-  if ('text' in content) {
-    if (content.text.toString().trim().length === 0) {
+const contentToMdAst =
+  (tall: boolean) =>
+  (content: Content): [StitchMode, any] => {
+    if ('text' in content) {
+      if (content.text.toString().trim().length === 0) {
+        return [
+          'merge',
+          { type: 'root', children: [{ type: 'paragraph', children: [] }] }
+        ];
+      }
       return [
         'merge',
-        { type: 'root', children: [{ type: 'paragraph', children: [] }] }
+        tall ? parseTall(content.text) : parseWide(content.text)
+      ] as [StitchMode, any];
+    } else if ('code' in content) {
+      return ['block', codeToMdAst(content)];
+    } else if ('reference' in content) {
+      return [
+        'block',
+        {
+          type: 'root',
+          children: [
+            {
+              type: 'graph-reference',
+              reference: content.reference
+            }
+          ]
+        }
+      ];
+    } else if ('url' in content) {
+      const images = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+      return [
+        'inline',
+        {
+          type: 'root',
+          children: [
+            {
+              type: 'link',
+              url: content.url,
+              children: [
+                {
+                  type: 'text',
+                  value: !images.some(i => content.url.includes(i))
+                    ? content.url
+                    : ''
+                }
+              ]
+            }
+          ]
+        }
+      ];
+    } else if ('mention' in content) {
+      return [
+        'inline',
+        {
+          type: 'root',
+          children: [
+            {
+              type: 'graph-mention',
+              ship: content.mention,
+              emphasis: content.emphasis
+            }
+          ]
+        }
       ];
     }
-    return [
-      'merge',
-      tall ? parseTall(content.text) : parseWide(content.text)
-    ] as [StitchMode, any];
-  } else if ('code' in content) {
-    return ['block', codeToMdAst(content)];
-  } else if ('reference' in content) {
-    return [
-      'block',
-      {
-        type: 'root',
-        children: [
-          {
-            type: 'graph-reference',
-            reference: content.reference
-          }
-        ]
-      }
-    ];
-  } else if ('url' in content) {
-    return [
-      'block',
-      {
-        type: 'root',
-        children: [
-          {
-            type: 'graph-url',
-            url: content.url
-          }
-        ]
-      }
-    ];
-  } else if ('mention' in content) {
     return [
       'inline',
       {
         type: 'root',
-        children: [
-          {
-            type: 'graph-mention',
-            ship: content.mention
-          }
-        ]
+        children: []
       }
     ];
-  }
-  return [
-    'inline',
-    {
-      type: 'root',
-      children: []
-    }
-  ];
-};
+  };
 
 function stitchInline(a: any, b: any) {
   if (!a?.children) {
     throw new Error('Bad stitchInline call: missing root');
   }
+
   const lastParaIdx = a.children.length - 1;
   const last = a.children[lastParaIdx];
+
+  // wrap bare link in list-item inside a p node
+  // for better typography consistency
+  if (last?.type === 'listItem') {
+    if (last?.children.length === 0) {
+      last.children.push({
+        type: 'paragraph',
+        children: []
+      });
+    }
+  }
   if (last?.children) {
     const ros = {
       ...a,
@@ -150,9 +242,14 @@ function getChildren<T extends unknown>(node: T): AstContent[] {
 }
 
 export function asParent<T extends BlockContent>(node: T): Parent | undefined {
-  return ['paragraph', 'heading', 'list', 'listItem', 'table'].includes(
-    node.type
-  )
+  return [
+    'paragraph',
+    'heading',
+    'list',
+    'listItem',
+    'table',
+    'blockquote'
+  ].includes(node.type)
     ? (node as Parent)
     : undefined;
 }
@@ -174,6 +271,7 @@ function stitchMerge(a: Root, b: Root) {
       children: [...aChildren.slice(0, -1), mergedPara, ...bChildren.slice(1)]
     };
   }
+
   return { ...a, children: [...aChildren, ...bChildren] };
 }
 
@@ -189,10 +287,10 @@ function stitchInlineAfterBlock(a: Root, b: GraphMentionNode[]) {
 }
 
 function stitchAsts(asts: [StitchMode, GraphAstNode][]) {
-  return _.reduce(
+  const t = _.reduce(
     asts,
     ([prevMode, ast], [mode, val]): [StitchMode, GraphAstNode] => {
-      if (prevMode === 'block') {
+      if (prevMode === 'block' || prevMode === 'inline') {
         if (mode === 'inline') {
           return [mode, stitchInlineAfterBlock(ast, val?.children ?? [])];
         }
@@ -216,6 +314,46 @@ function stitchAsts(asts: [StitchMode, GraphAstNode][]) {
     },
     ['block', { type: 'root', children: [] }] as [StitchMode, GraphAstNode]
   );
+
+  t[1].children.map((c, idx) => {
+    const links = [];
+    function addRichEmbedURL(nodes) {
+      if (nodes?.children) {
+        nodes.children.filter(k => {
+          if (k.type === 'link') {
+            links.push({
+              type: 'root',
+              children: [
+                {
+                  type: 'graph-url',
+                  url: k.url
+                }
+              ]
+            });
+          } else if (k?.children) {
+            k.children.filter(o => {
+              if (o.type === 'link') {
+                links.push({
+                  type: 'root',
+                  children: [
+                    {
+                      type: 'graph-url',
+                      url: o.url
+                    }
+                  ]
+                });
+              }
+            });
+          }
+        });
+
+        nodes.children.push(...links);
+      }
+    }
+    addRichEmbedURL(c);
+  });
+
+  return t;
 }
 const header = ({ children, depth, ...rest }) => {
   const level = depth;
@@ -325,7 +463,7 @@ const renderers = {
     );
     return tall ? <Box mb={2}>{inner}</Box> : inner;
   },
-  link: (props) => {
+  link: props => {
     return (
       <Anchor
         display="inline"
@@ -341,28 +479,28 @@ const renderers = {
     );
   },
   list: ({ depth, ordered, children }) => {
-    return ordered ? <Ol>{children}</Ol> : <Ul>{children}</Ul>;
+    return ordered ? (
+      <Ol fontSize="1">{children}</Ol>
+    ) : (
+      <Ul fontSize="1">{children}</Ul>
+    );
   },
-  'graph-mention': ({ ship }) => <Mention ship={ship} />,
+  'graph-mention': obj => {
+    return <Mention ship={obj.ship} emphasis={obj.emphasis} />;
+  },
   image: ({ url, tall }) => (
     <Box mt="1" mb="2" flexShrink={0}>
       <RemoteContent key={url} url={url} tall={tall} />
     </Box>
   ),
   'graph-url': ({ url, tall }) => (
-    <Box mt={1} mb={2} flexShrink={0}>
-      <RemoteContent key={url} url={url} tall={tall} />
-    </Box>
+    <RemoteContent key={url} url={url} tall={tall} />
   ),
   'graph-reference': ({ reference, transcluded }) => {
     const { link } = referenceToPermalink({ reference });
     return (
       <Box my={2} flexShrink={0}>
-        <PermalinkEmbed
-          link={link}
-          transcluded={transcluded}
-          showOurContact
-        />
+        <PermalinkEmbed link={link} transcluded={transcluded} showOurContact />
       </Box>
     );
   },
@@ -430,16 +568,13 @@ export type GraphContentProps = PropFunc<typeof Box> & {
   showOurContact: boolean;
 };
 
-export const GraphContent = React.memo((
-  props: GraphContentProps
-) => {
-  const {
-    contents,
-    tall = false,
-    transcluded = 0,
-    ...rest
-  } = props;
-  const [, ast] = stitchAsts(contents.map(contentToMdAst(tall)));
+export const GraphContent = React.memo((props: GraphContentProps) => {
+  const { contents, tall = false, transcluded = 0, ...rest } = props;
+  const [, ast] = stitchAsts(
+    contents
+      .map((content, index) => addEmphasisToMention(contents, content, index))
+      .map(contentToMdAst(tall))
+  );
   return (
     <Box {...rest}>
       <Graphdown transcluded={transcluded} ast={ast} tall={tall} />

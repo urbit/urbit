@@ -1,9 +1,19 @@
 import { BaseTextArea, Box, Button, Icon, LoadingSpinner, Row } from '@tlon/indigo-react';
-import { Association, Content, createPost, evalCord, Group, Path } from '@urbit/api';
+import {
+  Association,
+  Content,
+  createPost,
+  evalCord,
+  Group,
+  Path,
+  isChannelAdmin,
+  isHost,
+  isWriter,
+  resourceFromPath
+} from '@urbit/api';
 import React, {
   ReactElement, useCallback, useState
 } from 'react';
-import { isChannelAdmin, isHost, isWriter, resourceFromPath } from '~/logic/lib/group';
 import tokenizeMessage from '~/logic/lib/tokenizeMessage';
 import useStorage from '~/logic/lib/useStorage';
 import { useToggleState } from '~/logic/lib/useToggleState';
@@ -20,13 +30,13 @@ function canWrite(props) {
   }
 
   if(vip === 'admin-feed') {
-    return isChannelAdmin(group, association.group);
+    return isChannelAdmin(group, association.group, window.ship);
   }
   if(vip === 'host-feed') {
-    return isHost(association.group);
+    return isHost(association.group, window.ship);
   }
 
-  return isWriter(group, association.resource);
+  return isWriter(group, association.resource, window.ship);
 }
 
 interface PostInputProps {

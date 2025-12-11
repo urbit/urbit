@@ -13,7 +13,8 @@
 =/  m  (strand:strandio ,vase)
 ^-  form:m
 ;<  =latest=block  bind:m  (get-latest-block:ethio url.pup)
-;<  pup=watchpup   bind:m  (zoom pup number.id.latest-block)
+=+  last=number.id.latest-block
+;<  pup=watchpup   bind:m  (zoom pup last (min last (fall to.pup last)))
 =|  vows=disavows
 ;<  pup=watchpup   bind:m  (fetch-batches pup)
 ::?.  eager.pup
@@ -79,15 +80,19 @@
 ::    at a safe distance -- 100 blocks ago is probably sufficient.
 ::
 ++  zoom
-  |=  [pup=watchpup =latest=number:block]
+  |=  [pup=watchpup =latest=number:block up-to=number:block]
   =/  m  (strand:strandio ,watchpup)
   ^-  form:m
-  =/  zoom-margin=number:block  0  :: TODO: 30!
-  =/  zoom-step=number:block  100.000
+  =/  zoom-margin=number:block  30
+  =/  zoom-step=number:block    100.000
   ?:  (lth latest-number (add number.pup zoom-margin))
     (pure:m pup)
   =/  up-to-number=number:block
-    (min (add 10.000.000 number.pup) (sub latest-number zoom-margin))
+    ;:  min
+      (add 10.000.000 number.pup)
+      (sub latest-number zoom-margin)
+      up-to
+    ==
   |-
   =*  loop  $
   ?:  (gth number.pup up-to-number)

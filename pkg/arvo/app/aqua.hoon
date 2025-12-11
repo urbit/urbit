@@ -2,27 +2,26 @@
 ::
 ::  usage:
 ::  |start %aqua
-::  /-  aquarium
-::  :aqua &pill .^(pill:aquarium %cx %/urbit/pill)
+::  /+  pill
+::  :aqua &pill .^(pill:pill %cx %/urbit/pill)
 ::    OR
-::  :aqua &pill +solid
+::  :aqua &pill +pill/solid
 ::
+::  XX: update these examples
 ::  Then try stuff:
 ::  :aqua [%init ~[~bud ~dev]]
 ::  :aqua [%dojo ~[~bud ~dev] "[our eny (add 3 5)]"]
 ::  :aqua [%dojo ~[~bud] "|hi ~dev"]
 ::  :aqua [%wish ~[~bud ~dev] '(add 2 3)']
-::  :aqua [%peek ~[~bud] /cx/~bud/home/(scot %da now)/app/curl/hoon]
+::  :aqua [%peek ~[~bud] /cx/~bud/base/(scot %da now)/app/curl/hoon]
 ::  :aqua [%dojo ~[~bud ~dev] '|mount %']
 ::  :aqua [%file ~[~bud ~dev] %/sys/vane]
 ::  :aqua [%pause-events ~[~bud ~dev]]
 ::
-::
-::  We get ++unix-event and ++pill from /-aquarium
+::  We get ++unix-event from /-aquarium
 ::
 /-  aquarium
-/+  pill, azimuth, default-agent, aqua-azimuth, dbug, verb
-=,  pill-lib=pill
+/+  pill, azimuth, naive, default-agent, aqua-azimuth, dbug, verb
 =,  aquarium
 =>  $~  |%
     +$  versioned-state
@@ -30,15 +29,23 @@
       ==
     +$  state-0
       $:  %0
-          pil=$>(%pill pill)
+          pil=$>(%pill pill-0)
           assembled=*
           tym=@da
+          fresh-piers=(map [=ship fake=?] [=pier boths=(list unix-both)])
           fleet-snaps=(map term fleet)
           piers=fleet
       ==
-    ::  XX temporarily shadowed, fix and remove
     ::
-    +$  pill  pill:pill-lib
+    +$  pill-0
+      $%  [%ivory p=(list)]
+          $:  %pill
+              nam=term
+              boot-ova=(list)
+              kernel-ova=(list unix-event:pill)
+              userspace-ova=(list unix-event:pill)
+          ==
+      ==
     ::
     +$  fleet  [ships=(map ship pier) azi=az-state]
     +$  pier
@@ -46,6 +53,7 @@
           event-log=(list unix-timed-event)
           next-events=(qeu unix-event)
           processing-events=?
+          namespace=(map path (list yowl:ames))
       ==
     --
 ::
@@ -60,7 +68,7 @@
       aqua-core  +>
       ac         ~(. aqua-core bowl)
       def        ~(. (default-agent this %|) bowl)
-  ++  on-init           `this
+  ++  on-init  `this
   ++  on-save  !>(state)
   ++  on-load
     |=  old-vase=vase
@@ -78,11 +86,12 @@
   ::
   ++  on-poke
     |=  [=mark =vase]
+    ?>  (team:title [our src]:bowl)
     ^-  step:agent:gall
     =^  cards  state
       ?+  mark  ~|([%aqua-bad-mark mark] !!)
           %aqua-events     (poke-aqua-events:ac !<((list aqua-event) vase))
-          %pill       (poke-pill:ac !<(pill vase))
+          %pill            (poke-pill:ac !<(pill:pill vase))
           %noun            (poke-noun:ac !<(* vase))
           %azimuth-action  (poke-azimuth-action:ac !<(azimuth-action vase))
       ==
@@ -135,6 +144,8 @@
 ::  Represents a single ship's state.
 ::
 ++  pe
+  ::NOTE  if we start needing the fake flag outside of +ahoy and +yaho,
+  ::      probably add it as an argument here.
   |=  who=ship
   =+  (~(gut by ships.piers) who *pier)
   =*  pier-data  -
@@ -154,6 +165,31 @@
     =.  snap  assembled
     ~&  pill-size=(met 3 (jam snap))
     ..abet-pe
+  ::
+  ::  store post-pill ship for later re-use
+  ::
+  ++  ahoy
+    |=  fake=?
+    =?  fresh-piers  !(~(has by fresh-piers) [who fake])
+      %+  ~(put by fresh-piers)  [who fake]
+      [pier-data (~(get ja unix-boths) who)]
+    ..ahoy
+  ::
+  ::  restore post-pill ship for re-use
+  ::
+  ++  yaho
+    |=  fake=?
+    =/  fresh  (~(got by fresh-piers) [who fake])
+    =.  pier-data  pier.fresh
+    =.  boths.fresh  (flop boths.fresh)
+    |-
+    ?~  boths.fresh  ..yaho
+    =.  ..yaho
+      ?-  -.i.boths.fresh
+        %effect  (publish-effect +.i.boths.fresh)
+        %event   (publish-event +.i.boths.fresh)
+      ==
+    $(boths.fresh t.boths.fresh)
   ::
   ::  Enqueue events to child arvo
   ::
@@ -195,6 +231,16 @@
     $
   ::
   ::  Peek
+  ::
+  ++  peek-once
+    |=  [=view =desk =spur]
+    =/  res  (mox +22.snap)
+    ?>  ?=(%0 -.res)
+    =/  peek  p.res
+    =/  pek  (slum peek [[~ ~] %| %once view desk spur])
+    =+  ;;(res=(unit (cask [path (cask)])) pek)
+    ::NOTE  it's an %omen, so we unpack a little bit deeper
+    (bind res (cork tail (cork tail tail)))
   ::
   ++  peek
     |=  p=*
@@ -368,9 +414,30 @@
 ::  events.
 ::
 ++  poke-pill
-  |=  p=pill
+  |=  p=pill:pill
   ^-  (quip card:agent:gall _state)
-  ?<  ?=(%ivory -.p)
+  =?  p  ?=(%cash -.p)
+    ^-  $>(%pill pill:pill)
+    [%pill +<.p]
+  ?>  ?=(%pill -.p)
+  =.  userspace-ova.p
+    ::  if there is an azimuth-snapshot in the pill, we stub it out,
+    ::  since it would interfere with aqua's azimuth simulation.
+    ::
+    ^+  userspace-ova.p
+    %+  turn  userspace-ova.p
+    |=  e=unix-event:pill
+    ^+  e
+    ?.  ?=(%park -.q.e)   e
+    ?.  ?=(%& -.yok.q.e)  e
+    =-  e(q.p.yok.q -)
+    ^-  (map path (each page lobe:clay))
+    %-  ~(urn by q.p.yok.q.e)
+    |=  [=path fil=(each page lobe:clay)]
+    ^+  fil
+    ?.  =(/app/azimuth/version-0/azimuth-snapshot path)  fil
+    ?:  ?=(%| -.fil)  fil
+    &+azimuth-snapshot+[%0 [0x0 0] *^state:naive ~ ~]
   =.  this  apex-aqua  =<  abet-aqua
   =.  pil  p
   ~&  lent=(met 3 (jam boot-ova.pil))
@@ -381,6 +448,7 @@
       %0
     ~&  %suc
     =.  assembled  +7.p.res
+    =.  fresh-piers  ~
     this
   ::
       %1
@@ -409,12 +477,10 @@
   ::
   ?+  val  ~|(%bad-noun-arg !!)
       [%swap-vanes vs=*]
-    ?>  ?=(^ boot-ova.pil)
-    ?>  ?=([%7 * %1 installed=*] i.boot-ova.pil)
-    =.  installed.i.boot-ova.pil
+    ?>  ?=([aeon=^ boot-two=^ [%7 * %1 installed=*] *] boot-ova.pil)
+    =.  installed.i.t.t.boot-ova.pil
       %+  roll  (,(list term) vs.val)
-      |=  [v=term =_installed.i.boot-ova.pil]
-      %^  slum  installed  now.hid
+      |=  [v=term =_installed.i.t.t.boot-ova.pil]
       =/  vane
         ?+  v  ~|([%unknown-vane v] !!)
           %a  %ames
@@ -426,22 +492,24 @@
           %j  %jael
           %g  %gall
         ==
+      ~&  swaping/vane
       =/  pax
-        /(scot %p our.hid)/work/(scot %da now.hid)/sys/vane/[vane]
+        /(scot %p our.hid)/base/(scot %da now.hid)/sys/vane/[vane]
       =/  txt  .^(@ %cx (weld pax /hoon))
-      [/vane/[vane] [%veer v pax txt]]
+      %^  slum  installed  now.hid
+      [//arvo %what pax^hoon/txt ~]
     =>  .(this ^+(this this))
     =^  ms  state  (poke-pill pil)
     (emit-cards ms)
   ::
-      [%swap-files ~]
+      [%swap-files @tas]
+    =/  =desk  +.val
     =.  userspace-ova.pil
-      =/  slim-dirs=(list path)
-        ~[/app /ted /gen /lib /mar /sur /hoon/sys /arvo/sys /zuse/sys]
+      ::  take all files from a userspace desk
       :_  ~
-      %-  unix-event
-      %-  %*(. file-ovum:pill-lib directories slim-dirs)
-      /(scot %p our.hid)/work/(scot %da now.hid)
+      %-  unix-event:pill
+      %-  file-ovum:pill
+      [desk /(scot %p our.hid)/[desk]/(scot %da now.hid) ~]
     =^  ms  state  (poke-pill pil)
     (emit-cards ms)
   ::
@@ -506,6 +574,18 @@
   ?-  -.ae
   ::
       %init-ship
+    ?:  &(fake.ae (~(has by fresh-piers) [who fake]:ae))
+      ~&  [%aqua %cached-init +.ae]
+      =.  this  abet-pe:(yaho fake):[ae (pe who.ae)]
+      ?:  fake.ae  (pe who.ae)
+      ::  for real ships, make sure they have their latest keys
+      ::
+      %.  who.ae
+      =<  pe:abet-pe:plow
+      %-  push-events:(pe who.ae)
+      =/  =life  lyfe:(~(got by lives.azi.piers) who.ae)
+      =/  =ring  sec:ex:(get-keys:aqua-azimuth who.ae life)
+      [/j/aqua/rekey %rekey life ring]~
     =.  this  abet-pe:(publish-effect:(pe who.ae) [/ %sleep ~])
     =/  initted
       =<  plow
@@ -536,14 +616,20 @@
         ::
         userspace-ova.pil  :: load os
         ::
-        :~  [/b/behn/0v1n.2m9vh %born ~]
+        :*  [/b/behn/0v1n.2m9vh %born ~]
             [/i/http-client/0v1n.2m9vh %born ~]
             [/e/http-server/0v1n.2m9vh %born ~]
             [/e/http-server/0v1n.2m9vh %live 8.080 `8.445]
             [/a/newt/0v1n.2m9vh %born ~]
+            [/d/term/1 %hail ~]
+          ::
+            ?:  fake.ae  ~
+            =+  [%raw-poke %noun %refresh-rate ~s30]
+            [/g/aqua/reduce-refresh-rate %deal [. . /]:who.ae %azimuth -]~
         ==
       ==
-    =.  this  abet-pe:initted
+    =.  this
+      abet-pe:(ahoy fake):[ae initted]
     (pe who.ae)
   ::
       %pause-events
@@ -584,6 +670,58 @@
       =.  this  thus
       (publish-effect:(pe who) [/ %restore ~])
     (pe ~bud)  ::  XX why ~bud?  need an example
+  ::
+      %read
+    ?~  pier=(~(get by ships.piers) ship.from.ae)
+      (pe ship.from.ae)
+    =/  cash  (~(get by namespace.u.pier) path.ae)
+    |-
+    ?^  cash
+      ?:  (gth num.ae (lent u.cash))
+        (pe ship.from.ae)
+      ::TODO  depends on /ted/aqua/ames behavior in a weird indirect way
+      =/  for=@p  `@`(tail lane.for.ae)  ::NOTE  moons & comets not supported
+      %-  push-events:(pe for)
+      %-  flop  =<  events
+      %+  roll  u.cash
+      |=  [=yowl:ames i=@ud events=(list unix-event)]
+      :-  +(i)
+      :_  events
+      :-  /a/aqua/fine-response/[(scot %ud i)]
+      ^-  task-arvo
+      :+  %hear  `lane:ames`[%| `@`ship.from.ae]
+      ^-  blob:ames
+      %-  etch-shot:ames
+      :*  [sndr=ship.from.ae rcvr=for]
+          req=|  sam=|
+          sndr-tick=life.from.ae
+          rcvr-tick=life.for.ae
+          origin=~
+          content=`@ux`yowl
+      ==
+    ::
+    =/  pacs=(unit (list yowl:ames))
+      =/  =path  [%fine %hunk (scot %ud num.ae) '512' path.ae]
+      %+  biff
+        (peek-once:(pe ship.from.ae) %ax %$ path)
+      (soft (list yowl:ames))
+    ?~  pacs  (pe ship.from.ae)
+    =.  u.pacs
+      ::  add request to each response packet payload
+      ::
+      =+  pat=(spat path.ae)
+      =+  wid=(met 3 pat)
+      %-  flop  =<  blobs
+      %+  roll  u.pacs
+      |=  [=yowl:ames num=_1 blobs=(list @ux)]
+      :-  +(num)
+      :_  blobs
+      (can 3 4^num 2^wid wid^`@`pat (met 3 yowl)^yowl ~)
+    =.  namespace.u.pier
+      (~(put by namespace.u.pier) path.ae u.pacs)
+    =.  ships.piers
+      (~(put by ships.piers) ship.from.ae u.pier)
+    $(cash pacs, thus this)
   ::
       %event
     ~?  &(aqua-debug=| !?=(?(%belt %hear) -.q.ue.ae))
@@ -741,7 +879,8 @@
 ++  dawn
   |=  who=ship
   ^-  dawn-event:jael
-  ?>  ?=(?(%czar %king %duke) (clan:title who))
+  =/  clan  (clan:title who)
+  ?>  ?=(?(%czar %king %duke %earl %pawn) clan)
   =/  spon=(list [ship point:azimuth])
     %-  flop
     |-  ^-  (list [ship point:azimuth])
@@ -763,16 +902,18 @@
     ?:  ?=(%czar (clan:title ship))
       [a-point]~
     [a-point $(who ship)]
-  =/  =seed:jael
-    =/  life-rift  (~(got by lives.azi.piers) who)
+  =/  =feed:jael
+    =/  life-rift=[lyfe=life rut=rift]
+      ?:  ?=(?(%pawn %earl) clan)  [1 0]
+      (~(got by lives.azi.piers) who)
     =/  =life  lyfe.life-rift
     [who life sec:ex:(get-keys:aqua-azimuth who life) ~]
-  :*  seed
+  :*  feed
       spon
       get-czars
       ~[~['arvo' 'netw' 'ork']]
       0
-      `(need (de-purl:html 'http://localhost:8545'))
+      `(need (de-purl:html 'http://fake.aqua.domain/'))
   ==
 ::
 ::  Should only do galaxies

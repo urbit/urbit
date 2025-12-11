@@ -31,7 +31,7 @@
       ?>  ?=(%king (clan:title i.tar))
       $(tar t.tar, stars (~(put in stars) i.tar))
     ::
-    |-  ^-  seed:jael
+    |-  ^-  feed:jael
     =/  cub=acru:ames  (pit:nu:crub:crypto 512 eny)
     =/  who=ship  `@`fig:ex:cub
     ::  disallow 64-bit or smaller addresses
@@ -39,7 +39,7 @@
     ?.  ?=(%pawn (clan:title who))
       $(eny +(eny))
     ?:  (~(has in stars) (^sein:title who))
-      [who 1 sec:ex:cub ~]
+      [[%2 ~] who 0 [1 sec:ex:cub]~]
     $(eny +(eny))
   ::  |give:dawn: produce requests for pre-boot validation
   ::
@@ -49,8 +49,8 @@
     ::
     ++  czar
       ^-  octs
-      %-  as-octt:mimes:html
-      %-  en-json:html
+      %-  as-octs:mimes:html
+      %-  en:json:html
       :-  %a
       %+  turn  (gulf 0 255)
       |=  gal=@
@@ -63,8 +63,8 @@
     ++  point
       |=  who=ship
       ^-  octs
-      %-  as-octt:mimes:html
-      %-  en-json:html
+      %-  as-octs:mimes:html
+      %-  en:json:html
       %+  request-to-json
         ~.
       :-  'getPoint'
@@ -73,8 +73,8 @@
     ::
     ++  turf
       ^-  octs
-      %-  as-octt:mimes:html
-      %-  en-json:html
+      %-  as-octs:mimes:html
+      %-  en:json:html
       %+  request-to-json
         'turf'
       ['getDns' ~]
@@ -106,7 +106,7 @@
     ++  czar
       |=  rep=octs
       ^-  (unit (map ship [=rift =life =pass]))
-      =/  jon=(unit json)  (de-json:html q.rep)
+      =/  jon=(unit json)  (de:json:html q.rep)
       ?~  jon
         ~&([%czar-take-dawn %invalid-json] ~)
       =/  res=(unit (list [@t @ud @ud @]))
@@ -142,7 +142,7 @@
       |=  [who=ship rep=octs]
       ^-  (unit point:azimuth)
       ~!  *point:azimuth
-      =/  jon=(unit json)  (de-json:html q.rep)
+      =/  jon=(unit json)  (de:json:html q.rep)
       ?~  jon
         ~&([%point-take-dawn %invalid-json] ~)
       =-  ?~  res
@@ -202,7 +202,7 @@
     ++  turf
       |=  rep=octs
       ^-  (unit (list ^turf))
-      =/  jon=(unit json)  (de-json:html q.rep)
+      =/  jon=(unit json)  (de:json:html q.rep)
       ?~  jon
         ~&([%turf-take-dawn %invalid-json] ~)
       =/  res=(unit (list @t))
@@ -225,32 +225,57 @@
   ::
   ++  veri
     |=  [=ship =feed:jael =point:azimuth =live]
-    ^-  (each seed:jael (lest error=term))
+    ^-  (each feed:jael (lest error=term))
     |^  ?@  -.feed
-          ?^  err=(test feed)  |+[u.err ~]
-          &+feed
-        ?>  ?=([%1 ~] -.feed)
+          =/  rac  (clan:title who.feed)
+          ?:  ?&  ?!  |(=(rac %earl) =(rac %pawn))
+                  ?=(~ net.point)
+              ==
+            |+[%not-keyed ~]
+          =/  ryf
+            ?<  =(rac %earl)
+            ?:  =(rac %pawn)  0
+            ?~  net.point  !!
+            continuity-number.u.net.point
+          =/  fed=feed:jael
+            [[%2 ~] who.feed ryf [lyf.feed key.feed]~]
+          ?^  err=(test fed)  |+[u.err ~]
+          &+fed
+        =/  rac  (clan:title who.feed)
+        =/  ryf
+          ?:  ?=([%1 ~] -.feed)
+            ?<  =(rac %earl)
+            ?:  =(rac %pawn)  0
+            ?~  net.point  !!
+            continuity-number.u.net.point
+          ryf.feed
+        =/  kyz=(list [lyf=life key=ring])
+          ?:  ?=([%1 ~] -.feed)  kyz.feed
+          kyz.feed
         =|  errs=(list term)
         |-
-        ?~  kyz.feed
+        ?~  kyz
           |+?~(errs [%no-key ~] errs)
-        =/  =seed:jael  [who [lyf key ~]:i.kyz]:feed
-        ?~  err=(test seed)
-          &+seed
+        =/  fed=feed:jael
+          [[%2 ~] who.feed ryf [lyf.i.kyz key.i.kyz]~]
+        ?~  err=(test fed)
+          &+fed
         =.  errs  (snoc errs u.err)
-        $(kyz.feed t.kyz.feed)
+        $(kyz t.kyz)
     ::
     ++  test
-      |=  =seed:jael
+      |=  =feed:jael
       ^-  (unit error=term)
-      ?.  =(ship who.seed)  `%not-our-key
-      =/  rac  (clan:title who.seed)
-      =/  cub  (nol:nu:crub:crypto key.seed)
+      ?>  ?=([%2 ~] -.feed)
+      ?~  kyz.feed  !!
+      ?.  =(ship who.feed)  `%not-our-key
+      =/  rac  (clan:title who.feed)
+      =/  cub  (nol:nu:crub:crypto key.i.kyz.feed)
       ?-  rac
           %pawn
         ::  a comet address is the fingerprint of the keypair
         ::
-        ?.  =(who.seed `@`fig:ex:cub)
+        ?.  =(who.feed `@`fig:ex:cub)
           `%key-mismatch
         ::  a comet can never be breached
         ::
@@ -258,7 +283,7 @@
           `%already-booted
         ::  a comet can never be re-keyed
         ::
-        ?.  ?=(%1 lyf.seed)
+        ?.  ?=(%1 lyf.i.kyz.feed)
           `%invalid-life
         ~
       ::
@@ -277,7 +302,7 @@
           `%key-mismatch
         ::  life must match the contract
         ::
-        ?.  =(lyf.seed life.net)
+        ?.  =(lyf.i.kyz.feed life.net)
           `%life-mismatch
         ::  the boot life must be greater than and discontinuous with
         ::  the last seen life (per the sponsor)

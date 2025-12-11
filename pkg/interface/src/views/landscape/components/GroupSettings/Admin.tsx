@@ -5,13 +5,10 @@ import {
     Text
 } from '@tlon/indigo-react';
 import _ from 'lodash';
-import { changePolicy, deSig, Enc } from '@urbit/api';
-import { Group, GroupPolicy } from '@urbit/api/groups';
-import { Association, metadataEdit, MetadataEditField } from '@urbit/api/metadata';
+import { Association, changePolicy, deSig, Enc, Group, GroupPolicy, metadataEdit, MetadataEditField, resourceFromPath, roleForShip } from '@urbit/api';
 import { Form, Formik, FormikHelpers } from 'formik';
 import React from 'react';
 import * as Yup from 'yup';
-import { resourceFromPath, roleForShip } from '~/logic/lib/group';
 import { uxToHex } from '~/logic/lib/util';
 import { AsyncButton } from '~/views/components/AsyncButton';
 import { ColorInput } from '~/views/components/ColorInput';

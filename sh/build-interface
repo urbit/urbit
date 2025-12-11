@@ -2,10 +2,7 @@
 
 set -ex
 
-cd pkg/npm/api
-npm install &
-
-cd ../../interface
+cd pkg/interface
 npm install
 npm run build:prod &
 

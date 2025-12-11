@@ -13,9 +13,10 @@
     :~  create+create
         remove+remove
         join+join
+        abort+dejs-path:resource
         leave+leave
         invite+invite
-        hide+dejs-path:resource
+        done+dejs-path:resource
     ==
   ::
   ++  create
@@ -34,6 +35,9 @@
     %-  ot
     :~  resource+dejs:resource
         ship+(su ;~(pfix sig fed:ag))
+        app+(su (perk %groups %graph ~))
+        'shareContact'^bo
+        autojoin+bo
     ==
   ::
   ++  invite
@@ -74,10 +78,13 @@
   ++  request
     |=  req=^request
     %-  pairs
-    :~  hidden+b+hidden.req
-        started+(time started.req)
+    :~  started+(time started.req)
         ship+(ship ship.req)
         progress+s+progress.req
+        'shareContact'^b+share-co.req
+        autojoin+b+autojoin.req
+        app+s+`@t`app.req
+        invite+a+(turn ~(tap in invite.req) (cork (cury scot %ux) (lead %s)))
     ==
   ::
   ++  initial

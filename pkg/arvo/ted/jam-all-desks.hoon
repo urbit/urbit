@@ -15,7 +15,7 @@
   ==
 ^-  form:m
 ::
-;<  [our=ship syd=desk =case:clay]  bind:m  get-beak:strandio
+;<  [our=ship syd=desk =case]  bind:m  get-beak:strandio
 =/  now=@da  ?>(?=(%da -.case) p.case)
 ::
 ;<  ~  bind:m

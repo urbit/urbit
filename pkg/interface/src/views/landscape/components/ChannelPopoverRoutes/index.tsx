@@ -1,16 +1,15 @@
 import { Box, Col, Row, Text } from '@tlon/indigo-react';
 import {
     Association,
-
-  deleteGraph,
-
+    deleteGraph,
     Group,
     leaveGraph,
-    metadataRemove
+    metadataRemove,
+    isChannelAdmin,
+    isHost
 } from '@urbit/api';
 import React, { useCallback } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { isChannelAdmin, isHost } from '~/logic/lib/group';
 import { useHashLink } from '~/logic/lib/useHashLink';
 import { FormGroup } from '~/views/components/FormGroup';
 import { ModalOverlay } from '~/views/components/ModalOverlay';
@@ -53,8 +52,8 @@ export function ChannelPopoverRoutes(props: ChannelPopoverRoutesProps) {
     return history.push(props.rootUrl);
   };
 
-  const canAdmin = isChannelAdmin(group, association.resource);
-  const isOwner = isHost(association.resource);
+  const canAdmin = isChannelAdmin(group, association.resource, window.ship);
+  const isOwner = isHost(association.resource, window.ship);
 
   return (
     <ModalOverlay

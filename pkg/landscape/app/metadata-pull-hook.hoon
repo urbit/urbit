@@ -296,19 +296,21 @@
 ++  on-watch  
   |=  =path
   ?>  (team:title [our src]:bowl)
-  ?.  ?=([%preview @ @ @ ~] path)
-    (on-watch:def path)
-  =/  rid=resource
-    (de-path:resource t.path)
-  =/  prev=(unit group-preview:metadata)
-    ?^  (peek-metadatum:met %groups rid)  
-      (some (get-preview:met rid))
-    (~(get by previews) rid)
-  ?~  prev
-    :_  this(pending (~(put in pending) rid))
-    (get-preview rid)^~
-  :_  this
-  (fact-init:io metadata-hook-update+!>([%preview u.prev]))^~
+  ?+  path  (on-watch:def path)
+  ::
+      [%preview @ @ @ ~]
+    =/  rid=resource
+      (de-path:resource t.path)
+    =/  prev=(unit group-preview:metadata)
+      ?^  (peek-metadatum:met %groups rid)  
+        (some (get-preview:met rid))
+      (~(get by previews) rid)
+    ?~  prev
+      :_  this(pending (~(put in pending) rid))
+      (get-preview rid)^~
+    :_  this
+    (fact-init:io metadata-hook-update+!>([%preview u.prev]))^~
+  ==
 ::
 ++  on-leave  on-leave:def
 ++  on-peek   on-peek:def
@@ -319,15 +321,7 @@
 ++  on-pull-nack
   |=   [=resource =tang]
   ^-  (quip card _this)
-  =/  =associations:metadata
-    (metadata-for-group:met resource)
-  :_  this
-  %+  turn  ~(tap by associations)
-  |=  [=md-resource:metadata =association:metadata]
-  %+  poke-our:pass:io  %metadata-store
-  :-  %metadata-update-2
-  !>  ^-   update:metadata
-  [%remove resource md-resource]
+  `this
 ::
 ++  on-pull-kick
   |=  =resource

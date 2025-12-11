@@ -6,10 +6,7 @@ import {
 
     StatelessTextInput as Input, Text
 } from '@tlon/indigo-react';
-import { Contact, Contacts } from '@urbit/api/contacts';
-import { addTag, removeMembers, changePolicy, Group, removeTag, RoleTags } from '@urbit/api/groups';
-import { Association } from '@urbit/api/metadata';
-import { deSig } from '@urbit/api';
+import { addTag, Association, Contact, Contacts, changePolicy, deSig, Group, removeMembers, removeTag, RoleTags, resourceFromPath, roleForShip } from '@urbit/api';
 import _ from 'lodash';
 import f from 'lodash/fp';
 import React, {
@@ -19,7 +16,6 @@ import React, {
 import { Link } from 'react-router-dom';
 import VisibilitySensor from 'react-visibility-sensor';
 import styled from 'styled-components';
-import { resourceFromPath, roleForShip } from '~/logic/lib/group';
 import { Sigil } from '~/logic/lib/sigil';
 import { cite, uxToHex } from '~/logic/lib/util';
 import useContactState from '~/logic/state/contact';
@@ -63,7 +59,7 @@ const emptyContact = (patp: string, pending: boolean): Participant => ({
 
 function getParticipants(cs: Contacts, group: Group) {
   const contacts: Participant[] = _.flow(
-    f.omitBy<Contacts>((_c, patp) => !group.members.has(deSig(patp))),
+    f.omitBy<Contacts>((_c, patp) => !_.includes(group.members, deSig(patp))),
     f.toPairs,
     f.map(([patp, c]: [string, Contact]) => ({
       ...c,
@@ -86,8 +82,8 @@ function getParticipants(cs: Contacts, group: Group) {
   const incPending = _.unionBy(allMembers, pending, 'patp');
   return [
     incPending,
-    incPending.length - group.members.size,
-    group.members.size
+    incPending.length - group.members.length,
+    group.members.length
   ] as const;
 }
 
@@ -112,11 +108,14 @@ export function Participants(props: {
     ParticipantsTabId,
     (p: Participant) => boolean
   > = useMemo(
-    () => ({
-      total: p => !p.pending,
-      pending: p => p.pending,
-      admin: p => props.group.tags?.role?.admin?.has(p.patp)
-    }),
+    () => {
+      const admins = props.group.tags?.role?.admin;
+      return {
+        total: p => !p.pending,
+        pending: p => p.pending,
+        admin: p => _.includes(admins, p.patp)
+      };
+    },
     [props.group]
   );
 
@@ -133,7 +132,7 @@ export function Participants(props: {
     [setSearch]
   );
 
-  const adminCount = props.group.tags?.role?.admin?.size || 0;
+  const adminCount = props.group.tags?.role?.admin?.length || 0;
   const isInvite = 'invite' in props.group.policy;
   const contacts = useContactState(state => state.contacts);
 
@@ -353,7 +352,7 @@ function Participant(props: {
                 </Link>
               </Action>
               <Action bg="transparent">
-                <Link to={`/~landscape/dm/${contact.patp}`}>
+                <Link to={`/~landscape/messages/dm/~${contact.patp}`}>
                   <Text color="green">Send Message</Text>
                 </Link>
               </Action>
@@ -365,7 +364,7 @@ function Participant(props: {
                     </StatelessAsyncAction>
                   )}
                   {role === 'admin' ? (
-                    group?.tags?.role?.admin?.size > 1 && (<StatelessAsyncAction onClick={onDemote} bg="transparent">
+                    group?.tags?.role?.admin?.length > 1 && (<StatelessAsyncAction onClick={onDemote} bg="transparent">
                       Demote from Admin
                     </StatelessAsyncAction>)
                   ) : (

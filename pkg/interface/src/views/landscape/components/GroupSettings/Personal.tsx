@@ -4,8 +4,7 @@ import {
 
     Text
 } from '@tlon/indigo-react';
-import { ignoreGroup, listenGroup } from '@urbit/api';
-import { Association } from '@urbit/api/metadata';
+import { Association, ignoreGroup, listenGroup } from '@urbit/api';
 import React from 'react';
 import useHarkState from '~/logic/state/hark';
 import { StatelessAsyncToggle } from '~/views/components/StatelessAsyncToggle';
@@ -35,8 +34,8 @@ export function GroupPersonalSettings(props: {
       >
         <StatelessAsyncToggle selected={watching} onClick={onClick} />
         <Col>
-          <Label>Notify me on group activity</Label>
-          <Label mt={2} gray>Send me notifications when this group changes</Label>
+          <Label>Notify me on participant activity</Label>
+          <Label mt={2} gray>When a user joins or leaves this group, send me a notification</Label>
         </Col>
       </BaseLabel>
     </Col>

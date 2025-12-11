@@ -2,25 +2,11 @@ import { Anchor, Text } from '@tlon/indigo-react';
 import { Contact, Group } from '@urbit/api';
 import React from 'react';
 import ReactMarkdown, { ReactMarkdownProps } from 'react-markdown';
-import RemarkDisableTokenizers from 'remark-disable-tokenizers';
 import { isValidPatp } from 'urbit-ob';
 import { deSig } from '~/logic/lib/util';
 import { PermalinkEmbed } from '~/views/apps/permalinks/embed';
 import { Mention } from '~/views/components/MentionText';
 import RemoteContent from '~/views/components/RemoteContent';
-
-const DISABLED_BLOCK_TOKENS = [
-  'indentedCode',
-  'atxHeading',
-  'thematicBreak',
-  'list',
-  'setextHeading',
-  'html',
-  'definition',
-  'table'
-];
-
-const DISABLED_INLINE_TOKENS = [];
 
 type RichTextProps = ReactMarkdownProps & {
   disableRemoteContent?: boolean;
@@ -110,10 +96,6 @@ const RichText = React.memo(({ disableRemoteContent = false, ...props }: RichTex
         return <Text display={props.inline ? 'inline' : 'block'} mb={2} {...props}>{paraProps.children}</Text>;
       }
     }}
-    plugins={[[
-      RemarkDisableTokenizers,
-      { block: DISABLED_BLOCK_TOKENS, inline: DISABLED_INLINE_TOKENS }
-    ]]}
   />
 ));
 

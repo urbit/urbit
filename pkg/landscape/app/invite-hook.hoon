@@ -38,13 +38,13 @@
     =/  act=action  !<(action vase)
     ?+  -.act     ~
         %invites
-      ?.  (team:title [our src]:bowl)  ~
+      ?.  =,(bowl =(our src))  ~
       ::  outgoing. we must be inviting other ships. send them each an invite
       ::
       %+  turn  ~(tap in recipients.invites.act)
       |=  recipient=ship
       ^-  card
-      ?<  (team:title our.bowl recipient)
+      ?<  =,(bowl =(our recipient))
       %+  invite-hook-poke  recipient
       :^  %invite  term.act  uid.act
       ^-  invite
@@ -56,10 +56,10 @@
       ==
     ::
         %invite
-      ?:  (team:title [our src]:bowl)
+      ?:  =,(bowl =(our src))
         ::  outgoing. we must be inviting another ship. send them the invite.
         ::
-        ?<  (team:title our.bowl recipient.invite.act)
+        ?<  =(our.bowl recipient.invite.act)
         [(invite-hook-poke recipient.invite.act act)]~
       ::  else incoming. ensure invitatory exists and invite is not a duplicate.
       ::

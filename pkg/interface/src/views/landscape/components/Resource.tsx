@@ -1,5 +1,4 @@
-import { Association } from '@urbit/api/metadata';
-import { AppName } from '@urbit/api';
+import { AppName, Association } from '@urbit/api';
 import React, { ReactElement } from 'react';
 import Helmet from 'react-helmet';
 import { Route, Switch } from 'react-router-dom';

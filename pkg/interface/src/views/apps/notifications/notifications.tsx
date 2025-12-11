@@ -37,7 +37,7 @@ export function NavLink({
   );
 }
 
-export default function NotificationsScreen(props: any): ReactElement {
+export default function NotificationsScreen(): ReactElement {
   const relativePath = (p: string) => baseUrl + p;
 
   const notificationsCount = useHarkState(state => state.notificationsCount);

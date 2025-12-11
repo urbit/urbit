@@ -9,12 +9,14 @@
 +$  card  card:agent:gall
 +$  versioned-state
   $%  state-zero
+      state-one
   ==
 ::
-+$  state-zero  [%0 =credentials =configuration]
++$  state-zero  [%0 =credentials:zero:past =configuration:zero:past]
++$  state-one   [%1 =credentials =configuration]
 --
 ::
-=|  state-zero
+=|  state-one
 =*  state  -
 ::
 %-  agent:dbug
@@ -28,8 +30,28 @@
 ++  on-init   on-init:def
 ++  on-save   !>(state)
 ++  on-load
-  |=  old-vase=vase
-  [~ this(state !<(state-zero old-vase))]
+  |=  =vase
+  =/  old  !<(versioned-state vase)
+  |^
+  ?-  -.old
+    %1  `this(state old)
+    %0  `this(state (state-0-to-1 old))
+  ==
+  ++  state-0-to-1
+    |=  zer=state-zero
+    ^-  state-one
+    :*  %1
+        credentials.zer
+        (configuration-0-to-1 configuration.zer)
+    ==
+  ++  configuration-0-to-1
+    |=  conf=configuration:zero:past
+    ^-  ^configuration
+    :*  buckets.conf
+        current-bucket.conf
+        ''
+    ==
+  --
 ::
 ++  on-poke
   ~/  %s3-poke
@@ -56,6 +78,9 @@
     ::
         %set-secret-access-key
       state(secret-access-key.credentials secret-access-key.act)
+    ::
+        %set-region
+      state(region.configuration region.act)
     ::
         %set-current-bucket
       %_  state

@@ -28,7 +28,7 @@ import { Link } from 'react-router-dom';
 import { AppPermalink, referenceToPermalink } from '~/logic/lib/permalinks';
 import useMetadataState from '~/logic/state/metadata';
 import { RemoteContentWrapper } from './wrapper';
-import { useEmbed } from '~/logic/state/embed';
+import { Suspender } from '~/logic/lib/suspend';
 import { IS_SAFARI } from '~/logic/lib/platform';
 import useDocketState, { useTreaty } from '~/logic/state/docket';
 import { AppTile } from '~/views/apps/permalinks/embed';
@@ -44,13 +44,14 @@ function onStopProp<T extends HTMLElement>(e: MouseEvent<T>) {
 
 type ImageProps = PropFunc<typeof BaseImage> & {
   objectFit?: string;
+  stretch?: boolean;
 };
 
 const Image = styled.img(system({ objectFit: true }), ...allSystemStyle);
 export function RemoteContentImageEmbed(
   props: ImageProps & RemoteContentEmbedProps
 ) {
-  const { url, ...rest } = props;
+  const { url, stretch, ...rest } = props;
   const [noCors, setNoCors] = useState(false);
   const { hovering, bind } = useHovering();
   // maybe images aren't set up for CORS embeds
@@ -59,7 +60,13 @@ export function RemoteContentImageEmbed(
   }, []);
 
   return (
-    <Box height="100%" width="100%" position="relative" {...bind} {...rest}>
+    <Box
+      height={stretch ? "100%" : "192px"}
+      width={stretch ? "100%" : "192px"}
+      position="relative"
+      {...bind}
+      {...rest}
+    >
       <BaseAnchor
         position="absolute"
         top={2}
@@ -84,11 +91,13 @@ export function RemoteContentImageEmbed(
         referrerPolicy="no-referrer"
         flexShrink={0}
         src={url}
-        height="100%"
+        height={stretch ? "100%" : "192px"}
+        maxWidth={stretch ? "100%" : "192px"}
         width="100%"
-        objectFit="contain"
+        objectFit="cover"
         borderRadius={2}
         onError={onError}
+        style={{ imageRendering: '-webkit-optimize-contrast' }}
         {...props}
       />
     </Box>
@@ -311,6 +320,7 @@ type RemoteContentOembedProps = {
   renderUrl?: boolean;
   thumbnail?: boolean;
   tall?: boolean;
+  oembed: Suspender<any>;
 } & RemoteContentEmbedProps &
   PropFunc<typeof Box>;
 
@@ -324,10 +334,9 @@ export const RemoteContentOembed = React.forwardRef<
   HTMLDivElement,
   RemoteContentOembedProps
 >((props, ref) => {
-  const { url, renderUrl = false, thumbnail = false, ...rest } = props;
-  const oembed = useEmbed(url);
+  const { url, oembed, renderUrl = false, thumbnail = false, ...rest } = props;
+
   const embed = oembed.read();
-  const fallbackError  = new Error('fallback');
 
   const [aspect, width, height] = useMemo(() => {
     if(!('height' in embed && typeof embed.height === 'number'
@@ -365,11 +374,9 @@ export const RemoteContentOembed = React.forwardRef<
             dangerouslySetInnerHTML={{ __html: embed.html }}
           ></EmbedBox>
         </EmbedContainer>
-      ) : renderUrl ? (
+      ) : (
         <RemoteContentEmbedFallback url={url} />
-        ) : (() => {
- throw fallbackError;
-})()
+        )
       }
     </Col>
   );

@@ -528,6 +528,81 @@
 ::
 ++  upgrade
   |%
+  ++  is-old-dm  |=(r=resource =('dm--' (end [3 4] name.r)))
+  ++  backup
+    |=  =bowl:gall
+    |=  [r=resource m=marked-graph]
+    ^-  card:agent:gall
+    =/  pax  /(rap 3 'archive-' (scot %p entity.r) '-' name.r ~)/noun
+    =/  =cage  drum-put+!>([pax (jam r m)])
+    [%pass /archive %agent [our.bowl %hood] %poke cage]
+  ++  strip-sigs-graph
+    |=  g=graph
+    ^+  g
+    =*  loop  $
+    %+  gas:orm  *graph
+    %+  turn  (tap:orm g)
+    |=  [key=@ val=node]  :: optional: also strip out deleted messages?
+    =?  children.val  ?=(%graph -.children.val)
+      [%graph loop(g p.children.val)]
+    :-  key
+    ?.  ?=(%& -.post.val)
+      val
+    val(signatures.p.post ~)
+  ++  strip-sigs-log
+    |=  u=update-log
+    %+  gas:orm-log  *update-log
+    %+  turn  (tap:orm-log u)
+    |=  [key=@ upd=logged-update]
+    :-  key
+    :-  p.upd
+    ?+    -.q.upd  q.upd
+        %add-graph
+      q.upd(graph (strip-sigs-graph graph.q.upd))
+    ::
+        %add-signatures
+      q.upd(signatures ~)
+    ::
+        %remove-signatures
+      q.upd(signatures ~)
+    ::
+        %add-nodes
+      %=    q.upd
+          nodes
+        %-  ~(run by nodes.q.upd)
+        |=  =node
+        ^+  node
+        %=    node
+            children
+          ?.  ?=(%graph -.children.node)
+            children.node
+          [%graph (strip-sigs-graph p.children.node)]
+        ::
+            post
+          ?.  ?=(%& -.post.node)
+            post.node
+          =.  signatures.p.post.node  ~
+          post.node
+        ==
+      ==
+    ==
+  ::
+  ++  nuke-groups
+    |=  =bowl:gall
+    |^  ^-  (list card:agent:gall)
+    ?.  .^(? (gall-scry %u %groups))
+      ~
+    =+  .^(=desk (gall-scry %d %groups))
+    :~  [%pass /nuke %agent [our.bowl %hood] %poke kiln-nuke+!>([desk &])]
+        [%pass /nuke %agent [our.bowl %docket] %poke docket-uninstall+!>(desk)]
+        [%pass /nuke %agent [our.bowl %docket] %poke docket-uninstall+!>(%talk)]
+    ==
+    ::
+    ++  gall-scry
+      |=  [=care:clay dap=dude:gall]
+      ^-  path
+      /(cat 3 %g care)/(scot %p our.bowl)/[dap]/(scot %da now.bowl)
+    --
   ::
   ::  +two
   ::
@@ -758,9 +833,9 @@
   --
 ++  import
   |=  [arc=* our=ship]
-  ^-  (quip card:agent:gall [%5 network])
+  ^-  (quip card:agent:gall [%7 network])
   |^
-  =/  sty  [%5 (remake-network ;;(tree-network +.arc))]
+  =/  sty  [%7 (remake-network ;;(tree-network +.arc))]
   :_  sty
   %+  turn  ~(tap by graphs.sty)
   |=  [rid=resource =marked-graph]

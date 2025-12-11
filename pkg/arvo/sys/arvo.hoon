@@ -1,11 +1,12 @@
 =>  ..ride  =>
+!:
 |%
 +|  %global
 ::
-++  arvo  %240
+++  arvo  %234
 ::
 ::  $arch: node identity
-::  $axal: fundamental node, recursive
+::  $axal: fundamental node, recursive (trie)
 ::  $axil: fundamental node
 ::  $beak: global context
 ::  $beam: global name
@@ -18,14 +19,15 @@
 ::  $gang: infinite set of peers
 ::  $mark: symbolic content type
 ::  $mien: orientation
-::  +omen: namespace path and data
+::  $page: untyped cage
+::  $omen: fully-qualified namespace path
 ::  $ship: network identity
 ::  $sink: subscription
 ::
 +$  arch  (axil @uvI)
 ++  axal
   |$  [item]
-  [fil=(unit item) dir=(map @ta $)] ::
+  [fil=(unit item) dir=(map @ta $)]
 ++  axil
   |$  [item]
   [fil=(unit item) dir=(map @ta ~)]
@@ -37,10 +39,12 @@
   $%  ::  %da:  date
       ::  %tas: label
       ::  %ud:  sequence
+      ::  %uv:  hash
       ::
       [%da p=@da]
       [%tas p=@tas]
       [%ud p=@ud]
+      [%uv p=@uv]
   ==
 +$  cage  (cask vase)
 ++  cask  |$  [a]  (pair mark a)
@@ -48,8 +52,9 @@
 +$  dock  (pair @p term)
 +$  gang  (unit (set ship))
 +$  mark  @tas
-+$  mein  [our=ship now=@da eny=@uvJ]
-++  omen  |$  [a]  (pair path (cask a))
++$  mien  [our=ship now=@da eny=@uvJ]
++$  page  (cask)
++$  omen  [vis=view bem=beam]
 +$  ship  @p
 +$  sink  (trel bone ship path)
 ::
@@ -106,18 +111,18 @@
   |$  [a]
   $~  =>(~ |~(* ~))
   $-  $:  lyc=gang                                      ::  leakset
-          vis=view                                      ::  perspective
-          bem=beam                                      ::  path
+          pov=path                                      ::  provenance
+          omen                                          ::  perspective, path
       ==                                                ::
   %-  unit                                              ::  ~: unknown
   %-  unit                                              ::  ~ ~: invalid
-  (cask a)
+  (cask a)                                              ::
 +$  roon                                                ::  partial namespace
   $~  =>(~ |~(* ~))
-  $-  [lyc=gang car=term bem=beam]
+  $-  [lyc=gang pov=path car=term bem=beam]
   (unit (unit cage))
 +$  root  $-(^ (unit (unit)))
-+$  view  $@(term [way=term car=term])
++$  view  $@(term [way=term car=term])                  ::  perspective
 ::
 ++  wind
   |$  ::  a: forward
@@ -202,10 +207,9 @@
       van=(map term (trap vase))
   ==
 +$  heir
-  $%  $:  %grub
-          $%  [_arvo =grub]
-      ==  ==
-      [_arvo =debt =soul]
+  $%  [%grub %234 =grub]  ::NOTE  no old versions, unused
+      [?(%240 %239 %238 %237 %236 %235) =debt =soul:a235]
+      [%234 =debt =soul]
   ==
 +$  plan  (pair germ (list move))
 +$  soul
@@ -214,7 +218,7 @@
       ::  zen: Outside knowledge
       ::  mod: internal modules
       ::
-      mein
+      mien
       $=  fad
       $:  ::  lac: not verbose
           ::
@@ -284,6 +288,69 @@
       [%whom p=ship]
   ==
 +$  wynn  (list weft)
+::
+++  a234  .
+++  a235
+  =,  a234
+  =,  h136
+  |%
+  +$  cage  (cask vase)
+  +$  soul
+    $:  ::  identity, time, entropy
+        ::  fad: configuration
+        ::  zen: Outside knowledge
+        ::  mod: internal modules
+        ::
+        mien
+        $=  fad
+        $:  ::  lac: not verbose
+            ::
+            lac=?
+        ==
+        $=  zen
+        $:  ::  ver: runtime version
+            ::  lag: upgrade blocked
+            ::
+            ver=vere
+            lag=_|
+        ==
+        $=  mod
+        $:  ::  fat: filesystem
+            ::  lul: %lull
+            ::  zus: %zuse
+            ::  van: vanes
+            ::
+            fat=(axal (cask))
+            lul=vase
+            zus=vase
+            van=(map term vane)
+        ==
+    ==
+  +$  vane  [=vase =worm]
+  +$  worm
+    $:  ::  +nest, +play, and +mint
+        ::
+        nes=(set ^)
+        pay=(map (pair type hoon) type)
+        mit=(map (pair type hoon) (pair type nock))
+    ==
+  ::
+  ++  next-cage
+    |=  a=cage
+    ^-  cage:a234
+    a(q (next-vase q.a))
+  ::
+  ++  next-soul
+    |=  a=soul
+    ^-  soul:a234
+    ::  clears vane compiler caches
+    ::
+    %=  a
+      lul.mod  (next-vase lul.mod.a)
+      zus.mod  (next-vase zus.mod.a)
+      van.mod  (~(run by van.mod.a) |=(a=vane [(next-vase vase.a) *worm:a234]))
+    ==
+  --
 --  =>
 ::
 ~%  %hex  ..ut  ~
@@ -310,11 +377,12 @@
   ^-  (unit case)
   ?^  num=(slaw %ud knot)  `[%ud u.num]
   ?^  wen=(slaw %da knot)  `[%da u.wen]
+  ?^  hax=(slaw %uv knot)  `[%uv u.hax]
   ?~  lab=(slaw %tas knot)  ~
   `[%tas u.lab]
 ::
 ++  en-omen
-  |=  [vis=view bem=beam]
+  |=  omen
   ^-  path
   :_  (en-beam bem)
   ?@  vis  vis
@@ -323,7 +391,7 @@
 ++  de-omen
   ~/  %de-omen
   |=  pax=path
-  ^-  (unit [vis=view bem=beam])
+  ^-  (unit omen)
   ?~  pax  ~
   ?~  bem=(de-beam t.pax)  ~
   ?:  ((sane %tas) i.pax)
@@ -337,16 +405,18 @@
 ::
 ++  look
   ~/  %look
-  |=  [rof=roof lyc=gang]
+  |=  [rof=roof lyc=gang pov=path]
   ^-  root
   ~/  %in
   |=  [ref=* raw=*]
   ?~  pax=((soft path) raw)  ~
   ?~  mon=(de-omen u.pax)  ~
-  ?~  dat=(rof lyc u.mon)  ~
+  ?~  dat=(rof lyc pov u.mon)  ~
   ?~  u.dat  [~ ~]
   =*  vax  q.u.u.dat
-  ?.  ?&  ?=(^ ref)
+  ?.  =>  [ref=ref vax=p=p.vax hoon-version=hoon-version wa=wa worm=worm]
+      ~>  %memo./arvo/look                  ::  with memoization
+      ?&  ?=(^ ref)
           =(hoon-version -.ref)
           -:(~(nets wa *worm) +.ref p.vax)
       ==
@@ -412,13 +482,21 @@
     ==
   --
 ::
-::  |de: axal engine
+::  |of: axal engine
 ::
-++  de
+++  of
   =|  fat=(axal)
   |@
+  ++  del
+    |=  pax=path
+    ^+  fat
+    ?~  pax  [~ dir.fat]
+    =/  kid  (~(get by dir.fat) i.pax)
+    ?~  kid  fat
+    fat(dir (~(put by dir.fat) i.pax $(fat u.kid, pax t.pax)))
+  ::  Descend to the axal at this path
   ::
-  ++  get
+  ++  dip
     |=  pax=path
     ^+  fat
     ?~  pax  fat
@@ -426,20 +504,50 @@
     ?~  kid  [~ ~]
     $(fat u.kid, pax t.pax)
   ::
-  ++  put
-    |*  [pax=path dat=*]
-    =>  .(dat `_?>(?=(^ fil.fat) u.fil.fat)`dat)
-    ^+  fat
-    ?~  pax  fat(fil `dat)
-    =/  kid  (~(get by dir.fat) i.pax)
-    =/  new  (fall kid fat(fil ~, dir ~))
-    fat(dir (~(put by dir.fat) i.pax $(fat new, pax t.pax)))
-  ::
   ++  gas
     |=  lit=(list (pair path _?>(?=(^ fil.fat) u.fil.fat)))
     ^+  fat
     ?~  lit  fat
     $(fat (put p.i.lit q.i.lit), lit t.lit)
+  ::
+  ++  get
+    |=  pax=path
+    fil:(dip pax)
+  ::  Fetch file at longest existing prefix of the path
+  ::
+  ++  fit
+    |=  pax=path
+    ^+  [pax fil.fat]
+    ?~  pax  [~ fil.fat]
+    =/  kid  (~(get by dir.fat) i.pax)
+    ?~  kid  [pax fil.fat]
+    =/  low  $(fat u.kid, pax t.pax)
+    ?~  +.low
+      [pax fil.fat]
+    low
+  ::
+  ++  has
+    |=  pax=path
+    !=(~ (get pax))
+  ::  Delete subtree
+  ::
+  ++  lop
+    |=  pax=path
+    ^+  fat
+    ?~  pax  fat
+    |-
+    ?~  t.pax  fat(dir (~(del by dir.fat) i.pax))
+    =/  kid  (~(get by dir.fat) i.pax)
+    ?~  kid  fat
+    fat(dir (~(put by dir.fat) i.pax $(fat u.kid, pax t.pax)))
+  ::
+  ++  put
+    |*  [pax=path dat=*]
+    =>  .(dat `_?>(?=(^ fil.fat) u.fil.fat)`dat, pax `path`pax)
+    |-  ^+  fat
+    ?~  pax  fat(fil `dat)
+    =/  kid  (~(gut by dir.fat) i.pax ^+(fat [~ ~]))
+    fat(dir (~(put by dir.fat) i.pax $(fat kid, pax t.pax)))
   ::
   ++  tap
     =|  pax=path
@@ -453,6 +561,10 @@
       dir  t.dir
       out  ^$(pax (weld pax /[p.i.dir]), fat q.i.dir)
     ==
+  ::  Serialize to map
+  ::
+  ++  tar
+    (~(gas by *(map path _?>(?=(^ fil.fat) u.fil.fat))) tap)
   --
 ::
 ++  wa                                                  ::  cached compile
@@ -693,7 +805,7 @@
       ?@  epic  arvo
       %=  $
         epic  +.epic
-        arvo  .*(arvo [%9 2 %10 [6 %1 -.epic] %0 1])
+        arvo  .*([arvo -.epic] [%9 2 %10 [6 %0 3] %0 2])
       ==
     ::
     ::  +boot: event 2: bootstrap a kernel from source
@@ -728,7 +840,10 @@
       ::
       ~>  %slog.[0 leaf+"1-c (compiling compiler, wait a few minutes)"]
       =/  compiler-tool
-        .*(compiler-gate [%9 2 %10 [6 %1 noun/hoon.log] %0 1])
+        ~>  %bout
+        =>  [compiler-gate=compiler-gate log=hoon=hoon.log]
+        ~>  %memo./boot/brass
+        .*([compiler-gate noun/hoon.log] [%9 2 %10 [6 %0 3] %0 2])
       ::
       ::  switch to the second-generation compiler.  we want to be
       ::  able to generate matching reflection nouns even if the
@@ -736,7 +851,7 @@
       ::  generate last-generation spans for `!>`, etc.
       ::
       ~>  %slog.[0 leaf+"1-d"]
-      =.  compiler-gate  .*(0 +:compiler-tool)
+      =.  compiler-gate  ~>(%bout .*(0 +.compiler-tool))
       ::
       ::  get the span (type) of the kernel core, which is the context
       ::  of the compiler gate.  we just compiled the compiler,
@@ -746,18 +861,23 @@
       ::
       ~>  %slog.[0 leaf+"1-e"]
       =/  kernel-span
-        -:.*(compiler-gate [%9 2 %10 [6 %1 [-.compiler-tool '+>']] %0 1])
+        ~>  %bout
+        -:.*([compiler-gate -.compiler-tool '+>'] [%9 2 %10 [6 %0 3] %0 2])
       ::
       ::  compile the arvo source against the kernel core.
       ::
       ~>  %slog.[0 leaf+"1-f"]
       =/  kernel-tool
-        .*(compiler-gate [%9 2 %10 [6 %1 [kernel-span arvo.log]] %0 1])
+        ~>  %bout
+        =>  [compiler-gate=compiler-gate kernel-span=kernel-span log=arvo=arvo.log]
+        ~>  %memo./boot/brass
+        .*([compiler-gate kernel-span arvo.log] [%9 2 %10 [6 %0 3] %0 2])
       ::
       ::  create the arvo kernel, whose subject is the kernel core.
       ::
       ~>  %slog.[0 leaf+"1-g"]
-      [.*(+>:compiler-gate +:kernel-tool) epic.log]
+      ~>  %bout
+      [.*(+>.compiler-gate +.kernel-tool) epic.log]
     --
   ::
   ::  |adapt
@@ -781,8 +901,8 @@
       ::
       =*  pax  p.i.fal
       =*  dat  q.i.fal
-      =/  hav  (~(get de fat) pax)
-      =?  del  |(?=(~ fil.hav) !=(u.fil.hav dat))
+      =/  hav  (~(get of fat) pax)
+      =?  del  |(?=(~ hav) !=(u.hav dat))
          ?:  ?=([%sys *] pax)
            del(sys (~(put by sys.del) pax dat))
          del(use (~(put by use.del) pax dat))
@@ -799,7 +919,7 @@
         `[`(sole u.arv) [/sys/arvo u.arv] ~]
       =/  rav
         ~|  %usurp-hoon-no-arvo
-        ((bond |.((need fil:(~(get de fat) /sys/arvo)))) arv)
+        ((bond |.((need (~(get of fat) /sys/arvo)))) arv)
       ~!  rav
       :+  ~
         [`(sole u.hun) (sole rav)]
@@ -814,10 +934,10 @@
       =^  lul  fat
         ?^  hav=(~(get by sys.del) /sys/lull)
           :-  `(sole u.hav)
-          (~(put de fat) /sys/lull u.hav)
+          (~(put of fat) /sys/lull u.hav)
         :_  fat
         ~|  %adorn-no-lull
-        ?.(all ~ `(sole (need fil:(~(get de fat) /sys/lull))))
+        ?.(all ~ `(sole (need (~(get of fat) /sys/lull))))
       ::  zuse: shared library
       ::
       ::    %lull is the subject of %zuse; force all if we have a new %lull
@@ -826,10 +946,10 @@
       =^  zus  fat
         ?^  hav=(~(get by sys.del) /sys/zuse)
           :-  `(sole u.hav)
-          (~(put de fat) /sys/zuse u.hav)
+          (~(put of fat) /sys/zuse u.hav)
         :_  fat
         ~|  %adorn-no-zuse
-        ?.(all ~ `(sole (need fil:(~(get de fat) /sys/zuse))))
+        ?.(all ~ `(sole (need (~(get of fat) /sys/zuse))))
       ::  kernel modules
       ::
       ::    %zuse is the subject of the vanes; force all if we have a new %zuse
@@ -839,7 +959,7 @@
       =?  nav  all
         %-  ~(gas by nav)
         %+  turn
-          ~(tap by dir:(~(get de fat) /sys/vane))
+          ~(tap by dir:(~(dip of fat) /sys/vane))
         |=([name=@ta _fat] [`@tas`name (sole (need fil))])
       ::
       =^  new  fat
@@ -852,7 +972,7 @@
         ?>  ?=([%sys %vane @tas ~] p)
         =*  nam  i.t.t.p
         ?>  ((sane %tas) nam)
-        [[`@tas`nam (sole q)] (~(put de taf) p q)]
+        [[`@tas`nam (sole q)] (~(put of taf) p q)]
       ::
       =;  van
         [[lul zus van] fat]
@@ -994,24 +1114,28 @@
   ::  |va: vane engine
   ::
   ++  va
-    =>  |%
+    =>  ~%  %va-ctx  ..va  ~
+        |%
         +$  vane-sample  [now=@da eny=@uvJ rof=rook]
         ::
         ++  smit
           |=  [cap=tape sub=vase pax=path txt=@t]
           ^-  vase
-          ~>  %slog.[0 leaf/"{cap}: {(scow p+(mug txt))}"]
+          ~>  %slog.[0 leaf/"{cap}: {(scow uv+(mug txt))}"]
+          ~>  %bout
           %-  road  |.
           ~_  leaf/"{cap}: build failed"
           (slap sub (rain pax txt))
         ::
         ++  create
+          ~/  %create
           |=  [our=ship zus=vase lal=term pax=path txt=@t]
           ^-  vase
-          =/  cap  "vane %{(trip lal)}"
+          =/  cap  "vane: %{(trip lal)}"
           (slym (smit cap zus pax txt) our)
         ::
         ++  settle
+          ~/  %settle
           |=  van=vase
           ^-  (pair vase worm)
           =|  sac=worm
@@ -1023,6 +1147,7 @@
         ::  XX pass identity to preserve behavior?
         ::
         ++  update
+          ~/  %update
           |=  [las=vase nex=vase]
           ^-  vase
           =/  sam=vase  (slap (slym las *vane-sample) [%limb %stay])
@@ -1036,13 +1161,16 @@
     ::  |plow:va: operate in time and space
     ::
     ++  plow
+      ~/  %plow
       |=  [now=@da rok=rook]
+      ~%  %plow-core  +  ~
       |%
       ::  +peek:plow:va: read from a local namespace
       ::
       ++  peek
+        ~/  %peek
         ^-  rook
-        |=  [lyc=gang vis=view bem=beam]
+        |=  [lyc=gang pov=path omen]
         ^-  (unit (unit (cask meta)))
         ::  namespace reads receive no entropy
         ::
@@ -1054,7 +1182,7 @@
           ~>  %mean.'peek: pull failed'
           (~(slap wa sac) rig [%limb %scry])
         ::
-        =/  mas=[gang view beam]  [lyc vis bem]
+        =/  mas=[gang path view beam]  [lyc pov vis bem]
         ::
         =^  pro  sac
           ~>  %mean.'peek: call failed'
@@ -1234,7 +1362,7 @@
           :^  %pass  [vane.gem vane]
             ?:  ?=(?(%deal %deal-gall) +>-.task)
               :-  :-  +>-.task
-                  ;;([[ship ship] term term] [+>+< +>+>- +>+>+<]:task)
+                  ;;([[ship ship path] term term] [+>+< +>+>- +>+>+<]:task)
               wire
             [(symp +>-.task) wire]
           duct
@@ -1294,36 +1422,35 @@
       ^-  mass
       =;  sam=(list mass)
         :+  %arvo  %|
-        :~  hoon+&+pit
-            zuse+&+zus.mod
+        :~  :+  %hoon  %|
+            :~  one+&+..bloq
+                two+&+..turn
+                tri+&+..year
+                qua+&+..sane
+                pen+&+..ride
+            ==
+            hex+&+..part
+            pit+&+pit
+            lull+|+[dot+&+q typ+&+p ~]:lul.mod
+            zuse+|+[dot+&+q typ+&+p ~]:zus.mod
             vane+|+sam
         ==
       ::
-      =/  von
+      %+  turn
         (sort ~(tap by van.mod) |=([[a=@tas *] [b=@tas *]] (aor a b)))
-      ::
-      :~  :+  %reports  %|
-          =/  bem=beam  [[our %home da+now] /whey]  ::TODO  %base?
-          %+  turn  von
-          |=  [nam=term =vane]
-          =/  met  (peek [~ ~] nam bem)
-          ~|  mass/nam
-          ?>  &(?=(^ met) ?=(^ u.met))  :: XX make optional
-          nam^|+;;((list mass) q.q.u.u.met)
-      ::
-          :+  %caches  %|
-          %+  turn  von
-          |=([nam=term =vane] nam^&+worm.vane)
-      ::
-          :+  %dregs  %|
-          %+  turn  von
-          |=([nam=term =vane] nam^&+vase.vane)
-      ==
+      =/  bem=beam  [[our %$ da+now] //whey]
+      |=  [nam=term =vane]
+      =;  mas=(list mass)
+        nam^|+(welp mas [dot+&+q.vase typ+&+p.vase sac+&+worm ~]:vane)
+      ?~  met=(peek [~ ~] / [nam %x] bem)  ~
+      ?~  u.met  ~
+      ~|  mass+nam
+      ;;((list mass) q.q.u.u.met)
     ::  +peek: read from the entire namespace
     ::
     ++  peek
       ^-  rook
-      |=  [lyc=gang vis=view bem=beam]
+      |=  [lyc=gang pov=path omen]
       ^-  (unit (unit (cask meta)))
       ::  vane and care may be concatenated
       ::
@@ -1334,12 +1461,12 @@
         [(end 3 vis) (rsh 3 vis)]
       ::
       ?:  ?=(%$ way)
-        (peek:pith lyc car bem)
+        (peek:pith lyc pov car bem)
       ::
       =.  way  (grow way)
       ?~  van=(~(get by van.mod) way)
         ~
-      %.  [lyc car bem]
+      %.  [lyc pov car bem]
       peek:spin:(~(plow va [vil u.van]) now peek)
     ::  +call: advance to target
     ::
@@ -1438,7 +1565,7 @@
         ++  lod
           |=  kel=(list (pair path (cask)))
           ^+  ..pith
-          =.  fat.mod.sol  (~(gas de fat.mod.sol) kel)
+          =.  fat.mod.sol  (~(gas of fat.mod.sol) kel)
           %+  mod
             (~(group adapt fat.mod.sol) fil)
           %+  lien  kel
@@ -1494,11 +1621,11 @@
       ::
       ++  peek
         ^-  roon
-        |=  [lyc=gang car=term bem=beam]
+        |=  [lyc=gang pov=path car=term bem=beam]
         ^-  (unit (unit cage))
-        ?.  ?|  =(our p.bem)
+        ?.  ?&  =(our p.bem)
                 ?=(%$ q.bem)
-                =([%da now] p.r.bem)
+                =([%da now] r.bem)
             ==
           ~
         ?+  s.bem  ~
@@ -1506,7 +1633,7 @@
           [%fad %lac ~]  ``noun/!>(lac.fad)
           [%zen %lag ~]  ``noun/!>(lag.zen)
           [%zen %ver ~]  ``noun/!>(ver.zen)
-          [%mod %fat *]  ``noun/!>((~(get de fat.mod) t.t.s.bem))
+          [%mod %fat *]  ``noun/!>((~(dip of fat.mod) t.t.s.bem))
         ==
       ::
       ++  poke
@@ -1526,7 +1653,7 @@
         ::
           %crud  =?  lag.zen  ?&  ?=(%exit mote.goof.buz)
                                   ?=(^ tang.goof.buz)
-                                  ?=(%leaf -.i.tang.goof.buz)  :: XX ?@
+                                  ?=([%leaf *] i.tang.goof.buz)
                                   ?=(%wyrd (crip p.i.tang.goof.buz))
                               ==
                    ~&(%lagging &)
@@ -1575,16 +1702,17 @@
   |=  [kel=wynn hun=(unit @t) van=@t]
   ^-  $-(heir (trap ^))
   ~>  %mean.'arvo: upgrade failed'
-  ~>  %slog.[1 'arvo: beginning upgrade']
+  ~>  %slog.[0 'arvo: beginning upgrade']
   ?~  hun
     =/  gat
       ~>  %slog.[0 'arvo: compiling next arvo']
+      ~>  %bout
       %-  road  |.
       (slap !>(..ride) (rain /sys/arvo/hoon van))
     =/  lod
       (slap (slot 7 gat) [%limb %load])
     |=  =heir
-    |.  ~>  %slog.[1 'arvo: +load next']
+    |.  ~>  %slog.[0 'arvo: +load next']
     ;;(^ q:(slam lod !>(heir)))
   ::
   ::  hyp: hoon core type
@@ -1596,6 +1724,7 @@
     ::
     =/  raw
       ~>  %slog.[0 'arvo: compiling hoon']
+      ~>  %bout
       (road |.((ride %noun u.hun)))
     ::  activate the new compiler gate, producing +ride
     ::
@@ -1621,6 +1750,7 @@
         [raw cop]
       =/  hot
         ~>  %slog.[0 leaf/"arvo: recompiling hoon %{(scow %ud nex)}"]
+        ~>  %bout
         (road |.((slum cop [%noun u.hun])))
       [hot .*(0 +.hot)]
     ::  extract the hoon core from the outer gate (+ride)
@@ -1636,6 +1766,7 @@
   ::
   =/  rav
     ~>  %slog.[0 'arvo: compiling next arvo']
+    ~>  %bout
     (road |.((slum cop [hyp van])))
   ::  activate arvo and extract the arvo core from the outer gate
   ::
@@ -1675,10 +1806,11 @@
     %c  %clay
     %d  %dill
     %e  %eyre
-    %f  %ford
     %g  %gall
     %i  %iris
     %j  %jael
+    %k  %khan
+    %l  %lick
   ==
 --  =>
 ::
@@ -1698,11 +1830,13 @@
   |=  hir=$<(%grub heir)
   ^-  ^
   ~|  %load
+  ~>  %spin.['load/arvo']
   ::  store persistent state
   ::
   =.  sol
     ?-  -.hir
-      _arvo  soul.hir
+      ?(%240 %239 %238 %237 %236 %235)  (next-soul:a235 soul.hir)
+      %234                              soul.hir
     ==
   ::  clear compiler caches
   ::
@@ -1731,11 +1865,12 @@
           $=  nom
           %+  each  path
           $%  [%once vis=view syd=desk tyl=spur]
-              [%beam vis=view bem=beam]
+              [%beam omen]  :: XX unfortunate naming
           ==
       ==
   ^-  (unit (cask))
-  =/  hap=(unit [pat=? vis=view bem=beam])
+  ~>  %spin.['peek/arvo']
+  =/  hap=(unit [pat=? omen])
     ?-  nom
       [%& *]        ?~(mon=(de-omen p.nom) ~ `[| u.mon])
       [%| %beam *]  `[| vis bem]:p.nom
@@ -1743,7 +1878,7 @@
     ==
   ::
   ?~  hap  ~
-  =/  pro  (~(peek le:part [pit vil] sol) lyc [vis bem]:u.hap)
+  =/  pro  (~(peek le:part [pit vil] sol) lyc / [vis bem]:u.hap)
   ?:  |(?=(~ pro) ?=(~ u.pro))  ~
   =/  dat=(cask)  [p q.q]:u.u.pro
   ?.  pat.u.hap  `dat
@@ -1754,6 +1889,7 @@
 ++  poke                                                ::  +23
   |=  [now=@da ovo=ovum]
   ^-  ^
+  ~>  %spin.['poke/arvo']
   ::  this assertion is not yet viable, as vere's timestamps
   ::  are too unreliable. sad!
   ::
@@ -1777,6 +1913,7 @@
 ::
 ++  wish                                                ::  +10
   |=  txt=@
+  ~>  %spin.['wish/arvo']
   q:(slap zus.mod (ream txt))
 --  =>
 ::
@@ -1817,10 +1954,16 @@
           ++  smit
             |=  [cap=tape sub=(trap vase) pax=path txt=@t]
             ^-  (trap vase)
-            ~>  %slog.[0 leaf/"{cap}: {(scow p+(mug txt))}"]
+            ~>  %slog.[0 leaf/"{cap}: {(scow uv+(mug txt))}"]
             %-  road  |.
             ~_  leaf/"{cap}: build failed"
-            (swat sub (rain pax txt))
+            =>  [tap=sub pax=pax txt=txt ..rain]
+            ~>  %memo./boot/brass
+            =/  gen  (rain pax txt)
+            ^-  (trap vase)
+            =/  gun  (~(mint ut p:$:tap) %noun gen)
+            |.  ~+
+            [p.gun .*(q:$:tap q.gun)]
           --
       ::
       |=  [grub fil=(list (pair path (cask)))]
@@ -1837,14 +1980,14 @@
       =?  taf  =(~ dir.taf)     ::  XX TMI
         ~|  %larval-need-kernel
         ?>  &(?=(^ tub) ?=(^ hun.p.u.tub))
-        (~(gas de taf) q.u.tub)
+        (~(gas of taf) q.u.tub)
       ::
       =^  job=oped:part  taf  (~(adorn adapt:part taf) del |)
       =?  lul  ?=(^ lul.job)
-       `(smit "lull" |.(pit) /sys/lull/hoon u.lul.job)
+        `(smit "lull" =>(pit=pit |.(pit)) /sys/lull/hoon u.lul.job)
       =?  zus  ?=(^ zus.job)
         ?.  ?=(^ lul)
-         ~|(%larval-need-lull !!)
+          ~|(%larval-need-lull !!)
         `(smit "zuse" u.lul /sys/zuse/hoon u.zus.job)
       =?  van  !=(~ van.job)    ::  XX TMI
         ?.  ?=(^ zus)
@@ -1853,7 +1996,7 @@
         |=  [[nam=term txt=cord] =_van]
         ^+  van
         %+  ~(put by van)  nam
-        (smit "vane %{(trip nam)}" u.zus /sys/vane/[nam]/hoon txt)
+        (smit "vane: %{(trip nam)}" u.zus /sys/vane/[nam]/hoon txt)
       gub(fat `taf)
     --
 ::

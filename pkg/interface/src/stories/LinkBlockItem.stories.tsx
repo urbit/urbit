@@ -4,8 +4,7 @@ import { withDesign } from 'storybook-addon-designs';
 
 import { Col, Row } from '@tlon/indigo-react';
 import { LinkBlockItem } from '~/views/apps/links/components/LinkBlockItem';
-import { createPost, GraphNode } from '@urbit/api';
-import BigIntOrderedMap from '@urbit/api/lib/BigIntOrderedMap';
+import { BigIntOrderedMap, createPost, GraphNode } from '@urbit/api';
 
 export default {
   title: 'Collections/BlockItem',

@@ -1,10 +1,9 @@
 import { Box, Col } from '@tlon/indigo-react';
-import { Association, Graph, GraphNode, Group } from '@urbit/api';
+import { Association, Graph, GraphNode, Group, resourceFromPath } from '@urbit/api';
 import { History } from 'history';
 import bigInt from 'big-integer';
 import React from 'react';
 import { useHistory } from 'react-router';
-import { resourceFromPath } from '~/logic/lib/group';
 import PostItem from './PostItem/PostItem';
 import PostInput from './PostInput';
 import { GraphScroller } from '~/views/components/GraphScroller';

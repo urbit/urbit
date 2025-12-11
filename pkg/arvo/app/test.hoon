@@ -2,7 +2,8 @@
 !:
 |%
 +$  card  card:agent:gall
-+$  test  ?(%agents %marks %generators)
++$  command  $@(=test [=desk =test])
++$  test  ?(%agents %marks %generators %threads)
 +$  state
   $:  app=(set path)
       app-ok=?
@@ -10,9 +11,10 @@
       mar-ok=?
       gen=(set path)
       gen-ok=?
+      ted=(set path)
+      ted-ok=?
   ==
 --
-=,  format
 ^-  agent:gall
 =|  =state
 |_  =bowl:gall
@@ -25,12 +27,17 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  [(list card) _this]
+  ?>  (team:title [our src]:bowl)
+  =+  !<(cmd=command vase)
+  =?  cmd  ?=(@ cmd)
+    [q.byk.bowl test.cmd]
+  ?>  ?=(^ cmd)
   |^
-  =+  !<(=test vase)
-  ?-  test
-    %marks   test-marks
-    %agents  test-agents
+  ?-  test.cmd
+    %marks       test-marks
+    %agents      test-agents
     %generators  test-generators
+    %threads     test-threads
   ==
   ::
   ++  test-marks
@@ -50,7 +57,7 @@
       |=(c=@tD `@tD`?:(=('/' c) '-' c))
     =/  sing=card
       :+  %pass  /build/mar/[mak]
-      [%arvo %c %warp our.bowl q.byk.bowl ~ %sing %b da+now.bowl /[mak]]
+      [%arvo %c %warp our.bowl desk.cmd ~ %sing %b da+now.bowl /[mak]]
     %_  $
       paz        t.paz
       fex        [sing fex]
@@ -72,7 +79,7 @@
       $(daz t.daz)
     =/  sing=card
       :+  %pass  /build/app/[i.daz]
-      [%arvo %c %warp our.bowl q.byk.bowl ~ %sing %a da+now.bowl dap-pax]
+      [%arvo %c %warp our.bowl desk.cmd ~ %sing %a da+now.bowl dap-pax]
     %_  $
       daz        t.daz
       fex        [sing fex]
@@ -92,14 +99,33 @@
       $(paz t.paz)
     =/  sing=card
       :+  %pass  build+i.paz
-      [%arvo %c %warp our.bowl q.byk.bowl ~ %sing %a da+now.bowl i.paz]
+      [%arvo %c %warp our.bowl desk.cmd ~ %sing %a da+now.bowl i.paz]
     %_  $
       paz        t.paz
       fex        [sing fex]
       gen.state  (~(put in gen.state) i.paz)
     ==
   ::
-  ++  now-beak  %_(byk.bowl r [%da now.bowl])
+  ++  test-threads
+    =|  fex=(list card)
+    ^+  [fex this]
+    ?>  =(~ ted.state)
+    =.  ted-ok.state  %.y
+    =+  .^(paz=(list path) ct+(en-beam now-beak /ted))
+    |-  ^+  [fex this]
+    ?~  paz  [(flop fex) this]
+    =/  xap=path  (flop i.paz)
+    ?.  ?=([%hoon *] xap)
+      $(paz t.paz)
+    =/  sing=card
+      :+  %pass  build+i.paz
+      [%arvo %c %warp our.bowl desk.cmd ~ %sing %a da+now.bowl i.paz]
+    %_  $
+      paz        t.paz
+      fex        [sing fex]
+      ted.state  (~(put in ted.state) i.paz)
+    ==
+  ++  now-beak  [our.bowl desk.cmd da+now.bowl]
   --
 ++  on-watch  on-watch:def
 ++  on-leave  on-leave:def
@@ -148,6 +174,15 @@
     =.  gen.state  (~(del in gen.state) path)
     ~?  =(~ gen.state)
       ?:(gen-ok.state %all-generators-built %some-generators-failed)
+    [~ this]
+  ::
+      [%ted *]
+    =/  ok  ?=(^ p.sign-arvo)
+    %-  (report path ok)
+    =?  ted-ok.state  !ok  %.n
+    =.  ted.state  (~(del in ted.state) path)
+    ~?  =(~ ted.state)
+      ?:(ted-ok.state %all-threads-built %some-threads-failed)
     [~ this]
   ==
 ++  on-fail   on-fail:def

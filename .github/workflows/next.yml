@@ -1,0 +1,31 @@
+name: Push to next/kelvin/*
+
+on:
+  push:
+    branches:
+      - 'next/kelvin/*'
+    paths:
+      - '.github/workflows/feature.yml'
+      - '.github/workflows/develop.yml'
+      - '.github/workflows/release.yml'
+      - '.github/workflows/master.yml'
+      - '.github/workflows/shared.yml'
+      - 'pkg/arvo/**'
+      - 'pkg/docker-image/**'
+      - 'pkg/ent/**'
+      - 'pkg/ge-additions/**'
+      - 'pkg/libaes_siv/**'
+      - 'pkg/urbit/**'
+      - 'pkg/urcrypt/**'
+      - 'tests/**'
+      - 'bin/**'
+      - 'nix/**'
+      - 'default.nix'
+
+jobs:
+  call-vere:
+    uses: ./.github/workflows/shared.yml
+    with:
+      upload: true
+      next: ${{ github.ref_name }}
+    secrets: inherit

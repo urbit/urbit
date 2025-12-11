@@ -123,7 +123,15 @@
       ::  ensure difference
       =/  old=(unit contact:store)  (~(get by rolodex) ship)
       ?.  ?|  ?=(~ old)
-              !=(contact(last-updated *@da) u.old(last-updated *@da))
+              ::  if new contact is before existing contact, no-op
+              ::
+              ::  NB: last-updated.contact is often *@da, so this
+              ::  effectively stops add from applying if we already have
+              ::  a contact for them
+              ::
+              ?&  (gth last-updated.contact last-updated.u.old)
+                  !=(contact(last-updated *@da) u.old(last-updated *@da))
+              ==
           ==
         [~ state]
       ~|  "cannot add a data url to cover!"

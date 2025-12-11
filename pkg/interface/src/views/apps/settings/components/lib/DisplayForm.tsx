@@ -7,7 +7,6 @@ import {
 import { Form } from 'formik';
 import React, { useCallback } from 'react';
 import * as Yup from 'yup';
-import { uxToHex } from '~/logic/lib/util';
 import useSettingsState, { SettingsState } from '~/logic/state/settings';
 import { FormikOnBlur } from '~/views/components/FormikOnBlur';
 import { BackButton } from './BackButton';
@@ -54,18 +53,28 @@ export default function DisplayForm() {
 
   const onSubmit = useCallback(async (values) => {
     const { putEntry } = useSettingsState.getState();
-    putEntry('display', 'backgroundType', values.bgType);
-    putEntry(
-      'display',
-      'background',
-      values.bgType === 'color'
-        ? `#${uxToHex(values.bgColor || '0x0')}`
-        : values.bgType === 'url'
-        ? values.bgUrl || ''
-        : false
-    );
-    putEntry('display', 'theme', values.theme);
-  }, []);
+    const { bgType, bgColor, bgUrl, theme } = initialValues;
+
+    if (bgType !== values.bgType) {
+      putEntry('display', 'backgroundType', values.bgType);
+    }
+
+    if (bgColor !== values.bgColor || bgUrl !== values.bgUrl) {
+      putEntry(
+        'display',
+        'background',
+        values.bgType === 'color'
+          ? values.bgColor
+          : values.bgType === 'url'
+          ? values.bgUrl || ''
+          : ''
+      );
+    }
+
+    if (theme !== values.theme) {
+      putEntry('display', 'theme', values.theme);
+    }
+  }, [initialValues]);
 
   return (
     <FormikOnBlur

@@ -25,7 +25,7 @@
   |=  =network
   ?+  network  ~&(%careful-fallback-contracts mainnet-contracts:azimuth)
     %mainnet  mainnet-contracts:azimuth
-    %ropsten  ropsten-contracts:azimuth
+    %goerli   goerli-contracts:azimuth
   ==
 ::
 ++  encode-claz-call
@@ -42,8 +42,14 @@
     %adopt                 (adopt:dat +.call)
     %start-document-poll   (start-document-poll:dat +.call)
     %cast-document-vote    (cast-document-vote:dat +.call)
+    %start-upgrade-poll    (start-upgrade-poll:dat +.call)
+    %cast-upgrade-vote     (cast-upgrade-vote:dat +.call)
   ::
     %send-point  (send-point:dat +.call)
+  ::
+    %approve-batch-transfer  (approve-batch-transfer:dat +.call)
+    %transfer-batch          (transfer-batch:dat +.call)
+    %withdraw                (withdraw:dat +.call)
   ==
 ::
 +$  call-data  call-data:rpc
@@ -67,12 +73,18 @@
   ++  adopt                   (enc adopt:cal)
   ++  start-document-poll     (enc start-document-poll:cal)
   ++  cast-document-vote      (enc cast-document-vote:cal)
+  ++  start-upgrade-poll      (enc start-upgrade-poll:cal)
+  ++  cast-upgrade-vote       (enc cast-upgrade-vote:cal)
   ::
   ++  register-linear         (enc register-linear:cal)
   ++  register-conditional    (enc register-conditional:cal)
   ++  deposit                 (enc deposit:cal)
   ::
   ++  send-point              (enc send-point:cal)
+  ::
+  ++  approve-batch-transfer  (enc approve-batch-transfer:cal)
+  ++  transfer-batch          (enc transfer-batch:cal)
+  ++  withdraw                (enc withdraw:cal)
   --
 ::
 ::TODO  lib
@@ -170,6 +182,25 @@
         [%bool support]
     ==
   ::
+  ++  start-upgrade-poll
+    |=  [gal=ship =address]
+    ^-  call-data
+    ?>  =(%czar (clan:title gal))
+    :-  'startUpgradePoll(uint8,address)'
+    :~  [%uint `@`gal]
+        [%address address]
+    ==
+  ::
+  ++  cast-upgrade-vote
+    |=  [gal=ship =address support=?]
+    ^-  call-data
+    ?>  =(%czar (clan:title gal))
+    :-  'castUpgradeVote(uint8,address,bool)'
+    :~  [%uint `@`gal]
+        [%address address]
+        [%bool support]
+    ==
+  ::
   ::
   ++  set-dns-domains
     |=  [pri=tape sec=tape ter=tape]
@@ -250,6 +281,27 @@
     :~  [%uint `@`as]
         [%uint `@`point]
         [%address to]
+    ==
+  ::
+  ++  approve-batch-transfer
+    |=  to=address
+    ^-  call-data
+    :-  'approveBatchTransfer(address)'
+    :~  [%address to]
+    ==
+  ::
+  ++  transfer-batch
+    |=  from=address
+    ^-  call-data
+    :-  'transferBatch(address)'
+    :~  [%address from]
+    ==
+  ::
+  ++  withdraw
+    |=  to=address
+    ^-  call-data
+    :-  'withdraw(address)'
+    :~  [%address to]
     ==
   ::
   ::  read calls

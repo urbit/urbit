@@ -1,28 +1,34 @@
 /+  default-agent
-/+  drum=hood-drum, helm=hood-helm, kiln=hood-kiln
+/+  drum=hood-drum, helm=hood-helm, kiln=hood-kiln, load=hood-load
 |%
 +$  state
-  $~  [%22 *state:drum *state:helm *state:kiln]
-  $>(%22 any-state)
+  $~  [%28 *state:drum *state:helm *state:kiln]
+  $>(%28 any-state)
 ::
 +$  any-state
   $%  [ver=?(%1 %2 %3 %4 %5 %6) lac=(map @tas fin-any-state)]
-      [%7 drum=state-2:drum helm=state:helm kiln=state-0:kiln]
-      [%8 drum=state-2:drum helm=state:helm kiln=state-0:kiln]
-      [%9 drum=state-2:drum helm=state:helm kiln=state-0:kiln]
-      [%10 drum=state-2:drum helm=state:helm kiln=state-0:kiln]
-      [%11 drum=state-2:drum helm=state:helm kiln=state-0:kiln]
-      [%12 drum=state-2:drum helm=state:helm kiln=state-0:kiln]
-      [%13 drum=state-2:drum helm=state:helm kiln=state-1:kiln]
-      [%14 drum=state-2:drum helm=state:helm kiln=state-1:kiln]
-      [%15 drum=state-2:drum helm=state:helm kiln=state-2:kiln]
-      [%16 drum=state-4:drum helm=state:helm kiln=state-3:kiln]
-      [%17 drum=state-4:drum helm=state:helm kiln=state-4:kiln]
-      [%18 drum=state-4:drum helm=state:helm kiln=state-5:kiln]
-      [%19 drum=state-4:drum helm=state:helm kiln=state-6:kiln]
-      [%20 drum=state-4:drum helm=state:helm kiln=state-7:kiln]
-      [%21 drum=state-4:drum helm=state:helm kiln=state-8:kiln]
-      [%22 drum=state-4:drum helm=state:helm kiln=state-9:kiln]
+      [%7 drum=state-2:drum helm=state-1:helm kiln=state-0:kiln]
+      [%8 drum=state-2:drum helm=state-1:helm kiln=state-0:kiln]
+      [%9 drum=state-2:drum helm=state-1:helm kiln=state-0:kiln]
+      [%10 drum=state-2:drum helm=state-1:helm kiln=state-0:kiln]
+      [%11 drum=state-2:drum helm=state-1:helm kiln=state-0:kiln]
+      [%12 drum=state-2:drum helm=state-1:helm kiln=state-0:kiln]
+      [%13 drum=state-2:drum helm=state-1:helm kiln=state-1:kiln]
+      [%14 drum=state-2:drum helm=state-1:helm kiln=state-1:kiln]
+      [%15 drum=state-2:drum helm=state-1:helm kiln=state-2:kiln]
+      [%16 drum=state-4:drum helm=state-1:helm kiln=state-3:kiln]
+      [%17 drum=state-4:drum helm=state-1:helm kiln=state-4:kiln]
+      [%18 drum=state-4:drum helm=state-1:helm kiln=state-5:kiln]
+      [%19 drum=state-4:drum helm=state-1:helm kiln=state-6:kiln]
+      [%20 drum=state-4:drum helm=state-1:helm kiln=state-7:kiln]
+      [%21 drum=state-4:drum helm=state-1:helm kiln=state-8:kiln]
+      [%22 drum=state-4:drum helm=state-1:helm kiln=state-9:kiln]
+      [%23 drum=state-4:drum helm=state-2:helm kiln=state-9:kiln]
+      [%24 drum=state-4:drum helm=state-2:helm kiln=state-10:kiln]
+      [%25 drum=state-5:drum helm=state-2:helm kiln=state-10:kiln]
+      [%26 drum=state-6:drum helm=state-2:helm kiln=state-10:kiln]
+      [%27 drum=state-6:drum helm=state-2:helm kiln=state-11:kiln]
+      [%28 drum=state-6:drum helm=state-2:helm kiln=state-11:kiln]
   ==
 +$  any-state-tuple
   $:  drum=any-state:drum
@@ -48,6 +54,7 @@
 ++  on-fail   on-fail:def
 ++  on-init
   ^-  step:agent:gall
+  =^  h  helm.state  on-init:helm-core
   =^  d  drum.state  on-init:drum-core
   =^  k  kiln.state  on-init:kiln-core
   [:(welp d k) this]
@@ -65,6 +72,9 @@
   |=  =old-state=vase
   ^-  step:agent:gall
   =+  !<(old=any-state old-state-vase)
+  ?:  ?=(%27 -.old)
+    :_  this(state old(- %28))
+    (eyre-clean:load [our now]:bowl)
   =/  tup=any-state-tuple
     ?+    -.old  +.old
         ?(%1 %2 %3 %4 %5 %6)
@@ -89,8 +99,7 @@
   ::
   ?+  mark  (on-poke:def mark vase)
     %atom            poke-helm(mark %helm-atom)
-    %dill-belt       poke-drum(mark %drum-dill-belt)
-    %dill-blit       poke-drum(mark %drum-dill-blit)
+    %dill-poke       poke-drum
     %hood-sync       poke-kiln(mark %kiln-sync)
     %write-sec-atom  poke-helm(mark %helm-write-sec-atom)
   ==
@@ -105,6 +114,7 @@
   ?+  path  (on-watch:def +<)
     [%drum *]  =^(c drum.state (peer:drum-core t.path) [c this])
     [%kiln *]  =^(c kiln.state (peer:kiln-core t.path) [c this])
+    [%dill *]  =^(c drum.state (peer:drum-core +<) [c this])
   ==
 ::
 ++  on-agent
@@ -120,6 +130,7 @@
   |=  [=wire syn=sign-arvo]
   ^-  step:agent:gall
   ?+  wire  ~|([%hood-bad-wire wire] !!)
+    [%drum *]  =^(c drum.state (take-arvo:drum-core t.wire syn) [c this])
     [%helm *]  =^(c helm.state (take-arvo:helm-core t.wire syn) [c this])
     [%kiln *]  =^(c kiln.state (take-arvo:kiln-core t.wire syn) [c this])
   ==

@@ -652,7 +652,7 @@
     :^  url  %post
       %-  ~(gas in *math)
       ~['Content-Type'^['application/json']~]
-    (some (as-octt (en-json:html jon)))
+    (some (as-octs (en:json:html jon)))
   ::  +light-json-request: like json-request, but for %l
   ::
   ::    TODO: Exorcising +purl from our system is a much longer term effort;
@@ -665,7 +665,7 @@
     :*  %'POST'
         (crip (en-purl:html url))
         ~[['content-type' 'application/json']]
-        (some (as-octt (en-json:html jon)))
+        (some (as-octs (en:json:html jon)))
     ==
   ::
   ++  batch-read-request
@@ -733,7 +733,7 @@
     ::
         %eth-get-block-by-number
       :-  'eth_getBlockByNumber'
-      :~  (tape (num-to-hex bon.req))
+      :~  (tape (num-to-hex-minimal bon.req))
           b+txs.req
       ==
     ::
@@ -942,11 +942,32 @@
   %-  render-hex-bytes
   (as-octs:mimes:html n)
 ::
+++  num-to-hex-minimal
+  |=  n=@
+  ^-  tape
+  %-  prefix-hex
+  ((x-co:co 1) n)
+::
 ++  address-to-hex
   |=  a=address
   ^-  tape
   %-  prefix-hex
   (render-hex-bytes 20 `@`a)
+::
+++  address-to-checksum
+  |=  a=address
+  ^-  tape
+  =/  hexed  (render-hex-bytes 20 `@`a)
+  =/  hash  (keccak-256:keccak:crypto (as-octs:mimes:html (crip hexed)))
+  =|  ret=tape
+  =/  pos  63
+  |-
+  ?~  hexed  (prefix-hex (flop ret))
+  =/  char  i.hexed
+  ?:  (lth char 58)  $(pos (dec pos), ret [char ret], hexed t.hexed)
+  =/  nib  (cut 2 [pos 1] hash)
+  ?:  (lth 7 nib)  $(pos (dec pos), ret [(sub char 32) ret], hexed t.hexed)
+  $(pos (dec pos), ret [char ret], hexed t.hexed)
 ::
 ++  transaction-to-hex
   |=  h=@
@@ -978,5 +999,8 @@
 ::
 ++  hex-to-num
   |=  a=@t
-  (rash (rsh [3 2] a) hex)
+  ~|  %non-hex-cord
+  ?>  =((end [3 2] a) '0x')
+  =<  ?<(=(0 p) q)  %-  need
+  (de:base16:mimes:html (rsh [3 2] a))
 --

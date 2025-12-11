@@ -8,7 +8,7 @@
 =>  |%
     +$  card  card:agent:gall
     +$  app-state
-      $:  %5
+      $:  %7
           dogs=(map path watchdog)
       ==
     ::
@@ -133,14 +133,16 @@
   ::
   =?  old-state  ?=(%4 -.old-state)
     %-  (slog leaf+"upgrading eth-watcher from %4" ~)
-    ^-  app-state
+    ^-  app-state-5
     %=    old-state
         -  %5
         dogs
       %-  ~(run by dogs.old-state)
       |=  dog=watchdog-4
+      ^-  watchdog-5
       %=  dog
           -
+        ^-  config-5
         =,  -.dog
         [url eager refresh-rate timeout-time from contracts ~ topics]
       ::
@@ -160,10 +162,86 @@
       ==
     ==
   ::
-  [cards-1 this(state ?>(?=(%5 -.old-state) old-state))]
+  =?  old-state  ?=(%5 -.old-state)
+    %=    old-state
+        -  %6
+        dogs
+      %-  ~(run by dogs.old-state)
+      |=  dog=watchdog-5
+      ^-  watchdog
+      %=  dog
+          -
+        ^-  config
+        =,  -.dog
+        [url eager refresh-rate timeout-time from ~ contracts batchers topics]
+      ::
+          running
+        ?~  running.dog  ~
+        `[now.bowl tid.u.running.dog]
+      ==
+    ==
+  ::
+  =^  cards-2=(list card)  old-state
+    ?.  ?=(%6 -.old-state)
+      `old-state
+    =.  dogs.old-state
+      %-   ~(run by dogs.old-state)
+      |=  dog=watchdog
+      =/  [old-b=@ud last-b=@ud]
+        ?~  history.dog         number.dog^number.dog
+        ?~  head=i.history.dog  number.dog^number.dog
+        ?~  mined=mined.i.head  number.dog^number.dog
+        number.dog^block-number.u.mined
+      ?:  =(old-b last-b)
+        dog
+      %-  (slog leaf+"rewinding eth-watcher from {<old-b>} to {<last-b>}" ~)
+      dog(number last-b)
+    ::
+    :_  old-state(- %7)
+    %+  turn  ~(tap by dogs.old-state)
+    |=  [=path dog=watchdog]
+    (wait-shortcut path now.bowl)
+  [(weld cards-1 cards-2) this(state ?>(?=(%7 -.old-state) old-state))]
   ::
   +$  app-states
-    $%(app-state-0 app-state-1 app-state-2 app-state-3 app-state-4 app-state)
+    $%  app-state-0
+        app-state-1
+        app-state-2
+        app-state-3
+        app-state-4
+        app-state-5
+        app-state-6
+        app-state
+    ==
+  ::
+  +$  app-state-6
+    $:  %6
+        dogs=(map path watchdog)
+    ==
+  +$  app-state-5
+    $:  %5
+        dogs=(map path watchdog-5)
+    ==
+  ::
+  +$  watchdog-5
+    $:  config-5
+        running=(unit [since=@da =tid:spider])
+        =number:block
+        =pending-logs
+        =history
+        blocks=(list block)
+    ==
+  ::
+  +$  config-5
+    $:  url=@ta
+        eager=?
+        refresh-rate=@dr
+        timeout-time=@dr
+        from=number:block
+        contracts=(list address:ethereum)
+        batchers=(list address:ethereum)
+        =topics
+    ==
   ::
   +$  app-state-4
     $:  %4
@@ -280,6 +358,7 @@
 ::
 ++  on-poke
   |=  [=mark =vase]
+  ?>  (team:title [our src]:bowl)
   ?:  ?=(%noun mark)
     ~&  state
     `this
@@ -319,6 +398,17 @@
       =/  dog=watchdog
         ?:  restart  *watchdog
         (~(got by dogs.state) path.poke)
+      =+  pending=(sort ~(tap in ~(key by pending-logs.dog)) lth)
+      =?  pending-logs.dog
+          ?:  restart  |
+          ?~  pending  |
+          (gte i.pending from.config.poke)
+        ?>  ?=(^ pending)
+        ::  if there are pending logs newer than what we poke with,
+        ::  we need to clear those too avoid processing duplicates
+        ::
+        ~&  %dropping-unreleased-logs^[from+i.pending n+(lent pending)]
+        ~
       %_  dog
         -       config.poke
         number  from.config.poke
@@ -411,6 +501,10 @@
       [~ this(dogs.state (~(put by dogs.state) path u.dog(running ~)))]
     ::
         %thread-done
+      ::  if empty, that means we cancelled this thread
+      ::
+      ?:  =(*vase q.cage.sign)
+        `this
       =+  !<([vows=disavows pup=watchpup] q.cage.sign)
       =.  u.dog
         %_  u.dog
@@ -462,17 +556,14 @@
   ++  release-logs
     |=  [=path dog=watchdog]
     ^-  (quip card watchdog)
-    ?:  (lth number.dog 0)  :: TODO: 30!
+    ?:  (lth number.dog 30)
       `dog
-    =/  rel-number  (sub number.dog 0)  :: TODO: 30!
     =/  numbers=(list number:block)  ~(tap in ~(key by pending-logs.dog))
     =.  numbers  (sort numbers lth)
     =^  logs=(list event-log:rpc:ethereum)  dog
       |-  ^-  (quip event-log:rpc:ethereum watchdog)
       ?~  numbers
         `dog
-      ?:  (gth i.numbers rel-number)
-        $(numbers t.numbers)
       =^  rel-logs-1  dog
         =/  =loglist  (~(get ja pending-logs.dog) i.numbers)
         =.  pending-logs.dog  (~(del by pending-logs.dog) i.numbers)
@@ -529,6 +620,12 @@
       ::  if not (or no longer) running, start a new thread
       ::
       ?^  running.dog
+        `dog
+      :: if reached the to-block, don't start a new thread
+      ::
+      ?:  ?&  ?=(^ to.dog)
+              (gte number.dog u.to.dog)
+          ==
         `dog
       ::
       =/  new-tid=@ta
