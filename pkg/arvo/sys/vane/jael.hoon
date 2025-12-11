@@ -922,8 +922,6 @@
     ++  fiefs
       |=  whos=(set ship)
       ^+  ..feed
-      ?:  fak.own.pki
-        ..feed  ::(fiefs:fake whos)
       ::  Add to subscriber list
       ::
       =.  nef.zim
