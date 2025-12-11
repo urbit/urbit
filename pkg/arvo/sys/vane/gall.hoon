@@ -2620,8 +2620,13 @@
             ?=(%nuke -.u.yok)
             ?=(%.n -.agent.u.yok)
         ==
+      %-  %^  trace:mo-core  &(?=([%gp @ ~] path) odd.veb.bug.state)  agent-name
+          [leaf/"flubbing in-progress flow" ~]
       (mo-do-flub:mo-core ship agent-name)
-    ?.  ?=([%ge @ ~] path)  mo-core
+    ?.  ?=([%ge @ ~] path)
+      %-  %^  trace:mo-core  odd.veb.bug.state  agent-name
+          [leaf/"weird in-progress flow for running agent; skip %flub" ~]
+      mo-core
     (mo-handle-ames-request:mo-core ship agent-name +.ames-request-all)
   ::
       %sear  mo-abet:(mo-filter-queue:mo-core ship.task)
