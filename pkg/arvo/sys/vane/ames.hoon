@@ -4033,6 +4033,8 @@
                 [%behn %wake *]  (on-take-wake:event-core wire error.sign)
               ::
                 [%gall %flub ~]  (on-take-flub:event-core wire)
+              ::
+                [%jael %fief *]  (on-take-fief:event-core fiefs-result.sign)
               ==
             ::
             [moves vane-gate]
@@ -4122,6 +4124,16 @@
           %-  %^  ev-trace  odd.veb  her
               |.("dropping %flub: bone={<bone>} {(spud wire)}")
           abet:(on-flub:peer-core bone)
+        ::  +on-take-fief: handle fief routing updates from jael
+        ::
+        ++  on-take-fief
+          |=  =fiefs-result:jael
+          ^+  event-core
+          ::  check we're not booting for the first time
+          ::
+          ?~  unix-duct.ames-state
+            event-core
+          (emit [unix-duct.ames-state %give %fief fiefs-result])
         ::  +on-take-done: handle notice from vane that it processed a message
         ::
         ++  on-take-done
