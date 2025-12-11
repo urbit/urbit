@@ -7299,6 +7299,8 @@
                     ?~  m=;;((soft [vane=@tas =path payload=*]) message)
                       peer-core
                     ?.  ?=([%g [%ge @ *] *] u.m)
+                      ::  XX /gk pleas to non running aggents are always acked
+                      ::
                       peer-core
                     =/  agent-name  i.t.path.u.m
                     %-  %+  pe-trace  odd.veb
@@ -7306,7 +7308,7 @@
                         "last in-progress check %flub for {<agent-name>}"
                     %^  pe-emit  duct  %pass
                     :-  (make-bone-wire her her-rift.channel bone.shut-packet)
-                    [%g %plea her `plea`[%g `path`[%gp agent-name ~] ~]]
+                    [%g %plea her u.m(path /gp/[agent-name])]
                   sink
                 ::  ack all other packets
                 ::
