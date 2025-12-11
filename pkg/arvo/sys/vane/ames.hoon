@@ -7266,41 +7266,48 @@
                             la=last-acked.state  lh=last-heard.state
                         ==
                       "hear last in-progress {<data>}"
-                  =+  ?.  odd.veb  ~
-                      ?.  ?=(%plea (received bone.shut-packet))   ~
-                      =/  fragments=(map @ @uwfragment)
-                        ::  create default if first fragment
-                        ::
-                        ?~  existing=(~(get by live-messages.state) seq)
-                          ?.  =(0 fragment-num)
-                            ~
-                          %+  ~(put by *(map @ @uwfragment))
-                            fragment-num
-                          fragment
-                        ?>  (gth num-fragments.u.existing fragment-num)
-                        ?>  =(num-fragments.u.existing num-fragments)
-                        ::
-                        %+  ~(put by fragments.u.existing)
+                  =.  peer-core
+                    ?.  ?=(%plea (received bone.shut-packet))
+                      peer-core
+                    =/  fragments=(map @ @uwfragment)
+                      ::  create default if first fragment
+                      ::
+                      ?~  existing=(~(get by live-messages.state) seq)
+                        ?.  =(0 fragment-num)
+                          ~
+                        %+  ~(put by *(map @ @uwfragment))
                           fragment-num
                         fragment
-                      ?~  fragments
-                        %-  %+  pe-trace  &
-                            |.  ^-  tape
-                            =/  data
-                              :*  her  seq=seq  bone=bone.shut-packet
-                                  fragment-num  num-fragments
-                                  la=last-acked.state  lh=last-heard.state
-                                  pending=~(key by pending-vane-ack.state)
-                              ==
-                            "last in-progress miss live {<data>}"
-                        ~
-                      =/  message=*
-                        (assemble-fragments num-fragments fragments)
-                      ?~  m=;;((soft [vane=@tas =path payload=*]) message)  ~
-                      %-  %+  pe-trace  &
-                          |.  ^-  tape  =,  u.m
-                          "last in-progress {<vane=vane>} path={<(spud path)>}"
-                      ~
+                      ?>  (gth num-fragments.u.existing fragment-num)
+                      ?>  =(num-fragments.u.existing num-fragments)
+                      ::
+                      %+  ~(put by fragments.u.existing)
+                        fragment-num
+                      fragment
+                    ?~  fragments
+                      %.  peer-core
+                      %+  pe-trace  odd.veb
+                      |.  ^-  tape
+                      =/  data
+                        :*  her  seq=seq  bone=bone.shut-packet
+                            fragment-num  num-fragments
+                            la=last-acked.state  lh=last-heard.state
+                            pending=~(key by pending-vane-ack.state)
+                        ==
+                      "last in-progress miss live {<data>}"
+                    =/  message=*
+                      (assemble-fragments num-fragments fragments)
+                    ?~  m=;;((soft [vane=@tas =path payload=*]) message)
+                      peer-core
+                    ?.  ?=([%g [%ge @ *] *] u.m)
+                      peer-core
+                    =/  agent-name  i.t.path.u.m
+                    %-  %+  pe-trace  odd.veb
+                        |.  ^-  tape
+                        "last in-progress check %flub for {<agent-name>}"
+                    %^  pe-emit  duct  %pass
+                    :-  (make-bone-wire her her-rift.channel bone.shut-packet)
+                    [%g %plea her `plea`[%g `path`[%gp agent-name ~] ~]]
                   sink
                 ::  ack all other packets
                 ::

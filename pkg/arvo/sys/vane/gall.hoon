@@ -354,7 +354,7 @@
       [%x ~]
   ==
 ::
-+$  flub-requesst  [%0 ~]
++$  flub-request  [%0 ~]
 ::
 +$  flub-response
   $:  %0
@@ -1310,33 +1310,6 @@
     ^+  mo-core
     ::
     =.  mo-core  (mo-track-ship ship)
-    ::
-    =/  yok=(unit yoke)  (~(get by yokes.state) agent-name)
-    ?:  ?|   ?=(~ yok)
-             ?=(%nuke -.u.yok)
-             ?=(%.n -.agent.u.yok)
-        ==
-      ::  %ames wil pass a $deep task to itself to halt the flow, at the same
-      ::  time, on the /flub flow, we send a %boon with the bone that the sender
-      ::  needs to halt as well to stop sending any outstanding $pleas
-      ::
-      ::  XX if %leave, cork the flow; otherwise, halt it?
-      ::  currently we always halt it
-      ::
-      =?  halts.state  (~(has by flub-ducts.state) ship)
-        ::  only add the app if we have received the /gf $plea
-        ::
-        (~(put ju halts.state) agent-name ship hen)
-      ::  before flubbing, check if system flow is established
-      ::
-      =.  mo-core  (mo-track-flubs ship)
-      %+  mo-give  %flub
-      ::  if we are waiting to hear the /gf $plea, only %flub the flow in %ames
-      ::  and skip sending the %flub $boon
-      ::
-      ?.  (~(has by flub-ducts.state) ship)
-        ~
-      [~ agent-name]
     ::  %u/%leave gets automatically acked
     ::
     =?  mo-core  ?=(%u -.ames-request)
@@ -1351,6 +1324,30 @@
         %u  [%leave ~]
       ==
     (mo-pass wire %g %deal [ship our /] agent-name deal)
+  ::
+  ++  mo-do-flub
+    |=  [=ship agent-name=term]
+    ::  %ames wil pass a $deep task to itself to halt the flow, at the same
+    ::  time, on the /flub flow, we send a %boon with the bone that the sender
+    ::  needs to halt as well to stop sending any outstanding $pleas
+    ::
+    ::  XX if %leave, cork the flow; otherwise, halt it?
+    ::  currently we always halt it
+    ::
+    =?  halts.state  (~(has by flub-ducts.state) ship)
+      ::  only add the app if we have received the /gf $plea
+      ::
+      (~(put ju halts.state) agent-name ship hen)
+    ::  before flubbing, check if system flow is established
+    ::
+    =.  mo-core  (mo-track-flubs ship)
+    %+  mo-give  %flub
+    ::  if we are waiting to hear the /gf $plea, only %flub the flow in %ames
+    ::  and skip sending the %flub $boon
+    ::
+    ?.  (~(has by flub-ducts.state) ship)
+      ~
+    [~ agent-name]
   ::
   ++  mo-handle-flub-plea
     |=  =ship
@@ -2599,19 +2596,32 @@
     =/  =noun  payload.plea.task
     ::
     ?:  ?=([%gf *] path)
-      ?>  ?=(flub-requesst noun)
+      ?>  ?=(flub-request noun)
       mo-abet:(mo-handle-flub-plea:mo-core ship)
     ?:  ?=([%gk @ ~] path)
       =/  agent-name  i.t.path
+      ::  XX check mo-do-flub?
+      ::
       =+  ;;(=fine-request noun)
       =<  mo-abet
       (mo-handle-key-request:mo-core ship agent-name path.fine-request)
-    ?>  ?=([%ge @ ~] path)
-    =/  agent-name  i.t.path
+    ?.  ?|  ?=([%gp @ ~] path)
+            ?=([%ge @ ~] path)
+        ==
+      !!
+    =/  agent-name  ?>(?=([@ @ ~] path) i.t.path)  :: XX find-fork
     ::
     =+  ;;(=ames-request-all noun)
     ?>  ?=(%0 -.ames-request-all)
+    ::
+    =/  yok=(unit yoke)  (~(get by yokes.state) agent-name)
     =<  mo-abet
+    ?:  ?|  ?=(~ yok)
+            ?=(%nuke -.u.yok)
+            ?=(%.n -.agent.u.yok)
+        ==
+      (mo-do-flub:mo-core ship agent-name)
+    ?.  ?=([%ge @ ~] path)  mo-core
     (mo-handle-ames-request:mo-core ship agent-name +.ames-request-all)
   ::
       %sear  mo-abet:(mo-filter-queue:mo-core ship.task)
