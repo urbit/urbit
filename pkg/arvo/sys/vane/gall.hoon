@@ -579,7 +579,6 @@
       =.  mo-core  (mo-give-halts dap)
       (mo-clear-queue dap)
     ::
-
     =.  yokes.state
       %+  ~(put by yokes.state)  dap
       %*    .  *$>(%live yoke)
@@ -1355,16 +1354,23 @@
     ::  before flubbing, check if system flow is established
     ::
     =.  mo-core  (mo-track-flubs ship)
+    ::
+    =+  maybe-blocked=?=(^ (~(get by blocked.state) agent-name))
     %+  mo-give  %flub
     ::  if we are waiting to hear the /gf $plea, only %flub the flow in %ames
     ::  and skip sending the %flub $boon
     ::
+    ::  if we have blocked moves, skip the %flub handling logic in %ames
+    ::
+    :+  ~  maybe-blocked
     ?.  (~(has by flub-ducts.state) ship)
-      ~
-    [~ agent-name]
+      %$  :: XX empty agent as placeholder
+    agent-name
   ::
   ++  mo-handle-flub-plea
     |=  =ship
+    %-   %^  trace:mo-core  odd.veb.bug.state  %$  :: XX add system flags to .veb
+         &+"/gf system flow established with {<ship>}"
     =.  flub-ducts.state  (~(put by flub-ducts.state) ship hen)
     ::  before acking the %flub $plea, check if the system flow is established
     ::
@@ -2638,7 +2644,7 @@
       (mo-do-flub:mo-core ship agent-name)
     ?.  ?=([%ge @ ~] path)
       %-  %^  trace:mo-core  odd.veb.bug.state  agent-name
-          &+"on {<ship>} weird in-progress flow; non running agent; skip %flub"
+          &+"on {<ship>} weird in-progress flow; running agent; skip %flub"
       mo-core
     (mo-handle-ames-request:mo-core ship agent-name +.ames-request-all)
   ::
