@@ -1914,6 +1914,7 @@
       ~/  %ap-from-internal
       |=  card=carp
       ^-  (list move)
+      :: =-  ~&  [%ap-from-internal card=card out=-]  -
       ::
       ?-    -.card
           %slip  !!
@@ -1981,7 +1982,7 @@
           ?-  -.neet
             %agent  [%out (scot %p ship.neet) name.neet wire]
             %huck   [%out (scot %p ship.neet) name.neet wire]
-            %jump   [(scot %p ship.attributing.agent-routes) wire]  ::  gall doing something
+            %jump   [(scot %p ship.attributing.agent-routes) %$ wire]
             %arvo   ::TODO  need to disambiguate syscalls
                     :+  (scot %p ship.attributing.agent-routes)  ::REVIEW  mb change?
                       ::  pack identifying resource id details into the wire
@@ -2009,9 +2010,10 @@
               [%lick *]        [%l +>.neet(name [agent-name name.neet])]
             ::
                 [%syscall *]
+              ::NOTE  fake vase because ;; too slow for these kinds of types
               ::NOTE  crash on malformed notes, syscall means no guard rails
-              ::REVIEW  perf?
-              ;;(note-arvo note-arvo.neet)
+              ::REVIEW  consider making %syscall contain a vase instead??
+              !<(note-arvo [-:!>(*note-arvo) note-arvo.neet])
             ==
           ==
         [duct %pass wire note-arvo]~
@@ -3162,8 +3164,8 @@
       |=  [a=term e=egg-12]
       ^-  egg-15
       ?:  ?=(%nuke -.e)  e
-      ::!!
-      e(sky [sky.e ken:*$>(%live egg-15)])
+      !!
+      :: e(sky [sky.e ken:*$>(%live egg-15)])
     ==
   ::
   ++  spore-13-to-14
