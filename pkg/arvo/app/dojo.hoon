@@ -1065,7 +1065,7 @@
     ^-  (each (unit (each dojo-command tape)) hair)     ::  prefix+result
     =+  len=+((lent txt))                               ::  line length
     =.  txt  (weld buf `tape`(weld txt "\0a"))          ::
-    =+  vex=((full parse-command-line:he-parser) [1 1] txt)
+    =+  vex=((full parse-command-line:he-parser) [1 1] [0 (lent txt)] (rep 3 txt))
     ?:  =(q.p.vex len)                                  ::  matched to line end
       [%& ~]                                            ::
     ?:  =(p.p.vex +((lent (skim txt |=(a=@ =(10 a)))))) ::  parsed all lines
@@ -1376,7 +1376,7 @@
         (insert-magic:auto (add (lent buf) pos) :(weld buf (tufa buf.say)))
     =/  id-len  (sub fore-pos back-pos)
     =/  fore-pos-diff  (sub fore-pos pos)
-    =+  vex=((full parse-command-line:he-parser) [1 1] txt)
+    =+  vex=((full parse-command-line:he-parser) [1 1] [0 (lent txt)] (rep 3 txt))
     ?.  ?=([* ~ [* @ %ex *] *] vex)
       (he-tab-not-hoon pos :(weld buf (tufa buf.say) "\0a"))
     =/  typ  p:(slop q:he-hoon-head !>(..zuse))

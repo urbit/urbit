@@ -11,7 +11,7 @@
 ::
 ++  lily
   |*  [los=tape sab=rule]
-  =+  vex=(sab [[1 1] los])
+  =+  vex=(sab [[1 1] [0 (lent los)] (rep 3 los)])
   ?~  q.vex
     [%| p=p.vex(q (dec q.p.vex))]
   ?.  =(~ q.q.u.q.vex)
