@@ -491,9 +491,9 @@
   ^-  pile
   =/  [=hair res=(unit [=pile =nail])]
     %-  road  |.
-    =>  [pile-rule=pile-rule pax=pax txt=txt trip=trip]
+    =>  [pile-rule=pile-rule pax=pax txt=txt met=met]
     ~>  %memo./clay/pile
-    ((pile-rule pax) [1 1] (trip txt))
+    ((pile-rule pax) [1 1] [0 (met 3 txt)] txt)
   ?^  res  pile.u.res
   %-  mean
   =/  lyn  p.hair
