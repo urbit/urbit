@@ -860,8 +860,8 @@
     ::
     ++  public-keys
       |=  whos=(set ship)
-      ?:  fak.own.pki
-        (public-keys:fake whos)
+::      ?:  fak.own.pki
+::        (public-keys:fake whos)
       ::  Subscribe to parent of moons
       ::
       =.  ..feed
