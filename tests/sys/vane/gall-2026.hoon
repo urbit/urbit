@@ -33,6 +33,58 @@
   ?^  p.res  p.res
   ~['+eval-mare failure with empty trace']
 ::
+++  branch
+  =/  m  (mare ,~)
+  |=  l=(list [t=@t f=form:m])  ::NOTE  can't seem to use $^ here
+  ^-  form:m
+  =/  e=tang  ~
+  |=  s=state
+  |-  ^-  output:m
+  ?~  l
+    ?.  =(~ e)  [%| e]
+    [%& ~ s]
+  =/  o  (f.i.l s)
+  =?  e  ?=(%| -.o)
+    =-  (weld e `tang`-)
+    [(rap 3 'failed in branch \'' t.i.l '\':' ~) p.o]
+  $(l t.l)
+::
+++  merge  ::  branch with shared, cached continuation
+  |*  a=mold  ::  arg for constructing continuation, comes out of branches
+  =/  w  (mare a)
+  =/  m  (mare ,~)
+  |=  [l=(list [t=@t f=form:w]) n=$-(a form:m)]
+  ^-  form:m
+  =|  err=tang
+  =|  per=(map tang @t)
+  =|  cac=(map @ output:m)
+  |=  sat=state
+  |-  ^-  output:m
+  ?~  l
+    ?.  =(~ err)  [%| err]
+    [%& ~ sat]
+  =^  res=output:m  cac
+    ::  the below is essentially (((bind:m a) f.i.l n) sat)
+    ::  but with the n invocation cached
+    ::
+    =/  wes=output:w  (f.i.l sat)
+    ?:  ?=(%| -.wes)  [wes cac]
+    ?^  hit=(~(get by cac) (mug p.wes))
+      [u.hit cac]
+    =/  res=output:m  ((n out.p.wes) state.p.wes)
+    [res (~(put by cac) (mug p.wes) res)]
+  ::  when printing fail traces, if a previous branch had an identical failure,
+  ::  just print a reference to that for brevity
+  ::
+  =?  err  ?=(%| -.res)
+    =-  (weld err `tang`-)
+    :-  (rap 3 'failed in merge branch \'' t.i.l '\':' ~)
+    ?~  pev=(~(get by per) p.res)  p.res
+    [(rap 3 '[same as in merge branch \'' u.pev '\']' ~)]~
+  =?  per  &(?=(%| -.res) !(~(has by per) p.res))
+    (~(put by per) p.res t.i.l)
+  $(l t.l)
+::
 ++  mock-agent
   ^-  agent:gall
   |_  =bowl:gall
@@ -43,8 +95,7 @@
   ++  on-watch  |=(* [~ this])
   ++  on-leave  |=(* [~ this])
   ++  on-agent  |=(* [~ this])
-  ++  on-arvo   |=(* [~ this])  ::TODO  echo the call outward?
-  ++  on-fail   |=(* [~ this])  ::TODO  echo the call outward?
+  ++  on-fail   |=(* ~&(%mock-on-fail [~ this]))  ::TODO  echo the call outward?
   ++  on-peek   |=(* ~)
   ::
   ++  on-poke
@@ -52,6 +103,10 @@
     ^-  (quip card:agent:gall _this)
     ?>  ?=(%test-card mark)
     [[!<(card:agent:gall vase)]~ this]
+  ::
+  ++  on-arvo
+    |=  [=wire =gift-user-v1:gall]
+    [[%pass //echo %arvo %syscall `note-arvo`[%b %drip !>(+<)]]~ this]
   --
 ::
 ++  mock-roof
@@ -175,6 +230,22 @@
   |=  mov=move:gall
   (expect-eq:test !>(mow) !>(mov))
 ::
+++  ex-echo
+  |=  =vase
+  |=  move:gall
+  ~|  -.move
+  ~!  -.move
+  ?>  ?=(%pass -.move)
+  ~|  p.move
+  ?>  ?=([%use @ @ @ %$ %$ %echo ~] p.move)
+  ~|  q.move
+  ?>  ?=([%b %drip *] q.move)
+  (expect-eq:test p.q.move vase)
+::
+++  ex-on-arvo
+  |=  [=wire gift=gift-user-v1:gall]
+  (ex-echo !>(+<))
+::
 ::  setup
 ::
 ++  mock-card
@@ -244,4 +315,66 @@
   %+  ex-resources  %mock
   :~  [/agent/wire %lick %spin /mysocket]
   ==
+::
+++  test-keen-request
+  %-  eval-mare
+  ;<  *  bind:m  (do-load %mock mock-agent)
+  ::  agent issues a plain %keen
+  ::
+  =/  =spar:ames  [~fun /g/x/~2222.2.2/dude/some/thing]
+  ;<  gall-wire=wire  bind:m
+    (use-wire %mock //agent/wire)  ::TODO  different from +test-lick-socket
+  %+  (merge (list move:gall))
+    :~  :-  'unencrypted keen'
+        ;<  moz=(list move:gall)  bind:m
+          (mock-card %pass /agent/wire %arvo %ames %keen secret=| spar)
+        ;<  ~  bind:m
+          %+  ex-moves  moz  ::TODO  different from +test-lick-socket
+          :~  (ex-move ~[/sysduct] %pass gall-wire [%a %keen sec=~ spar])
+              (ex-move default-duct %give %unto %poke-ack ~)
+          ==
+        (pure:m ~)  ::TODO
+      ::
+        :-  'encrypted keen'
+        ;<  moz=(list move:gall)  bind:m
+          (mock-card %pass /agent/wire %arvo %ames %keen secret=& spar)
+        =/  plea-wire=wire
+          [%key %mock '0w3.lBw1H' %bod (scot %p ship.spar) path.spar]  ::TODO  construct from helper
+        ;<  ~  bind:m
+          %+  ex-moves  moz  ::TODO  different from +test-lick-socket
+          :~  (ex-move default-duct %pass plea-wire [%a %plea ship.spar [%g /gk/dude %0 /some/thing]])
+              (ex-move default-duct %give %unto %poke-ack ~)
+          ==
+        =/  =brood:gall  [path.spar 1 2 3]
+        ;<  moz=(list move:gall)  bind:m
+          (do-take [plea-wire ~[/sysduct]] %ames %boon %0 `brood)
+        ;<  ~  bind:m
+          %+  ex-moves  moz
+          :~  (ex-move ~[/sysduct] %pass gall-wire [%a %keen sec=`+.hutch.brood spar])
+          ==
+        (pure:m ~)
+    ==
+  |=  moz=(list move:gall)
+  ;<  e=_+:*$>(%live egg:gall)  bind:m  (get-live-egg %mock)
+  ;<  ~  bind:m  (ex-equal !>(ken.e) !>((~(put ju *(jug spar:ames wire)) spar /agent/wire)))
+  ::TODO  emit a second request?
+  ::  response comes back from ames
+  ::
+  %+  (merge ,~)
+    :~  :-  'page result'
+        ;<  moz=(list move:gall)  bind:m
+          (do-take [gall-wire ~[/sysduct]] %ames %sage `sage:mess:ames`[spar *page])
+        (ex-moves moz (ex-on-arvo /agent/wire %ames %sage spar *page) ~)
+      ::
+        :-  'empty result'
+        ;<  moz=(list move:gall)  bind:m
+          (do-take [gall-wire ~[/sysduct]] %ames %sage `sage:mess:ames`[spar ~])
+        (ex-moves moz (ex-on-arvo /agent/wire %ames %sage spar ~) ~)
+    ==
+  |=  ~
+  ;<  e=_+:*$>(%live egg:gall)  bind:m  (get-live-egg %mock)
+  ;<  ~  bind:m  (ex-equal !>(ken.e) !>(*(jug spar:ames wire)))
+  (pure:m ~)
+::
+::TODO  test keen wire consistent between %keen, %keen w/ secret, reinstall
 --
