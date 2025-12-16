@@ -1,4 +1,4 @@
-/-  *aquarium
+/-  dice, *aquarium
 /+  ethereum, azimuth
 ::
 |%
@@ -14,6 +14,25 @@
   |=  [our=ship her=ship uf=unix-effect azi=az-state]
   ^-  (unit card:agent:gall)
   =,  enjs:format
+  =/  ask-load
+    %+  extract-request  uf
+    'https://bootstrap.urbit.org/mainnet.azimuth-snapshot'
+  ?^  ask-load
+    =/  events=(list aqua-event)
+      :_  ~
+      :*  %event
+          her
+          /i/http-client/0v1n.2m9vh
+          %receive
+          num.u.ask-load
+          [%start [200 ~] `(as-octs:mimes:html (jam *versioned-snap:dice)) &]
+      ==
+    %-  some
+    :*  %pass  /aqua-events
+        %agent  [our %aqua]
+        %poke  %aqua-events
+        !>(events)
+    ==
   =/  ask  (extract-request uf 'http://fake.aqua.domain/')
   ?~  ask
     ~
@@ -200,16 +219,91 @@
 ::
 ++  get-keys
   |=  [who=@p lyfe=life]
-  %+  pit:nu:cric:crypto  32
-  (can 5 [1 (scot %p who)] [1 (scot %ud lyfe)] ~)
+  ?~  cum=(~(get by comets) who)
+    %^  pit:nu:cric:crypto  32
+      (can 5 [1 (scot %p who)] [1 (scot %ud lyfe)] ~)
+    [%b ~]
+  ?.  =(lyfe 1)
+    %^  pit:nu:cric:crypto  32
+      (can 5 [1 (scot %p who)] [1 (scot %ud lyfe)] ~)
+    [%c 0xdead.beef.cafe]
+  ?:  ?=(%b suite.u.cum)
+    (pit:nu:cric:crypto 512 seed.u.cum %b ~)
+  (pit:nu:cric:crypto 512 seed.u.cum %c 0xdead.beef.cafe)
 ::
 ++  get-public
-  |=  [who=@p lyfe=life typ=?(%auth %crypt)]
-  =/  bod  (rsh 3 pub:ex:(get-keys who lyfe))
-  =+  [enc=(rsh 8 bod) aut=(end 8 bod)]
-  ?:  =(%auth typ)
-    aut
-  enc
+  |=  [who=@p lyfe=life]
+  ^-  public-keys:ames
+  ded:ex:(get-keys who lyfe)
+::  +comets: allowed comets, their +cric suite and seeds
+::    the tweak for %c comets is 0xdead.beef.cafe
+::
+++  comets
+  ^~  ^-  (map ship [suite=?(%b %c) seed=@uw])
+  %-  ~(gas by *(map ship [suite=?(%b %c) seed=@uw]))
+  ^-  (list [=ship suite=?(%b %c) seed=@uw])
+  %+  zip
+    ::  comet names
+    ^-  (list @p)
+    :~  :: marbud, %c suite
+        ~fasteg-dinhet-malrum-ransub--hocduc-digtev-radsut-marbud
+        ~daldyl-nildem-dispec-tilryx--dondus-dirmet-tintyl-marbud
+        ~dansyr-ponbec-tocfel-laddux--socnut-nisnyx-dinsut-marbud
+        :: marbud, %b suite
+        ~harrep-podpec-torsut-docnyx--mopsyx-fosdus-ladpen-marbud
+        ~liblyn-togrut-tabwel-hodbet--dovbex-parryt-mirbyt-marbud
+        ~hidreb-naptev-banben-bicrup--massup-dantus-fodwet-marbud
+        :: mardev, %c suite
+        ~molpyx-novtyc-wortyc-noswyd--taltyv-loplev-dabwen-mardev
+        ~fosnys-noctyd-talfyl-borryl--davhus-disbyn-fotnec-mardev
+        ~tonmep-tabrux-rinbep-firmur--silmex-saldef-pasfer-mardev
+        :: mardev, %b suite
+        ~holwyx-ramped-tognet-barsyn--navler-ronmeg-topbex-mardev
+        ~hacmet-doslyr-narhut-tiptec--micbyl-motnev-worsyn-mardev
+        ~ribmut-nopdul-minmet-pardeg--wisfex-rosfus-fogsyn-mardev
+    ==
+  %+  zip
+    ::  comet suites
+    ^-  (list ?(%b %c))
+    ~[%c %c %c %b %b %b %c %c %c %b %b %b]
+  ::  comet seeds
+  ^-  (list @uw)
+  :~  0w2.5sfF0.~inVv.dQ7zb.ykQSG.aX5nF.uGQsm.keVzY.6Pu1S.
+      quvGI.b0Ht2.Ctbbr.-ADfG.7yIL4.NXJ5a.lGmJZ.5wkdb.9Z775
+      0w5Disb.xWJtw.cszH3.YBTFu.9k6Nc.JjeyV.origh.VkYmT.
+      9-Obr.T3TOs.IPdWd.MmsUQ.ZZGZa.OLHMe.5azFd.l7hXr.~vuI~
+      0w1.7wOws.lF20Y.WRmex.htiLX.WrZ43.yxBCD.Ow3oE.kumTc.
+      dRou7.xGeQm.Lbbx-.6hTii.hzYgP.Z2iQ9.7YYLB.2qb1b.PDItX
+      0w3.7aZCR.XIcSt.sKqRG.AS4KD.A-FAT.bbZwc.2N4z5.pez5t.
+      aZGIz.d0Hy9.C~RPd.87GcR.LM0Jt.6oVFF.LL4v7.rzlwk.~Fm5Z
+      0w1.fuip3.x~XMr.eE02V.K4RC5.OvDaK.jug28.75z30.UY476.
+      ZlB3Q.bD78k.M8E~g.I4LRY.OytPc.XD2Bm.XDM9t.iQEhl.LNCMM
+      0w1.BHOHC.VyVuo.4kS0o.VKJNU.-zMyL.T2zJo.j1EF5.symnK.
+      yQB8T.TvCPN.Z8~P~.KS6j4.~055y.E-jBn.UhIxJ.mItiE.PmML1
+      0w3.mAqpe.eRL-v.65LTo.aHWFA.5kTRF.qQ1o-.xK2W-.tae8A.
+      FLBV~.wL3iP.A~53S.izniF.SiLrJ.DDxNO.A9Yps.QLFta.LmorX
+      0w3.L29ce.OZsch.LKI2F.f86PX.JuhkV.8gnMT.FSqcd.~MqL3.
+      v4wEj.yFnGN.DHr-Z.TiCRY.tG-7r.E1oza.pW2FM.i097b.yA~Ql
+      0w2.iUm0y.wCmrI.GrVKW.r5yu9.Stccm.3diy3.vS4r7.tV~jd.
+      -mxoM.S1nFG.soxnp.dDr6X.DUI99.4uhQO.ntSQJ.UYiQi.pMRi2
+      0w2.i8vIr.hWTd1.aC9jk.F6Y3e.r5OEr.nzm8U.KHzQN.RsEzF.
+      trAnj.MqRRu.397ik.L8o9k.RSIip.0vZ4Q.qhnSI.eXfhu.brJPS
+      0ws1~UQ.v~fJv.C5MPg.LFX3N.ZmJmu.0LeVG.lyyT7.shhvL.
+      2~det.i-jOI.OVI8v.9ldMk.16MGj.AZxso.qsTpQ.inrUz.aE1sa
+      0w~w9s8.YLtr3.bSQ8H.SIK5g.Dnh9M.aIcT2.mqIqG.geVWH.
+      lJUzq.OTuUl.oM9ww.7MwQh.pQ7Q9.NB38f.FzzKE.S7is8.~0Gg-
+  ==
+::  +zip: combine two lists into a list of cells of their elements
+::
+++  zip
+    |*  [a=(list) b=(list)]
+    ^-  (list [_?>(?=(^ a) i.a) _?>(?=(^ b) i.b)])
+    =|  out=(list [_?>(?=(^ a) i.a) _?>(?=(^ b) i.b)])
+    ?>  =((lent a) (lent b))
+    |-
+    ?~  a  (flop out)
+    ?~  b  (flop out)
+    $(out [[i.a i.b] out], a t.a, b t.b)
 ::
 ::  Generate logs
 ::

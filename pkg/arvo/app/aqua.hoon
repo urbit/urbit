@@ -824,15 +824,10 @@
   ?<  (~(has by lives.azi.piers) who)
   =.  lives.azi.piers  (~(put by lives.azi.piers) who [1 0])
   =.  logs.azi.piers
+    =/  [cry=@ sgn=@]  (get-public:aqua-azimuth who 1)
     %+  weld  logs.azi.piers
     :_  ~
-    %-  changed-keys:lo:aqua-azimuth
-    :*  who
-        (get-public:aqua-azimuth who 1 %crypt)
-        (get-public:aqua-azimuth who 1 %auth)
-        1
-        1
-    ==
+    (changed-keys:lo:aqua-azimuth [who cry sgn 1 1])
   (spam-logs 10)
 ::
 ++  cycle-keys
@@ -844,15 +839,10 @@
   =/  lyfe  +(lyfe.prev)
   =.  lives.azi.piers  (~(put by lives.azi.piers) who [lyfe rut.prev])
   =.  logs.azi.piers
+    =/  [cry=@ sgn=@]  (get-public:aqua-azimuth who lyfe)
     %+  weld  logs.azi.piers
     :_  ~
-    %-  changed-keys:lo:aqua-azimuth
-    :*  who
-        (get-public:aqua-azimuth who lyfe %crypt)
-        (get-public:aqua-azimuth who lyfe %auth)
-        1
-        lyfe
-    ==
+    (changed-keys:lo:aqua-azimuth [who cry sgn 1 lyfe])
   state
 ::
 ++  breach
@@ -871,56 +861,51 @@
   |=  who=ship
   ^-  dawn-event:jael
   =/  clan  (clan:title who)
-  ?>  ?=(?(%czar %king %duke %earl) clan)
-  =/  spon=(list [ship point:azimuth])
+  =/  spon=(list [ship point:jael])
     %-  flop
-    |-  ^-  (list [ship point:azimuth])
+    |-  ^-  (list [ship point:jael])
     =/  =ship  (^sein:title who)
-    =/  a-point=[^ship point:azimuth]
-      =/  spon-spon  [& (^sein:title ship)]
-      =/  life-rift  ~|([ship lives.azi.piers] (~(got by lives.azi.piers) ship))
-      =/  =life  lyfe.life-rift
-      =/  =rift  rut.life-rift
-      =/  =pass
-        %^    pass-from-eth:azimuth
-            (as-octs:mimes:html (get-public:aqua-azimuth ship life %crypt))
-          (as-octs:mimes:html (get-public:aqua-azimuth ship life %auth))
-        1
-      :^    ship
-          *[address address address address]:azimuth
-        `[life=life pass rift spon-spon ~]
-      ~
+    =/  a-point=[^ship point:jael]
+      =/  spon-spon  (^sein:title ship)
+      =/  [=life =rift]
+        ~|([ship lives.azi.piers] (~(got by lives.azi.piers) ship))
+      =/  =pass  pub:ex:(get-keys:aqua-azimuth ship life)
+      =/  keys
+        (~(put by *(map ^life [crypto-suite=@ud =^pass])) life [1 pass])
+      [ship rift life keys `spon-spon ~]
     ?:  ?=(%czar (clan:title ship))
       [a-point]~
     [a-point $(who ship)]
   =/  =feed:jael
-    =/  life-rift=[lyfe=life rut=rift]
-      ?:  =(%earl clan)  [1 0]
+    =/  [lyfe=life rut=rift]
+      ?:  ?=(?(%earl %pawn) clan)  [1 0]
       (~(got by lives.azi.piers) who)
-    =/  =life  lyfe.life-rift
-    [who life sec:ex:(get-keys:aqua-azimuth who life) ~]
-  :*  feed
-      spon
+    =/  kyz=(list [life ring])
+      [lyfe sec:ex:(get-keys:aqua-azimuth who lyfe)]~
+    [[%2 ~] who rut kyz]
+  :*  %1
+      feed
+      *(list [ship point:jael]) ::spon
       get-czars
-      ~[~['arvo' 'netw' 'ork']]
+      ~[/arvo/netw/ork]
       0
       `(need (de-purl:html 'http://fake.aqua.domain/'))
+      *(list (pair @tas *))
   ==
 ::
 ::  Should only do galaxies
 ::
 ++  get-czars
-  ^-  (map ship [rift life pass])
+  ^-  (map ship point:jael)
   %-  malt
   %+  murn
     ~(tap by lives.azi.piers)
   |=  [who=ship lyfe=life rut=rift]
   ?.  =(%czar (clan:title who))
     ~
-  %-  some
-  :^  who  rut  lyfe
-  %^    pass-from-eth:azimuth
-      (as-octs:mimes:html (get-public:aqua-azimuth who lyfe %crypt))
-    (as-octs:mimes:html (get-public:aqua-azimuth who lyfe %auth))
-  1
+  =/  =pass  pub:ex:(get-keys:aqua-azimuth who lyfe)
+  =/  keys
+    (~(put by *(map life [crypto-suite=@ud =^pass])) lyfe [1 pass])
+  `[who rut lyfe keys ~ ~]
+::
 --

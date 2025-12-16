@@ -73,6 +73,7 @@
 +$  unix-effect
   %+  pair  wire
   $%  [%blit p=(list blit:dill)]
+      [%fief =fiefs-result:jael]
       [%send p=lane:ames q=@]
       [%doze p=(unit @da)]
       [%thus p=@ud q=(unit hiss:eyre)]
