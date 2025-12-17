@@ -1061,10 +1061,27 @@
     ::
     =/  =move
       =/  =sack  [ship.attributing.routes our path.attributing.routes]
-      ?:  ?=(%& -.blocker)
-        ?>  ?=(^ duct)
-        [+.duct %slip %g %deal sack dap p.blocker]
-      [duct %give %unto p.blocker]
+      ?:  ?=(%| -.blocker)
+        ::  agents signs
+        ::
+        [duct %give %unto p.blocker]
+      ::  agent tasks
+      ::
+      :_  [%slip %g %deal sack dap p.blocker]
+      ?:  =(our ship.attributing.routes)
+        ::  if this is a local $deal, drop /gall-use-wire if this is an old
+        ::  (pre 16-to-17) $deal and keep the original duct as is; only remote
+        ::  $deals lack the routing wire
+        ::
+        =?  duct  ?=([[%gall-use-wire *] *] duct)
+          t.duct
+        duct
+      ::  if this came from a foreign ship we need to drop the
+      ::  dummy wire added in the 16-to-17 migration; after the
+      ::  %flub $gift was introduced, remote deals are dropped and
+      ::  not enqueued anymore
+      ::
+      ?>(?=(^ duct) +.duct)
     $(moves [move moves])
   ::
   ++  mo-give-halts
@@ -1280,7 +1297,11 @@
     =/  blocked=(qeu blocked-move)
       =/  waiting  (~(get by blocked.state) agent)
       =/  deals  (fall waiting *(qeu blocked-move))
-      =/  deal  [hen routes &+deal]
+      =/  deal  [hen routes &+deal]  ::  XX add /dummy wire here?
+                                     ::  to conform to the $wire added to the
+                                     ::  16-to-17 migration
+                                     ::  XX assert =(our ship)
+                                     ::  remote $deals are dropped
       (~(put to deals) deal)
     ::
     %-  (slog leaf+"gall: not running {<agent>} yet, got {<-.deal>}" ~)
