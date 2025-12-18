@@ -60,9 +60,9 @@
 ::  $move: Arvo-level move
 ::
 +$  move  [=duct move=(wind note-arvo gift-arvo)]
-::  $state-18: overall gall state, versioned
+::  $state-19: overall gall state, versioned
 ::
-+$  state-18  [%18 state]
++$  state-19  [%19 state]
 ::  $state: overall gall state
 ::
 ::    system-duct: TODO document
@@ -428,11 +428,11 @@
       flubs=(jug ship app=term)
       halts=(jug app=term [ship duct])
   ==
-+$  spore-18  [%18 spore]
++$  spore-19  [%19 spore]
 --
 ::  adult gall vane interface, for type compatibility with pupa
 ::
-=|  state=state-18
+=|  state=state-19
 |=  [now=@da eny=@uvJ rof=roof]
 =*  gall-payload  .
 ~%  %gall-top  ..part  ~
@@ -1074,10 +1074,14 @@
     ::
     =/  =move
       =/  =sack  [ship.attributing.routes our path.attributing.routes]
-      ?:  ?=(%& -.blocker)
-        ?>  ?=(^ duct)
-        [+.duct %slip %g %deal sack dap p.blocker]
-      [duct %give %unto p.blocker]
+      :-  duct
+      ?:  ?=(%| -.blocker)
+        ::  agents signs
+        ::
+        [%give %unto p.blocker]
+      ::  agent tasks
+      ::
+      [%slip %g %deal sack dap p.blocker]
     $(moves [move moves])
   ::
   ++  mo-give-halts
@@ -2678,11 +2682,12 @@
       =?  old  ?=(%15 -.old)  (spore-15-to-16 +.old)
       =?  old  ?=(%16 -.old)  (spore-16-to-17 +.old)
       =?  old  ?=(%17 -.old)  (spore-17-to-18 +.old)
-      ?>  ?=(%18 -.old)
+      =?  old  ?=(%18 -.old)  (spore-18-to-19 +.old)
+      ?>  ?=(%19 -.old)
       gall-payload(state old)
   ::
   +$  spore-any
-    $%  [%18 spore]
+    $%  [%19 spore]
         [%7 spore-7]
         [%8 spore-8]
         [%9 spore-9]
@@ -2694,7 +2699,9 @@
         [%15 spore-15]
         [%16 spore-16]
         [%17 spore-17]
+        [%18 spore]
     ==
+  +$  spore-18  spore
   +$  spore-17  spore-16
   +$  spore-16
     $:  system-duct=duct
@@ -3002,7 +3009,7 @@
         [a (snag (dec a) m)]
       ==
     ==
-  ::  drop unto blocked moves;s
+  ::  drop unto blocked moves
   ::
   ++  spore-16-to-17
     |=  old=spore-16
@@ -3021,16 +3028,33 @@
       ::
       (~(put to r) blocked-move(duct [/gall-use-wire duct.blocked-move]))
     ==
-  ::
   ::  add flubbed/halted agents
   ::
   ++  spore-17-to-18
     |=  old=spore-17
-    ^-  spore-18
     :-  %18
+    ^-  spore-18
     %=    old
         leaves
       [leaves.old flub-ducts=~ flubs=~ halts=~]
+    ==
+  ::
+  ::  drop /gall-use-wire from blocked moves
+  ::
+  ++  spore-18-to-19
+    |=  old=spore-18
+    ^-  spore-19
+    :-  %19
+    %_    old
+        blocked
+      %-  ~(urn by blocked.old)
+      |=  [=term q=(qeu blocked-move)]
+      ^+  q
+      %-  ~(rep by q)
+      |=  [=blocked-move r=(qeu blocked-move)]
+      ?:  ?=([[%gall-use-wire *] *] duct.blocked-move)
+        r
+      (~(put to r) blocked-move)
     ==
   ::
   --
@@ -3294,7 +3318,7 @@
 ::  +stay: save without cache; suspend non-%base agents
 ::
 ++  stay
-  ^-  spore-18
+  ^-  spore-19
   =;  eggs=(map term egg)  state(yokes eggs)
   %-  ~(run by yokes.state)
   |=  =yoke
