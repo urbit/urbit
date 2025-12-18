@@ -47,7 +47,7 @@
     :_  this
     ~&  >>  -.action
     ?-  -.action
-      %send  ~&(%sending [%give %fact [/subs]~ pub-fact+!>(data.action)]~)
+      %send  ~&(%sending [%give %fact [/subs]~ noun+!>(data.action)]~)
       %bye   ~&(%kicking [%give %kick [/subs]~ `who.action]~)
       %flus  ~&(%flushing [%give %fact [/flus]~ atom+!>(data.action)]~)
       %flas  ~&(%flashing [%give %kick [/flus]~ `who.action]~)
@@ -76,9 +76,9 @@
   ?+  path  (on-watch:def path)
     :: XX allow users for crashes here to trigger naxplanations
     ::
-      [%subs ~]  ~&  subs+src.bowl  ~ :: (on-watch:def path)
-      [%sabs ~]  ~&  sabs+src.bowl  ~ :: (on-watch:def path)
-      [%sups ~]  ~&  sups+src.bowl
+      [%subs ~]  ~&  subs+[our=our src=src]:bowl  ~ :: (on-watch:def path)
+      [%sabs ~]  ~&  sabs+[our=our src=src]:bowl  ~ :: (on-watch:def path)
+      [%sups ~]  ~&  sups+[our=our src=src]:bowl
     :~  [%give %fact ~ atom+!>(%done)]
         [%give %kick ~ ~]
     ==
@@ -92,7 +92,7 @@
   ~&  leave+[src.bowl path]
   :: XX allow users for crashes here to trigger naxplanations
   ::
-  ?:  &  !!
+  :: ?:  &  !!  :: XX
   `this
   :: ?.  ?=([%subs ~] path)  `this
   :: :_  this

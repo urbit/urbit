@@ -350,6 +350,36 @@
       ==
     loop
   (pure:m noun.unto.q.unix-effect)
+::
+++  wait-for-cork
+  |=  [our=ship her=ship flow=bone:ames]
+  =/  m  (strand ,~)
+  ^-  form:m
+  ;<  =bowl:spider  bind:m  get-bowl
+  |-  ^-  form:m
+  =*  loop  $
+  ;<  [from=ship =unix-effect]  bind:m  take-unix-effect
+  ;<  now=@da                   bind:m  get-time
+  ::  only %send or %push effects
+  ::
+  ?.  ?=(?(%send %push) -.q.unix-effect)
+    loop
+  ::  check that this is an %ack?
+  ?.  =(from our)
+    ::  wait until the ack for the %cork $plea is sent, at this point
+    ::  the publisher has already corked the flow
+    ::
+    loop
+  =/  aqua-pax
+    %+  weld  /i/(scot %p our)/ax/(scot %p our)//(scot %da now)
+    /corked/(scot %p her)/(scot %ud flow)/noun
+  =+  ;;  corked=(unit ?)  (scry-aqua:util noun our.bowl now aqua-pax)
+  ?~  corked  loop
+  ?.  u.corked  ::  XX check .her as well
+    loop
+  ~&  >>  flow-is-corked/flow
+  (pure:m ~)
+::
 ::  Send "|hi" and wait for "not responding" message
 ::
 ++  send-hi-not-responding
