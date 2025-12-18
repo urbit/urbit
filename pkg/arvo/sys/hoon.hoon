@@ -13630,21 +13630,24 @@
     |.  ~+
     %+  (slug |=([a=limb b=wing] [a b]))
       dot
-    ;~  pose
-      (cold [%| 0 ~] com)
-      %+  cook
-        |=([a=(list) b=term] ?~(a b [%| (lent a) `b]))
-      ;~(plug (star ket) ;~(pose sym (cold %$ buc)))
+    %-  stew
+    ^.  stet  ^.  limo
+    :~  :-  ['a' 'z']  sym
+        :-  '$'  (cold %$ buc)
+        :-  ','  (cold [%| 0 ~] com)
+        :-  '^'  %+  cook
+                   |=([a=(list) b=term] ?~(a b [%| (lent a) `b]))
+                 ;~(plug (plus ket) ;~(pose sym (cold %$ buc)))
     ::
-      %+  cook
-        |=(a=axis [%& a])
-      ;~  pose
-        ;~(pfix lus dim:ag)
-        ;~(pfix pam (cook |=(a=@ (sub (bex +(a)) 2)) dim:ag))
-        ;~(pfix bar (cook |=(a=@ (sub (bex +(a)) 1)) dim:ag))
-        ven
-        (cold 1 dot)
-      ==
+        :-  '+'  %+  cook  (lead %&)
+                 ;~  pose
+                   ;~(pfix lus dim:ag)
+                   ven
+                 ==
+        :-  '-'  (cook (lead %&) ven)
+        :-  '&'  ;~(pfix pam (cook |=(a=@ &+(sub (bex +(a)) 2)) dim:ag))
+        :-  '|'  ;~(pfix bar (cook |=(a=@ &+(sub (bex +(a)) 1)) dim:ag))
+        :-  '.'  (cold &+1 dot)
     ==
   ::
   ++  wise
