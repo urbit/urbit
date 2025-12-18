@@ -3018,8 +3018,8 @@
       ^+  q
       %-  ~(rep by q)
       |=  [=blocked-move r=(qeu blocked-move)]
-      ?:  ?=([[%gall-use-wire *] *] duct.blocked-move)
-        r
+      =?  duct.blocked-move  ?=([[%gall-use-wire *] *] duct.blocked-move)
+        t.duct.blocked-move
       (~(put to r) blocked-move)
     ==
   ::
