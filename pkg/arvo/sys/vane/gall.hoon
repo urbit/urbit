@@ -3054,14 +3054,14 @@
     :-  %19
     %_    old
         blocked
-      %-  ~(urn by blocked.old)
-      |=  [=term q=(qeu blocked-move)]
+      %-  ~(run by blocked.old)
+      |=  q=(qeu blocked-move)
       ^+  q
-      %-  ~(rep by q)
-      |=  [=blocked-move r=(qeu blocked-move)]
-      ?:  ?=([[%gall-use-wire *] *] duct.blocked-move)
-        r
-      (~(put to r) blocked-move)
+      %-  ~(run to `(qeu blocked-move)`q)
+      |=  =blocked-move
+      =?  duct.blocked-move  ?=([[%gall-use-wire *] *] duct.blocked-move)
+        t.duct.blocked-move
+      blocked-move
     ==
   ::
   --
