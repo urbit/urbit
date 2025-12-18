@@ -4451,7 +4451,7 @@
           =/  lyf
             (rof [~ ~] /ames %j `beam`[[our %lyfe %da now] /(scot %p sndr.shot)])
           ?:  ?=([~ ~ [* * ^]] lyf)
-            (emit [[//keys]~ %pass /public-keys %j %public-keys sndr.shot ~ ~])
+            (emit [duct %pass /public-keys %j %public-keys sndr.shot ~ ~])
           ::  upgrade comet to %known via on-publ-full
           ::
           =.  event-core
@@ -5280,7 +5280,7 @@
             (rof [~ ~] /ames %j `beam`[[our %lyfe %da now] /(scot %p ship)])
           ?:  ?=([~ ~ [* * ^]] lyf)
             =.  event-core  (emil moves)
-            (emit [[//keys]~ %pass /public-keys %j %public-keys ship ~ ~])
+            (emit [duct %pass /public-keys %j %public-keys ship ~ ~])
           =.  event-core
             =/  =blob  (sendkeys-packet ship)
             (send-blob for=| ship blob (~(get by peers.ames-state) ship))
