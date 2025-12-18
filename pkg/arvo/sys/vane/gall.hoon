@@ -956,6 +956,8 @@
         ::
         ::  add agent to list of suspended/not running agents
         ::
+        %-  %^  trace  odd.veb.bug.state  foreign-agent.response
+            &+"add remote agent to flubs; will be revived on %spur"
         =.  flubs.state  (~(put ju flubs.state) u.ship foreign-agent.response)
         (mo-pass /remote-flub %a %halt u.ship [foreign-agent bone]:response)
       ::
@@ -970,6 +972,8 @@
         |=  [[[=^wire =duct] queue=*] m=_mo-core]
         ?.  =(/sys/way/(scot %p u.ship)/[foreign-agent.response] wire)
           m
+        %-  %^  trace:m  odd.veb.bug.state  foreign-agent.response
+            &+"remove remote agent from %flubs; revive flow"
         (mo-pass:m(hen duct) wire %a %goad u.ship)
       ==
     ==
@@ -1280,6 +1284,9 @@
   ::
   ::    If the agent is not running or blocked, assign it the supplied
   ::    +deal.  Otherwise simply apply the action to the agent.
+  ::
+  ::    (remote %deals coming from %ames are not added to the blocked queue
+  ::     for non-running agents; see +mo-do-flub)
   ::
   ++  mo-handle-local
     |=  [prov=path =ship agent=term =deal]
