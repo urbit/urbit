@@ -5461,11 +5461,14 @@
         ?:  ?=(%blob -.lot)
           ['~' '0' ((v-co 1) (jam p.lot))]
         ?:  ?=(%many -.lot)
-          :-  '.'
+          :-  '._'
           |-  ^-  tape
           ?~   p.lot
             ['_' '_' rep]
-          ['_' (weld (trip (wack rent(lot i.p.lot))) $(p.lot t.p.lot))]
+          %+  weld
+            (trip (wack rent(lot i.p.lot)))
+          ?~  t.p.lot  $(p.lot t.p.lot)
+          ['_' $(p.lot t.p.lot)]
         =+  [yed=(end 3 p.p.lot) hay=(cut 3 [1 1] p.p.lot)]
         |-  ^-  tape
         ?+    yed  (z-co q.p.lot)
