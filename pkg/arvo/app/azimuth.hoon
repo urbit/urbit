@@ -275,11 +275,12 @@
       =?  snap.poke  ?=(%0 -.snap.poke)
         snap.poke(- %1, nas (load:naive nas.snap.poke))
       ?>  ?=(%1 -.snap.poke)
-      =:  net.state   %default
+      =:  net.state   ?.(=('' url.state) net.state %default)
           nas.state   nas.snap.poke
           own.state   owners.snap.poke
           spo.state   sponsors.snap.poke
-          url.state   'http://eth-mainnet.urbit.org:8545'
+          url.state   ?.  =('' url.state)  url.state
+                      'http://eth-mainnet.urbit.org:8545'
           sap.state   snap.poke
           logs.state  ~
         ==

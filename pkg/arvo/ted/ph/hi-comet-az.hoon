@@ -4,7 +4,7 @@
 ^-  thread:spider
 |=  vase
 =/  m  (strand ,vase)
-=/  comet  ~bosrym-podwyl-magnes-dacrys--pander-hablep-masrym-marbud
+=/  comet  ~harrep-podpec-torsut-docnyx--mopsyx-fosdus-ladpen-marbud
 ;<  ~  bind:m  start-azimuth
 ;<  ~  bind:m  (spawn ~bud)
 ;<  ~  bind:m  (init-ship ~bud |)

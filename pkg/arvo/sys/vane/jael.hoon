@@ -324,7 +324,9 @@
       =.  +>.$
         ?:  =(~ srcs.tac)
           %^  poke-watch  hen  %azimuth
-          !>([%watch 'http://eth-mainnet.urbit.org:8545/' %default])
+          ?~  node.tac
+            [%watch 'http://eth-mainnet.urbit.org:8545/' %default]
+          [%watch (crip (en-purl:html u.node.tac)) %default]
         |-  ^+  +>.^$
         ?~  srcs.tac  +>.^$
         =.  +>.^$  (poke-watch hen i.srcs.tac)

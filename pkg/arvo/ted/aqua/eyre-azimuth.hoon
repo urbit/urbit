@@ -1,7 +1,7 @@
 ::  Pass-through Eyre driver
 ::
-/-  spider, *aquarium
-/+  ethereum, azimuth, ph-io, util=ph-util, strandio
+/-  spider, dice, *aquarium
+/+  ethereum, azimuth, ph-io, util=ph-util, strandio, aqua-azimuth
 =,  strand=strand:spider
 |%
 +$  state
@@ -71,6 +71,24 @@
   |=  [our=ship her=ship uf=unix-effect]
   ^-  (unit card:agent:gall)
   =,  enjs:format
+  =/  ask-load
+    %+  extract-request:util  uf
+    'https://bootstrap.urbit.org/mainnet.azimuth-snapshot'
+  ?^  ask-load
+    =/  events=(list aqua-event)
+      :_  ~
+      :*  %event
+          her
+          /i/http-client/0v1n.2m9vh
+          %receive
+          num.u.ask-load
+          [%start [200 ~] `(as-octs:mimes:html (jam *versioned-state:dice)) &]
+      ==
+    :*  %pass  /aqua-events
+        %agent  [our %aqua]
+        %poke  %aqua-events
+        !>(events)
+    ==
   =/  ask  (extract-request:util uf 'http://localhost:8545/')
   ?~  ask
     ~
@@ -279,13 +297,13 @@
       ?(%earl %pawn)
     =/  spon=ship  (^sein:title who)
     =/  cic
-      ::  hard-code a valid comet key for convenience so we don't have to mine
+      ::  use hard-coded comet keys so we don't have to mine
       ::
-      ?:  =(who ~bosrym-podwyl-magnes-dacrys--pander-hablep-masrym-marbud)
-        %-  nol:nu:cric:crypto
-        0w9N.5uIvA.Jg0cx.NCD2R.o~MtZ.uEQOB.9uTbp.6LHvg.0yYTP.
-        3q3td.T4UF0.d5sDL.JGpZq.S3A92.QUuWg.IHdw7.izyny.j9W92
-      (pit:nu:cric:crypto 512 (shaz (jam who life=1 %entropy)))
+      ?~  cum=(~(get by comets:aqua-azimuth) who)
+        (pit:nu:cric:crypto 512 (shaz (jam who life=1 %entropy)) %b ~)
+      ?:  ?=(%b suite.u.cum)
+        (pit:nu:cric:crypto 512 seed.u.cum %b ~)
+      (pit:nu:cric:crypto 512 seed.u.cum %c 0xdead.beef.cafe)
     =/  =feed:jael
       [[%2 ~] who 0 [1 sec:ex:cic] ~]
     =/  =pass  pub:ex:cic
@@ -309,11 +327,7 @@
       =/  life-rift  ~|([ship lives.state] (~(got by lives.state) ship))
       =/  =life  lyfe.life-rift
       =/  =rift  rut.life-rift
-      =/  =pass
-        %^    pass-from-eth:azimuth
-            (as-octs:mimes:html (get-public ship life %crypt))
-          (as-octs:mimes:html (get-public ship life %auth))
-        1
+      =/  =pass  pub:ex:(get-keys:aqua-azimuth ship life)
       :^    ship
           *[address address address address]:azimuth
         `[life=life pass rift spon-spon ~]
@@ -327,7 +341,7 @@
     =/  life-rift  (~(got by lives.state) who)
     =/  =life  lyfe.life-rift
     =/  =rift  rut.life-rift
-    [[%2 ~] who rift [life sec:ex:(get-keys who life)]~]
+    [[%2 ~] who rift [life sec:ex:(get-keys:aqua-azimuth who life)]~]
   :*  feed
       spon
       get-czars
@@ -348,10 +362,7 @@
     ~
   %-  some
   :^  who  rut  lyfe
-  %^    pass-from-eth:azimuth
-      (as-octs:mimes:html (get-public who lyfe %crypt))
-    (as-octs:mimes:html (get-public who lyfe %auth))
-  1
+  pub:ex:(get-keys:aqua-azimuth who lyfe)
 ::
 ++  spawn
   |=  who=@p
@@ -360,14 +371,9 @@
   ?<  (~(has by lives.state) who)
   =.  lives.state  (~(put by lives.state) who [1 0])
   =.  logs.state
+    =/  [cry=@ sgn=@]  (get-public:aqua-azimuth who 1)
     %+  weld  logs.state
-    :~  %-  changed-keys:lo
-        :*  who
-            (get-public who 1 %crypt)
-            (get-public who 1 %auth)
-            1
-            1
-        ==
+    :~  (changed-keys:lo who cry sgn 1 1)
     ==
   (spam-logs 10)
 ::
@@ -379,14 +385,9 @@
   =/  lyfe  +(lyfe.prev)
   =.  lives.state  (~(put by lives.state) who [lyfe rut.prev])
   =.  logs.state
+    =/  [cry=@ sgn=@]  (get-public:aqua-azimuth who lyfe)
     %+  weld  logs.state
-    :_  ~
-    %-  changed-keys:lo
-    :*  who
-        (get-public who lyfe %crypt)
-        (get-public who lyfe %auth)
-        1
-        lyfe
+    :~  (changed-keys:lo who cry sgn 1 lyfe)
     ==
   (pure:m state)
 ::
@@ -417,19 +418,6 @@
     (cycle-keys ~fes)
   =.  state  new-state
   loop(n (dec n))
-::
-++  get-keys
-  |=  [who=@p lyfe=life]
-  %+  pit:nu:cric:crypto  32
-  (can 5 [1 (scot %p who)] [1 (scot %ud lyfe)] ~)
-::
-++  get-public
-  |=  [who=@p lyfe=life typ=?(%auth %crypt)]
-  =/  bod  (rsh 3 pub:ex:(get-keys who lyfe))
-  =+  [enc=(rsh 8 bod) aut=(end 8 bod)]
-  ?:  =(%auth typ)
-    aut
-  enc
 ::
 ::  Generate logs
 ::
