@@ -2361,11 +2361,11 @@
             [%26 axle-26-27]
             [%27 axle-26-27]
             [%28 axle]
+            [%29 axle]
         ==
     ::
     ::
     |=  [now=@da eny=@ rof=roof]
-    ~>  %spin.[%ames]
     =*  larval-gate  .
     =*  adult-core   (adult-gate +<)
     ::  formal interface with no extra arms
@@ -2436,7 +2436,7 @@
       ~>  %slog.0^leaf/"ames: metamorphosis on %take"
       [:(weld molt-moves queu-moves take-moves) adult-gate]
     ::
-    ++  stay  [%28 larva/ames-state]
+    ++  stay  [%29 larva/ames-state]
     ++  scry  scry:adult-core
     ++  load
       |=  $=  old
@@ -2594,6 +2594,10 @@
                   state=axle-26-27
               ==
               $:  %28                            :: add halted flows
+                  ?(%adult %larva)               ::
+                  state=axle
+              ==
+              $:  %29                            :: clean up corked flows
                   ?(%adult %larva)               ::
                   state=axle
           ==  ==
@@ -2881,6 +2885,11 @@
         larval-gate
       ::
           [%28 *]
+        =.  cached-state  `[%28 state.old]
+        ~>  %slog.1^leaf/"ames: larva %28 reload"
+        larval-gate
+      ::
+          [%29 *]
         ?-  +<.old
           %larva  larval-gate
           %adult  (load:adult-core state.old)
@@ -2959,7 +2968,7 @@
       |^  ^+  [moz larval-core]
       ?~  cached-state  [~ larval-core]
       =*  old  u.cached-state
-      ?:  ?=(%28 -.old)
+      ?:  ?=(%29 -.old)
         ::  no state migrations left; update state, clear cache, and exit
         ::
         [(flop moz) larval-core(ames-state.adult-gate +.old, cached-state ~)]
@@ -3051,8 +3060,52 @@
             [[/ames]~ %pass /stir %a %stir '']
           moz
         ==
-      ?>  ?=(%27 -.old)
-      $(cached-state `28+(state-27-to-28 +.old))
+      ?:  ?=(%27 -.old)
+        $(cached-state `28+(state-27-to-28 +.old))
+      ~>  %slog.0^leaf/"ames: clean up corked flows"
+      %_    $
+          -.u.cached-state  %29
+      ::
+          moz
+        ^-  (list move)
+        %-  ~(rep by chums.+.old)
+        |=  [[=ship per-sat=chum-state] moz=_moz]
+        ?.  ?=([%known *] per-sat)
+          moz
+        =/  ev-core
+          %.  [~[//cork-peek] ship +.per-sat]
+          %*(ev-abed ev:mesa:adult-core ames-state +.old)
+        %-  ~(rep by pit.per-sat)
+        |=  [[=path req=request-state] m=_moz]
+        ?.  ?=(^ pay.req)  m
+        %-  ~(rep by for.req)
+        |=  [[hen=duct *] m=_m]
+        ::  inspect the duct to find %mesa wires for %pokes
+        ::
+        ?.  ?=([[%ames %mesa %flow *] *] hen)
+          m
+        =>  .(i.hen `(pole knot)`i.hen)
+        ?.  ?=([@ @ @ %ack %for h=@ r=@ bone=@ ~] i.hen)
+          m
+        ?~  bone=(slaw %ud bone.i.hen)
+          m
+        =+  fo-core=(fo-abed:fo:ev-core u.bone %for)
+        ::  if the flow is in closing, we are the forward side, and we are
+        ::  resending the %cork $plea, the other side could have corked the
+        ::  flow so we try to peek for the %corked flow. as soon as either the
+        ::  %ack for the %cork $plea, or the %gone $page for the peek arrive,
+        ::  fo-abel will delete the flow and clean up any outstanding peeks
+        ::
+        ?.  ?&  closing.state.fo-core
+                !pending-ack.rcv.fo-core
+                =(1 (wyt:fo-mop:fo-core loads.snd.fo-core))
+                ?~  first=(pry:fo-mop:fo-core loads.snd.fo-core)
+                  |
+                ?=([%plea %$ [%flow ~] %cork ~] val.u.first)
+            ==
+          m
+        (weld m moves:fo-peek-cork:fo-core)
+      ==
       ::
       ++  our-beam  `beam`[[our %rift %da now] /(scot %p our)]
       ++  state-4-to-5
@@ -3541,7 +3594,7 @@
       ++  state-27-to-28
         |=  old=axle-26-27
         ^-  axle
-        ~>  %slog.0^leaf/"ames: migrating from state %27 to %26"
+        ~>  %slog.0^leaf/"ames: migrating from state %27 to %28"
         %=    old
             peers
           %-  ~(run by peers.old)
@@ -4477,7 +4530,6 @@
           ::  will be resent.
           ::
           ?.  ?=([~ %known *] sndr-state)
-            ~&  %enqueue-alien
             (enqueue-alien-todo sndr.shot sndr-state |=(alien-agenda +<))
           ::  decrypt packet contents using symmetric-key.channel
           ::
@@ -10014,13 +10066,15 @@
             ::  ack is for the first, oldest pending-ack sent message;
             ::  remove it and start processing cached acks
             ::
-            =^  *  loads.snd  (del:fo-mop loads.snd seq)
+            =^  m  loads.snd  (del:fo-mop loads.snd seq)
             ::  increase the send-window so we can send the next message
             ::
             =.  send-window.snd  +(send-window.snd)
             =.  can-be-corked
-              ?&  closing.state    ::  we sent a %cork %plea
+              ?&  ?=(%for dire)    ::  (only if we are the %for side)
+                  closing.state    ::  we sent a %cork %plea
                   ?=(~ loads.snd)  ::  nothing else is pending
+                  ?=(^ m)  =([%plea %$ [%flow ~] %cork ~] u.m)
               ==
             ::  send next messages
             ::
@@ -10896,11 +10950,18 @@
               ?:  ?=(%pawn (clan:title ship))
                 ::  XX resend attestation request?
                 ::
-                =/  spon=@p  (^sein:title ship)
+                =/  gal=(unit @p)
+                  =/  sax
+                    %^  rof  [~ ~]  /ames
+                    j/`beam`[[our %saxo %da now] /(scot %p ship)]
+                  ?.  ?=([~ ~ *] sax)
+                    ~
+                  `(rear ;;((list @p) q.q.u.u.sax))
                 =^  al-moves  ames-state.core
-                  ?:  =(our spon)  ~  ::  XX  don't send to ourselves
+                  ?~  gal           ~  ::  XX  this shouldn't happen
+                  ?:  =(our u.gal)  ~  ::  XX  don't send to ourselves
                   =<  al-abet
-                  %.  [ship `@ux`spon]
+                  %.  [ship lane=`@ux`u.gal]
                   ~(al-read-proof al(ames-state ames-state.core) ~[/ames])
                 (sy-emil:core al-moves)
               %-  sy-emit:core
@@ -10911,10 +10972,6 @@
             ::
             =^  resend-moves  ames-state.core
               =;  c=_ev-core
-                ::  moves are going to be flopped again in sy-abet but
-                ::  that seems fine since there is only one packet per
-                ::  entry in the pit
-                ::
                 ev-abet:c
               %-  ~(rep by pit.per.ev-core)
               |=  [[=path req=request-state] core=_ev-core]
@@ -11560,9 +11617,16 @@
             al-core
           ::
           ?:  =(%pawn (clan:title ship))
-            =/  spon=@p  (^sein:title ship)
-            ?:  =(our spon)  al-core  ::  XX  don't send to ourselves
-            (al-read-proof ship `@ux`spon)
+            =/  gal=(unit @p)
+              =/  sax
+                %^  rof  [~ ~]  /ames
+                j/`beam`[[our %saxo %da now] /(scot %p ship)]
+              ?.  ?=([~ ~ *] sax)
+                ~
+              `(rear ;;((list @p) q.q.u.u.sax))
+            ?~  gal           al-core  ::  XX  this shouldn't happen
+            ?:  =(our u.gal)  al-core  ::  XX  don't send to ourselves
+            (al-read-proof ship lane=`@ux`u.gal)
           ::  NB: we specifically look for this wire in +public-keys-give in
           ::  Jael.  if you change it here, you must change it there.
           ::
@@ -11629,7 +11693,9 @@
           ::  so we can set up the comet lane which is not in state
           ::
           ?~  pact=(co-make-pact:co `spar`comet^path ~ rift=0)
-            !!
+            %-  %^  al-tace  odd.veb.bug.ames-state  comet
+                |.("peek for comet attestation failed")
+            al-core
           %-  %^  al-tace  fin.veb.bug.ames-state  comet
               |.("peek for comet attestation proof")
           (al-emit (push-pact comet u.pact (make-lanes comet `[0 lane] *qos)))
@@ -12223,7 +12289,12 @@
           =/  =side  [u.bone dire]
           =+  fo-core=(fo-abed:fo:ev-core side)
           ?.  (~(has by flows.per.fo-core) side)
-            ~
+            ::  if the flow doesn't exist check if the query is asking
+            ::  for corked flows
+            ::
+            ?+  qery.pat.tyl  ~
+              [%cork ~]  ?~(r=(fo-peek:fo-core %cork 0) ~ ``[%message !>(u.r)])
+            ==
           =,  state:fo-core
           ?+    qery.pat.tyl  ~
               ~          ``message/!>(sate/state:fo-core)
@@ -13053,7 +13124,7 @@
 ++  call
   |=  [hen=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _vane-gate]
-  ~>  %spin.[%call]
+  ~>  %spin.['call/ames']
   =*  sample  +<
   =+  me-core=mesa
   =+  am-core=(ames now eny rof)
@@ -13109,7 +13180,7 @@
 ++  take
   |=  [=wire =duct dud=(unit goof) =sign]
   ^-  [(list move) _vane-gate]
-  ~>  %spin.[%take]
+  ~>  %spin.['take/ames']
   =*  sample  +<
   =+  me-core=mesa
   =+  am-core=(ames now eny rof)
@@ -13151,18 +13222,18 @@
   take:am-core
 ::  +stay: extract state before reload
 ::
-++  stay  [%28 adult/ames-state]
+++  stay  [%29 adult/ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
   |=  state=axle
-  ~>  %spin.[%load]
+  ~>  %spin.['load/ames']
   vane-gate(ames-state state)
 ::  +scry: dereference namespace
 ::
 ++  scry
   ^-  roon
-  ~>  %spin.[%scry]
+  ~>  %spin.['scry/ames']
   |=  [lyc=gang pov=path car=term bem=beam]
   =*  sample  +<
   =+  me-core=mesa

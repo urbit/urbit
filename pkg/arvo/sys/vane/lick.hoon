@@ -23,7 +23,6 @@
 =|  lick-state
 =*  state  -
 |=  [now=@da eny=@uvJ rof=roof]
-~>  %spin.[%lick]
 =*  lick-gate  .
 ^?
 |%
@@ -48,7 +47,7 @@
           wrapped-task=(hobo task)
       ==
   ^-  [(list move) _lick-gate]
-  ~>  %spin.[%call]
+  ~>  %spin.['call/lick']
   ::
   =/  =task  ((harden task) wrapped-task)
   ?+   -.task  [~ lick-gate]
@@ -80,7 +79,7 @@
 ++  load
   |=  old=lick-state
   ^+  lick-gate
-  ~>  %spin.[%load]
+  ~>  %spin.['load/lick']
   lick-gate(state old)
 ::  +scry: view state
 ::
@@ -90,7 +89,7 @@
   ^-  roon
   |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
-  ~>  %spin.[%scry]
+  ~>  %spin.['scry/lick']
   |^
   ::  only respond for the local identity, current timestamp, root gang
   ::
@@ -131,7 +130,7 @@
 ++  take
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^-  [(list move) _lick-gate]
-  ~>  %spin.[%take]
+  ~>  %spin.['take/lick']
   ?^  dud
     ~|(%lick-take-dud (mean tang.u.dud))
   ::

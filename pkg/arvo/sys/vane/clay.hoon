@@ -4904,7 +4904,6 @@
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
-~>  %spin.[%clay]
 ~%  %clay-top  ..part  ~
 |%                                                    ::
 ++  call                                              ::  handle request
@@ -4914,7 +4913,7 @@
           wrapped-task=(hobo task)
       ==
   ^-  [(list move) _..^$]
-  ~>  %spin.[%call]
+  ~>  %spin.['call/clay']
   ::
   =/  req=task  ((harden task) wrapped-task)
   ::
@@ -5732,7 +5731,7 @@
       --
   |=  old=raft-any
   |^
-  ~>  %spin.[%load]
+  ~>  %spin.['load/clay']
   =?  old  ?=(%6 -.old)   7+(raft-6-to-7 +.old)
   =?  old  ?=(%7 -.old)   8+(raft-7-to-8 +.old)
   =?  old  ?=(%8 -.old)   9+(raft-8-to-9 +.old)
@@ -6121,7 +6120,7 @@
   ^-  roon
   |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
-  ~>  %spin.[%scry]
+  ~>  %spin.['scry/clay']
   =*  scry-loop  $
   |^
   =*  ren  car
@@ -6342,7 +6341,7 @@
   ~/  %clay-take
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^+  [*(list move) ..^$]
-  ~>  %spin.[%take]
+  ~>  %spin.['take/clay']
   ?^  dud
     ?+    tea
       ~|(%clay-take-dud (mean tang.u.dud))
