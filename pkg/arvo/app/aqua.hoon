@@ -868,7 +868,7 @@
     =/  a-point=[^ship point:jael]
       =/  spon-spon  (^sein:title ship)
       =/  [=life =rift]
-        ~|([ship lives.azi.piers] (~(got by lives.azi.piers) ship))
+        (~(gut by lives.azi.piers) ship [1 0])
       =/  =pass  pub:ex:(get-keys:aqua-azimuth ship life)
       =/  keys
         (~(put by *(map ^life [crypto-suite=@ud =^pass])) life [1 pass])
