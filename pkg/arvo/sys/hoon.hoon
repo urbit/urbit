@@ -1491,7 +1491,7 @@
       d(r $(d r.d))
     e(l $(e l.e))
   ::
-  ++  dig                                               ::  axis of b key
+  ++  dig                                               ::  axis of [key=b val]
     |=  b=*
     =+  c=1
     |-  ^-  (unit @)
