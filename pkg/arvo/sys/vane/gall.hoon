@@ -1348,16 +1348,13 @@
         %u  [%leave ~]
       ==
     (mo-pass wire %g %deal [ship our /] agent-name deal)
+  ::  +mo-do-flub: drop incoming pleas in %ames
+  ::
+  ::    (if the /gf system flow has been established, notify the other ship
+  ::     to halt the flow)
   ::
   ++  mo-do-flub
     |=  [=ship agent-name=term]
-    ::  %ames wil pass a $deep task to itself to halt the flow, at the same
-    ::  time, on the /flub flow, we send a %boon with the bone that the sender
-    ::  needs to halt as well to stop sending any outstanding $pleas
-    ::
-    ::  XX if %leave, cork the flow; otherwise, halt it?
-    ::  currently we always halt it
-    ::
     =?  halts.state  (~(has by flub-ducts.state) ship)
       ::  only add the app if we have received the /gf $plea
       ::
@@ -1367,16 +1364,21 @@
     =.  mo-core  (mo-track-flubs ship)
     ::
     =+  maybe-blocked=?=(^ (~(get by blocked.state) agent-name))
+    ::  after handling the %flub $gift, %ames wil pass a $deep task
+    ::  to itself to halt the flow. at the same time, on the /flub
+    ::  flow, we send a %boon with the bone that the sender needs to
+    ::  halt as well to stop sending any outstanding $pleas
+    ::
+    ::  XX if %leave, cork the flow; otherwise, halt it?
+    ::  currently we always halt it
+    ::
     %+  mo-give  %flub
-    ::  if we are waiting to hear the /gf $plea, only %flub the flow in %ames
-    ::  and skip sending the %flub $boon
     ::
     ::  if we have blocked moves, skip the %flub handling logic in %ames
+    ::  if /gf system flow is not established, skip sending the %flub $boon
     ::
-    :+  ~  maybe-blocked
-    ?.  (~(has by flub-ducts.state) ship)
-      %$  :: XX empty agent as placeholder
-    agent-name
+    :+  ~  skip=maybe-blocked
+    ?.((~(has by flub-ducts.state) ship) ~ `agent-name)
   ::
   ++  mo-handle-flub-plea
     |=  =ship
@@ -2653,7 +2655,7 @@
       %-  %^  trace:mo-core  &(?=([%gp @ ~] path) odd.veb.bug.state)  agent-name
           &+"on {<ship>} flubbing in-progress flow"
       (mo-do-flub:mo-core ship agent-name)
-    ?.  ?=([%ge @ ~] path)
+    ?:  ?=([%gp @ ~] path)
       %-  %^  trace:mo-core  odd.veb.bug.state  agent-name
           &+"on {<ship>} weird in-progress flow; running agent; skip %flub"
       mo-core
