@@ -7262,73 +7262,57 @@
               ::    which doesn't happen for boons.
               ::
               ?:  (lte seq last-heard.state)
-                ?:  &(is-last-fragment !closing)
-                  ::  if not from a closing bone, drop last packet,
-                  ::  since we don't know whether to ack or nack
+                ?.  &(is-last-fragment !closing)
+                  ::  not last one; ack all other packets
                   ::
+                  =.  peer-core  (send-shut-packet bone seq %| %& fragment-num)
+                  %-  %+  pe-trace  rcv.veb  |.
+                      =/  data
+                        :*  seq=seq  fragment-num=fragment-num
+                            num-fragments=num-fragments  closing=closing
+                        ==
+                      "send ack-1 {<data>}"
+                  sink
+                ::  if not from a closing bone, drop last packet,
+                ::  since we don't know whether to ack or nack
+                ::
+                =/  data
+                  :*  her  seq=seq  bone=bone.shut-packet
+                      fragment-num  num-fragments
+                      la=last-acked.state  lh=last-heard.state
+                      pending=~(key by pending-vane-ack.state)
+                  ==
+                =.  peer-core
+                  ::  sanity check; boons are always acked
+                  ::
+                  ?.  ?=(%plea (received bone.shut-packet))
+                    peer-core
+                  ?:  ?&  ?=(~ (~(get by live-messages.state) seq))
+                          !=(0 fragment-num)
+                      ==
+                    %.  peer-core
+                    %+  pe-trace  |(rcv.veb odd.veb)
+                    |.("hear last in-progress miss live {<data>}")
+                  ::  if this message is in progress, it should be in the
+                  ::  pending-ack queue. all queued messages should be
+                  ::  pleas to the same agent so we just get the last one to
+                  ::  retrieve the agent name
+                  ::
+                  =/  [num=@ud message=*]  p:~(get to pending-vane-ack.state)
+                  ?~  m=;;((soft [vane=@tas =path payload=*]) message)
+                    peer-core
+                  ?.  ?=([%g [%ge @ *] *] u.m)
+                    ::  XX /gk pleas to non running aggents are always acked
+                    ::
+                    peer-core
+                  =/  agent  i.t.path.u.m
                   %-  %+  pe-trace  rcv.veb
                       |.  ^-  tape
-                      =/  data
-                        :*  her  seq=seq  bone=bone.shut-packet
-                            fragment-num  num-fragments
-                            la=last-acked.state  lh=last-heard.state
-                        ==
-                      "hear last in-progress {<data>}"
-                  =.  peer-core
-                    ?.  ?=(%plea (received bone.shut-packet))
-                      peer-core
-                    =/  fragments=(map @ @uwfragment)
-                      ::  create default if first fragment
-                      ::
-                      ?~  existing=(~(get by live-messages.state) seq)
-                        ?.  =(0 fragment-num)
-                          ~
-                        %+  ~(put by *(map @ @uwfragment))
-                          fragment-num
-                        fragment
-                      ?>  (gth num-fragments.u.existing fragment-num)
-                      ?>  =(num-fragments.u.existing num-fragments)
-                      ::
-                      %+  ~(put by fragments.u.existing)
-                        fragment-num
-                      fragment
-                    ?~  fragments
-                      %.  peer-core
-                      %+  pe-trace  odd.veb
-                      |.  ^-  tape
-                      =/  data
-                        :*  her  seq=seq  bone=bone.shut-packet
-                            fragment-num  num-fragments
-                            la=last-acked.state  lh=last-heard.state
-                            pending=~(key by pending-vane-ack.state)
-                        ==
-                      "last in-progress miss live {<data>}"
-                    =/  message=*
-                      (assemble-fragments num-fragments fragments)
-                    ?~  m=;;((soft [vane=@tas =path payload=*]) message)
-                      peer-core
-                    ?.  ?=([%g [%ge @ *] *] u.m)
-                      ::  XX /gk pleas to non running aggents are always acked
-                      ::
-                      peer-core
-                    =/  agent-name  i.t.path.u.m
-                    %-  %+  pe-trace  odd.veb
-                        |.  ^-  tape
-                        "last in-progress check %flub for {<agent-name>}"
-                    %^  pe-emit  duct  %pass
-                    :-  (make-bone-wire her her-rift.channel bone.shut-packet)
-                    [%g %plea her u.m(path /gp/[agent-name])]
+                      "hear last in-progress; try to %flub {<[agent data]>}"
+                  %^  pe-emit  duct  %pass
+                  :-  (make-bone-wire her her-rift.channel bone.shut-packet)
+                  [%g %plea her u.m(path /gp/[agent])]
                   sink
-                ::  ack all other packets
-                ::
-                =.  peer-core  (send-shut-packet bone seq %| %& fragment-num)
-                %-  %+  pe-trace  rcv.veb  |.
-                    =/  data
-                      :*  seq=seq  fragment-num=fragment-num
-                          num-fragments=num-fragments  closing=closing
-                      ==
-                    "send ack-1 {<data>}"
-                sink
               ::  last-heard<seq<10+last-heard; packet in a live message
               ::
               =/  =partial-rcv-message
