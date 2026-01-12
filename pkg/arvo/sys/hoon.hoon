@@ -4905,24 +4905,38 @@
     vex
   [p=p.vex q=[~ u=[p=(hez [p.tub p.q.u.q.vex] p.u.q.vex) q=q.u.q.vex]]]
 ::
-++  inde  |*  sef=rule                                  :: indentation block
-  |=  nail  ^+  (sef)
-  =+  [har tap]=[p q]:+<
+++  inde                                                :: indentation block
+  |*  [[ope=rule end=rule] sef=rule]
+  |=  tub=nail  ^+  (sef)
+  =*  har  p.tub
+  =*  tap  q.tub
   =+  lev=(fil 3 (dec q.har) ' ')
   =+  eol=(just `@t`10)
-  =+  =-  roq=((star ;~(pose prn ;~(sfix eol (jest lev)) -)) har tap)
-      ;~(simu ;~(plug eol eol) eol)
+  =+  and=;~(plug eol (jest lev) end)
+  ::  get block contents without the indenting spaces
+  ::
+  =/  roq
+    %.  tub
+    =/  led
+      ;~  pose
+        ;~(sfix eol (jest lev))        ::  eat leading spaces
+        ;~(simu ;~(plug eol eol) eol)  ::  allow empty lines
+      ==
+    ;~  pfix  ope  led
+      %-  star
+      ;~(less and ;~(pose prn led))
+    ==
   ?~  q.roq  roq
-  =+  vex=(sef har(q 1) p.u.q.roq)
+  ::  parse block contents fully
+  ::
+  =+  vex=((full sef) har(q 1) p.u.q.roq)
+  ::  indent hair, produce result, continue after block
+  ::
   =+  fur=p.vex(q (add (dec q.har) q.p.vex))
   ?~  q.vex  vex(p fur)
-  =-  vex(p fur, u.q -)
-  :+  &3.vex
-    &4.vex(q.p (add (dec q.har) q.p.&4.vex))
-  =+  res=|4.vex
-  |-  ?~  res  |4.roq
-  ?.  =(10 -.res)  [-.res $(res +.res)]
-  (welp [`@t`10 (trip lev)] $(res +.res))
+  =+  vux=(and p.roq q.q.u.q.roq)
+  ?~  q.vux  vux
+  [p.vux ~ p.u.q.vex q.u.q.vux]
 ::
 ++  ifix
   |*  [fel=[rule rule] hof=rule]
@@ -5239,25 +5253,7 @@
            (cook |=(a=char (sub a 87)) (shim 'a' 'f'))
            (cook |=(a=char (sub a 55)) (shim 'A' 'F'))
          ==
-++  iny                                                 :: indentation block
-  |*  sef=rule
-  |=  nail  ^+  (sef)
-  =+  [har tap]=[p q]:+<
-  =+  lev=(fil 3 (dec q.har) ' ')
-  =+  eol=(just `@t`10)
-  =+  =-  roq=((star ;~(pose prn ;~(sfix eol (jest lev)) -)) har tap)
-      ;~(simu ;~(plug eol eol) eol)
-  ?~  q.roq  roq
-  =+  vex=(sef har(q 1) p.u.q.roq)
-  =+  fur=p.vex(q (add (dec q.har) q.p.vex))
-  ?~  q.vex  vex(p fur)
-  =-  vex(p fur, u.q -)
-  :+  &3.vex
-    &4.vex(q.p (add (dec q.har) q.p.&4.vex))
-  =+  res=|4.vex
-  |-  ?~  res  |4.roq
-  ?.  =(10 -.res)  [-.res $(res +.res)]
-  (welp [`@t`10 (trip lev)] $(res +.res))
+++  iny  inde                                           :: indentation block
 ::
 ++  low  (shim 'a' 'z')                                 ::  lowercase
 ++  mes  %+  cook                                       ::  hexbyte
@@ -5279,10 +5275,10 @@
              ;~  less  soz
                (ifix [soq soq] (boss 256 (more gon qit)))
              ==
-             =+  hed=;~(pose ;~(plug (plus ace) vul) (just '\0a'))
-             %-  iny  %+  ifix
-               :-  ;~(plug soz hed)
-               ;~(plug (just '\0a') soz)
+             %+  iny
+               =+  vul=;~(plug col col (star prn))
+               :-  ;~(plug soz ;~(pose ;~(plug (plus ace) vul) (easy ~)))
+               soz
              (boss 256 (star qat))
            ==
          ==
@@ -11828,8 +11824,7 @@
           (ifix [doq doq] (cook collapse-chars quote-innards))
         ==
       ::
-        %-  inde
-        %+  ifix  [(jest '"""\0a') (jest '\0a"""')]
+        %+  inde  [(jest '"""') (jest '"""')]
         (cook collapse-chars quote-innards(lin |))
       ==
     ::
@@ -11840,7 +11835,7 @@
         ;~(pfix bas ;~(pose (mask "-+*%;\{") bas doq bix:ab))
         inline-embed
         ;~(less bas kel ?:(in-tall-form fail doq) prn)
-        ?:(lin fail ;~(less (jest '\0a"""') (just '\0a')))
+        ?:(lin fail (just '\0a'))
       ==
     ::
     ++  bracketed-elem                                  ::  bracketed element
@@ -12964,13 +12959,12 @@
         ==
       ==
     ::
-      %-  iny  %+  ifix
-        [(jest '"""\0a') (jest '\0a"""')]
+      %+  iny  [(jest '"""') (jest '"""')]
       %-  star
       ;~  pose
         ;~(pfix bas ;~(pose bas kel bix:ab))
         ;~(less bas kel prn)
-        ;~(less (jest '\0a"""') (just `@`10))
+        (just `@`10)
         (stag ~ sump)
       ==
     ==
@@ -13634,21 +13628,24 @@
     |.  ~+
     %+  (slug |=([a=limb b=wing] [a b]))
       dot
-    ;~  pose
-      (cold [%| 0 ~] com)
-      %+  cook
-        |=([a=(list) b=term] ?~(a b [%| (lent a) `b]))
-      ;~(plug (star ket) ;~(pose sym (cold %$ buc)))
+    %-  stew
+    ^.  stet  ^.  limo
+    :~  :-  ['a' 'z']  sym
+        :-  '$'  (cold %$ buc)
+        :-  ','  (cold [%| 0 ~] com)
+        :-  '^'  %+  cook
+                   |=([a=(list) b=term] ?~(a b [%| (lent a) `b]))
+                 ;~(plug (plus ket) ;~(pose sym (cold %$ buc)))
     ::
-      %+  cook
-        |=(a=axis [%& a])
-      ;~  pose
-        ;~(pfix lus dim:ag)
-        ;~(pfix pam (cook |=(a=@ (sub (bex +(a)) 2)) dim:ag))
-        ;~(pfix bar (cook |=(a=@ (sub (bex +(a)) 1)) dim:ag))
-        ven
-        (cold 1 dot)
-      ==
+        :-  '+'  %+  cook  (lead %&)
+                 ;~  pose
+                   ;~(pfix lus dim:ag)
+                   ven
+                 ==
+        :-  '-'  (cook (lead %&) ven)
+        :-  '&'  ;~(pfix pam (cook |=(a=@ &+(sub (bex +(a)) 2)) dim:ag))
+        :-  '|'  ;~(pfix bar (cook |=(a=@ &+(sub (bex +(a)) 1)) dim:ag))
+        :-  '.'  (cold &+1 dot)
     ==
   ::
   ++  wise
