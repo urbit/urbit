@@ -1563,7 +1563,7 @@
     ::
     +$  message-sink-task
       $%  [%done ok=?]
-          $>(%flub gift:gall)  :: XX add cork=? for %leaves?
+          [%flub $@(~ [blocked=? dap=(unit term)])]  :: XX add cork=? for %leaves?
           [%drop =message-num]
           [%hear =lane =shut-packet ok=?]
       ==
@@ -4122,7 +4122,7 @@
         ::  never delivered
         ::
         ++  on-take-flub
-          |=  [=wire flub=$>(%flub gift:gall)]
+          |=  [=wire flub=[%flub $@(~ [blocked=? dap=(unit term)])]]
           ^+  event-core
           ?~  parsed=(parse-bone-wire wire)
             ::  no-op
@@ -5607,7 +5607,7 @@
             abet:(call:(abed:mu bone) %hear [message-num +.meat]:shut-packet)
           ::
           ++  on-take-flub
-            |=  [=bone flub=$>(%flub gift:gall)]
+            |=  [=bone flub=[%flub $@(~ [blocked=? dap=(unit term)])]]
             ^+  peer-core
             abet:(call:(abed:mi:peer-core bone) flub)
           ::
@@ -7161,8 +7161,8 @@
                   %drop  sink(nax.state (~(del in nax.state) message-num.task))
                   %done  (done ok.task)
                   %flub
-                ?~  +.task  sink
-                =?  peer-core  ?=([? ^] +.task)
+                ?:  ?=([%flub ~] task)  sink
+                =?  peer-core  ?=([%flub ? ^] task)
                   ::  /gf system flow established; halt the flow
                   ::
                   (pe-emit duct %pass /flub %a %deep %halt her u.dap.task bone)
