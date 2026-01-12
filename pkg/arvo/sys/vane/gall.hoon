@@ -579,7 +579,6 @@
       =.  mo-core  (mo-give-halts dap)
       (mo-clear-queue dap)
     ::
-
     =.  yokes.state
       %+  ~(put by yokes.state)  dap
       %*    .  *$>(%live yoke)
@@ -957,6 +956,8 @@
         ::
         ::  add agent to list of suspended/not running agents
         ::
+        %-  %^  trace  odd.veb.bug.state  foreign-agent.response
+            &+"add remote agent to flubs; will be revived on %spur"
         =.  flubs.state  (~(put ju flubs.state) u.ship foreign-agent.response)
         (mo-pass /remote-flub %a %halt u.ship [foreign-agent bone]:response)
       ::
@@ -971,6 +972,8 @@
         |=  [[[=^wire =duct] queue=*] m=_mo-core]
         ?.  =(/sys/way/(scot %p u.ship)/[foreign-agent.response] wire)
           m
+        %-  %^  trace:m  odd.veb.bug.state  foreign-agent.response
+            &+"remove remote agent from %flubs; revive flow"
         (mo-pass:m(hen duct) wire %a %goad u.ship)
       ==
     ==
@@ -1282,6 +1285,9 @@
   ::    If the agent is not running or blocked, assign it the supplied
   ::    +deal.  Otherwise simply apply the action to the agent.
   ::
+  ::    (remote %deals coming from %ames are not added to the blocked queue
+  ::     for non-running agents; see +mo-do-flub)
+  ::
   ++  mo-handle-local
     |=  [prov=path =ship agent=term =deal]
     ^+  mo-core
@@ -1342,16 +1348,13 @@
         %u  [%leave ~]
       ==
     (mo-pass wire %g %deal [ship our /] agent-name deal)
+  ::  +mo-do-flub: drop incoming pleas in %ames
+  ::
+  ::    (if the /gf system flow has been established, notify the other ship
+  ::     to halt the flow)
   ::
   ++  mo-do-flub
     |=  [=ship agent-name=term]
-    ::  %ames wil pass a $deep task to itself to halt the flow, at the same
-    ::  time, on the /flub flow, we send a %boon with the bone that the sender
-    ::  needs to halt as well to stop sending any outstanding $pleas
-    ::
-    ::  XX if %leave, cork the flow; otherwise, halt it?
-    ::  currently we always halt it
-    ::
     =?  halts.state  (~(has by flub-ducts.state) ship)
       ::  only add the app if we have received the /gf $plea
       ::
@@ -1359,16 +1362,26 @@
     ::  before flubbing, check if system flow is established
     ::
     =.  mo-core  (mo-track-flubs ship)
-    %+  mo-give  %flub
-    ::  if we are waiting to hear the /gf $plea, only %flub the flow in %ames
-    ::  and skip sending the %flub $boon
     ::
-    ?.  (~(has by flub-ducts.state) ship)
-      ~
-    [~ agent-name]
+    ::  after handling the %flub $gift, %ames wil pass a $deep task
+    ::  to itself to halt the flow. at the same time, on the /flub
+    ::  flow, we send a %boon with the bone that the sender needs to
+    ::  halt as well to stop sending any outstanding $pleas
+    ::
+    ::  XX if %leave, cork the flow; otherwise, halt it?
+    ::  currently we always halt it
+    ::
+    %^  mo-give  %flub
+    ::  if we have blocked moves, skip the %flub handling logic in %ames
+    ::  if /gf system flow is not established, skip sending the %flub $boon
+    ::
+      maybe-blocked=?=(^ (~(get by blocked.state) agent-name))
+    ?.((~(has by flub-ducts.state) ship) ~ `agent-name)
   ::
   ++  mo-handle-flub-plea
     |=  =ship
+    %-   %^  trace:mo-core  odd.veb.bug.state  %$  :: XX add system flags to .veb
+         &+"/gf system flow established with {<ship>}"
     =.  flub-ducts.state  (~(put by flub-ducts.state) ship hen)
     ::  before acking the %flub $plea, check if the system flow is established
     ::
@@ -2640,9 +2653,9 @@
       %-  %^  trace:mo-core  &(?=([%gp @ ~] path) odd.veb.bug.state)  agent-name
           &+"on {<ship>} flubbing in-progress flow"
       (mo-do-flub:mo-core ship agent-name)
-    ?.  ?=([%ge @ ~] path)
+    ?:  ?=([%gp @ ~] path)
       %-  %^  trace:mo-core  odd.veb.bug.state  agent-name
-          &+"on {<ship>} weird in-progress flow; non running agent; skip %flub"
+          &+"on {<ship>} weird in-progress flow; running agent; skip %flub"
       mo-core
     (mo-handle-ames-request:mo-core ship agent-name +.ames-request-all)
   ::
@@ -3157,6 +3170,15 @@
           =([~ ~] lyc)
       ==
     ``halts+!>(halts.state)
+  ::
+  ?:  ?&  =(%i care)
+          =(~ path)
+          =([%$ %da now] coin)
+          =(our ship)
+          =([~ ~] lyc)
+      ==
+    ::  XX support per ship
+    ``flub-ducts+!>(flub-ducts.state)
   ::
   ?:  ?&  =(%n care)
           ?=([@ @ ^] path)

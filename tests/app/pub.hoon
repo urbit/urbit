@@ -47,7 +47,7 @@
     :_  this
     ~&  >>  -.action
     ?-  -.action
-      %send  ~&(%sending [%give %fact [/subs]~ noun+!>(data.action)]~)
+      %send  ~&(%sending [%give %fact [/subs]~ pub-fact+!>(data.action)]~)
       %bye   ~&(%kicking [%give %kick [/subs]~ `who.action]~)
       %flus  ~&(%flushing [%give %fact [/flus]~ atom+!>(data.action)]~)
       %flas  ~&(%flashing [%give %kick [/flus]~ `who.action]~)
