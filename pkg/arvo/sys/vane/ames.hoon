@@ -4047,7 +4047,7 @@
               ::
                 [%behn %wake *]  (on-take-wake:event-core wire error.sign)
               ::
-                [%gall %flub *]  (on-take-flub:event-core wire +>.sign)
+                [%gall %flub *]  (on-take-flub:event-core wire +.sign)
                 [%gall %spur *]  (on-take-spur:event-core wire)
               ==
             ::
@@ -4122,7 +4122,7 @@
         ::  never delivered
         ::
         ++  on-take-flub
-          |=  [=wire ~ blocked=? dap=(unit term)]
+          |=  [=wire flub=$>(%flub gift:gall)]
           ^+  event-core
           ?~  parsed=(parse-bone-wire wire)
             ::  no-op
@@ -4142,7 +4142,7 @@
             event-core
           =/  =bone
             ?-(u.parsed [%new *] bone.u.parsed, [%old *] bone.u.parsed)
-          abet:(on-take-flub:peer-core bone ~ blocked dap)
+          abet:(on-take-flub:peer-core bone flub)
         ::  +on-take-spur: vane ready to process message
         ::
         ++  on-take-spur
@@ -5607,9 +5607,9 @@
             abet:(call:(abed:mu bone) %hear [message-num +.meat]:shut-packet)
           ::
           ++  on-take-flub
-            |=  [=bone ~ blocked=? dap=(unit term)]
+            |=  [=bone flub=$>(%flub gift:gall)]
             ^+  peer-core
-            abet:(call:(abed:mi:peer-core bone) %flub ~ blocked dap)
+            abet:(call:(abed:mi:peer-core bone) flub)
           ::
           ++  on-take-spur
             |=  =bone
@@ -7161,13 +7161,14 @@
                   %drop  sink(nax.state (~(del in nax.state) message-num.task))
                   %done  (done ok.task)
                   %flub
-                =?  peer-core  ?=(^ dap.task)
+                ?~  +.task  sink
+                =?  peer-core  ?=([? ^] +.task)
                   ::  /gf system flow established; halt the flow
                   ::
                   (pe-emit duct %pass /flub %a %deep %halt her u.dap.task bone)
                 ?:  blocked.task
                   %-  %+  pe-trace  odd.veb
-                      |.("%plea is enqueued in %gall; skip %flub")
+                      |.("%plea enqueued in %gall; skip %flub")
                   sink
                 %-  (pe-trace odd.veb |.("%flubbing: {<bone=bone>}"))
                 %_  sink
@@ -9817,10 +9818,10 @@
                 ::  halt the flow
                 ::
                   %flub
-                =?  halt.state   ?=(^ dap.sign)  %.y
-                =?     fo-core   ?=(^ dap.sign)
+                =?  halt.state   ?=([? ^] +.sign)  %.y
+                =?     fo-core   ?=([? ^] +.sign)
                   (fo-emit hen %pass /halt %g %halt her u.dap.sign bone)
-                =?  pending-ack.rcv  !blocked.sign
+                =?  pending-ack.rcv  &(?=([? *] +.sign) !blocked.sign)
                   %.n  :: XX  tack.pending-ack.rcv
                 fo-core
                 ::  un-halt the flow

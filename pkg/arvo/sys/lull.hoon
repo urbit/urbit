@@ -3681,7 +3681,7 @@
     $%  [%boon payload=*]                               ::  ames response
         [%noon id=* payload=*]
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
-        [%flub ~ blocked=? dap=(unit term)]             ::  refuse to take plea
+        [%flub $@(~ [blocked=? dap=(unit term)])]       ::  refuse to take plea
         [%spur ~]                                       ::  ready to take plea
         [%unto p=unto]                                  ::
     ==                                                  ::

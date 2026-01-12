@@ -1363,7 +1363,6 @@
     ::
     =.  mo-core  (mo-track-flubs ship)
     ::
-    =+  maybe-blocked=?=(^ (~(get by blocked.state) agent-name))
     ::  after handling the %flub $gift, %ames wil pass a $deep task
     ::  to itself to halt the flow. at the same time, on the /flub
     ::  flow, we send a %boon with the bone that the sender needs to
@@ -1372,12 +1371,11 @@
     ::  XX if %leave, cork the flow; otherwise, halt it?
     ::  currently we always halt it
     ::
-    %+  mo-give  %flub
-    ::
+    %^  mo-give  %flub
     ::  if we have blocked moves, skip the %flub handling logic in %ames
     ::  if /gf system flow is not established, skip sending the %flub $boon
     ::
-    :+  ~  skip=maybe-blocked
+      maybe-blocked=?=(^ (~(get by blocked.state) agent-name))
     ?.((~(has by flub-ducts.state) ship) ~ `agent-name)
   ::
   ++  mo-handle-flub-plea
@@ -3172,6 +3170,15 @@
           =([~ ~] lyc)
       ==
     ``halts+!>(halts.state)
+  ::
+  ?:  ?&  =(%i care)
+          =(~ path)
+          =([%$ %da now] coin)
+          =(our ship)
+          =([~ ~] lyc)
+      ==
+    ::  XX support per ship
+    ``flub-ducts+!>(flub-ducts.state)
   ::
   ?:  ?&  =(%n care)
           ?=([@ @ ^] path)
