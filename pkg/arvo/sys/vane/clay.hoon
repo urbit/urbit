@@ -837,7 +837,7 @@
         %+  slub  (with-faces cor+old ~)
         ^-  hoon
         :+  %brcl  !,(*hoon v=+<.cor)
-        :+  %sggr  
+        :+  %sggr
           [%spin %cltr [%sand %t (crip "grow-{<a>}->{<b>}")] ~]
         :+  %tsgl  limb/b
         !,(*hoon ~(grow cor v))
@@ -845,11 +845,11 @@
       ::
       =^  new=vase  nub  (build-fit %mar b)
       =/  arm=?  (has-arm %grab a new)
-      =/  rab 
+      =/  rab
         %-  mule  |.
-        %+  slap  new 
+        %+  slap  new
         ^-  hoon
-        :+  %sggr  
+        :+  %sggr
           [%spin %cltr [%sand %t (crip "grab-{<a>}->{<b>}")] ~]
         tsgl/[limb/a limb/%grab]
       ?:  &(arm ?=(%& -.rab) ?=(^ q.p.rab))

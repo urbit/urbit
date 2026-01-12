@@ -21,11 +21,11 @@
             ${./urbit} --pier $out -F zod -B ${pill} -l -x -t -A ${arvo}
           '';
         fakePier = bootFakeShip {
-          pill = ./bin/solid.pill;
+          pill = ./bin/brass.pill;
           arvo = "${./pkg}/arvo";
         };
         testPier = bootFakeShip {
-          pill = ./bin/solid.pill;
+          pill = ./bin/brass.pill;
           arvo = pkgs.runCommand "test-arvo" {} ''
             cp -r ${./pkg} $out
             chmod +w -R $out

@@ -92,7 +92,7 @@
   ~&  leave+[src.bowl path]
   :: XX allow users for crashes here to trigger naxplanations
   ::
-  ?:  &  !!
+  :: ?:  &  !!  :: XX
   `this
   :: ?.  ?=([%subs ~] path)  `this
   :: :_  this
