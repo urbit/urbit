@@ -3093,6 +3093,14 @@
     =/  yok=(unit yoke)  (~(get by yokes.state) dap)
     &(?=([~ %live *] yok) -.agent.u.yok)
   ::
+  ?:  ?&  =(%b care)
+          =(~ path)
+          =([%$ %da now] coin)
+          =(our ship)
+          =([~ ~] lyc)
+      ==
+    [~ ~ noun+!>(blocked.state)]
+  ::
   ?:  ?&  =(%d care)
           =(~ path)
           =([%$ %da now] coin)

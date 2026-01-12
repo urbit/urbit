@@ -10963,11 +10963,18 @@
               ?:  ?=(%pawn (clan:title ship))
                 ::  XX resend attestation request?
                 ::
-                =/  spon=@p  (^sein:title ship)
+                =/  gal=(unit @p)
+                  =/  sax
+                    %^  rof  [~ ~]  /ames
+                    j/`beam`[[our %saxo %da now] /(scot %p ship)]
+                  ?.  ?=([~ ~ *] sax)
+                    ~
+                  `(rear ;;((list @p) q.q.u.u.sax))
                 =^  al-moves  ames-state.core
-                  ?:  =(our spon)  ~  ::  XX  don't send to ourselves
+                  ?~  gal           ~  ::  XX  this shouldn't happen
+                  ?:  =(our u.gal)  ~  ::  XX  don't send to ourselves
                   =<  al-abet
-                  %.  [ship `@ux`spon]
+                  %.  [ship lane=`@ux`u.gal]
                   ~(al-read-proof al(ames-state ames-state.core) ~[/ames])
                 (sy-emil:core al-moves)
               %-  sy-emit:core
@@ -11623,9 +11630,16 @@
             al-core
           ::
           ?:  =(%pawn (clan:title ship))
-            =/  spon=@p  (^sein:title ship)
-            ?:  =(our spon)  al-core  ::  XX  don't send to ourselves
-            (al-read-proof ship `@ux`spon)
+            =/  gal=(unit @p)
+              =/  sax
+                %^  rof  [~ ~]  /ames
+                j/`beam`[[our %saxo %da now] /(scot %p ship)]
+              ?.  ?=([~ ~ *] sax)
+                ~
+              `(rear ;;((list @p) q.q.u.u.sax))
+            ?~  gal           al-core  ::  XX  this shouldn't happen
+            ?:  =(our u.gal)  al-core  ::  XX  don't send to ourselves
+            (al-read-proof ship lane=`@ux`u.gal)
           ::  NB: we specifically look for this wire in +public-keys-give in
           ::  Jael.  if you change it here, you must change it there.
           ::
