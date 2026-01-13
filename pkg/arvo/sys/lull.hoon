@@ -4114,9 +4114,10 @@
           turf.tac
           bloq.tac
           node.tac
+          srcs:*dawn-1
         ::
-          =<  [%azimuth %watch - %default]~
-          'http://eth-mainnet.urbit.org:8545'
+::          =<  [%azimuth %watch - %default]~
+::          'http://eth-mainnet.urbit.org:8545'
         ::
       ==
     --
