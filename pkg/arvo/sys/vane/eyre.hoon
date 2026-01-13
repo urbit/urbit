@@ -152,6 +152,13 @@
   =+  t=(en-turf:html turf)
   ?~  port  t
   (rap 3 t ':' (crip (a-co:co u.port)) ~)
+::
+++  ip-string
+  |=  [ip=@if port=(unit @ud)]
+  ^-  @t
+  =+  t=(rsh 3 (scot %if ip))
+  ?~  port  t
+  (rap 3 t ':' (crip (a-co:co u.port)) ~)
 ::  +combine-octs: combine multiple octs into one
 ::
 ++  combine-octs
@@ -853,6 +860,7 @@
       ::      host=@t, or better yet, host=turf
       !!
     ::  parse the hostname from the request, then
+    ::  either it's a naked ip address, or we
     ::  find the domain that we _know_ (.domains.state) that is the
     ::  longest prefix for the requested hostname and take its last
     ::  subdomain as the candidate request-target desk
@@ -862,20 +870,27 @@
     ::    example 2: request to pals.mopfel.np.io:
     ::               `[domain=~['io' 'np' 'mopfel'] desk=`%pals]
     ::
-    ::  .target: request target, with separate host and scope
-    ::         .root: "root" hostname, known domain
-    ::         .port: request port
-    ::         .desk: subdomain/scope of the request, if any
+    ::  .proto-target: request target, with separate host and scope
+    ::             either accessed by domain name:
+    ::               .domain: "root" hostname, known domain
+    ::               .port: request port
+    ::               .desk: subdomain/scope of the request, if any
+    ::             or by ip address:
+    ::               .ip: request ip target
+    ::               .port: request port
     ::
-    =/  target=(unit [[domain=turf port=(unit @ud)] desk=(unit desk)])
+    =/  proto-target=(unit (each [[domain=turf port=(unit @ud)] desk=(unit desk)] [ip=@if port=(unit @ud)]))
       ::REVIEW  should just parse earlier?
       =/  doom=(unit [port=(unit @ud) doom=(each turf @if)])
         (rush u.host thor:de-purl:html)
-      ~&  doom=doom
-      ?.  ?=([~ * %& *] doom)  ~  ::  only proper hostnames supported
+      ?~  doom  ~
+      ?:  ?=(%| -.doom.u.doom)
+        ::TODOxx  if ip support not enabled, produce ~
+        `[%| p.doom port]:u.doom
       =.  domains.state  (~(put in domains.state) ~['localhost'])  ::TODOxx tmp
       =-  ?:  =(hit *turf)  ~
           %-  some
+          :-  %&
           :-  [hit port.u.doom]
           ?:  =(/ suffix)  ~
           `(rear suffix)
@@ -894,7 +909,9 @@
       ?:  (gte (lent u.res) (lent suffix))
         [ours u.res]
       nop
-    ~&  [host=host target=target url=url.request]
+    ?~  proto-target
+      !!  ::TODOxx  serve 400
+    =*  target  u.proto-target
     ::  .pathowner: desk that the target path is bound to (~ for base/eyre)
     ::
     =/  pathowner=(unit desk)
@@ -923,7 +940,7 @@
     ::  it's requesting at the wrong subdomain, or at top-level for a subdomain
     ::  path), redirect to the subdomain that "owns" the requested url/binding.
     ::
-    ?:  &(?=(^ target) ?=(^ pathowner) !=(pathowner desk.u.target))
+    ?:  &(?=(%& -.target) ?=(^ pathowner) !=(pathowner desk.p.target))
       ::NOTE  some code duplication with below, but request handling deserves
       ::      a refactor anyway
       =.  connections.state
@@ -938,7 +955,7 @@
       =/  target-url=@t
         %+  rap  3
         :~  '//'  u.pathowner  '.'
-            (host-string -.u.target)  url.request
+            (host-string -.p.target)  url.request
         ==
       %-  handle-response
       :*  %start
@@ -947,12 +964,10 @@
           complete=%.y
       ==
     =/  [=action suburl=@t]
-      ::  if the domain is not known to us, we can't serve on it.
+      ::  in the ip case, always resolve the route
       ::
-      ?~  target
-        :_  url.request
-        ~&  [%for-oh-ofr-a url=url.request]
-        [%four-oh-four ~]
+      ?:  ?=(%| -.target)
+        (get-action-for-binding host url.request)
       ::  if there is no pathowner (aka the pathowner is eyre)
       ::  then we _always resolve the route_,
       ::  because eyre handles the request itself.
@@ -962,11 +977,11 @@
         ::      "eyre endpoint", never %app or %gen
         (get-action-for-binding host url.request)
       ::NOTE  should be handled directly above this
-      ?~  desk.u.target  ~|(%eyre-confused-branching !!)
+      ?~  desk.p.target  ~|(%eyre-confused-branching !!)
       ::  if the subdomain points to a desk that does not own the request path,
       ::  (a desk that did not bind that path,) we cannot resolve the request.
       ::
-      ?.  =(u.desk.u.target u.pathowner)
+      ?.  =(u.desk.p.target u.pathowner)
         ~&  [%for-oh-ofr-b url=url.request]
         [[%four-oh-four ~] url.request]
       ::  finally, if we are serving under a known domain, whose subdomain
@@ -1000,33 +1015,29 @@
           [%negotiate subdomain=turf old-session=(unit @uv)]
       ==
     =^  auth-state=t  state
-      ?~  target
-        :_  state
-        ::NOTE  careful! this is wack!
-        ::      but this case always gets a %four-oh-four, which will instantly
-        ::      remove this from connection state (and not extend the non-
-        ::      existent session-id).
-        ?>  ?=(%four-oh-four -.action)
-        [%made *@uv [fake+~fipfes-fipfes-fipfes-fipfes--fipfes-fipfes-fipfes-fipfes ~] ~]
-      =*  full-turf  (snoc domain.u.target u.desk.u.target)
+      =*  full-turf  (snoc domain.p.target u.desk.p.target)
       ?~  sid=(session-id-from-request:authentication request)
-        ?^  desk.u.target  [[%negotiate full-turf ~] state]
+        ?:  ?=([%& * ^] target)  [[%negotiate full-turf ~] state]
         [[%made -] +]:(start-session:authentication %new-guest ~)
       ?~  ses=(~(get by sessions.auth.state) u.sid)
-        ?:  ?=(^ desk.u.target)
+        ?:  ?=([%& * ^] target)
           [[%negotiate full-turf `u.sid] state]
         [[%invalid u.sid] state]
       ?:  (gth now expiry-time.u.ses)
-        ?:  ?=(^ desk.u.target)
+        ?:  ?=([%& * ^] target)
           [[%negotiate full-turf `u.sid] state]
         [[%invalid u.sid] state]
       ::  provenance doesn't match request target,
       ::  they shouldn't pass this cookie!
+      ::  (bare ip access always treated as root scope)
       ::
-      ?.  =(desk.u.target scope.identity.u.ses)
-        ::TODOxx  log? warn? weird case
-        [[%negotiate ?~(desk.u.target domain.u.target full-turf) ~] state]
-      [[%have u.sid identity.u.ses ~] state]
+      =/  desk=(unit desk)
+        ?:(?=(%| -.target) ~ desk.p.target)
+      ?:  =(desk scope.identity.u.ses)
+        [[%have u.sid identity.u.ses ~] state]
+      ::TODOxx  log? warn? weird case
+      ?:  ?=(%| -.target)  [[%invalid u.sid] state]
+      [[%negotiate ?~(desk.p.target domain.p.target full-turf) ~] state]
     ::  normally, %negotiate on a subdomain means that we _start_ auth
     ::  negotiation. however, if the request binds to %xxauth, this means we're
     ::  returning to the subdomain after having started negotiation through the
@@ -1037,7 +1048,7 @@
     =^  auth-state=t  state
       ?.  ?&  ?=(%negotiate -.auth-state)
               ?=(%xxauth -.action)
-              ?=([~ * ^] target)
+              ?=([%& * ^] target)
           ==
         [auth-state state]
       =/  [tmp-token=@uv target-url=tape]
@@ -1055,7 +1066,7 @@
       ?~  parent-session=(~(get by sessions.auth.state) u.parent)
         ~|(%unknown-parent-session !!)
       =/  new-id=identity
-        identity.u.parent-session(scope desk.u.target)
+        identity.u.parent-session(scope desk.p.target)
       =.  tokensxx.auth.state  (~(del by tokensxx.auth.state) tmp-token)
       [[%made -] +]:(start-session:authentication new-id parent)
     ::
@@ -1089,13 +1100,14 @@
       ==
     ::
     ?:  ?=(%negotiate -.auth-state)
+      ?>  ?=(%& -.target)
       ::TODOxx  this is the equivalent of doing a [%xxauth %jump],
       ::        can imagine implementing it as such, =. action or w/e
       :_  state
       =;  =http-event:http
         [duct %give %response http-event]~
       %-  build-subdomain-negotiation
-      :+  [subdomain.auth-state port:(need target)]
+      :+  [subdomain.auth-state port.p.target]
         url.request
       %+  bind  old-session.auth-state
       (curr session-cookie-string:authentication ~)
@@ -1211,17 +1223,17 @@
       ::NOTE  %jump case handled in %negotiate auth-state above
       :: ?:  ?=([~ * ^] target)
       ::   %^  return-static-data-on-duct  200  'text/html'
-      ::   (build-subdomain-negotiation domain.u.target suburl)
-      ?~  target
+      ::   (build-subdomain-negotiation domain.p.target suburl)
+      ?:  ?=(%| -.target)
         ~&  %xxauth-hit-without-domain
-        ::  we don't know this domain, so can't reliably redirect to top or
-        ::  subdomain, so can't really do anything with this binding here
+        ::  this binding is for cross-domain auth negotiation,
+        ::  doesn't make sense to hit in the ip address case
         ::
-        %^  return-static-data-on-duct  404  'text/html'
-        (error-page 404 & url.request "no such route")
+        %^  return-static-data-on-duct  400  'text/html'
+        (error-page 400 & url.request "no ip xxauth")
       ::  top domain, %sink case
       ::
-      ?~  desk.u.target
+      ?~  desk.p.target
         ::  at this point, we expect the url.request to be of the shape
         ::  /~/xxauth/[scope]/[target-path]. get those values out.
         ::
@@ -1239,7 +1251,7 @@
         =/  expire=move
           [duct %pass /xx-auth/(scot %uv tmp-token) %b %wait (add now tmp-token-timeout)]
         =/  redirect-url=tape
-          "//{(trip scope)}.{(trip (host-string -.u.target))}/~/xxauth/{(scow %uv tmp-token)}{target-url}"
+          "//{(trip scope)}.{(trip (host-string -.p.target))}/~/xxauth/{(scow %uv tmp-token)}{target-url}"
         =^  moz=(list move)  state
           %-  handle-response
           [%start [303 ['location' (crip redirect-url)]~] ~ &]
@@ -1729,7 +1741,7 @@
     ::
     ++  handle-request
       |=  $:  secure=?
-              target=(unit [[domain=turf port=(unit @ud)] desk=(unit desk)])
+              target=(each [[domain=turf port=(unit @ud)] desk=(unit desk)] [ip=@if port=(unit @ud)])
               =address
               [session-id=@uv =identity]
               =request:http
@@ -1746,15 +1758,15 @@
       ::  all /~/login requests on subdomains must redirect to root,
       ::  which is the only legitimate place for authentication requests
       ::
-      ?:  ?=([~ * ^] target)
+      ?:  ?=([%& * ^] target)
         ::TODOxx  refactor redirects into dedicated arm?
         %-  handle-response
         =/  next=@t
           %+  rap  3
           :~  '//'
-              (host-string -.u.target)
+              (host-string -.p.target)
               '/~/login'
-              '?desk='  u.desk.u.target
+              '?desk='  u.desk.p.target
               ?:(=(`& with-eauth) '&eauth' '')
               ?^(redirect (cat 3 '&redirect=' u.redirect) '')
           ==
@@ -1794,13 +1806,14 @@
           (login-page [target-desk redirect] our identity `& %.n)
         ::TODO  redirect logic here and elsewhere is ugly
         =/  redirect  (fall redirect '')
-        =/  base=(unit @t)
-          ?~  target  ~
-          %-  some
+        =/  base=@t
           %^  cat  3
             ?:(secure 'https://' 'http://')
-          (host-string -.u.target)
-        (start:server:eauth u.ship base ?:(=(redirect '') '/' redirect))
+          ?-  -.target
+            %&  (host-string -.p.target)
+            %|  (ip-string p.target)
+          ==
+        (start:server:eauth u.ship `base ?:(=(redirect '') '/' redirect))
       ::
       =.  with-eauth  (bind with-eauth |=(? |))
       ?~  password=(get-header:http 'password' u.parsed)
@@ -1833,11 +1846,12 @@
           ::  avoid overwriting public domains with localhost
           ::
           ::TODO REVIEW  but not if it's an eauth login??
-          ?&  ?=(^ target)
+          ::TODO REVIEW  allow naked ip addresses to become eauth endpoint?
+          ?&  ?=(%& -.target)
           ?|  ?=(~ auth.endpoint.auth.state)
-              !=(~['localhost'] domain.u.target)
+              !=(~['localhost'] domain.p.target)
           ==  ==
-        =/  host=@t  (host-string -.u.target)
+        =/  host=@t  (host-string -.p.target)
         %-  (trace 2 |.("eauth: storing endpoint at {(trip host)}"))
         =/  new-auth=(unit @t)
           `(cat 3 ?:(secure 'https://' 'http://') host)
@@ -1861,10 +1875,12 @@
         ?:  =('' u.target-desk)  ~
         `u.target-desk
       =?  actual-redirect  ?=(^ actual-desk)
-        ?>  ?=(^ target)
         %+  rap  3
         :~  '//'
-            (host-string -.u.target)
+            ?-  -.target
+              %&  (host-string -.p.target)
+              %|  (ip-string p.target)
+            ==
             '/~/xxauth/'  u.actual-desk
             actual-redirect
         ==
@@ -2168,6 +2184,7 @@
         ::  +start: initiate an eauth login attempt for the :ship identity
         ::
         ++  start
+          ::TODO  .base could become @t
           |=  [=ship base=(unit @t) last=@t]
           ^-  [(list move) server-state]
           %-  (trace 2 |.("eauth: starting eauth into {(scow %p ship)}"))
