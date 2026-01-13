@@ -1332,6 +1332,9 @@
         %eauth
       (on-request:eauth:authentication [suv identity] request)
     ::
+        %auth
+      (on-request:auth:authentication [suv identity] request)
+    ::
         %logout
       (handle-logout:authentication [suv identity] request)
     ::
@@ -1686,7 +1689,7 @@
       %-  (trace 1 |.("leaving subscription to {<app.action>}"))
       (deal-as /watch-response/[eyre-id] identity our app.action %leave ~)
     ::
-        ?(%authentication %eauth %logout)
+        ?(%authentication %eauth %auth %logout)
       ::NOTE  expiry timer will clean up cancelled eauth attempts
       [~ state]
     ::
@@ -2663,6 +2666,92 @@
         |=  =path
         ^-  move
         [duct %pass [%eauth %expire path] %b %wait (add now eauth-timeout)]
+      --
+    ::
+    ++  auth
+      |%
+      ++  on-request
+        |=  [[suv=@uv =identity] =request:http]
+        ^-  [(list move) server-state]
+        ::  only root login is allowed to do this
+        ::
+        ?.  ?=([[%ours ~] ~] identity)
+          =;  url=@t  (handle-response %start 303^['location' url]~ ~ &)
+          %^  cat  3  '/~/login?redirect='
+          (crip (en-urlt:html (trip url.request)))
+        ::
+        ?:  ?=(%'POST' method.request)  (on-post +<)
+        ?.  ?=(%'GET' method.request)   (handle-response %start 405^~ ~ &)
+        ::  parse the arguments out of request uri
+        ::
+        =+  request-line=(parse-request-line url.request)
+        =/  scope   (get-header:http 'scope' args.request-line)
+        =/  return  (get-header:http 'return' args.request-line)
+        =/  client  (fall (get-header:http 'client' args.request-line) 'unknown')
+        ::
+        ?~  return  (error-page 'no return provided')
+        ?~  scope   (error-page 'no scope specified')
+        ::
+        (dialog-page u.scope client u.return)
+      ::
+      ++  dialog-page
+        |=  [scope=desk client=@t return=@t]
+        %-  handle-response
+        :+  %start  200^['content-type' 'text/html']~
+        :_  &
+        %-  some
+        %-  as-octs:mimes:html
+        %-  crip
+        %-  en-xml:html
+        ;html
+          ;head
+            ;meta(charset "utf-8");
+            ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
+            :: ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
+            ;title:"Urbit: External Authentication"
+            ;style:"{(trip auth-styling)}"
+          ==
+          ;body
+            ;div
+              ;p:"Let {(trip client)} log in to {(trip scope)} on {(scow %p our)}?"
+              ;form(action "/~/auth", method "post")  ::TODOxx  review form submission deets
+                ;input(type "hidden", name "scope", value (trip scope));
+                ;input(type "hidden", name "return", value (trip return));
+                ;button(type "submit", name "deny"):"Deny"
+                ;button(type "submit", name "approve"):"Approve"
+              ==
+            ==
+          ==
+        ==
+      ::
+      ++  on-post
+        |=  [[suv=@uv =identity] =request:http]
+        ^-  [(list move) server-state]
+        ?~  body.request  (error-page 'no body')
+        =/  parsed=(unit (list [key=@t value=@t]))
+          (rush q.u.body.request yquy:de-purl:html)
+        ?~  parsed  (error-page 'bad body')
+        ?~  return=(get-header:http 'return' u.parsed)
+          (error-page 'no return')
+        =/  scope    (get-header:http 'scope' u.parsed)
+        =/  approve  (get-header:http 'approve' u.parsed)
+        ?~  approve
+          (serve-return u.return '?error=rejected')
+        ?~  scope
+          (serve-return u.return '?error=noscope')
+        =^  [session=@uv ^identity moz1=(list move)]  state
+          (start-session identity(scope `u.scope) `suv)
+        =^  moz2=(list move)  state
+          (serve-return u.return (cat 3 '?token=' (scot %uv session)))
+        [(weld moz1 moz2) state]
+      ::
+      ++  error-page
+        |=  msg=@t
+        (handle-response %start 400^~ `(as-octs:mimes:html msg) &)
+      ::
+      ++  serve-return
+        |=  [return=@t args=@t]
+        (handle-response %start 303^['location' (cat 3 return args)]~ ~ &)
       --
     --
   ::  +channel: per-event handling of requests to the channel system
@@ -4072,6 +4161,7 @@
       ^-  (list [binding ^duct action])
       :~  [[~ /~/login] duct [%authentication ~]]
           [[~ /~/eauth] duct [%eauth ~]]
+          [[~ /~/auth] duct [%auth ~]]
           [[~ /~/logout] duct [%logout ~]]
           [[~ /~/channel] duct [%channel ~]]
           [[~ /~/scry] duct [%scry ~]]

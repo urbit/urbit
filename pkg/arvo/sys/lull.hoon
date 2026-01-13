@@ -3381,6 +3381,9 @@
         ::  cross-ship authentication handling
         ::
         [%eauth ~]
+        ::  oauth-esque authentication handling
+        ::
+        [%auth ~]
         ::  internal logout page
         ::
         [%logout ~]
