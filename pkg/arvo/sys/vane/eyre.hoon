@@ -438,9 +438,9 @@
 ::  +login-page: internal page to login to an Urbit
 ::
 ++  login-page
-  |=  [redirect-url=(unit @t) our=@p uid=(unit identity) eauth=(unit ?) failed=?]
+  |=  [redirect-url=(unit @t) our=@p identity=(unit identity) eauth=(unit ?) failed=?]
   ^-  octs
-  =+  auth-method=-:(fall uid [%fake ~])
+  =+  id-type=-:(fall identity [%fake ~])
   =+  redirect-str=?~(redirect-url "" (trip u.redirect-url))
   %-  as-octs:mimes:html
   %-  crip
@@ -486,7 +486,7 @@
       ;div#local
         ;p:"Urbit ID"
         ;input(value "{(scow %p our)}", disabled "true", class "mono");
-        ;+  ?:  =(%ours auth-method)
+        ;+  ?:  =(%ours id-type)
               ;div
                 ;p:"Already authenticated"
                 ;a.button/"{(trip (fall redirect-url '/'))}":"Continue"
@@ -535,8 +535,8 @@
           ;button(name "eauth", type "submit"):"Continue"
         ==
       ==
-      ;*  ?:  ?=(%ours auth-method)  ~
-          =+  as="proceed as{?:(?=(%fake auth-method) " guest" "")}"
+      ;*  ?:  ?=(%ours id-type)  ~
+          =+  as="proceed as{?:(?=(%fake id-type) " guest" "")}"
           ;+  ;span.guest.mono
                 ; Or try to
                 ;a/"{(trip (fall redirect-url '/'))}":"{as}"
