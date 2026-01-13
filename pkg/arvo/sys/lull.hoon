@@ -1602,7 +1602,7 @@
   ::    dead:        dead flow consolidation timer and recork timer, if set
   ::
   +$  axle
-    $:  peers=(map ship ship-state)
+    $:  peers=(map ship ship-state)         ::  %ames protocol peers
         =unix=duct  ::  [//ames/0v0 ~]
         =life
         =rift
@@ -1618,8 +1618,8 @@
         ::
         =server=chain                       ::  for serving %shut requests
         priv=private-key
-        chums=(map ship chum-state)         ::  XX migrated peers
-        core=_`?(%ames %mesa)`%ames         ::  XX use |mesa core by default
+        chums=(map ship chum-state)         ::  %mesa protocol peers
+        core=_`?(%ames %mesa)`%mesa
         ::  TODOs
         :: XX tmp=(map @ux page)            :: temporary hash-addressed bindings
     ==
@@ -3681,7 +3681,7 @@
     $%  [%boon payload=*]                               ::  ames response
         [%noon id=* payload=*]
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
-        [%flub agent=(unit term)]                       ::  refuse to take plea
+        [%flub $@(~ [blocked=? dap=(unit term)])]       ::  refuse to take plea
         [%spur ~]                                       ::  ready to take plea
         [%unto p=unto]                                  ::
     ==                                                  ::

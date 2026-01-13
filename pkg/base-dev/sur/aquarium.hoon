@@ -83,5 +83,7 @@
       [%init ~]
       [%request id=@ud request=request:http]
       [%turf p=(list turf)]
+      [%unto =unto:gall]  ::  internal gifts to host ships
+                          ::   (%facts are transformed to %raw-facts)
   ==
 --
