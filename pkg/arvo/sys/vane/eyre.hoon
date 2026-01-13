@@ -792,7 +792,7 @@
         (clap (forwarded-host u.forwards) host head)
       (fall (forwarded-for u.forwards) address)
     ::
-    =/  session=?(invalid=@uv [suv=@uv =identity som=(list move)])
+    =/  session=?(invalid=@uv [suv=@uv =identity])
       (session-for-request:authentication request)
     =/  authenticated
       ?@  session  |
@@ -833,9 +833,6 @@
           `bod
           complete=%.y
       ==
-    =;  [moz=(list move) sat=server-state]
-      ?@  session  [moz sat]
-      [(weld som.session moz) sat]
     ::
     ::  if we have no eauth endpoint yet, and the request is authenticated,
     ::  deduce it from the hostname
@@ -939,7 +936,7 @@
         %gen
       ::  crash if session invalid
       ::  invalid case handled above returning unauthenticated err 401
-      =/  [suv=@uv =identity som=(list move)]  ?^  session  session  !!
+      =/  [suv=@uv =identity]  ?^  session  session  !!
       =/  bek=beak  [our desk.generator.action da+now]
       =/  sup=spur  path.generator.action
       =/  ski       (rof [~ ~] /eyre %ca bek sup)
@@ -1005,14 +1002,16 @@
       ==
     ::
         %app
-      =^  session=[suv=@uv =identity som=(list move)]  state  
-        ?^  session  [session state]
-          (start-session:authentication %guest)
+      =^  [suv=@uv =identity som=(list move)]  state  
+        ?^  session  [[suv.session identity.session ~] state]
+        (start-session:authentication %guest)
       =/  connection=outstanding-connection
-      [action [authenticated secure address request] [suv.session identity.session] ~ 0]
+      [action [authenticated secure address request] [suv identity] ~ 0]
       =.  connections.state
         (~(put by connections.state) duct connection)
-      (request-to-app identity.session app.action inbound-request.connection)
+      =^  moz  state  
+        (request-to-app identity app.action inbound-request.connection)
+      [(weld som moz) state]
       ::
         %authentication
       %:  handle-request:authentication
@@ -1024,14 +1023,16 @@
       ==
     ::
         %eauth
-      =^  session=[suv=@uv =identity som=(list move)]  state  
-        ?^  session  [session state]  
+      =^  [suv=@uv =identity som=(list move)]  state  
+        ?^  session  [[suv.session identity.session ~] state]  
         (start-session:authentication %guest)
       =/  connection=outstanding-connection
-        [action [authenticated secure address request] [suv.session identity.session] ~ 0]
+        [action [authenticated secure address request] [suv identity] ~ 0]
       =.  connections.state
         (~(put by connections.state) duct connection)
-      (on-request:eauth:authentication [suv.session identity.session] request)
+      =^  moz  state  
+        (on-request:eauth:authentication [suv identity] request)
+      [(weld som moz) state]
     ::
         %logout
       ?@  session  (handle-login-redirect:authentication request ~)
@@ -1816,14 +1817,14 @@
     ::
       ++  session-for-request
       |=  =request:http
-      ^-  $@(session=@uv [session=@uv =identity moves=(list move)])
+      ^-  $@(session=@uv [session=@uv =identity])
       ?~  sid=(session-id-from-request request)
         0v0
       ?~  ses=(~(get by sessions.auth.state) u.sid)
         u.sid
       ?:  (gth now expiry-time.u.ses)
         u.sid
-      [u.sid identity.u.ses ~]
+      [u.sid identity.u.ses]
     ::  +close-session: delete a session and its associated channels
     ::
     ::    if :all is true, deletes all sessions that share the same identity.
@@ -1921,16 +1922,17 @@
           =.  visitors.auth  (~(put by visitors.auth) nonce visit)
           ::  check if request has session if so get session data from authentication-state
           :: if doesn't have session start guest session
-          =^  session=[suv=@uv =identity som=(list move)]  state  
+          =^  [suv=@uv =identity som=(list move)]  state  
             ?~  session-id=(session-id-from-request:authentication request)  (start-session:authentication %guest)
             ?~  sesh=(~(get by sessions.auth) u.session-id)  (start-session:authentication %guest)
             [[u.session-id identity.u.sesh ~] state]
           =/  connection=outstanding-connection
-          [[%authentication ~] [| secure address request] [suv.session identity.session] ~ 0]
+          [[%authentication ~] [| secure address request] [suv identity] ~ 0]
           =.  connections.state  (~(put by connections.state) duct connection)
           :_  state
           ::  we delay serving an http response until we receive a scry %tune
           ::
+          %+  weld  som
           :~  (send-keen %keen ship nonce now)
               (start-timeout /visitors/(scot %uv nonce))
           ==
