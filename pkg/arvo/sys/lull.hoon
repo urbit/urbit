@@ -2522,7 +2522,6 @@
         tom=(map tako norm)                             ::  tomb policies
         nor=norm                                        ::  default policy
         mim=(map path mime)                             ::  mime cache
-        fod=flue                                        ::  ford cache
         wic=(map weft yoki)                             ::  commit-in-waiting
         liv=zest                                        ::  running agents
         ren=rein                                        ::  force agents on/off
