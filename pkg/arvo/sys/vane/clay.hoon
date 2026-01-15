@@ -623,7 +623,7 @@
     $(vaz t.vaz)
   ::
   ++  ford
-    !:
+    !.
     =>  |%
         +$  args
           $+  args
@@ -759,7 +759,7 @@
               %+  slub  (with-faces cor+old ~)
               ^-  hoon
               :+  %brcl  !,(*hoon v=+<.cor)
-              :+  %sggr  
+              :+  %sggr
                 [%spin %cltr [%sand %t (crip "grow-{<mark.a>}->{<mark.b>}")] ~]
               :+  %tsgl  limb/mark.b
               !,(*hoon ~(grow cor v))
@@ -767,9 +767,9 @@
             =/  arm=?  (has-arm %grab mark.a new)
             =/  rab
               %-  mule  |.
-              %+  slap  new 
+              %+  slap  new
               ^-  hoon
-              :+  %sggr  
+              :+  %sggr
                 [%spin %cltr [%sand %t (crip "grab-{<mark.a>}->{<mark.b>}")] ~]
               tsgl/[limb/mark.a limb/%grab]
             ::
@@ -812,8 +812,6 @@
       ==
     ::
     ++  header-rule
-      :: =>  ..lull  ::  XX doesn't compile, is it necessary?
-      :: =,  clay
       |^
       %+  cook  pile-header-to-bush
       %+  ifix
@@ -1794,7 +1792,6 @@
       (get-changes q.old-yaki new-data)
     ~|  [from=let.dom deletes=deletes changes=~(key by changes)]
     ::
-    ::  promote ford cache
     ::  promote and fill in mime cache
     ::
     =/  invalid  (~(uni in deletes) ~(key by changes))
@@ -1834,9 +1831,7 @@
     =?  updated  updated  (did-kernel-update invalid)
     =>  ?.  updated  .
         ~>(%slog.0^leaf/"clay: rebuilding {<syd>} after kernel update" .)
-    ::  clear caches if zuse reloaded
     ::
-    :: =.  fod.dom  [~ ~]
     =?  changes  updated  (changes-for-upgrade q.old-yaki deletes changes)
     ::
     =/  files
@@ -4928,24 +4923,8 @@
         abet:(stay:den ver.arg.req)
       [moves ..^$]
     ::
-    ::     [%trim ~]
-    ::   =:    fad.ruf      *flow
-    ::         dos.rom.ruf
-    ::       %-  ~(run by dos.rom.ruf)
-    ::       |=  =dojo
-    ::       dojo(fod.dom *flue)
-    ::     ::
-    ::         hoy.ruf
-    ::       %-  ~(run by hoy.ruf)
-    ::       |=  =rung
-    ::       %=    rung
-    ::           rus
-    ::         %-  ~(run by rus.rung)
-    ::         |=  =rede
-    ::         rede(fod.dom *flue)
-    ::       ==
-    ::     ==
-    ::   [~ ..^$]
+        [%trim ~]
+      [~ ..^$]
     ::
         [%fine ~]
       ~&  "clay: resetting fine state.  old:"
@@ -5056,9 +5035,7 @@
   ==
 ::
 ++  load
-  ::  latest $raft-* is equivalent to top-level $raft,
-  ::  save for the stubbing out of the cache types.
-  ::  +clear-cache inflates to $raft.
+  ::  latest $raft-* is equivalent to top-level $raft
   ::
   =>  |%
       +$  raft-any
@@ -5534,29 +5511,6 @@
   ?>  ?=(%16 -.old)
   ..^^$(ruf +.old)
   ::
-  ::  We clear the ford cache so we don't have to know how to upgrade
-  ::  the types, which are complicated and eg contravariant in +hoon.
-  ::  Also, many of the results would be different if zuse is different.
-  ::
-::   ++  clear-cache
-::     |=  raf=raft-16
-::     ^-  raft
-::     %=    raf
-::         fad  *flow
-::         dos.rom
-::       %-  ~(run by dos.rom.raf)
-::       |=  doj=dojo-16
-::       ^-  dojo
-::       doj(fod.dom *flue)
-::     ::
-::         hoy
-::       %-  ~(run by hoy.raf)
-::       |=  =rung-16
-::       %-  ~(run by rus.rung-16)
-::       |=  =rede-16
-::       ^-  rede
-::       rede-16(dom dom.rede-16(fod *flue))
-::     ==
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
   ::
   ++  raft-6-to-7
@@ -5854,18 +5808,17 @@
       |=  d=dojo-13
       d(fiz [fiz.d ese=%.y])
     ==
-  ::  +raft-15-to-16: update type of type
+  ::  +raft-15-to-16: update type of type, remove ford cache
   ::
   ++  raft-15-to-16
     |=  raf=raft-15
     |^  ^-  raft-16
-        ^-  raft
         =<  [&1 &2 &3 |4]
         %=  raf
             dos.rom
           %-  ~(run by dos.rom.raf)
           |=  d=dojo-15
-          d(qyx (cult-15-to-cult qyx.d), dom [&1 &2 &3 &4 &5 &6 |7]:dom.d)
+          d(qyx (cult-15-to-cult qyx.d), dom (dome-13-to-dome dom.d))
         ::
             hoy
           %-  ~(run by hoy.raf)
@@ -5875,7 +5828,7 @@
           %=  r
             ref  (bind ref.r rind-15-to-rind)
             qyx  (cult-15-to-cult qyx.r)
-            dom  [&1 &2 &3 &4 &5 &6 |7]:dom.r
+            dom  (dome-13-to-dome dom.r)
           ==
         ==
     ::
@@ -5887,6 +5840,11 @@
       |=  [w=wove-15 s=(set duct)]
       ^-  [wove (set duct)]
       [w(rove (rove-15-to-rove rove.w)) s]
+    ::
+    ++  dome-13-to-dome
+      |=  d=dome-13
+      ^-  dome
+      [let hit lab tom nor mim wic liv ren]:d
     ::
     ++  rove-15-to-rove
       |=  r=rove-15
@@ -5976,12 +5934,10 @@
     ?~  path
       ~
     ?+    i.path  ~
-        :: %sweep  ``[%sweep !>(sweep)]
         %rang   ``[%rang !>(ran.ruf)]
         %tomb   ``[%flag !>((tomb t.path))]
         %cult   ``[%cult !>((cult t.path))]
         %esse   (esse t.path)
-        :: %flow   ``[%flow !>(fad.ruf)]
         %domes  domes
         %tire   ``[%tire !>(tore:(lu now rof *duct ruf))]
         %tyre   ``[%tyre !>(tyr.ruf)]
@@ -6045,66 +6001,7 @@
     =+  !<(=arch q.u.u.cay)
     ?~  fil.arch  %|
     (~(has by lat.ran.ruf) u.fil.arch)
-  ::
-  ::  Check for refcount errors
-  ::
-::   ++  sweep
-::     ^-  (list [need=@ud have=@ud leak])
-::     =/  marked=(map leak [need=@ud have=@ud])
-::       (~(run by fad.ruf) |=([refs=@ud *] [0 refs]))
-::     =.  marked
-::       =/  items=(list [=leak *])  ~(tap by fad.ruf)
-::       |-  ^+  marked
-::       ?~  items
-::         marked
-::       =/  deps  ~(tap in deps.leak.i.items)
-::       |-  ^+  marked
-::       ?~  deps
-::         ^$(items t.items)
-::       =.  marked
-::         %+  ~(put by marked)  i.deps
-::         =/  gut  (~(gut by marked) i.deps [0 0])
-::         [+(-.gut) +.gut]
-::       $(deps t.deps)
-::     ::
-::     =/  spills=(list (set leak))
-::       %+  welp
-::         %+  turn  ~(tap by dos.rom.ruf)
-::         |=  [* =dojo]
-::         spill.fod.dom.dojo
-::       %-  zing
-::       %+  turn  ~(tap by hoy.ruf)
-::       |=  [* =rung]
-::       %+  turn  ~(tap by rus.rung)
-::       |=  [* =rede]
-::       spill.fod.dom.rede
-::     ::
-::     =.  marked
-::       |-
-::       ?~  spills
-::         marked
-::       =/  leaks  ~(tap in i.spills)
-::       |-
-::       ?~  leaks
-::         ^$(spills t.spills)
-::       =.  marked
-::         %+  ~(put by marked)  i.leaks
-::         =/  gut  (~(gut by marked) i.leaks [0 0])
-::         [+(-.gut) +.gut]
-::       $(leaks t.leaks)
-::     ::
-::     %+  murn  ~(tap by marked)
-::     |=  [=leak need=@ud have=@ud]
-::     ?:  =(need have)
-::       ~
-::     `u=[need have leak]
   --
-::
-::  We clear the ford cache by replacing it with its bunt as a literal,
-::  with its singleton type.  This nests within +flow and +flue without
-::  reference to +type, +hoon, or anything else in the sample of cache
-::  objects.  Otherwise we would be contravariant in those types, which
-::  makes them harder to change.
 ::
 ++  stay
   ^-  raft-any:load
@@ -6385,7 +6282,6 @@
       |=  [=desk =dojo]
       :+  desk  %|
       :~  mime+&+mim.dom.dojo
-        ::   flue+&+fod.dom.dojo
           dojo+&+dojo
       ==
     :~  :+  %object-store  %|
@@ -6397,14 +6293,12 @@
         ==
         domestic+|+domestic
         foreign+&+hoy.ruf
-        :: ford-cache+&+fad.ruf
     ==
   =/  domestic
     %+  turn  (sort ~(tap by dos.rom.ruf) aor)
     |=  [=desk =dojo]
     :+  desk  %|
     :~  mime+&+mim.dom.dojo
-        :: flue+&+fod.dom.dojo
         dojo+&+dojo
     ==
   :~  :+  %object-store  %|
@@ -6413,7 +6307,6 @@
       ==
       domestic+|+domestic
       foreign+&+hoy.ruf
-    ::   ford-cache+&+fad.ruf
   ==
 ::
 ++  tomb
