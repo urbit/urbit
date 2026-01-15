@@ -802,34 +802,19 @@
     =/  session-id=(unit @uv)  ?@(session ~ `suv.session)
     ::
     =/  [=action suburl=@t]  (get-action-for-binding host url.request)
-    ::  if session is not cell or default, session expired  
-    ?.  ?|  .?(session)
-            =(session 0v0)
-        ==
+    ::
+    ::  if session is invalid (but not absent), session expired
+    ?:  &(?=(@ session) !=(0v0 session))
       ::  the request provided a session cookie that's not (or no longer)
       ::  valid. to make sure they're aware, tell them 401
-      ::
-      ::NOTE  some code duplication with below, but request handling deserves
-      ::      a refactor anyway
-      ?^  session  `state
-      =.  connections.state
-        ::NOTE  required by +handle-response.
-        ::      the session identity we provide here doesn't actually exist.
-        ::      that's fine: we call +handle-response for this connection right
-        ::      away, that no-ops for the non-existing session, and then
-        ::      deletes the connection from state.
-        %+  ~(put by connections.state)  duct
-        ^-  outstanding-connection
-        [action [| secure address request] [session %fake *@p] ~ 0]
-      ::  their cookie was invalid, make sure they expire it
+      ::  and make sure they expire it
       ::
       =/  bod=octs  (as-octs:mimes:html 'bad session auth')
-      %-  handle-response-async
+      %-  handle-response
+      :_  [~ origin]
       :*  %start
           :-  401
-          :~  ['set-cookie' (session-cookie-string:authentication session ~)]
-              ['content-length' (crip (a-co:co p.bod))]
-          ==
+          ~['set-cookie'^(session-cookie-string:authentication session ~)]
           `bod
           complete=%.y
       ==
@@ -893,7 +878,7 @@
       ::  allow the method and headers that were asked for,
       ::  falling back to wildcard if none specified
       ::
-      ::NOTE  +handle-response-async will add the rest of the headers
+      ::NOTE  +handle-response will add the rest of the headers
       ::
       :~  :-  'Access-Control-Allow-Methods'
           =-  (fall - '*')
@@ -927,7 +912,7 @@
     ?:  ?&  ?=(@ session)
             ?=(?(%gen %channel %name) -.action)
         ==
-        %:  return-static-data-on-duct  
+        %:  return-static-data-on-duct
             401  'text/html'
             (error-page 401 authenticated url.request "bad session auth")
             ~  origin
@@ -977,20 +962,6 @@
             `suv  origin
         ==
       =/  result  ;;(simple-payload:http +.p.res)
-      ::  ensure we have a valid content-length header
-      ::
-      ::    We pass on the response and the headers the generator produces, but
-      ::    ensure that we have a single content-length header set correctly in
-      ::    the returned if this has a body, and has no content-length if there
-      ::    is no body returned to the client.
-      ::
-      =.  headers.response-header.result
-        ?~  data.result
-          (delete-header:http 'content-length' headers.response-header.result)
-        ::
-        %^  set-header:http  'content-length'
-          (crip (a-co:co p.u.data.result))
-        headers.response-header.result
       ::
       %-  handle-response
       :_  [`suv origin]
@@ -1272,7 +1243,6 @@
         :-  status-code=200
         ^=  headers
           :~  ['content-type' (rsh 3 (spat p.mime))]
-              ['content-length' (crip (a-co:co p.q.mime))]
               ['cache-control' ?:(fqp 'max-age=31536000' 'no-cache')]
           ==
         data=[~ q.mime]
@@ -1473,9 +1443,7 @@
     :*  %start
         :-  status-code=code
         ^=  headers
-          :~  ['content-type' content-type]
-              ['content-length' (crip (a-co:co p.data))]
-          ==
+          ~['content-type'^content-type]
         data=[~ data]
         complete=%.y
     ==
@@ -1490,9 +1458,7 @@
     :*  %start
         :-  status-code=code
         ^=  headers
-          :~  ['content-type' content-type]
-              ['content-length' (crip (a-co:co p.data))]
-          ==
+          ~['content-type'^content-type]
         data=[~ data]
         complete=%.y
     ==
@@ -1620,19 +1586,16 @@
         out(moves [give-session-tokens :(weld moz moves.fex moves.out)])
       ::NOTE  that we don't provide a 'set-cookie' header here.
       ::      +handle-response does that for us.
-      ::TODO  that should really also handle the content-length header for us,
-      ::      somewhat surprising that it doesn't...
+      ::
       %-  handle-response
       :_  :-  `session.fex
           origin
       =/  bod=octs
         (as-octs:mimes:html (scot %uv session.fex))
-      =/  col=[key=@t value=@t]
-        ['content-length' (crip (a-co:co p.bod))]
       ?~  redirect
-        [%start 200^~[col] `bod &]
+        [%start 200^~ `bod &]
       =/  actual-redirect  ?:(=(u.redirect '') '/' u.redirect)
-      [%start 303^~['location'^actual-redirect col] `bod &]
+      [%start 303^~['location'^actual-redirect] `bod &]
     ::  +handle-logout: handles an http request for logging out
     ::
     ++  handle-logout
@@ -3321,53 +3284,29 @@
           tang
       ==
     [(weld moves-1 moves-2) state]
-  ::  +handle-response: XX
+  ::  +handle-response: send sync response to earth 
+  ::    assign headers as needed and refresh session if provided.
   ::
   ++  handle-response
     |=  [=http-event:http session-id=(unit @uv) origin=(unit origin)]
     ^-  [(list move) server-state]
+    |^
     ?~  session-id
-      [[duct %give %response http-event]~ state]
+      ?.  ?=(%start -.http-event)
+        pass-response
+      =.  response-header.http-event  (give-response http-event origin)
+      pass-response
     ::
-    |^  ?-    -.http-event
+    ::  XX:  do we want to print a whole event ?
+    ?+    -.http-event   ~|([%sync-got-continue http-event] !!)
     ::
         %start
-      =^  response-header  sessions.auth.state
-        =,  authentication
-        =*  sessions    sessions.auth.state
-        =*  headers        headers.response-header.http-event
-        ?~  ses=(~(get by sessions) u.session-id)
-            ::  if the session has expired since the request was opened,
-            ::  tough luck, we don't create/revive sessions here
-            ::
-          [response-header.http-event sessions]
-        =/  kind  ?:(?=(%fake -.identity.u.ses) %guest %auth)
-        =/  timeout
-          =,  session-timeout
-          ?:(?=(%guest kind) guest auth)
-        :_  %+  ~(put by sessions)  u.session-id
-            u.ses(expiry-time (add now timeout))
-        =-  response-header.http-event(headers -)
-        =/  cookie=(pair @t @t)
-          ['set-cookie' (session-cookie-string u.session-id `kind)]
-        |-
-        ?~  headers
-          [cookie ~]
-        ?:  &(=(key.i.headers p.cookie) =(value.i.headers q.cookie))
-          headers
-        [i.headers $(headers t.headers)]
-      =?  headers.response-header
-          ?&  ?=(^ origin)
-              (~(has in approved.cors-registry.state) u.origin)
-          ==
-        %^  set-header:http  'Access-Control-Allow-Origin'       u.origin
-        %^  set-header:http  'Access-Control-Allow-Credentials'  'true'
-        headers.response-header
-        ::
+      =^  response-header  state
+        %-  refresh-session
+        :_  u.session-id
+        (give-response http-event origin)
       =.  response-header.http-event  response-header
-      [[duct %give %response http-event]~ state]
-    ::
-        %continue  `state
+      pass-response
     ::
         %cancel
       ((trace 1 |.("cancel http event")) error-connection)
@@ -3377,10 +3316,16 @@
         :_  state
         :-  [duct %give %response %cancel ~]
         ~
+      ::
+      ++  pass-response
+      ^-  [(list move) server-state]
+      [[duct %give %response http-event]~ state] 
     --
-  ::  +handle-response: check a response for correctness and send to earth
+  ::  +handle-response-async: send an async response to earth
+  ::    check a response for correctness, assign headers, 
+  ::    refresh session and send an async response to earth.
   ::
-  ::    All outbound responses including %http-server generated responses need to go
+  ::    All responses from app and authentication flow need to go
   ::    through this interface because we want to have one centralized place
   ::    where we perform logging and state cleanup for connections that we're
   ::    done with.
@@ -3402,52 +3347,18 @@
           ?^  response-header.u.connection-state
             ((trace 0 |.("{<duct>} error multiple start")) error-connection)
           ::  extend the request's session's + cookie's life
-          ::
-          =^  response-header  sessions.auth.state
-            =,  authentication
-            =*  session-id  session-id.u.connection-state
-            =*  sessions    sessions.auth.state
-            =*  inbound     inbound-request.u.connection-state
-            =*  headers     headers.response-header.http-event
-            ::
-            ?~  ses=(~(get by sessions) session-id)
-              ::  if the session has expired since the request was opened,
-              ::  tough luck, we don't create/revive sessions here
-              ::
-              [response-header.http-event sessions]
-            =/  kind  ?:(?=(%fake -.identity.u.ses) %guest %auth)
-            =/  timeout
-              =,  session-timeout
-              ?:(?=(%guest kind) guest auth)
-            :_  %+  ~(put by sessions)  session-id
-                u.ses(expiry-time (add now timeout))
-            =-  response-header.http-event(headers -)
-            =/  cookie=(pair @t @t)
-              ['set-cookie' (session-cookie-string session-id `kind)]
-            |-
-            ?~  headers
-              [cookie ~]
-            ?:  &(=(key.i.headers p.cookie) =(value.i.headers q.cookie))
-              headers
-            [i.headers $(headers t.headers)]
-          ::
           =*  connection  u.connection-state
-          ::
-          ::  if the request was a simple cors request from an approved origin
-          ::  append the necessary cors headers to the response
-          ::
           =/  origin=(unit origin)
             %+  get-header:http  'origin'
             header-list.request.inbound-request.connection
-          =?  headers.response-header
-              ?&  ?=(^ origin)
-                  (~(has in approved.cors-registry.state) u.origin)
-              ==
-            %^  set-header:http  'Access-Control-Allow-Origin'       u.origin
-            %^  set-header:http  'Access-Control-Allow-Credentials'  'true'
-            headers.response-header
+          ::
+          =^  response-header  state
+            %-  refresh-session 
+            :_  session-id.u.connection-state
+            (give-response http-event origin)
           ::
           =.  response-header.http-event  response-header
+          ::
           =.  connections.state
             ?:  complete.http-event
               ::  XX  optimize by not requiring +put:by in +request
@@ -3514,6 +3425,64 @@
           |.("leaving subscription to {<app.action>}")
       (deal-as /watch-response/[eyre-id] identity our app.action %leave ~)
     --
+  ::  +give-response: appends content-length and CORS headers as needed to the response-header
+  ::
+  ++  give-response 
+    |=  [=http-event:http origin=(unit origin)]
+    ^-  response-header:http
+    ?>  ?=(%start -.http-event)
+    ::
+    =/  headers  headers.response-header.http-event
+    ::  ensure we have a valid content-length header
+    ::
+    =.  headers  
+      ?.  ?=(^ data.http-event) 
+          (delete-header:http 'content-length' headers)
+      %^  set-header:http  'content-length'  
+        (crip (a-co:co p.u.data.http-event))
+      headers
+    ::
+    ::  if the request was a simple cors request from an approved origin
+    ::  append the necessary cors headers to the response
+    ::
+    =?  headers
+      ?&  ?=(^ origin)
+          (~(has in approved.cors-registry.state) u.origin)
+      ==
+        %^  set-header:http  'Access-Control-Allow-Origin'       u.origin
+        %^  set-header:http  'Access-Control-Allow-Credentials'  'true'
+        headers
+    [status-code.response-header.http-event headers]
+  ::
+  ++  refresh-session
+    |=  [=response-header:http session-id=@uv]
+    ^-  [response-header:http server-state]
+    =/  sessions  sessions.auth.state
+    =*  headers     headers.response-header
+    ?~  ses=(~(get by sessions) session-id)
+      ::  if the session has expired since the request was opened,
+      ::  tough luck, we don't create/revive sessions here
+      ::
+      [response-header state]
+    =/  kind  ?:(?=(%fake -.identity.u.ses) %guest %auth)
+    =/  timeout
+      =,  session-timeout
+      ?:(?=(%guest kind) guest auth)
+    =.  sessions.auth.state
+      %+  ~(put by sessions)  session-id
+      u.ses(expiry-time (add now timeout))
+    :_  state
+    =,  authentication
+    =-  response-header(headers -)
+    =/  cookie=(pair @t @t)
+      ['set-cookie' (session-cookie-string session-id `kind)]
+    ::
+    |-
+    ?~  headers
+      [cookie ~]
+    ?:  &(=(key.i.headers p.cookie) =(value.i.headers q.cookie))
+      headers
+    [i.headers $(headers t.headers)]
   ::  +set-response: remember (or update) a cache mapping
   ::
   ++  set-response
@@ -4197,9 +4166,9 @@
       [moves http-server-gate]
     ::
     ?:  ?=([%gall %unto %kick ~] sign)
-      =/  handle-response  handle-response-async:(per-server-event event-args)
+      =/  async-response  handle-response-async:(per-server-event event-args)
       =^  moves  server-state.ax
-        (handle-response %continue ~ &)
+        (async-response %continue ~ &)
       [moves http-server-gate]
     ::
     ?>  ?=([%gall %unto %fact *] sign)
@@ -4219,9 +4188,9 @@
         %http-response-data    [%continue !<((unit octs) vase) |]
         %http-response-cancel  [%cancel ~]
       ==
-    =/  handle-response  handle-response-async:(per-server-event event-args)
+    =/  async-response  handle-response-async:(per-server-event event-args)
     =^  moves  server-state.ax
-      (handle-response http-event)
+      (async-response http-event)
     [moves http-server-gate]
   ::
   ++  channel
