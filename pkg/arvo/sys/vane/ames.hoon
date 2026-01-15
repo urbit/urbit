@@ -2978,7 +2978,7 @@
       |^  ^+  [moz larval-core]
       ?~  cached-state  [~ larval-core]
       =*  old  u.cached-state
-      ?:  ?=(%29 -.old)
+      ?:  ?=(%30 -.old)
         ::  no state migrations left; update state, clear cache, and exit
         ::
         [(flop moz) larval-core(ames-state.adult-gate +.old, cached-state ~)]
@@ -12708,9 +12708,9 @@
           ::  [%mesa ~ %alien *]
           ::    %mesa is our default network core. we might have outstanding
           ::    poke/peeks, but the keys are missing and the peer sends an %ames
-          ::    packet — if notthing outstanding, the peer has first sent an
-          ::    %ames packet, we dropped it and asked for the key, then the peer
-          ::    sent a %mesa packet
+          ::    packet — if nothing outstanding, the peer has first sent a
+          ::    %mesa packet, we dropped it and asked for the key, then the peer
+          ::    sent an %ames packet (this one)
           ::    XX log as missbeheaving peer?
           ::
           [~ %alien *]
@@ -12737,7 +12737,7 @@
         ::    if we can find the peer in chums, it means that they sent an %ahoy
         ::    $plea, we migrated them, but they haven't heard our %ack, and have
         ::    not migrated us, so they could still be resending the $plea.
-        ::    in this case we just ack the plea
+        ::    in this case we just ack plea if it is indeed an %ahoy.
         ::
         ::    if this was not an %ahoy plea, check if we can move the ship back
         ::    to .peers, if this is a first contact (e.g after a breach)
@@ -12762,8 +12762,10 @@
             `vane-gate
           ::  if the peer sends us an %ames packets, but we have %known state in
           ::  .chums. this could be caused by:
+          ::
           ::    - the peer breached, we had communicated previously but our
           ::    default core was %mesa, so it stayed in .chums
+          ::
           ::    - the peer booted after breaching with an old pill that has
           ::    %mesa as the default core, or doesn't support zuse 410k, or the
           ::    default core was manually changed
@@ -13044,7 +13046,7 @@
             %-  %+  ev-tace:ev-core  odd.veb.bug.ames-state
                 |.("poke for {<rcvr.pok>} at rifts={<rifs>}; skip")
             `ames-state
-          ?.  =(her-pok rcvr.ack)  ::  do ack and pokes match?
+          ?.  =(her-pok rcvr.ack)      ::  do ack and pokes match?
             %-  %+  ev-tace:ev-core  odd.veb.bug.ames-state
                 |.("ack {<rcvr.ack>} and poke {<her-pok>} missmatch; skip")
             `ames-state
