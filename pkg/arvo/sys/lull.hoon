@@ -2768,42 +2768,6 @@
         (sham [%tako (roll p add) q t])
     [p q has t]
   ::
-  ::  $leak: ford cache key
-  ::
-  ::    This includes all build inputs, including transitive dependencies,
-  ::    recursively.
-  ::
-  +$  leak
-    $~  [*pour ~]
-    $:  =pour
-        deps=(set leak)
-    ==
-  ::
-  ::  $flow: global ford cache
-  ::
-  ::    Refcount includes references from other items in the cache, and
-  ::    from spills in each desk
-  ::
-  ::    This is optimized for minimizing the number of rebuilds, and given
-  ::    that, minimizing the amount of memory used.  It is relatively slow
-  ::    to lookup, because generating a cache key can be fairly slow (for
-  ::    files, it requires parsing; for tubes, it even requires building
-  ::    the marks).
-  ::
-  +$  flow  (map leak [refs=@ud =soak])
-  ::
-  ::  Per-desk ford cache
-  ::
-  ::    Spill is the set of "roots" we have into the global ford cache.
-  ::    We add a root for everything referenced directly or indirectly on
-  ::    a desk, then invalidate them on commit only if their dependencies
-  ::    change.
-  ::
-  ::    Sprig is a fast-lookup index over the global ford cache.  The only
-  ::    goal is to make cache hits fast.
-  ::
-  +$  flue  [spill=(set leak) sprig=(map mist [=leak =soak])]
-  ::
   ::  Ford build without content.
   ::
   +$  mist

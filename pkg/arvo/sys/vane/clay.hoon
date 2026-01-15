@@ -5076,6 +5076,13 @@
         ==
       +$  raft-16  raft
       ::
+      +$  flow  (map leak [refs=@ud =soak])
+      +$  leak
+        $~  [*pour ~]
+        $:  =pour
+            deps=(set leak)
+        ==
+      ::
       +$  raft-15
         $+  raft-15
         $:  rom=room-15
@@ -6099,31 +6106,11 @@
 ::  objects.  Otherwise we would be contravariant in those types, which
 ::  makes them harder to change.
 ::
-:: ++  stay
-::   ^-  raft-any:load
-::   =/  flu  [~ ~]
-::   =+  `flue`flu
-::   =/  flo  ~
-::   =+  `flow`flo
-::   :-  ver
-::   ^-  raft-16:load
-::   %=    ruf
-::       fad  flo
-::       dos.rom
-::     %-  ~(run by dos.rom.ruf)
-::     |=  =dojo
-::     dojo(fod.dom flu)
-::   ::
-::       hoy
-::     %-  ~(run by hoy.ruf)
-::     |=  =rung
-::     %=    rung
-::         rus
-::       %-  ~(run by rus.rung)
-::       |=  =rede
-::       rede(fod.dom flu)
-::     ==
-::   ==
+++  stay
+  ^-  raft-any:load
+  :-  ver
+  ^-  raft-16:load
+  ruf
 ::
 ++  take                                              ::  accept response
   ~/  %clay-take
