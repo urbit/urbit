@@ -1494,7 +1494,7 @@
         =.  connections.state
           ?~  session  connections.state
           (~(del by connections.state) duct)
-        %:  return-static-data-on-duct  
+        %:  return-static-data-on-duct
           200  'text/html'
           (login-page redirect our u-identity with-eauth %.n)
           session-id  origin
@@ -2603,13 +2603,15 @@
             (cancel-timeout-move channel-id p.state.channel)^~
           =.  duct-to-key.channel-state.state
             (~(del by duct-to-key.channel-state.state) p.state.channel)
-          =/  cancel-heartbeat
+          =/  cancel-heartbeat=(list move)
             ?~  heartbeat.channel  ~
             :_  ~
             %+  cancel-heartbeat-move  channel-id
             [date duct]:u.heartbeat.channel
-          =-  [(weld cancel-heartbeat -<) ->]
-          (handle-response(duct p.state.channel) [%cancel ~] `session-id origin)
+          =-  [(snoc cancel-heartbeat -<) ->]
+          %-  (trace 1 |.("cancel http event"))
+          :_  state
+          [p.state.channel %give %response %cancel ~]
         ::  flush events older than the passed in 'Last-Event-ID'
         ::
         =?  state  ?=(^ maybe-last-event-id)
@@ -3193,24 +3195,21 @@
       |=  channel-id=@t
       ^-  [(list move) server-state]
       ::
-      =/  res
-        %:  handle-response
+      =/  =http-event:http
           :*  %continue
               data=(some (as-octs:mimes:html ':\0a'))
               complete=%.n
           ==
-          ~  ~
-        ==
-      =/  http-moves  -.res
-      =/  new-state  +.res
       =/  heartbeat-time=@da  (add now ~s20)
-      :_  %_    new-state
+      :_  %_  state
               session.channel-state
             %+  ~(jab by session.channel-state.state)  channel-id
             |=  =channel
             channel(heartbeat (some [heartbeat-time duct]))
           ==
-      (snoc http-moves (set-heartbeat-move channel-id heartbeat-time))
+      :~  [duct %give %response http-event]                 
+          (set-heartbeat-move channel-id heartbeat-time)    
+      ==
     ::  +discard-channel: remove a channel from state
     ::
     ::    cleans up state, timers, and gall subscriptions of the channel
@@ -3291,31 +3290,17 @@
     |=  [=http-event:http session-id=(unit @uv) origin=(unit origin)]
     ^-  [(list move) server-state]
     |^
+    ?>  ?=(%start -.http-event)
+    =.  response-header.http-event  (give-response http-event origin)
     ?~  session-id
-      ?.  ?=(%start -.http-event)
-        pass-response
-      =.  response-header.http-event  (give-response http-event origin)
       pass-response
     ::
-    ::  XX:  do we want to print a whole event ?
-    ?+    -.http-event   ~|([%sync-got-continue http-event] !!)
-    ::
-        %start
-      =^  response-header  state
-        %-  refresh-session
-        :_  u.session-id
-        (give-response http-event origin)
-      =.  response-header.http-event  response-header
-      pass-response
-    ::
-        %cancel
-      ((trace 1 |.("cancel http event")) error-connection)
-    ==
-    ::
-      ++  error-connection
-        :_  state
-        :-  [duct %give %response %cancel ~]
-        ~
+    =^  response-header  state
+      %+  refresh-session
+        response-header.http-event
+      u.session-id
+    =.  response-header.http-event  response-header
+    pass-response
       ::
       ++  pass-response
       ^-  [(list move) server-state]
