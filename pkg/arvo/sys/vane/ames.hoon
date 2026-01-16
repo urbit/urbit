@@ -4839,9 +4839,8 @@
             ::  namespace that they have migrated us?
             ::  XX  requires a namespace for migrated peers?
             ::
-            :: %-  %^  ev-trace  sun.veb  ship.deep
-            ::     |.("migrating to |mesa")
-            ~&  >>  "migrating to |mesa"
+            %-  %^  ev-trace  sun.veb  ship.deep
+                |.("migrating to |mesa")
             ::  before migrating check that we can migrate this peer without
             ::  crashing. if so, we will nack the %ahoy $plea.
             ::
@@ -7474,9 +7473,8 @@
                     ::
                     ?>  (on-mate-test her)
                     ::
-                    :: %-  %^  ev-trace  sun.veb  her
-                    ::     |.("migrating {<her>} test succeded")
-                    ~&  >  "testing dry migration {<her>} succeded"
+                    %-  %^  ev-trace  sun.veb  her
+                        |.("testing dry migration {<her>} succeded")
                     ::
                     (done ok=%.y)
                 =.  peer-core
