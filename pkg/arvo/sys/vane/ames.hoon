@@ -13012,6 +13012,8 @@
             =.  fren  fren(- -.old-peer)
             =?  lane.fren  =(%czar (clan:title her-pok))
               (some [hop=0 `@ux`her-pok])
+            =.  chums.ames-state.ev-core
+              (~(put by peers.ames-state.ev-core) her-pok known/fren)
             =<  ev-abet
             %.  [dud lane hop.pact %poke +>.pact]
             hear-poke:ev-pact:(ev-abed:ev-core hen her-pok fren)
