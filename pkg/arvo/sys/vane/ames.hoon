@@ -12754,7 +12754,9 @@
           ::  .peers, if this is a first contact (e.g after a breach)
           ::
           =/  fren=fren-state  +.u.+.ship-state
-          ?.  =(+:*fren-state +.fren)
+          ::  skip route in comparison; galaxies have it hardcoded
+          ::
+          ?.  =(+>:*fren-state +>.fren)
             %-  %+  %*(ev-tace ev-core her sndr.shot)  odd.veb.bug.ames-state
                 |.("hear ames packet for migrated %known peer")
             `vane-gate
@@ -12776,6 +12778,8 @@
           ::
           =.  peers.ames-state
             =|  =peer-state
+            =?  route.peer-state  =(%czar (clan:title sndr.shot))
+              `[direct=%.y %& sndr.shot]
             (~(put by peers.ames-state) sndr.shot known/peer-state(- -.fren))
           =.  chums.ames-state
             (~(del by chums.ames-state) sndr.shot)
@@ -12987,7 +12991,32 @@
             :: `ames-state
             ::
             al-abet:(al-read-proof:al-core her-pok lane)
-          ::  peer has been regressed to %ames (or XX?)
+          ::  peer has been regressed to %ames or
+          ::  breached, and %ames is our default network core
+          ::
+          =/  old-peer=peer-state  +.u.chum-state
+          ::  when comparing, skip route, since for galaxies this is hardcoded
+          ::
+          ?:  =(+>:*peer-state +>.old-peer)
+            %-  %+  %*(ev-tace ev-core her her-pok)  odd.veb.bug.ames-state
+                |.("hear mesa packet for breached %known peer")
+            ::  we migrate the peer on the spot to .chums
+            ::
+            ::  remove the ship from .peers, it will be added to chums on +abet
+            ::
+            =.  peers.ames-state
+              (~(del by peers.ames-state) her-pok)
+            =|  fren=fren-state
+            ::  transfer azimuth key state and galaxy lane if aplicable
+            ::
+            =.  fren  fren(- -.old-peer)
+            =?  lane.fren  =(%czar (clan:title her-pok))
+              (some [hop=0 `@ux`her-pok])
+            =<  ev-abet
+            %.  [dud lane hop.pact %poke +>.pact]
+            hear-poke:ev-pact:(ev-abed:ev-core hen her-pok fren)
+          ::
+          ::  the peer is %known with non-empty state
           ::
           ?.  =(1 (div (add tob.data.pact 1.023) 1.024))
             ::  only deal with single-fragment %rege pleas
@@ -13076,7 +13105,7 @@
           ?.  =(last-acked.u.sink mess.pok)
             %-  %+  ev-tace:ev-core  snd.veb.bug.ames-state
                 |.
-                "%rege $plea is not last acked ({<mess.pok>}) bone={<bone.ack>}"
+                "%rege $plea not last acked ({<mess.pok>}) bone={<bone.ack>}"
             `ames-state
           =/  moves=(list move)
             ::  create temporary flow for ack payload
