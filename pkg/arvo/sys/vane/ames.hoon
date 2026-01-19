@@ -10962,9 +10962,11 @@
                   ?.  ?=([~ ~ *] sax)
                     ~
                   `(rear ;;((list @p) q.q.u.u.sax))
+                ?~  gal
+                  core  ::  XX  this shouldn't happen
+                ?:  =(our u.gal)
+                  core  ::  don't send to ourselves
                 =^  al-moves  ames-state.core
-                  ?~  gal           ~  ::  XX  this shouldn't happen
-                  ?:  =(our u.gal)  ~  ::  XX  don't send to ourselves
                   =<  al-abet
                   %.  [ship lane=`@ux`u.gal]
                   ~(al-read-proof al(ames-state ames-state.core) ~[/ames])
