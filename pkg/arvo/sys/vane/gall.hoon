@@ -595,7 +595,7 @@
         =/  sky=(list [=spur bob=@ud])  ~(tap by sky.u.yak)
         |-
         ?~  sky  farm
-        =.  farm  (need (~(put-grow of-farm farm) spur.i.sky [`bob.i.sky ~]))
+        =.  farm  (~(put of-farm farm) spur.i.sky [`bob.i.sky ~])
         $(sky t.sky)
       ==
     ::
