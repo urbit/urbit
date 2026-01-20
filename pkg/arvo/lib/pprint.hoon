@@ -37,7 +37,7 @@
 ::
 +|  %utils
 ::
-+$  battery  (map term (map term hoon))
++$  battery  (map term (pair what (map term hoon)))
 ::
 +|  %render
 ::
@@ -95,7 +95,7 @@
   ^-  wain
   ?.  ?=([%core *] type)  [%zpzp ~]
   =*  tomes=(list tome)  ~(val by q.r.q.type)
-  =*  hoons=(list hoon)  (turn tomes |=(t=tome [%cltr ~(val by t)]))
+  =*  hoons=(list hoon)  (turn tomes |=(t=tome [%cltr ~(val by q.t)]))
   ~(tall plume (hoon-to-plum 999 [%cltr hoons]))
 ::
 +|  %to-plum
@@ -545,7 +545,7 @@
   ^-  plum
   =/  chapters=(list (pair term tome))  ~(tap by map)
   =*  with-chapters  (chapters-to-plum-verbose knot head map)
-  =*  without-chaps  (core-to-plum knot head q.i.chapters)
+  =*  without-chaps  (core-to-plum knot head q.q.i.chapters)
   ?~  chapters  with-chapters
   ?~  t.chapters
     ?:  .=('' p.i.chapters)  without-chaps
@@ -570,7 +570,7 @@
 ::  XX Document this.
 ::
 ++  chapter-to-plum
-  |=  [nm=knot bat=(map term hoon)]
+  |=  [nm=knot [* bat=(map term hoon)]]
   ^-  plum
   :+  %tree
     [~ `['+|' ~]]
@@ -586,7 +586,7 @@
   |=  =(map term tome)
   ^-  (list plum)
   %+  turn  ~(tap by map)
-  |=  [=term hoons=(^map term hoon)]
+  |=  [=term [* hoons=(^map term hoon)]]
   ^-  plum
   ?:  =(term '')
     :+  %tree  [wide=~ tall=[~ '' ~]]  (battery-to-plum-list hoons)
@@ -632,6 +632,7 @@
                  [%atom *]  (cat 3 '@' p.p.spec)
                ==
         %dbug  $(spec q.spec)
+        %gist  $(spec q.spec)
         %leaf  =+((scot p.spec q.spec) ?:(=('~' -) - (cat 3 '%' -)))
         %like  tree/[[`[':' ~] ~] (turn `(list wing)`+.spec wing-to-plum)]
         %loop  (cat 3 '$' p.spec)
@@ -880,8 +881,8 @@
     =/  batt=(map term tome)
       %-  ~(gas by *(map term tome))
       %+  turn  ~(tap by xbat)
-      |=  [nm=term arms=(map term xkey)]
-      [nm (cvt-arms arms)]
+      |=  [nm=term w=what arms=(map term xkey)]
+      [nm w (cvt-arms arms)]
     ::
     (hoon-to-plum 999 [%brcn p.garb batt])
   ::
@@ -972,7 +973,7 @@
     ^-  (list term)
     %-  zing
     %+  turn  ~(val by battery)
-    |=  arms=(map term hoon)
+    |=  [=what arms=(map term hoon)]
     ^-  (list term)
     ~(tap in ~(key by arms))
   ::

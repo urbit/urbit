@@ -97,8 +97,8 @@
 ::
 +|  %helpers
 ::
-++  batt-of  |$  [arm]  (map term (map term arm))
-++  chap-of  |$  [arm]  arms=(map term arm)
+++  batt-of  |$  [arm]  (map term (pair what (map term arm)))
+++  chap-of  |$  [arm]  [doc=what arms=(map term arm)]
 ::
 ::  Traverse over a chapter in a battery.
 ::
@@ -128,8 +128,9 @@
   |=  [b=(batt-of arm) f=$-(arm arm)]
   ^-  (batt-of arm)
   %-  ~(run by b)
-  |=  chap=(map term arm)
-  ^-  (map term arm)
+  |=  [w=what chap=(map term arm)]
+  ^-  [what (map term arm)]
+  :-  w
   %-  ~(run by chap)
   |=  i=arm
   ^-  arm
@@ -146,7 +147,7 @@
   ?^  old  [u.old tbl]
   ::
   =/  i=xkey  next.tbl
-  =/  x=xray  [i ty d ~ ~ ~ ~ ~ ~]
+  =/  x=xray  [i ty d ~ ~ ~ ~ ~ ~ ~]
   ::
   =.  next.tbl      +(next.tbl)
   =.  xrays.tbl     (~(put by xrays.tbl) i x)
@@ -187,7 +188,7 @@
   ^-  (list xkey)
   %-  zing
   %+  turn  ~(val by b)
-  |=  =(map term xkey)
+  |=  [=what =(map term xkey)]
   ^-  (list xkey)
   ~(val by map)
 ::
@@ -341,13 +342,14 @@
   ::
   ::  Analyze a %hint type.
   ::
-  ::  This updates the `studs`, and/or `recipe` fields of the
+  ::  This updates the `helps`, `studs`, and/or `recipe` fields of the
   ::  given xray.
   ::
   ++  hint
     |=  [st=xtable [subject-of-note=type =note] x=xray]
     ^-  [xray xtable]
     ?-  -.note
+      %help  :_  st  x(helps (~(put in helps.x) p.note))
       %know  :_  st  x(studs (~(put in studs.x) p.note))
       %made  =^  recipe  st
                ?~  q.note  [[%direct p.note] st]
@@ -528,6 +530,7 @@
       [target ~(tap in (all-refs-to tbl xkey.target))]
     |=  [acc=xray ref=xkey]
     =/  ref-xray=xray  (focus-on img ref)
+    =/  helps    ^-  (set help)    (~(uni in helps.acc) helps.ref-xray)
     =/  recipes  ^-  (set recipe)  (~(uni in recipes.acc) recipes.ref-xray)
     ::
     =/  studs    ^-  (set stud)                       ::  Type system hack
@@ -536,7 +539,7 @@
                  |=  [acc=(set stud) new=stud]
                  (~(put in acc) new)
     ::
-    acc(studs studs, recipes recipes)
+    acc(helps helps, studs studs, recipes recipes)
   ::
   ::  Note that the `xroles` and `pats` fields may contain references
   ::  to other xrays as well. We don't bother to update those, because this
@@ -1019,7 +1022,7 @@
       ?^  t.chapters          ~
       ?.  =(p.i.chapters '')  ~
       ::
-      =/  arms=(list (pair term xkey))  ~(tap by q.i.chapters)
+      =/  arms=(list (pair term xkey))  ~(tap by q.q.i.chapters)
       ::
       ?~  arms            ~
       ?^  t.arms          ~
@@ -1221,7 +1224,7 @@
     =/  old=(unit xkey)  (~(get by type-map.st) ty)
     ?^  old  [u.old st]
     =/  xkey          next.st
-    =/  res=xray     [xkey ty `d ~ ~ ~ ~ ~ `%.n]
+    =/  res=xray     [xkey ty `d ~ ~ ~ ~ ~ ~ `%.n]
     =.  next.st      +(xkey)
     =.  xrays.st     (~(put by xrays.st) xkey.res res)
     =.  type-map.st  (~(put by type-map.st) type.res xkey.res)
@@ -1859,7 +1862,7 @@
     =/  chapters  ~(tap by batt)
     |-  ^-  (map term xkey)
     ?~  chapters  ~
-    (~(uni by q.i.chapters) $(chapters t.chapters))
+    (~(uni by q.q.i.chapters) $(chapters t.chapters))
   ::
   --
 ::

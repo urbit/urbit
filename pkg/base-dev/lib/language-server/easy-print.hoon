@@ -421,11 +421,11 @@
     ?:(?=([%plot *] q.yon) [q.hin p.q.yon] [q.hin q.yon ~])
   ::
       [%core *]
-    ?:  ?=([[%$ [[%$ @ *] ~ ~]] ~ ~] q.r.q.sut)
+    ?:  ?=([[%$ * [[%$ @ *] ~ ~]] ~ ~] q.r.q.sut)
       =/  dad  $(sut p.sut)
       :-  p.dad
       ~!  q.r.q.sut
-      [%gate q.n.q.n.q.r.q.sut sut(r.p.q %gold) q.dad]
+      [%gate q.n.q.q.n.q.r.q.sut sut(r.p.q %gold) q.dad]
     =+  yad=$(sut p.sut)
     :-  p.yad
     =+  ^=  doy  ^-  [p=(list @ta) q=wine]
@@ -438,7 +438,7 @@
     %^  cat  3
       %~  rent  co
       :+  %$  %ud
-      %-  ~(rep by (~(run by q.r.q.sut) |=(tome ~(wyt by +<))))
+      %-  ~(rep by (~(run by q.r.q.sut) |=(tome ~(wyt by q.+<))))
       |=([[@ a=@u] b=@u] (add a b))
     %^  cat  3
       ?-(r.p.q.sut %gold '.', %iron '|', %lead '?', %zinc '&')

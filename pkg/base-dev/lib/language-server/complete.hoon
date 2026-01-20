@@ -43,7 +43,7 @@
     %+  turn  ~(tap by q.r.q.ty)
     |=  [term =tome]
     %+  turn
-      ~(tap by tome)
+      ~(tap by q.tome)
     |=  [name=term =hoon]
     ^-  (pair term type)
     ~|  term=term
@@ -227,7 +227,7 @@
     =*  outer-loop  $
     ?~  tomes
       ~
-    =/  arms  ~(tap by q.i.tomes)
+    =/  arms  ~(tap by q.q.i.tomes)
     |-  ^-  (unit [term type])
     =*  inner-loop  $
     ?~  arms
