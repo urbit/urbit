@@ -79,6 +79,9 @@
       ::  domains: domain-names that resolve to us
       ::
       domains=(set turf)
+      ::  risk: true if access through bare ip address is allowed
+      ::
+      risk=_|
       ::  http-config: our server configuration
       ::
       =http-config
@@ -886,6 +889,7 @@
       ?~  doom  ~
       ?:  ?=(%| -.doom.u.doom)
         ::TODOxx  if ip support not enabled, produce ~
+        ?.  risk.state  ~
         `[%| p.doom port]:u.doom
       =.  domains.state  (~(put in domains.state) ~['localhost'])  ::TODOxx tmp
       =-  ?:  =(hit *turf)  ~
@@ -910,7 +914,18 @@
         [ours u.res]
       nop
     ?~  proto-target
-      !!  ::TODOxx  serve 400
+      ::NOTE  some code duplication with below, but request handling deserves
+      ::      a refactor anyway
+      =.  connections.state
+        %+  ~(put by connections.state)  duct
+        ^-  outstanding-connection
+        [*action [| secure address request] [*@uv [[%fake *@p] ~]] ~ 0]
+      %-  handle-response
+      :*  %start
+          [400 ~]
+          `(as-octs:mimes:html 'bad host')
+          complete=%.y
+      ==
     =*  target  u.proto-target
     ::  .pathowner: desk that the target path is bound to (~ for base/eyre)
     ::
@@ -4348,6 +4363,12 @@
       =/  cmd
         [%acme %poke `cage`[%acme-order !>(mod)]]
       [duct %pass /acme/order %g %deal [our our /eyre] cmd]~
+    ::
+        ::  %risk: turn bare ip access on or off
+        ::
+        %risk
+      =.  risk.server-state.ax  on.http-rule.task
+      [~ http-server-gate]
     ==
   ::
       %plea
@@ -4926,10 +4947,11 @@
     ==
   ::
       %~2024.8.20
-    %=  $
-      date.old  %~2025.1.31
-      verb.old  [verb.old check-session-timer=&]
-    ==
+    !!  ::TODOxx  migrations
+    :: %=  $
+    ::   date.old  %~2025.1.31
+    ::   verb.old  [verb.old check-session-timer=&]
+    :: ==
   ::
       %~2025.1.31
     =.  bindings.old

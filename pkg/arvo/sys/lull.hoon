@@ -3464,7 +3464,11 @@
             $%  [%put =turf]
                 [%del =turf]
                 [%new turfs=(set turf)]
-    ==  ==  ==
+        ==  ==
+        ::  risk: turn on to access via bare ip address at cost of security
+        ::
+        [%risk on=?]
+    ==
   ::  +address: client IP address
   ::
   +$  address
