@@ -3420,9 +3420,9 @@
     =/  headers  headers.response-header.http-event
     ::  ensure we have a valid content-length header
     ::
-    =.  headers  
-      ?.  ?=(^ data.http-event) 
-          (delete-header:http 'content-length' headers)
+    =.  headers
+      ?.  ?&(complete.http-event ?=(^ data.http-event))   
+        (delete-header:http 'content-length' headers)
       %^  set-header:http  'content-length'  
         (crip (a-co:co p.u.data.http-event))
       headers
