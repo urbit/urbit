@@ -20,7 +20,7 @@
       ==
     ::
     +$  behn-state
-      $:  %2
+      $:  %3
           timers=(tree [key=@da val=(qeu duct)])
           unix-duct=duct
           next-wake=(unit @da)
@@ -205,6 +205,7 @@
 =|  behn-state
 =*  state  -
 |=  [now=@da eny=@uvJ rof=roof]
+~>  %spin.[%behn]
 =*  behn-gate  .
 ^?
 |%
@@ -217,7 +218,7 @@
           wrapped-task=(hobo task)
       ==
   ^-  [(list move) _behn-gate]
-  ~>  %spin.['call/behn']
+  ~>  %spin.[%call]
   =/  =task  ((harden task) wrapped-task)
   =/  event-core  (per-event [now hen] state)
   =^  moves  state
@@ -226,10 +227,32 @@
 ::  +load: migrate an old state to a new behn version
 ::
 ++  load
-  |=  old=behn-state
-  ^+  behn-gate
-  ~>  %spin.['load/behn']
-  behn-gate(state old)
+  |^  |=  old=$%(state-2 state-3)
+      ^+  behn-gate
+      ~>  %spin.['load/behn']
+      ?-  -.old
+        %2  behn-gate(state (state-2-to-3 old))
+        %3  behn-gate(state old)
+      ==
+  ::
+  +$  state-3  behn-state
+  ::
+  +$  state-2
+    $:  %2
+        timers=(tree [key=@da val=(qeu duct)])
+        unix-duct=duct
+        next-wake=(unit @da)
+        drips=drip-manager-2
+    ==
+  +$  drip-manager-2
+      $:  count=@ud
+          movs=(map @ud vase:h136)
+      ==
+  ++  state-2-to-3
+    |=  s=state-2
+    ^-  state-3
+    s(- %3, movs.drips (~(run by movs.drips.s) next-vase:h136))
+  --
 ::  +scry: view timer state
 ::
 ::    TODO: not referentially transparent w.r.t. elapsed timers,
@@ -237,7 +260,7 @@
 ::
 ++  scry
   ^-  roon
-  ~>  %spin.['scry/behn']
+  ~>  %spin.[%scry]
   |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
   =*  ren  car
@@ -309,7 +332,7 @@
 ++  take
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^-  [(list move) _behn-gate]
-  ~>  %spin.['take/behn']
+  ~>  %spin.[%take]
   ?^  dud
     ~|(%behn-take-dud (mean tang.u.dud))
   ::
