@@ -4613,9 +4613,14 @@
     (min next expiry-time)
   ::
   ++  xx-auth
+    ?>  ?=([%behn %wake *] sign)
+    =*  tokens  tokensxx.auth.server-state.ax
+    ?^  error.sign
+      %-  (slog 'eyre: xx-auth wake crashed, nuking tmp tokens' ~)
+      =.  tokens  ~
+      [~ http-server-gate]
     ?>  ?=([@ ~] t.wire)
     =/  token=@uv  (slav %uv i.t.wire)
-    =*  tokens  tokensxx.auth.server-state.ax
     =.  tokens  (~(del by tokens) token)
     [~ http-server-gate]
   ::
