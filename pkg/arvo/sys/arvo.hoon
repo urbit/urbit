@@ -3,7 +3,7 @@
 |%
 +|  %global
 ::
-++  arvo  %235
+++  arvo  %234
 ::
 ::  $arch: node identity
 ::  $axal: fundamental node, recursive (trie)
@@ -207,10 +207,9 @@
       van=(map term (trap vase))
   ==
 +$  heir
-  $%  $:  %grub
-          $%  [?(%240 %239 %238 %237 %236 %235) =grub]
-      ==  ==
-      [?(%240 %239 %238 %237 %236 %235) =debt =soul]
+  $%  [%grub %234 =grub]  ::NOTE  no old versions, unused
+      [?(%240 %239 %238 %237 %236 %235) =debt =soul:a235]
+      [%234 =debt =soul]
   ==
 +$  plan  (pair germ (list move))
 +$  soul
@@ -289,6 +288,69 @@
       [%whom p=ship]
   ==
 +$  wynn  (list weft)
+::
+++  a234  .
+++  a235
+  =,  a234
+  =,  h136
+  |%
+  +$  cage  (cask vase)
+  +$  soul
+    $:  ::  identity, time, entropy
+        ::  fad: configuration
+        ::  zen: Outside knowledge
+        ::  mod: internal modules
+        ::
+        mien
+        $=  fad
+        $:  ::  lac: not verbose
+            ::
+            lac=?
+        ==
+        $=  zen
+        $:  ::  ver: runtime version
+            ::  lag: upgrade blocked
+            ::
+            ver=vere
+            lag=_|
+        ==
+        $=  mod
+        $:  ::  fat: filesystem
+            ::  lul: %lull
+            ::  zus: %zuse
+            ::  van: vanes
+            ::
+            fat=(axal (cask))
+            lul=vase
+            zus=vase
+            van=(map term vane)
+        ==
+    ==
+  +$  vane  [=vase =worm]
+  +$  worm
+    $:  ::  +nest, +play, and +mint
+        ::
+        nes=(set ^)
+        pay=(map (pair type hoon) type)
+        mit=(map (pair type hoon) (pair type nock))
+    ==
+  ::
+  ++  next-cage
+    |=  a=cage
+    ^-  cage:a234
+    a(q (next-vase q.a))
+  ::
+  ++  next-soul
+    |=  a=soul
+    ^-  soul:a234
+    ::  clears vane compiler caches
+    ::
+    %=  a
+      lul.mod  (next-vase lul.mod.a)
+      zus.mod  (next-vase zus.mod.a)
+      van.mod  (~(run by van.mod.a) |=(a=vane [(next-vase vase.a) *worm:a234]))
+    ==
+  --
 --  =>
 ::
 ~%  %hex  ..ut  ~
@@ -1773,7 +1835,8 @@
   ::
   =.  sol
     ?-  -.hir
-      ?(%240 %239 %238 %237 %236 %235)  soul.hir
+      ?(%240 %239 %238 %237 %236 %235)  (next-soul:a235 soul.hir)
+      %234                              soul.hir
     ==
   ::  clear compiler caches
   ::
