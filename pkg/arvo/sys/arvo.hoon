@@ -1840,6 +1840,8 @@
     ==
   ::  clear compiler caches
   ::
+  ~>  %drop  ::  XX  placement?
+  ::   =-(?. condition $ ~>(%drop $))  |.
   =.  van.mod  (~(run by van.mod) |=(=vane vane(worm *worm)))
   ::
   %-  %+  need:wyrd  kel.ver.zen
