@@ -83,6 +83,7 @@
 =*  point               point:jael
 =*  public-keys-result  public-keys-result:jael
 =/  packet-size  13
+=/  retry-timer  ~m2    ::  only used in /mesa/retry and /dead-flow timers
 ::
 =>  ::  common helpers
     ~%  %ames  ..part  ~
@@ -3041,7 +3042,7 @@
           cached-state  `23+(state-22-to-23 +.old)
         ::
             moz
-          [[/ames]~ %pass /mesa/retry %b %wait `@da`(add now ~m2)]^moz
+          [[/ames]~ %pass /mesa/retry %b %wait `@da`(add now retry-timer)]^moz
         ==
       ?:  ?=(%23 -.old)
         $(cached-state `24+(state-23-to-24 +.old))
@@ -3420,7 +3421,7 @@
         %=    old
             cork.dead
           :-  cork.dead.old
-          rots/`[~[/ames] /routes `@da`(add now ~m2)]
+          rots/`[~[/ames] /routes `@da`(add now retry-timer)]
         ==
       ::
       ++  state-22-to-23
@@ -3433,7 +3434,7 @@
         :*  peers  unix-duct  life  rift  bug  snub  cong
           ::
             :^    flow.dead  ::  preserve |ames dead-flow consolidation
-                chum/`[~[/ames] /mesa/retry `@da`(add now ~m2)]
+                chum/`[~[/ames] /mesa/retry `@da`(add now retry-timer)]
               cork.dead
             rots.dead
           ::
@@ -4272,7 +4273,7 @@
             |=  [[=bone pump=message-pump-state] cor=_core]
             ^+  cor
             =/  next-wake  next-wake.packet-pump-state.pump
-            ?.  ?&  =(~m2 rto.metrics.packet-pump-state.pump)
+            ?.  ?&  =(retry-timer rto.metrics.packet-pump-state.pump)
                     ?=(^ next-wake)
                 ==
               cor
@@ -4299,7 +4300,7 @@
               =*  tim  next-wake.packet-pump-state.m
               ?~  tim  acc
               ?:  ?&  ?=(^ +.flow.dead.ames-state)
-                      =(~m2 rto.metrics.packet-pump-state.m)
+                      =(retry-timer rto.metrics.packet-pump-state.m)
                   ==
                 ::  if dead-flow consolidated, we dont' want this timer
                 ::
@@ -4313,7 +4314,7 @@
                   [date ames/wire duct]:u.cork.dead.ames-state
               ::
                   ?:  ?=(~ +.chum.dead.ames-state)            ::  mesa retries
-                    [(add now ~m2) ~[/ames/mesa/retry /ames]] ::  (init if unset)
+                    [(add now retry-timer) ~[/ames/mesa/retry /ames]]
                   [date ames/wire duct]:u.chum.dead.ames-state
               ::
                   ?:  ?=(~ +.rots.dead.ames-state)            ::  expire routes
@@ -4329,7 +4330,7 @@
             =?  cork.dead.ames-state  ?=(~ +.cork.dead.ames-state)
               cork/`[~[/ames] /recork `@da`(add now ~d1)]
             =?  chum.dead.ames-state  ?=(~ +.chum.dead.ames-state)
-              chum/`[~[/ames] /mesa/retry `@da`(add now ~m2)]
+              chum/`[~[/ames] /mesa/retry `@da`(add now retry-timer)]
             =?  rots.dead.ames-state  ?=(~ +.rots.dead.ames-state)
               rots/`[~[/ames] /routes `@da`(add now ~m2)]
             ::
@@ -4902,8 +4903,8 @@
         ++  set-dead-flow-timer
           ^+  event-core
           =.  flow.dead.ames-state.event-core
-            flow/`[~[/ames] /dead-flow `@da`(add now ~m2)]
-          (emit ~[/ames] %pass /dead-flow %b %wait `@da`(add now ~m2))
+            flow/`[~[/ames] /dead-flow `@da`(add now retry-timer)]
+          (emit ~[/ames] %pass /dead-flow %b %wait `@da`(add now retry-timer))
         ::
         ++  set-dead-routes-timer
           ^+  event-core
@@ -4928,7 +4929,8 @@
             ?:(abort abort:core abet:core)
           %-  ~(rep by snd.peer-state)
           |=  [[=bone =message-pump-state] cor=_pe-core]
-          ?.  ?&  =(~m2 rto.metrics.packet-pump-state.message-pump-state)
+          ?.  ?&  =.  retry-timer
+                      rto.metrics.packet-pump-state.message-pump-state
                   ?=(^ next-wake.packet-pump-state.message-pump-state)
               ==
             cor
@@ -7098,12 +7100,14 @@
                   (pu-emit %b %rest (need next-wake.state))
                 ::  set new timer if non-null and not at at max-backoff
                 ::
-                ::  we are using the ~m2 literal instead of max-backoff:gauge
-                ::  because /app/ping has a special cased maximum backoff of
-                ::  ~s25 and we don't want to consolidate that
+                ::  we are using the retry-timer=~m2 literal instead of
+                ::  max-backoff:gauge because /app/ping has a special cased
+                ::  maximum backoff of ~s25 and we don't want to consolidate it
                 ::
                 =?  peer-core  ?=(^ new-wake)
-                  ?:  ?&(?=(^ +.flow.dead.ames-state) =(~m2 rto.metrics.state))
+                  ?:  ?&  ?=(^ +.flow.dead.ames-state)
+                          =(retry-timer rto.metrics.state)
+                      ==
                     peer-core
                   (pu-emit %b %wait u.new-wake)
                 ::
@@ -8021,7 +8025,7 @@
             ::
             ++  max-backoff
               ^-  @dr
-              ?:(?=([[%gall %use %ping *] *] duct) ~s25 ~m2)
+              ?:(?=([[%gall %use %ping *] *] duct) ~s25 retry-timer)
             ::  +in-slow-start: %.y if we're in "slow-start" mode
             ::
             ++  in-slow-start
@@ -10028,67 +10032,111 @@
           ++  fo-take-ack
             |=  [seq=@ud =spar =gage:mess]
             ^+  fo-core
-            ::  if all pokes have been processed no-op
+            ::
+            ::  assurance checks
             ::
             ?~  first=(pry:fo-mop loads.snd)
               %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("no message to %ack {<[bone=bone seq=seq]>}")
+                  |.("no message to ack {<[bone=bone seq=seq]>}")
               fo-core
-            ::  only handle acks for %pokes that have been sent
             ::
             ?.  (lth seq next.snd)
               %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("old %ack {<[bone=bone seq=seq]>}")
+                  |.("ack for unsent message {<[bone=bone seq=seq]>}")
               fo-core
-            ~|  gage
             =+  ;;([%message %ack nack=?] gage)  ::  XX
+            ::  handle out-of-order acks (only during migration)
+            ::
             ?.  =(key.u.first seq)
               ::  XX we shouldn't see this since send-window is always 1,
               ::  XX only for migrated queued-message-acks
               ::
-              %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("hear out of order ack {<[seq=seq first=key.u.first]>}")
-              ::  if the ack we receive is not for the first, save it
-              ::  if nack, start +peeking right away
-              ::
-              =?  fo-core  nack  (fo-peek-naxplanation seq)
-              fo-core(acks.snd.state (put:fo-cac acks seq ?:(nack nack/~ ok/~)))
-            =|  error=(unit error:ames)
+              (fo-cache-out-of-order-ack seq nack)
+            ::
+            ::  if error start +peek for naxplanation
+            ::
             ?:  nack
               ::  XX make nack=(unit error), and include the naxplanation there?
               ::
-              ::  if error start +peek for naxplanation
+              (fo-peek-naxplanation seq)
+            ::
+            ::  process in-order ack
+            ::
+            =.  fo-core  (fo-process-in-order-ack seq nack error=~)
+            ::
+            ::  process any cached acks
+            ::
+            (fo-process-cached-acks seq)
+          ::
+          ++  fo-cache-out-of-order-ack
+            |=  [seq=@ud nack=?]
+            ^+  fo-core
+            ::  cache an ack that arrived out of order
+            ::
+            %-  %+  ev-tace  odd.veb.bug.ames-state
+                |.("cache out-of-order ack {<[seq=seq first=next.snd nack=nack]>}")
+            ::
+            =?  fo-core  nack
+              ::  if nack, start +peeking right away
               ::
               (fo-peek-naxplanation seq)
-            |-  ^+  fo-core
-            %-  %+  ev-tace  msg.veb.bug.ames-state
-                |.("hear {<?~(error %ack %nack)>} for {<[bone=bone seq=seq]>}")
-            ::  ack is for the first, oldest pending-ack sent message;
-            ::  remove it and start processing cached acks
+            fo-core(acks.snd.state (put:fo-cac acks seq ?:(nack nack/~ ok/~)))
+
+          ++  fo-process-in-order-ack
+            |=  [seq=@ud nack=? error=(unit error:ames)]
+            ^+  fo-core
+            ::  process an ack for the oldest pending message
             ::
-            =^  m  loads.snd  (del:fo-mop loads.snd seq)
+            %-  %+  ev-tace  msg.veb.bug.ames-state
+                |.("process in-order {<?:(nack %nack %ack)>} {<[bone=bone seq=seq]>}")
+            ::
+            ::  remove message from send queue
+            ::
+            =^  deleted-msg  loads.snd  (del:fo-mop loads.snd seq)
+            ::
             ::  increase the send-window so we can send the next message
             ::
             =.  send-window.snd  +(send-window.snd)
+            ::
+            ::  check cork condition
+            ::
             =.  can-be-corked
               ?&  ?=(%for dire)    ::  (only if we are the %for side)
                   closing.state    ::  we sent a %cork %plea
                   ?=(~ loads.snd)  ::  nothing else is pending
-                  ?=(^ m)  =([%plea %$ [%flow ~] %cork ~] u.m)
+                  ?=(^ deleted-msg)
+                  =([%plea %$ [%flow ~] %cork ~] u.deleted-msg)
               ==
-            ::  send next messages
+            ::
+            ::  send next queued messages
             ::
             =.  fo-core  fo-send
-            ::  don't give %done for %boon and %cork; implicit %ack
+            ::
+            ::  emit %done to client vane (unless this is a cork)
             ::
             =?  fo-core  ?&  ?=(%for dire)
-                             !can-be-corked
-                         ==
+                            !can-be-corked
+                        ==
               (fo-emit (ev-got-duct bone) %give %done error)
-            ::  are there any cached acks?
             ::
-            =^  next  fo-core  (fo-handle-miss-ack seq)
-            ?:(=(seq ack.next) fo-core $(seq ack.next, error error.next))
+            fo-core
+          ::
+          ++  fo-process-cached-acks
+            |=  last-seq=@ud
+            ^+  fo-core
+            ::  iteratively process any cached acks in order
+            ::
+            =^  next  fo-core  (fo-handle-miss-ack last-seq)
+            ?:  =(last-seq ack.next)
+              ::  no more cached acks
+              ::
+              fo-core
+            ::
+            ::  process the next cached ack
+            ::
+            =.  fo-core  (fo-process-in-order-ack ack.next %.n error.next)
+            ::
+            $(last-seq ack.next)
           ::
           ++  fo-take-nax
             |=  [seq=@ud =spar =gage:mess]
@@ -10268,47 +10316,52 @@
             [(fo-wire %fub) %a meek/[chum-to-our her (fo-cor-path seq=0 our)]]
           ::
           ++  fo-handle-miss-ack
-            |=  seq=message-num
+            |=  last-seq=message-num
             ^-  [[ack=@ud error=(unit error)] _fo-core]
-            ::  are there any cached acks?
             ::
-            ?~  cack=(pry:fo-cac acks.snd.state)  [seq ~]^fo-core
-            ?.  =(key.u.cack +(seq))              [seq ~]^fo-core
+            ::  check if there's a cached ack for the next message
+            ::
+            ?~  cack=(pry:fo-cac acks.snd.state)
+              [last-seq ~]^fo-core
+            ::
+            ?.  =(key.u.cack +(last-seq))
+              [last-seq ~]^fo-core
+            ::
+            ::  found a cached ack for next message
+            ::
             =+  next-load=(pry:fo-mop loads.snd)
-            ::  if next cached is a %nack, no-op; we are still waiting for the
-            ::  naxplanation
+            ::
+            ::  if it's a nack, check if we need to peek naxplanation
             ::
             ?:  ?=([%nack ~] val.u.cack)
-              :-  [seq ~]
-              ?.  ?=(~ next-load)  fo-core
-                ::  if there is no payload outstanding but we still have queued
-                ::  nacks, the naxplanation got processed incorrectly
-                ::  and queued messages have been migrated from .peers; start
-                ::  peeking for the naxplanation
-                ::
+              :-  [last-seq ~]
+              ?.  ?=(~ next-load)
+                fo-core  ::  payload outstanding, wait for it
+              ::
+              ::  no payload but we have a nack - peek for naxplanation
+              ::
               %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("queued %nack; %naxplanation missing {<[b=bone n=seq]>}")
+                  |.("queued nack needs naxplanation {<[bone=bone seq=key.u.cack]>}")
               (fo-peek-naxplanation key.u.cack)
+            ::
+            ::  verify the cached ack matches the next outstanding message
+            ::
             ?:  ?&  ?=(^ next-load)
-                    (lth seq next.snd)
-                    !=(key.u.next-load +(seq))
+                    (lth last-seq next.snd)
+                    !=(key.u.next-load +(last-seq))
                 ==
               %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("outstanding %loads doesn't match next {<[b=bone n=seq]>}")
-              ::  if there are outstanding payloads, no-op if the oldest one
-              ::  doesn't match the next sequence in order
-              ::
-              [seq ~]^fo-core
-            ::  either there is no payloads outstanding, but next queued message
-            ::  ack is the next one in order, or next cached ack is for the next
-            ::  sent %poke; process
+                  |.("cached ack mismatch {<[bone=bone cached=key.u.cack load=key.u.next-load]>}")
+              [last-seq ~]^fo-core
+            ::
+            ::  process the cached ack
             ::
             %-  %+  ev-tace  msg.veb.bug.ames-state
-                |.("process next queued ack {<[bone=bone seq=key.u.cack]>}")
-            =^  *  acks.snd.state  (del:fo-cac acks.snd.state key.u.cack)
-            :_  fo-core
-            ::  produce ack or naxplanation
+                |.("process cached ack {<[bone=bone seq=key.u.cack]>}")
             ::
+            =^  *  acks.snd.state  (del:fo-cac acks.snd.state key.u.cack)
+            ::
+            :_  fo-core
             [key.u.cack ?:(?=(%ok -.val.u.cack) ~ `+.val.u.cack)]
           ::
           --
@@ -10353,9 +10406,10 @@
             (rof [~ ~] /ames %j `beam`[[our %turf %da now] /])
           ::
           =?  sy-core  ?=(~ +.chum.dead.ames-state)
-            (sy-emit ~[/ames] %pass /mesa/retry %b %wait `@da`(add now ~m2))
+            %-  sy-emit
+            [~[/ames] %pass /mesa/retry %b %wait `@da`(add now retry-timer)]
           =?  chum.dead.ames-state  ?=(~ +.chum.dead.ames-state)
-            chum/`[~[/ames] /mesa/retry `@da`(add now ~m2)]
+            chum/`[~[/ames] /mesa/retry `@da`(add now retry-timer)]
           =^  cork-moves  cork.dead.ames-state
             ?.  ?=(~ +.cork.dead.ames-state)
               `cork.dead.ames-state
@@ -10436,12 +10490,13 @@
           ::  XX only timed-out (dead) outgoing %poke requests
           ::
           =.  chum.dead.ames-state
-            chum/`[~[/ames] /mesa/retry `@da`(add now ~m2)]
+            chum/`[~[/ames] /mesa/retry `@da`(add now retry-timer)]
           =?  sy-core  ?=(~ error)
             ::  if there's been an error, reset the timer and skip %proding
             ::
             (sy-prod ~)
-          (sy-emit ~[/ames] %pass /mesa/retry %b %wait `@da`(add now ~m2))
+          %-  sy-emit
+          [~[/ames] %pass /mesa/retry %b %wait `@da`(add now retry-timer)]
         ::
         ++  sy-publ
           |=  [=wire =public-keys-result:jael]
@@ -10947,32 +11002,34 @@
             ?.  ?=([%known *] per-sat)
               ::  XX  this shouldn't be needed
               ::  XX  only if %alien
-              ?:  ?=(%pawn (clan:title ship))
-                ::  XX resend attestation request?
-                ::
-                =/  gal=(unit @p)
-                  =/  sax
-                    %^  rof  [~ ~]  /ames
-                    j/`beam`[[our %saxo %da now] /(scot %p ship)]
-                  ?.  ?=([~ ~ *] sax)
-                    ~
-                  `(rear ;;((list @p) q.q.u.u.sax))
-                =^  al-moves  ames-state.core
-                  ?~  gal           ~  ::  XX  this shouldn't happen
-                  ?:  =(our u.gal)  ~  ::  XX  don't send to ourselves
-                  =<  al-abet
-                  %.  [ship lane=`@ux`u.gal]
-                  ~(al-read-proof al(ames-state ames-state.core) ~[/ames])
-                (sy-emil:core al-moves)
-              %-  sy-emit:core
-              [~[//keys] %pass /public-keys %j %public-keys ship ~ ~]
-            ::
+              ?.  ?=(%pawn (clan:title ship))
+                %-  sy-emit:core
+                [~[//keys] %pass /public-keys %j %public-keys ship ~ ~]
+              ::  resend attestation request
+              ::
+              =/  gal=(unit @p)
+                =/  sax
+                  %^  rof  [~ ~]  /ames
+                  j/`beam`[[our %saxo %da now] /(scot %p ship)]
+                ?.  ?=([~ ~ *] sax)
+                  ~
+                `(rear ;;((list @p) q.q.u.u.sax))
+              ?~  gal
+                core  ::  XX  this shouldn't happen
+              ?:  =(our u.gal)
+                core  ::  don't send to ourselves
+              %-  sy-emil:core
+              ::  +al-read-proof doesn't modify any state and just emits
+              ::  a +peek to read the comet's attestation
+              ::
+              =<  moves
+              %.  [ship lane=`@ux`u.gal]
+              ~(al-read-proof al(ames-state ames-state.core) ~[/ames])
             =/  ev-core
               ~(ev-core ev(ames-state ames-state.core) hen ship +.per-sat)
             ::
             =^  resend-moves  ames-state.core
-              =;  c=_ev-core
-                ev-abet:c
+              =<  ev-abet  ^+  ev-core
               %-  ~(rep by pit.per.ev-core)
               |=  [[=path req=request-state] core=_ev-core]
               ::  update and print connection status
