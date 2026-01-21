@@ -8399,10 +8399,10 @@
       (bind $(gen q.gen) |=(=skin [%help p.p.gen skin]))
     ::
         [%wing *]
-      ?:  ?=([@ ~] p.gen)
-        `i.p.gen
       =/  depth  0
       |-  ^-  (unit skin)
+      ?:  ?=([@ ~] p.gen)
+        `i.p.gen
       ?~  p.gen  `[%wash depth]
       ?.  =([%| 0 ~] i.p.gen)  ~
       $(p.gen t.p.gen)
@@ -9190,8 +9190,13 @@
           [%cell *]
         ?+  ref      sint
           [%atom *]  sut
-          [%cell *]  ?.  (nest(sut p.ref) | p.sut)  sut
-                     (cell p.sut dext(sut q.sut, ref q.ref))
+          [%cell *]  =/  lef  dext(sut p.sut, ref p.ref)
+                     =/  ryt  dext(sut q.sut, ref q.ref)
+                     %-  fork
+                     :~  (cell lef q.sut)
+                         (cell p.sut ryt)
+                         (cell lef ryt)
+                     ==
         ==
       ::
           [%core *]  ?:(?=(?([%atom *] [%cell *]) ref) sut sint)
@@ -9208,12 +9213,12 @@
       ^-  type
       ?+    ref    !!
         [%core *]  sut
-        [%face *]  dext(ref repo(sut ref))
+        [%face *]  dext(ref q.ref)
         [%fork *]  =+  yed=~(tap in p.ref)
                    |-  ^-  type
                    ?~  yed  sut
                    $(yed t.yed, sut dext(ref i.yed))
-        [%hint *]  dext(ref repo(sut ref))
+        [%hint *]  dext(ref q.ref)
         [%hold *]  dext(ref repo(sut ref))
       ==
     --
@@ -9663,27 +9668,31 @@
     ~/  %fuse
     |=  ref=type
     =+  bix=*(set [type type])
+    =+  rev=|
     |-  ^-  type
     ?:  ?|(=(sut ref) =(%noun ref))
       sut
     ?-    sut
         [%atom *]
       ?-    ref
-          [%atom *]   =+  foc=?:((fitz p.ref p.sut) p.sut p.ref)
-                      ?^  q.sut
-                        ?^  q.ref
-                          ?:  =(q.sut q.ref)
-                            [%atom foc q.sut]
+          [%atom *]   =+  [a b]=?:(rev [ref sut] [sut ref])
+                      =+  foc=?:((fitz p.b p.a) p.a p.b)
+                      ?^  q.a
+                        ?^  q.b
+                          ?:  =(q.a q.b)
+                            [%atom foc q.a]
                           %void
-                        [%atom foc q.sut]
-                      [%atom foc q.ref]
+                        [%atom foc q.a]
+                      [%atom foc q.b]
           [%cell *]   %void
-          *           $(sut ref, ref sut)
+          *           $(sut ref, ref sut, rev !rev)
       ==
         [%cell *]
       ?-  ref
-        [%cell *]   (cell $(sut p.sut, ref p.ref) $(sut q.sut, ref q.ref))
-        *           $(sut ref, ref sut)
+        [%cell *]   =+  hed=$(sut p.sut, ref p.ref)
+                    ?:  ?=(%void hed)  %void
+                    (cell hed $(sut q.sut, ref q.ref))
+        *           $(sut ref, ref sut, rev !rev)
       ==
     ::
         [%core *]  $(sut repo)
