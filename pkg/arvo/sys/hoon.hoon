@@ -1335,17 +1335,15 @@
     ~/  %int
     |*  b=_a
     |-  ^+  a
-    ?~  b
-      ~
-    ?~  a
-      ~
-    ?.  (mor n.a n.b)
-      $(a b, b a)
+    ?~  b  ~
+    ?~  a  ~
     ?:  =(n.b n.a)
-      a(l $(a l.a, b l.b), r $(a r.a, b r.b))
+      b(l $(a l.a, b l.b), r $(a r.a, b r.b))
     ?:  (gor n.b n.a)
-      %-  uni(a $(a l.a, r.b ~))  $(b r.b)
-    %-  uni(a $(a r.a, l.b ~))  $(b l.b)
+      %-  uni(a $(a l.a, r.b ~))  ::  left of b must be left of a
+      $(l.b ~)                    ::  right of b could be anywhere
+    %-  uni(a $(a r.a, l.b ~))    ::  right of b must be right of a
+    $(r.b ~)                      ::  left of b could be anywhere
   ::
   ++  put                                               ::  puts b in a, sorted
     ~/  %put
@@ -1554,21 +1552,15 @@
     ~/  %int
     |*  b=_a
     |-  ^+  a
-    ?~  b
-      ~
-    ?~  a
-      ~
-    ?:  (mor p.n.a p.n.b)
-      ?:  =(p.n.b p.n.a)
-        b(l $(a l.a, b l.b), r $(a r.a, b r.b))
-      ?:  (gor p.n.b p.n.a)
-        %-  uni(a $(a l.a, r.b ~))  $(b r.b)
-      %-  uni(a $(a r.a, l.b ~))  $(b l.b)
-    ?:  =(p.n.a p.n.b)
-      b(l $(b l.b, a l.a), r $(b r.b, a r.a))
-    ?:  (gor p.n.a p.n.b)
-      %-  uni(a $(b l.b, r.a ~))  $(a r.a)
-    %-  uni(a $(b r.b, l.a ~))  $(a l.a)
+    ?~  b  ~
+    ?~  a  ~
+    ?:  =(p.n.b p.n.a)
+      b(l $(a l.a, b l.b), r $(a r.a, b r.b))
+    ?:  (gor p.n.b p.n.a)
+      %-  uni(a $(a l.a, r.b ~))  ::  left of b must be left of a
+      $(l.b ~)                    ::  right of b could be anywhere
+    %-  uni(a $(a r.a, l.b ~))    ::  right of b must be right of a
+    $(r.b ~)                      ::  left of b could be anywhere
   ::
   ++  jab
     ~/  %jab
