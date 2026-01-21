@@ -4238,7 +4238,7 @@
   ^-  tape
   (turn vib |=(a=@ ?.(&((gte a 'a') (lte a 'z')) a (sub a 32))))
 ::
-++  crip  |=(a=tape `@t`(rap 3 a))                      ::  tape to cord
+++  crip  |=(a=tape `@t`(rep 3 a))                      ::  tape to cord
 ::
 ++  mesc                                                ::  ctrl code escape
   |=  vib=tape
