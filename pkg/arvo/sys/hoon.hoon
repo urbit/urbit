@@ -1704,6 +1704,11 @@
     |.  ^+  b
     ?~  a   b
     $(a r.a, b $(a l.a, b (~(put in b) p.n.a)))
+  ++  ley                                               :: list of keys
+    =+  b=`(list _?>(?=(^ a) p.n.a))`~
+    |-  ^+  b
+    ?~  a   b
+    $(a r.a, b [p.n.a $(a l.a)])  
   ::
   ++  val                                               ::  list of vals
     =+  b=`(list _?>(?=(^ a) q.n.a))`~
