@@ -10032,67 +10032,111 @@
           ++  fo-take-ack
             |=  [seq=@ud =spar =gage:mess]
             ^+  fo-core
-            ::  if all pokes have been processed no-op
+            ::
+            ::  assurance checks
             ::
             ?~  first=(pry:fo-mop loads.snd)
               %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("no message to %ack {<[bone=bone seq=seq]>}")
+                  |.("no message to ack {<[bone=bone seq=seq]>}")
               fo-core
-            ::  only handle acks for %pokes that have been sent
             ::
             ?.  (lth seq next.snd)
               %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("old %ack {<[bone=bone seq=seq]>}")
+                  |.("ack for unsent message {<[bone=bone seq=seq]>}")
               fo-core
-            ~|  gage
             =+  ;;([%message %ack nack=?] gage)  ::  XX
+            ::  handle out-of-order acks (only during migration)
+            ::
             ?.  =(key.u.first seq)
               ::  XX we shouldn't see this since send-window is always 1,
               ::  XX only for migrated queued-message-acks
               ::
-              %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("hear out of order ack {<[seq=seq first=key.u.first]>}")
-              ::  if the ack we receive is not for the first, save it
-              ::  if nack, start +peeking right away
-              ::
-              =?  fo-core  nack  (fo-peek-naxplanation seq)
-              fo-core(acks.snd.state (put:fo-cac acks seq ?:(nack nack/~ ok/~)))
-            =|  error=(unit error:ames)
+              (fo-cache-out-of-order-ack seq nack)
+            ::
+            ::  if error start +peek for naxplanation
+            ::
             ?:  nack
               ::  XX make nack=(unit error), and include the naxplanation there?
               ::
-              ::  if error start +peek for naxplanation
+              (fo-peek-naxplanation seq)
+            ::
+            ::  process in-order ack
+            ::
+            =.  fo-core  (fo-process-in-order-ack seq nack error=~)
+            ::
+            ::  process any cached acks
+            ::
+            (fo-process-cached-acks seq)
+          ::
+          ++  fo-cache-out-of-order-ack
+            |=  [seq=@ud nack=?]
+            ^+  fo-core
+            ::  cache an ack that arrived out of order
+            ::
+            %-  %+  ev-tace  odd.veb.bug.ames-state
+                |.("cache out-of-order ack {<[seq=seq first=next.snd nack=nack]>}")
+            ::
+            =?  fo-core  nack
+              ::  if nack, start +peeking right away
               ::
               (fo-peek-naxplanation seq)
-            |-  ^+  fo-core
-            %-  %+  ev-tace  msg.veb.bug.ames-state
-                |.("hear {<?~(error %ack %nack)>} for {<[bone=bone seq=seq]>}")
-            ::  ack is for the first, oldest pending-ack sent message;
-            ::  remove it and start processing cached acks
+            fo-core(acks.snd.state (put:fo-cac acks seq ?:(nack nack/~ ok/~)))
+
+          ++  fo-process-in-order-ack
+            |=  [seq=@ud nack=? error=(unit error:ames)]
+            ^+  fo-core
+            ::  process an ack for the oldest pending message
             ::
-            =^  m  loads.snd  (del:fo-mop loads.snd seq)
+            %-  %+  ev-tace  msg.veb.bug.ames-state
+                |.("process in-order {<?:(nack %nack %ack)>} {<[bone=bone seq=seq]>}")
+            ::
+            ::  remove message from send queue
+            ::
+            =^  deleted-msg  loads.snd  (del:fo-mop loads.snd seq)
+            ::
             ::  increase the send-window so we can send the next message
             ::
             =.  send-window.snd  +(send-window.snd)
+            ::
+            ::  check cork condition
+            ::
             =.  can-be-corked
               ?&  ?=(%for dire)    ::  (only if we are the %for side)
                   closing.state    ::  we sent a %cork %plea
                   ?=(~ loads.snd)  ::  nothing else is pending
-                  ?=(^ m)  =([%plea %$ [%flow ~] %cork ~] u.m)
+                  ?=(^ deleted-msg)
+                  =([%plea %$ [%flow ~] %cork ~] u.deleted-msg)
               ==
-            ::  send next messages
+            ::
+            ::  send next queued messages
             ::
             =.  fo-core  fo-send
-            ::  don't give %done for %boon and %cork; implicit %ack
+            ::
+            ::  emit %done to client vane (unless this is a cork)
             ::
             =?  fo-core  ?&  ?=(%for dire)
-                             !can-be-corked
-                         ==
+                            !can-be-corked
+                        ==
               (fo-emit (ev-got-duct bone) %give %done error)
-            ::  are there any cached acks?
             ::
-            =^  next  fo-core  (fo-handle-miss-ack seq)
-            ?:(=(seq ack.next) fo-core $(seq ack.next, error error.next))
+            fo-core
+          ::
+          ++  fo-process-cached-acks
+            |=  last-seq=@ud
+            ^+  fo-core
+            ::  iteratively process any cached acks in order
+            ::
+            =^  next  fo-core  (fo-handle-miss-ack last-seq)
+            ?:  =(last-seq ack.next)
+              ::  no more cached acks
+              ::
+              fo-core
+            ::
+            ::  process the next cached ack
+            ::
+            =.  fo-core  (fo-process-in-order-ack ack.next %.n error.next)
+            ::
+            $(last-seq ack.next)
           ::
           ++  fo-take-nax
             |=  [seq=@ud =spar =gage:mess]
@@ -10272,47 +10316,52 @@
             [(fo-wire %fub) %a meek/[chum-to-our her (fo-cor-path seq=0 our)]]
           ::
           ++  fo-handle-miss-ack
-            |=  seq=message-num
+            |=  last-seq=message-num
             ^-  [[ack=@ud error=(unit error)] _fo-core]
-            ::  are there any cached acks?
             ::
-            ?~  cack=(pry:fo-cac acks.snd.state)  [seq ~]^fo-core
-            ?.  =(key.u.cack +(seq))              [seq ~]^fo-core
+            ::  check if there's a cached ack for the next message
+            ::
+            ?~  cack=(pry:fo-cac acks.snd.state)
+              [last-seq ~]^fo-core
+            ::
+            ?.  =(key.u.cack +(last-seq))
+              [last-seq ~]^fo-core
+            ::
+            ::  found a cached ack for next message
+            ::
             =+  next-load=(pry:fo-mop loads.snd)
-            ::  if next cached is a %nack, no-op; we are still waiting for the
-            ::  naxplanation
+            ::
+            ::  if it's a nack, check if we need to peek naxplanation
             ::
             ?:  ?=([%nack ~] val.u.cack)
-              :-  [seq ~]
-              ?.  ?=(~ next-load)  fo-core
-                ::  if there is no payload outstanding but we still have queued
-                ::  nacks, the naxplanation got processed incorrectly
-                ::  and queued messages have been migrated from .peers; start
-                ::  peeking for the naxplanation
-                ::
+              :-  [last-seq ~]
+              ?.  ?=(~ next-load)
+                fo-core  ::  payload outstanding, wait for it
+              ::
+              ::  no payload but we have a nack - peek for naxplanation
+              ::
               %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("queued %nack; %naxplanation missing {<[b=bone n=seq]>}")
+                  |.("queued nack needs naxplanation {<[bone=bone seq=key.u.cack]>}")
               (fo-peek-naxplanation key.u.cack)
+            ::
+            ::  verify the cached ack matches the next outstanding message
+            ::
             ?:  ?&  ?=(^ next-load)
-                    (lth seq next.snd)
-                    !=(key.u.next-load +(seq))
+                    (lth last-seq next.snd)
+                    !=(key.u.next-load +(last-seq))
                 ==
               %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("outstanding %loads doesn't match next {<[b=bone n=seq]>}")
-              ::  if there are outstanding payloads, no-op if the oldest one
-              ::  doesn't match the next sequence in order
-              ::
-              [seq ~]^fo-core
-            ::  either there is no payloads outstanding, but next queued message
-            ::  ack is the next one in order, or next cached ack is for the next
-            ::  sent %poke; process
+                  |.("cached ack mismatch {<[bone=bone cached=key.u.cack load=key.u.next-load]>}")
+              [last-seq ~]^fo-core
+            ::
+            ::  process the cached ack
             ::
             %-  %+  ev-tace  msg.veb.bug.ames-state
-                |.("process next queued ack {<[bone=bone seq=key.u.cack]>}")
-            =^  *  acks.snd.state  (del:fo-cac acks.snd.state key.u.cack)
-            :_  fo-core
-            ::  produce ack or naxplanation
+                |.("process cached ack {<[bone=bone seq=key.u.cack]>}")
             ::
+            =^  *  acks.snd.state  (del:fo-cac acks.snd.state key.u.cack)
+            ::
+            :_  fo-core
             [key.u.cack ?:(?=(%ok -.val.u.cack) ~ `+.val.u.cack)]
           ::
           --
