@@ -10957,13 +10957,17 @@
                   ?.  ?=([~ ~ *] sax)
                     ~
                   `(rear ;;((list @p) q.q.u.u.sax))
-                =^  al-moves  ames-state.core
-                  ?~  gal           ~  ::  XX  this shouldn't happen
-                  ?:  =(our u.gal)  ~  ::  XX  don't send to ourselves
-                  =<  al-abet
-                  %.  [ship lane=`@ux`u.gal]
-                  ~(al-read-proof al(ames-state ames-state.core) ~[/ames])
-                (sy-emil:core al-moves)
+                ?~  gal
+                  core  ::  XX  this shouldn't happen
+                ?:  =(our u.gal)
+                  core  ::  don't send to ourselves
+                %-  sy-emil:core
+                ::  +al-read-proof doesn't modify any state and just emits
+                ::  a +peek to read the comet's attestation
+                ::
+                =<  moves
+                %.  [ship lane=`@ux`u.gal]
+                ~(al-read-proof al(ames-state ames-state.core) ~[/ames])
               %-  sy-emit:core
               [~[//keys] %pass /public-keys %j %public-keys ship ~ ~]
             ::
@@ -10971,8 +10975,7 @@
               ~(ev-core ev(ames-state ames-state.core) hen ship +.per-sat)
             ::
             =^  resend-moves  ames-state.core
-              =;  c=_ev-core
-                ev-abet:c
+              =<  ev-abet  ^+  ev-core
               %-  ~(rep by pit.per.ev-core)
               |=  [[=path req=request-state] core=_ev-core]
               ::  update and print connection status
