@@ -229,7 +229,7 @@
 ++  load
   |^  |=  old=$%(state-2 state-3)
       ^+  behn-gate
-      ~>  %spin.[%load]
+      ~>  %spin.['load/behn']
       ?-  -.old
         %2  behn-gate(state (state-2-to-3 old))
         %3  behn-gate(state old)

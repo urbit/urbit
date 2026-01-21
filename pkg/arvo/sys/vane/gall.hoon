@@ -18,14 +18,32 @@
 ::  +trace: print if .verb is set and we're tracking .dude
 ::
 ++  trace
-  |=  [verb=? =dude dudes=(set dude) print=tang]
+  |=  [verb=? =dude dudes=(set dude) print=(each tape tang)]
   ^+  same
   ?.  verb
     same
   ?.  =>  [dude=dude dudes=dudes in=in]
       ~+  |(=(~ dudes) (~(has in dudes) dude))
     same
-  (slog print)
+  ?:  ?=(%.n -.print)
+    %+  slog
+      :-  %leaf  %+  weld  "gall: "
+      ?:  =(%$ dude)  ""
+      "{<dude>}: "
+    +.print
+  %-  slog
+  ^-  tang
+  :-  :-  %leaf
+      ^-  tape
+      ;:    weld
+          "gall: "
+        ::
+          ?:  =(%$ dude)  ""
+          "{<dude>}: "
+        ::
+          `tape`+.print
+      ==
+  ~
 ::
 ::  $bug: debug printing configuration
 ::
@@ -42,9 +60,9 @@
 ::  $move: Arvo-level move
 ::
 +$  move  [=duct move=(wind note-arvo gift-arvo)]
-::  $state-19: overall gall state, versioned
+::  $state-20: overall gall state, versioned
 ::
-+$  state-19  [%19 state]
++$  state-20  [%20 state]
 ::  $state: overall gall state
 ::
 ::    system-duct: TODO document
@@ -350,7 +368,7 @@
       [%x ~]
   ==
 ::
-+$  flub-requesst  [%0 ~]
++$  flub-request  [%0 ~]
 ::
 +$  flub-response
   $:  %0
@@ -410,13 +428,12 @@
       flubs=(jug ship app=term)
       halts=(jug app=term [ship duct])
   ==
-+$  spore-19  [%19 spore]
++$  spore-20  [%20 spore]
 --
 ::  adult gall vane interface, for type compatibility with pupa
 ::
-=|  state=state-19
+=|  state=state-20
 |=  [now=@da eny=@uvJ rof=roof]
-~>  %spin.[%gall]
 =*  gall-payload  .
 ~%  %gall-top  ..part  ~
 |%
@@ -430,7 +447,7 @@
   |_  [hen=duct moves=(list move)]
   ::
   ++  trace
-    |=  [verb=? =dude print=tang]
+    |=  [verb=? =dude print=(each tape tang)]
     ^+  same
     (^trace verb dude dudes.bug.state print)
   ::
@@ -562,7 +579,6 @@
       =.  mo-core  (mo-give-halts dap)
       (mo-clear-queue dap)
     ::
-
     =.  yokes.state
       %+  ~(put by yokes.state)  dap
       %*    .  *$>(%live yoke)
@@ -579,7 +595,7 @@
         =/  sky=(list [=spur bob=@ud])  ~(tap by sky.u.yak)
         |-
         ?~  sky  farm
-        =.  farm  (need (~(put-grow of-farm farm) spur.i.sky [`bob.i.sky ~]))
+        =.  farm  (~(put of-farm farm) spur.i.sky [`bob.i.sky ~])
         $(sky t.sky)
       ==
     ::
@@ -843,12 +859,11 @@
           ::
         (mo-pass sys+wire %a %cork ship)
       ::
-      ?-  remote-request
-        %watch-as  (mo-give %unto %watch-ack err)
-        %watch     (mo-give %unto %watch-ack err)
-        %poke      (mo-give %unto %poke-ack err)
-        %missing   ~>(%slog.[3 'gall: missing'] mo-core)
-        ::
+      ?-    remote-request
+          %poke                (mo-give %unto %poke-ack err)
+          %missing             ~>(%slog.[3 'gall: missing'] mo-core)
+          ?(%watch %watch-as)  (mo-give %unto %watch-ack err)
+      ::
           %leave
         ::  if we get an %ack for a %leave, send %cork. otherwise,
         ::  the /nacked-leaves timer will re-send the %leave eventually.
@@ -856,7 +871,7 @@
         ?~  err
           (mo-pass sys+wire %a %cork ship)
         %-  %:  ^trace  odd.veb.bug.state  *dude  ~
-              leaf/"gall: {<ship>} got %nacked %leave {<(spud wire)>}"  ~
+              &+"{<ship>} got %nacked %leave {<(spud wire)>}"
             ==
         ::  if first time hearing a %nack for a %leave, after upgrade
         ::  or if all outstanding %leaves have been handled, set up timer
@@ -873,18 +888,35 @@
         ::  kill subscriptions which use the old wire format
         ::
         !!
+      =/  key  [[%sys wire] hen]
+      =+  outs=(~(gut by outstanding.state) key ~)
       =/  =ames-response  ;;(ames-response payload.sign-arvo)
+      ::  if there are outstanding $pleas and we get a %fact, assume that the %ack
+      ::  will be resend later on, and give the %watch-ack now.
+      ::
+      ::  when the actual ack for the $plea arrives, we won't deliver this second
+      ::  %ack to the agent and just no-op.
+      ::
+      ::  if the outstanding $plea is a %leave, the subcription should have been
+      ::  deleted from boat.yoke, and we would also no-op
+      ::
+      ::    (see +run-sign:ap-specific-take)
+      ::
+      =?  mo-core  ?=(^ outs)  (mo-give %unto %watch-ack ~)
       ::  %d: diff; ask clay to validate .noun as .mark
-      ::  %x: kick; tell agent the publisher canceled the subscription, and
+      ::  %x: kick; tell agent the publisher canceled the subscription and
       ::      cork; tell ames to close the associated flow.
       ::
       ?-  -.ames-response
-        %d  (mo-give %unto %raw-fact mark.ames-response noun.ames-response)
-        %x  =.  mo-core  (mo-give %unto %kick ~)
-            =/  key  [[%sys wire] hen]
-            =?  outstanding.state  =(~ (~(gut by outstanding.state) key ~))
-              (~(del by outstanding.state) key)
-            (mo-pass sys+wire a/cork+ship)
+          %d  (mo-give %unto %raw-fact mark.ames-response noun.ames-response)
+          %x
+        =.  mo-core  (mo-give %unto %kick ~)
+        =?  outstanding.state  =(~ outs)
+          ::  if there is an outstanding $plea don't delete it from
+          ::  .outstanding to avoid a %gall-missing print
+          ::
+          (~(del by outstanding.state) key)
+        (mo-pass sys+wire a/cork+ship)
       ==
     ::
         [%ames %lost *]
@@ -924,6 +956,8 @@
         ::
         ::  add agent to list of suspended/not running agents
         ::
+        %-  %^  trace  odd.veb.bug.state  foreign-agent.response
+            &+"add remote agent to flubs; will be revived on %spur"
         =.  flubs.state  (~(put ju flubs.state) u.ship foreign-agent.response)
         (mo-pass /remote-flub %a %halt u.ship [foreign-agent bone]:response)
       ::
@@ -938,6 +972,8 @@
         |=  [[[=^wire =duct] queue=*] m=_mo-core]
         ?.  =(/sys/way/(scot %p u.ship)/[foreign-agent.response] wire)
           m
+        %-  %^  trace:m  odd.veb.bug.state  foreign-agent.response
+            &+"remove remote agent from %flubs; revive flow"
         (mo-pass:m(hen duct) wire %a %goad u.ship)
       ==
     ==
@@ -1042,10 +1078,14 @@
     ::
     =/  =move
       =/  =sack  [ship.attributing.routes our path.attributing.routes]
-      ?:  ?=(%& -.blocker)
-        ?>  ?=(^ duct)
-        [+.duct %slip %g %deal sack dap p.blocker]
-      [duct %give %unto p.blocker]
+      :-  duct
+      ?:  ?=(%| -.blocker)
+        ::  agents signs
+        ::
+        [%give %unto p.blocker]
+      ::  agent tasks
+      ::
+      [%slip %g %deal sack dap p.blocker]
     $(moves [move moves])
   ::
   ++  mo-give-halts
@@ -1245,6 +1285,9 @@
   ::    If the agent is not running or blocked, assign it the supplied
   ::    +deal.  Otherwise simply apply the action to the agent.
   ::
+  ::    (remote %deals coming from %ames are not added to the blocked queue
+  ::     for non-running agents; see +mo-do-flub)
+  ::
   ++  mo-handle-local
     |=  [prov=path =ship agent=term =deal]
     ^+  mo-core
@@ -1291,30 +1334,6 @@
     ^+  mo-core
     ::
     =.  mo-core  (mo-track-ship ship)
-    ::
-    =/  yok=(unit yoke)  (~(get by yokes.state) agent-name)
-    ?:  ?|   ?=(~ yok)
-             ?=(%nuke -.u.yok)
-             ?=(%.n -.agent.u.yok)
-        ==
-      ::  %ames wil pass a $deep task to itself to halt the flow, at the same
-      ::  time, on the /flub flow, we send a %boon with the bone that the sender
-      ::  needs to halt as well to stop sending any outstanding $pleas
-      ::
-      ::  XX if %leave, cork the flow; otherwise, halt it?
-      ::  currently we always halt it
-      ::
-      =?  halts.state  (~(has by flub-ducts.state) ship)
-        ::  only add the app if we have received the /gf $plea
-        ::
-        (~(put ju halts.state) agent-name ship hen)
-      %+  mo-give  %flub
-      ::  if we are waiting to hear the /gf $plea, only %flub the flow in %ames
-      ::  and skip sending the %flub $boon
-      ::
-      ?.  (~(has by flub-ducts.state) ship)
-        ~
-      [~ agent-name]
     ::  %u/%leave gets automatically acked
     ::
     =?  mo-core  ?=(%u -.ames-request)
@@ -1329,10 +1348,44 @@
         %u  [%leave ~]
       ==
     (mo-pass wire %g %deal [ship our /] agent-name deal)
+  ::  +mo-do-flub: drop incoming pleas in %ames
+  ::
+  ::    (if the /gf system flow has been established, notify the other ship
+  ::     to halt the flow)
+  ::
+  ++  mo-do-flub
+    |=  [=ship agent-name=term]
+    =?  halts.state  (~(has by flub-ducts.state) ship)
+      ::  only add the app if we have received the /gf $plea
+      ::
+      (~(put ju halts.state) agent-name ship hen)
+    ::  before flubbing, check if system flow is established
+    ::
+    =.  mo-core  (mo-track-flubs ship)
+    ::
+    ::  after handling the %flub $gift, %ames wil pass a $deep task
+    ::  to itself to halt the flow. at the same time, on the /flub
+    ::  flow, we send a %boon with the bone that the sender needs to
+    ::  halt as well to stop sending any outstanding $pleas
+    ::
+    ::  XX if %leave, cork the flow; otherwise, halt it?
+    ::  currently we always halt it
+    ::
+    %^  mo-give  %flub
+    ::  if we have blocked moves, skip the %flub handling logic in %ames
+    ::  if /gf system flow is not established, skip sending the %flub $boon
+    ::
+      maybe-blocked=?=(^ (~(get by blocked.state) agent-name))
+    ?.((~(has by flub-ducts.state) ship) ~ `agent-name)
   ::
   ++  mo-handle-flub-plea
     |=  =ship
+    %-   %^  trace:mo-core  odd.veb.bug.state  %$  :: XX add system flags to .veb
+         &+"/gf system flow established with {<ship>}"
     =.  flub-ducts.state  (~(put by flub-ducts.state) ship hen)
+    ::  before acking the %flub $plea, check if the system flow is established
+    ::
+    =.  mo-core  (mo-track-flubs ship)
     (mo-give %done error=~)
   ::  +mo-spew: handle request to set verbosity toggles on debug output
   ::
@@ -1379,7 +1432,7 @@
         ==
     ::
     ++  trace
-      |=  [verb=? print=tang]
+      |=  [verb=? print=(each tape tang)]
       ^+  same
       (^trace verb agent-name print)
     ::
@@ -1438,7 +1491,7 @@
       ?.  ?=([%g %x cas=@ app=@ rest=*] pole)
         %.  ap-core
         %+  trace  odd.veb.bug.state
-        [leaf+"gall: {<agent-name>}: brood request {<pole>} invalid, dropping"]~
+        &+"brood request {<pole>} invalid, dropping"
       =.  pen.yoke  (~(put ju pen.yoke) [ship pole] wire)
       =/  =fine-request  [%0 rest.pole]
       =/  =plea:ames     [%g /gk/[app.pole] fine-request]
@@ -1477,7 +1530,7 @@
         =.  ap-core
           %.  (ap-generic-take i.wis %ames %sage [ship t.wire] ~)
           %+  trace  odd.veb.bug.state
-          [leaf/"gall: {<agent-name>} bad brood res {<ship>} {<t.wire>}"]~
+          &+"bad brood res {<ship>} {<t.wire>}"
         $(wis t.wis)
       ==
     ::
@@ -1494,7 +1547,7 @@
       ?~  cop=(ap-match-coop rest.pole)
         %.  [&+~ ap-abet]
         %+  trace  odd.veb.bug.state
-        [leaf/"gall: {<agent-name>} no coop match {<ship>} {<rest.pole>}"]~
+        &+"gall: {<agent-name>} no coop match {<ship>} {<rest.pole>}"
       =/  cag=(unit (unit cage))
         (ap-peek %| %c (snoc u.cop (scot %p ship)))
       =/  has-perms=?
@@ -1507,7 +1560,7 @@
       ?.  has-perms
         %.  [[%.y ~] ap-abet]
         %+  trace  odd.veb.bug.state
-        [leaf/"gall: {<agent-name>} no perms for {<coop>} {<ship>} {<rest.pole>}"]~
+        &+"no perms for {<coop>} {<ship>} {<rest.pole>}"
       =/  =brood  [u.cop hutch]
       [[%.y `brood] ap-abet]
     ::
@@ -1569,7 +1622,7 @@
         ?.  (~(has by gem.yoke) coop)
           %.  ap-core
           %+  trace  &
-          [leaf+"gall: {<agent-name>} no such coop {<coop>}, dropping %tend at {<path>}"]~
+          &+"no such coop {<coop>}, dropping %tend at {<path>}"
         =.  gem.yoke  (~(put ju gem.yoke) coop path page)
         ap-core
       =.  sky.yoke  (~(grow of-farm sky.yoke) (welp coop path) now page)
@@ -1617,7 +1670,7 @@
       ?:  ?=(^ (ap-match-coop spur))
         %.  ap-core
         %+  trace  &
-        [leaf+"gall: {<agent-name>}: grow {<spur>} has coop, dropping"]~
+        &+"grow {<spur>} has coop, dropping"
       =-  ap-core(sky.yoke -)
       (~(grow of-farm sky.yoke) spur now page)
     ::  +ap-tomb: tombstone -- replace bound value with hash
@@ -1631,17 +1684,17 @@
       ?~  old  ::  no-op if nonexistent
         %.  sky.yoke
         %+  trace  odd.veb.bug.state
-        [leaf+"gall: {<agent-name>}: tomb {<[case spur]>} no sky"]~
+        &+"tomb {<[case spur]>} no sky"
       =/  val  (get:on-path fan.u.old yon)
       ?~  val  ::  no-op if nonexistent
         %.  sky.yoke
         %+  trace  odd.veb.bug.state
-        [leaf+"gall: {<agent-name>}: tomb {<[case spur]>} no val"]~
+        &+"tomb {<[case spur]>} no val"
       ?-    -.q.u.val
           %|  ::  already tombstoned, no-op
         %.  sky.yoke
         %+  trace  odd.veb.bug.state
-        [leaf+"gall: {<agent-name>}: tomb {<[case spur]>} no-op"]~
+        &+"tomb {<[case spur]>} no-op"
       ::
           %&  ::  replace with hash
         %+  ~(put of-farm sky.yoke)  spur
@@ -1661,19 +1714,18 @@
       ?~  old  ::  no-op if nonexistent
         %.  sky.yoke
         %+  trace  odd.veb.bug.state
-        [leaf+"gall: {<agent-name>}: cull {<[case spur]>} no-op"]~
+        &+"cull {<[case spur]>} no-op"
       ?~  las=(ram:on-path fan.u.old)
         %.  sky.yoke
         %+  trace  &
-        [leaf+"gall: {<agent-name>}: cull {<[case spur]>} no paths"]~
+        &+"cull {<[case spur]>} no paths"
       =/  fis  (need (pry:on-path fan.u.old))
       ?.  &((gte yon key.fis) (lte yon key.u.las))
         %.  sky.yoke
         %+  trace  &
-        :_  ~
-        :-  %leaf
+        :-  %.y
         %+  weld
-          "gall: {<agent-name>}: cull {<[case spur]>} out of range, "
+          "cull {<[case spur]>} out of range, "
         "min: {<key.fis>}, max: {<key.u.las>}"
       %+  ~(put of-farm sky.yoke)  spur  ::  delete all older paths
       [`yon (lot:on-path fan.u.old `yon ~)]
@@ -2125,37 +2177,42 @@
             %watch-ack
           ?.  (~(has by boat.yoke) sub-key)
             %.  ap-core
-            %+  trace  odd.veb.bug.state  :~
-              leaf+"{<agent-name>}: got ack for nonexistent subscription"
+            %+  trace  odd.veb.bug.state  :-  %|  :~
+              leaf+"got ack for nonexistent subscription"
               leaf+"{<dock>}: {<agent-wire>}"
               >wire=wire<
             ==
           =?  boar.yoke  ?=(^ p.sign)  (~(del by boar.yoke) sub-key)
           ::
+          =/  [acked=? =path]  (~(got by boat.yoke) sub-key)
+          ?:  &(?=(~ p.sign) acked)
+            ::  if there's no error and the subscription has been acked, no-op
+            ::
+            %.  ap-core
+            %+  trace  odd.veb.bug.state
+            &+"2nd watch-ack on {<path>}"
           =.  boat.yoke
             ?^  p.sign  (~(del by boat.yoke) sub-key)
             ::
             %+  ~(jab by boat.yoke)  sub-key
-            |=  val=[acked=? =path]
-            %.  val(acked &)
-            %^  trace  &(odd.veb.bug.state acked.val)
-            leaf/"{<agent-name>} 2nd watch-ack on {<val>}"  ~
+            |=  val=[acked=? =^path]
+            val(acked &)
           ::
           ingest-and-check-error
         ==
       ::
       ++  on-missing
         %.  ap-core
-        %+  trace  odd.veb.bug.state  :~
-          leaf+"{<agent-name>}: got {<-.sign>} for nonexistent subscription"
+        %+  trace  odd.veb.bug.state  :-  %.n  :~
+          leaf+"got {<-.sign>} for nonexistent subscription"
           leaf+"{<dock>}: {<[nonce=nonce agent-wire]>}"
           >wire=wire<
         ==
       ::
       ++  on-weird-kick
         %.  run-sign
-        %+  trace  odd.veb.bug.state  :~
-          leaf+"{<agent-name>}: got %kick for nonexistent subscription"
+        %+  trace  odd.veb.bug.state  :-  %.n  :~
+          leaf+"got %kick for nonexistent subscription"
           leaf+"{<dock>}: {<agent-wire>}"
           >wire=wire<
         ==
@@ -2163,10 +2220,10 @@
       ++  on-bad-nonce
         |=  stored-nonce=@
         %.  ap-core
-        %+  trace  odd.veb.bug.state  :~
+        %+  trace  odd.veb.bug.state  :-  %.n  :~
           =/  nonces  [expected=stored-nonce got=nonce]
           =/  ok  |(?=(?(%fact %kick) -.sign) =(~ p.sign))
-          leaf+"{<agent-name>}: stale {<-.sign>} {<nonces>} ok={<ok>}"
+          leaf+"stale {<-.sign>} {<nonces>} ok={<ok>}"
         ::
           leaf+"{<dock>}: {<agent-wire>}"
           >wire=wire<
@@ -2475,8 +2532,8 @@
         ::
         ?.  (~(has by boat.yoke) sub-wire dock)
           %.  $(moves t.moves)
-          %^  trace  odd.veb.bug.state
-          leaf/"gall: {<agent-name>} missing subscription, got %leave"  ~
+          %+  trace  odd.veb.bug.state
+          &+"missing subscription, got %leave"
         =/  nonce=@  (~(got by boar.yoke) sub-wire dock)
         =.  p.move.move
           %+  weld  sys-wire
@@ -2530,7 +2587,7 @@
   ~%  %gall-call  +>   ~
   |=  [=duct dud=(unit goof) hic=(hobo task)]
   ^-  [(list move) _gall-payload]
-  ~>  %spin.[%call]
+  ~>  %spin.['call/gall']
   ?^  dud
     ~|(%gall-call-dud (mean tang.u.dud))
   ::
@@ -2569,19 +2626,37 @@
     =/  =noun  payload.plea.task
     ::
     ?:  ?=([%gf *] path)
-      ?>  ?=(flub-requesst noun)
+      ?>  ?=(flub-request noun)
       mo-abet:(mo-handle-flub-plea:mo-core ship)
     ?:  ?=([%gk @ ~] path)
       =/  agent-name  i.t.path
+      ::  XX check mo-do-flub?
+      ::
       =+  ;;(=fine-request noun)
       =<  mo-abet
       (mo-handle-key-request:mo-core ship agent-name path.fine-request)
-    ?>  ?=([%ge @ ~] path)
-    =/  agent-name  i.t.path
+    ?.  ?|  ?=([%gp @ ~] path)
+            ?=([%ge @ ~] path)
+        ==
+      !!
+    =/  agent-name  ?>(?=([@ @ ~] path) i.t.path)  :: XX find-fork
     ::
     =+  ;;(=ames-request-all noun)
     ?>  ?=(%0 -.ames-request-all)
+    ::
+    =/  yok=(unit yoke)  (~(get by yokes.state) agent-name)
     =<  mo-abet
+    ?:  ?|  ?=(~ yok)
+            ?=(%nuke -.u.yok)
+            ?=(%.n -.agent.u.yok)
+        ==
+      %-  %^  trace:mo-core  &(?=([%gp @ ~] path) odd.veb.bug.state)  agent-name
+          &+"on {<ship>} flubbing in-progress flow"
+      (mo-do-flub:mo-core ship agent-name)
+    ?:  ?=([%gp @ ~] path)
+      %-  %^  trace:mo-core  odd.veb.bug.state  agent-name
+          &+"on {<ship>} weird in-progress flow; running agent; skip %flub"
+      mo-core
     (mo-handle-ames-request:mo-core ship agent-name +.ames-request-all)
   ::
       %sear  mo-abet:(mo-filter-queue:mo-core ship.task)
@@ -2602,7 +2677,7 @@
 ::
 ++  load
   |^  |=  old=spore-any
-      ~>  %spin.[%load]
+      ~>  %spin.['load/gall']
       =?  old  ?=(%7 -.old)   (spore-7-to-8 +.old)
       =?  old  ?=(%8 -.old)   (spore-8-to-9 +.old)
       =?  old  ?=(%9 -.old)   (spore-9-to-10 +.old)
@@ -2615,11 +2690,12 @@
       =?  old  ?=(%16 -.old)  (spore-16-to-17 +.old)
       =?  old  ?=(%17 -.old)  (spore-17-to-18 +.old)
       =?  old  ?=(%18 -.old)  (spore-18-to-19 +.old)
-      ?>  ?=(%19 -.old)
+      =?  old  ?=(%19 -.old)  (spore-19-to-20 +.old)
+      ?>  ?=(%20 -.old)
       gall-payload(state old)
   ::
   +$  spore-any
-    $%  [%19 spore]
+    $%  [%20 spore]
         [%7 spore-7]
         [%8 spore-8]
         [%9 spore-9]
@@ -2632,7 +2708,9 @@
         [%16 spore-16]
         [%17 spore-17]
         [%18 spore-18]
+        [%19 spore-19]
     ==
+  +$  spore-19  spore-18
   ::
   +$  spore-18
     $:  system-duct=duct
@@ -2665,6 +2743,7 @@
   +$  cage-18  cage:a235
   +$  vase-18  vase:h136
   ::
+
   +$  spore-17  spore-16
   +$  spore-16
     $:  system-duct=duct
@@ -2972,7 +3051,7 @@
         [a (snag (dec a) m)]
       ==
     ==
-  ::  drop unto blocked moves;s
+  ::  drop unto blocked moves
   ::
   ++  spore-16-to-17
     |=  old=spore-16
@@ -3001,12 +3080,31 @@
         leaves
       [leaves.old flub-ducts=~ flubs=~ halts=~]
     ==
-  ::  +spore-18-to-19: type of type migration
+  ::
+  ::  +spore-18-to-19: drop /gall-use-wire from blocked moves
   ::
   ++  spore-18-to-19
     |=  old=spore-18
-    ^-  spore-19
     :-  %19
+    ^-  spore-19
+    %_    old
+        blocked
+      %-  ~(run by blocked.old)
+      |=  q=(qeu blocked-move-18)
+      ^+  q
+      %-  ~(run to `(qeu blocked-move-18)`q)
+      |=  blocked-move=blocked-move-18
+      =?  duct.blocked-move  ?=([[%gall-use-wire *] *] duct.blocked-move)
+        t.duct.blocked-move
+      blocked-move
+    ==
+  ::
+  ::  +spore-19-to-20: type of type migration
+  ::
+  ++  spore-19-to-20
+    |=  old=spore-19
+    ^-  spore-20
+    :-  %20
     %=  old
         eggs
       %-  ~(run by eggs.old)
@@ -3030,7 +3128,6 @@
         [%| %fact *]     move.b(cage.p (next-cage:a235 cage.p.move.b))
       ==
     ==
-  ::
   --
 ::  +scry: standard scry
 ::
@@ -3039,7 +3136,7 @@
   ^-  roon
   |=  [lyc=gang pov=path care=term bem=beam]
   ^-  (unit (unit cage))
-  ~>  %spin.[%scry]
+  ~>  %spin.['scry/gall']
   =*  ship  p.bem
   =*  dap  q.bem
   =/  =coin  $/r.bem
@@ -3072,6 +3169,14 @@
       [~ ~ noun+!>(hav)]
     =/  yok=(unit yoke)  (~(get by yokes.state) dap)
     &(?=([~ %live *] yok) -.agent.u.yok)
+  ::
+  ?:  ?&  =(%b care)
+          =(~ path)
+          =([%$ %da now] coin)
+          =(our ship)
+          =([~ ~] lyc)
+      ==
+    [~ ~ noun+!>(blocked.state)]
   ::
   ?:  ?&  =(%d care)
           =(~ path)
@@ -3130,6 +3235,15 @@
       ==
     ``halts+!>(halts.state)
   ::
+  ?:  ?&  =(%i care)
+          =(~ path)
+          =([%$ %da now] coin)
+          =(our ship)
+          =([~ ~] lyc)
+      ==
+    ::  XX support per ship
+    ``flub-ducts+!>(flub-ducts.state)
+  ::
   ?:  ?&  =(%n care)
           ?=([@ @ ^] path)
           =([%$ %da now] coin)
@@ -3162,7 +3276,7 @@
           p.agent.u.yok
         on-save:p.agent.u.yok
       ==
-    ``noun+!>(`egg-any`[%19 egg])
+    ``noun+!>(`egg-any`[%20 egg])
   ::
   ?:  ?&  =(%w care)
           =([%$ %da now] coin)
@@ -3292,7 +3406,7 @@
 ::  +stay: save without cache; suspend non-%base agents
 ::
 ++  stay
-  ^-  spore-19
+  ^-  spore-20
   =;  eggs=(map term egg)  state(yokes eggs)
   %-  ~(run by yokes.state)
   |=  =yoke
@@ -3312,7 +3426,7 @@
   ~/  %gall-take
   |=  [=wire =duct dud=(unit goof) syn=sign-arvo]
   ^-  [(list move) _gall-payload]
-  ~>  %spin.[%take]
+  ~>  %spin.['take/gall']
   ?^  dud
     ~&(%gall-take-dud ((slog tang.u.dud) [~ gall-payload]))
   ?:  =(/nowhere wire)
@@ -3352,7 +3466,7 @@
       ::  make sure that only the %leave remains in the queue
       ::
       %-  %:  trace  odd.veb.bug.state  *dude  ~
-            leaf/"gall: resending %nacked %leave {<(spud wire)>}"  ~
+            &+"resending %nacked %leave {<(spud wire)>}"
           ==
       %_    core
           outstanding.state

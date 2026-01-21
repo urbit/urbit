@@ -105,6 +105,7 @@
   ~&  >>  path/path
   ?+  path  (on-watch:def path)
     [%subs ~]  ~&(subs+src.bowl ~)
+    [%aqua ~]  ~&(aqua-sub+[our=our src=src]:bowl ~)
     [%http ~]  ~&(subs+src.bowl ~)
   ==
 ::
@@ -120,7 +121,6 @@
   ^-  (quip card _this)
   |^
   ~&  wire-on-agent/wire
-
   ?+  wire  (on-agent:def wire sign)
     [%pok ~]  (get-data sign)
     [%sub ~]  (get-data sign)
@@ -154,10 +154,11 @@
      ::
         %fact
       ?+  p.cage.sign  (on-agent:def wire sign)
-          %atom
-        ~&  %fact-received
+          ?(%noun %atom)
+        ~&  >>  fact-received/q.cage.sign
         :: ?:  &  ~&  >>>  %about-to-crash  !!
-        [~ this]
+        ~&(%sending-to-aqua [%give %fact [/aqua]~ cage.sign]~^this)
+        :: [~ this]
       ==
     ==
   ::

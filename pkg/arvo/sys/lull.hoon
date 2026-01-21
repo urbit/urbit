@@ -1619,7 +1619,7 @@
         =server=chain                       ::  for serving %shut requests
         priv=private-key
         chums=(map ship chum-state)         ::  XX migrated peers
-        core=_`?(%ames %mesa)`%ames         ::  XX use migrated core by default
+        core=_`?(%ames %mesa)`%ames         ::  XX use |mesa core by default
         ::  TODOs
         :: XX tmp=(map @ux page)            :: temporary hash-addressed bindings
     ==
@@ -3644,7 +3644,7 @@
     $%  [%boon payload=*]                               ::  ames response
         [%noon id=* payload=*]
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
-        [%flub agent=(unit term)]                       ::  refuse to take plea
+        [%flub $@(~ [blocked=? dap=(unit term)])]       ::  refuse to take plea
         [%spur ~]                                       ::  ready to take plea
         [%unto p=unto]                                  ::
     ==                                                  ::
@@ -3674,7 +3674,7 @@
   ::
   +$  fans  ((mop @ud (pair @da (each page @uvI))) lte)
   +$  plot
-    $:  bob=(unit @ud)
+    $:  bob=(unit @ud)                                  ::  latest revision
         fan=fans
     ==
   +$  stats                                             ::  statistics
@@ -3710,7 +3710,7 @@
             pen=(jug spar:ames wire)
             gem=(jug coop [path page])
     ==  ==
-  +$  egg-any  $%([%15 egg-15] [%16 egg-16] [%19 egg])
+  +$  egg-any  $%([%15 egg-15] [%16 egg-16] [%20 egg])
   +$  egg-15
     $%  [%nuke sky=(map spur @ud)]
     $:  %live
