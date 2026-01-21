@@ -10947,30 +10947,29 @@
             ?.  ?=([%known *] per-sat)
               ::  XX  this shouldn't be needed
               ::  XX  only if %alien
-              ?:  ?=(%pawn (clan:title ship))
-                ::  XX resend attestation request?
-                ::
-                =/  gal=(unit @p)
-                  =/  sax
-                    %^  rof  [~ ~]  /ames
-                    j/`beam`[[our %saxo %da now] /(scot %p ship)]
-                  ?.  ?=([~ ~ *] sax)
-                    ~
-                  `(rear ;;((list @p) q.q.u.u.sax))
-                ?~  gal
-                  core  ::  XX  this shouldn't happen
-                ?:  =(our u.gal)
-                  core  ::  don't send to ourselves
-                %-  sy-emil:core
-                ::  +al-read-proof doesn't modify any state and just emits
-                ::  a +peek to read the comet's attestation
-                ::
-                =<  moves
-                %.  [ship lane=`@ux`u.gal]
-                ~(al-read-proof al(ames-state ames-state.core) ~[/ames])
-              %-  sy-emit:core
-              [~[//keys] %pass /public-keys %j %public-keys ship ~ ~]
-            ::
+              ?.  ?=(%pawn (clan:title ship))
+                %-  sy-emit:core
+                [~[//keys] %pass /public-keys %j %public-keys ship ~ ~]
+              ::  resend attestation request
+              ::
+              =/  gal=(unit @p)
+                =/  sax
+                  %^  rof  [~ ~]  /ames
+                  j/`beam`[[our %saxo %da now] /(scot %p ship)]
+                ?.  ?=([~ ~ *] sax)
+                  ~
+                `(rear ;;((list @p) q.q.u.u.sax))
+              ?~  gal
+                core  ::  XX  this shouldn't happen
+              ?:  =(our u.gal)
+                core  ::  don't send to ourselves
+              %-  sy-emil:core
+              ::  +al-read-proof doesn't modify any state and just emits
+              ::  a +peek to read the comet's attestation
+              ::
+              =<  moves
+              %.  [ship lane=`@ux`u.gal]
+              ~(al-read-proof al(ames-state ames-state.core) ~[/ames])
             =/  ev-core
               ~(ev-core ev(ames-state ames-state.core) hen ship +.per-sat)
             ::
