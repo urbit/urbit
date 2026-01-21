@@ -83,6 +83,7 @@
 =*  point               point:jael
 =*  public-keys-result  public-keys-result:jael
 =/  packet-size  13
+=/  retry-timer  ~m2    ::  only used in /mesa/retry and /dead-flow timers
 ::
 =>  ::  common helpers
     ~%  %ames  ..part  ~
@@ -3041,7 +3042,7 @@
           cached-state  `23+(state-22-to-23 +.old)
         ::
             moz
-          [[/ames]~ %pass /mesa/retry %b %wait `@da`(add now ~m2)]^moz
+          [[/ames]~ %pass /mesa/retry %b %wait `@da`(add now retry-timer)]^moz
         ==
       ?:  ?=(%23 -.old)
         $(cached-state `24+(state-23-to-24 +.old))
@@ -3420,7 +3421,7 @@
         %=    old
             cork.dead
           :-  cork.dead.old
-          rots/`[~[/ames] /routes `@da`(add now ~m2)]
+          rots/`[~[/ames] /routes `@da`(add now retry-timer)]
         ==
       ::
       ++  state-22-to-23
@@ -3433,7 +3434,7 @@
         :*  peers  unix-duct  life  rift  bug  snub  cong
           ::
             :^    flow.dead  ::  preserve |ames dead-flow consolidation
-                chum/`[~[/ames] /mesa/retry `@da`(add now ~m2)]
+                chum/`[~[/ames] /mesa/retry `@da`(add now retry-timer)]
               cork.dead
             rots.dead
           ::
@@ -4272,7 +4273,7 @@
             |=  [[=bone pump=message-pump-state] cor=_core]
             ^+  cor
             =/  next-wake  next-wake.packet-pump-state.pump
-            ?.  ?&  =(~m2 rto.metrics.packet-pump-state.pump)
+            ?.  ?&  =(retry-timer rto.metrics.packet-pump-state.pump)
                     ?=(^ next-wake)
                 ==
               cor
@@ -4299,7 +4300,7 @@
               =*  tim  next-wake.packet-pump-state.m
               ?~  tim  acc
               ?:  ?&  ?=(^ +.flow.dead.ames-state)
-                      =(~m2 rto.metrics.packet-pump-state.m)
+                      =(retry-timer rto.metrics.packet-pump-state.m)
                   ==
                 ::  if dead-flow consolidated, we dont' want this timer
                 ::
@@ -4313,7 +4314,7 @@
                   [date ames/wire duct]:u.cork.dead.ames-state
               ::
                   ?:  ?=(~ +.chum.dead.ames-state)            ::  mesa retries
-                    [(add now ~m2) ~[/ames/mesa/retry /ames]] ::  (init if unset)
+                    [(add now retry-timer) ~[/ames/mesa/retry /ames]]
                   [date ames/wire duct]:u.chum.dead.ames-state
               ::
                   ?:  ?=(~ +.rots.dead.ames-state)            ::  expire routes
@@ -4329,7 +4330,7 @@
             =?  cork.dead.ames-state  ?=(~ +.cork.dead.ames-state)
               cork/`[~[/ames] /recork `@da`(add now ~d1)]
             =?  chum.dead.ames-state  ?=(~ +.chum.dead.ames-state)
-              chum/`[~[/ames] /mesa/retry `@da`(add now ~m2)]
+              chum/`[~[/ames] /mesa/retry `@da`(add now retry-timer)]
             =?  rots.dead.ames-state  ?=(~ +.rots.dead.ames-state)
               rots/`[~[/ames] /routes `@da`(add now ~m2)]
             ::
@@ -4902,8 +4903,8 @@
         ++  set-dead-flow-timer
           ^+  event-core
           =.  flow.dead.ames-state.event-core
-            flow/`[~[/ames] /dead-flow `@da`(add now ~m2)]
-          (emit ~[/ames] %pass /dead-flow %b %wait `@da`(add now ~m2))
+            flow/`[~[/ames] /dead-flow `@da`(add now retry-timer)]
+          (emit ~[/ames] %pass /dead-flow %b %wait `@da`(add now retry-timer))
         ::
         ++  set-dead-routes-timer
           ^+  event-core
@@ -4928,7 +4929,8 @@
             ?:(abort abort:core abet:core)
           %-  ~(rep by snd.peer-state)
           |=  [[=bone =message-pump-state] cor=_pe-core]
-          ?.  ?&  =(~m2 rto.metrics.packet-pump-state.message-pump-state)
+          ?.  ?&  =.  retry-timer
+                      rto.metrics.packet-pump-state.message-pump-state
                   ?=(^ next-wake.packet-pump-state.message-pump-state)
               ==
             cor
@@ -7098,12 +7100,14 @@
                   (pu-emit %b %rest (need next-wake.state))
                 ::  set new timer if non-null and not at at max-backoff
                 ::
-                ::  we are using the ~m2 literal instead of max-backoff:gauge
-                ::  because /app/ping has a special cased maximum backoff of
-                ::  ~s25 and we don't want to consolidate that
+                ::  we are using the retry-timer=~m2 literal instead of
+                ::  max-backoff:gauge because /app/ping has a special cased
+                ::  maximum backoff of ~s25 and we don't want to consolidate it
                 ::
                 =?  peer-core  ?=(^ new-wake)
-                  ?:  ?&(?=(^ +.flow.dead.ames-state) =(~m2 rto.metrics.state))
+                  ?:  ?&  ?=(^ +.flow.dead.ames-state)
+                          =(retry-timer rto.metrics.state)
+                      ==
                     peer-core
                   (pu-emit %b %wait u.new-wake)
                 ::
@@ -8021,7 +8025,7 @@
             ::
             ++  max-backoff
               ^-  @dr
-              ?:(?=([[%gall %use %ping *] *] duct) ~s25 ~m2)
+              ?:(?=([[%gall %use %ping *] *] duct) ~s25 retry-timer)
             ::  +in-slow-start: %.y if we're in "slow-start" mode
             ::
             ++  in-slow-start
@@ -10353,9 +10357,10 @@
             (rof [~ ~] /ames %j `beam`[[our %turf %da now] /])
           ::
           =?  sy-core  ?=(~ +.chum.dead.ames-state)
-            (sy-emit ~[/ames] %pass /mesa/retry %b %wait `@da`(add now ~m2))
+            %-  sy-emit
+            [~[/ames] %pass /mesa/retry %b %wait `@da`(add now retry-timer)]
           =?  chum.dead.ames-state  ?=(~ +.chum.dead.ames-state)
-            chum/`[~[/ames] /mesa/retry `@da`(add now ~m2)]
+            chum/`[~[/ames] /mesa/retry `@da`(add now retry-timer)]
           =^  cork-moves  cork.dead.ames-state
             ?.  ?=(~ +.cork.dead.ames-state)
               `cork.dead.ames-state
@@ -10436,12 +10441,13 @@
           ::  XX only timed-out (dead) outgoing %poke requests
           ::
           =.  chum.dead.ames-state
-            chum/`[~[/ames] /mesa/retry `@da`(add now ~m2)]
+            chum/`[~[/ames] /mesa/retry `@da`(add now retry-timer)]
           =?  sy-core  ?=(~ error)
             ::  if there's been an error, reset the timer and skip %proding
             ::
             (sy-prod ~)
-          (sy-emit ~[/ames] %pass /mesa/retry %b %wait `@da`(add now ~m2))
+          %-  sy-emit
+          [~[/ames] %pass /mesa/retry %b %wait `@da`(add now retry-timer)]
         ::
         ++  sy-publ
           |=  [=wire =public-keys-result:jael]
