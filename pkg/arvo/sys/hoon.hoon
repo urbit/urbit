@@ -1585,6 +1585,34 @@
     ::
     a(r $(a r.a))
   ::
+  ++  jub                                               ::  add or modify
+    ~/  %jub
+    |*  [key=_?>(?=(^ a) p.n.a) fun=$-((unit _?>(?=(^ a) q.n.a)) _?>(?=(^ a) q.n.a))]
+    ^+  a
+    ::
+    ?~  a  [[key (fun ~)] ~ ~]
+    ::
+    ?:  =(key p.n.a)
+      a(q.n (fun `q.n.a))
+    ::
+    ?:  (gor key p.n.a)
+      a(l $(a l.a))
+    a(r $(a r.a))
+  ::                                                    :: bunt or modify
+  ++  jib  
+    ~/  %jib
+    |*  [key=_?>(?=(^ a) p.n.a) fun=$-(_?>(?=(^ a) q.n.a) _?>(?=(^ a) q.n.a))]
+    ^+  a
+    ::
+    ?~  a  [[key (fun)] ~ ~]
+    ::
+    ?:  =(key p.n.a)
+      a(q.n (fun q.n.a))
+    ::
+    ?:  (gor key p.n.a)
+      a(l $(a l.a))
+    a(r $(a r.a))
+  ::
   ++  mar                                               ::  add with validation
     |*  [b=* c=(unit *)]
     ?~  c
