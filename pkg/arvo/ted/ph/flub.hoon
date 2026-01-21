@@ -85,37 +85,37 @@
   :+  %event  ~dev
   [/g/aqua/watch/pub %deal [~dev ~dev /] %pub %watch /subs]
 ;<  ~      bind:m  (send-events aqua-event ~)
-::  check that we receive the gift
+::  check that ~bud receives the gift
 ::
 ;<  *  bind:m
-  (wait-for-fact ~bud %noun /aqua/watch/sub (gate ,(list [path @]) [/hola 1]~))
+  (wait-for-fact rcv=~bud %noun /aqua/watch/sub (gate ,(list [path @]) [/hola 1]~))
 ::
 ::  now we are going to give the second (2) fact and wait for it
 ::
 ;<  ~  bind:m  (dojo ~dev ":pub send+`(list [path @])`[/adios 2]~")
 ;<  =noun  bind:m
-  (wait-for-fact ~dev %noun /aqua/watch/pub (gate ,(list [path @]) [/adios 2]~))
+  (wait-for-fact snd=~dev %noun /aqua/watch/pub (gate ,(list [path @]) [/adios 2]~))
 ::
 ;<  *  bind:m
-  (wait-for-fact ~bud %noun /aqua/watch/sub (gate ,(list [path @]) [/adios 2]~))
+  (wait-for-fact rcv=~bud %noun /aqua/watch/sub (gate ,(list [path @]) [/adios 2]~))
 ::  suspendend subscriber agent; send (3) %fact
 ::
 ;<  ~  bind:m  (dojo ~bud "|rein %base [%.n %sub]")
 ;<  ~  bind:m  (dojo ~dev ":pub send+`(list [path @])`[/cucu 3]~")
-::  check that we send the gift
+::  check that ~bud emits the gift
 ::
 ;<  *  bind:m
-  (wait-for-fact ~dev %noun /aqua/watch/pub (gate ,(list [path @]) [/cucu 3]~))
+  (wait-for-fact rcv=~dev %noun /aqua/watch/pub (gate ,(list [path @]) [/cucu 3]~))
 ::  the gift should be now in the blocked queue
 ::
 ;<  ~  bind:m  (sleep ~s3)
 ::  revive agent
 ::
 ;<  ~  bind:m  (dojo ~bud "|rein %base [%.y %sub]")
-::  check that we receive the gift
+::  check that ~bud receives the gift
 ::
 ;<  *  bind:m
-  (wait-for-fact ~bud %noun /aqua/watch/sub (gate ,(list [path @]) [/cucu 3]~))
+  (wait-for-fact rcv=~bud %noun /aqua/watch/sub (gate ,(list [path @]) [/cucu 3]~))
 ::
 ::  leave the subscription and resubscribe (will make a new subscription flow)
 ::
@@ -150,11 +150,11 @@
 ::
 ;<  ~  bind:m  (dojo ~bud "|rein %base [%.y %sub]")
 ;<  *  bind:m
-  (wait-for-fact ~bud %noun /aqua/watch/sub (gate ,(list [path @]) [/new 1]~))
+  (wait-for-fact rcv=~bud %noun /aqua/watch/sub (gate ,(list [path @]) [/new 1]~))
 ;<  *  bind:m
-  (wait-for-fact ~bud %noun /aqua/watch/sub (gate ,(list [path @]) [/new 2]~))
+  (wait-for-fact rcv=~bud %noun /aqua/watch/sub (gate ,(list [path @]) [/new 2]~))
 ;<  *  bind:m
-  (wait-for-fact ~bud %noun /aqua/watch/sub (gate ,(list [path @]) [/new 3]~))
+  (wait-for-fact rcv=~bud %noun /aqua/watch/sub (gate ,(list [path @]) [/new 3]~))
 ::
 ;<  ~  bind:m  end
 $(cores t.cores)
