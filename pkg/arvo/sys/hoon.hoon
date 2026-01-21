@@ -3293,6 +3293,173 @@
       ++  qad  126.144.001            ::  (add 1 (mul 4 yer))
       ++  yer  31.536.000             ::  (mul 365 day)
   --
+::  time-related conversions
+++  ty
+  |%
+  ::
+  ::  +ms
+  ::
+  ::  Convert from a value in milliseconds to Urbit relative time, @dr.
+  ::  Examples:
+  ::    > `@ux`(ms:ty 1)
+  ::    0x41.8937.4bc6.a7ef
+  ::    > `@dr`(ms:ty 1)
+  ::    ~s0..0041.8937.4bc6.a7ef
+  ::  Source:
+  ++  ms
+    |=  t=@ud
+    ^-  @dr
+    (mul t (div ~s1 1.000))
+  ::  +us
+  ::
+  ::  Convert from a value in microseconds to Urbit relative time, @dr.
+  ::  Examples:
+  ::    > `@ux`(us:ty 1)
+  ::    0x10c6.f7a0.b5ed
+  ::    > `@dr`(us:ty 1)
+  ::    ~s0..0000.10c6.f7a0.b5ed
+  ::  Source:
+  ++  us
+    |=  t=@ud
+    ^-  @dr
+    (mul t (div ~s1 1.000.000))
+  ::  +ns
+  ::
+  ::  Convert from a value in nanoseconds to Urbit relative time, @dr.
+  ::  Examples:
+  ::    > `@ux`(ns:ty 1)
+  ::    0x4.4b82.fa09
+  ::    > `@dr`(ns:ty 1)
+  ::    ~s0..0000.0004.4b82.fa09
+  ::  Source:
+  ++  ns
+    |=  t=@ud
+    ^-  @dr
+    (mul t (div ~s1 1.000.000.000))
+  ::  +ps
+  ::
+  ::  Convert from a value in picoseconds to Urbit relative time, @dr.
+  ::  Examples:
+  ::    > `@ux`(ps:ty 1)
+  ::    0x119.7998
+  ::    > `@dr`(ps:ty 1)
+  ::    ~s0..0000.0000.0119.7998
+  ::  Source:
+  ++  ps
+    |=  t=@ud
+    ^-  @dr
+    (mul t (div ~s1 1.000.000.000.000))
+  ::  +fs
+  ::
+  ::  Convert from a value in femtoseconds to Urbit relative time, @dr.
+  ::  Examples:
+  ::    > `@ux`(fs:ty 1)
+  ::    0x480e
+  ::    > `@dr`(fs:ty 1)
+  ::    ~s0..0000.0000.0000.0000.480e
+  ::  Source:
+  ++  fs
+    |=  t=@ud
+    ^-  @dr
+    (mul t (div ~s1 1.000.000.000.000.000))
+  ::  +as
+  ::
+  ::  Convert from a value in attoseconds to Urbit relative time, @dr.
+  ::  Examples:
+  ::    > `@ux`(as:ty 1)
+  ::    0x12
+  ::    > `@dr`(as:ty 1)
+  ::    ~s0..0000.0000.0000.0000.0000.0012
+  ::  Source:
+  ++  as
+    |=  t=@ud
+    ^-  @dr
+    (mul t (div ~s1 1.000.000.000.000.000.000))
+  ::  +mis
+  ::
+  ::  Convert from a value in mikiseconds to Urbit relative time, @dr.
+  ::  1 mis = 2^-10 s
+  ::  Examples:
+  ::    > `@ux`(mis:ty 1)
+  ::    0x40.0000.0000.0000
+  ::    > `@dr`(mis:ty 1)
+  ::    ~s0..0040
+  ::  Source:
+  ++  mis
+    |=  t=@ud
+    ^-  @dr
+    (mul t (div ~s1 (bex 10)))
+  ::  +uis
+  ::
+  ::  Convert from a value in mukiseconds to Urbit relative time, @dr.
+  ::  1 uis = 2^-20 s
+  ::  Examples:
+  ::    > `@ux`(uis:ty 1)
+  ::    0x1000.0000.0000
+  ::    > `@dr`(uis:ty 1)
+  ::    ~s0..0000.1000
+  ::  Source:
+  ++  uis
+    |=  t=@ud
+    ^-  @dr
+    (mul t (div ~s1 (bex 20)))
+  ::  +nis
+  ::
+  ::  Convert from a value in nakiseconds to Urbit relative time, @dr.
+  ::  1 nis = 2^-30 s
+  ::  Examples:
+  ::    > `@ux`(nis:ty 1)
+  ::    0x4.0000.0000
+  ::    > `@dr`(nis:ty 1)
+  ::    ~s0..0000.0004
+  ::  Source:
+  ++  nis
+    |=  t=@ud
+    ^-  @dr
+    (mul t (div ~s1 (bex 30)))
+  ::  +pis
+  ::
+  ::  Convert from a value in pikiseconds to Urbit relative time, @dr.
+  ::  1 pis = 2^-40 s
+  ::  Examples:
+  ::    > `@ux`(pis:ty 1)
+  ::    0x100.0000
+  ::    > `@dr`(pis:ty 1)
+  ::    ~s0..0000.0000.0010
+  ::  Source:
+  ++  pis
+    |=  t=@ud
+    ^-  @dr
+    (mul t (div ~s1 (bex 40)))
+  ::  +fis
+  ::
+  ::  Convert from a value in fekiseconds to Urbit relative time, @dr.
+  ::  1 fis = 2^-50 s
+  ::  Examples:
+  ::    > `@ux`(fis:ty 1)
+  ::    0x4000
+  ::    > `@dr`(fis:ty 1)
+  ::    ~s0..0000.0000.0000.4000
+  ::  Source:
+  ++  fis
+    |=  t=@ud
+    ^-  @dr
+    (mul t (div ~s1 (bex 50)))
+  ::  +ais
+  ::
+  ::  Convert from a value in akkiseconds to Urbit relative time, @dr.
+  ::  1 ais = 2^-60 s
+  ::  Examples:
+  ::    > `@ux`(ais:ty 1)
+  ::    0x10
+  ::    > `@dr`(ais:ty 1)
+  ::    ~s0..0000.0000.0000.0010
+  ::  Source:
+  ++  ais
+    |=  t=@ud
+    ^-  @dr
+    (mul t (div ~s1 (bex 60)))
+  --
 ::
 ::    3d: SHA hash family
 +|  %sha-hash-family
@@ -5729,13 +5896,23 @@
       ==
       (stag %ud dem:ag)
     ==
+  +$  times  ?(%d %h %m %s %ms %mis %us %uis %ns %nis %ps %pis %fs %fis %as %ais)
+  ::  Zero-pad the length of a list by prefixing 0x0 elements.
+  ++  pad
+    |=  [a=(list @) b=@]
+    ^-  (list @)
+    ?:  (lth b (lent a))  a
+    =/  i  (lent a)
+    |-
+    ?:  =(b i)  a
+    $(i +(i), a [0x0 a])
   ++  crub
     ~+
     ;~  pose
       (cook |=(det=date `dime`[%da (year det)]) when)
     ::
       %+  cook
-        |=  [a=(list [p=?(%d %h %m %s) q=@]) b=(list @)]
+        |=  [a=(list (pair times @)) b=(list @)]
         =+  rop=`tarp`[0 0 0 0 b]
         |-  ^-  dime
         ?~  a
@@ -5745,6 +5922,126 @@
           %h  $(a t.a, h.rop (add q.i.a h.rop))
           %m  $(a t.a, m.rop (add q.i.a m.rop))
           %s  $(a t.a, s.rop (add q.i.a s.rop))
+          %ms
+            =/  tym  (rip 4 (add (rap 4 f.rop) (mul q.i.a 0x41.8937.4bc6.a7ef)))
+            %=  $
+              a   ?.  (gth (lent tym) 4)
+                    t.a
+                  `(list (pair times @))`(snoc `(list (pair times @))`t.a `(pair times @)`[%s (rap 4 (slag 4 tym))])
+              f.rop  ?.  (gth (lent tym) 4)
+                    tym
+                  (scag 4 tym)
+            ==
+          %mis
+            =/  tym  (rip 4 (add (rap 4 f.rop) (mul q.i.a (bex 54))))
+            %=  $
+              a   ?.  (gth (lent tym) 4)
+                    t.a
+                  `(list (pair times @))`(snoc `(list (pair times @))`t.a `(pair times @)`[%s (rap 4 (slag 4 tym))])
+              f.rop  ?.  (gth (lent tym) 4)
+                    tym
+                  (scag 4 tym)
+            ==
+          %us
+            =/  tym  (pad (rip 4 (add (rap 4 f.rop) (mul q.i.a 0x10c6.f7a0.b5ed))) 4)
+            %=  $
+              a   ?.  (gth (lent tym) 4)
+                    t.a
+                  `(list (pair times @))`(snoc `(list (pair times @))`t.a `(pair times @)`[%s (rap 4 (slag 4 tym))])
+              f.rop  ?.  (gth (lent tym) 4)
+                    tym
+                  (scag 4 tym)
+            ==
+          %uis
+            =/  tym  (pad (rip 4 (add (rap 4 f.rop) (mul q.i.a (bex 54)))) 4)
+            %=  $
+              a   ?.  (gth (lent tym) 4)
+                    t.a
+                  `(list (pair times @))`(snoc `(list (pair times @))`t.a `(pair times @)`[%s (rap 4 (slag 4 tym))])
+              f.rop  ?.  (gth (lent tym) 4)
+                    tym
+                  (scag 4 tym)
+            ==
+          %ns
+            =/  tym  (pad (rip 4 (add (rap 4 f.rop) (mul q.i.a 0x4.4b82.fa09))) 4)
+            %=  $
+              a   ?.  (gth (lent tym) 4)
+                    t.a
+                  `(list (pair times @))`(snoc `(list (pair times @))`t.a `(pair times @)`[%s (rap 4 (slag 4 tym))])
+              f.rop  ?.  (gth (lent tym) 4)
+                    tym
+                  (scag 4 tym)
+            ==
+          %nis
+            =/  tym  (pad (rip 4 (add (rap 4 f.rop) (mul q.i.a (bex 34)))) 4)
+            %=  $
+              a   ?.  (gth (lent tym) 4)
+                    t.a
+                  `(list (pair times @))`(snoc `(list (pair times @))`t.a `(pair times @)`[%s (rap 4 (slag 4 tym))])
+              f.rop  ?.  (gth (lent tym) 4)
+                    tym
+                  (scag 4 tym)
+            ==
+          %ps
+            =/  tym  (pad (rip 4 (add (rap 4 f.rop) (mul q.i.a 0x119.7998))) 4)
+            %=  $
+              a   ?.  (gth (lent tym) 4)
+                    t.a
+                  `(list (pair times @))`(snoc `(list (pair times @))`t.a `(pair times @)`[%s (rap 4 (slag 4 tym))])
+              f.rop  ?.  (gth (lent tym) 4)
+                    tym
+                  (scag 4 tym)
+            ==
+          %pis
+            =/  tym  (pad (rip 4 (add (rap 4 f.rop) (mul q.i.a (bex 24)))) 4)
+            %=  $
+              a   ?.  (gth (lent tym) 4)
+                    t.a
+                  `(list (pair times @))`(snoc `(list (pair times @))`t.a `(pair times @)`[%s (rap 4 (slag 4 tym))])
+              f.rop  ?.  (gth (lent tym) 4)
+                    tym
+                  (scag 4 tym)
+            ==
+          %fs
+            =/  tym  (pad (rip 4 (add (rap 4 f.rop) (mul q.i.a 0x480e))) 4)
+            %=  $
+              a   ?.  (gth (lent tym) 4)
+                    t.a
+                  `(list (pair times @))`(snoc `(list (pair times @))`t.a `(pair times @)`[%s (rap 4 (slag 4 tym))])
+              f.rop  ?.  (gth (lent tym) 4)
+                    tym
+                  (scag 4 tym)
+            ==
+          %fis
+            =/  tym  (pad (rip 4 (add (rap 4 f.rop) (mul q.i.a (bex 14)))) 4)
+            %=  $
+              a   ?.  (gth (lent tym) 4)
+                    t.a
+                  `(list (pair times @))`(snoc `(list (pair times @))`t.a `(pair times @)`[%s (rap 4 (slag 4 tym))])
+              f.rop  ?.  (gth (lent tym) 4)
+                    tym
+                  (scag 4 tym)
+            ==
+          %as
+            =/  tym  (pad (rip 4 (add (rap 4 f.rop) (mul q.i.a 0x12))) 4)
+            %=  $
+              a   ?.  (gth (lent tym) 4)
+                    t.a
+                  `(list (pair times @))`(snoc `(list (pair times @))`t.a `(pair times @)`[%s (rap 4 (slag 4 tym))])
+              f.rop  ?.  (gth (lent tym) 4)
+                    tym
+                  (scag 4 tym)
+            ==
+          %ais
+            =/  tym  (pad (rip 4 (add (rap 4 f.rop) (mul q.i.a (bex 4)))) 4)
+            %=  $
+              a   ?.  (gth (lent tym) 4)
+                    t.a
+                  `(list (pair times @))`(snoc `(list (pair times @))`t.a `(pair times @)`[%s (rap 4 (slag 4 tym))])
+              f.rop  ?.  (gth (lent tym) 4)
+                    tym
+                  (scag 4 tym)
+            ==
         ==
       ;~  plug
         %+  most
@@ -5754,6 +6051,24 @@
           ;~(pfix (just 'h') (stag %h dim:ag))
           ;~(pfix (just 'm') (stag %m dim:ag))
           ;~(pfix (just 's') (stag %s dim:ag))
+          ;~  pose  ;~(pfix (jest 'ms') (stag %ms dim:ag))     :: out of 1000
+                    ;~(pfix (jest 'mis') (stag %mis dim:ag))   :: out of 1024
+          ==
+          ;~  pose  ;~(pfix (jest 'us') (stag %us dim:ag))     :: out of 1000
+                    ;~(pfix (jest 'uis') (stag %uis dim:ag))   :: out of 1024
+          ==
+          ;~  pose  ;~(pfix (jest 'ns') (stag %ns dim:ag))     :: out of 1000
+                    ;~(pfix (jest 'nis') (stag %nis dim:ag))   :: out of 1024
+          ==
+          ;~  pose  ;~(pfix (jest 'ps') (stag %ps dim:ag))     :: out of 1000
+                    ;~(pfix (jest 'pis') (stag %pis dim:ag))   :: out of 1024
+          ==
+          ;~  pose  ;~(pfix (jest 'fs') (stag %fs dim:ag))     :: out of 1000
+                    ;~(pfix (jest 'fis') (stag %fis dim:ag))   :: out of 1024
+          ==
+          ;~  pose  ;~(pfix (jest 'as') (stag %as dim:ag))     :: out of 1000
+                    ;~(pfix (jest 'ais') (stag %ais dim:ag))   :: out of 1024
+          ==
         ==
         ;~(pose ;~(pfix ;~(plug dot dot) (most dot qix:ab)) (easy ~))
       ==
