@@ -4459,7 +4459,7 @@
     %-  tako-ford:den
     ::TODO  is this +got after +got semantically correct?
     (~(got by hit.dom:(~(got by dos.rom) syd)) ?~(yon let.dom:den u.yon))
-  ::  +wrap: save ford cache
+  ::  +wrap: save ford cache  XX deprecate?
   ::
   ++  wrap
     |*  [her=ship syd=desk yon=(unit aeon) res=*]
