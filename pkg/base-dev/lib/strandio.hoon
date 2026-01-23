@@ -912,7 +912,6 @@
   =/  poke-vase  !>(`start-args:spider`[`tid.bowl `tid byk.bowl file args])
   ;<  ~      bind:m  (watch-our /awaiting/[tid] %spider /thread-result/[tid])
   ;<  ~      bind:m  (poke-our %spider %spider-start poke-vase)
-  ;<  ~      bind:m  (sleep ~s0)  ::  wait for thread to start
   ;<  =cage  bind:m  (take-fact /awaiting/[tid])
   ;<  ~      bind:m  (take-kick /awaiting/[tid])
   ?+  p.cage  ~|([%strange-thread-result p.cage file tid] !!)
