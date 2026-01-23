@@ -10413,7 +10413,8 @@
               [%diff @ %spon *]
             (on-publ-sponsor [who to.diff]:public-keys-result)
           ::
-              [%diff @ %fief *]  sy-core
+              [%diff @ %fief *]
+            (on-publ-fief [who to.diff]:public-keys-result)
           ::
               [%full *]
             (on-publ-full points.public-keys-result)
@@ -10526,6 +10527,16 @@
               (sy-emit unix-duct %give %saxo ~(tap in sponsors))
             ::
             sy-core
+          ::  +on-publ-fief: handle fief migration for peer
+          ::
+          ++  on-publ-fief
+            |=  [=ship to=(unit fief)]
+            ^+  sy-core
+            ?~  unix-duct.ames-state
+              sy-core
+            ?~  to
+              sy-core
+            (sy-emit [unix-duct.ames-state %give %fief (my [ship to]~)])
           ::  +on-publ-rekey: handle new key for peer
           ::
           ::    TODO: assert .crypto-suite compatibility
