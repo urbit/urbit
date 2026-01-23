@@ -9,7 +9,7 @@
 ::
 ::  XX: update these examples
 ::  Then try stuff:
-::  :aqua [%init ~[~bud ~dev]]
+::  :aqua &aqua-events [%init-ship ~bud %.y feed=~]~
 ::  :aqua [%dojo ~[~bud ~dev] "[our eny (add 3 5)]"]
 ::  :aqua [%dojo ~[~bud] "|hi ~dev"]
 ::  :aqua [%wish ~[~bud ~dev] '(add 2 3)']
@@ -22,15 +22,18 @@
 ::
 /-  aquarium
 /+  pill, azimuth, naive, default-agent, aqua-azimuth, dbug, verb
+/=  arvo-gate  /sys/arvo
 =,  aquarium
 =>  $~  |%
+    ++  larva-arvo  ..poke:+>.arvo-gate
+    ++  arvo-core  ..^poke:+>.arvo-gate
     +$  versioned-state
       $%  state-0
       ==
     +$  state-0
       $:  %0
           pil=$>(%pill pill-0)
-          assembled=*
+          assembled=* ::  XX  _arvo-core
           fresh-piers=(map [=ship fake=?] [=pier boths=(list unix-both)])
           fleet-snaps=(map term fleet)
           piers=fleet
@@ -48,7 +51,7 @@
     ::
     +$  fleet  [ships=(map ship pier) azi=az-state]
     +$  pier
-      $:  snap=*
+      $:  snap=_arvo-core
           event-log=(list unix-timed-event)
           next-events=(qeu unix-event)
           processing-events=?
@@ -162,8 +165,8 @@
   ::
   ++  apex
     =.  pier-data  *pier
-    =.  snap  assembled
-    ~&  pill-size=(met 3 (jam snap))
+    =.  snap  !<(_snap [-:!>(arvo-core) assembled])
+    =.  our.snap  who
     ..abet-pe
   ::
   ::  store post-pill ship for later re-use
@@ -215,19 +218,18 @@
     ?.  processing-events
       ..abet-pe
     =^  ue  next-events  ~(get to next-events)
-    =/  poke-arm  (mox +23.snap)
-    ?>  ?=(%0 -.poke-arm)
-    =/  poke  p.poke-arm
-    =.  tym.pier-data  (max +(tym.pier-data) now.hid)
-    =/  poke-result  (mule |.((slum poke tym.pier-data ue)))
+    =.  tym.pier-data   (max +(tym.pier-data) now.hid)
+    =/  poke-gate=vase  [-:!>(poke:arvo-core) poke:snap]
+    =/  poke-result=(each vase tang)
+      (mule |.((slym poke-gate event=[tym.pier-data ue])))
     ?:  ?=(%| -.poke-result)
       %-  (slog >%aqua-crash< >guest=who< p.poke-result)
       $
-    =.  snap  +.p.poke-result
+    =.  snap  !<(_snap [-:!>(arvo-core) +.q.p.poke-result])
     =.  ..abet-pe  (publish-event tym.pier-data ue)
     =.  ..abet-pe
-      ~|  ova=-.p.poke-result
-      (handle-effects ;;((list ovum) -.p.poke-result))
+      ~|  ova=+.q.p.poke-result
+      (handle-effects ;;((list ovum) -.q.p.poke-result))
     $
   ::
   ::  Peek
@@ -453,7 +455,33 @@
   ?-  -.res
       %0
     ~&  %suc
-    =.  assembled  +7.p.res
+    ~&  pill-size/(met 3 (jam +7.p.res))
+    =+  !<(=_larva-arvo [-:!>(larva-arvo) +7.p.res])
+    ?>  =(%234 +<:+6.larva-arvo)
+    ::  extract %what file lists from kernel and userspace ova
+    ::
+    =/  files=(list (pair path (cask)))
+      %-  zing
+      %+  murn  (weld kernel-ova.pil userspace-ova.pil)
+      |=  ovo=unix-event:pill
+      ^-  (unit (list (pair path (cask))))
+      ?.  ?=([* %what *] ovo)  ~
+      `+>.ovo
+    ::  build initial grub with bunted identity and version info
+    ::
+    =|  gub=grub
+    =.  who.gub  `*@p    ::  bunted identity, replaced on %init-ship
+    =.  eny.gub  `0      ::  entropy
+    =.  ver.gub
+      `[[~.nonce /aqua] ~[zuse+zuse lull+lull arvo+arvo hoon+hoon-version nock+4]]
+    ::  load kernel then userspace via ++what
+    ::
+    =.  gub  (what:larva-arvo gub files)
+    ::  manually trigger metamorphosis
+    ::
+    =/  hir=(unit $>(%234 heir))  (molt:larva-arvo *@da gub)
+    ?~  hir  ~|(%metamorphosis-failed !!)
+    =.  assembled  +:(load:arvo-core u.hir)
     =.  fresh-piers  ~
     this
   ::
