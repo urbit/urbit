@@ -631,27 +631,45 @@
       %-  push-events:apex:(pe who.ae)
       ^-  (list unix-event)
       %-  zing
-      :~  :_  ~
-          :^  /d/term/1  %boot  &
-          ?:  fake.ae
-            [%fake who.ae]
-          [%dawn (dawn [who feed]:ae)]
+      :~
+        :~  [/ %wack 0]  ::  eny
+            :: [/ %verb `|]  :: possible verb
+            :^  /  %wyrd  [~.nonce /aqua] :: dummy runtime version + nonce
+            ^-  (list (pair term @))
+            :~  zuse+zuse
+                lull+lull
+                arvo+arvo
+                hoon+hoon-version
+                nock+4
+            ==
+            [/ %whom who.ae]  ::  who
+        ==
+        ::
+        kernel-ova.pil  :: load compiler
+        ::
+        :_  ~
+        :^  /d/term/1  %boot  &
+        ?:  fake.ae
+          [%fake who.ae]
+        [%dawn (dawn [who feed]:ae)]
+        ::
+        userspace-ova.pil  :: load os
+        ::
+        :*  [/b/behn/0v1n.2m9vh %born ~]
+            [/i/http-client/0v1n.2m9vh %born ~]
+            [/e/http-server/0v1n.2m9vh %born ~]
+            [/e/http-server/0v1n.2m9vh %live 8.080 `8.445]
+            [/a/newt/0v1n.2m9vh %born ~]
+            [/d/term/1 %hail ~]
+            :: [/d/term/1 %verb ~]  :: XX uncomment for verbose mode
           ::
-          :*  [/b/behn/0v1n.2m9vh %born ~]
-              [/i/http-client/0v1n.2m9vh %born ~]
-              [/e/http-server/0v1n.2m9vh %born ~]
-              [/e/http-server/0v1n.2m9vh %live 8.080 `8.445]
-              [/a/newt/0v1n.2m9vh %born ~]
-              [/d/term/1 %hail ~]
-              :: [/d/term/1 %verb ~]  :: XX uncomment for verbose mode
-            ::
-              ?:  fake.ae  ~
-              :~  =+  [%raw-poke %noun %refresh-rate ~s30]
-                  [/g/aqua/reduce-refresh-rate %deal [. . /]:who.ae %azimuth -]
-                  =+  [%poke azimuth-poke/!>([%kick ~])]
-                  [/g/aqua/watch %deal [. . /]:who.ae %azimuth -]
-              ==
-          ==
+            ?:  fake.ae  ~
+            :~  =+  [%raw-poke %noun %refresh-rate ~s30]
+                [/g/aqua/reduce-refresh-rate %deal [. . /]:who.ae %azimuth -]
+                =+  [%poke azimuth-poke/!>([%kick ~])]
+                [/g/aqua/watch %deal [. . /]:who.ae %azimuth -]
+            ==
+        ==
       ==
     =.  this
       abet-pe:(ahoy fake):[ae initted]
