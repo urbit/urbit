@@ -36,6 +36,13 @@
       [%gall gift:gall]
       [%clay gift:clay]
   ==
+::  +destructed-request: request and eyre session data
+::
++$  destructed-request 
+  $:  =request:http
+      authenticated=?
+      session-id=(unit @uv)
+  ==
 --
 ::  more structures
 ::
@@ -797,9 +804,10 @@
     =/  authenticated
       ?@  session  |
       ?=(%ours -.identity.session)
-    =/  origin=(unit origin)
-      (get-header:http 'origin' headers)
-    =/  session-id=(unit @uv)  ?@(session ~ `suv.session)
+    =/  =destructed-request
+      :+  request
+        authenticated
+      ?@(session ~ `suv.session)
     ::
     =/  [=action suburl=@t]  (get-action-for-binding host url.request)
     ::
@@ -811,7 +819,7 @@
       ::
       =/  bod=octs  (as-octs:mimes:html 'bad session auth')
       %-  handle-response
-      :_  [~ origin]
+      :_  destructed-request
       :*  %start
           :-  401
           ~['set-cookie'^(session-cookie-string:authentication session ~)]
@@ -850,7 +858,7 @@
             url.request
         ==
       %-  handle-response
-      :_  [session-id origin]
+      :_  destructed-request
       :*  %start
           :-  status-code=301
           headers=['location' location]~
@@ -861,6 +869,7 @@
     ::  whether the origin is approved or not,
     ::  and maybe add it to the "pending approval" set
     ::
+    =/  origin  (get-header:http 'origin' header-list.request)
     =^  cors-approved  requests.cors-registry.state
       =,  cors-registry.state
       ?~  origin                         [| requests]
@@ -872,7 +881,7 @@
     ::
     ?:  &(?=(^ origin) cors-approved ?=(%'OPTIONS' method.request))
       %-  handle-response
-      :_  [session-id origin]
+      :_  destructed-request
       =;  =header-list:http
         [%start [204 header-list] ~ &]
       ::  allow the method and headers that were asked for,
@@ -896,32 +905,25 @@
     ::    (handle-http-scry authenticated p request)
     ::
     ?:  =('/_~_/' (end [3 5] url.request))
-      (handle-http-scry authenticated request session-id)
+      (handle-http-scry destructed-request)
     ::  handle requests to the cache, if a non-empty entry exists
     ::
     =/  cached=(unit [aeon=@ud val=(unit cache-entry)])
       (~(get by cache.state) url.request)
     ?:  &(?=([~ @ ^] cached) ?=(%'GET' method.request))
-      %:  handle-cache-req 
-        authenticated 
-        request 
-        u.val.u.cached
-        session-id
-      ==
+      %+  handle-cache-req
+        destructed-request
+      u.val.u.cached
     ::
     ?:  ?&  ?=(@ session)
             ?=(?(%gen %channel %name) -.action)
         ==
-        %:  return-static-data-on-duct
-            401  'text/html'
-            (error-page 401 authenticated url.request "bad session auth")
-            ~  origin
-        ==
+        %^  error-response  401
+          destructed-request
+        "bad session auth"
     ?-    -.action
         %gen
-      ::  crash if session invalid
       ::  invalid case handled above returning unauthenticated err 401
-      =/  [suv=@uv =identity]  ?^  session  session  !!
       =/  bek=beak  [our desk.generator.action da+now]
       =/  sup=spur  path.generator.action
       =/  ski       (rof [~ ~] /eyre %ca bek sup)
@@ -946,7 +948,7 @@
                 leaf+"generator crashed"
                 p.res
             ==
-            `suv  origin
+            destructed-request
         ==
       ?:  ?=(%1 -.res)
         =+  connection=(~(got by connections.state) duct)
@@ -959,12 +961,12 @@
                 leaf+"scry blocked on"
                 (fall (bind (bind ((soft path) p.res) smyt) (late ~)) ~)
             ==
-            `suv  origin
+            destructed-request
         ==
       =/  result  ;;(simple-payload:http +.p.res)
       ::
       %-  handle-response
-      :_  [`suv origin]
+      :_  destructed-request
       ^-  http-event:http
       :*  %start
           response-header.result
@@ -988,9 +990,9 @@
       %:  handle-request:authentication
         secure
         host 
-        ?@  session  ~  `[suv.session identity.session]
+        ?@  session  ~  `identity.session
         address
-        request
+        destructed-request
       ==
     ::
         %eauth
@@ -1006,70 +1008,56 @@
       [(weld som moz) state]
     ::
         %logout
-      ?@  session  (handle-login-redirect:authentication request ~)
+      ?@  session  (handle-login-redirect:authentication destructed-request)
       =/  connection=outstanding-connection
         [action [authenticated secure address request] [suv.session identity.session] ~ 0]
       (handle-logout:authentication request connection)
     ::
         %channel
-      =/  [suv=@uv =identity]  
-        ?^  session  [suv.session identity.session]  !!
-      (handle-request:by-channel [suv identity] address request)
+      ::  invalid case handled above returning unauthenticated err 401
+      =/  identity  ?^  session  identity.session  !!
+      %^  handle-request:by-channel  identity
+        address 
+      destructed-request
     ::
         %scry
-      %:  handle-scry 
-        authenticated 
-        address 
-        request(url suburl)
-        session-id
-      ==
+      %+  handle-scry  address
+      destructed-request(url.request suburl)
     ::
         %name
+      ::  invalid case handled above returning unauthenticated err 401
       =/  identity  ?^  session  identity.session  !!
-      (handle-name identity request session-id)
+      %+  handle-name  identity  destructed-request
     ::
         %host
       %:  return-static-data-on-duct  
           200  
           'text/plain'
           (as-octs:mimes:html (scot %p our))  
-          session-id
-          origin
+          destructed-request
       ==
     ::
         %ip
-      %^  handle-ip  address  request
-      session-id
+      %+  handle-ip  address  destructed-request
     ::
         %boot
-      %+  handle-boot  request
-      session-id
+      %-  handle-boot  destructed-request
     ::
         %sponsor
-      %+  handle-sponsor  request
-      session-id
+      %-  handle-sponsor  destructed-request
     ::
         %four-oh-four
-      %:  return-static-data-on-duct  
-          404  
-          'text/html'
-          (error-page 404 authenticated url.request ~)  
-          session-id
-          origin
-      ==
+      %^  error-response  
+        404  
+      destructed-request  ~
     ==
   ::  +handle-ip: respond with the requester's ip
   ::
   ++  handle-ip
-    |=  [=address =request:http session-id=(unit @uv)]
+    |=  [=address =destructed-request]
     ^-  (quip move server-state)
-    =/  origin  (get-header:http 'origin' header-list.request)
-    ?.  =(%'GET' method.request)
-      %:  return-static-data-on-duct  
-          405  'text/html'
-          (error-page 405 & url.request "may only GET ip")
-          session-id  origin
-      ==
+    ?.  =(%'GET' method.request.destructed-request)
+      (error-response 405 +<+ "may only GET ip")
     %:  return-static-data-on-duct  200  'text/plain'
       =/  ip=@t
         ?-    address
@@ -1082,7 +1070,7 @@
           ;~(pfix dot (star ;~(pose (cold ':' dot) next)))
         ==
       (as-octs:mimes:html ip)
-      session-id  origin
+      destructed-request
     ==
   ::  Get current sponsor of ship
   ::
@@ -1095,41 +1083,23 @@
     $(ship next)
   ::
   ++  handle-sponsor
-    |=  [=request:http session-id=(unit @uv)]
+    |=  =destructed-request
     ^-  (quip move server-state)
-    =/  crumbs  q:(rash url.request apat:de-purl:html)
-    =/  origin  (get-header:http 'origin' header-list.request)
-    ?.  ?=([@t @t @t ~] crumbs)
-      %:  return-static-data-on-duct  
-          400  
-          'text/html'
-          %:  error-page
-            400
-            &
-            url.request
-            "Invalid input: Expected /~/boot/<ship=@p>"
-          ==
-          session-id  origin
-      ==
+    =/  crumbs  q:(rash url.request.destructed-request apat:de-purl:html)
+    =*  error
+      %^  error-response  400
+        destructed-request
+      "Invalid input: Expected /~/boot/<ship=@p>"
+    ?.  ?=([@t @t @t ~] crumbs)  error
     =/  ship
       %+  slaw
         %p
       i.t.t.crumbs
-    ?~  ship
-      %:  return-static-data-on-duct  
-          400  'text/html'
-          %:  error-page
-            400
-            &
-            url.request
-            "Invalid input: Expected /~/boot/<ship=@p>"
-          ==
-        session-id  origin
-      ==
-    %:  return-static-data-on-duct  
+    ?~  ship  error
+    %:  return-static-data-on-duct
         200  'text/plain'
         (as-octs:mimes:html (scot %p (galaxy-for u.ship)))
-        session-id  origin
+        destructed-request
     ==
   ::  Returns peer-state data for verifying sync status between ship and network.
   ::  Takes two path parameters - ship=@p and optional bone=@u.
@@ -1144,26 +1114,16 @@
   ::  - Bone was not found under peer (assuming bone was provided)
   ::
   ++  handle-boot
-    |=  [=request:http session-id=(unit @uv)]
+    |=  =destructed-request
     ^-  (quip move server-state)
-    =/  origin  (get-header:http 'origin' header-list.request)
-    ?.  =(%'GET' method.request)
-      %:  return-static-data-on-duct  405  'text/html'
-        (error-page 405 & url.request "may only GET boot data")
-        session-id  origin
-      ==
-    =/  crumbs  q:(rash url.request apat:de-purl:html)
+    ?.  =(%'GET' method.request.destructed-request)
+      (error-response 405 +< "may only GET boot data")
+    =/  crumbs  q:(rash url.request.destructed-request apat:de-purl:html)
     =>  .(crumbs `(pole knot)`crumbs)
     ?.  ?=([%'~' %boot ship=@t req=*] crumbs)
-      %:  return-static-data-on-duct  400  'text/html'
-        %:  error-page
-          400
-          &
-          url.request
-          "Invalid input: Expected /~/boot/<ship=@p> or /~/boot/<ship=@p>/<bone=@u>"
-        ==
-        session-id  origin
-      ==
+      %^  error-response  400  
+        destructed-request
+      "Invalid input: Expected /~/boot/<ship=@p> or /~/boot/<ship=@p>/<bone=@u>"
     =/  ship=(unit ship)  (slaw %p ship.crumbs)
     =/  bone=(unit @ud)
       ?.  ?=([bone=@t ~] req.crumbs)  ~
@@ -1171,15 +1131,9 @@
     ?:  ?|  ?=(~ ship)
             &(?=([bone=@ ~] req.crumbs) ?=(~ bone))
         ==
-      %:  return-static-data-on-duct  400  'text/html'
-        %:  error-page
-          400
-          &
-          url.request
-          "Invalid input: Expected /~/boot/<ship=@p> or /~/boot/<ship=@p>/<bone=@u>"
-        ==
-        session-id  origin
-      ==
+      %^  error-response  400
+        destructed-request
+      "Invalid input: Expected /~/boot/<ship=@p> or /~/boot/<ship=@p>/<bone=@u>"
     ::
     =/  des=(unit (unit cage))
       %:  rof
@@ -1191,54 +1145,48 @@
         ?~(bone ~ [(scot %ud u.bone) ~])  :: XX
       ==
     ?.  ?=([~ ~ %noun *] des)
-      %:  return-static-data-on-duct  404  'text/html'
-        (error-page 404 & url.request "Peer {(scow %p u.ship)} not found.")
-        session-id  origin
-      ==
+      %^  error-response  404
+        destructed-request
+      "Peer {(scow %p u.ship)} not found."
     =+  !<  [rift=@ud life=@ud bone=(unit @ud) last-acked=(unit @ud)]  q.u.u.des
     %:  return-static-data-on-duct  200  'application/octet-stream'
       %-  as-octs:mimes:html
       %-  jam
       ^-  boot
       [%1 (galaxy-for u.ship) rift life bone last-acked]
-      session-id  origin
+      destructed-request
     ==
   ::  +handle-name: respond with the requester's @p
   ::
   ++  handle-name
-    |=  [=identity =request:http session-id=(unit @uv)]
+    |=  [=identity =destructed-request]
     ^-  (quip move server-state)
-    =/  origin  (get-header:http 'origin' header-list.request)
-    ?.  =(%'GET' method.request)
-      %:  return-static-data-on-duct  
-        405  'text/html'
-        (error-page 405 & url.request "may only GET name")
-        session-id  origin
-      ==
+    ?.  =(%'GET' method.request.destructed-request)
+      (error-response 405 +<+ "may only GET name")
     %:  return-static-data-on-duct  
       200  'text/plain'
       =/  nom=@p
         ?+(-.identity who.identity %ours our)
       (as-octs:mimes:html (scot %p nom))
-      session-id  origin
+      destructed-request
     ==
   ::  +handle-http-scry: respond with scry result
   ::
   ++  handle-http-scry
-    |=  [authenticated=? =request:http session-id=(unit @uv)]
+    |=  =destructed-request
     |^  ^-  (quip move server-state)
-    =/  origin  (get-header:http 'origin' header-list.request)
-    ?.  authenticated  (error-response 403 ~ session-id origin)
-    ?.  =(%'GET' method.request)
-      (error-response 405 "may only GET scries" session-id origin)
-    =/  req  (parse-request-line url.request)
+    ?.  authenticated.destructed-request
+      (error-response 403 destructed-request ~)
+    ?.  =(%'GET' method.request.destructed-request)
+      (error-response 405 destructed-request "may only GET scries")
+    =/  req  (parse-request-line url.request.destructed-request)
     =/  fqp  (fully-qualified site.req)
     =/  mym  (scry-mime now rof [~ ~] ext.req site.req)
-    ?:  ?=(%| -.mym)  (error-response 500 p.mym session-id origin)
+    ?:  ?=(%| -.mym)  
+      (error-response 500 destructed-request p.mym)
     =*  mime  p.mym
     %-  handle-response
-    :_  :-  session-id
-        (get-header:http 'origin' header-list.request)
+    :_  destructed-request
     :*  %start
         :-  status-code=200
         ^=  headers
@@ -1255,69 +1203,49 @@
       ?.  ?=([%'_~_' @ @ @ *] a)  %.n
       =/  vez  (vang | (en-beam [our %base da+now] ~))
       ?=  [~ [^ ^ ^ *]]  (rush (spat t.t.a) ;~(pfix fas gash:vez))
-    ::
-    ++  error-response
-      |=  [status=@ud =tape session-id=(unit @uv) origin=(unit origin)]
-      ^-  (quip move server-state)
-      %:  return-static-data-on-duct
-        status  'text/html'
-        (error-page status authenticated url.request tape)
-        session-id  origin
-      ==
     --
   ::  +handle-cache-req: respond with cached value, 404 or 500
   ::
   ++  handle-cache-req
-    |=  [authenticated=? =request:http entry=cache-entry session-id=(unit @uv)]
-    |^  ^-  (quip move server-state)
-    =/  origin  (get-header:http 'origin' header-list.request)
-    ?:  &(auth.entry !authenticated)
-      (error-response 403 ~ session-id origin)
+    |=  [=destructed-request entry=cache-entry]
+    ^-  (quip move server-state)
+    ?:  &(auth.entry !authenticated.destructed-request)
+      (error-response 403 destructed-request ~)
     =*  body  body.entry
     ?-    -.body
         %payload
       %-  handle-response
-      :_  [session-id origin]
+      :_  destructed-request
       :*  %start
           response-header.simple-payload.body
           data.simple-payload.body
           complete=%.y
       ==
     ==
-    ::
-    ++  error-response
-      |=  [status=@ud =tape session-id=(unit @uv) origin=(unit origin)]
-      ^-  (quip move server-state)
-      %:  return-static-data-on-duct
-        status  'text/html'
-        (error-page status authenticated url.request tape)
-        session-id  origin
-      ==
-    --
   ::  +handle-scry: respond with scry result, 404 or 500
   ::
   ++  handle-scry
-    |=  [authenticated=? =address =request:http session-id=(unit @uv)]
+    |=  [=address =destructed-request]
     |^  ^-  (quip move server-state)
-    =/  origin  (get-header:http 'origin' header-list.request)
-    ?.  authenticated
-      (error-response 403 ~ session-id origin)
-    ?.  =(%'GET' method.request)
-      (error-response 405 "may only GET scries" session-id origin)
+    ?.  authenticated.destructed-request
+      (error-response 403 destructed-request ~)
+    ?.  =(%'GET' method.request.destructed-request)
+      (error-response 405 destructed-request "may only GET scries")
     ::  make sure the path contains an app to scry into
     ::
-    =+  req=(parse-request-line url.request)
+    =+  req=(parse-request-line url.request.destructed-request)
     ?.  ?=(^ site.req)
-      %:  error-response  
-        400  "scry path must start with app name"  
-        session-id  origin
-      ==
+      %^  error-response  400
+        destructed-request
+      "scry path must start with app name"
     ::  attempt the scry that was asked for
     ::
     =/  res=(unit (unit cage))
       (do-scry %gx i.site.req (snoc t.site.req (fall ext.req %mime)))
-    ?~  res    (error-response 500 "failed scry" session-id origin)
-    ?~  u.res  (error-response 404 "no scry result" session-id origin)
+    ?~  res    
+      (error-response 500 destructed-request "failed scry")
+    ?~  u.res
+      (error-response 404 destructed-request "no scry result")
     =*  mark   p.u.u.res
     =*  vase   q.u.u.res
     ?:  =(%mime mark)
@@ -1326,31 +1254,29 @@
         200
         (rsh 3 (spat p.mime))  
         q.mime
-        session-id  origin
+        destructed-request
       ==
     ::  attempt to find conversion gate to mime
     ::
     =/  tub=(unit [tub=tube:clay mov=move])
       (find-tube i.site.req mark %mime)
     ?~  tub
-      %:  error-response  500 
-        "no tube from {(trip mark)} to mime"  
-        session-id  origin
-      ==
+      %^  error-response  500 
+        destructed-request
+      "no tube from {(trip mark)} to mime"  
     ::  attempt conversion, then send results
     ::
     =/  mym=(each mime tang)
       (mule |.(!<(mime (tub.u.tub vase))))
     =^  cards  state
       ?-  -.mym
-        %|  %:  error-response
-              500  "failed tube from {(trip mark)} to mime"  
-              session-id  origin
-            ==
+        %|  %^  error-response  500
+              destructed-request
+            "failed tube from {(trip mark)} to mime"
         %&  %:  return-static-data-on-duct
               200  (spat p.p.mym)
               q.p.mym
-              session-id  origin
+              destructed-request
             ==
       ==
     [[mov.u.tub cards] state]
@@ -1374,15 +1300,6 @@
       |=  [care=term =desk =path]
       ^-  (unit (unit cage))
       (rof [~ ~] /eyre care [our desk da+now] path)
-    ::
-    ++  error-response
-      |=  [status=@ud =tape session-id=(unit @uv) origin=(unit origin)]
-      ^-  (quip move server-state)
-      %:  return-static-data-on-duct  
-        status  'text/html'
-        (error-page status authenticated url.request tape)
-        session-id  origin
-      ==
     --
   ::  +request-to-app: subscribe to app and poke it with request data
   ::
@@ -1433,6 +1350,20 @@
     =,  u.connection
     %-  (trace 1 |.("leaving subscription to {<app.action>}"))
     (deal-as /watch-response/[eyre-id] identity our app.action %leave ~)
+  ::
+  ++  error-response 
+  |=  [status=@ud =destructed-request =tape]
+  ^-  (quip move server-state)
+  %:  return-static-data-on-duct
+    status  'text/html'
+    %:  error-page 
+      status 
+      authenticated.destructed-request
+      url.request.destructed-request
+      tape
+    ==
+    destructed-request
+  ==
   ::  +return-static-data-on-duct-async: returns one piece of data all at once on asynchronous request 
   ::
   ++  return-static-data-on-duct-async
@@ -1450,11 +1381,11 @@
   ::  +return-static-data-on-duct: returns one piece of data all at once
   ::
   ++  return-static-data-on-duct
-    |=  [code=@ content-type=@t data=octs session-id=(unit @uv) origin=(unit origin)]
+    |=  [code=@ content-type=@t data=octs =destructed-request]
     ^-  [(list move) server-state]
     ::
     %-  handle-response
-    :_  [session-id origin]
+    :_  destructed-request
     :*  %start
         :-  status-code=code
         ^=  headers
@@ -1473,15 +1404,14 @@
     ::  +handle-request: handles an http request for the login page
     ::
     ++  handle-request
-      |=  [secure=? host=(unit @t) session=(unit [session-id=@uv =identity]) =address =request:http]
+      |=  [secure=? host=(unit @t) identity=(unit identity) =address =destructed-request]
       ^-  [(list move) server-state]
       ::  parse the arguments out of request uri
       ::
+      =/  request     request.destructed-request
       =+  request-line=(parse-request-line url.request)
-      =/  u-identity  ?~(session ~ `+:(need session))
-      =/  session-id  ?~(session ~ `-:(need session))
+      =/  session-id  session-id.destructed-request
       =/  redirect    (get-header:http 'redirect' args.request-line)
-      =/  origin      (get-header:http 'origin' header-list.request)
       =/  with-eauth=(unit ?)
         ?:  =(~ eauth-url:eauth)  ~
         `?=(^ (get-header:http 'eauth' args.request-line))
@@ -1492,28 +1422,28 @@
       ::
       ?:  =('GET' method.request)
         =.  connections.state
-          ?~  session  connections.state
+          ?~  identity  connections.state
           (~(del by connections.state) duct)
         %:  return-static-data-on-duct
           200  'text/html'
-          (login-page redirect our u-identity with-eauth %.n)
-          session-id  origin
+          (login-page redirect our identity with-eauth %.n)
+          destructed-request
         ==
       ::  if we are not a post, return an error
       ::
       ?.  =('POST' method.request)
         %:  return-static-data-on-duct  
           405  'text/html'
-          (login-page ~ our u-identity with-eauth %.n)
-          session-id  origin
+          (login-page ~ our identity with-eauth %.n)
+          destructed-request
         ==
       ::  we are a post, and must process the body type as form data
       ::
       ?~  body.request
         %:  return-static-data-on-duct  
           400  'text/html'
-          (login-page ~ our u-identity with-eauth %.n)
-          session-id  origin
+          (login-page ~ our identity with-eauth %.n)
+          destructed-request
         ==
       ::
       =/  parsed=(unit (list [key=@t value=@t]))
@@ -1521,16 +1451,16 @@
       ?~  parsed
         %:  return-static-data-on-duct
           400  'text/html'
-          (login-page ~ our u-identity with-eauth %.n)
-          session-id  origin
+          (login-page ~ our identity with-eauth %.n)
+          destructed-request
         ==
       ::
       =/  redirect=(unit @t)  (get-header:http 'redirect' u.parsed)
       ?^  (get-header:http 'eauth' u.parsed)
         ?~  ship=(biff (get-header:http 'name' u.parsed) (cury slaw %p))
           %:  return-static-data-on-duct  400  'text/html'
-            (login-page redirect our u-identity `& %.n)
-            session-id  origin
+            (login-page redirect our identity `& %.n)
+            destructed-request
           ==
         ::TODO  redirect logic here and elsewhere is ugly
         =/  redirect  (fall redirect '')
@@ -1542,22 +1472,22 @@
       =.  with-eauth  (bind with-eauth |=(? |))
       ?~  password=(get-header:http 'password' u.parsed)
         %:  return-static-data-on-duct  400  'text/html'
-          (login-page redirect our u-identity with-eauth %.n)
-          session-id  origin
+          (login-page redirect our identity with-eauth %.n)
+          destructed-request
         ==
       ::  check that the password is correct
       ::
       ?.  =(u.password code)
         %:  return-static-data-on-duct  400  'text/html'
-          (login-page redirect our u-identity with-eauth %.y)
-          session-id  origin
+          (login-page redirect our identity with-eauth %.y)
+          destructed-request
         ==
       ::  clean up the session they're changing out from
       ::
       ::
       =^  moz  state
-        ?~  session  `state
-        (close-session session-id.u.session |)
+        ?~  session-id  `state
+        (close-session u.session-id |)
       ::
       ::  initialize the new session
       ::
@@ -1588,8 +1518,7 @@
       ::      +handle-response does that for us.
       ::
       %-  handle-response
-      :_  :-  `session.fex
-          origin
+      :_  destructed-request(session-id `session.fex)
       =/  bod=octs
         (as-octs:mimes:html (scot %uv session.fex))
       ?~  redirect
@@ -1604,6 +1533,9 @@
       ::  whatever we end up doing, we always respond with a redirect
       ::
       =/  [session-id=@uv =identity]  [session-id.connection identity.connection]
+      ::  authenticated set to %.n logging out session
+      ::
+      =/  =destructed-request  [request | `session-id]
       =/  response=$>(%start http-event:http)
         =/  redirect=(unit @t)
           %+  get-header:http  'redirect'
@@ -1635,7 +1567,7 @@
         ?.  ?=(%ours -.identity)  ~
         (biff (get-header:http 'host' arg) (cury slaw %p))
       ?~  sid
-        (handle-login-redirect request `session-id)
+        (handle-login-redirect destructed-request)
       ::  if this is an eauth remote logout, send the %shut
       ::
       =*  auth  auth.state
@@ -1654,27 +1586,25 @@
         :_  headers.response-header.response
         ['set-cookie' (session-cookie-string session-id ~)]
       ::  close the session as requested, then send the response
-      =/  origin  (get-header:http 'origin' header-list.request)
       ::
       =^  moz1  state  (close-session u.sid all)
-      =^  moz2  state  (handle-response response `session-id origin)
+      =^  moz2  state  (handle-response response destructed-request)
       [[give-session-tokens (weld moz1 moz2)] state]
     ::  +handle-login-redirect:  sends response with redirect to login page
     ::
     ::
-    ++  handle-login-redirect 
-    |=  [=request:http session-id=(unit @uv)]
+    ++  handle-login-redirect
+    |=  =destructed-request
     =/  response=$>(%start http-event:http)
       =/  redirect=(unit @t)
         %+  get-header:http  'redirect'
-        args:(parse-request-line url.request)
+        args:(parse-request-line url.request.destructed-request)
       :*  %start
           response-header=[303 ['location' (fall redirect '/~/login')]~]
           data=~
           complete=%.y
       ==
-    =/  origin  (get-header:http 'origin' header-list.request)
-    (handle-response response session-id origin)
+    (handle-response response destructed-request)
     ::  +session-id-from-request: attempt to find a session token
     ::
     ::    looks in the authorization header first. if there is no such header,
@@ -2397,18 +2327,18 @@
     ::  +handle-request: handles an http request for the subscription system
     ::
     ++  handle-request
-      |=  [[session-id=@uv =identity] =address =request:http]
+      |=  [=identity =address =destructed-request]
       ^-  [(list move) server-state]
       ::  parse out the path key the subscription is on
       ::
-      =/  origin  (get-header:http 'origin' header-list.request)
+      =/  request  request.destructed-request
       =+  request-line=(parse-request-line url.request)
       ?.  ?=([@t @t @t ~] site.request-line)
         ::  url is not of the form '/~/channel/'
         ::
-        %:  return-static-data-on-duct  400  'text/html'
-          (error-page 400 & url.request "malformed channel url")
-          `session-id  origin
+        %:  error-response  400
+          destructed-request
+          "malformed channel url"
         ==
       ::  channel-id: unique channel id parsed out of url
       ::
@@ -2417,19 +2347,18 @@
       ?:  =('PUT' method.request)
         ::  PUT methods starts/modifies a channel, and returns a result immediately
         ::
-        (on-put-request channel-id identity request session-id)
+        (on-put-request channel-id identity destructed-request)
       ::
       ?:  =('GET' method.request)
-        (on-get-request channel-id [session-id identity] request)
+        (on-get-request channel-id identity destructed-request)
       ?:  =('POST' method.request)
         ::  POST methods are used solely for deleting channels
-        (on-put-request channel-id identity request session-id)
+        (on-put-request channel-id identity destructed-request)
       ::
       %-  (trace 0 |.("session not a put"))
-      %:  return-static-data-on-duct  405  'text/html'
-        (error-page 405 & url.request "bad method for session endpoint")
-        `session-id  origin
-      ==
+      %^  error-response  405
+        destructed-request
+      "bad method for session endpoint"
     ::  +on-cancel-request: cancels an ongoing subscription
     ::
     ::    One of our long lived sessions just got closed. We put the associated
@@ -2545,18 +2474,15 @@
     ::    the client in text/event-stream format.
     ::
     ++  on-get-request
-      |=  [channel-id=@t [session-id=@uv =identity] =request:http]
+      |=  [channel-id=@t =identity =destructed-request]
       ^-  [(list move) server-state]
       ::  if the channel doesn't exist, we cannot serve it.
       ::  this 404 also lets clients know if their channel was reaped since
       ::  they last connected to it.
       ::
-      =/  origin  (get-header:http 'origin' header-list.request)
+      =/  request  request.destructed-request
       ?.  (~(has by session.channel-state.state) channel-id)
-        %:  return-static-data-on-duct  404  'text/html'
-          (error-page 404 | url.request ~)
-          `session-id  origin
-        ==
+        (error-response 404 destructed-request ~)
       ::
       =/  mode=?(%json %jam)
         (find-channel-mode %'GET' header-list.request)
@@ -2576,10 +2502,7 @@
         ::
         ?.  =(identity identity.channel)
           =^  mos  state
-            %:  return-static-data-on-duct  403  'text/html'
-              (error-page 403 | url.request ~)
-              `session-id  origin
-            ==
+            (error-response 403 destructed-request ~)
           [[& '' mos] state]
         ::  make sure the request "mode" doesn't conflict with a prior request
         ::
@@ -2587,11 +2510,9 @@
         ::      request will ever be listening to this channel?
         ?.  =(mode mode.channel)
           =^  mos  state
-            %:  return-static-data-on-duct  406  'text/html'
-              =;  msg=tape  (error-page 406 %.y url.request msg)
-              "channel already established in {(trip mode.channel)} mode"
-              `session-id  origin
-            ==
+            %^  error-response  406
+              destructed-request
+            "channel already established in {(trip mode.channel)} mode"
           [[& '' mos] state]
         ::  when opening an event-stream, we must cancel our timeout timer
         ::  if there's no duct already bound. else, kill the old request,
@@ -2647,7 +2568,7 @@
       ::
       =^  http-moves  state
         %-  handle-response
-        :_  [`session-id origin]
+        :_  destructed-request
         :*  %start
             :-  200
             :~  ['content-type' 'text/event-stream']
@@ -2669,10 +2590,12 @@
       =.  duct-to-key.channel-state.state
         (~(put by duct-to-key.channel-state.state) duct channel-id)
       ::  associate this channel with the session cookie
+      ::  invalid case handled in +request arm
       ::
       =.  sessions.auth.state
         %+  ~(jab by sessions.auth.state)
-          session-id
+          ?~  session-id.destructed-request  !!
+          u.session-id.destructed-request
         |=  =session
         session(channels (~(put in channels.session) channel-id))
       ::  initialize sse heartbeat
@@ -2716,26 +2639,20 @@
     ::    this request to contain an empty list of commands.
     ::
     ++  on-put-request
-      |=  [channel-id=@t =identity =request:http session-id=@uv]
+      |=  [channel-id=@t =identity =destructed-request]
       ^-  [(list move) server-state]
       ::  if the channel already exists, and is not of this identity, 403
       ::
       ::    the creation case happens in the +update-timeout-timer-for below
       ::
-      =/  origin  (get-header:http 'origin' header-list.request)
+      =/  request  request.destructed-request
       ?:  ?~  c=(~(get by session.channel-state.state) channel-id)  |
           !=(identity identity.u.c)
-        %:  return-static-data-on-duct  403  'text/html'
-          (error-page 403 | url.request ~)
-          `session-id  origin
-        ==
+        (error-response 403 destructed-request ~)
       ::  error when there's no body
       ::
       ?~  body.request
-        %:  return-static-data-on-duct  400  'text/html'
-          (error-page 400 %.y url.request "no put body")
-          `session-id  origin
-        ==
+        (error-response 400 destructed-request "no put body")
       ::
       =/  mode=?(%json %jam)
         (find-channel-mode %'PUT' header-list.request)
@@ -2744,10 +2661,7 @@
       =/  maybe-requests=(each (list channel-request) @t)
         (parse-channel-request mode u.body.request)
       ?:  ?=(%| -.maybe-requests)
-        %:  return-static-data-on-duct  400  'text/html'
-          (error-page 400 & url.request (trip p.maybe-requests))
-          `session-id  origin
-        ==
+        (error-response 400 destructed-request (trip p.maybe-requests))
       ::  check for the existence of the channel-id
       ::
       ::    if we have no session, create a new one set to expire in
@@ -2779,7 +2693,7 @@
                   data=~
                   complete=%.y
               ==
-              `session-id  origin
+              destructed-request
             ==
           ::
           [:(weld (flop gall-moves) http-moves moves) state]
@@ -2794,7 +2708,7 @@
             %+  turn  (sort ~(tap by errors) dor)
             |=  [id=@ud er=@t]
             (rap 3 (crip (a-co:co id)) ': ' er '<br/>' ~)
-            `session-id  origin
+            destructed-request
           ==
         [(weld http-moves moves) state]
       ::
@@ -3287,18 +3201,20 @@
   ::    assign headers as needed and refresh session if provided.
   ::
   ++  handle-response
-    |=  [=http-event:http session-id=(unit @uv) origin=(unit origin)]
+    |=  [=http-event:http =destructed-request]
     ^-  [(list move) server-state]
     |^
     ?>  ?=(%start -.http-event)
-    =.  response-header.http-event  (give-response http-event origin)
-    ?~  session-id
+    =.  response-header.http-event
+      %+  give-response  http-event
+      (get-header:http 'origin' header-list.request.destructed-request)
+    ?~  session-id.destructed-request
       pass-response
     ::
     =^  response-header  state
       %+  refresh-session
         response-header.http-event
-      u.session-id
+      u.session-id.destructed-request
     =.  response-header.http-event  response-header
     pass-response
       ::
