@@ -1172,6 +1172,8 @@
       %-  (slog leaf+"gall: {<dap>} dead, got {<+<.sign-arvo>}" ~)
       mo-core
     ?.  =(run-nonce.u.yoke i.t.wire)
+      ::NOTE  seeing this indicates gall didn't clean up the previous agent's
+      ::      resource properly
       %-  (slog leaf+"gall: got old {<+<.sign-arvo>} for {<dap>}" ~)
       mo-core
     ::
@@ -1305,9 +1307,15 @@
     |=  =^yoke
     ?:  ?=(%nuke -.yoke)  yoke
     :+  %nuke
+      ::  retain sequence nrs to guarantee referential transparency,
+      ::  but drop the data
+      ::
       %-  ~(run-plot of-farm sky.yoke)
       |=  plot
       (fall (clap bob (bind (ram:on-path fan) head) max) 0)
+    ::  retain paths' encryption keys
+    ::NOTE  if we drop them here, may also need to tell ames to drop them
+    ::
     ~(tap-hutch of-farm sky.yoke)
   ::  +mo-load: install agents
   ::
@@ -1742,6 +1750,8 @@
         %+  turn  ~(tap by bitt.yoke)
         |=  [=duct =ship =path]
         path
+      ::TODO  different factoring might be possible,
+      ::      see also the TODO in +ap-from-internal
       =/  will=(list card:agent)
         ;:  welp
           ?:  =(~ inbound-paths)
@@ -1753,6 +1763,16 @@
           [%pass wire %agent dock %leave ~]
         ::
           ap-yawn-all
+        ::
+          %+  turn  ~(tap in resources.yoke)
+          |=  res=arvo-resource
+          ^-  card:agent
+          =-  [%pass wire.res %arvo -]
+          ?-  +.res
+            [%behn %wait *]   [%behn %rest time.res]
+            [%iris %request]  [%iris %cancel-request ~]
+            [%lick %spin *]   [%lick %shut name.res]
+          ==
         ==
       =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent]))
       ap-core
@@ -1968,6 +1988,10 @@
         ==
       ::
           %pass
+        ::TODO  consider factoring out the wire and note-arvo transformations
+        ::      into standalone, functional arms. +ap-nuke and perhaps others
+        ::      might like to use that instead of depending on the whole
+        ::      pipeline leading up to +ap-from-internal
         =/  =duct  system-duct.state
         =/  =wire  p.card
         =/  =neet  q.card

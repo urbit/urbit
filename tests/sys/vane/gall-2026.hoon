@@ -166,6 +166,7 @@
   =/  m  (mare mold)
   ^-  form:m
   |=  =state
+  ~|  [%get-scry care desk path]
   =-  [%& - state]  ::  %-  pure:m
   !<  mold
   =<  q  %-  need  %-  need
@@ -175,6 +176,11 @@
 ++  get-our
   |=  =state
   [%& our.g.state state]
+::
+++  get-yoke
+  |=  =dude:gall
+  |=  =state
+  [%& (~(got by yokes.state.g.state) dude) state]
 ::
 ++  get-egg
   |=  =dude:gall
@@ -376,5 +382,31 @@
   ;<  ~  bind:m  (ex-equal !>(ken.e) !>(*(jug spar:ames wire)))
   (pure:m ~)
 ::
+++  test-nuke-closes-resources
+  %-  eval-mare
+  ;<  *  bind:m  (do-load %mock mock-agent)
+  ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %behn %wait ~2345.6.7)
+  ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %iris %request *request:http *outbound-config:iris)
+  ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %lick %spin /mysocket)
+  ::  nuking the agent should delete/clear/close/cancel all its resources.
+  ::  make sure we grab the wire while the nonce is still known!
+  ::
+  ;<  gall-wire=wire        bind:m
+    (use-wire %mock //agent/wire)
+  ;<  gall-wire-b=wire        bind:m
+    (use-wire %mock /[(crip ~(rend co %blob ~2345.6.7))]/agent/wire)
+  ;<  moz=(list move:gall)  bind:m
+    (do-call ~ %nuke %mock)
+  ;<  ~  bind:m
+    ::NOTE  moves sorted because otherwise dependent on set order
+    %+  ex-moves  (sort moz aor)
+    :~  (ex-move ~[/sysduct] %pass gall-wire [%i %cancel-request ~])
+        (ex-move ~[/sysduct] %pass gall-wire [%l %shut [%mock /mysocket]])
+        (ex-move ~[/sysduct] %pass gall-wire-b [%b %rest ~2345.6.7])
+    ==
+  ;<  y=yoke:gall  bind:m  (get-yoke %mock)
+  (ex-equal !>(-.y) !>(%nuke))
+::
 ::TODO  test keen wire consistent between %keen, %keen w/ secret, reinstall
+::TODO  test namespace revision nrs across nukes
 --
