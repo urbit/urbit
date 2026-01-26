@@ -203,7 +203,6 @@
   $:  rom=room                                          ::  domestic
       hoy=(map ship rung)                               ::  foreign
       ran=rang                                          ::  hashes
-      fad=flow                                          ::  ford cache
       mon=(map term beam)                               ::  mount points
       hez=(unit duct)                                   ::  sync duct
       cez=(map @ta crew)                                ::  permission groups
@@ -465,6 +464,15 @@
     %1       peg.fell
   ==
 ::
+++  has-arm
+  |=  [arm=@tas =mark core=vase]
+  ^-  ?
+  =/  rib  (mule |.((slub core [%wing ~[arm]])))
+  ?:  ?=(%| -.rib)  %.n
+  =/  lab  (mule |.((slob mark p.p.rib)))
+  ?:  ?=(%| -.lab)  %.n
+  p.lab
+::
 ++  rave-to-rove
   |=  rav=rave
   ^-  rove
@@ -604,12 +612,6 @@
 ++  fusion
   ~%  %fusion  ..fusion  ~
   |%
-  ::  +wrap: external wrapper
-  ::
-  ++  wrap
-    |*  [* state:ford]
-    [+<- +<+< +<+>-]  ::  [result cache.state flue]
-  ::
   ++  with-face  |=([face=@tas =vase] vase(p [%face face p.vase]))
   ++  with-faces
     =|  res=(unit vase)
@@ -623,47 +625,368 @@
   ++  ford
     !.
     =>  |%
-        +$  state
-          $:  cache=flow
-              flue
-              cycle=(set mist)
-              drain=(map mist leak)
-              stack=(list (set leak))
-          ==
         +$  args
+          $+  args
           $:  files=(map path (each page lobe))
               file-store=(map lobe page)
               verb=@
-              cache=flow
-              flue
+          ==
+        ::
+        +$  bush
+          $%  [%file =cage]
+              [%hoon text=@t deps=(list (pair (unit term) bush)) =path]
+              [%arch =spec files=(map @ta bush) =path]
+              [%mark grad=(unit (trel bush bush bush)) cor=vase]
+              [%tube p=$@(?(%same %mime) [a=[=mark =bush] b=[=mark =bush]])]  ::  identity/mime -> hoon
+          ==
+        ::
+        +$  bush-node
+          $%  [%hoon =path]
+              [%file =mark =path]  :: leaf
+              [%mark =mark]
+              [%tube =mars]
+              [%arch =spec =path]
+          ==
+        --
+    =>  |%
+        ++  bush-to-vase
+          =/  only-prelude=?  |
+          |=  [=bush sut=vase]
+          ^-  vase
+          ?-    -.bush
+              %file
+            q.cage.bush
+          ::
+              %hoon
+            =.  sut  zuse.bud
+            ~>  %memo./clay/ford
+            |-  ^-  vase
+            ?^  deps.bush
+              =/  dep=vase  (bush-to-vase q.i.deps.bush sut)
+              =?  p.dep  ?=(^ p.i.deps.bush)  [%face u.p.i.deps.bush p.dep]
+              $(deps.bush t.deps.bush, sut (slop dep sut))
+            ?:  only-prelude  sut
+            =/  =pile  (parse-pile path.bush text.bush)
+            (slub sut hoon.pile)
+          ::
+              %arch
+            ~>  %memo./clay/ford
+            =/  [type-val=type type-map=type]
+              =>  [sut=sut spec=spec.bush ..ut]
+              ~>  %memo./clay/ford
+              :-  (~(play ut p.sut) [%kttr spec])
+              %-  ~(play ut p.sut)
+              [%kttr %make [%wing ~[%map]] ~[[%base %atom %ta] spec]]
+            ::
+            =.  sut  *vase
+            ~>  %memo./clay/ford
+            =/  res=(map @ta vase)
+              (~(run by files.bush) (curr bush-to-vase *vase))
+            ::
+            :-  type-map
+            |-
+            ?~  res  ~
+            ?.  (~(nest ut type-val) | p.q.n.res)
+              ~|  [%nest-fail path.bush p.n.res]
+              !!
+            :-  [p.n.res q.q.n.res]
+            [$(res l.res) $(res r.res)]
+          ::
+              %mark
+            =.  sut  *vase
+            ~>  %memo./clay/ford
+            =*  cor  cor.bush
+            ?~  grad.bush
+              %+  slub  (slop (with-face cor+cor) zuse.bud)
+              !,  *hoon
+              =/  typ  _+<.cor
+              =/  dif  _*diff:grad:cor
+              ^-  (nave:clay typ dif)
+              |%
+              ++  diff  |=([old=typ new=typ] (diff:~(grad cor old) new))
+              ++  form  form:grad:cor
+              ++  join
+                |=  [a=dif b=dif]
+                ^-  (unit (unit dif))
+                ?:  =(a b)
+                  ~
+                `(join:grad:cor a b)
+              ++  mash
+                |=  [a=[=ship =desk =dif] b=[=ship =desk =dif]]
+                ^-  (unit dif)
+                ?:  =(dif.a dif.b)
+                  ~
+                `(mash:grad:cor a b)
+              ++  pact  |=([v=typ d=dif] (pact:~(grad cor v) d))
+              ++  vale  noun:grab:cor
+              --
+            =/  deg=vase  (bush-to-vase p.u.grad.bush *vase)
+            =/  tub=vase  (bush-to-vase q.u.grad.bush *vase)
+            =/  but=vase  (bush-to-vase r.u.grad.bush *vase)
+            %+  slub
+              (with-faces deg+deg tub+tub but+but cor+cor nave+nave.bud ~)
+            !,  *hoon
+            =/  typ  _+<.cor
+            =/  dif  _*diff:deg
+            ^-  (nave typ dif)
+            |%
+            ++  diff
+              |=  [old=typ new=typ]
+              ^-  dif
+              (diff:deg (tub old) (tub new))
+            ++  form  form:deg
+            ++  join  join:deg
+            ++  mash  mash:deg
+            ++  pact
+              |=  [v=typ d=dif]
+              ^-  typ
+              (but (pact:deg (tub v) d))
+            ++  vale  noun:grab:cor
+            --
+          ::
+              %tube
+            =.  sut  *vase
+            ~>  %memo./clay/ford
+            ?@  p.bush
+              ?-  p.bush
+                %same  same.bud
+                %mime  =>(..zuse !>(|=(m=mime q.q.m)))
+              ==
+            =/  a  a.p.bush
+            =/  b  b.p.bush
+            =/  old  (bush-to-vase bush.a *vase)
+            ?:  (has-arm %grow mark.b old)
+              %+  slub  (with-faces cor+old ~)
+              ^-  hoon
+              :+  %brcl  !,(*hoon v=+<.cor)
+              :+  %sggr
+                [%spin %cltr [%sand %t (crip "grow-{<mark.a>}->{<mark.b>}")] ~]
+              :+  %tsgl  limb/mark.b
+              !,(*hoon ~(grow cor v))
+            =/  new  (bush-to-vase bush.b *vase)
+            =/  arm=?  (has-arm %grab mark.a new)
+            =/  rab
+              %-  mule  |.
+              %+  slap  new
+              ^-  hoon
+              :+  %sggr
+                [%spin %cltr [%sand %t (crip "grab-{<mark.a>}->{<mark.b>}")] ~]
+              tsgl/[limb/mark.a limb/%grab]
+            ::
+            ?:  &(arm ?=(%& -.rab) ?=(^ q.p.rab))
+              p.rab
+            ?:  ?=(%noun mark.b)  same.bud
+            ~|(no-cast-between+[mark.a mark.b] !!)  ::  XX +jump arm, +grab with @tas product
+          ::
           ==
         --
     ~%  %ford-gate  ..ford  ~
     |=  args
-    ::  nub: internal mutable state for this computation
-    ::
-    =|  nub=state
-    =.  cache.nub  cache
-    =.  spill.nub  spill
-    =.  sprig.nub  sprig
     ~%  %ford-core  ..$  ~
     |%
+    ::  Chapter for constructing $bush (dependency graph of a file) given its
+    ::  desk-wide identifier
+    ::
+    +|  %bush-construction
+    ::
+    ++  parse-header
+      |=  [pax=path src=@t]
+      ^-  (list (pair (unit term) bush-node))
+      ~>  %memo./clay/ford
+      =*  out  (list (pair (unit term) bush-node))
+      =/  [=hair res=(unit [=out =nail])]
+        (header-rule [1 1] (trip src))
+      ?^  res  out.u.res
+      %-  mean
+      =/  lyn  p.hair
+      =/  col  q.hair
+      ^-  (list tank)
+      :~  leaf+"syntax error at [{<lyn>} {<col>}] in {<pax>}"
+        ::
+          =/  =wain  (to-wain:format src)
+          ?:  (gth lyn (lent wain))
+            '<<end of file>>'
+          (snag (dec lyn) wain)
+        ::
+          leaf+(runt [(dec col) '-'] "^")
+      ==
+    ::
+    ++  header-rule
+      |^
+      %+  cook  pile-header-to-bush
+      %+  ifix
+        :_  gay
+        ::  parse optional /? and ignore
+        ::
+        ;~(plug gay (punt ;~(plug fas wut gap dem gap)))
+      ;~  plug
+        %+  cook  (bake zing (list (list taut)))
+        %+  rune  hep
+        (most ;~(plug com gaw) taut-rule)
+      ::
+        %+  cook  (bake zing (list (list taut)))
+        %+  rune  lus
+        (most ;~(plug com gaw) taut-rule)
+      ::
+        %+  rune  tis
+        ;~(plug sym ;~(pfix gap stap))
+      ::
+        %+  rune  sig
+        ;~((glue gap) sym wyde:vast stap)
+      ::
+        %+  rune  cen
+        ;~(plug sym ;~(pfix gap ;~(pfix cen sym)))
+      ::
+        %+  rune  buc
+        ;~  (glue gap)
+          sym
+          ;~(pfix cen sym)
+          ;~(pfix cen sym)
+        ==
+      ::
+        %+  rune  tar
+        ;~  (glue gap)
+          sym
+          ;~(pfix cen sym)
+          ;~(pfix stap)
+        ==
+      ==
+      ::
+      ++  pant
+        |*  fel=^rule
+        ;~(pose fel (easy ~))
+      ::
+      ++  mast
+        |*  [bus=^rule fel=^rule]
+        ;~(sfix (more bus fel) bus)
+      ::
+      ++  rune
+        |*  [bus=^rule fel=^rule]
+        %-  pant
+        %+  mast  gap
+        ;~(pfix fas bus gap fel)
+      ::
+      ++  taut-rule
+        %+  cook  |=(taut +<)
+        ;~  pose
+          (stag ~ ;~(pfix tar sym))
+          ;~(plug (stag ~ sym) ;~(pfix tis sym))
+          (cook |=(a=term [`a a]) sym)
+        ==
+      ::
+      ++  pile-header-to-bush
+        |=  $:  sur=(list taut)
+                lib=(list taut)
+                raw=(list [face=term =path])
+                raz=(list [face=term =spec =path])
+                maz=(list [face=term =mark])
+                caz=(list [face=term =mars])
+                bar=(list [face=term =mark =path])
+            ==
+        ^-  (list (pair (unit term) bush-node))
+        %-  zing
+        ^-  (list (list (pair (unit term) bush-node)))
+        :~
+          (turn sur (taut-to-bush-node %sur))
+          (turn lib (taut-to-bush-node %lib))
+          (turn raw |=([face=term =path] [`face hoon+(snoc path %hoon)]))
+          (turn raz |=([face=term =spec =path] [`face arch+[spec path]]))
+          (turn maz |=([face=term =mark] [`face mark+mark]))
+          (turn caz |=([face=term =mars] [`face tube+mars]))
+          (turn bar |=([face=term =mark =path] [`face file+[mark path]]))
+        ==
+      ::
+      ++  taut-to-bush-node
+        |=  prefix=term
+        |=  =taut
+        ^-  (pair (unit term) bush-node)
+        :-  face.taut
+        [%hoon (fit-path prefix pax.taut)]
+      --
+    ::
+    ++  build-bush
+      |=  nod=bush-node
+      ^-  bush
+      ~>  %memo./clay/ford
+      =|  cycle=(set bush-node)
+      |-  ^-  bush
+      =*  bush-loop  $
+      ?:  (~(has in cycle) nod)  ~|  [cycle+nod cycle]  !!
+      =.  cycle  (~(put in cycle) nod)
+      ?-    -.nod
+          %file
+        ::  XX here in cast-path and later in read-file we reenter the build
+        ::  process to build marks, and we can't detect the top-level cycle
+        ::  without a more global cycle stack, which would make us miss cache
+        ::  entries.  OTOH the cycle involves a circular dependency of a mark on
+        ::  its file with the same mark, which is an exotic situation.
+        ::  %loop hint to the rescue?
+        ::
+        =/  file=cage  (cast-path path.nod mark.nod)
+        [%file file]
+      ::
+          %hoon
+        =/  file=cage  (read-file path.nod)
+        ?>  =(%hoon p.file)
+        =+  !<(src=@t q.file)
+        =/  deps=(list (pair (unit term) bush-node))
+          (parse-header path.nod src)
+        ::
+        :^  %hoon  src
+          %+  turn  deps
+          |=  [u=(unit term) don=bush-node]
+          [u bush-loop(nod don)]
+        path.nod
+      ::
+          %mark
+        =/  cor=vase  (build-fit %mar mark.nod)
+        =/  gad=vase  (slap cor limb/%grad)
+        ?^  q.gad  [%mark ~ cor]
+        =/  deg  bush-loop(nod mark+q.gad)
+        =/  tub  bush-loop(nod tube+[mark.nod q.gad])
+        =/  but  bush-loop(nod tube+[q.gad mark.nod])
+        [%mark `[deg tub but] cor]
+      ::
+          %tube
+        ?:  =(a.mars.nod b.mars.nod)  tube+%same
+        ?:  =([%mime %hoon] [a.mars.nod b.mars.nod])  tube+%mime
+        :+  %tube
+          [a.mars.nod bush-loop(nod hoon+(fit-path %mar a.mars.nod))]
+        [b.mars.nod bush-loop(nod hoon+(fit-path %mar b.mars.nod))]
+      ::
+          %arch
+        =/  fiz=(list @ta)
+          =/  len  (lent path.nod)
+          %+  murn  ~(tap by files)
+          |=  [pax=path *]
+          ^-  (unit @ta)
+          ?.  =(path.nod (scag len pax))
+            ~
+          =/  pat  (slag len pax)
+          ?:  ?=([@ %hoon ~] pat)
+            `i.pat
+          ~
+        ::
+        =|  rez=(map @ta bush)
+        |-
+        ?~  fiz
+          [%arch spec.nod rez path.nod]
+        =*  nom=@ta   i.fiz
+        =/  pax=path  (weld path.nod nom %hoon ~)
+        =/  res=bush  bush-loop(nod hoon+pax)
+        $(fiz t.fiz, rez (~(put by rez) nom res))
+      ==
+    ::
+    +|  %external-interface
+    ::
     ::  +read-file: retrieve marked, validated file contents at path
     ::
     ++  read-file
       ~/  %read-file
       |=  =path
-      ^-  [cage state]
+      ^-  cage
+      ~>  %memo./clay/ford
       ~|  %error-validating^path
-      %-  soak-cage
-      %+  gain-sprig  vale+path  |.
-      =.  stack.nub  [~ stack.nub]
-      ?:  (~(has in cycle.nub) vale+path)
-        ~|(cycle+vale+path^cycle.nub !!)
-      =.  cycle.nub  (~(put in cycle.nub) vale+path)
-      %+  gain-leak  vale+path
-      |=  nob=state
-      =.  nub  nob
       %-  (trace 1 |.("read file {(spud path)}"))
       =/  file
         ~|  %file-not-found^path
@@ -673,104 +996,30 @@
           p.file
         ~|  %tombstoned-file^path^p.file
         (~(got by file-store) p.file)
-      =^  =cage  nub  (validate-page path page)
-      [[%cage cage] nub]
+      (validate-page path page)
     ::
     ::  +build-nave: build a statically typed mark core
     ::
     ++  build-nave
       ~/  %build-nave
       |=  mak=mark
-      ^-  [vase state]
+      ^-  vase
+      ~>  %memo./clay/ford
       ~|  %error-building-mark^mak
-      %-  soak-vase
-      %+  gain-sprig  nave+mak  |.
-      =.  stack.nub  [~ stack.nub]
-      ?:  (~(has in cycle.nub) nave+mak)
-        ~|(cycle+nave+mak^cycle.nub !!)
-      =.  cycle.nub  (~(put in cycle.nub) nave+mak)
-      %-  (trace 1 |.("make mark {<mak>}"))
-      =^  cor=vase  nub  (build-fit %mar mak)
-      =/  gad=vase  (slub cor limb/%grad)
-      ?@  q.gad
-        =+  !<(mok=mark gad)
-        =^  deg=vase  nub  ^$(mak mok)
-        =^  tub=vase  nub  (build-cast mak mok)
-        =^  but=vase  nub  (build-cast mok mak)
-        %+  gain-leak  nave+mak
-        |=  nob=state
-        =.  nub  nob
-        :_  nub  :-  %vase
-        ^-  vase  ::  vase of nave
-        %+  slub
-          (with-faces deg+deg tub+tub but+but cor+cor nave+nave.bud ~)
-        !,  *hoon
-        =/  typ  _+<.cor
-        =/  dif  _*diff:deg
-        ^-  (nave typ dif)
-        |%
-        ++  diff
-          |=  [old=typ new=typ]
-          ^-  dif
-          (diff:deg (tub old) (tub new))
-        ++  form  form:deg
-        ++  join  join:deg
-        ++  mash  mash:deg
-        ++  pact
-          |=  [v=typ d=dif]
-          ^-  typ
-          (but (pact:deg (tub v) d))
-        ++  vale  noun:grab:cor
-        --
-      %+  gain-leak  nave+mak
-      |=  nob=state
-      =.  nub  nob
-      :_  nub  :-  %vase
-      ^-  vase  ::  vase of nave
-      %+  slub  (slop (with-face cor+cor) zuse.bud)
-      !,  *hoon
-      =/  typ  _+<.cor
-      =/  dif  _*diff:grad:cor
-      ^-  (nave:clay typ dif)
-      |%
-      ++  diff  |=([old=typ new=typ] (diff:~(grad cor old) new))
-      ++  form  form:grad:cor
-      ++  join
-        |=  [a=dif b=dif]
-        ^-  (unit (unit dif))
-        ?:  =(a b)
-          ~
-        `(join:grad:cor a b)
-      ++  mash
-        |=  [a=[=ship =desk =dif] b=[=ship =desk =dif]]
-        ^-  (unit dif)
-        ?:  =(dif.a dif.b)
-          ~
-        `(mash:grad:cor a b)
-      ++  pact  |=([v=typ d=dif] (pact:~(grad cor v) d))
-      ++  vale  noun:grab:cor
-      --
+      (bush-to-vase (build-bush %mark mak) *vase)
     ::  +build-dais: build a dynamically typed mark definition
     ::
     ++  build-dais
       ~/  %build-dais
       |=  mak=mark
-      ^-  [dais state]
+      ^-  dais
+      ~>  %memo./clay/ford
       ~|  %error-building-dais^mak
-      %-  soak-dais
-      %+  gain-sprig  dais+mak  |.
-      =.  stack.nub  [~ stack.nub]
-      ?:  (~(has in cycle.nub) dais+mak)
-        ~|(cycle+dais+mak^cycle.nub !!)
-      =.  cycle.nub  (~(put in cycle.nub) dais+mak)
-      =^  nav=vase  nub  (build-nave mak)
-      %+  gain-leak  dais+mak
-      |=  nob=state
-      =.  nub  nob
+      =/  nav=vase  (build-nave mak)
       %-  (trace 1 |.("make dais {<mak>}"))
-      :_  nub  :-  %dais
       ^-  dais
       =>  [nav=nav ..zuse]
+      ~>  %memo./clay/ford
       |_  sam=vase
       ++  diff
         |=  new=vase
@@ -806,319 +1055,80 @@
     ++  build-cast
       ~/  %build-cast
       |=  [a=mark b=mark]
-      ^-  [vase state]
+      ^-  vase
+      ~>  %memo./clay/ford
       ~|  error-building-cast+[a b]
-      %-  soak-vase
-      %+  gain-sprig  cast+a^b  |.
-      =.  stack.nub  [~ stack.nub]
-      ?:  (~(has in cycle.nub) cast+[a b])
-        ~|(cycle+cast+[a b]^cycle.nub !!)
-      ?:  =(a b)
-        %+  gain-leak  cast+a^b
-        |=  nob=state
-        %-  (trace 4 |.("identity shortcircuit"))
-        =.  nub  nob
-        :_(nub vase+same.bud)
-      ?:  =([%mime %hoon] [a b])
-        %-  (trace 4 |.("%mime -> %hoon shortcircuit"))
-        :_(nub [%vase =>(..zuse !>(|=(m=mime q.q.m)))])
-      ::  try +grow; is there a +grow core with a .b arm?
-      ::
-      %-  (trace 1 |.("make cast {<a>} -> {<b>}"))
-      =^  old=vase  nub  (build-fit %mar a)
-      ?:  (has-arm %grow b old)
-        ::  +grow core has .b arm; use that
-        ::
-        %+  gain-leak  cast+a^b
-        |=  nob=state
-        %-  (trace 4 |.("{<a>} -> {<b>}: +{(trip b)}:grow:{(trip a)}"))
-        =.  nub  nob
-        :_  nub  :-  %vase
-        %+  slub  (with-faces cor+old ~)
-        ^-  hoon
-        :+  %brcl  !,(*hoon v=+<.cor)
-        :+  %sggr
-          [%spin %cltr [%sand %t (crip "grow-{<a>}->{<b>}")] ~]
-        :+  %tsgl  limb/b
-        !,(*hoon ~(grow cor v))
-      ::  try direct +grab
-      ::
-      =^  new=vase  nub  (build-fit %mar b)
-      =/  arm=?  (has-arm %grab a new)
-      =/  rab
-        %-  mule  |.
-        %+  slap  new
-        ^-  hoon
-        :+  %sggr
-          [%spin %cltr [%sand %t (crip "grab-{<a>}->{<b>}")] ~]
-        tsgl/[limb/a limb/%grab]
-      ?:  &(arm ?=(%& -.rab) ?=(^ q.p.rab))
-        %+  gain-leak  cast+a^b
-        |=  nob=state
-        %-  (trace 4 |.("{<a>} -> {<b>}: +{(trip a)}:grab:{(trip b)}"))
-        =.  nub  nob
-        :_(nub vase+p.rab)
-      ::  try +jump
-      ::
-      =/  jum  (mule |.((slub old tsgl/[limb/b limb/%jump])))
-      ?:  &((has-arm %jump a old) ?=(%& -.jum))
-        =/  via  !<(mark p.jum)
-        %-  (trace 4 |.("{<a>} -> {<b>}: via {<via>} per +jump:{(trip a)}"))
-        (compose-casts a via b)
-      ?:  &(arm ?=(%& -.rab))
-        =/  via  !<(mark p.rab)
-        %-  (trace 4 |.("{<a>} -> {<b>}: via {<via>} per +grab:{(trip b)}"))
-        (compose-casts a via b)
-      ?:  ?=(%noun b)
-        %+  gain-leak  cast+a^b
-        |=  nob=state
-        %-  (trace 4 |.("{<a>} -> {<b>} default"))
-        =.  nub  nob
-        :_(nub vase+same.bud)
-      ~|(no-cast-from+[a b] !!)
-    ::
-    ++  compose-casts
-      |=  [x=mark y=mark z=mark]
-      ^-  [soak state]
-      =^  uno=vase  nub  (build-cast x y)
-      =^  dos=vase  nub  (build-cast y z)
-      %+  gain-leak  cast+x^z
-      |=  nob=state
-      =.  nub  nob
-      :_  nub  :-  %vase
-      %+  slub
-        (with-faces uno+uno dos+dos ~)
-      !,(*hoon |=(_+<.uno (dos (uno +<))))
-    ::
-    ++  has-arm
-      |=  [arm=@tas =mark core=vase]
-      ^-  ?
-      =/  rib  (mule |.((slub core [%wing ~[arm]])))
-      ?:  ?=(%| -.rib)  %.n
-      =/  lab  (mule |.((slob mark p.p.rib)))
-      ?:  ?=(%| -.lab)  %.n
-      p.lab
+      (bush-to-vase (build-bush %tube a b) *vase)
     ::  +build-tube: produce a $tube mark conversion gate from .a to .b
     ::
     ++  build-tube
       |=  [a=mark b=mark]
-      ^-  [tube state]
+      ^-  tube
       ~>  %spin.[%build-tube]  ~>  %spin.[a]  ~>  %spin.[b]
+      ~>  %memo./clay/ford
       ~|  error-building-tube+[a b]
-      %-  soak-tube
-      %+  gain-sprig  tube+a^b  |.
-      =.  stack.nub  [~ stack.nub]
-      ?:  (~(has in cycle.nub) tube+[a b])
-        ~|(cycle+tube+[a b]^cycle.nub !!)
-      =^  gat=vase  nub  (build-cast a b)
-      %+  gain-leak  tube+a^b
-      |=  nob=state
-      =.  nub  nob
+      =/  gat=vase  (build-cast a b)
       %-  (trace 1 |.("make tube {<a>} -> {<b>}"))
-      :_(nub [%tube =>([gat=gat ..zuse] |=(v=vase (slam gat v)))])
+      =>  [gat=gat ..zuse]
+      ~>  %memo./clay/ford
+      |=(v=vase (slam gat v))
     ::
     ++  validate-page
       |=  [=path =page]
-      ^-  [cage state]
+      ^-  cage
       ~|  validate-page-fail+path^from+p.page
       =/  mak=mark  (head (flop path))
       ?:  =(mak p.page)
         (page-to-cage page)
-      =^  [mark vax=vase]  nub  (page-to-cage page)
-      =^  =tube  nub  (build-tube p.page mak)
-      :_(nub [mak (tube vax)])
+      =/  [mark vax=vase]  (page-to-cage page)
+      =/  =tube  (build-tube p.page mak)
+      [mak (tube vax)]
     ::
     ++  page-to-cage
       |=  =page
-      ^-  [cage state]
+      ^-  cage
       ?:  =(%hoon p.page)
-        :_(nub [%hoon [%atom %t ~] q.page])
+        [%hoon [%atom %t ~] ;;(@ q.page)]
       ?:  =(%mime p.page)
-        :_(nub [%mime =>([;;(mime q.page) ..zuse] !>(-))])
-      =^  =dais  nub  (build-dais p.page)
-      :_(nub [p.page (vale:dais q.page)])
+        [%mime =>([;;(mime q.page) ..zuse] !>(-))]
+      =/  =dais  (build-dais p.page)
+      :-  p.page
+      =>  [dais=dais dat=q.page]
+      ~>  %memo./clay/ford
+      (vale:dais dat)
     ::
     ++  cast-path
       |=  [=path mak=mark]
-      ^-  [cage state]
+      ^-  cage
+      ~>  %memo./clay/ford
       =/  mok  (head (flop path))
       ~|  error-casting-path+[path mok mak]
-      =^  cag=cage  nub  (read-file path)
+      =/  cag=cage  (read-file path)
       ?:  =(mok mak)
-        [cag nub]
-      =^  =tube  nub  (build-tube mok mak)
+        cag
+      =/  =tube  (build-tube mok mak)
       ~|  error-running-cast+[path mok mak]
-      :_(nub [mak (tube q.cag)])
-    ::
-    ++  run-pact
-      |=  [old=page diff=page]
-      ^-  [cage state]
-      ?:  ?=(%hoon p.old)
-        =/  txt=wain  (to-wain:format ;;(@t q.old))
-        =+  ;;(dif=(urge cord) q.diff)
-        =/  new=@t  (of-wain:format (lurk:differ txt dif))
-        :_(nub [%hoon =>([new ..zuse] !>(-))])
-      =^  dys=dais  nub  (build-dais p.old)
-      =^  syd=dais  nub  (build-dais p.diff)
-      :_(nub [p.old (~(pact dys (vale:dys q.old)) (vale:syd q.diff))])
+      [mak (tube q.cag)]
     ::
     ++  prelude
       |=  =path
       ^-  vase
-      =^  cag=cage  nub  (read-file path)
-      ?>  =(%hoon p.cag)
-      =+  !<(txt=@t q.cag)
-      =/  =pile  (parse-pile path txt)
-      =.  hoon.pile  !,(*hoon .)
-      =^  res=vase  nub  (run-prelude pile)
-      res
-    ::
-    ++  build-dependency
-      ~/  %build-dep
-      |=  dep=(each [dir=path fil=path] path)
-      ^-  [vase state]
-      =/  =path
-        ?:(?=(%| -.dep) p.dep fil.p.dep)
-      ~|  %error-building^path
-      %-  soak-vase
-      %+  gain-sprig  file+path  |.
-      =.  stack.nub  [~ stack.nub]
-      %-  (trace 1 |.("make file {(spud path)}"))
-      ?:  (~(has in cycle.nub) file+path)
-        ~|(cycle+file+path^cycle.nub !!)
-      =.  cycle.nub  (~(put in cycle.nub) file+path)
-      =^  cag=cage  nub  (read-file path)
-      ?>  =(%hoon p.cag)
-      =+  !<(txt=@t q.cag)
-      =/  =pile  (parse-pile path txt)
-      =^  sut=vase  nub  (run-prelude pile)
-      %+  gain-leak  file+path
-      |=  nob=state
-      =.  nub  nob
-      =/  res=vase  (slub sut hoon.pile)
-      [[%vase res] nub]
+      =/  b2v  bush-to-vase
+      (b2v(only-prelude &) (build-bush %hoon path) *vase)
     ::
     ++  build-file
       |=  =path
-      (build-dependency |+path)
-    ::  +build-directory: builds files in top level of a directory
-    ::
-    ::    this excludes files directly at /path/hoon,
-    ::    instead only including files in the unix-style directory at /path,
-    ::    such as /path/file/hoon, but not /path/more/file/hoon.
-    ::
-    ++  build-directory
-      |=  =path
-      ^-  [(map @ta vase) state]
-      %-  soak-arch
-      %+  gain-sprig  arch+path  |.
-      =.  stack.nub  [~ stack.nub]
-      %+  gain-leak  arch+path
-      |=  nob=state
-      =.  nub  nob
-      =/  fiz=(list @ta)
-        =/  len  (lent path)
-        %+  murn  ~(tap by files)
-        |=  [pax=^path *]
-        ^-  (unit @ta)
-        ?.  =(path (scag len pax))
-          ~
-        =/  pat  (slag len pax)
-        ?:  ?=([@ %hoon ~] pat)
-          `i.pat
-        ~
-      ::
-      =|  rez=(map @ta vase)
-      |-
-      ?~  fiz
-        [[%arch rez] nub]
-      =*  nom=@ta    i.fiz
-      =/  pax=^path  (weld path nom %hoon ~)
-      =^  res  nub   (build-dependency &+[path pax])
-      $(fiz t.fiz, rez (~(put by rez) nom res))
-    ::
-    ++  run-prelude
-      |=  =pile
-      =/  sut=vase  zuse.bud
-      =^  sut=vase  nub  (run-tauts sut %sur sur.pile)
-      =^  sut=vase  nub  (run-tauts sut %lib lib.pile)
-      =^  sut=vase  nub  (run-raw sut raw.pile)
-      =^  sut=vase  nub  (run-raz sut raz.pile)
-      =^  sut=vase  nub  (run-maz sut maz.pile)
-      =^  sut=vase  nub  (run-caz sut caz.pile)
-      =^  sut=vase  nub  (run-bar sut bar.pile)
-      [sut nub]
-    ::
-    ++  run-tauts
-      |=  [sut=vase wer=?(%lib %sur) taz=(list taut)]
-      ^-  [vase state]
-      ?~  taz  [sut nub]
-      =^  pin=vase  nub  (build-fit wer pax.i.taz)
-      =?  p.pin  ?=(^ face.i.taz)  [%face u.face.i.taz p.pin]
-      $(sut (slop pin sut), taz t.taz)
-    ::
-    ++  run-raw
-      |=  [sut=vase raw=(list [face=term =path])]
-      ^-  [vase state]
-      ?~  raw  [sut nub]
-      =^  pin=vase  nub  (build-file (snoc path.i.raw %hoon))
-      =.  p.pin  [%face face.i.raw p.pin]
-      $(sut (slop pin sut), raw t.raw)
-    ::
-    ++  run-raz
-      |=  [sut=vase raz=(list [face=term =spec =path])]
-      ^-  [vase state]
-      ?~  raz  [sut nub]
-      =^  res=(map @ta vase)  nub
-        (build-directory path.i.raz)
-      =;  pin=vase
-        =.  p.pin  [%face face.i.raz p.pin]
-        $(sut (slop pin sut), raz t.raz)
-      ::
-      =/  =type  (~(play ut p.sut) [%kttr spec.i.raz])
-      ::  ensure results nest in the specified type,
-      ::  and produce a homogenous map containing that type.
-      ::
-      :-  %-  ~(play ut p.sut)
-          [%kttr %make [%wing ~[%map]] ~[[%base %atom %ta] spec.i.raz]]
-      |-
-      ?~  res  ~
-      ?.  (~(nest ut type) | p.q.n.res)
-        ~|  [%nest-fail path.i.raz p.n.res]
-        !!
-      :-  [p.n.res q.q.n.res]
-      [$(res l.res) $(res r.res)]
-    ::
-    ++  run-maz
-      |=  [sut=vase maz=(list [face=term =mark])]
-      ^-  [vase state]
-      ?~  maz  [sut nub]
-      =^  pin=vase  nub  (build-nave mark.i.maz)
-      =.  p.pin  [%face face.i.maz p.pin]
-      $(sut (slop pin sut), maz t.maz)
-    ::
-    ++  run-caz
-      |=  [sut=vase caz=(list [face=term =mars])]
-      ^-  [vase state]
-      ?~  caz  [sut nub]
-      =^  pin=vase  nub  (build-cast mars.i.caz)
-      =.  p.pin  [%face face.i.caz p.pin]
-      $(sut (slop pin sut), caz t.caz)
-    ::
-    ++  run-bar
-      |=  [sut=vase bar=(list [face=term =mark =path])]
-      ^-  [vase state]
-      ?~  bar  [sut nub]
-      =^  =cage  nub  (cast-path [path mark]:i.bar)
-      =.  p.q.cage  [%face face.i.bar p.q.cage]
-      $(sut (slop q.cage sut), bar t.bar)
-    ::
+      ^-  vase
+      ~>  %memo./clay/ford
+      (bush-to-vase (build-bush %hoon path) *vase)
     ::  +build-fit: build file at path, maybe converting '-'s to '/'s in path
     ::
     ++  build-fit
       |=  [pre=@tas pax=@tas]
-      ^-  [vase state]
+      ^-  vase
       (build-file (fit-path pre pax))
+    ::
+    +|  %helpers
     ::
     ::  +fit-path: find path, maybe converting '-'s to '/'s
     ::
@@ -1137,143 +1147,10 @@
         pux
       $(paz t.paz)
     ::
-    ++  all-fits
-      |=  [=term suf=term]
-      ^-  (list path)
-      %+  turn  (segments suf)
-      |=  seg=path
-      [term (snoc seg %hoon)]
-    ::
-    ::  Gets a map of the data at the given path and all children of it.
-    ::
-    ::    i.e. +dip:of for a map, except doesn't shorten paths
-    ::
-    ++  dip-hat
-      |=  pax=path
-      ^-  (map path (each page lobe))
-      %-  malt
-      %+  skim  ~(tap by files)
-      |=  [p=path *]
-      ?|  ?=(~ pax)
-          ?&  !?=(~ p)
-              =(-.pax -.p)
-              $(p +.p, pax +.pax)
-      ==  ==
-    ::
     ++  trace
       |=  [pri=@ print=(trap tape)]
       (^trace verb pri print)
-    ::
-    ++  mist-to-pour
-      |=  =mist
-      ^-  pour
-      ?+    -.mist  mist
-          %vale
-        :+  %vale  path.mist
-        ~|  %file-not-found-mist^path.mist
-        =/  lob  (~(got by files) path.mist)
-        ?-  -.lob
-          %&  (page-to-lobe p.lob)
-          %|  p.lob
-        ==
-      ::
-          %arch
-        =/  dip  (dip-hat path.mist)
-        :+  %arch  path.mist
-        %-  ~(run by dip)
-        |=  file=(each page lobe)
-        ?-  -.file
-          %&  (page-to-lobe p.file)
-          %|  p.file
-        ==
-      ==
-    ::
-    ++  soak-cage  |=([s=soak n=state] ?>(?=(%cage -.s) [cage.s n]))
-    ++  soak-vase  |=([s=soak n=state] ?>(?=(%vase -.s) [vase.s n]))
-    ++  soak-dais  |=([s=soak n=state] ?>(?=(%dais -.s) [dais.s n]))
-    ++  soak-tube  |=([s=soak n=state] ?>(?=(%tube -.s) [tube.s n]))
-    ++  soak-arch  |=([s=soak n=state] ?>(?=(%arch -.s) [dir.s n]))
-    ::
-    ++  gain-sprig
-      |=  [=mist next=(trap [soak state])]
-      ^-  [soak state]
-      ?~  got=(~(get by sprig.nub) mist)
-        $:next
-      =?  stack.nub  ?=(^ stack.nub)
-        stack.nub(i (~(put in i.stack.nub) leak.u.got))
-      [soak.u.got nub]
-    ::
-    ++  gain-leak
-      |=  [=mist next=$-(state [soak state])]
-      ^-  [soak state]
-      =^  top=(set leak)  stack.nub  stack.nub
-      =/  =leak  [(mist-to-pour mist) top]
-      =.  cycle.nub  (~(del in cycle.nub) mist)
-      =?  stack.nub  ?=(^ stack.nub)
-        stack.nub(i (~(put in i.stack.nub) leak))
-      =/  spilt  (~(has in spill.nub) leak)
-      =^  =soak  nub
-        ?^  got=(~(get by cache.nub) leak)
-          %-  %+  trace  3  |.
-              =/  refs    ?:(spilt 0 1)
-              %+  welp  "cache {<pour.leak>}: adding {<refs>}, "
-              "giving {<(add refs refs.u.got)>}"
-          =?  cache.nub  !spilt
-            (~(put by cache.nub) leak [+(refs.u.got) soak.u.got])
-          [soak.u.got nub]
-        %-  (trace 2 |.("cache {<pour.leak>}: creating"))
-        =^  =soak  nub  (next nub)
-        =.  cache.nub  (~(put by cache.nub) leak [1 soak])
-        ::  If we're creating a cache entry, add refs to our dependencies
-        ::
-        =/  deps  ~(tap in deps.leak)
-        |-
-        ?~  deps
-          [soak nub]
-        =/  got  (~(got by cache.nub) i.deps)
-        %-  %+  trace  3  |.
-            %+  welp  "cache {<pour.leak>} for {<pour.i.deps>}"
-            ": bumping to ref {<refs.got>}"
-        =.  cache.nub  (~(put by cache.nub) i.deps got(refs +(refs.got)))
-        $(deps t.deps)
-      ?:  spilt
-        [soak nub]
-      %-  (trace 3 |.("spilt {<mist>}"))
-      =:  spill.nub  (~(put in spill.nub) leak)
-          sprig.nub  (~(put by sprig.nub) mist leak soak)
-        ==
-      [soak nub]
     --
-  ::
-  ++  lose-leak
-    |=  [verb=@ fad=flow =leak]
-    ^-  flow
-    ?~  got=(~(get by fad) leak)
-      %-  (trace verb 0 |.("lose missing leak {<leak>}"))
-      fad
-    ?:  (lth 1 refs.u.got)
-      %-  (trace verb 3 |.("cache {<pour.leak>}: decrementing from {<refs.u.got>}"))
-      =.  fad  (~(put by fad) leak u.got(refs (dec refs.u.got)))
-      fad
-    =+  ?.  =(0 refs.u.got)  ~
-        ((trace verb 0 |.("lose zero leak {<leak>}")) ~)
-    %-  (trace verb 2 |.("cache {<pour.leak>}: freeing"))
-    =.  fad  (~(del by fad) leak)
-    =/  leaks  ~(tap in deps.leak)
-    |-  ^-  flow
-    ?~  leaks
-      fad
-    =.  fad  ^$(leak i.leaks)
-    $(leaks t.leaks)
-  ::
-  ++  lose-leaks
-    |=  [verb=@ fad=flow leaks=(set leak)]
-    ^-  flow
-    =/  leaks  ~(tap in leaks)
-    |-
-    ?~  leaks
-      fad
-    $(fad (lose-leak verb fad i.leaks), leaks t.leaks)
   ::
   ++  trace
     |=  [verb=@ pri=@ print=(trap tape)]
@@ -1545,25 +1422,11 @@
   ::
   ::  Create a ford appropriate for the aeon
   ::
-  ::  Don't forget to call +tako-flow!
-  ::
   ++  tako-ford
     |=  tak=tako
     %-  ford:fusion
-    :-  (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
-    [lat.ran veb.bug fad ?:(=(tak (aeon-to-tako:ze let.dom)) fod.dom [~ ~])]
-  ::  Produce ford cache appropriate for the aeon
-  ::
-  ++  tako-flow
-    |*  [tak=tako res=* fud=flow fod=flue]
-    :-  res
-    ^+  ..park
-    ?:  &(?=(~ ref) =((aeon-to-tako:ze let.dom) tak))
-      ..park(fad fud, fod.dom fod)
-    :: if in the past, don't update ford cache, since any results have
-    :: no roots
-    ::
-    ..park
+    :_  [lat.ran veb.bug]
+    (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
   ::
   ++  request-wire
     |=  [kind=@ta =ship =desk index=@ud]
@@ -1929,7 +1792,6 @@
       (get-changes q.old-yaki new-data)
     ~|  [from=let.dom deletes=deletes changes=~(key by changes)]
     ::
-    ::  promote ford cache
     ::  promote and fill in mime cache
     ::
     =/  invalid  (~(uni in deletes) ~(key by changes))
@@ -1969,14 +1831,7 @@
     =?  updated  updated  (did-kernel-update invalid)
     =>  ?.  updated  .
         ~>(%slog.0^leaf/"clay: rebuilding {<syd>} after kernel update" .)
-    ::  clear caches if zuse reloaded
     ::
-    =/  old-fod  fod.dom
-    =.  fod.dom
-      ?:  updated  [~ ~]
-      (promote-ford fod.dom invalid)
-    =.  fad
-      (lose-leaks:fusion veb.bug fad (~(dif in spill.old-fod) spill.fod.dom))
     =?  changes  updated  (changes-for-upgrade q.old-yaki deletes changes)
     ::
     =/  files
@@ -1985,7 +1840,7 @@
       %-  ~(dif by (~(uni by original) changes))
       %-  ~(gas by *(map path (each page lobe)))
       (turn ~(tap in deletes) |=(=path [path |+*lobe]))
-    =/  =args:ford:fusion  [files lat.ran veb.bug fad fod.dom]
+    =/  =args:ford:fusion  [files lat.ran veb.bug]
     ::
     =^  change-cages  args  (checkout-changes args changes)
     =/  sane-continuation  (sane-changes changes change-cages)
@@ -2031,8 +1886,6 @@
     =.  mim.dom  mim.res
     =.  args     args.res
     ::
-    =.  fod.dom  [spill sprig]:args
-    =.  fad      cache.args
     =.  ..park   (emil (print q.old-yaki data))
     ::  if upgrading kelvin and there's a commit-in-waiting, use that
     ::
@@ -2127,44 +1980,6 @@
       =/  pre=_changes  (~(run by old) |=(lob=lobe |+lob))
       (~(uni by pre) changes)
     ::
-    ++  promote-ford
-      |=  [fod=flue invalid=(set path)]
-      ^-  flue
-      =/  old=(list leak)  ~(tap in spill.fod)
-      =|  new=flue
-      |-  ^-  flue
-      ?~  old
-        new
-      =/  invalid
-        |-  ^-  ?
-        ?|  ?+    -.pour.i.old  %|
-                %vale  (~(has in invalid) path.pour.i.old)
-                %arch
-              ::  TODO: overly conservative, should be only direct hoon
-              ::  children
-              ::
-              =/  len  (lent path.pour.i.old)
-              %-  ~(any in invalid)
-              |=  =path
-              =(path.pour.i.old (scag len path))
-            ==
-          ::
-            =/  deps  ~(tap in deps.i.old)
-            |-  ^-  ?
-            ?~  deps
-              %|
-            ?|  ^$(i.old i.deps)
-                $(deps t.deps)
-            ==
-        ==
-      =?  new  !invalid
-        :-  (~(put in spill.new) i.old)
-        =/  =mist  (pour-to-mist pour.i.old)
-        ?~  got=(~(get by sprig.fod) mist)
-          sprig.new
-        (~(put by sprig.new) mist u.got)
-      $(old t.old)
-    ::
     ++  page-to-cord
       |=  =page
       ^-  @t
@@ -2191,14 +2006,9 @@
               [built=(map path [lobe cage]) cache=_ford-args]
           ==
       ^+  [built ford-args]
-      =.  ford-args  cache
-      =/  [=cage fud=flow fod=flue]
+      =/  =cage
         ::  ~>  %slog.[0 leaf/"clay: validating {(spud path)}"]
-        %-  wrap:fusion
         (read-file:(ford:fusion ford-args) path)
-      =.  cache.ford-args  fud
-      =.  spill.ford-args  spill.fod
-      =.  sprig.ford-args  sprig.fod
       =/  =lobe
         ?-  -.change
           %|  p.change
@@ -2280,7 +2090,7 @@
         =/  original=(map path (each page lobe))
           (~(run by q.yaki) |=(=lobe |+lobe))
         (~(uni by original) changes)
-      =/  =args:ford:fusion  [all-changes lat.ran veb.bug ~ ~ ~]
+      =/  =args:ford:fusion  [all-changes lat.ran veb.bug]
       =^  all-change-cages  args  (checkout-changes args all-changes)
       =/  ccs=(list [=path =lobe =cage])  ~(tap by change-cages)
       |-  ^+  *sane-changes
@@ -2839,18 +2649,12 @@
         =/  peg=(unit page)  (~(get by lat.ran) lobe)
         ?~  peg
           ~
-        =/  [=cage *]
-          %-  wrap:fusion
-          (page-to-cage:(tako-ford (~(got by hit.dom) let.dom)) u.peg)
-        `cage
+        `(page-to-cage:(tako-ford (~(got by hit.dom) let.dom)) u.peg)
       ::
       ++  get-dais
         |=  =mark
         ^-  dais
-        =/  [=dais *]
-          %-  wrap:fusion
-          (build-dais:(tako-ford (~(got by hit.dom) let.dom)) mark)
-        dais
+        (build-dais:(tako-ford (~(got by hit.dom) let.dom)) mark)
       ::
       ::  Diff two files on bob-desk
       ::
@@ -3075,12 +2879,9 @@
     |-  ^-  [(map path (unit mime)) args:ford:fusion]
     ?~  cans
       [mim ford-args]
-    =/  [=cage fud=flow fod=flue]
+    =/  =cage
       ~|  mime-cast-fail+i.cans
-      (wrap:fusion (cast-path:(ford:fusion ford-args) i.cans %mime))
-    =.  cache.ford-args  fud
-    =.  spill.ford-args  spill.fod
-    =.  sprig.ford-args  sprig.fod
+      (cast-path:(ford:fusion ford-args) i.cans %mime)
     =^  mim  ford-args  $(cans t.cans)
     [(~(put by mim) i.cans `!<(mime q.cage)) ford-args]
   ::
@@ -3150,8 +2951,7 @@
       (~(put by mon) pot [her syd ud+for-yon] spur)
     =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) u.yon))
     =/  files  (~(run by q.yaki) |=(=lobe |+lobe))
-    =/  =args:ford:fusion
-      [files lat.ran veb.bug fad ?:(=(yon let.dom) fod.dom [~ ~])]
+    =/  =args:ford:fusion  [files lat.ran veb.bug]
     =^  mim  args
       (checkout-mime args ~ ~(key by files))
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
@@ -3473,7 +3273,6 @@
       ^-  (unit cage)
       =/  vale-result
         %-  mule  |.
-        %-  wrap:fusion
         ::  Use %base's marks to validate, so we don't have to build the
         ::  foreign marks
         ::
@@ -3485,7 +3284,7 @@
       ?:  ?=(%| -.vale-result)
         %-  (slog >%validate-x-failed< p.vale-result)
         ~
-      `-.p.vale-result
+      `p.vale-result
     ::
     ::  Make sure the incoming data is a %z response
     ::
@@ -4173,61 +3972,51 @@
     ++  read-a
       !.
       |=  [=tako =path]
-      ^-  [(unit (unit cage)) _..park]
-      =^  =vase  ..park
+      ^-  (unit (unit cage))
+      =/  =vase
         ~_  leaf/"clay: %a build failed {<[syd tako path]>}"
-        %+  tako-flow  tako
-        %-  wrap:fusion
         (build-file:(tako-ford tako) path)
-      :_(..park [~ ~ %vase !>(vase)])
+      [~ ~ %vase !>(vase)]
     ::
     ++  read-b
       !.
       |=  [=tako =path]
-      ^-  [(unit (unit cage)) _..park]
+      ^-  (unit (unit cage))
       ?.  ?=([@ ~] path)
-        [[~ ~] ..park]
-      =^  =dais  ..park
-        %+  tako-flow  tako
-        %-  wrap:fusion
+        [~ ~]
+      =/  =dais
         (build-dais:(tako-ford tako) i.path)
-      :_(..park [~ ~ %dais !>(dais)])
+      [~ ~ %dais !>(dais)]
     ::
     ++  read-c
       !.
       |=  [=tako =path]
-      ^-  [(unit (unit cage)) _..park]
+      ^-  (unit (unit cage))
       ?.  ?=([@ @ ~] path)
-        [[~ ~] ..park]
-      =^  =tube  ..park
-        %+  tako-flow  tako
-        %-  wrap:fusion
+        [~ ~]
+      =/  =tube
         (build-tube:(tako-ford tako) [i i.t]:path)
-      :_(..park [~ ~ %tube !>(tube)])
+      [~ ~ %tube !>(tube)]
     ::
     ++  read-e
       !.
       |=  [=tako =path]
-      ^-  [(unit (unit cage)) _..park]
+      ^-  (unit (unit cage))
       ?.  ?=([@ ~] path)
-        [[~ ~] ..park]
-      =^  =vase  ..park
-        %+  tako-flow  tako
-        %-  wrap:fusion
+        [~ ~]
+      =/  =vase
         (build-nave:(tako-ford tako) i.path)
-      :_(..park [~ ~ %nave vase])
+      [~ ~ %nave vase]
     ::
     ++  read-f
       !.
       |=  [=tako =path]
-      ^-  [(unit (unit cage)) _..park]
+      ^-  (unit (unit cage))
       ?.  ?=([@ @ ~] path)
-        [[~ ~] ..park]
-      =^  =vase  ..park
-        %+  tako-flow  tako
-        %-  wrap:fusion
+        [~ ~]
+      =/  =vase
         (build-cast:(tako-ford tako) [i i.t]:path)
-      :_(..park [~ ~ %cast vase])
+      [~ ~ %cast vase]
     ::
     ::  TODO move to +read-buc
     ::
@@ -4356,10 +4145,9 @@
     ::
     ++  read-r
       |=  [tak=tako pax=path]
-      ^-  [(unit (unit cage)) _..park]
-      =^  x  ..park  (read-x tak pax)
-      :_  ..park
-      ?~  x    ~
+      ^-  (unit (unit cage))
+      =/  x  (read-x tak pax)
+      ?~  x     ~
       ?~  u.x  [~ ~]
       ``[p.u.u.x !>(q.u.u.x)]
     ::  +read-s: produce miscellaneous
@@ -4424,14 +4212,11 @@
         ``uvi+[-:!>(*@uvI) (content-hash u.yak /)]
       ::
           %cage
-        ::  should save ford cache
-        ::
         =/  =lobe  (slav %uv i.t.pax)
         =/  peg=(unit page)  (~(get by lat.ran) lobe)
         ?~  peg
           ~
-        =/  [=cage *]
-          %-  wrap:fusion
+        =/  =cage
           (page-to-cage:(tako-ford tak) u.peg)
         ``cage+[-:!>(*^cage) cage]
       ::
@@ -4549,17 +4334,13 @@
     ::
     ++  read-x
       |=  [tak=tako pax=path]
-      ^-  [(unit (unit cage)) _..park]
+      ^-  (unit (unit cage))
       =/  q  (read-q tak pax)
-      ?~  q    `..park
-      ?~  u.q  [[~ ~] ..park]
+      ?~  q     ~
+      ?~  u.q  [~ ~]
       ::  should convert any lobe to cage
       ::
-      =^  =cage  ..park
-        %+  tako-flow  tak
-        %-  wrap:fusion
-        (page-to-cage:(tako-ford tak) p.u.u.q q.q.u.u.q)
-      [``cage ..park]
+      ``(page-to-cage:(tako-ford tak) p.u.u.q q.q.u.u.q)
     ::
     ::  Gets an arch (directory listing) at a node.
     ::
@@ -4629,24 +4410,25 @@
       ::
       ++  read
         ^-  [(unit (unit cage)) _..park]
+        :_  ..park
         ?-  care.mun
           %a  (read-a tak path.mun)
           %b  (read-b tak path.mun)
           %c  (read-c tak path.mun)
-          %d  [(read-d tak path.mun) ..park]
+          %d  (read-d tak path.mun)
           %e  (read-e tak path.mun)
           %f  (read-f tak path.mun)
-          %p  [(read-p path.mun) ..park]
-          %q  [(read-q tak path.mun) ..park]
+          %p  (read-p path.mun)
+          %q  (read-q tak path.mun)
           %r  (read-r tak path.mun)
-          %s  [(read-s tak path.mun case.mun) ..park]
-          %t  [(read-t tak path.mun) ..park]
-          %u  [(read-u tak path.mun) ..park]
-          %v  [(read-v tak path.mun) ..park]
-          %w  [(read-w tak) ..park]
+          %s  (read-s tak path.mun case.mun)
+          %t  (read-t tak path.mun)
+          %u  (read-u tak path.mun)
+          %v  (read-v tak path.mun)
+          %w  (read-w tak)
           %x  (read-x tak path.mun)
-          %y  [(read-y tak path.mun) ..park]
-          %z  [(read-z tak path.mun) ..park]
+          %y  (read-y tak path.mun)
+          %z  (read-z tak path.mun)
         ==
       --
     --
@@ -4677,14 +4459,13 @@
     %-  tako-ford:den
     ::TODO  is this +got after +got semantically correct?
     (~(got by hit.dom:(~(got by dos.rom) syd)) ?~(yon let.dom:den u.yon))
-  ::  +wrap: save ford cache
+  ::  +wrap: save ford cache  XX deprecate?
   ::
   ++  wrap
-    |*  [her=ship syd=desk yon=(unit aeon) res=* =state:ford:fusion]
+    |*  [her=ship syd=desk yon=(unit aeon) res=*]
     =^  moves  ruf
       =/  den  ((de now rof hen ruf) her syd)
-      =/  tak  (aeon-to-tako:ze:den ?~(yon let.dom:den u.yon))
-      abet:+:(tako-flow:den tak res cache.state &2.state)
+      abet:..park:den
     [res (emil moves)]
   ::
   ++  trace
@@ -4797,15 +4578,15 @@
     =/  f  (ford our desk.i.sat ~)
     =^  new=load:gall  ..abet
       %-  wrap  :^  our  desk.i.sat  ~
-      |-  ^-  [load:gall state:ford:fusion]
+      |-  ^-  load:gall
       ?~  bill.i.sat
-        [~ nub.f]
-      =^  =vase  nub.f
+        ~
+      =/  =vase
         %-  road  |.
         (build-file:f /app/[i.bill.i.sat]/hoon)
       =/  agent  ~|  [%building-app bill.i.sat]  !<(agent:gall vase)
-      =^  lid  nub.f  $(bill.i.sat t.bill.i.sat)
-      [[[i.bill.i.sat [our desk.i.sat da+now] agent] lid] nub.f]
+      =/  lid  $(bill.i.sat t.bill.i.sat)
+      [[i.bill.i.sat [our desk.i.sat da+now] agent] lid]
     =.  lad  (weld lad new)
     $(sat t.sat)
   ::  build-dais for each mark
@@ -4818,13 +4599,13 @@
     =/  f  (ford our i.desks ~)
     =^  null  ..abet
       %-  wrap  :^  our  i.desks  ~
-      =^  marks=(list mark)  nub.f
+      =/  marks=(list mark)
         =/  pax=path  /
-        |-  ^-  [(list mark) _nub.f]
+        |-  ^-  (list mark)
         =/  den  ((de now rof hen ruf) our i.desks)
         =^  res  den  (aver:den ~ %y da+now mar+pax)
         ?.  ?=([~ ~ *] res)
-          [~ nub.f]
+          ~
         =/  arch  ~|  [%building-arch i.desks]  !<(arch q.u.u.res)
         =/  m1=(list mark)
           ?.  ?&  ?=(^ fil.arch)
@@ -4840,20 +4621,20 @@
             i.pax
           (rap 3 i.pax '-' $(pax t.pax) ~)
         ::
-        =^  m2  nub.f
-          |-  ^-  [(list mark) _nub.f]
+        =/  m2
+          |-  ^-  (list mark)
           ?~  dir.arch
-            [~ nub.f]
-          =^  n1  nub.f  ^$(pax (weld pax /[p.n.dir.arch]))
-          =^  n2  nub.f  $(dir.arch l.dir.arch)
-          =^  n3  nub.f  $(dir.arch r.dir.arch)
-          [:(weld n1 n2 n3) nub.f]
-        [(weld m1 m2) nub.f]
+            ~
+          =/  n1  ^$(pax (weld pax /[p.n.dir.arch]))
+          =/  n2  $(dir.arch l.dir.arch)
+          =/  n3  $(dir.arch r.dir.arch)
+          :(weld n1 n2 n3)
+        (weld m1 m2)
       ::
-      |-  ^-  [~ state:ford:fusion]
+      |-  ^-  ~
       ?~  marks
-        [~ nub.f]
-      =^  =dais  nub.f  (build-dais:f i.marks)
+        ~
+      =/  =dais  (build-dais:f i.marks)
       $(marks t.marks)
     $(desks t.desks)
   ::
@@ -5142,22 +4923,6 @@
       [moves ..^$]
     ::
         [%trim ~]
-      =:    fad.ruf      *flow
-            dos.rom.ruf
-          %-  ~(run by dos.rom.ruf)
-          |=  =dojo
-          dojo(fod.dom *flue)
-        ::
-            hoy.ruf
-          %-  ~(run by hoy.ruf)
-          |=  =rung
-          %=    rung
-              rus
-            %-  ~(run by rus.rung)
-            |=  =rede
-            rede(fod.dom *flue)
-          ==
-        ==
       [~ ..^$]
     ::
         [%fine ~]
@@ -5269,9 +5034,7 @@
   ==
 ::
 ++  load
-  ::  latest $raft-* is equivalent to top-level $raft,
-  ::  save for the stubbing out of the cache types.
-  ::  +clear-cache inflates to $raft.
+  ::  latest $raft-* is equivalent to top-level $raft
   ::
   =>  |%
       +$  raft-any
@@ -5287,12 +5050,14 @@
             [%7 raft-7]
             [%6 raft-6]
         ==
-      +$  raft-16  _%*(. *raft fad **, rom *room-16, hoy *(map ship rung-16))
-      +$  room-16  _%*(. *room dos *(map desk dojo-16))
-      +$  rung-16  _%*(. *rung rus *(map desk rede-16))
-      +$  rede-16  _%*(. *rede dom *dome-16)
-      +$  dojo-16  _%*(. *dojo dom *dome-16)
-      +$  dome-16  _%*(. *dome fod **)
+      +$  raft-16  raft
+      ::
+      +$  flow  (map leak [refs=@ud =soak])
+      +$  leak
+        $~  [*pour ~]
+        $:  =pour
+            deps=(set leak)
+        ==
       ::
       +$  raft-15
         $+  raft-15
@@ -5743,31 +5508,8 @@
   =?  old  ?=(%14 -.old)  15+(raft-14-to-15 +.old)
   =?  old  ?=(%15 -.old)  16+(raft-15-to-16 +.old)
   ?>  ?=(%16 -.old)
-  ..^^$(ruf (clear-cache +.old))
+  ..^^$(ruf +.old)
   ::
-  ::  We clear the ford cache so we don't have to know how to upgrade
-  ::  the types, which are complicated and eg contravariant in +hoon.
-  ::  Also, many of the results would be different if zuse is different.
-  ::
-  ++  clear-cache
-    |=  raf=raft-16
-    ^-  raft
-    %=    raf
-        fad  *flow
-        dos.rom
-      %-  ~(run by dos.rom.raf)
-      |=  doj=dojo-16
-      ^-  dojo
-      doj(fod.dom *flue)
-    ::
-        hoy
-      %-  ~(run by hoy.raf)
-      |=  =rung-16
-      %-  ~(run by rus.rung-16)
-      |=  =rede-16
-      ^-  rede
-      rede-16(dom dom.rede-16(fod *flue))
-    ==
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
   ::
   ++  raft-6-to-7
@@ -6065,23 +5807,28 @@
       |=  d=dojo-13
       d(fiz [fiz.d ese=%.y])
     ==
-  ::  +raft-15-to-16: update type of type
+  ::  +raft-15-to-16: update type of type, remove ford cache
   ::
   ++  raft-15-to-16
     |=  raf=raft-15
     |^  ^-  raft-16
+        =<  [&1 &2 &3 |4]
         %=  raf
             dos.rom
           %-  ~(run by dos.rom.raf)
           |=  d=dojo-15
-          d(qyx (cult-15-to-cult qyx.d))
+          d(qyx (cult-15-to-cult qyx.d), dom (dome-13-to-dome dom.d))
         ::
             hoy
           %-  ~(run by hoy.raf)
           |=  r=rung-15
           %-  ~(run by rus.r)
           |=  r=rede-15
-          r(ref (bind ref.r rind-15-to-rind), qyx (cult-15-to-cult qyx.r))
+          %=  r
+            ref  (bind ref.r rind-15-to-rind)
+            qyx  (cult-15-to-cult qyx.r)
+            dom  (dome-13-to-dome dom.r)
+          ==
         ==
     ::
     ++  cult-15-to-cult
@@ -6092,6 +5839,11 @@
       |=  [w=wove-15 s=(set duct)]
       ^-  [wove (set duct)]
       [w(rove (rove-15-to-rove rove.w)) s]
+    ::
+    ++  dome-13-to-dome
+      |=  d=dome-13
+      ^-  dome
+      [let hit lab tom nor mim wic liv ren]:d
     ::
     ++  rove-15-to-rove
       |=  r=rove-15
@@ -6181,12 +5933,10 @@
     ?~  path
       ~
     ?+    i.path  ~
-        %sweep  ``[%sweep !>(sweep)]
         %rang   ``[%rang !>(ran.ruf)]
         %tomb   ``[%flag !>((tomb t.path))]
         %cult   ``[%cult !>((cult t.path))]
         %esse   (esse t.path)
-        %flow   ``[%flow !>(fad.ruf)]
         %domes  domes
         %tire   ``[%tire !>(tore:(lu now rof *duct ruf))]
         %tyre   ``[%tyre !>(tyr.ruf)]
@@ -6250,92 +6000,13 @@
     =+  !<(=arch q.u.u.cay)
     ?~  fil.arch  %|
     (~(has by lat.ran.ruf) u.fil.arch)
-  ::
-  ::  Check for refcount errors
-  ::
-  ++  sweep
-    ^-  (list [need=@ud have=@ud leak])
-    =/  marked=(map leak [need=@ud have=@ud])
-      (~(run by fad.ruf) |=([refs=@ud *] [0 refs]))
-    =.  marked
-      =/  items=(list [=leak *])  ~(tap by fad.ruf)
-      |-  ^+  marked
-      ?~  items
-        marked
-      =/  deps  ~(tap in deps.leak.i.items)
-      |-  ^+  marked
-      ?~  deps
-        ^$(items t.items)
-      =.  marked
-        %+  ~(put by marked)  i.deps
-        =/  gut  (~(gut by marked) i.deps [0 0])
-        [+(-.gut) +.gut]
-      $(deps t.deps)
-    ::
-    =/  spills=(list (set leak))
-      %+  welp
-        %+  turn  ~(tap by dos.rom.ruf)
-        |=  [* =dojo]
-        spill.fod.dom.dojo
-      %-  zing
-      %+  turn  ~(tap by hoy.ruf)
-      |=  [* =rung]
-      %+  turn  ~(tap by rus.rung)
-      |=  [* =rede]
-      spill.fod.dom.rede
-    ::
-    =.  marked
-      |-
-      ?~  spills
-        marked
-      =/  leaks  ~(tap in i.spills)
-      |-
-      ?~  leaks
-        ^$(spills t.spills)
-      =.  marked
-        %+  ~(put by marked)  i.leaks
-        =/  gut  (~(gut by marked) i.leaks [0 0])
-        [+(-.gut) +.gut]
-      $(leaks t.leaks)
-    ::
-    %+  murn  ~(tap by marked)
-    |=  [=leak need=@ud have=@ud]
-    ?:  =(need have)
-      ~
-    `u=[need have leak]
   --
-::
-::  We clear the ford cache by replacing it with its bunt as a literal,
-::  with its singleton type.  This nests within +flow and +flue without
-::  reference to +type, +hoon, or anything else in the sample of cache
-::  objects.  Otherwise we would be contravariant in those types, which
-::  makes them harder to change.
 ::
 ++  stay
   ^-  raft-any:load
-  =/  flu  [~ ~]
-  =+  `flue`flu
-  =/  flo  ~
-  =+  `flow`flo
   :-  ver
   ^-  raft-16:load
-  %=    ruf
-      fad  flo
-      dos.rom
-    %-  ~(run by dos.rom.ruf)
-    |=  =dojo
-    dojo(fod.dom flu)
-  ::
-      hoy
-    %-  ~(run by hoy.ruf)
-    |=  =rung
-    %=    rung
-        rus
-      %-  ~(run by rus.rung)
-      |=  =rede
-      rede(fod.dom flu)
-    ==
-  ==
+  ruf
 ::
 ++  take                                              ::  accept response
   ~/  %clay-take
@@ -6610,7 +6281,6 @@
       |=  [=desk =dojo]
       :+  desk  %|
       :~  mime+&+mim.dom.dojo
-          flue+&+fod.dom.dojo
           dojo+&+dojo
       ==
     :~  :+  %object-store  %|
@@ -6622,14 +6292,12 @@
         ==
         domestic+|+domestic
         foreign+&+hoy.ruf
-        ford-cache+&+fad.ruf
     ==
   =/  domestic
     %+  turn  (sort ~(tap by dos.rom.ruf) aor)
     |=  [=desk =dojo]
     :+  desk  %|
     :~  mime+&+mim.dom.dojo
-        flue+&+fod.dom.dojo
         dojo+&+dojo
     ==
   :~  :+  %object-store  %|
@@ -6638,7 +6306,6 @@
       ==
       domestic+|+domestic
       foreign+&+hoy.ruf
-      ford-cache+&+fad.ruf
   ==
 ::
 ++  tomb
