@@ -915,15 +915,11 @@
         destructed-request
       u.val.u.cached
     ::
-    ?:  ?&  ?=(@ session)
-            ?=(?(%gen %channel %name) -.action)
-        ==
-        %^  error-response  401
-          destructed-request
-        "bad session auth"
+    |^
+    =*  error  (error-response 401 destructed-request "bad session auth")
     ?-    -.action
         %gen
-      ::  invalid case handled above returning unauthenticated err 401
+      ?:  ?=(@ session)  error
       =/  bek=beak  [our desk.generator.action da+now]
       =/  sup=spur  path.generator.action
       =/  ski       (rof [~ ~] /eyre %ca bek sup)
@@ -975,15 +971,10 @@
       ==
     ::
         %app
-      =^  [suv=@uv =identity som=(list move)]  state  
-        ?^  session  [[suv.session identity.session ~] state]
-        (start-session:authentication %guest)
-      =/  connection=outstanding-connection
-      [action [authenticated secure address request] [suv identity] ~ 0]
-      =.  connections.state
-        (~(put by connections.state) duct connection)
+      =^  [connection=outstanding-connection som=(list move)]  state
+        start-guest-session
       =^  moz  state  
-        (request-to-app identity app.action inbound-request.connection)
+        (request-to-app identity.connection app.action inbound-request.connection)
       [(weld som moz) state]
       ::
         %authentication
@@ -996,15 +987,10 @@
       ==
     ::
         %eauth
-      =^  [suv=@uv =identity som=(list move)]  state  
-        ?^  session  [[suv.session identity.session ~] state]  
-        (start-session:authentication %guest)
-      =/  connection=outstanding-connection
-        [action [authenticated secure address request] [suv identity] ~ 0]
-      =.  connections.state
-        (~(put by connections.state) duct connection)
+      =^  [connection=outstanding-connection som=(list move)]  state
+        start-guest-session
       =^  moz  state  
-        (on-request:eauth:authentication [suv identity] request)
+        (on-request:eauth:authentication [session-id.connection identity.connection] request)
       [(weld som moz) state]
     ::
         %logout
@@ -1014,20 +1000,15 @@
       (handle-logout:authentication request connection)
     ::
         %channel
-      ::  invalid case handled above returning unauthenticated err 401
-      =/  identity  ?^  session  identity.session  !!
-      %^  handle-request:by-channel  identity
-        address 
-      destructed-request
+      ?:  ?=(@ session)  error
+      (handle-request:by-channel identity.session address destructed-request)
     ::
         %scry
-      %+  handle-scry  address
-      destructed-request(url.request suburl)
+      (handle-scry address destructed-request(url.request suburl))
     ::
         %name
-      ::  invalid case handled above returning unauthenticated err 401
-      =/  identity  ?^  session  identity.session  !!
-      %+  handle-name  identity  destructed-request
+      ?:  ?=(@ session)  error
+      (handle-name identity.session destructed-request)
     ::
         %host
       %:  return-static-data-on-duct  
@@ -1038,19 +1019,30 @@
       ==
     ::
         %ip
-      %+  handle-ip  address  destructed-request
+      (handle-ip address destructed-request)
     ::
         %boot
-      %-  handle-boot  destructed-request
+      (handle-boot destructed-request)
     ::
         %sponsor
-      %-  handle-sponsor  destructed-request
+      (handle-sponsor destructed-request)
     ::
         %four-oh-four
-      %^  error-response  
-        404  
-      destructed-request  ~
+      (error-response 404 destructed-request ~)
     ==
+    ::
+    ++  start-guest-session
+      ^-  [[=outstanding-connection moves=(list move)] server-state]
+      =^  [suv=@uv =identity moz=(list move)]  state  
+        ?^  session  [[suv.session identity.session ~] state]
+        (start-session:authentication %guest)
+      =/  connection=outstanding-connection
+        [action [authenticated secure address request] [suv identity] ~ 0]
+      :-  [connection moz]  
+      =.  connections.state
+        (~(put by connections.state) duct connection)
+      state
+    --
   ::  +handle-ip: respond with the requester's ip
   ::
   ++  handle-ip
