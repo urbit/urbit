@@ -994,10 +994,10 @@
       [(weld som moz) state]
     ::
         %logout
-      ?@  session  (handle-login-redirect:authentication destructed-request)
+      ?@  session  (handle-logout:authentication request ~)
       =/  connection=outstanding-connection
         [action [authenticated secure address request] [suv.session identity.session] ~ 0]
-      (handle-logout:authentication request connection)
+      (handle-logout:authentication request `connection)
     ::
         %channel
       ?:  ?=(@ session)  error
@@ -1520,14 +1520,10 @@
     ::  +handle-logout: handles an http request for logging out
     ::
     ++  handle-logout
-      |=  [=request:http connection=outstanding-connection]
+      |=  [=request:http u-connection=(unit outstanding-connection)]
       ^-  [(list move) server-state]
       ::  whatever we end up doing, we always respond with a redirect
       ::
-      =/  [session-id=@uv =identity]  [session-id.connection identity.connection]
-      ::  authenticated set to %.n logging out session
-      ::
-      =/  =destructed-request  [request | `session-id]
       =/  response=$>(%start http-event:http)
         =/  redirect=(unit @t)
           %+  get-header:http  'redirect'
@@ -1537,6 +1533,12 @@
             data=~
             complete=%.y
         ==
+      ?~  u-connection  (handle-response response [request | ~])
+      =/  connection    (need u-connection)
+      =/  [session-id=@uv =identity]  [session-id.connection identity.connection]
+      ::  authenticated set to %.n logging out session
+      ::
+      =/  destructed-request  [request | `session-id]
       ::  read options from the body
       ::  all: log out all sessions with this identity?
       ::  sid: which session do we log out? (defaults to requester's)
@@ -1559,7 +1561,7 @@
         ?.  ?=(%ours -.identity)  ~
         (biff (get-header:http 'host' arg) (cury slaw %p))
       ?~  sid
-        (handle-login-redirect destructed-request)
+        (handle-response response destructed-request)
       ::  if this is an eauth remote logout, send the %shut
       ::
       =*  auth  auth.state
@@ -1582,21 +1584,6 @@
       =^  moz1  state  (close-session u.sid all)
       =^  moz2  state  (handle-response response destructed-request)
       [[give-session-tokens (weld moz1 moz2)] state]
-    ::  +handle-login-redirect:  sends response with redirect to login page
-    ::
-    ::
-    ++  handle-login-redirect
-    |=  =destructed-request
-    =/  response=$>(%start http-event:http)
-      =/  redirect=(unit @t)
-        %+  get-header:http  'redirect'
-        args:(parse-request-line url.request.destructed-request)
-      :*  %start
-          response-header=[303 ['location' (fall redirect '/~/login')]~]
-          data=~
-          complete=%.y
-      ==
-    (handle-response response destructed-request)
     ::  +session-id-from-request: attempt to find a session token
     ::
     ::    looks in the authorization header first. if there is no such header,
