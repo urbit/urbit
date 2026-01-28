@@ -1407,6 +1407,7 @@
       =/  with-eauth=(unit ?)
         ?:  =(~ eauth-url:eauth)  ~
         `?=(^ (get-header:http 'eauth' args.request-line))
+      |^
       ::  if we received a simple get: show the login page
       ::
       ::NOTE  we never auto-redirect, to avoid redirect loops with apps that
@@ -1431,29 +1432,17 @@
         ==
       ::  we are a post, and must process the body type as form data
       ::
-      ?~  body.request
-        %:  return-static-data-on-duct  
-          400  'text/html'
-          (login-page ~ our identity with-eauth %.n)
-          destructed-request
-        ==
+      ?~  body.request  (login-redirect ~ %.n)
       ::
       =/  parsed=(unit (list [key=@t value=@t]))
         (rush q.u.body.request yquy:de-purl:html)
-      ?~  parsed
-        %:  return-static-data-on-duct
-          400  'text/html'
-          (login-page ~ our identity with-eauth %.n)
-          destructed-request
-        ==
+      ?~  parsed  (login-redirect ~ %.y)
       ::
       =/  redirect=(unit @t)  (get-header:http 'redirect' u.parsed)
       ?^  (get-header:http 'eauth' u.parsed)
         ?~  ship=(biff (get-header:http 'name' u.parsed) (cury slaw %p))
-          %:  return-static-data-on-duct  400  'text/html'
-            (login-page redirect our identity `& %.n)
-            destructed-request
-          ==
+          =.  with-eauth  `&
+          (login-redirect redirect %.n)
         ::TODO  redirect logic here and elsewhere is ugly
         =/  redirect  (fall redirect '')
         =/  base=(unit @t)
@@ -1463,17 +1452,10 @@
       ::
       =.  with-eauth  (bind with-eauth |=(? |))
       ?~  password=(get-header:http 'password' u.parsed)
-        %:  return-static-data-on-duct  400  'text/html'
-          (login-page redirect our identity with-eauth %.n)
-          destructed-request
-        ==
+        (login-redirect redirect %.n)
       ::  check that the password is correct
       ::
-      ?.  =(u.password code)
-        %:  return-static-data-on-duct  400  'text/html'
-          (login-page redirect our identity with-eauth %.y)
-          destructed-request
-        ==
+      ?.  =(u.password code)  (login-redirect redirect %.y)
       ::  clean up the session they're changing out from
       ::
       ::
@@ -1517,6 +1499,14 @@
         [%start 200^~ `bod &]
       =/  actual-redirect  ?:(=(u.redirect '') '/' u.redirect)
       [%start 303^~['location'^actual-redirect] `bod &]
+      ::
+      ++  login-redirect 
+        |=  [redirect-url=(unit @t) failed=?]
+        %:  return-static-data-on-duct  400  'text/html'
+          (login-page redirect-url our identity with-eauth failed)
+          destructed-request
+        ==
+    --
     ::  +handle-logout: handles an http request for logging out
     ::
     ++  handle-logout
