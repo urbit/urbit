@@ -1724,9 +1724,11 @@
       on-cancel-request:by-channel
     ::
         ?(%scry %four-oh-four %name %host %ip %boot %sponsor %xxauth)
-      ::  it should be impossible for these to be asynchronous
+      ::  it should be impossible for these to be asynchronous,
+      ::  but also no clean-up needed, so don't crash just in case.
+      ::  (crashing during %born handling is Very Bad.)
       ::
-      !!
+      [~ state]
     ==
   ::  +return-static-data-on-duct: returns one piece of data all at once
   ::
