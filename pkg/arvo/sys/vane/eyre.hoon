@@ -1815,8 +1815,6 @@
       ::
       =/  target-desk=(unit @t)  (get-header:http 'desk' u.parsed)
       =/  redirect=(unit @t)     (get-header:http 'redirect' u.parsed)
-      ?^  (get-header:http 'xxtokenflow' u.parsed)
-        (handle-token-flow-request [session-id identity] u.parsed)
       ?^  (get-header:http 'eauth' u.parsed)
         ?~  ship=(biff (get-header:http 'name' u.parsed) (cury slaw %p))
           %^  return-static-data-on-duct  400  'text/html'
@@ -1902,28 +1900,6 @@
             actual-redirect
         ==
       (handle-response %start 303^['location' actual-redirect]~ ~ &)
-    ::  +handle-token-flow-request
-    ::
-    ++  handle-token-flow-request
-      |=  [[session-id=@uv =identity] args=(list [key=@t val=@t])]
-      ^-  [(list move) server-state]
-      =*  bad-req
-        %-  handle-response
-        [%start [400 ~] `(as-octs:mimes:html 'bad token flow req') &]
-      ?~  scope=(get-header:http 'scope' args)
-        bad-req
-      ::TODOxx  maybe check whether scope is an installed/active desk y/n?
-      =/  token-id=@uv  new-session-key
-      =.  sessions.auth.state
-        %+  ~(put by sessions.auth.state)  token-id
-        :*  identity(scope scope)
-            |+session-id
-            timeout=(add now auth:session-timeout)
-            channels=~
-        ==
-      %-  handle-response
-      ::TODOxx  consider also cookie header?
-      [%start [200 ~] `(as-octs:mimes:html (scot %uv token-id)) &]
     ::  +handle-logout: handles an http request for logging out
     ::
     ++  handle-logout
