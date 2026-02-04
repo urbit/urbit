@@ -1741,7 +1741,22 @@
       ?:  ?=(%| -.agent.yoke)  ap-core
       ~>  %spin.[(crip "on-save/{<agent-name>}")]
       =>  [ken=ken.yoke (ap-ingest ~ |.([ap-yawn-all p.agent.yoke]))]
-      ap-core(ken.yoke ken, agent.yoke |+on-save:ap-agent-core)
+      ::  arvo-resources -> generate appropriate cleanup card
+      ::
+      %-  ap-move(ken.yoke ken, agent.yoke |+on-save:ap-agent-core)
+      %-  zing
+      %+  turn  ~(tap in resources.yoke)
+      |=  res=arvo-resource
+      %-  ap-from-internal
+      ^-  carp
+      =-  [%pass wire.res %arvo -]
+      ::  TODO ripped from ap-nuke -> helper
+      ::
+      ?-  +.res
+        [%behn %wait *]   [%behn %rest time.res]
+        [%iris %request]  [%iris %cancel-request ~]
+        [%lick %spin *]   [%lick %shut name.res]
+      ==
     ::
     ++  ap-nuke
       ^+  ap-core
@@ -2244,9 +2259,25 @@
         (turn ~(tap in wyz) |=(=wire [%pass wire %arvo %ames %keen secret=| spar]))
       =^  error  ap-core
         (ap-install(agent.yoke &+agent) `old-state)
-      ?~  error
-        ap-core
-      (mean >%load-failed< u.error)
+      ?^  error
+        (mean >%load-failed< u.error)
+      ::  reinflate arvo-resources
+      ::
+      %-  ~(rep in resources.yoke)
+      |=  [res=arvo-resource acc=_ap-core]
+      =.  ap-core  acc
+      ?:  ?=([%iris %request] +.res)
+        ::  we depend on +ap-generic-take to untrack the resource
+        ::
+        (ap-generic-take ~ wire.res [%iris %http-response %cancel ~])
+      %-  ap-move
+      %-  ap-from-internal
+      ^-  carp
+      =-  [%pass wire.res %arvo -]
+      ?-  +.res
+        [%behn %wait *]  [%behn %wait time.res]
+        [%lick %spin *]  [%lick %spin name.res]
+      ==
     ::  +ap-subscribe-as: apply %watch-as.
     ::
     ++  ap-subscribe-as

@@ -14,6 +14,7 @@
   ++  form    (form-raw a)
   ++  output  (output-raw a)
   ++  pure    |=(arg=a `form`|=(=state [%& arg state]))
+  ++  fail    |=(arg=tang `form`|=(=state [%| arg]))
   ++  bind
     |*  b=mold
     |=  [m-b=(form-raw b) fun=$-(b form)]
@@ -406,6 +407,43 @@
     ==
   ;<  y=yoke:gall  bind:m  (get-yoke %mock)
   (ex-equal !>(-.y) !>(%nuke))
+::
+++  test-suspend-and-revive
+  %-  eval-mare
+  ;<  *  bind:m  (do-load %mock mock-agent)
+  ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %behn %wait ~2345.6.7)
+  ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %iris %request *request:http *outbound-config:iris)
+  ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %lick %spin /mysocket)
+  ::  suspending the agent should "pause" all its resources.
+  ::  we delete the resources, but remember them for revival.
+  ::
+  ;<  gall-wire=wire        bind:m
+    (use-wire %mock //agent/wire)
+  ;<  gall-wire-b=wire        bind:m
+    (use-wire %mock /[(crip ~(rend co %blob ~2345.6.7))]/agent/wire)
+  ;<  moz=(list move:gall)  bind:m
+    (do-call ~ %idle %mock)
+  ;<  ~  bind:m
+    ::NOTE  moves sorted because otherwise dependent on set order
+    %+  ex-moves  (sort moz aor)
+    :~  (ex-move ~[/sysduct] %pass gall-wire [%i %cancel-request ~])
+        (ex-move ~[/sysduct] %pass gall-wire [%l %shut [%mock /mysocket]])
+        (ex-move ~[/sysduct] %pass gall-wire-b [%b %rest ~2345.6.7])
+    ==
+  ;<  y=yoke:gall  bind:m  (get-yoke %mock)
+  ?.  &(?=(%live -.y) ?=(%| -.agent.y))
+    (fail:m 'agent not suspended' ~)
+  ;<  moz=(list move:gall)  bind:m
+    (do-load %mock mock-agent)
+  ;<  ~  bind:m
+    ::NOTE  moves sorted because otherwise dependent on set order
+    %+  ex-moves  (sort moz aor)
+    :~  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
+        (ex-on-arvo /agent/wire [%iris %http-response %cancel ~])
+        (ex-move ~[/sysduct] %pass gall-wire [%l %spin [%mock /mysocket]])
+        (ex-move ~[/sysduct] %pass gall-wire-b [%b %wait ~2345.6.7])
+    ==
+  (pure:m ~)
 ::
 ::TODO  test keen wire consistent between %keen, %keen w/ secret, reinstall
 ::TODO  test namespace revision nrs across nukes
