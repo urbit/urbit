@@ -809,6 +809,7 @@
         authenticated
       ?@(session ~ `suv.session)
     ::
+    =/  u-identity=(unit identity)  ?@(session ~ `identity.session)
     =/  [=action suburl=@t]  (get-action-for-binding host url.request)
     ::
     ::  if session is invalid (but not absent), session expired
@@ -915,7 +916,6 @@
         destructed-request
       u.val.u.cached
     ::
-    |^
     =*  error  (error-response 401 destructed-request "bad session auth")
     ?-    -.action
         %gen
@@ -971,27 +971,22 @@
       ==
     ::
         %app
-      =^  [connection=outstanding-connection som=(list move)]  state
-        start-guest-session
+      =^  [suv=@uv =identity som=(list move)]  state  
+        ?^  session  [[suv.session identity.session ~] state]
+        (start-session:authentication %guest)
+      =/  connection=outstanding-connection
+        [action [authenticated secure address request] [suv identity] ~ 0]
+      =.  connections.state
+        (~(put by connections.state) duct connection)
       =^  moz  state  
         (request-to-app identity.connection app.action inbound-request.connection)
       [(weld som moz) state]
       ::
         %authentication
-      %:  handle-request:authentication
-        secure
-        host 
-        ?@  session  ~  `identity.session
-        address
-        destructed-request
-      ==
+      (handle-request:authentication secure host u-identity address destructed-request)
     ::
         %eauth
-      =^  [connection=outstanding-connection som=(list move)]  state
-        start-guest-session
-      =^  moz  state  
-        (on-request:eauth:authentication [session-id.connection identity.connection] request)
-      [(weld som moz) state]
+      (on-request:eauth:authentication secure u-identity address destructed-request)
     ::
         %logout
       ?@  session  (handle-logout:authentication request ~)
@@ -1000,15 +995,15 @@
       (handle-logout:authentication request `connection)
     ::
         %channel
-      ?:  ?=(@ session)  error
-      (handle-request:by-channel identity.session address destructed-request)
+      ?~  u-identity  error
+      (handle-request:by-channel u.u-identity address destructed-request)
     ::
         %scry
       (handle-scry address destructed-request(url suburl))
     ::
         %name
-      ?:  ?=(@ session)  error
-      (handle-name identity.session destructed-request)
+      ?~  u-identity  error
+      (handle-name u.u-identity destructed-request)
     ::
         %host
       %:  return-static-data-on-duct  
@@ -1030,19 +1025,6 @@
         %four-oh-four
       (error-response 404 destructed-request ~)
     ==
-    ::
-    ++  start-guest-session
-      ^-  [[=outstanding-connection moves=(list move)] server-state]
-      =^  [suv=@uv =identity moz=(list move)]  state  
-        ?^  session  [[suv.session identity.session ~] state]
-        (start-session:authentication %guest)
-      =/  connection=outstanding-connection
-        [action [authenticated secure address request] [suv identity] ~ 0]
-      :-  [connection moz]  
-      =.  connections.state
-        (~(put by connections.state) duct connection)
-      state
-    --
   ::  +handle-ip: respond with the requester's ip
   ::
   ++  handle-ip
@@ -1835,7 +1817,7 @@
         ::  +cancel: the client aborted the eauth attempt, so clean it up
         ::
         ++  cancel
-          |=  [nonce=@uv last=@t]
+          |=  [nonce=@uv last=@t request=destructed-request]
           ^-  [(list move) server-state]
           ::  if the eauth attempt doesn't exist, or it was already completed,
           ::  we cannot cancel it
@@ -1850,7 +1832,7 @@
             =/  url=@t
               %^  cat  3  '/~/login?eauth&redirect='
               (crip (en-urlt:html (trip last)))
-            (handle-response-async %start 303^['location' url]~ ~ &)
+            (handle-response [%start 303^['location' url]~ ~ &] request)
           :_  state
           %+  weld  moz
           ?~  duct.u.visa  ~
@@ -1880,7 +1862,7 @@
         ::    gives the http response on the current duct
         ::
         ++  finalize
-          |=  [=plea=^duct nonce=@uv =ship last=@t]
+          |=  [=plea=^duct nonce=@uv =ship last=@t request=destructed-request]
           ^-  [(list move) server-state]
           %-  (trace 2 |.("eauth: finalizing login for {(scow %p ship)}"))
           ::  clean up the session they're changing out from,
@@ -1890,18 +1872,15 @@
           ::  and send the visitor the cookie + final redirect
           ::
           =^  moz1  state
-            (close-session session-id:(~(got by connections.state) duct) |)
+            ?~  session-id.request  [~ state]
+            (close-session u.session-id.request |)
           =^  [sid=@uv * moz2=(list move)]  state
             (start-session %eauth ship)
           =.  visitors.auth
             %+  ~(jab by visitors.auth)  nonce
             |=(v=visitor v(+ sid))
-          =.  connections.state
-            %+  ~(jab by connections.state)  duct
-            |=  o=outstanding-connection
-            o(session-id sid)
           =^  moz3  state
-            =;  hed  (handle-response-async %start 303^hed ~ &)
+            =;  hed  (handle-response [%start 303^hed ~ &] request)
             :~  ['location' last]
                 ['set-cookie' (session-cookie-string sid `%auth)]
             ==
@@ -2153,18 +2132,20 @@
       ::  +on-request: http request to the /~/eauth endpoint
       ::
       ++  on-request
-        |=  [[session-id=@uv =identity] =request:http]
+        |=  [secure=? identity=(unit identity) =address request=destructed-request]
         ^-  [(list move) server-state]
         ::  we may need the requester to log in before proceeding
         ::
         =*  login
-          =;  url=@t  (handle-response-async %start 303^['location' url]~ ~ &)
+          =;  url=@t  (handle-response [%start 303^['location' url]~ ~ &] request)
           %^  cat  3  '/~/login?redirect='
           (crip (en-urlt:html (trip url.request)))
         ::  or give them a generic, static error page in unexpected cases
         ::
-        =*  error  %^  return-static-data-on-duct-async  400  'text/html'
+        =*  error  %:  return-static-data-on-duct  400  'text/html'
                    (eauth-error-page ~)
+                   request
+                   ==
         ::  GET requests either render the confirmation page,
         ::  or finalize an eauth flow
         ::
@@ -2180,14 +2161,16 @@
           ?^  server
             ::  request for confirmation page
             ::
-            ?.  ?=(%ours -.identity)  login
+            ?.  &(?=(^ identity) ?=(%ours -.u.identity))  login
             =/  book  (~(gut by visiting.auth) u.server *logbook)
             =/  door  (~(get by map.book) u.nonce)
             ?~  door
               ::  nonce not yet used, render the confirmation page as normal
               ::
-              %^  return-static-data-on-duct-async  200  'text/html'
-              (confirmation-page:client u.server u.nonce)
+              %:  return-static-data-on-duct  200  'text/html'
+                (confirmation-page:client u.server u.nonce)
+                request
+              ==
             ::  if we're still awaiting a redirect target, we choose to serve
             ::  this latest request instead
             ::
@@ -2195,21 +2178,23 @@
             ?~  pend.u.door    error
             =.  map.book       (~(put by map.book) u.nonce u.door(pend `duct))
             =.  visiting.auth  (~(put by visiting.auth) u.server book)
-            %-  return-static-data-on-duct-async(duct u.pend.u.door)
-            [202 'text/plain' (as-octs:mimes:html 'continued elsewhere...')]
+            %-  return-static-data-on-duct(duct u.pend.u.door)
+            [202 'text/plain' (as-octs:mimes:html 'continued elsewhere...') request]
           ::  important to provide an error response for unexpected states
           ::
           =/  visa=(unit visitor)  (~(get by visitors.auth) u.nonce)
           ?~  visa         error
           ?@  +.u.visa     error
-          =*  error  %^  return-static-data-on-duct-async  400  'text/html'
+          =*  error  %:  return-static-data-on-duct  400  'text/html'
                      (eauth-error-page %server last.u.visa)
+                     request
+                     ==
           ::  request for finalization, must either abort or provide a token
           ::
           ::NOTE  yes, this means that unauthenticated clients can abort
           ::      any eauth attempt they know the nonce for, but that should
           ::      be pretty benign
-          ?:  abort  (cancel:^server u.nonce last.u.visa)
+          ?:  abort  (cancel:^server u.nonce last.u.visa request)
           ?~  token  error
           ::  if this request provides a token, but the client didn't, complain
           ::
@@ -2220,12 +2205,14 @@
             %-  (trace 1 |.("eauth: token mismatch"))
             error
           ?~  duct.u.visa  error
-          (finalize:^server u.duct.u.visa u.nonce ship.u.visa last.u.visa)
+          (finalize:^server u.duct.u.visa u.nonce ship.u.visa last.u.visa request)
         ::
         ?.  ?=(%'POST' method.request)
-          %^  return-static-data-on-duct-async  405  'text/html'
-          (eauth-error-page ~)
-        ?.  =(%ours -.identity)  login
+          %:  return-static-data-on-duct  405  'text/html'
+            (eauth-error-page ~)
+            request
+          ==
+        ?.  &(?=(^ identity) ?=(%ours -.u.identity))  login
         ::  POST requests are always submissions of the confirmation page
         ::
         =/  args=(map @t @t)
@@ -2234,12 +2221,22 @@
         =/  nonce=(unit @uv)  (biff (~(get by args) 'nonce') (cury slaw %uv))
         =/  grant=?           =(`'grant' (~(get by args) 'grant'))
         ::
-        =*  error   %^  return-static-data-on-duct-async  400  'text/html'
-                    (eauth-error-page ~)
+        =*  error   %:  return-static-data-on-duct  400  'text/html'
+                      (eauth-error-page ~)
+                      request
+                    ==
         ?~  server  error
         ?~  nonce   error
         =/  book    (~(gut by visiting.auth) u.server *logbook)
         ?:  (~(has by map.book) u.nonce)  error
+        =/  connection=outstanding-connection
+          :*  [%eauth ~] 
+            [authenticated.request secure address -.request] 
+            [(need session-id.request) u.identity]
+            ~  0
+          ==
+        =.  connections.state
+          (~(put by connections.state) duct connection)
         (start:client u.server u.nonce grant)
       ::
       ++  eauth-url
@@ -3158,7 +3155,6 @@
   ::    through this interface because we want to have one centralized place
   ::    where we perform logging and state cleanup for connections that we're
   ::    done with.
-  ::
   ::
   ++  handle-response-async
     |=  =http-event:http

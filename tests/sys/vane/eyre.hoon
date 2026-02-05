@@ -1782,7 +1782,7 @@
   ::  eyre must not comply, instead redirect to login page
   ::
   ;<  ex-rs=$-(move tang)  bind:m
-    (make-ex-resp 303 ~['location'^'/~/login?redirect=%2F~%2Feauth'] ~ &)
+    (make-ex-resp 303 ~['location'^'/~/login?redirect=%2F~%2Feauth'] ~ |)
   ;<  ~  bind:m
     %+  expect-moves  mos
     :~  ex-rs
