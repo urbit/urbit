@@ -1312,9 +1312,6 @@
   ++  cancel-request
     ^-  [(list move) server-state]
     ::
-    ?.  =(~ (~(get by duct-to-key.channel-state.state) duct))
-      ::  handle channel cancel-request 
-      on-cancel-request:by-channel
     ?~  connection=(~(get by connections.state) duct)
       ::  nothing has handled this connection
       ::
@@ -1322,12 +1319,16 @@
     ::
     =.   connections.state  (~(del by connections.state) duct)
     ::
-    ?.  ?=(%app -.action.u.connection)  [~ state]
-    :_  state
-    :_  ~
-    =,  u.connection
-    %-  (trace 1 |.("leaving subscription to {<app.action>}"))
-    (deal-as /watch-response/[eyre-id] identity our app.action %leave ~)
+    ?+  -.action.u.connection  [~ state]
+        %app
+      :_  state
+      :_  ~
+      =,  u.connection
+      %-  (trace 1 |.("leaving subscription to {<app.action>}"))
+      (deal-as /watch-response/[eyre-id] identity our app.action %leave ~)
+      ::
+        %channel  on-cancel-request:by-channel
+    ==
   ::
   ++  error-response 
   |=  [status=@ud request=destructed-request =tape]
@@ -1387,16 +1388,18 @@
       =/  with-eauth=(unit ?)
         ?:  =(~ eauth-url:eauth)  ~
         `?=(^ (get-header:http 'eauth' args.request-line))
-      |^
+      =/  login-redirect
+        |=  [redirect-url=(unit @t) =_with-eauth failed=?]
+        %:  return-static-data-on-duct  400  'text/html'
+          (login-page redirect-url our identity with-eauth failed)
+          request
+        ==
       ::  if we received a simple get: show the login page
       ::
       ::NOTE  we never auto-redirect, to avoid redirect loops with apps that
       ::      send unprivileged users to the login screen
       ::
       ?:  =('GET' method.request)
-        =.  connections.state
-          ?~  identity  connections.state
-          (~(del by connections.state) duct)
         %:  return-static-data-on-duct
           200  'text/html'
           (login-page redirect our identity with-eauth %.n)
@@ -1412,17 +1415,16 @@
         ==
       ::  we are a post, and must process the body type as form data
       ::
-      ?~  body.request  (login-redirect ~ %.n)
+      ?~  body.request  (login-redirect ~ with-eauth %.n)
       ::
       =/  parsed=(unit (list [key=@t value=@t]))
         (rush q.u.body.request yquy:de-purl:html)
-      ?~  parsed  (login-redirect ~ %.y)
+      ?~  parsed  (login-redirect ~ with-eauth %.y)
       ::
       =/  redirect=(unit @t)  (get-header:http 'redirect' u.parsed)
       ?^  (get-header:http 'eauth' u.parsed)
         ?~  ship=(biff (get-header:http 'name' u.parsed) (cury slaw %p))
-          =.  with-eauth  `&
-          (login-redirect redirect %.n)
+          (login-redirect redirect `& %.n)
         ::TODO  redirect logic here and elsewhere is ugly
         =/  redirect  (fall redirect '')
         =/  base=(unit @t)
@@ -1432,10 +1434,10 @@
       ::
       =.  with-eauth  (bind with-eauth |=(? |))
       ?~  password=(get-header:http 'password' u.parsed)
-        (login-redirect redirect %.n)
+        (login-redirect redirect with-eauth %.n)
       ::  check that the password is correct
       ::
-      ?.  =(u.password code)  (login-redirect redirect %.y)
+      ?.  =(u.password code)  (login-redirect redirect with-eauth %.y)
       ::  clean up the session they're changing out from
       ::
       ::
@@ -1479,14 +1481,6 @@
         [%start 200^~ `bod &]
       =/  actual-redirect  ?:(=(u.redirect '') '/' u.redirect)
       [%start 303^~['location'^actual-redirect] `bod &]
-      ::
-      ++  login-redirect 
-        |=  [redirect-url=(unit @t) failed=?]
-        %:  return-static-data-on-duct  400  'text/html'
-          (login-page redirect-url our identity with-eauth failed)
-          request
-        ==
-    --
     ::  +handle-logout: handles an http request for logging out
     ::
     ++  handle-logout
@@ -1504,11 +1498,9 @@
             complete=%.y
         ==
       ?~  u-connection  (handle-response response [request | ~])
-      =/  connection    (need u-connection)
-      =/  [session-id=@uv =identity]  [session-id.connection identity.connection]
-      ::  authenticated set to %.n logging out session
-      ::
-      =/  destructed-request  [request | `session-id]
+      =*  connection    u.u-connection
+      =,  connection
+      =*  destructed-request  [request ?=(%ours -.identity) `session-id]
       ::  read options from the body
       ::  all: log out all sessions with this identity?
       ::  sid: which session do we log out? (defaults to requester's)
