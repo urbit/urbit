@@ -1295,21 +1295,23 @@
     ^-  [(list move) server-state]
     ::
     ?~  connection=(~(get by connections.state) duct)
-      ::  nothing has handled this connection
+      ::  checking if duct is associated with a channel
       ::
-      [~ state]
+      ?~  channel-id=(~(get by duct-to-key.channel-state.state) duct)
+        ((trace 0 |.("{<duct>} no connection or channel to cancel")) `state)
+      ::
+      ?~  channel=(~(get by session.channel-state.state) u.channel-id)
+        ((trace 0 |.("{<u.channel-id>} session doesn't exist")) `state)
+      (on-cancel-request:by-channel [u.channel-id u.channel])
     ::
     =.   connections.state  (~(del by connections.state) duct)
-    ::
-    ?+  -.action.u.connection  [~ state]
+    ?+  -.action.u.connection  `state
         %app
       :_  state
       :_  ~
       =,  u.connection
       %-  (trace 1 |.("leaving subscription to {<app.action>}"))
       (deal-as /watch-response/[eyre-id] identity our app.action %leave ~)
-      ::
-        %channel  on-cancel-request:by-channel
     ==
   ::
   ++  error-response 
@@ -2297,35 +2299,26 @@
     ::    session back into the waiting state.
     ::
     ++  on-cancel-request
+      |=  [channel-id=@ =channel]
       ^-  [(list move) server-state]
-      ::  lookup the session id by duct
       ::
-      %-  (trace 1 |.("{<duct>} moving channel to waiting state"))
-      ::
-      ?~  maybe-channel-id=(~(get by duct-to-key.channel-state.state) duct)
-        ((trace 0 |.("{<duct>} no channel to move")) `state)
-      ::
-      =/  maybe-session
-        (~(get by session.channel-state.state) u.maybe-channel-id)
-      ?~  maybe-session
-        ((trace 1 |.("{<maybe-session>} session doesn't exist")) `state)
+      %-  (trace 1 |.("{<duct>} moving channel {<channel-id>} to waiting"))
       ::
       =/  heartbeat-cancel=(list move)
-        ?~  heartbeat.u.maybe-session  ~
+        ?~  heartbeat.channel  ~
         :~  %^  cancel-heartbeat-move
-              u.maybe-channel-id
-            date.u.heartbeat.u.maybe-session
-          duct.u.heartbeat.u.maybe-session
+              channel-id
+            date.u.heartbeat.channel
+          duct.u.heartbeat.channel
         ==
       ::
       =/  expiration-time=@da  (add now channel-timeout)
       ::
       :-  %+  weld  heartbeat-cancel
-        [(set-timeout-move u.maybe-channel-id expiration-time) moves]
+        [(set-timeout-move channel-id expiration-time) moves]
       %_    state
           session.channel-state
-        %+  ~(jab by session.channel-state.state)  u.maybe-channel-id
-        |=  =channel
+        %+  ~(put by session.channel-state.state)  channel-id
         ::  if we are canceling a known channel, it should have a listener
         ::
         ?>  ?=([%| *] state.channel)
