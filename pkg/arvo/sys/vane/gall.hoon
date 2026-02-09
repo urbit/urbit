@@ -1579,6 +1579,7 @@
             agent-duct=duct
             agent-moves=(list move)
             agent-config=(list (each suss tang))
+            inflating=(set (each arvo-resource [=wire =dock]))  ::TODO  consider shared type
             =$>(%live yoke)
         ==
     ::
@@ -1744,18 +1745,32 @@
       ::  arvo-resources -> generate appropriate cleanup card
       ::
       %-  ap-move(ken.yoke ken, agent.yoke |+on-save:ap-agent-core)
-      %-  zing
-      %+  turn  ~(tap in resources.yoke)
-      |=  res=arvo-resource
-      %-  ap-from-internal
-      ^-  carp
-      =-  [%pass wire.res %arvo -]
-      ::  TODO ripped from ap-nuke -> helper
+      ;:  weld
+        ::  close outgoing subscriptions
+        ::
+        ^-  (list move)
+        %-  zing
+        %+  turn  ~(tap by boat.yoke)
+        |=  [[=wire =dock] ? =path]
+        %-  ap-from-internal
+        [%pass wire %agent dock %leave ~]
       ::
-      ?-  +.res
-        [%behn %wait *]   [%behn %rest time.res]
-        [%iris %request]  [%iris %cancel-request ~]
-        [%lick %spin *]   [%lick %shut name.res]
+        ::  suspend kernel resources
+        ::
+        ^-  (list move)
+        %-  zing
+        %+  turn  ~(tap in resources.yoke)
+        |=  res=arvo-resource
+        %-  ap-from-internal
+        ^-  carp
+        =-  [%pass wire.res %arvo -]
+        ::  TODO ripped from ap-nuke -> helper
+        ::
+        ?-  +.res
+          [%behn %wait *]   [%behn %rest time.res]
+          [%iris %request]  [%iris %cancel-request ~]
+          [%lick %spin *]   [%lick %shut name.res]
+        ==
       ==
     ::
     ++  ap-nuke
@@ -2242,11 +2257,27 @@
       ~/  %ap-reinstall
       |=  =agent
       ^+  ap-core
+      ::  sanity check, .inflating should only contain entries for the
+      ::  duration of this arm
+      ::
+      ?>  =(~ inflating)
+      =<  ~|  inflating=inflating
+          ?>(=(~ inflating) .)
+      ^+  ap-core
       ~>  %spin.[(crip "on-save/{<agent-name>}")]
       =/  old-state=vase
         ?:  ?=(%& -.agent.yoke)
           on-save:ap-agent-core
         p.agent.yoke
+      ::  mark all the resources as to-be-inflated
+      ::TODO  consider the %keen inflation (and its ordering) in this light
+      ::
+      =.  inflating
+        %-  %~  uni  in
+            ^+  inflating
+            (~(run in resources.yoke) (lead %&))
+        ^+  inflating
+        (~(run in ~(key by boat.yoke)) (lead %|))
       ::  re-start all of the agent's namespace read requests
       ::  (+ap-idle stopped them)
       ::
@@ -2257,15 +2288,42 @@
         |=  [=spar:ames wyz=(set wire)]
         ::TODO  .ken needs to have [secret=? spar:ames] key so we can do this correctly
         (turn ~(tap in wyz) |=(=wire [%pass wire %arvo %ames %keen secret=| spar]))
+      ::  we take a copy here because we want to only operate on resources
+      ::  that existed during +ap-idle, not ones created during +ap-install
+      ::
+      =/  og-boat       boat.yoke
+      =/  og-resources  resources.yoke
+      ::  load the agent back up
+      ::
       =^  error  ap-core
         (ap-install(agent.yoke &+agent) `old-state)
       ?^  error
         (mean >%load-failed< u.error)
+      ::  simulate kicks on the subscriptions that we closed for them
+      ::
+      =.  ap-core
+        %-  ~(rep by og-boat)
+        |=  [[key=[=wire =dock] ? =path] acc=_ap-core]
+        =.  ap-core  acc
+        =.  inflating  (~(del in inflating) |+key)
+        ::  if the sub was left by previous invocation, don't reinflate
+        ::
+        ?.  (~(has by boat.yoke) key)  ap-core
+        ::NOTE  could be simulating a kick for un-acked subscription
+        =:  boar.yoke  (~(del by boar.yoke) key)
+            boat.yoke  (~(del by boat.yoke) key)
+          ==
+        =^  tan  ap-core  (ap-ingest ~ |.((on-agent:ap-agent-core wire.key %kick ~)))
+        ?~(tan ap-core (ap-error %kick leaf/"take %kick failed (b)" u.tan))
       ::  reinflate arvo-resources
       ::
-      %-  ~(rep in resources.yoke)
+      %-  ~(rep in og-resources)
       |=  [res=arvo-resource acc=_ap-core]
       =.  ap-core  acc
+      =.  inflating  (~(del in inflating) &+res)
+      ::  if the resource was deleted by a previous invocation, don't reinflate
+      ::
+      ?.  (~(has in resources.yoke) res)  ap-core
       ?:  ?=([%iris %request] +.res)
         ::  we depend on +ap-generic-take to untrack the resource
         ::
@@ -2713,7 +2771,14 @@
         `ap-core
       ::
       =.  agent.yoke  &++.p.result
+      ::TODO  if we filter out "duplicate resource creation" cards here,
+      ::      then we don't have to account for them in +ap-handle-peers and co
+      ::      (and if we don't, we have to update handle-peers and co)
       =.  resources.yoke   (ap-handle-resources -.p.result)
+      =.  boat.yoke        (ap-handle-peers-tracking -.p.result)
+      =.  -.p.result       (skip -.p.result ap-redundant)
+      =^  caz=(list card:agent)  ap-core
+        (ap-handle-peers-transforms -.p.result)
       ::
       =^  fex  ap-core  (ap-handle-sky -.p.result)
       =/  moves         (zing (turn fex ap-from-internal))
@@ -2721,7 +2786,34 @@
       ::      formal %kick already present in the -.p.result cards
       ::      same for +ap-handle-peers, none of the transforms above add/remove watches or leaves
       =.  bitt.yoke     (ap-handle-kicks moves)
-      (ap-handle-peers moves)
+      [moves ap-core]
+    ::  +ap-redundant: true for side-effects redundant with deflation
+    ::
+    ::NOTE  we assume that a +ap-handle-resources call will delete the
+    ::      resource's tracking, which will prevent it from being reinflated
+    ::
+    ++  ap-redundant
+      |=  =card:agent
+      ^-  ?  ::  drop y/n
+      ?:  =(~ inflating)  |
+      =;  res=$@(~ (each arvo-resource [=wire =dock]))
+        ?~  res  |
+        (~(has in inflating) res)  ::  deletion already happened but inflation hasn't
+      ?+  card  ~
+          [%pass * %arvo *]
+        =*  task  +.q.card
+        ?+  +.q.card  ~
+          :: [%ames %yawn *]                 &+[p.card %ames %keen spar.task]
+          [%behn %rest *]                 &+[p.card %behn %wait time.task]
+          [%iris %cancel-request ~]       &+[p.card %iris %request]
+          [%lick %shut *]                 &+[p.card %lick %spin name.task]
+        ==
+      ::
+          [%pass * %agent *]
+        ?+  -.task.q.card  ~
+          %leave  |+[p.card [ship name]:q.card]
+        ==
+      ==
     ::  +ap-handle-resources: track resources created/used by the agent
     ::
     ++  ap-handle-resources
@@ -2732,6 +2824,7 @@
       =;  $@(~ [add=? res=_+:*arvo-resource])
         ?@  -  $(caz t.caz)
         ?:  add
+          ::TODO  prevent agent from creating the same resources twice
           $(caz t.caz, resources.yoke (~(put in resources.yoke) p.i.caz res))
         $(caz t.caz, resources.yoke (~(del in resources.yoke) p.i.caz res))
       =*  task  +.q.i.caz
@@ -2804,72 +2897,78 @@
       =/  quit-map=bitt
         (malt (turn quits |=(=duct [duct *[ship path]])))
       (~(dif by bitt.yoke) quit-map)
-    ::  +ap-handle-peers: handle new boat.watches
+    ::  +ap-handle-peers-tracking: update resource tracking .boat for subs
     ::
-    ++  ap-handle-peers
-      ~/  %ap-handle-peers
-      |=  moves=(list move)
-      ^-  [(list move) _ap-core]
-      =|  new-moves=(list move)
-      |-  ^-  [(list move) _ap-core]
-      ?~  moves
-        [(flop new-moves) ap-core]
-      =/  =move  i.moves
-      ?:  ?=([* %pass * %g %deal * * %leave *] move)
-        =/  =wire  p.move.move
-        ?>  ?=([%use @ @ %out @ @ *] wire)
-        =/  =dock           [q.p q]:q.move.move
-        =/  sys-wire=^wire  (scag 6 `^wire`wire)
-        =/  sub-wire=^wire  (slag 6 `^wire`wire)
-        ::
-        ?.  (~(has by boat.yoke) sub-wire dock)
-          %.  $(moves t.moves)
+    ::  VERY IMPORTANT that you call +ap-handle-peers-transform with
+    ::  the same cards after having called this (so that wires get
+    ::  transformed, and nonces incremented)
+    ::
+    ++  ap-handle-peers-tracking
+      |=  cards=(list card:agent)
+      ^+  boat.yoke
+      %+  roll  cards
+      |=  [=card:agent boat=_boat.yoke]
+      ?+  card  boat
+          [%pass * %agent * %leave *]
+        =/  =wire  p.card
+        =/  =dock  [ship name]:q.card
+        ::  ?.  (~(has by boat.yoke) wire dock)
+        ::    "missing subscription, got leave"
+        ~?  (~(has by boat.yoke) wire dock)  "missing subscription, got leave {<[wire dock]>}"
+        (~(del by boat.yoke) [wire dock])
+      ::
+          [%pass * %agent * ?(%watch %watch-as) *]
+        =/  =wire  p.card
+        =/  [=dock =task:agent:gall]  [[ship name] task]:q.card
+        ::  ?:  (~(has by boat.yoke) wire dock)
+        ::    "subscribe wire not unique"
+        ::    ap-error
+        %+  ~(put by boat.yoke)  [wire dock]
+        :-  acked=|
+        path=?+(-.task !! %watch path.task, %watch-as path.task)
+      ==
+    ::  +ap-handle-peers-transforms: add nonces to subs' wire and .boar
+    ::
+    ++  ap-handle-peers-transforms
+      |=  cards=(list card:agent)
+      ^-  [(list card:agent) _ap-core]
+      =|  new-cards=(list card:agent)
+      |-  ^-  [(list card:agent) _ap-core]
+      ?~  cards
+        [(flop new-cards) ap-core]
+      =/  =card:agent  i.cards
+      ?+  card  $(cards t.cards, new-cards [card new-cards])
+          [%pass * %agent * %leave *]
+        =/  =wire  p.card
+        =/  =dock  [ship name]:q.card
+        ?.  (~(has by boat.yoke) wire dock)
+          %.  $(cards t.cards)
           %^  trace  odd.veb.bug.state
           leaf/"missing subscription, got %leave"  ~
-        =/  nonce=@  (~(got by boar.yoke) sub-wire dock)
-        =.  p.move.move
-          %+  weld  sys-wire
-          (ap-nonce-wire sub-wire dock)
-        =:  boat.yoke  (~(del by boat.yoke) [sub-wire dock])
-            boar.yoke  (~(del by boar.yoke) [sub-wire dock])
-          ==
+        =/  nonce=@    (~(got by boar.yoke) wire dock)
+        =.  boar.yoke  (~(del by boar.yoke) [wire dock])
+        =.  p.card     (ap-nonce-wire wire dock)
         ::  if nonce = 0, this was a pre-nonce subscription so later
         ::  subscriptions need to start subscribing on the next nonce
         ::
         =?  sub-nonce.yoke  =(nonce 0)  +(sub-nonce.yoke)
-        $(moves t.moves, new-moves [move new-moves])
-      ?.  ?=([* %pass * %g %deal * * ?(%watch %watch-as) *] move)
-        $(moves t.moves, new-moves [move new-moves])
-      =/  =wire  p.move.move
-      ?>  ?=([%use @ @ %out @ @ *] wire)
-      =/  sys-wire=^wire  (scag 6 `^wire`wire)
-      =/  sub-wire=^wire  (slag 6 `^wire`wire)
-      =/  [=dock =deal]  [[q.p q] r]:q.move.move
+        $(cards t.cards, new-cards [card new-cards])
       ::
-      ?:  (~(has by boat.yoke) sub-wire dock)
-        =.  ap-core
-          =/  =tang
-            ~[leaf+"subscribe wire not unique" >agent-name< >sub-wire< >dock<]
-          =/  have  (~(got by boat.yoke) sub-wire dock)
-          %-  (slog >out=have< tang)
-          (ap-error %watch-not-unique tang)  ::  reentrant, maybe bad?
-        $(moves t.moves)
-      ::
-      ::NOTE  0-check guards against pre-release bug
-      =?  p.move.move  !=(0 sub-nonce.yoke)
-        (weld sys-wire [(scot %ud sub-nonce.yoke) sub-wire])
-      %_    $
-          moves            t.moves
-          new-moves       [move new-moves]
+          [%pass * %agent * ?(%watch %watch-as) *]
+        =/  =wire  p.card
+        =/  [=dock =task:agent:gall]  [[ship name] task]:q.card
+        ::  ?:  (~(has by boat.yoke) wire dock)
+        ::    "subscribe wire not unique"
+        ::    ap-error
+        ::NOTE  0-check guards against pre-release bug
+        =?  p.card  !=(0 sub-nonce.yoke)
+          [(scot %ud sub-nonce.yoke) wire]
+        %_    $
+          cards           t.cards
+          new-cards       [card new-cards]
           sub-nonce.yoke  +(sub-nonce.yoke)
-      ::
-          boat.yoke
-        %+  ~(put by boat.yoke)  [sub-wire dock]
-        :-  acked=|
-        path=?+(-.deal !! %watch path.deal, %watch-as path.deal)
-      ::
-          boar.yoke
-        (~(put by boar.yoke) [sub-wire dock] sub-nonce.yoke)
+          boar.yoke       (~(put by boar.yoke) [wire dock] sub-nonce.yoke)
+        ==
       ==
     --
   --

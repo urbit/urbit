@@ -95,7 +95,6 @@
   ++  on-load   |=(* [~ this])
   ++  on-watch  |=(* [~ this])
   ++  on-leave  |=(* [~ this])
-  ++  on-agent  |=(* [~ this])
   ++  on-fail   |=(* ~&(%mock-on-fail [~ this]))  ::TODO  echo the call outward?
   ++  on-peek   |=(* ~)
   ::
@@ -104,6 +103,10 @@
     ^-  (quip card:agent:gall _this)
     ?>  ?=(%test-card mark)
     [[!<(card:agent:gall vase)]~ this]
+  ::
+  ++  on-agent
+    |=  [=wire =sign:agent:gall]
+    [[%pass //echo %arvo %syscall `note-arvo`[%b %drip !>(+<)]]~ this]
   ::
   ++  on-arvo
     |=  [=wire =gift-user-v1:gall]
@@ -214,6 +217,13 @@
   ;<  e=_+:*$>(%live egg:gall)  bind:m  (get-live-egg dude)
   (ex-equal !>(resources.e) !>((~(gas in *(set arvo-resource:gall)) rez)))
 ::
+++  ex-boat
+  |=  [=dude:gall =boat:gall]
+  =/  m  (mare ,~)
+  ::NOTE  if only ;<  let us specify just a face...
+  ;<  e=_+:*$>(%live egg:gall)  bind:m  (get-live-egg dude)
+  (ex-equal !>(boat.e) !>(boat))
+::
 ++  ex-moves
   |=  [moz=(list move:gall) exes=(list $-(move:gall tang))]
   =/  m  (mare ,~)
@@ -253,18 +263,31 @@
   |=  [=wire gift=gift-user-v1:gall]
   (ex-echo !>(+<))
 ::
+++  ex-on-agent
+  |=  [=wire =sign:agent:gall]
+  (ex-echo !>(+<))
+::
 ::  setup
 ::
 ++  mock-card
   |=  =card:agent:gall
   (do-deal %mock %poke %test-card !>(card))
 ::
+++  a2k-wire
+  |=  [=dude:gall =wire]
+  =/  m  (mare ,^wire)
+  ;<  src=ship  bind:m  get-our  ::NOTE  !
+  (use-wire dude (scot %p src) wire)
+::
 ++  use-wire
   |=  [=dude:gall =wire]
   =/  m  (mare ,^wire)
-  ;<  o=ship  bind:m  get-our
   ;<  e=_+:*$>(%live egg:gall)  bind:m  (get-live-egg dude)
-  (pure:m %use [dude] [run-nonce:e] (scot %p o) wire)
+  (pure:m %use dude run-nonce:e wire)
+::
+++  a2a-wire
+  |=  [=dude:gall =dock:gall =wire]
+  (use-wire dude %out (scot %p p.dock) q.dock wire)
 ::
 ::  tests
 ::
@@ -274,7 +297,7 @@
   ;<  moz=(list move:gall)  bind:m
     (mock-card %pass /agent/wire %arvo %behn %wait ~2026.2.2)
   ;<  gall-wire=wire        bind:m
-    (use-wire %mock /[(crip ~(rend co %blob ~2026.2.2))]/agent/wire)
+    (a2k-wire %mock /[(crip ~(rend co %blob ~2026.2.2))]/agent/wire)
   ;<  ~  bind:m
     %+  ex-moves  moz
     :~  (ex-move default-duct %give %unto %poke-ack ~)
@@ -299,7 +322,7 @@
   ;<  moz=(list move:gall)  bind:m
     (mock-card %pass /agent/wire %arvo %behn %rest ~2026.2.2)
   ;<  gall-wire=wire        bind:m
-    (use-wire %mock /[(crip ~(rend co %blob ~2026.2.2))]/agent/wire)
+    (a2k-wire %mock /[(crip ~(rend co %blob ~2026.2.2))]/agent/wire)
   ;<  ~  bind:m
     %+  ex-moves  moz
     :~  (ex-move default-duct %give %unto %poke-ack ~)
@@ -313,7 +336,7 @@
   ;<  moz=(list move:gall)  bind:m
     (mock-card %pass /agent/wire %arvo %lick %spin /mysocket)
   ;<  gall-wire=wire        bind:m
-    (use-wire %mock //agent/wire)
+    (a2k-wire %mock //agent/wire)
   ;<  ~  bind:m
     %+  ex-moves  moz
     :~  (ex-move default-duct %give %unto %poke-ack ~)
@@ -330,7 +353,7 @@
   ::
   =/  =spar:ames  [~fun /g/x/~2222.2.2/dude/some/thing]
   ;<  gall-wire=wire  bind:m
-    (use-wire %mock //agent/wire)  ::TODO  different from +test-lick-socket
+    (a2k-wire %mock //agent/wire)  ::TODO  different from +test-lick-socket
   %+  (merge (list move:gall))
     :~  :-  'unencrypted keen'
         ;<  moz=(list move:gall)  bind:m
@@ -393,9 +416,9 @@
   ::  make sure we grab the wire while the nonce is still known!
   ::
   ;<  gall-wire=wire        bind:m
-    (use-wire %mock //agent/wire)
+    (a2k-wire %mock //agent/wire)
   ;<  gall-wire-b=wire        bind:m
-    (use-wire %mock /[(crip ~(rend co %blob ~2345.6.7))]/agent/wire)
+    (a2k-wire %mock /[(crip ~(rend co %blob ~2345.6.7))]/agent/wire)
   ;<  moz=(list move:gall)  bind:m
     (do-call ~ %nuke %mock)
   ;<  ~  bind:m
@@ -414,22 +437,27 @@
   ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %behn %wait ~2345.6.7)
   ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %iris %request *request:http *outbound-config:iris)
   ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %lick %spin /mysocket)
+  ;<  *  bind:m  (mock-card %pass /agent/wire %agent [~fun %bar] %watch /blah)
   ::  suspending the agent should "pause" all its resources.
   ::  we delete the resources, but remember them for revival.
   ::
   ;<  gall-wire=wire        bind:m
-    (use-wire %mock //agent/wire)
+    (a2k-wire %mock //agent/wire)
   ;<  gall-wire-b=wire        bind:m
-    (use-wire %mock /[(crip ~(rend co %blob ~2345.6.7))]/agent/wire)
+    (a2k-wire %mock /[(crip ~(rend co %blob ~2345.6.7))]/agent/wire)
+  ;<  gall-wire-a=wire      bind:m
+    (a2a-wire %mock [~fun %bar] /agent/wire)
   ;<  moz=(list move:gall)  bind:m
     (do-call ~ %idle %mock)
   ;<  ~  bind:m
     ::NOTE  moves sorted because otherwise dependent on set order
     %+  ex-moves  (sort moz aor)
-    :~  (ex-move ~[/sysduct] %pass gall-wire [%i %cancel-request ~])
+    :~  (ex-move ~[/sysduct] %pass gall-wire-a [%g %deal [~dev ~fun /gall/mock] %bar %leave ~])  ::TODO  deal constructor
+        (ex-move ~[/sysduct] %pass gall-wire [%i %cancel-request ~])
         (ex-move ~[/sysduct] %pass gall-wire [%l %shut [%mock /mysocket]])
         (ex-move ~[/sysduct] %pass gall-wire-b [%b %rest ~2345.6.7])
     ==
+  ::TODO  test that resources still tracked
   ;<  y=yoke:gall  bind:m  (get-yoke %mock)
   ?.  &(?=(%live -.y) ?=(%| -.agent.y))
     (fail:m 'agent not suspended' ~)
@@ -440,10 +468,219 @@
     %+  ex-moves  (sort moz aor)
     :~  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
         (ex-on-arvo /agent/wire [%iris %http-response %cancel ~])
+        (ex-on-agent /agent/wire %kick ~)
         (ex-move ~[/sysduct] %pass gall-wire [%l %spin [%mock /mysocket]])
         (ex-move ~[/sysduct] %pass gall-wire-b [%b %wait ~2345.6.7])
     ==
   (pure:m ~)
+::
+++  test-redundant-arvo-deflate-onload
+  ::  agent unsets timer during +on-load (during reinstall):
+  ::  gall must not emit the %rest, it already emitted that during suspend
+  ::
+  %-  eval-mare
+  ;<  *  bind:m  (do-load %mock mock-agent)
+  ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %behn %wait ~2345.6.7)
+  ;<  *  bind:m  (do-call ~ %idle %mock)
+  ::  reinstall agent that clears its timer on-load
+  ::
+  ;<  moz=(list move:gall)  bind:m
+    %+  do-load  %mock
+    ::TODO  dedupe with +mock-agent
+    ^-  agent:gall
+    |_  =bowl:gall
+    +*  this  .
+    ++  on-init   [~ this]
+    ++  on-save   !>(~)
+    ++  on-load
+      |=  *
+      [[%pass /agent/wire %arvo %behn %rest ~2345.6.7]~ this]
+    ::
+    ++  on-watch  |=(* [~ this])
+    ++  on-leave  |=(* [~ this])
+    ++  on-agent  |=(* [~ this])
+    ++  on-fail   |=(* ~&(%mock-on-fail [~ this]))  ::TODO  echo the call outward?
+    ++  on-peek   |=(* ~)
+    ::
+    ++  on-poke
+      |=  [=mark =vase]
+      ^-  (quip card:agent:gall _this)
+      ?>  ?=(%test-card mark)
+      [[!<(card:agent:gall vase)]~ this]
+    ::
+    ++  on-arvo
+      |=  [=wire =gift-user-v1:gall]
+      [[%pass //echo %arvo %syscall `note-arvo`[%b %drip !>(+<)]]~ this]
+    --
+  ::  expect timer to not be reinflated,
+  ::  and not to see a redundant %rest,
+  ::  and the resource to have been untracked.
+  ::
+  ;<  ~  bind:m
+    %+  ex-moves  moz
+    :~  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
+    ==
+  (ex-resources %mock ~)
+::
+++  test-redundant-arvo-deflate-onagent
+  ::  agent unsets timer during +on-agent (during reinstall):
+  ::  gall must not emit the %rest, it already emitted that during suspend
+  ::
+  %-  eval-mare
+  ;<  *  bind:m  (do-load %mock mock-agent)
+  ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %behn %wait ~2345.6.7)
+  ;<  *  bind:m  (mock-card %pass /agent/wire %agent [~fun %bar] %watch /blah)
+  ;<  *  bind:m  (do-call ~ %idle %mock)
+  ::  reinstall agent that clears its timer on-load
+  ::
+  ;<  moz=(list move:gall)  bind:m
+    %+  do-load  %mock
+    ::TODO  dedupe with +mock-agent
+    ^-  agent:gall
+    |_  =bowl:gall
+    +*  this  .
+    ++  on-init   [~ this]
+    ++  on-save   !>(~)
+    ++  on-load   |=(* [~ this])
+    ++  on-watch  |=(* [~ this])
+    ++  on-leave  |=(* [~ this])
+    ++  on-fail   |=(* ~&(%mock-on-fail [~ this]))  ::TODO  echo the call outward?
+    ++  on-peek   |=(* ~)
+    ::
+    ++  on-poke
+      |=  [=mark =vase]
+      ^-  (quip card:agent:gall _this)
+      ?>  ?=(%test-card mark)
+      [[!<(card:agent:gall vase)]~ this]
+    ::
+    ++  on-agent
+      |=  [=wire =sign:agent:gall]
+      :_  this
+      :~  [%pass //echo %arvo %syscall `note-arvo`[%b %drip !>(+<)]]
+          [%pass /agent/wire %arvo %behn %rest ~2345.6.7]
+      ==
+    ::
+    ++  on-arvo
+      |=  [=wire =gift-user-v1:gall]
+      [[%pass //echo %arvo %syscall `note-arvo`[%b %drip !>(+<)]]~ this]
+    --
+  ::  expect timer to not be reinflated,
+  ::  and not to see a redundant %rest,
+  ::  and the resource to have been untracked.
+  ::
+  ;<  ~  bind:m
+    %+  ex-moves  moz
+    :~  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
+        (ex-on-agent /agent/wire %kick ~)
+    ==
+  (ex-resources %mock ~)
+::
+++  test-redundant-watch-deflate-onload
+  ::  agent leaves a subscription during +on-load (during reinstall):
+  ::  gall must not emit %leave, it already emitted that during suspend
+  ::
+  %-  eval-mare
+  ;<  *  bind:m  (do-load %mock mock-agent)
+  ;<  *  bind:m  (mock-card %pass /agent/wire %agent [~fun %bar] %watch /blah)
+  ;<  *  bind:m  (do-call ~ %idle %mock)
+  ::  reinstall agent that clears its timer on-load
+  ::
+  ;<  moz=(list move:gall)  bind:m
+    %+  do-load  %mock
+    ::TODO  dedupe with +mock-agent
+    ^-  agent:gall
+    |_  =bowl:gall
+    +*  this  .
+    ++  on-init   [~ this]
+    ++  on-save   !>(~)
+    ++  on-load
+      |=  *
+      [[%pass /agent/wire %agent [~fun %bar] %leave ~]~ this]
+    ::
+    ++  on-watch  |=(* [~ this])
+    ++  on-leave  |=(* [~ this])
+    ++  on-fail   |=(* ~&(%mock-on-fail [~ this]))  ::TODO  echo the call outward?
+    ++  on-peek   |=(* ~)
+    ::
+    ++  on-poke
+      |=  [=mark =vase]
+      ^-  (quip card:agent:gall _this)
+      ?>  ?=(%test-card mark)
+      [[!<(card:agent:gall vase)]~ this]
+    ::
+    ++  on-agent
+      |=  [=wire =sign:agent:gall]
+      [[%pass //echo %arvo %syscall `note-arvo`[%b %drip !>(+<)]]~ this]
+    ::
+    ++  on-arvo
+      |=  [=wire =gift-user-v1:gall]
+      [[%pass //echo %arvo %syscall `note-arvo`[%b %drip !>(+<)]]~ this]
+    --
+  ::  expect +on-agent not to be called,
+  ::  and not to see a redundant %leave,
+  ::  and the resource to have been untracked.
+  ::
+  ;<  ~  bind:m
+    %+  ex-moves  moz
+    :~  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
+    ==
+  (ex-boat %mock ~)
+::
+++  test-redundant-watch-deflate-onagent
+  ::  agent leaves a subscription during +on-agent (during reinstall):
+  ::  gall must not emit %leave, it already emitted that during suspend
+  ::
+  %-  eval-mare
+  ;<  *  bind:m  (do-load %mock mock-agent)
+  ;<  *  bind:m  (mock-card %pass /agent/wire %agent [~fun %bar] %watch /blah)
+  ;<  *  bind:m  (mock-card %pass /agent/wire2 %agent [~fun %baz] %watch /blah)
+  ;<  *  bind:m  (do-call ~ %idle %mock)
+  ::  reinstall agent that clears its timer on-load
+  ::
+  ;<  moz=(list move:gall)  bind:m
+    %+  do-load  %mock
+    ::TODO  dedupe with +mock-agent
+    ^-  agent:gall
+    |_  =bowl:gall
+    +*  this  .
+    ++  on-init   [~ this]
+    ++  on-save   !>(~)
+    ++  on-load   |=(* [~ this])
+    ++  on-watch  |=(* [~ this])
+    ++  on-leave  |=(* [~ this])
+    ++  on-fail   |=(* ~&(%mock-on-fail [~ this]))  ::TODO  echo the call outward?
+    ++  on-peek   |=(* ~)
+    ::
+    ++  on-poke
+      |=  [=mark =vase]
+      ^-  (quip card:agent:gall _this)
+      ?>  ?=(%test-card mark)
+      [[!<(card:agent:gall vase)]~ this]
+    ::
+    ++  on-agent
+      |=  [=wire =sign:agent:gall]
+      :_  this
+      :~  [%pass //echo %arvo %syscall `note-arvo`[%b %drip !>(+<)]]
+          [%pass /agent/wire2 %agent [~fun %baz] %leave ~]  ::NOTE  assumes order!
+      ==
+    ::
+    ++  on-arvo
+      |=  [=wire =gift-user-v1:gall]
+      [[%pass //echo %arvo %syscall `note-arvo`[%b %drip !>(+<)]]~ this]
+    --
+  ::  expect +on-agent not to be called,
+  ::  and not to see a redundant %leave,
+  ::  and the resource to have been untracked.
+  ::
+  ;<  ~  bind:m
+    %+  ex-moves  moz
+    :~  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
+        (ex-on-agent /agent/wire %kick ~)  ::NOTE  assumes order!
+    ==
+  (ex-boat %mock ~)
+::
+::TODO  test duplicate resource creation for failure
+::TODO  same during reinstall/reload
 ::
 ::TODO  test keen wire consistent between %keen, %keen w/ secret, reinstall
 ::TODO  test namespace revision nrs across nukes
