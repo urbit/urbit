@@ -2011,21 +2011,6 @@
           [%alien ovni-state]
       ==
     ::
-    +$  peer-state-25
-      $:  azimuth-state-25
-          route=(unit [direct=? =lane])  ::  XX (list)
-          =qos
-          =ossuary
-          snd=(map bone message-pump-state)
-          rcv=(map bone message-sink-state)
-          nax=(set [=bone =message-num])
-          closing=(set bone)
-          corked=(set bone)
-          keens=(map path keen-state)
-          =chain
-          tip=(jug =user=path [duct =ames=path])
-      ==
-    ::
     +$  fren-state-25
       $:  azimuth-state-29
           lane=(unit [hop=@ =lane:pact])
@@ -3266,7 +3251,7 @@
             moz
           =/  ev-core
             %.  [~[//cork-peek] ship +.per-sat]
-            %*(ev-abed ev:mesa:adult-core ames-state old-30)
+            %*(ev-abed ev:(mesa now eny rof):adult-core ames-state old-30)
           %-  ~(rep by pit.per-sat)
           |=  [[=path req=request-state] m=_moz]
           ?.  ?=(^ pay.req)  m
@@ -3738,7 +3723,7 @@
                   -
                 %=  +<.c
                   pass     [ded:ex:(com:nu:cric:crypto pass.+<.c) pass.+<.c]
-                  sponsor  [sponsor=sponsor fief=~]
+                  sponsor  [sponsor=sponsor.+<.c fief=~]
                 ==
               ==
             =/  mesa-core
@@ -3776,17 +3761,6 @@
         ^-  axle-26-27
         ~>  %slog.0^leaf/"ames: migrating from state %25 to %26"
         %=    old
-            priv
-          =/  cic  (nol:nu:cric:crypto priv.old) 
-          [saf:ex:cic priv.old pub:ex:cic]
-        ::
-            peers
-          %-  ~(run by peers.old)
-          |=  p=ship-state-25
-          ^-  ship-state-26
-          ?.  ?=(%known -.p)  p
-          p(+< (azimuth-state-25-to-26 +<.p))
-        ::
             chums
           %-  ~(run by chums.old)
           |=  c=chum-state-25
@@ -4754,10 +4728,10 @@
                   ^=  sponsor  `(^^sein:title rof /ames our now sndr.shot)
                   ~
               ==
-            =+  sy-core=~(. sy:mesa duct)
+            =+  mesa-core=(mesa now eny rof)
             =^  publ-moves  ames-state
               =<  sy-abet
-              (~(sy-publ sy:mesa duct) / [%full (my [sndr.shot point]~)])
+              (~(sy-publ sy:mesa-core duct) / [%full (my [sndr.shot point]~)])
             (emil publ-moves)
           ::  manually add the lane to the peer state
           ::
