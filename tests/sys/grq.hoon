@@ -13,6 +13,8 @@
   :: =^  *  ames.bud
   ::  (ames-call:v ames.bud ~[/none] [%spew ~[%msg %snd %rcv %odd %rot]] *roof)
   ::
+  =^  *  ames.nec  (ames-call:v ames.nec ~[/none] [%load %ames] *roof)
+  =^  *  ames.bud  (ames-call:v ames.bud ~[/none] [%load %ames] *roof)
   ::  poke %sub to tell it to subscribe
   ~?  >  dbug  'poke %sub to tell it to subscribe'
   =/  =task:gall  [%deal [~nec ~nec /] %sub %poke watch+!>(~bud)]
@@ -35,6 +37,7 @@
       :-  ~[/use/sub/0w1.d6Isf/out/~bud/pub/1/sub-foo/~bud /init]
       [%deal [~nec ~bud /] %pub %watch /foo]
       :~  :-  ~[/init]  [%pass /sys/era %j %public-keys (sy ~bud ~)]
+          :-  ~[/init]  [%pass /sys/flu/~bud %a %plea ~bud %g /gf [%0 ~]]
           :-  ~[/use/sub/0w1.d6Isf/out/~bud/pub/1/sub-foo/~bud /init]
           [%pass /sys/way/~bud/pub %a %plea ~bud %g /ge/pub [%0 %s /foo]]
       ==

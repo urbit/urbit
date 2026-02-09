@@ -1462,8 +1462,10 @@
         [~ ~]
       =/  sec  (~(got by jaw.own.pki.lex) u.lyf)
       =/  cic  (nol:nu:cric:crypto sec)
-      =/  sig  %+  sign-raw:ed:crypto  (shaf %self (sham [u.who 1 pub:ex:cic]))
-               [sgn.pub sgn.sek]:saf:ex:cic
+      =/  sig
+        %+  sign-raw:ed:crypto
+          (shaf %self (sham [u.who 1 pub:ex:cic]))
+        [sgn.pub sgn.sek]:saf:ex:cic
       :^  ~  ~  %noun
       !>  [1 pub:ex:cic `sig]
     ::

@@ -17,7 +17,7 @@
 ;<  ~  bind:m  (send-hi ~bud ~torsyx-linnup-torsyx)
 ;<  ~  bind:m  (send-hi ~torsyx-linnup-torsyx ~marbud)
 ;<  ~  bind:m  (init-ship ~dev |)
-::TODO  these hi's never come through!
+::  XX  these hi's never come through! (not true anymore)
 ;<  ~  bind:m  (send-hi ~torsyx-linnup-torsyx ~dev)
 ;<  ~  bind:m  (send-hi ~dev ~torsyx-linnup-torsyx)
 ;<  ~  bind:m  end

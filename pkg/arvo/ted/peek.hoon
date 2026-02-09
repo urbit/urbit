@@ -13,14 +13,7 @@
     %chum  (chum:strandio /peek spar)
     %shut  (keen:strandio /peek spar `+.sec)
   ==
-;<  [=spar:ames roar=(unit roar:ames)]  bind:m  (take-tune:strandio /peek)
-:: ;<  =sage:mess:ames  bind:m  (take-sage:strandio /peek)  :: restore in 409k
-
-=/  =sage:mess:ames
-  :-  spar
-  ?~  roar  ~
-  ?~  q.dat.u.roar  ~
-  u.q.dat.u.roar
+;<  =sage:mess:ames  bind:m  (take-sage:strandio /peek)  :: restored in 409k
 ?~  q.sage
   (pure:m !>([leaf+"... empty response ..." ~]))
 ::
