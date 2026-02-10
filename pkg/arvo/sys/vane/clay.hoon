@@ -1206,7 +1206,7 @@
     ++  gain-leak
       |=  [=mist next=$-(state [soak state])]
       ^-  [soak state]
-      =^  top=(set leak)  stack.nub  stack.nub
+      =^  top=(set leak)  stack.nub  ?>  ?=(^ stack.nub)  stack.nub
       =/  =leak  [(mist-to-pour mist) top]
       =.  cycle.nub  (~(del in cycle.nub) mist)
       =?  stack.nub  ?=(^ stack.nub)

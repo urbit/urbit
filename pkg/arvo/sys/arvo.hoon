@@ -373,8 +373,8 @@
   ++  sane
     |=  kel=wynn
     ^-  ?
-    ?:  =(~ kel)  &
-    =^  las=weft  kel  kel
+    ?:  =(~ kel)  &  ::XX  TMI
+    =^  las=weft  kel  ?>  ?=(^ kel)  kel
     |-  ^-  ?
     ?~  kel  &
     ?&  (gte num.las num.i.kel)
@@ -1275,7 +1275,7 @@
         loop(run t.run)
       =.  dud  ~
       =.  gem  p.i.run
-      =^  mov=move  q.i.run  q.i.run
+      =^  mov=move  q.i.run  ?>  ?=(^ q.i.run)  q.i.run
       loop:(step mov)
     ::  +step: advance the loop one step by routing a move
     ::
@@ -1470,7 +1470,7 @@
       ++  gest
         |=  =ovum
         ^-  $>(%pass ball)
-        =^  way=term  wire.ovum  wire.ovum
+        =^  way=term  wire.ovum  ?>  ?=(^ wire.ovum)  wire.ovum
         ::
         ::  %$: default, routed to arvo-proper as trivial vase
         ::  @:  route to vane as $hobo
