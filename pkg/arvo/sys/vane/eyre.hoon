@@ -36,12 +36,19 @@
       [%gall gift:gall]
       [%clay gift:clay]
   ==
-::  +destructed-request: request and eyre session data
+::  +destructured-request: request and eyre session data
 ::
-+$  destructed-request
++$  sessioned-request
   $:  request:http
       authenticated=?
-      session=(unit [session-id=@uv =identity])
+      session=[session-id=@uv =identity]
+  ==
+::
++$  destructured-request
+  $@  sessioned-request
+  $:  request:http
+      authenticated=?
+      session=$@(~ [session-id=@uv =identity])
   ==
 --
 ::  more structures
@@ -806,9 +813,9 @@
       ?@  session  |
       ?=(%ours -.identity.session)
     ::
-    =/  =destructed-request
+    =/  =destructured-request
       :+  request  authenticated
-      ?@(session ~ `[suv.session identity.session])
+      ?@(session ~ session)
     ::
     =/  [=action suburl=@t]  (get-action-for-binding host url.request)
     ::
@@ -819,7 +826,7 @@
       ::  and make sure they expire it
       ::
       =/  bod=octs  (as-octs:mimes:html 'bad session auth')
-      %+  handle-response  destructed-request
+      %+  handle-response  destructured-request
       :*  %start
           :-  401
           ~['set-cookie'^(session-cookie-string:authentication session ~)]
@@ -857,7 +864,7 @@
               '/'
             url.request
         ==
-      %+  handle-response  destructed-request
+      %+  handle-response  destructured-request
       :*  %start
           :-  status-code=301
           headers=['location' location]~
@@ -879,7 +886,7 @@
     ::  handle it synchronously
     ::
     ?:  &(?=(^ origin) cors-approved ?=(%'OPTIONS' method.request))
-      %+  handle-response  destructed-request
+      %+  handle-response  destructured-request
       =;  =header-list:http
         [%start [204 header-list] ~ &]
       ::  allow the method and headers that were asked for,
@@ -903,17 +910,17 @@
     ::    (handle-http-scry authenticated p request)
     ::
     ?:  =('/_~_/' (end [3 5] url.request))
-      (handle-http-scry destructed-request)
+      (handle-http-scry destructured-request)
     ::  handle requests to the cache, if a non-empty entry exists
     ::
     =/  cached=(unit [aeon=@ud val=(unit cache-entry)])
       (~(get by cache.state) url.request)
     ?:  &(?=([~ @ ^] cached) ?=(%'GET' method.request))
       %+  handle-cache-req
-        destructed-request
+        destructured-request
       u.val.u.cached
     ::
-    =*  error  (error-response 401 destructed-request "bad session auth")
+    =*  error  (error-response 401 destructured-request "bad session auth")
     ::
     ?-    -.action
         %gen
@@ -935,7 +942,7 @@
       ?:  ?=(%2 -.res)
         =+  connection=(~(got by connections.state) duct)
         %:  return-static-data-on-duct  
-            destructed-request  500  'text/html'
+            destructured-request  500  'text/html'
             %:  internal-server-error
                 authenticated.inbound-request.connection
                 url.request.inbound-request.connection
@@ -946,7 +953,7 @@
       ?:  ?=(%1 -.res)
         =+  connection=(~(got by connections.state) duct)
         %:  return-static-data-on-duct  
-            destructed-request  500  'text/html'
+            destructured-request  500  'text/html'
             %:  internal-server-error
                 authenticated.inbound-request.connection
                 url.request.inbound-request.connection
@@ -956,7 +963,7 @@
         ==
       =/  result  ;;(simple-payload:http +.p.res)
       ::
-      %+  handle-response  destructed-request
+      %+  handle-response  destructured-request
       ^-  http-event:http
       :*  %start
           response-header.result
@@ -977,10 +984,10 @@
       [(weld som moz) state]
       ::
         %authentication
-      (handle-request:authentication secure host address destructed-request)
+      (handle-request:authentication secure host address destructured-request)
     ::
         %eauth
-      (on-request:eauth:authentication secure address destructed-request)
+      (on-request:eauth:authentication secure address destructured-request)
     ::
         %logout
       =/  connection=(unit outstanding-connection)
@@ -989,36 +996,36 @@
       (handle-logout:authentication request connection)
     ::
         %channel
-      ?:  ?=(@ session.destructed-request)  error
-      (handle-request:by-channel address destructed-request)
+      ?~  session.destructured-request  error
+      (handle-request:by-channel address destructured-request)
     ::
         %scry
-      (handle-scry address destructed-request(url suburl))
+      (handle-scry address destructured-request(url suburl))
     ::
         %name
-      ?:  ?=(@ session.destructed-request)  error
-      (handle-name destructed-request)
+      ?~  session.destructured-request  error
+      (handle-name destructured-request)
     ::
         %host
       %-  return-static-data-on-duct  
-      [destructed-request 200 'text/plain' (as-octs:mimes:html (scot %p our))]
+      [destructured-request 200 'text/plain' (as-octs:mimes:html (scot %p our))]
     ::
         %ip
-      (handle-ip address destructed-request)
+      (handle-ip address destructured-request)
     ::
         %boot
-      (handle-boot destructed-request)
+      (handle-boot destructured-request)
     ::
         %sponsor
-      (handle-sponsor destructed-request)
+      (handle-sponsor destructured-request)
     ::
         %four-oh-four
-      (error-response 404 destructed-request ~)
+      (error-response 404 destructured-request ~)
     ==
   ::  +handle-ip: respond with the requester's ip
   ::
   ++  handle-ip
-    |=  [=address request=destructed-request]
+    |=  [=address request=destructured-request]
     ^-  (quip move server-state)
     ?.  =(%'GET' method.request)
       (error-response 405 +<+ "may only GET ip")
@@ -1046,7 +1053,7 @@
     $(ship next)
   ::
   ++  handle-sponsor
-    |=  request=destructed-request
+    |=  request=destructured-request
     ^-  (quip move server-state)
     =/  crumbs  q:(rash url.request apat:de-purl:html)
     =*  error
@@ -1074,7 +1081,7 @@
   ::  - Bone was not found under peer (assuming bone was provided)
   ::
   ++  handle-boot
-    |=  request=destructed-request
+    |=  request=destructured-request
     ^-  (quip move server-state)
     ?.  =(%'GET' method.request)
       (error-response 405 +< "may only GET boot data")
@@ -1117,11 +1124,11 @@
   ::  +handle-name: respond with the requester's @p
   ::
   ++  handle-name
-    |=  request=destructed-request
+    |=  request=sessioned-request
     ^-  (quip move server-state)
     ?.  =(%'GET' method.request)
       (error-response 405 request "may only GET name")
-    =/  =identity  identity:(need session.request)
+    =+  identity=identity.session.request
     %:  return-static-data-on-duct
       request  200  'text/plain'
       =/  nom=@p
@@ -1131,7 +1138,7 @@
   ::  +handle-http-scry: respond with scry result
   ::
   ++  handle-http-scry
-    |=  request=destructed-request
+    |=  request=destructured-request
     |^  ^-  (quip move server-state)
     ?.  authenticated.request
       (error-response 403 request ~)
@@ -1164,7 +1171,7 @@
   ::  +handle-cache-req: respond with cached value, 404 or 500
   ::
   ++  handle-cache-req
-    |=  [request=destructed-request entry=cache-entry]
+    |=  [request=destructured-request entry=cache-entry]
     ^-  (quip move server-state)
     ?:  &(auth.entry !authenticated.request)
       (error-response 403 request ~)
@@ -1181,7 +1188,7 @@
   ::  +handle-scry: respond with scry result, 404 or 500
   ::
   ++  handle-scry
-    |=  [=address request=destructed-request]
+    |=  [=address request=destructured-request]
     |^  ^-  (quip move server-state)
     ?.  authenticated.request
       (error-response 403 request ~)
@@ -1296,7 +1303,7 @@
     ==
   ::
   ++  error-response 
-  |=  [status=@ud request=destructed-request =tape]
+  |=  [status=@ud request=destructured-request =tape]
   ^-  (quip move server-state)
   %:  return-static-data-on-duct  request  status  'text/html' 
     (error-page status authenticated.request url.request tape)
@@ -1318,7 +1325,7 @@
   ::  +return-static-data-on-duct: returns one piece of data all at once
   ::
   ++  return-static-data-on-duct
-    |=  [request=destructed-request code=@ content-type=@t data=octs]
+    |=  [request=destructured-request code=@ content-type=@t data=octs]
     ^-  [(list move) server-state]
     ::
     %+  handle-response  request
@@ -1340,11 +1347,11 @@
     ::  +handle-request: handles an http request for the login page
     ::
     ++  handle-request
-      |=  [secure=? host=(unit @t) =address request=destructed-request]
+      |=  [secure=? host=(unit @t) =address request=destructured-request]
       ^-  [(list move) server-state]
-      =,  request
       =/  identity=(unit identity)
-        ?~(session ~ `identity:(need session))
+        ?~  session.request  ~  `identity.session.request
+      =,  request
       ::  parse the arguments out of request uri
       ::
       =+  request-line=(parse-request-line url)
@@ -1403,8 +1410,8 @@
       ::
       ::
       =^  moz  state
-        ?~  session  `state
-        (close-session session-id:(need session) |)
+        ?~  session.request  `state
+        (close-session session-id.session.request |)
       ::
       ::  initialize the new session
       ::
@@ -1435,7 +1442,7 @@
       ::      +handle-response does that for us.
       ::
       %+  handle-response
-        request(session `[session.fex identity.fex])
+        request(session [session.fex identity.fex])
       =/  bod=octs
         (as-octs:mimes:html (scot %uv session.fex))
       ?~  redirect
@@ -1462,7 +1469,7 @@
       =*  connection          u.u-connection
       =,  connection
       =*  authenticated       ?=(%ours -.identity)
-      =*  destructed-request  [request authenticated `[session-id identity]]
+      =*  sessioned-request  [request authenticated [session-id identity]]
       ::  read options from the body
       ::  all: log out all sessions with this identity?
       ::  sid: which session do we log out? (defaults to requester's)
@@ -1485,7 +1492,7 @@
         ?.  authenticated  ~
         (biff (get-header:http 'host' arg) (cury slaw %p))
       ?~  sid
-        (handle-response destructed-request response)
+        (handle-response sessioned-request response)
       ::  if this is an eauth remote logout, send the %shut
       ::
       =*  auth  auth.state
@@ -1506,7 +1513,7 @@
       ::  close the session as requested, then send the response
       ::
       =^  moz1  state  (close-session u.sid all)
-      =^  moz2  state  (handle-response destructed-request response)
+      =^  moz2  state  (handle-response sessioned-request response)
       [[give-session-tokens (weld moz1 moz2)] state]
     ::  +session-id-from-request: attempt to find a session token
     ::
@@ -1797,7 +1804,7 @@
         ::  +cancel: the client aborted the eauth attempt, so clean it up
         ::
         ++  cancel
-          |=  [nonce=@uv last=@t request=destructed-request]
+          |=  [nonce=@uv last=@t request=destructured-request]
           ^-  [(list move) server-state]
           ::  if the eauth attempt doesn't exist, or it was already completed,
           ::  we cannot cancel it
@@ -1842,7 +1849,7 @@
         ::    gives the http response on the current duct
         ::
         ++  finalize
-          |=  [=plea=^duct nonce=@uv =ship last=@t request=destructed-request]
+          |=  [=plea=^duct nonce=@uv =ship last=@t request=destructured-request]
           ^-  [(list move) server-state]
           %-  (trace 2 |.("eauth: finalizing login for {(scow %p ship)}"))
           ::  clean up the session they're changing out from,
@@ -1853,7 +1860,7 @@
           ::
           =^  moz1  state
             ?~  session.request  [~ state]
-            (close-session session-id.u.session.request |)
+            (close-session session-id.session.request |)
           =^  [sid=@uv * moz2=(list move)]  state
             (start-session %eauth ship)
           =.  visitors.auth
@@ -2112,10 +2119,10 @@
       ::  +on-request: http request to the /~/eauth endpoint
       ::
       ++  on-request
-        |=  [secure=? =address request=destructed-request]
+        |=  [secure=? =address request=destructured-request]
         ^-  [(list move) server-state]
         =/  identity=(unit identity)
-          ?~(session.request ~ `identity.u.session.request)
+          ?~  session.request  ~  `identity.session.request
         ::  we may need the requester to log in before proceeding
         ::
         =*  login
@@ -2189,7 +2196,7 @@
         ?.  ?=(%'POST' method.request)
           %-  return-static-data-on-duct
           [request 405 'text/html' (eauth-error-page ~)]
-        ?.  &(?=(^ session.request) ?=(%ours -.identity.u.session.request))  login
+        ?.  &(?=(^ session.request) ?=(%ours -.identity.session.request))  login
         ::  POST requests are always submissions of the confirmation page
         ::
         =/  args=(map @t @t)
@@ -2206,7 +2213,7 @@
         =/  connection=outstanding-connection
           :*  [%eauth ~]
             [authenticated.request secure address -.request]
-            (need session.request)
+            session.request
             ~  0
           ==
         =.  connections.state
@@ -2239,7 +2246,7 @@
     ::  +handle-request: handles an http request for the subscription system
     ::
     ++  handle-request
-      |=  [=address request=destructed-request]
+      |=  [=address request=sessioned-request]
       ^-  [(list move) server-state]
       ::  parse out the path key the subscription is on
       ::
@@ -2371,8 +2378,9 @@
     ::    the client in text/event-stream format.
     ::
     ++  on-get-request
-      |=  [channel-id=@t request=destructed-request]
+      |=  [channel-id=@t request=sessioned-request]
       ^-  [(list move) server-state]
+      =,  session.request
       ::  if the channel doesn't exist, we cannot serve it.
       ::  this 404 also lets clients know if their channel was reaped since
       ::  they last connected to it.
@@ -2396,7 +2404,6 @@
         ::
         ::  find the channel creator's identity, make sure it matches
         ::
-        =/  =identity  identity:(need session.request)
         ?.  =(identity identity.channel)
           =^  mos  state
             (error-response 403 request ~)
@@ -2488,8 +2495,7 @@
       ::  invalid case handled in +request arm
       ::
       =.  sessions.auth.state
-        %+  ~(jab by sessions.auth.state)
-          session-id:(need session.request)
+        %+  ~(jab by sessions.auth.state)  session-id
         |=  =session
         session(channels (~(put in channels.session) channel-id))
       ::  initialize sse heartbeat
@@ -2533,9 +2539,9 @@
     ::    this request to contain an empty list of commands.
     ::
     ++  on-put-request
-      |=  [channel-id=@t request=destructed-request]
+      |=  [channel-id=@t request=sessioned-request]
       ^-  [(list move) server-state]
-      =/  =identity  identity:(need session.request)
+      =+  identity=identity.session.request
       ::  if the channel already exists, and is not of this identity, 403
       ::
       ::    the creation case happens in the +update-timeout-timer-for below
@@ -3088,7 +3094,7 @@
   ::    assign headers as needed and refresh session if provided.
   ::
   ++  handle-response
-    |=  [request=destructed-request =http-event:http]
+    |=  [request=destructured-request =http-event:http]
     ^-  [(list move) server-state]
     ?>  ?=(%start -.http-event)
     =.  response-header.http-event
@@ -3100,7 +3106,7 @@
     =^  response-header  state
       %+  refresh-session
         response-header.http-event
-      session-id.u.session.request
+      session-id.session.request
     =.  response-header.http-event  response-header
     pass-response
   ::  +handle-response-async: send an async response to earth
