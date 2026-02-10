@@ -335,7 +335,7 @@
   ::
   ++  on-init
     =/  =binding:eyre
-      [~ /'.well-known'/acme-challenge]
+      /'.well-known'/acme-challenge
     =/  =generator:eyre
       [q.byk.bowl /gen/acme/domain-validation/hoon ~]
     =/  =card

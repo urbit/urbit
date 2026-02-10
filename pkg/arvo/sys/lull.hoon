@@ -3354,13 +3354,7 @@
   ::    what happens if there are two different actions for [~ /]?
   ::
   +$  binding
-    $:  ::  site: the site to match.
-        ::
-        ::    A ~ will match the Urbit's identity site (your.urbit.org). Any
-        ::    other value will match a domain literal.
-        ::
-        site=(unit @t)
-        ::  path: matches this prefix path
+    $:  ::  path: matches this prefix path
         ::
         ::    /~myapp will match /~myapp or /~myapp/longer/path
         ::

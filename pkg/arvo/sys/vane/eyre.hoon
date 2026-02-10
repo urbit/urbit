@@ -752,23 +752,6 @@
           ~
     ==
   ==
-::  +host-matches: %.y if the site :binding should be used to handle :host
-::
-++  host-matches
-  |=  [binding=(unit @t) host=(unit @t)]
-  ^-  ?
-  ::  if the binding allows for matching anything, match
-  ::
-  ?~  binding
-    %.y
-  ::  if the host is ~, that means we're trying to bind nothing to a real
-  ::  binding. fail.
-  ::
-  ?~  host
-    %.n
-  ::  otherwise, do a straight comparison
-  ::
-  =(u.binding u.host)
 ::  +find-suffix: returns [~ /tail] if :full is (weld :prefix /tail)
 ::
 ++  find-suffix
@@ -931,7 +914,7 @@
     ::
     =/  pathowner=(unit desk)
       =/  [=action @t]
-        (get-action-for-binding host url.request)
+        (get-action-for-binding url.request)
       ?+  -.action  ~
         %gen  `desk.generator.action
       ::
@@ -982,7 +965,7 @@
       ::  in the ip case, always resolve the route
       ::
       ?:  ?=(%| -.target)
-        (get-action-for-binding host url.request)
+        (get-action-for-binding url.request)
       ::  if there is no pathowner (aka the pathowner is eyre)
       ::  then we _always resolve the route_,
       ::  because eyre handles the request itself.
@@ -990,7 +973,7 @@
       ?~  pathowner
         ::NOTE  per .pathowner implementation, this will always be an
         ::      "eyre endpoint", never %app or %gen
-        (get-action-for-binding host url.request)
+        (get-action-for-binding url.request)
       ::NOTE  should be handled directly above this
       ?~  desk.p.target  ~|(%eyre-confused-branching !!)
       ::  if the subdomain points to a desk that does not own the request path,
@@ -1003,7 +986,7 @@
       ::  maps to a desk that owns the request path, resolve to the configured
       ::  binding.
       ::
-      (get-action-for-binding host url.request)
+      (get-action-for-binding url.request)
     ::
     ::TODO  we might want to mint new identities only for requests that end
     ::      up going into userspace, not the ones that get handled by eyre.
@@ -3822,43 +3805,8 @@
   ::  +get-action-for-binding: finds an action for an incoming web request
   ::
   ++  get-action-for-binding
-    |=  [raw-host=(unit @t) url=@t]
+    |=  url=@t
     ^-  [=action suburl=@t]
-    ::  process :raw-host
-    ::
-    ::    If we are missing a 'Host:' header, if that header is a raw IP
-    ::    address, or if the 'Host:' header refers to [our].urbit.org, we want
-    ::    to return ~ which means we're unidentified and will match against any
-    ::    wildcard matching.
-    ::
-    ::    Otherwise, return the site given.
-    ::
-    =/  host=(unit @t)
-      ?~  raw-host
-        ~
-      ::  Parse the raw-host so that we can ignore ports, usernames, etc.
-      ::
-      =+  parsed=(rush u.raw-host simplified-url-parser)
-      ?~  parsed
-        ~
-      ::  if the url is a raw IP, assume default site.
-      ::
-      ?:  ?=([%ip *] -.u.parsed)
-        ~
-      ::  if the url is "localhost", assume default site.
-      ::
-      ?:  =([%site 'localhost'] -.u.parsed)
-        ~
-      ::  render our as a tape, and cut off the sig in front.
-      ::
-      =/  with-sig=tape  (scow %p our)
-      ?>  ?=(^ with-sig)
-      ?:  =(u.raw-host (crip t.with-sig))
-        ::  [our].urbit.org is the default site
-        ::
-        ~
-      ::
-      raw-host
     ::  url is the raw thing passed over the 'Request-Line'.
     ::
     ::    todo: this is really input validation, and we should return a 500 to
@@ -3875,8 +3823,6 @@
     ?~  bindings
       [[%four-oh-four ~] url]
     ::
-    ?.  (host-matches site.binding.i.bindings raw-host)
-      $(bindings t.bindings)
     ?~  suffix=(find-suffix path.binding.i.bindings parsed-url)
       $(bindings t.bindings)
     ::
@@ -3992,7 +3938,7 @@
   =*  bid  binding.i.bindings
   ::  replace already bound paths
   ::
-  ?:  =([site path]:bid [site path]:binding.new)
+  ?:  =(path.bid path.binding.new)
     ~>  %slog.[0 leaf+"eyre: replacing existing binding at {<`path`path.bid>}"]
     [new t.bindings]
   ::  if new comes before bid, prepend it.
@@ -4001,9 +3947,7 @@
   =;  new-before-bid=?
     ?:  new-before-bid  [new bindings]
     [i.bindings $(bindings t.bindings)]
-  ?:  =(site.binding.new site.bid)
-    (aor path.bid path.binding.new)
-  (aor (fall site.bid '') (fall site.binding.new ''))
+  (aor path.bid path.binding.new)
 ::
 ++  channel-wire
   |=  [channel-id=@t request-id=@ud]
@@ -4169,18 +4113,18 @@
     =.  bindings.server-state.ax
       =-  (roll - insert-binding)
       ^-  (list [binding ^duct action])
-      :~  [[~ /~/login] duct [%authentication ~]]
-          [[~ /~/eauth] duct [%eauth ~]]
-          [[~ /~/auth] duct [%auth ~]]
-          [[~ /~/logout] duct [%logout ~]]
-          [[~ /~/channel] duct [%channel ~]]
-          [[~ /~/scry] duct [%scry ~]]
-          [[~ /~/name] duct [%name ~]]
-          [[~ /~/host] duct [%host ~]]
-          [[~ /~/ip] duct [%ip ~]]
-          [[~ /~/boot] duct [%boot ~]]
-          [[~ /~/sponsor] duct [%sponsor ~]]
-          [[~ /~/xxauth] duct [%xxauth ~]]
+      :~  [/~/login duct [%authentication ~]]
+          [/~/eauth duct [%eauth ~]]
+          [/~/auth duct [%auth ~]]
+          [/~/logout duct [%logout ~]]
+          [/~/channel duct [%channel ~]]
+          [/~/scry duct [%scry ~]]
+          [/~/name duct [%name ~]]
+          [/~/host duct [%host ~]]
+          [/~/ip duct [%ip ~]]
+          [/~/boot duct [%boot ~]]
+          [/~/sponsor duct [%sponsor ~]]
+          [/~/xxauth duct [%xxauth ~]]
       ==
     [~ http-server-gate]
   ::  %trim: in response to memory pressure
@@ -4827,7 +4771,7 @@
     ::
         bindings.server-state.old
       %+  insert-binding
-        [[~ /~/name] outgoing-duct.server-state.old [%name ~]]
+        [/~/name outgoing-duct.server-state.old [%name ~]]
       bindings.server-state.old
     ==
   ::
@@ -4908,8 +4852,8 @@
     ::   [-.c [%ours ~] +.c]
     :: ::
     ::     bindings.old
-    ::   %+  insert-binding  [[~ /~/host] outgoing-duct.old [%host ~]]
-    ::   %+  insert-binding  [[~ /~/eauth] outgoing-duct.old [%eauth ~]]
+    ::   %+  insert-binding  [/~/host outgoing-duct.old [%host ~]]
+    ::   %+  insert-binding  [/~/eauth outgoing-duct.old [%eauth ~]]
     ::   bindings.old
     :: ==
   ::
@@ -4921,11 +4865,11 @@
     ::
         bindings.old
       %+  insert-binding
-        [[~ /~/boot] outgoing-duct.old [%boot ~]]
+        [/~/boot outgoing-duct.old [%boot ~]]
       %+  insert-binding
-        [[~ /~/sponsor] outgoing-duct.old [%sponsor ~]]
+        [/~/sponsor outgoing-duct.old [%sponsor ~]]
       %+  insert-binding
-        [[~ /~/ip] outgoing-duct.old [%ip ~]]
+        [/~/ip outgoing-duct.old [%ip ~]]
       bindings.old
     ==
   ::
@@ -4938,7 +4882,7 @@
   ::
       %~2025.1.31
     =.  bindings.old
-      (insert-binding [[~ /~/xxauth] outgoing-duct.old [%xxauth ~]] bindings.old)
+      (insert-binding [/~/xxauth outgoing-duct.old [%xxauth ~]] bindings.old)
     http-server-gate(ax old)
   ::
   ==

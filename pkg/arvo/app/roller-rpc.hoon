@@ -33,7 +33,7 @@
     ^-  (quip card _this)
     ~&  >  'init'
     :_  this
-    [%pass /bind %arvo %e %connect [~ /v1/roller] dap.bowl]~
+    [%pass /bind %arvo %e %connect /v1/roller dap.bowl]~
   ::
   ++  on-save  !>(state)
   ++  on-load

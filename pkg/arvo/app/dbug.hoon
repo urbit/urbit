@@ -23,7 +23,7 @@
   ++  on-init
     ^-  (quip card _this)
     :_  this
-    [%pass /connect %arvo %e %connect [~ /'~debug'] dap.bowl]~
+    [%pass /connect %arvo %e %connect /'~debug' dap.bowl]~
   ::
   ++  on-save  !>(state)
   ::
@@ -366,7 +366,7 @@
     =,  eyre
     |=  [binding =duct =action]
     %-  pairs
-    :~  'location'^s+(cat 3 (fall site '*') (spat path))
+    :~  'location'^s+(spat path)
         'action'^(render-action:v-eyre action)
     ==
   ::
