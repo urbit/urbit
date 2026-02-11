@@ -684,4 +684,51 @@
 ::
 ::TODO  test keen wire consistent between %keen, %keen w/ secret, reinstall
 ::TODO  test namespace revision nrs across nukes
+::
+++  test-reload
+  %-  eval-mare
+  ;<  *  bind:m  (do-load %mock mock-agent)
+  ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %behn %wait ~2345.6.7)
+  ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %iris %request *request:http *outbound-config:iris)
+  ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %lick %spin /mysocket)
+  ;<  *  bind:m  (mock-card %pass /agent/wire %agent [~fun %bar] %watch /blah)
+  ::  suspending the agent should "pause" all its resources.
+  ::  we delete the resources, but remember them for revival.
+  ::
+  ;<  moz=(list move:gall)  bind:m
+    %+  do-load  %mock
+    ::TODO  dedupe with +mock-agent
+    ^-  agent:gall
+    |_  =bowl:gall
+    +*  this  .
+    ++  on-init   [~ this]
+    ++  on-save   !>(~)
+    ++  on-load   |=(* [~ this])
+    ++  on-watch  |=(* [~ this])
+    ++  on-leave  |=(* [~ this])
+    ++  on-fail   |=(* ~&(%mock-on-fail [~ this]))  ::TODO  echo the call outward?
+    ++  on-peek   |=(* ~)
+    ::
+    ++  on-poke
+      |=  [=mark =vase]
+      ^-  (quip card:agent:gall _this)
+      ?>  ?=(%test-card mark)
+      [[!<(card:agent:gall vase)]~ this]
+    ::
+    ++  on-agent
+      |=  [=wire =sign:agent:gall]
+      :_  this
+      :~  [%pass //echo %arvo %syscall `note-arvo`[%b %drip !>(+<)]]
+      ==
+    ::
+    ++  on-arvo
+      |=  [=wire =gift-user-v1:gall]
+      [[%pass //echo %arvo %syscall `note-arvo`[%b %drip !>(+<)]]~ this]
+    --
+  ::
+  ;<  ~  bind:m
+    %+  ex-moves  moz
+    :~  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
+    ==
+  (pure:m ~)
 --

@@ -2269,6 +2269,14 @@
         ?:  ?=(%& -.agent.yoke)
           on-save:ap-agent-core
         p.agent.yoke
+      ?.  =(%| -.agent.yoke)
+        ::  load the agent back up
+        ::
+        =^  error  ap-core
+          (ap-install(agent.yoke &+agent) `old-state)
+        ?^  error
+          (mean >%load-failed< u.error)
+        ap-core
       ::  mark all the resources as to-be-inflated
       ::TODO  consider the %keen inflation (and its ordering) in this light
       ::
@@ -2281,7 +2289,7 @@
       ::  re-start all of the agent's namespace read requests
       ::  (+ap-idle stopped them)
       ::
-      =?  ap-core  &(?=(%| -.agent.yoke) ?=(^ ken.yoke))
+      =?  ap-core  ?=(^ ken.yoke)
         =-  +:(ap-ingest ~ |.([+< agent]))
         %-  zing
         %+  turn  ~(tap by `(jug spar:ames wire)`ken.yoke)
