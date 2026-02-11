@@ -2328,21 +2328,31 @@
       %-  ~(rep in og-resources)
       |=  [res=arvo-resource acc=_ap-core]
       =.  ap-core  acc
-      =.  inflating  (~(del in inflating) &+res)
-      ::  if the resource was deleted by a previous invocation, don't reinflate
+      ?-    +.res
+          [%behn %wait *]
+        =.  inflating  (~(del in inflating) &+res)
+        ?.  (~(has in resources.yoke) res)  ap-core
+        %-  ap-move
+        %-  ap-from-internal
+        [%pass wire.res %arvo [%behn %wait time.res]]
       ::
-      ?.  (~(has in resources.yoke) res)  ap-core
-      ?:  ?=([%iris %request] +.res)
+          [%iris %request]
+        =.  inflating  (~(del in inflating) &+res)
+        ?.  (~(has in resources.yoke) res)  ap-core
         ::  we depend on +ap-generic-take to untrack the resource
         ::
         (ap-generic-take ~ wire.res [%iris %http-response %cancel ~])
-      %-  ap-move
-      %-  ap-from-internal
-      ^-  carp
-      =-  [%pass wire.res %arvo -]
-      ?-  +.res
-        [%behn %wait *]  [%behn %wait time.res]
-        [%lick %spin *]  [%lick %spin name.res]
+      ::
+          [%lick %spin *]
+        ?.  (~(has in resources.yoke) res)
+          ap-core(inflating (~(del in inflating) &+res))
+        =.  ap-core
+          (ap-generic-take ~ wire.res [%lick %soak [agent-name name.res] %disconnect ~])
+        =.  inflating  (~(del in inflating) &+res)
+        ?.  (~(has in resources.yoke) res)  ap-core
+        %-  ap-move
+        %-  ap-from-internal
+        [%pass wire.res %arvo [%lick %spin name.res]]
       ==
     ::  +ap-subscribe-as: apply %watch-as.
     ::

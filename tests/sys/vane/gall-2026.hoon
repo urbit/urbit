@@ -468,6 +468,7 @@
     %+  ex-moves  (sort moz aor)
     :~  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
         (ex-on-arvo /agent/wire [%iris %http-response %cancel ~])
+        (ex-on-arvo /agent/wire [%lick %soak /mysocket %disconnect ~])
         (ex-on-agent /agent/wire %kick ~)
         (ex-move ~[/sysduct] %pass gall-wire [%l %spin [%mock /mysocket]])
         (ex-move ~[/sysduct] %pass gall-wire-b [%b %wait ~2345.6.7])
@@ -729,6 +730,65 @@
   ;<  ~  bind:m
     %+  ex-moves  moz
     :~  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
+    ==
+  (pure:m ~)
+::
+++  test-lick-close-on-disconnect
+  %-  eval-mare
+  ;<  *  bind:m  (do-load %mock mock-agent)
+  ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %lick %spin /mysocket)
+  ::  suspending the agent should "pause" all its resources.
+  ::  we delete the resources, but remember them for revival.
+  ::
+  ;<  gall-wire=wire        bind:m
+    (a2k-wire %mock //agent/wire)
+  ;<  moz=(list move:gall)  bind:m
+    (do-call ~ %idle %mock)
+  ;<  ~  bind:m
+    ::NOTE  moves sorted because otherwise dependent on set order
+    %+  ex-moves  (sort moz aor)
+    :~
+      (ex-move ~[/sysduct] %pass gall-wire [%l %shut [%mock /mysocket]])
+    ==
+  ;<  moz=(list move:gall)  bind:m
+    %+  do-load  %mock
+    ::TODO  dedupe with +mock-agent
+    ^-  agent:gall
+    |_  =bowl:gall
+    +*  this  .
+    ++  on-init   [~ this]
+    ++  on-save   !>(~)
+    ++  on-load   |=(* [~ this])
+    ++  on-watch  |=(* [~ this])
+    ++  on-leave  |=(* [~ this])
+    ++  on-fail   |=(* ~&(%mock-on-fail [~ this]))  ::TODO  echo the call outward?
+    ++  on-peek   |=(* ~)
+    ::
+    ++  on-poke
+      |=  [=mark =vase]
+      ^-  (quip card:agent:gall _this)
+      ?>  ?=(%test-card mark)
+      [[!<(card:agent:gall vase)]~ this]
+    ::
+    ++  on-agent
+      |=  [=wire =sign:agent:gall]
+      :_  this
+      :~  [%pass //echo %arvo %syscall `note-arvo`[%b %drip !>(+<)]]
+      ==
+    ::
+    ++  on-arvo
+      |=  [=wire =gift-user-v1:gall]
+      :_  this
+      :~  [%pass //echo %arvo %syscall `note-arvo`[%b %drip !>(+<)]]
+          [%pass /agent/wire %arvo [%lick %shut /mysocket]]
+      ==
+    --
+  ::
+  ;<  ~  bind:m
+    ::NOTE  moves sorted because otherwise dependent on set order
+    %+  ex-moves  (sort moz aor)
+    :~  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
+        (ex-on-arvo /agent/wire [%lick %soak /mysocket %disconnect ~])
     ==
   (pure:m ~)
 --
