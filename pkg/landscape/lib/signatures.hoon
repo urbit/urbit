@@ -39,9 +39,10 @@
   ?.  =(a.deed r.signature)  %.y
   ::  verify signature from ship at life
   ::
-  =/  them
-    (com:nu:cric:crypto b.deed)
-  =(`hash (sure:as.them p.signature))
+  =/  them  (com:nu:cric:crypto b.deed)
+  =+  ;;([sig=@ msg=@] (cue p.signature))
+  ?.  =(hash msg)  |
+  (veri:ed:crypto sig msg sgn:ded:ex:them)
 ::
 ++  are-signatures-valid
   |=  [our=ship =signatures =hash now=time]

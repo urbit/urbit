@@ -37,6 +37,6 @@ For details about our release process, see the [maintainers guidelines][main]
 [azim]: https://github.com/urbit/azimuth
 [brid]: https://github.com/urbit/bridge
 [vere]: https://github.com/urbit/vere
-[list]: https://groups.google.com/a/urbit.org/forum/#!forum/dev
+[list]: https://groups.google.com/a/tlon.io/g/dev
 [cont]: https://github.com/urbit/urbit/blob/master/CONTRIBUTING.md
 [main]: https://github.com/urbit/urbit/blob/master/MAINTAINERS.md

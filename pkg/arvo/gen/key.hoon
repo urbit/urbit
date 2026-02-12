@@ -15,7 +15,7 @@
 %+  parse   (boss 256 (star prn))
 |=  fra=@t
 =/  bur  (shaz (add who (shaz fra)))
-=/  cic  (pit:nu:cric:crypto 512 bur)
+=/  cic  (pit:nu:cric:crypto 512 bur %b ~)
 ::
 =/  pub=pass  pub:ex:cic
 =/  mag=cord  (end 3 pub)

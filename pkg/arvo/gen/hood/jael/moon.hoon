@@ -41,7 +41,7 @@
 =/  =pass
   ?.  =(*pass public-key)
     public-key
-  =/  cic  (pit:nu:cric:crypto 512 (shaz (jam mon life=1 eny)))
+  =/  cic  (pit:nu:cric:crypto 512 (shaz (jam mon life=1 eny)) %b ~)
   =/  =feed:jael
     [[%2 ~] mon rift=0 [life=1 sec:ex:cic]~]
   %-  %-  slog
