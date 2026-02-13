@@ -45,7 +45,6 @@
   ==
 ::
 +$  destructured-request
-  $@  sessioned-request
   $:  request:http
       authenticated=?
       session=$@(~ [session-id=@uv =identity])
@@ -1302,7 +1301,7 @@
       (deal-as /watch-response/[eyre-id] identity our app.action %leave ~)
     ==
   ::
-  ++  error-response 
+  ++  error-response
   |=  [status=@ud request=destructured-request =tape]
   ^-  (quip move server-state)
   %:  return-static-data-on-duct  request  status  'text/html' 
