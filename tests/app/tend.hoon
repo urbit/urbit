@@ -42,7 +42,7 @@
      path.action
     [%pass /keen %keen & ship.action path]~
   [%pass /foo action]~
-++  on-peek   
+++  on-peek
   |=  =path
   ^-  (unit (unit cage))
   ~&  peek-path/path
@@ -51,20 +51,21 @@
     [~ ~]
   ``noun+!>(&)
 ++  on-watch  on-watch:def
-++  on-arvo   
+++  on-arvo
   |=  [=wire syn=sign-arvo]
   ^-  (quip card _this)
   ?:  =(/keen wire)
-    ?:  ?=([%ames %near *] syn)
-      ?.  ?=([~ ~ *] dat.syn)
-        ~&  no-item/dat.syn
+    ?:  ?=([%ames %sage *] syn)
+      ?~   q.sage.syn
+        ~&  no-item/sage.syn
         `this
-      =/  =path  /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[p.u.u.dat.syn]
+      =/  =path
+        /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[p.q.sage.syn]
       =+  .^  =dais:clay  %cb
         path
       ==
       :_  this
-      [%pass /flog %arvo %d %flog %text (noah ;;(vale.dais q.u.u.dat.syn))]~
+      [%pass /flog %arvo %d %flog %text (noah ;;(vale.dais q.q.sage.syn))]~
     `this
   `this
 ::

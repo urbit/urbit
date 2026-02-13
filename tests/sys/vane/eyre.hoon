@@ -274,8 +274,8 @@
   |=  [app=@t pax=path]
   =/  m  (mare ,~)
   ^-  form:m
-  ;<  mos=(list move)  bind:m  (call ~[/[app]] [%connect [~ pax] app])
-  (expect-moves mos (ex ~[/[app]] %give %bound %.y [~ pax]) ~)
+  ;<  mos=(list move)  bind:m  (call ~[/[app]] [%connect pax app])
+  (expect-moves mos (ex ~[/[app]] %give %bound %.y pax) ~)
 ::
 ++  request
   |=  [app=@t pax=path]
@@ -585,21 +585,12 @@
   ;<  ~  bind:m  (wait ~d1)
   ::  app1 unbinds
   ::
-  ;<  mos=(list move)  bind:m  (call ~[/app1] [%disconnect `/])
+  ;<  mos=(list move)  bind:m  (call ~[/app1] [%disconnect /])
   ;<  ~  bind:m  (expect-moves mos ~)
   ;<  ~  bind:m  (wait ~d1)
   ::  app2 binds successfully
   ::
   (connect %app2 /)
-::
-++  test-host-matching
-  ;:  weld
-    (expect !>((host-matches:eyre-gate ~ `'example.com')))
-    (expect !>((host-matches:eyre-gate ~ ~)))
-    (expect !>(!(host-matches:eyre-gate `'example.com' ~)))
-    (expect !>((host-matches:eyre-gate `'example.com' `'example.com')))
-    (expect !>(!(host-matches:eyre-gate `'example.com' `'blah.com')))
-  ==
 ::  tests that when we have no match, that we fall back to the built-in 404
 ::
 ++  test-builtin-four-oh-four
@@ -784,8 +775,8 @@
   ::  gen1 binds successfully
   ::
   ;<  mos=(list move)  bind:m
-    (call ~[/gen1] [%serve [~ /] %base /gen/handler/hoon ~])
-  ;<  ~  bind:m  (expect-moves mos (ex ~[/gen1] %give %bound %.y [~ /]) ~)
+    (call ~[/gen1] [%serve / %base /gen/handler/hoon ~])
+  ;<  ~  bind:m  (expect-moves mos (ex ~[/gen1] %give %bound %.y /) ~)
   ;<  ~  bind:m  (wait ~d1)
   ::  outside requests a path that app1 has bound to
   ::
@@ -1403,7 +1394,7 @@
   =-  state(sessions.auth.server-state.ax.gate -)
   %+  ~(put by sessions.auth.server-state.ax.gate.state)
     0vguest
-  [fake+~sampel-sampel-sampel-sampel--sampel-sampel-sampel-sampel ~2222.2.2 ~]
+  [[fake+~sampel-sampel-sampel-sampel--sampel-sampel-sampel-sampel ~] &+~ ~2222.2.2 ~]
 ::
 ++  setup-for-eauth
   |=  base=@t
@@ -1445,6 +1436,31 @@
   ;<  ~  bind:m  perform-authentication-2
   ;<  name=@p  bind:m  request-name
   (try (expect-eq !>(~nul) !>(name)))
+::
+++  test-header-authentication
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ^-  form:m
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  perform-born
+  ;<  ~  bind:m  perform-authentication-2
+  ::  clear out the sesh so that we don't send a cookie,
+  ::  then request our name while passing in header auth with the same token
+  ::
+  ;<  t=@t  bind:m  get-token
+  ;<  ~  bind:m  |=(=state [%& ~ state(sesh ~)])
+  ;<  name=@p  bind:m
+    =/  m  (mare ,@p)
+    ^-  form:m
+    ;<  mos=(list move)  bind:m  (get '/~/name' ['authorization' (cat 3 'Bearer ' t)]~)
+    ?>  ?=([[* %give %response %start * * %.y] ~] mos)
+    (pure:m (slav %p q:(need data.http-event.p.card.i.mos)))
+  ;<  ~  bind:m
+    (try (expect-eq !>(~nul) !>(name)))
+  ::  that should've also given us the corresponding cookie in case we want it
+  ::
+  ;<  tt=@t  bind:m  get-token
+  (try (expect-eq !>(t) !>(tt)))
 ::  +perform-authentication: goes through the authentication flow
 ::
 ++  perform-authentication-2
@@ -1452,7 +1468,7 @@
   ^-  form:m
   ;<  ex-rs=$-(move tang)  bind:m
     =/  headers  ['content-type' 'text/html']~
-    =/  body  `(login-page:eyre-gate `'/~landscape/inner-path' ~nul fake+g-name ~ %.n)
+    =/  body  `(login-page:eyre-gate [~ `'/~landscape/inner-path'] ~nul [fake+g-name ~] ~ %.n)
     (make-ex-resp 200 headers body)
   ;<  mos=(list move)  bind:m
     (get '/~/login?redirect=/~landscape/inner-path' ~)
@@ -1472,7 +1488,7 @@
           ['set-cookie' (bake-cookie | (cat 3 'urbauth-~nul=' t))]
       ==
     =/  token  t
-    (expect-moves mos (ex-sessions token ~ ~) (ex-response 303 headers ~) ~)
+    (expect-moves mos (ex-sessions token ~ ~) (ex-response 303 headers `(as-octs:mimes:html t)) ~)
   (pure:m ~)
 ::
 ++  eauth
@@ -1486,11 +1502,11 @@
       =/  body  'eauth&name=~sampel&redirect=/final'
       (post '/~/login' ~ body)
     ::
-    ++  tune
+    ++  sage
       %^  take  /eauth/keen/(scot %p ~sampel)/(scot %uv nonce)
         ~[/http-blah]
       ::NOTE  path and signature don't matter here, eyre doesn't look at them
-      [%ames %tune [~sampel *path] ~ [*path ~ %noun `'http://sampel.com/~/eauth'] ~]
+      [%ames %sage [~sampel *path] %noun `'http://sampel.com/~/eauth']
     ::
     ++  grant
       %+  call  ~[/http-blah]
@@ -1569,7 +1585,7 @@
         'http://sampel.com/~/eauth?server=~nul&nonce='
       (scot %uv nonce)
     (make-ex-resp 303 ['location' loc]~ ~)
-  ;<  mos=(list move)  bind:m  tune
+  ;<  mos=(list move)  bind:m  sage
   ;<  ~  bind:m
     (expect-moves mos ex-rs ~)
   ::  requester approves, we get an %open plea, must give an %okay boon
@@ -1607,7 +1623,7 @@
   =,  server:eauth
   ;<  ~  bind:m  (setup-for-eauth 'http://hoster.com')
   ;<  *  bind:m  start
-  ;<  *  bind:m  tune
+  ;<  *  bind:m  sage
   ;<  *  bind:m  grant
   ::  requester GETs a url with a non-matching token
   ::
@@ -1649,7 +1665,7 @@
   =,  server:eauth
   ;<  ~  bind:m  (setup-for-eauth 'http://hoster.com')
   ;<  *  bind:m  start
-  ;<  *  bind:m  tune
+  ;<  *  bind:m  sage
   ::  visitor returns, saying the attempt was aborted. we delete it
   ::
   ;<  ex-rs=$-(move tang)  bind:m
@@ -1668,7 +1684,7 @@
   =,  server:eauth
   ;<  ~  bind:m  (setup-for-eauth 'http://hoster.com')
   ;<  *  bind:m  start
-  ;<  *  bind:m  tune
+  ;<  *  bind:m  sage
   ;<  *  bind:m  grant
   ::  visitor returns, saying the attempt was aborted. we delete it
   ::
@@ -1688,7 +1704,7 @@
   =,  server:eauth
   ;<  ~  bind:m  (setup-for-eauth 'http://hoster.com')
   ;<  *  bind:m  start
-  ;<  *  bind:m  tune
+  ;<  *  bind:m  sage
   ;<  *  bind:m  grant
   ;<  *  bind:m  final
   ::  visitor tells us they want the session deleted

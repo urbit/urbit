@@ -31,7 +31,7 @@
 ::  +sign: private response from another vane to eyre
 ::
 +$  sign
-  $%  [%ames $>(?(%done %boon %lost %tune) gift:ames)]
+  $%  [%ames $>(?(%done %boon %lost %sage) gift:ames)]
       [%behn $>(%wake gift:behn)]
       [%gall gift:gall]
       [%clay gift:clay]
@@ -681,24 +681,6 @@
   |=  [wid=@u tan=tang]
   ^-  wall
   (zing (turn tan |=(a=tank (wash 0^wid a))))
-::  +wall-to-octs: text to binary output
-::
-++  wall-to-octs
-  |=  =wall
-  ^-  (unit octs)
-  ::
-  ?:  =(~ wall)
-    ~
-  ::
-  :-  ~
-  %-  as-octs:mimes:html
-  %-  crip
-  %-  zing  ^-  ^wall
-  %-  zing  ^-  (list ^wall)
-  %+  turn  wall
-  |=  t=tape
-  ^-  ^wall
-  ~[t "\0a"]
 ::  +internal-server-error: 500 page, with a tang
 ::
 ++  internal-server-error
@@ -1461,7 +1443,7 @@
     =/  ship=(unit ship)  (slaw %p ship.crumbs)
     =/  bone=(unit @ud)
       ?.  ?=([bone=@t ~] req.crumbs)  ~
-      (slaw %ud bone.req.crumbs)
+      (rush bone.req.crumbs dem)
     ?:  ?|  ?=(~ ship)
             &(?=([bone=@ ~] req.crumbs) ?=(~ bone))
         ==
@@ -1486,20 +1468,6 @@
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 & url.request "Peer {(scow %p u.ship)} not found.")
     =+  !<  [rift=@ud life=@ud bone=(unit @ud) last-acked=(unit @ud)]  q.u.u.des
-    ?~  bone
-      %^  return-static-data-on-duct  200  'application/octet-stream'
-      %-  as-octs:mimes:html
-      %-  jam
-      ^-  boot
-      [%1 (galaxy-for u.ship) rift life ~ ~]
-    ?~  last-acked
-      %^  return-static-data-on-duct  404  'text/html'
-      %:  error-page
-        404
-        &
-        url.request
-        "Bone {(scow %u u.bone)} of peer {(scow %p u.ship)} not found."
-      ==
     %^  return-static-data-on-duct  200  'application/octet-stream'
     %-  as-octs:mimes:html
     %-  jam
@@ -1865,8 +1833,15 @@
         out(moves [give-session-tokens :(weld moz moves.fex moves.out)])
       ::NOTE  that we don't provide a 'set-cookie' header here.
       ::      +handle-response does that for us.
+      ::TODO  that should really also handle the content-length header for us,
+      ::      somewhat surprising that it doesn't...
+      %-  handle-response
+      =/  bod=octs
+        (as-octs:mimes:html (scot %uv session.fex))
+      =/  col=[key=@t value=@t]
+        ['content-length' (crip (a-co:co p.bod))]
       ?~  redirect
-        (handle-response %start 204^~ ~ &)
+        [%start 200^~[col] `bod &]
       =/  actual-redirect=@t  ?:(=(u.redirect '') '/' u.redirect)
       =/  actual-desk=(unit @t)
         ?~  target-desk  ~
@@ -1882,7 +1857,7 @@
             '/~/xxauth/'  u.actual-desk
             actual-redirect
         ==
-      (handle-response %start 303^['location' actual-redirect]~ ~ &)
+      [%start 303^~['location'^actual-redirect col] `bod &]
     ::  +handle-logout: handles an http request for logging out
     ::
     ++  handle-logout
@@ -1942,11 +1917,18 @@
       =^  moz1  state  (close-session u.sid all)
       =^  moz2  state  (handle-response response)
       [[give-session-tokens (weld moz1 moz2)] state]
-    ::  +session-id-from-request: attempt to find a session cookie
+    ::  +session-id-from-request: attempt to find a session token
+    ::
+    ::    looks in the authorization header first. if there is no such header,
+    ::    looks in the cookie header(s) instead.
     ::
     ++  session-id-from-request
       |=  =request:http
       ^-  (unit @uv)
+      ::  is there an authorization header?
+      ::
+      ?^  auth=(get-header:http 'authorization' header-list.request)
+        (rush u.auth ;~(pfix (jest 'Bearer 0v') viz:ag))
       ::  are there cookies passed with this request?
       ::
       =/  cookie-header=@t
@@ -2916,7 +2898,7 @@
       ::
       =/  mode=?(%json %jam)
         (find-channel-mode %'GET' header-list.request)
-      =^  [exit=? =wall moves=(list move)]  state
+      =^  [exit=? c=cord moves=(list move)]  state
         ::  the request may include a 'Last-Event-Id' header
         ::
         =/  maybe-last-event-id=(unit @ud)
@@ -2934,7 +2916,7 @@
           =^  mos  state
             %^  return-static-data-on-duct  403  'text/html'
             (error-page 403 | url.request ~)
-          [[& ~ mos] state]
+          [[& '' mos] state]
         ::  make sure the request "mode" doesn't conflict with a prior request
         ::
         ::TODO  or could we change that on the spot, given that only a single
@@ -2944,7 +2926,7 @@
             %^  return-static-data-on-duct  406  'text/html'
             =;  msg=tape  (error-page 406 %.y url.request msg)
             "channel already established in {(trip mode.channel)} mode"
-          [[& ~ mos] state]
+          [[& '' mos] state]
         ::  when opening an event-stream, we must cancel our timeout timer
         ::  if there's no duct already bound. else, kill the old request,
         ::  we will replace its duct at the end of this arm
@@ -2973,12 +2955,12 @@
         ::
         ::  combine the remaining queued events to send to the client
         ::
-        =;  event-replay=wall
+        =;  event-replay=cord
           [[| - cancel-moves] state]
-        %-  zing
-        %-  flop
+        %-  roll  :_
+          |=([a=cord b=cord] (cat 3 a b))
         =/  queue  events.channel
-        =|  events=(list wall)
+        =|  events=(list cord)
         |-
         ^+  events
         ?:  =(~ queue)
@@ -2989,9 +2971,9 @@
         ::      since conversion failure also gets caught during first receive.
         ::      we can't do anything about this, so consider it unsupported.
         =/  said
-          (channel-event-to-tape channel request-id channel-event)
+          (channel-event-to-cord channel request-id channel-event)
         ?~  said  $
-        $(events [(event-tape-to-wall id +.u.said) events])
+        $(events [(event-cord-to-event-stream id +.u.said) events])
       ?:  exit  [moves state]
       ::  send the start event to the client
       ::
@@ -3008,7 +2990,7 @@
             ::  instead. some clients won't consider the connection established
             ::  until they've heard some bytes come over the wire.
             ::
-            ?.  =(~ wall)  (wall-to-octs wall)
+            ?.  =(~ c)  (some (as-octs:mimes:html c))
             (some (as-octs:mimes:html ':\0a'))
           ::
             complete=%.n
@@ -3219,7 +3201,7 @@
           ^-  move
           =,  u.maybe-subscription
           %-  (trace 1 |.("leaving subscription to {<app>}"))
-          %+  deal-as
+          %+  deal-as(duct duc)
             (subscription-wire channel-id subscription-id from ship app)
           [identity ship app %leave ~]
         ::
@@ -3316,8 +3298,8 @@
         (sign-to-channel-event sign u.channel request-id)
       ?~  maybe-channel-event  [~ state]
       =/  =channel-event  u.maybe-channel-event
-      =/  said=(unit (quip move tape))
-        (channel-event-to-tape u.channel request-id channel-event)
+      =/  said=(unit (quip move cord))
+        (channel-event-to-cord u.channel request-id channel-event)
       =?  moves  ?=(^ said)
         (weld moves -.u.said)
       =*  sending  &(?=([%| *] state.u.channel) ?=(^ said))
@@ -3340,8 +3322,9 @@
         :*  %response  %continue
         ::
             ^=  data
-            %-  wall-to-octs
-            (event-tape-to-wall next-id +:(need said))
+            :-  ~
+            %-  as-octs:mimes:html
+            (event-cord-to-event-stream next-id +:(need said))
         ::
             complete=%.n
         ==
@@ -3402,9 +3385,10 @@
         :*  %response  %continue
         ::
             ^=  data
-            %-  wall-to-octs
-            %+  event-tape-to-wall  next-id
-            +:(need (channel-event-to-tape u.channel request-id %kick ~))
+            :-  ~
+            %-  as-octs:mimes:html
+            %+  event-cord-to-event-stream  next-id
+            +:(need (channel-event-to-cord u.channel request-id %kick ~))
         ::
             complete=%.n
         ==
@@ -3438,15 +3422,15 @@
       ?.  ?=([~ ~ *] des)
         ((trace 0 |.("no desk for app {<app.u.sub>}")) ~)
       `!<(=desk q.u.u.des)
-    ::  +channel-event-to-tape: render channel-event from request-id in specified mode
+    ::  +channel-event-to-cord: render channel-event from request-id in specified mode
     ::
-    ++  channel-event-to-tape
+    ++  channel-event-to-cord
       |=  [=channel request-id=@ud =channel-event]
-      ^-  (unit (quip move tape))
+      ^-  (unit (quip move cord))
       ?-  mode.channel
         %json  %+  bind  (channel-event-to-json channel request-id channel-event)
-               |=((quip move json) [+<- (trip (en:json:html +<+))])
-        %jam   =-  `[~ (scow %uw (jam -))]
+               |=((quip move json) [+<- (en:json:html +<+)])
+        %jam   =-  `[~ (scot %uw (jam -))]
                [request-id channel-event]
       ==
     ::  +channel-event-to-json: render channel event as json channel event
@@ -3519,14 +3503,13 @@
         ==
       ==
     ::
-    ++  event-tape-to-wall
-      ~%  %eyre-tape-to-wall  ..part  ~
-      |=  [event-id=@ud =tape]
-      ^-  wall
-      :~  (weld "id: " (a-co:co event-id))
-          (weld "data: " tape)
-          ""
-      ==
+    ++  event-cord-to-event-stream
+      ~%  %eyre-cord-to-event-stream  ..part  ~
+      |=  [event-id=@ud data=cord]
+      ^-  cord
+      %^  cat  3
+      (cat 3 (cat 3 'id: ' (crip (a-co:co event-id))) '\0a')
+      (cat 3 (cat 3 'data: ' data) '\0a\0a')
     ::
     ++  on-channel-heartbeat
       |=  channel-id=@t
@@ -3590,7 +3573,7 @@
       |=  [request-id=@ud ship=@p app=term =path duc=^duct]
       ^-  move
       %-  (trace 1 |.("{<channel-id>} leaving subscription to {<app>}"))
-      %+  deal-as
+      %+  deal-as(duct duc)
         (subscription-wire channel-id request-id identity.session ship app)
       [identity.session ship app %leave ~]
     --
@@ -4047,6 +4030,7 @@
   ~/  %eyre-call
   |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _http-server-gate]
+  ~>  %spin.['call/eyre']
   ::
   =/  task=task  ((harden task) wrapped-task)
   ::
@@ -4358,6 +4342,7 @@
   ~/  %eyre-take
   |=  [=wire =duct dud=(unit goof) =sign]
   ^-  [(list move) _http-server-gate]
+  ~>  %spin.['take/eyre']
   =>  %=    .
           sign
         ?:  ?=(%gall -.sign)
@@ -4589,12 +4574,12 @@
           on-fail:server:eauth:authentication:(per-server-event args)
         [moz http-server-gate]
       ::
-      ?>  ?=([%ames %tune *] sign)
-      ?>  =(client ship.sign)
+      ?>  ?&  ?=([%ames %sage *] sign)
+              =(client ship.p.sage.sign)
+          ==
       =/  url=(unit @t)
-        ?~  roar.sign  ~
-        ?~  q.dat.u.roar.sign  ~
-        ;;((unit @t) q.u.q.dat.u.roar.sign)
+        ?~  q.sage.sign  ~
+        ;;((unit @t) q.q.sage.sign)
       =^  moz  server-state.ax
         ?~  url
           %.  [client nonce]
@@ -4761,6 +4746,8 @@
         ==
       --
   |=  old=axle-any
+  ^+  http-server-gate
+  ~>  %spin.['load/eyre']
   ?-    -.old
   ::
   ::  adds /~/name
@@ -4896,6 +4883,7 @@
   ^-  roon
   |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
+  ~>  %spin.['scry/eyre']
   =*  ren  car
   =*  why=shop  &/p.bem
   =*  syd  q.bem

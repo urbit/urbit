@@ -193,25 +193,33 @@
       %helm-hi  !>(mes)
   ==
 ::
-++  poke-send-ahoy
-  |=  [her=ship test=?]  =<  abet
+++  poke-start-ahoy
+  |=  [her=ship test=? force-test=?]  =<  abet
   =/  =wire
     :+  %helm  %ahoy
     ?.(test /(scot %p her) /test/(scot %p her))
-  =/  =path  ?:(test /test/mesa /mesa)
+  =/  =path  ?:(test /test/mesa-1 /mesa-1)
   ::  before migrating, test if we can migrate, regress, and check that there
-  ::  are not flows in a weird state. if we don't crash, send the %ahoy $plea
+  ::  are not flows in a weird state. if we get a [%done ~], send the %ahoy $plea
   ::
-  =^  mate-moves  sat  (poke-mass-mate `her test=%.y)
-  =^  ahoy-moves  sat  abet:(emit %pass wire %arvo %a %plea her %$ path %ahoy ~)
-  (emil (weld mate-moves ahoy-moves))
+  ?.  force-test
+    ::  skip test, ahoy right away; only for certain cases in ames.hoon
+    ::
+    (emit %pass wire %arvo %a %plea her %$ path %ahoy ~)
+  ::  wait for the %done of the local %mate
+  ::
+  =^  mate-moves  sat  %*($ poke-mass-mate dry test, +< `her)
+  (emil mate-moves)
 ::
 ++  poke-mass-mate
-  |=  [ship=(unit ship) dry=?]
+  =|  dry=?
+  |=  ship=(unit ship)
   =/  =wire
     :+  %helm  %mate
-    ?.(dry ~ /test)
-  abet:(emit %pass wire %arvo %a %mate ship dry)
+    ?~  ship  /test
+    ?:  dry   /test/(scot %p u.ship)
+    /(scot %p u.ship)
+  abet:(emit %pass wire %arvo %a %mate ship dry=%.y)
 ::
 ++  poke-mass-rege
   |=  [ship=(unit ship) dry=?]
@@ -220,19 +228,41 @@
     ?.(dry ~ /test)
   abet:(emit %pass wire %arvo %a %rege ship dry)
 ::
+++  take-test-mate
+  |=  [way=wire error=(unit error:ames)]
+  =/  =path
+    ?:(?=([%test her=@ ~] way) /test/mesa-1 /mesa-1)
+  =/  her=@p
+    ?:  ?=([%test her=@ ~] way)
+      (slav %p i.t.way)
+    ?>  ?=([her=@ ~] way)
+    (slav %p i.way)
+  ?^  error
+    ~&  >>>   %local-migration-failed
+    abet
+  ~&  >   %local-migration-worked
+  abet:(emit %pass [%helm %ahoy way] %arvo %a %plea her %$ path %ahoy ~)
+::
+++  take-migrate
+  |=  [way=wire error=(unit error:ames)]
+  ?^  error
+    ~&  >>>   %local-migration-failed
+    abet
+  ~&  >   %local-migration-worked
+  abet
+::
 ++  take-ahoy
   |=  [way=wire error=(unit error:ames)]
   ?:  ?=([%test @ *] way)
     ?~  error
       ~&  >   %migration-test-worked
-      ~&  >>  %test-local-migration
-      abet:(emit %pass /helm/migrate %arvo %a %mate (slaw %p i.t.way) dry=%.y)
+      abet
     %-  (slog %take-ahoy-test-failed u.error)
     abet
   ?>  ?=([@ ~] way)
   ?~  error
       ~&  >   %remote-migration-worked
-      ~&  >>  %try-local-migration
+      ~&  >>  %do-local-migration
     abet:(emit %pass /helm/migrate %arvo %a %mate (slaw %p i.way) dry=%.n)
   ~&  >>>  %ahoy-crash
   ::  XX retry?
@@ -245,7 +275,7 @@
   |=  [way=wire error=(unit tang)]
   ?>  ?=([@ ~] way)
   ?~  error
-    (poke-send-ahoy (slav %p i.way) |)
+    (poke-start-ahoy (slav %p i.way) | force=&)
   ~&  >>>  %ahoy-wake-crash
   ::  XX retry?
   ::
@@ -343,6 +373,11 @@
 ::
 ++  poke-gall-lave
   |=  [dry=? subs=(list [?(%g %a) ship term duct])]  =<  abet
+  ?:  dry  this
+  (emit %pass /helm %arvo %g %lave subs)
+::
+++  poke-eyre-lave
+  |=  [dry=? subs=(list [%g ship term duct])]  =<  abet
   ?:  dry  this
   (emit %pass /helm %arvo %g %lave subs)
 ::
@@ -665,6 +700,7 @@
     %helm-gall-sift        =;(f (f !<(_+<.f vase)) poke-gall-sift)
     %helm-gall-verb        =;(f (f !<(_+<.f vase)) poke-gall-verb)
     %helm-gall-lave        =;(f (f !<(_+<.f vase)) poke-gall-lave)
+    %helm-eyre-lave        =;(f (f !<(_+<.f vase)) poke-eyre-lave)
     %helm-hi               =;(f (f !<(_+<.f vase)) poke-hi)
     %helm-pans             =;(f (f !<(_+<.f vase)) poke-pans)
     %helm-mass             =;(f (f !<(_+<.f vase)) poke-mass)
@@ -675,7 +711,7 @@
     %helm-pass             =;(f (f !<(_+<.f vase)) poke-pass)
     %helm-rekey            =;(f (f !<(_+<.f vase)) poke-rekey)
     %helm-send-hi          =;(f (f !<(_+<.f vase)) poke-send-hi)
-    %helm-send-ahoy        =;(f (f !<(_+<.f vase)) poke-send-ahoy)
+    %helm-send-ahoy        =;(f (f !<(_+<.f vase)) poke-start-ahoy)
     %helm-mass-mate        =;(f (f !<(_+<.f vase)) poke-mass-mate)
     %helm-send-rege        =;(f (f !<(_+<.f vase)) poke-send-rege)
     %helm-mass-rege        =;(f (f !<(_+<.f vase)) poke-mass-rege)
@@ -710,6 +746,10 @@
     [%moon-breach *]  %+  take-wake-moon-breach  t.wire
                       ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
     [%ahoy *]         %+  take-ahoy  t.wire
+                      ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
+    [%mate *]         %+  take-test-mate  t.wire
+                      ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
+    [%migrate *]      %+  take-migrate  t.wire
                       ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
     [%rege *]         %+  take-rege  t.wire
                       ?>(?=(%done +<.sign-arvo) +>.sign-arvo)

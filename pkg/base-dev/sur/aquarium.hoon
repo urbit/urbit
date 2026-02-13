@@ -10,8 +10,6 @@
 ::  Short names are simply the first letter of each word plus `s` if
 ::  it's a list.
 ::
-/+  pill
-=,  pill-lib=pill
 |%
 +$  az-log  [topics=(lest @) data=@t]
 +$  az-state
@@ -34,10 +32,9 @@
       [%verb p=(unit ?)]
       task-arvo
   ==
-+$  pill        pill:pill-lib
 ::
 +$  aqua-event
-  $%  [%init-ship who=ship fake=?]
+  $%  [%init-ship who=ship fake=? feed=(unit feed:jael)]
       [%pause-events who=ship]
       [%snap-ships lab=term hers=(list ship)]
       [%restore-snap lab=term]
@@ -74,6 +71,9 @@
   %+  pair  wire
   $%  [%blit p=(list blit:dill)]
       [%send p=lane:ames q=@]
+      [%push p=(list lane:pact:ames) q=@]
+      [%saxo sponsors=(list ship)]
+      [%nail =ship lanes=(list lane:ames)]
       [%doze p=(unit @da)]
       [%thus p=@ud q=(unit hiss:eyre)]
       [%ergo p=@tas q=mode:clay]
@@ -83,9 +83,7 @@
       [%init ~]
       [%request id=@ud request=request:http]
       [%turf p=(list turf)]
-      ::  XX effects seen after running :aqua [%swap-files ~]
-      [%vega ~]
-      [%set-config =http-config:eyre]
-      [%sessions p=(set @t)]
+      [%unto =unto:gall]  ::  internal gifts to host ships
+                          ::   (%facts are transformed to %raw-facts)
   ==
 --

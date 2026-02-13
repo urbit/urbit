@@ -4,7 +4,7 @@
 =>  ..part
 ~%  %lull  ..part  ~
 |%
-++  lull  %322
+++  lull  %321
 ::                                                      ::  ::
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
@@ -898,6 +898,8 @@
         [%whey =spar boq=@ud]       :: weight of noun bounded at .path.spar
                                     :: as measured by .boq
         [%gulp path]                :: like %plug, but for |mesa
+        $>(%halt deep)              :: halt flow after we hear a remote %flub
+        [%goad =ship]               :: re-start flow after remote agent is %live
     ==
   ::
   ::  $gift: effect from ames
@@ -1044,6 +1046,7 @@
         [%kill =ship =bone]
         [%ahoy =ship =bone]  :: XX remove bone; it's just next-bone.ossuary
         [%prun =ship =user=path =duct =ames=path]
+        [%halt =ship agent=term =bone] :: XX add [=agent=path cork=?]
     ==
   ::  $stun: STUN notifications, from unix
   ::
@@ -1171,6 +1174,7 @@
         keens=(map path keen-state)
         =chain
         tip=(jug =user=path [duct =ames=path])
+        halt=(set bone)
     ==
   +$  keen-state
     $+  keen-state
@@ -1586,6 +1590,17 @@
     ?:  (lte size 8)  [8 %0b10]
     [16 %0b11]
   ::
+  ::  $axle: state for entire vane
+  ::
+  ::    peers:       states of connections to other ships
+  ::    unix-duct:   handle to give moves to unix
+  ::    life:        our $life; how many times we've rekeyed
+  ::    rift:        our $rift
+  ::    bug:         debug printing configuration
+  ::    snub:        blocklist for incoming packets
+  ::    cong:        parameters for marking a flow as clogged
+  ::    dead:        dead flow consolidation timer and recork timer, if set
+  ::
   +$  axle
     $:  peers=(map ship ship-state)
         =unix=duct  ::  [//ames/0v0 ~]
@@ -1598,13 +1613,13 @@
         $:  flow=[%flow (unit dead-timer)]  ::  ... for |ames
             chum=[%chum (unit dead-timer)]  ::  ... for |mesa
             cork=[%cork (unit dead-timer)]  ::  ... for %nacked corks
-            rots=[%rots (unit dead-timer)]  ::  ... fir expiring direct routes
+            rots=[%rots (unit dead-timer)]  ::  ... for expiring direct routes
         ==
         ::
         =server=chain                       ::  for serving %shut requests
         priv=private-key
         chums=(map ship chum-state)         ::  XX migrated peers
-        core=_`?(%ames %mesa)`%ames         ::  XX use migrated core by default
+        core=_`?(%ames %mesa)`%ames         ::  XX use |mesa core by default
         ::  TODOs
         :: XX tmp=(map @ux page)            :: temporary hash-addressed bindings
     ==
@@ -1648,11 +1663,14 @@
         =qos
         corked=(set side)  ::  can be +peeked in the namespace
                            ::  XX how many flows to keep here?
-        =ossuary      ::  XX redefine ossuary in terms of bone^side
+        =ossuary           ::  XX redefine ossuary in terms of bone^side
         flows=(map side flow-state)
         pit=(map path request-state)           :: active +peek namespace paths
         =client=chain                          :: stores keys for %shut requests
         tip=(jug =user=path [duct =ames=path]) :: reverse .pit lookup map
+        ::  a migrated flow in a weird state is tagged with a $term, and data
+        ::
+        weir=(jug side [tag=term data=*])
     ==
   ::
   ::  interest gifts per path in the pith
@@ -1694,8 +1712,8 @@
   ::
   +$  flow-state
     $:  ::  a flow switches to closing when:
-        ::    - forward: a %cork %plea %poke request is sent
-        ::    - backward: a %cork %plea %poke request is received
+        ::    - forward:  a %cork $plea %poke request is sent
+        ::    - backward: a %cork $plea %poke request is received
         ::
         ::  the flow is deleted first on the forward side when it can read the
         ::  %ack for the %cork, and then on the backward side when it can +peek
@@ -1705,6 +1723,11 @@
         ::  line: high-water mark for the last-acked message before migration
         ::
         line=@ud
+        ::  a flow halts when:
+        ::    - forward: %gall passes a %flub to %ames
+        ::    - backward: a %plea gets %flubbed over the wire
+        ::
+        halt=?(%.y %.n)
         ::  outbound %poke payloads, bounded in the ship's namespace
         ::  always and only for requests
         ::
@@ -1723,13 +1746,15 @@
           ::  payloads can be +peek'ed via a well-formed path with the format:
           ::  e.g.  /flow/[bone=0]/[load]/?[%for %bak]/[ship]/[seq=1]
           ::
-          ::  XX option to include messages that won't be bounded into the namespace (two-layer queue)
+          ::  XX option to include messages that won't be bounded into the
+          ::  namespace (two-layer queue)
+          ::
           loads=((mop ,@ud mesa-message) lte)         :: all unacked
           next=_1                                     :: =(next +(last-acked))
           ::
           send-window-max=_1                          :: how many pleas to send
           send-window=_1                              :: XX
-          :: cache=((mop ,@ud ?) lte)  :: out-of-order acks XX TODO
+          acks=((mop ,@ud ack) lte)                   :: out-of-order acks
         ==
         ::  incoming %pokes, pending their ack from the vane
         ::
@@ -3674,7 +3699,8 @@
     $%  [%boon payload=*]                               ::  ames response
         [%noon id=* payload=*]
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
-        [%flub ~]                                       ::  not ready to handle plea
+        [%flub $@(~ [blocked=? dap=(unit term)])]       ::  refuse to take plea
+        [%spur ~]                                       ::  ready to take plea
         [%unto p=unto]                                  ::
     ==                                                  ::
   +$  task                                              ::  incoming request
@@ -3689,6 +3715,7 @@
         [%doff dude=(unit dude) ship=(unit ship)]       ::  kill subscriptions
         [%rake dude=(unit dude) all=?]                  ::  reclaim old subs
         [%lave subs=(list [?(%g %a) ship dude duct])]   ::  delete stale bitt(s)
+        $>(%halt deep:ames)                             ::  send remote %flub
         $>(%init vane-task)                             ::  set owner
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
@@ -3702,7 +3729,7 @@
   ::
   +$  fans  ((mop @ud (pair @da (each page @uvI))) lte)
   +$  plot
-    $:  bob=(unit @ud)
+    $:  bob=(unit @ud)                                  ::  latest revision
         fan=fans
     ==
   +$  stats                                             ::  statistics
@@ -3719,9 +3746,9 @@
         [%plot p=(unit plot) q=(map @ta farm)]
     ==
   ::
-  +$  egg                                               ::  migratory agent state
-    $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)] ::  see /sys/gall $yoke
-        $:  %live
+  +$  egg                                               ::  migratory agent
+    $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)] ::  state; see /sys/gall
+        $:  %live                                       ::  $yoke
             control-duct=duct
             run-nonce=@t
             sub-nonce=@

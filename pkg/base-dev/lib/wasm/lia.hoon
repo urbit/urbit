@@ -6,7 +6,7 @@
 |%
 ::
 +$  run-input
-  (each (script-raw-form (list lia-value) *) (list lia-value))
+  (each (script-raw-form (list lia-value) vase) (list lia-value))
 ::  ++run-once: extract. Type polymorphic.
 ::
 ++  run-once
@@ -36,6 +36,7 @@
   :: ~&  !.(try-m+!=(try):runnable)                ::  [9 43 0 1]  kick x2
   :: ~&  !.(catch-m+!=(catch):runnable)            ::  [9 4 0 1]   kick x2
   :: ~&  !.(return-m+!=(return):runnable)          ::  [9 20 0 1]  kick
+  :: ~&  !.(fail-m+!=(fail):runnable)              ::  [9 47 0 1]  kick
   ::
   ^-  [yield:m type-acc]
   =,  engine-sur
@@ -76,36 +77,37 @@
 ::  ++run: extend & extract. Type monomorphic.
 ::
 ++  run
-  ~/  %run-v0
-  |=  [input=run-input =seed hint=term]
+  ~/  %run-v1
+  |=  [input=run-input =seed hint=*]
   ::
   =,  engine-sur
   =/  m  runnable
   =>  [- [input=input seed=seed] +>]  ::  remove hint
-  ^-  [yield:m * _seed]
+  ^-  [[yield:m vase] _seed]
   =.  seed
     ?-    -.input
         %&
       ::  jet matching hack
       ::  past.seed >> p.input
       ::
+      !.
       seed(past ((try:m) past.seed =>(p.input |=(* +>))))
     ::
         %|
-      seed(shop (snoc shop.seed p.input))
+      seed(shop [p.input shop.seed])
     ==
   =/  ast  (main:parser module.seed)
   =/  valid  (validate-module:validator ast)
   ?>  ?=(%& -.valid)
-  =/  sat=(lia-state)  [(conv:engine ast ~) shop.seed import.seed]
-  |^  ^-  [yield:m * _seed]
+  =/  sat=(lia-state vase)  [(conv:engine ast ~) (flop shop.seed) import.seed]
+  |^  ^-  [[yield:m vase] _seed]
   =^  yil=yield:m  sat  (;<(* try:m init past.seed) sat)  ::  ((init >> past.seed) sat)
-  [yil p.r.sat seed]
+  [[yil p.r.sat] seed]
   ::
   ++  init
-    =/  m  (script ,~ *)
+    =/  m  (script ,~ vase)
     ^-  form:m
-    |=  sat=(lia-state)
+    |=  sat=(lia-state vase)
     ^-  output:m
     =/  engine-res=result:engine
       (instantiate:engine p.sat)
@@ -114,7 +116,7 @@
     ::  engine-res = [%1 [[mod=cord name=cord] =request] module mem tables globals]
     ::
     ?>  ?=(%func -.request.engine-res)
-    =/  sat-blocked=(lia-state)  [[~ +>.engine-res] q.sat r.sat]  ::  Wasm blocked on import
+    =/  sat-blocked=(lia-state vase)  [[~ +>.engine-res] q.sat r.sat]  ::  Wasm blocked on import
     =/  import-arrow
       (~(got by q.r.sat-blocked) mod.engine-res name.engine-res)
     =^  import-yil=(script-yield (list cw))  sat-blocked
@@ -131,7 +133,7 @@
 ++  arrows
   :: =*  ctx  .
   |*  m-acc=mold
-  ^?  |%
+  ^?  !.  |%
   ++  m-sat  (lia-state m-acc)
   ++  call
     |=  [name=cord args=(list @)]
@@ -306,7 +308,7 @@
 ::
 ::  misc
 ::
-++  runnable  (script (list lia-value) *)
+++  runnable  (script (list lia-value) vase)
 ++  cw-to-atom
   |=  cw=coin-wasm:wasm-sur
   ^-  @

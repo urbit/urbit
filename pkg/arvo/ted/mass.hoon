@@ -53,4 +53,3 @@
 ;<  quz=(list quac:dill)  bind:m  mass:strandio
 %-  (slog (print-quacs quz))
 (pure:m !>(~))
-

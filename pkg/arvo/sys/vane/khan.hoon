@@ -126,6 +126,7 @@
           wrapped-task=(hobo task)
       ==
   ^-  [(list move) _khan-gate]
+  ~>  %spin.['call/khan']
   ::
   =/  =task  ((harden task) wrapped-task)
   ?^  dud
@@ -168,6 +169,7 @@
 ++  load
   |=  old=khan-state
   ^+  khan-gate
+  ~>  %spin.['load/khan']
   khan-gate(state old)
 ::  +scry: nothing to see as yet
 ::
@@ -175,6 +177,7 @@
   ^-  roon
   |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
+  ~>  %spin.['scry/khan']
   ~
 ++  stay  state
 ::  +take: handle responses.
@@ -183,6 +186,7 @@
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^-  [(list move) _khan-gate]
   ?^  dud
+  ~>  %spin.['take/khan']
     ~|(%khan-take-dud (mean tang.u.dud))
   :_  khan-gate
   ?-    -.hin
