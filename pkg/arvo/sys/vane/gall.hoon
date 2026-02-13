@@ -550,7 +550,7 @@
   ::
   ++  mo-receive-core
     ~/  %mo-receive-core
-    |=  [prov=path dap=term bek=beak =agent]
+    |=  [prov=path dap=term bek=beak per=(set perm) =agent]
     ^+  mo-core
     ::
     =/  yak  (~(get by yokes.state) dap)
@@ -1162,7 +1162,7 @@
   ::  +mo-load: install agents
   ::
   ++  mo-load
-    |=  [prov=path agents=(list [=dude =beak =agent])]
+    |=  [prov=path agents=(list [=dude =beak per=(set perm) =agent])]
     =.  mo-core
       |-  ^+  mo-core
       ?~  agents  mo-core

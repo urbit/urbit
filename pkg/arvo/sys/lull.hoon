@@ -2459,9 +2459,11 @@
         [%ogre pot=$@(term beam)]                       ::  delete mount point
         [%park des=desk yok=yoki ran=rang]              ::  synchronous commit
         [%perm des=desk pax=path rit=rite]              ::  change permissions
+        [%pine des=desk add=? pes=(set perm)]           ::  requesting permissions
         [%pork ~]                                       ::  resume commit
         [%prep lat=(map lobe page)]                     ::  prime clay store
         [%rein des=desk ren=rein]                       ::  extra apps
+        [%seal des=desk add=? pes=(set perm)]           ::  granting and revoking permissions
         [%stir arg=*]                                   ::  debug
         [%tire p=(unit ~)]                              ::  app state subscribe
         [%tomb =clue]                                   ::  tombstone specific
@@ -2526,6 +2528,8 @@
         wic=(map weft yoki)                             ::  commit-in-waiting
         liv=zest                                        ::  running agents
         ren=rein                                        ::  force agents on/off
+        peg=(set perm)                                  ::  granted permissions
+        peq=(set perm)                                  ::  requested permissions
     ==                                                  ::
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission
@@ -2576,6 +2580,10 @@
   +$  norm  (axal ?)                                    ::  tombstone policy
   +$  open  $-(path vase)                               ::  get prelude
   +$  page  ^page                                       ::  export for compat
+  +$  perm  
+    $%  [%behn %timer]
+        [%eyre %serve]
+    ==
   +$  pour                                              ::  ford build w/content
     $%  [%file =path]
         [%nave =mark]
@@ -3784,7 +3792,11 @@
     ==  ==                                              ::                                                  ::
   +$  dude  term                                        ::  server identity
   +$  gill  (pair ship term)                            ::  general contact
-  +$  load  (list [=dude =beak =agent])                 ::  loadout
+  +$  perm
+    $%  [%behn %timer]
+        [%eyre %serve]
+    ==
+  +$  load  (list [=dude =beak per=(set perm) =agent])  ::  loadout
   +$  scar                                              ::  opaque duct
     $:  p=@ud                                           ::  bone sequence
         q=(map duct bone)                               ::  by duct

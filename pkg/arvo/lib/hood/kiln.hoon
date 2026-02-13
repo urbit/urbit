@@ -586,6 +586,7 @@
     %kiln-jump-opt           =;(f (f !<(_+<.f vase)) poke-jump-opt)
     %kiln-jump-propose       =;(f (f !<(_+<.f vase)) poke-jump-propose)
     %kiln-nuke               =;(f (f !<(_+<.f vase)) poke-nuke)
+    %kiln-pass               =;(f (f !<(_+<.f vase)) poke-pass)
     %kiln-pause              =;(f (f !<(_+<.f vase)) poke-pause)
     %kiln-permission         =;(f (f !<(_+<.f vase)) poke-permission)
     %kiln-revive             =;(f (f !<(_+<.f vase)) poke-revive)
@@ -894,6 +895,10 @@
   %-  emil
   %+  turn  (get-apps-have our term now)
   |=([=dude ?] [%pass /nuke %arvo %g [%nuke dude]])
+::
+++  poke-pass
+  |=  =card:agent:gall
+  abet:(emit card)
 ::
 ++  poke-pause
   |=  =desk

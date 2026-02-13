@@ -264,6 +264,7 @@
   ==                                                    ::
 ::
 +$  bill  (list dude:gall)
++$  seal  [%0 (list perm:clay)]
 ::
 ::  Active downloads
 ::
@@ -620,6 +621,40 @@
     =.  res  `?~(res faz (slop faz u.res))
     $(vaz t.vaz)
   ::
+  ++  built-ins
+    |^  ^-  (list [path vase])
+        :~  [/mar/seal/hoon seal]
+        ==
+    ::
+    ++  seal  !>
+      =>  [seal=^seal ..zuse]
+      |_  =seal
+      ++  grab
+        |%
+        ++  noun  ,[%0 (list perm:clay)]
+        ++  mime
+          |=  [=mite len=@ud tex=@]
+          !<(^seal (slap !>([%0 ~]) (ream tex)))
+        --
+      ++  grow
+        |%
+        ++  noun  seal
+        ++  mime  `^mime`[/text/x-seal (as-octs:mimes:html hoon)]
+        ++  hoon 
+          ^-  @t
+          %-  crip
+          ?~  +.seal  "[%0 ~]"
+          %+  welp
+            ;:(welp ":-  " <-.seal> "  :~  ")
+          %-  of-wall:format
+          %-  snoc  :_  "=="
+          %+  turn  +.seal
+          |=(=perm:clay <perm>)
+        --
+      ++  grad  %noun
+    --
+    --
+  ::
   ++  ford
     !.
     =>  |%
@@ -646,6 +681,10 @@
     =.  cache.nub  cache
     =.  spill.nub  spill
     =.  sprig.nub  sprig
+    ::  trunk: built-in files containing /mar/seal
+    ::
+    =/  trunk=(map path vase)
+      (~(gas by *(map path vase)) built-ins)
     ~%  %ford-core  ..$  ~
     |%
     ::  +read-file: retrieve marked, validated file contents at path
@@ -979,6 +1018,8 @@
       ^-  [vase state]
       =/  =path
         ?:(?=(%| -.dep) p.dep fil.p.dep)
+      ?:  (~(has by trunk) path)
+        [(~(got by trunk) path) nub]
       ~|  %error-building^path
       %-  soak-vase
       %+  gain-sprig  file+path  |.
@@ -1133,8 +1174,8 @@
       ?~  paz
         ~_(leaf/"clay: no files match /{(trip pre)}/{(trip pax)}/hoon" !!)
       =/  pux=path  pre^(snoc i.paz %hoon)
-      ?:  (~(has by files) pux)
-        pux
+      ?:  (~(has by trunk) pux)  pux
+      ?:  (~(has by files) pux)  pux
       $(paz t.paz)
     ::
     ++  all-fits
@@ -1491,6 +1532,42 @@
           %kelvin  ;;(waft q.page)
           %mime    (cord-to-waft q.q:;;(mime q.page))
       ==
+    --
+  ::
+  ::  +get-perm: read the desk's required permissions from /seal/desk
+  ++  get-perm
+    |=  =yoki
+    ^-  (set perm:clay)
+    |^  ?-  -.yoki
+        %|
+      ?~  per=(~(get by q.p.yoki) /desk/seal)
+        *(set perm:clay)
+      %-  silt
+      +:(lobe-to-seal (~(got by q.p.yoki) /desk/seal))  ::  return lobe
+        %&
+      ?~  lob=(~(get by q.p.yoki) /desk/seal)
+        *(set perm:clay)
+      %-  silt
+      ?-  -.u.lob
+        %|  +:(lobe-to-seal p.u.lob)
+        %&  +:(page-to-seal p.u.lob)
+      ==
+    ==
+    ::
+      ++  lobe-to-seal
+        |=  =lobe
+        ^-  seal
+        ?~  peg=(~(get by lat.ran) lobe)
+          ~|([%desk-seal-tombstoned syd] !!)
+        (page-to-seal u.peg)
+      ::
+      ++  page-to-seal
+        |=  =page
+        ^-  seal
+        ?+  p.page  ~|(clay-bad-seal-mark+p.page !!)
+          %seal  ;;(seal q.page)
+          %mime  !<(seal (slap !>([%0 ~]) (ream q.q:;;(mime q.page))))
+        ==
     --
   ::
   ++  case-to-date
@@ -1878,6 +1955,15 @@
         =-  (mean leaf/- ~)
         "clay: commit failed, file tombstoned: {<path>} {<`@uv`p.tum>}"
       !!
+    ::  find desk seal
+    ::
+    =/  per=(set perm:clay)  (get-perm yoki)
+    ~&  >>  %checking-permissions
+    ::  TODO:  itterate over permissions and check if it's been granted 
+    =/  has-peg  =(~ (~(dif in per) peg.dom))
+    ?.  |(has-peg =(%dead liv.dom) =(%base syd))
+      ::  TODO:  store missing perms in state, but how?
+      (mean leaf+"{<syd>} need permissions: {<per>}; has: {<peg.dom>}" ~)
     ::  find desk kelvin
     ::
     =/  kel=(set weft)  (waft-to-wefts (get-kelvin yoki))
@@ -3227,10 +3313,25 @@
     |=  r=rule
     r(who (~(del in who.r) |+nom))
   ::
+  ++  set-pine 
+    |=  [add=? pes=(set perm:clay)]
+    ^+  ..park
+    ::  TODO: notify about changes 
+    ?:  add  ..park(peq.dom (~(uni in peq.dom) pes))
+    ..park(peq.dom (~(dif in peq.dom) pes))
+  ::
   ++  set-rein                                          ::  [goad] <
     |=  [ren=(map dude:gall ?)]
     ^+  ..park
     ..park(ren.dom ren)
+  ::
+  ++  set-seal
+    |=  [add=? pes=(set perm:clay)]
+    ^+  ..park
+    ::  TODO: notify about changes 
+    ?:  add  ..park(peg.dom (~(uni in peg.dom) pes))
+    ?:  =(%live liv.dom)  (mean leaf+"can't remove permissions desk is %live, suspend first" ~)
+    ..park(peg.dom (~(dif in peg.dom) pes))
   ::
   ++  set-zest                                          ::  [goad] <
     |=  liv=zest
@@ -3248,6 +3349,16 @@
     ?.  (~(has in kel) zuse+zuse)
       =/  msg  "clay: can't set {<syd>} live, it doesn't support zuse {<zuse>}"
       ((slog leaf+msg ~) ..park)
+    =/  per=(set perm:clay)
+      %+  fall
+        (mole |.((get-perm [%| (aeon-to-yaki:ze let.dom)])))  
+      ~
+    ~&  >>  %checking-permissions
+    ::  TODO: do not do hard equality check 
+    ?:  &(=(liv %live) !=(~ (~(dif in per) peg.dom))) 
+      =/  msg   "clay: can't set {<syd>} live, it doesn't have required permissions"
+      =/  msg1  "need: {<per>}, have: {<peg.dom>}"
+      ((slog leaf+msg leaf+msg1 ~) ..park)
     ..park(liv.dom liv)
   ::
   ++  rise                                              ::  [goad] <
@@ -4800,12 +4911,15 @@
       |-  ^-  [load:gall state:ford:fusion]
       ?~  bill.i.sat
         [~ nub.f]
+      =/  den  ((de now rof hen ruf) our desk.i.sat)
       =^  =vase  nub.f
         %-  road  |.
         (build-file:f /app/[i.bill.i.sat]/hoon)
+      ::=/  per  !<(-:!>(*(set perm:gall)) !>(peg.den))
+      ~&  passing-granted-perm/peg.dom.den
       =/  agent  ~|  [%building-app bill.i.sat]  !<(agent:gall vase)
       =^  lid  nub.f  $(bill.i.sat t.bill.i.sat)
-      [[[i.bill.i.sat [our desk.i.sat da+now] agent] lid] nub.f]
+      [[[i.bill.i.sat [our desk.i.sat da+now] peg.dom.den agent] lid] nub.f]
     =.  lad  (weld lad new)
     $(sat t.sat)
   ::  build-dais for each mark
@@ -5113,12 +5227,28 @@
       abet:(perm:den pax.req rit.req)
     [mos ..^$]
   ::
+      %pine 
+    =^  mos  ruf 
+      =/  den  ((de now rof hen ruf) our des.req)
+      abet:(set-pine:den add.req pes.req)
+    [mos ..^$]
+  ::
       %rein
     =^  m1  ruf
       =/  den  ((de now rof hen ruf) our des.req)
       abet:(set-rein:den ren.req)
     =^  m2  ruf  abet:goad:(lu now rof hen ruf)         ::  [goad] >
     [(weld m1 m2) ..^$]
+  ::
+      %seal
+    =^  mos  ruf
+      =/  den  ((de now rof hen ruf) our des.req)
+      abet:(set-seal:den add.req pes.req)
+    ::  TODO: review this logic 
+    =^  mos2  ruf
+      abet:tare:(lu now rof hen ruf)
+    [(weld mos mos2) ..^$]
+    ::  
   ::
       %stir
     ?+    arg.req  ~|(%strange-stir !!)
