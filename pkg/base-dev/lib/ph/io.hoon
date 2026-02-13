@@ -88,7 +88,6 @@
   ^-  form:m
   (pure:m ~)
 ::
-::
 ++  init
   =/  m  (strand ,~)
   ^-  form:m
@@ -125,6 +124,8 @@
       1
     +(+.old-rut)
   ;<  ~  bind:m  (send-azimuth-action %breach who)
+  ;<  ~  bind:m  ?~  old-rut  (sleep ~s20) :: XX don't wait if possible
+                 (wait-for-sunk her who)   :: wait only if previously talked
   |-  ^-  form:m
   =*  loop  $
   ;<  ~  bind:m  (sleep ~s10)
@@ -155,8 +156,26 @@
   =/  m  (strand ,~)
   ^-  form:m
   ~&  >  "starting {<ship>}"
-  ;<  ~  bind:m  (send-events (init:util ship fake core))
+  ;<  ~  bind:m  (send-events (init:util ship fake ~ core))
   (check-ship-booted ship)
+::
+++  init-comet
+  =|  core=?(%mesa %ames)  :: XX make %mesa the default core
+  |=  [comet=ship =feed:jael]
+  =/  m  (strand ,~)
+  ^-  form:m
+  ~&  >  "mining comet under {<(^sein:title comet)>}"
+  ;<  ~  bind:m  (send-events (init:util comet fake=%.n `feed core))
+  (check-ship-booted comet)
+::
+::  Load network core protocol
+::
+++  load
+  |=  [who=ship ore=?(%mesa %ames)]
+  =/  m  (strand ,~)
+  ^-  form:m
+  ;<  ~  bind:m  (send-events [%event who [/a/aqua/load %load ore]]~)
+  (pure:m ~)
 ::
 ++  check-ship-booted
   |=  =ship
@@ -198,16 +217,24 @@
   |=  [our=ship her=ship dap=term]
   =/  m  (strand ,~)
   ^-  form:m
+  ;<  =bowl:spider  bind:m  get-bowl
   |-  ^-  form:m
   =*  loop  $
-  ;<  ~             bind:m  (sleep ~s1)  :: XX if this is not hear we scry into the future
-  ;<  =bowl:spider  bind:m  get-bowl
+  ;<  [from=^ship =unix-effect]  bind:m  take-unix-effect
+  ;<  now=@da                    bind:m  get-time
+  ?.  =(from our)
+    ::  our sends the $boon with the halted flow number, at this point
+    ::  gall has updated its state adding the app to gall's .halts map
+    ::  XX  search deeper in the .unix-effect?
+    ::
+    loop
   =/  aqua-pax
     :-  %i
-    /(scot %p our)/gg/(scot %p our)//(scot %da now.bowl)/[%$]/noun
-  =/  flubs  %-  need  ;;  (unit (jug ship term))
-    (scry-aqua:util noun our.bowl now.bowl aqua-pax)
-  ?.  (~(has ju flubs) her dap)
+    /(scot %p our)/gg/(scot %p our)//(scot %da now)/[%$]/noun
+  =+  ;;  flubs=(unit (jug ship term))
+    (scry-aqua:util noun our.bowl now aqua-pax)
+  ?~  flubs  loop
+  ?.  (~(has ju u.flubs) her dap)
     loop
   (pure:m ~)
 ::
@@ -215,16 +242,24 @@
   |=  [our=ship her=ship dap=term]
   =/  m  (strand ,~)
   ^-  form:m
+  ;<  =bowl:spider  bind:m  get-bowl
   |-  ^-  form:m
   =*  loop  $
-  ;<  ~             bind:m  (sleep ~s1)  :: XX if this is not hear we scry into the future
-  ;<  =bowl:spider  bind:m  get-bowl
+  ;<  [from=ship =unix-effect]  bind:m  take-unix-effect
+  ;<  now=@da                   bind:m  get-time
+  ?.  =(from our)
+    ::  our ack to the %spur $boon is sent, at this point
+    ::  gall has updated its state adding the app to gall's .flubs map
+    ::  XX  search deeper in the .unix-effect?
+    ::
+    loop
   =/  aqua-pax
     :-  %i
-    /(scot %p our)/gg/(scot %p our)//(scot %da now.bowl)/[%$]/noun
-  =/  flubs  %-  need  ;;  (unit (jug ship term))
-    (scry-aqua:util noun our.bowl now.bowl aqua-pax)
-  ?:  (~(has ju flubs) her dap)
+    /(scot %p our)/gg/(scot %p our)//(scot %da now)/[%$]/noun
+  =+  ;;  flubs=(unit (jug ship term))
+    (scry-aqua:util noun our.bowl now aqua-pax)
+  ?~  flubs  loop
+  ?:  (~(has ju u.flubs) her dap)
     loop
   (pure:m ~)
 ::
@@ -232,16 +267,29 @@
   |=  [our=ship her=ship dap=term]
   =/  m  (strand ,~)
   ^-  form:m
+  ;<  =bowl:spider  bind:m  get-bowl
   |-  ^-  form:m
   =*  loop  $
-  ;<  ~             bind:m  (sleep ~s1)  :: XX if this is not hear we scry into the future
-  ;<  =bowl:spider  bind:m  get-bowl
+  ;<  [from=ship =unix-effect]  bind:m  take-unix-effect
+  ;<  now=@da                   bind:m  get-time
+  ::  only %send or %push effects
+  ::
+  ?.  ?=(?(%send %push) -.q.unix-effect)
+    loop
+  ~&  >>  from^unix-effect
+  ?.  =(from our)
+    ::  wait until our ack for the %flub $boon is sent, at this point
+    ::  gall has updated its state adding the app to gall's .flubs map
+    ::  XX  search deeper in the .unix-effect?
+    ::
+    loop
   =/  aqua-pax
     :-  %i
-    /(scot %p our)/gh/(scot %p our)//(scot %da now.bowl)/[%$]/noun
-  =/  halts  %-  need  ;;  (unit (jug app=term [ship =duct]))
-    (scry-aqua:util noun our.bowl now.bowl aqua-pax)
-  ?.  (~(has by halts) dap)  ::  XX check .her as well
+    /(scot %p our)/gh/(scot %p our)//(scot %da now)/[%$]/noun
+  =+  ;;  halts=(unit (jug app=term [ship =duct]))
+    (scry-aqua:util noun our.bowl now aqua-pax)
+  ?~  halts  loop
+  ?.  (~(has by u.halts) dap)  ::  XX check .her as well
     loop
   (pure:m ~)
 ::
@@ -249,16 +297,24 @@
   |=  [our=ship her=ship dap=term]
   =/  m  (strand ,~)
   ^-  form:m
+  ;<  =bowl:spider  bind:m  get-bowl
   |-  ^-  form:m
   =*  loop  $
-  ;<  ~             bind:m  (sleep ~s1)  :: XX if this is not hear we scry into the future
-  ;<  =bowl:spider  bind:m  get-bowl
+  ;<  [from=ship =unix-effect]  bind:m  take-unix-effect
+  ;<  now=@da                   bind:m  get-time
+  ?.  =(from our)
+    ::  when the %spur $boon has been sent, gall has updated its state deleting
+    ::  the app from gall's .flubs map
+    ::  XX  search deeper in the .unix-effect?
+    ::
+    loop
   =/  aqua-pax
     :-  %i
-    /(scot %p our)/gh/(scot %p our)//(scot %da now.bowl)/[%$]/noun
-  =/  halts  %-  need  ;;  (unit (jug app=term [ship =duct]))
-    (scry-aqua:util noun our.bowl now.bowl aqua-pax)
-  ?:  (~(has by halts) dap) ::  XX check .her as well
+    /(scot %p our)/gh/(scot %p our)//(scot %da now)/[%$]/noun
+  =+  ;;  halts=(unit (jug app=term [ship =duct]))
+    (scry-aqua:util noun our.bowl now aqua-pax)
+  ?~  halts  loop
+  ?:  (~(has by u.halts) dap) ::  XX check .her as well
     loop
   (pure:m ~)
 ::  Send "|hi" from one ship to another
@@ -269,6 +325,60 @@
   ^-  form:m
   ;<  ~  bind:m  (dojo from "|hi {(scow %p to)}")
   (wait-for-output from "hi {(scow %p to)} successful")
+::
+::  Send "|hi" and wait for "not responding" message
+::
+++  wait-for-sunk
+  |=  [from=@p to=@p]
+  =/  m  (strand ,~)
+  (wait-for-output from "{(scow %p to)} has sunk")
+::
+++  wait-for-fact
+  |=  [=ship =mark =wire gate=$-([mark noun] ?)]
+  =/  m  (strand ,noun)
+  ^-  form:m
+  ~&  >  "waiting for fact: {<mark>}"
+  |-  ^-  form:m
+  =*  loop  $
+  ;<  [her=^ship =unix-effect]  bind:m  take-unix-effect
+  ?.  =(her ship)
+    loop
+  ?.  ?&  =(wire p.unix-effect)
+          ?=([%unto %raw-fact *] q.unix-effect)
+          =(mark mark.unto.q.unix-effect)
+          (gate mark noun.unto.q.unix-effect)
+      ==
+    loop
+  (pure:m noun.unto.q.unix-effect)
+::
+++  wait-for-cork
+  |=  [our=ship her=ship flow=bone:ames]
+  =/  m  (strand ,~)
+  ^-  form:m
+  ;<  =bowl:spider  bind:m  get-bowl
+  |-  ^-  form:m
+  =*  loop  $
+  ;<  [from=ship =unix-effect]  bind:m  take-unix-effect
+  ;<  now=@da                   bind:m  get-time
+  ::  only %send or %push effects
+  ::
+  ?.  ?=(?(%send %push) -.q.unix-effect)
+    loop
+  ::  check that this is an %ack?
+  ?.  =(from our)
+    ::  wait until the ack for the %cork $plea is sent, at this point
+    ::  the publisher has already corked the flow
+    ::
+    loop
+  =/  aqua-pax
+    %+  weld  /i/(scot %p our)/ax/(scot %p our)//(scot %da now)
+    /corked/(scot %p her)/(scot %ud flow)/noun
+  =+  ;;  corked=(unit ?)  (scry-aqua:util noun our.bowl now aqua-pax)
+  ?~  corked  loop
+  ?.  u.corked  ::  XX check .her as well
+    loop
+  ~&  >>  flow-is-corked/flow
+  (pure:m ~)
 ::
 ::  Send "|hi" and wait for "not responding" message
 ::

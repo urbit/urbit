@@ -34,7 +34,7 @@
   ==
 ::
 +$  aqua-event
-  $%  [%init-ship who=ship fake=?]
+  $%  [%init-ship who=ship fake=? feed=(unit feed:jael)]
       [%pause-events who=ship]
       [%snap-ships lab=term hers=(list ship)]
       [%restore-snap lab=term]
@@ -83,5 +83,7 @@
       [%init ~]
       [%request id=@ud request=request:http]
       [%turf p=(list turf)]
+      [%unto =unto:gall]  ::  internal gifts to host ships
+                          ::   (%facts are transformed to %raw-facts)
   ==
 --

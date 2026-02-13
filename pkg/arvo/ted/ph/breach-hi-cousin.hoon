@@ -19,8 +19,7 @@
 ;<  ~  bind:m  (init-ship ~mardev |)
 ;<  ~  bind:m  (send-hi ~marbud ~mardev)
 ;<  ~  bind:m  (breach-and-hear ~mardev ~marbud)
-;<  ~  bind:m  (send-hi-not-responding ~marbud ~mardev)
 ;<  ~  bind:m  (init-ship ~mardev |)
-;<  ~  bind:m  (wait-for-output ~marbud "hi ~mardev successful")
+;<  ~  bind:m  (send-hi ~marbud ~mardev)
 ;<  ~  bind:m  end
 (pure:m *vase)

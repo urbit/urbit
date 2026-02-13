@@ -185,6 +185,12 @@
 =>  .(bud +:(call:(bud) ~[//unix] ~ %born ~))
 =>  .(comet +:(call:(comet) ~[//unix] ~ %born ~))
 =>  .(comet2 +:(call:(comet2) ~[//unix] ~ %born ~))
+::  |ames as the default network core
+::
+=>  .(nec +:(call:(nec) ~[//unix] ~ %load %ames))
+=>  .(bud +:(call:(bud) ~[//unix] ~ %load %ames))
+=>  .(comet +:(call:(comet) ~[//unix] ~ %load %ames))
+=>  .(comet2 +:(call:(comet2) ~[//unix] ~ %load %ames))
 ::  helper core
 ::
 =>
@@ -451,6 +457,7 @@
       rcvr-life=3
     ==
   ::
+  =/  ahoy-plea  helm-send-ahoy/!>(~nec^test=|)
   =/  =blob:ames   (etch-shot:ames shot)
   =^  moves1  bud  (call bud ~[//unix] %hear lane-foo blob)
   =^  moves2  bud
@@ -914,7 +921,6 @@
   %+  expect-eq
     !>  pact
     !>  (parse-packet:bud blob)  :: %pass %peek for the attestation
-::
 ::
 ++  test-comet-sends-ames
   ::  turn on for verbosity
