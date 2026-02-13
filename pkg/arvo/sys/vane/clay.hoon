@@ -3247,7 +3247,8 @@
       [[%1 ~] ~]
     ?.  (~(has in kel) zuse+zuse)
       =/  msg  "clay: can't set {<syd>} live, it doesn't support zuse {<zuse>}"
-      ((slog leaf+msg ~) ..park)
+      :: ((slog leaf+msg ~) ..park)
+      ..park(liv.dom liv)            ::  XX
     ..park(liv.dom liv)
   ::
   ++  rise                                              ::  [goad] <
@@ -4794,6 +4795,31 @@
     |-  ^-  [load:gall _..abet]
     ?~  sat
       [lad ..abet]
+    ::
+    =/  den    ((de now rof hen ruf) our desk.i.sat)
+    =/  =yaki  (~(got by hut.ran:den) (~(got by hit.dom:den) let.dom:den))
+    =/  files  (get-kernel-files yaki)
+    ::
+    =/  zus=(unit vase)
+      ?:  |(?=(%base desk.i.sat) ?=(~ files))
+        ~
+      `(build-zuse u.files)
+    ::
+    =/  dub
+      ?~  zus  ~
+      =/  zuse  !>(..u.zus)
+      ::  XX  =>
+      :*  zuse=u.zus
+          nave=(slap u.zus !,(*hoon nave:clay))
+          cork=(slap u.zus !,(*hoon cork))
+          same=(slap u.zus !,(*hoon same))
+          mime=(slap u.zus !,(*hoon mime))
+          cass=(slap u.zus !,(*hoon cass:clay))
+      ==
+    ::
+    =>  ?:  ?=(~ dub)  ::  switch out bud/zuse
+          .
+        .(bud dub)
     =/  f  (ford our desk.i.sat ~)
     =^  new=load:gall  ..abet
       %-  wrap  :^  our  desk.i.sat  ~
@@ -4808,6 +4834,43 @@
       [[[i.bill.i.sat [our desk.i.sat da+now] agent] lid] nub.f]
     =.  lad  (weld lad new)
     $(sat t.sat)
+  ::
+  ++  get-kernel-files
+    |=  =yaki
+    ^-  (unit [h=@ a=@ l=@ z=@])
+    ;:  both
+      (get-kernel-file yaki /sys/hoon/hoon)
+      (get-kernel-file yaki /sys/arvo/hoon)
+      (get-kernel-file yaki /sys/lull/hoon)
+      (get-kernel-file yaki /sys/zuse/hoon)
+    ==
+  ::  +get-kernel-file: read hoon file from yaki
+  ::
+  ++  get-kernel-file
+    |=  [=yaki =path]
+    ^-  (unit @)
+    ?~  lube=(~(get by q.yaki) path)     ~
+    ?~  puge=(~(get by lat.ran) u.lube)  ~
+    ?.  ?=(%hoon p.u.puge)               ~
+    ?^  q.u.puge  ~
+    `q.u.puge
+  ::
+  ++  build-zuse
+    |=  [h=@ a=@ l=@ z=@]
+    ^-  vase
+    =/  hoon-core=vase
+      %-  (slog 'clay: compiling hoon' ~)
+      =-  (slot 7 -)
+      (road |.((slap *vase (ream h))))
+    =/  arvo-core=vase
+      %-  (slog 'clay: compiling arvo' ~)
+      =-  (slap - (ream '..part'))
+      (road |.((slap hoon-core (ream a))))
+    =/  lull-core=vase
+      %-  (slog 'clay: compiling lull' ~)
+      (road |.((slap arvo-core (rain /sys/lull/hoon l))))
+    %-  (slog 'clay: compiling zuse' ~)
+    (road |.((slap lull-core (rain /sys/zuse/hoon z))))
   ::  build-dais for each mark
   ::
   ++  build-marks
