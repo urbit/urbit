@@ -60,9 +60,9 @@
 ::  $move: Arvo-level move
 ::
 +$  move  [=duct move=(wind note-arvo gift-arvo)]
-::  $state-19: overall gall state, versioned
+::  $state-20: overall gall state, versioned
 ::
-+$  state-19  [%19 state]
++$  state-20  [%20 state]
 ::  $state: overall gall state
 ::
 ::    system-duct: TODO document
@@ -96,71 +96,11 @@
   ==
 +$  brood  [=coop =hutch]
 ::
-+$  task
-  $%  $<(?(%load %deal) task:gall)
-      [%load load]
-      [%deal p=sack q=term r=deal]
-  ==
-+$  load  (list [=dude =beak =agent])
-+$  deal
-  $%  [%raw-poke =mark =noun]
-      task:agent
-  ==
-::
 +$  gall-resource
   $:  =wire
   $%  [%poke =gill]
   ==  ==
 ::
-+$  arvo-resource
-  $:  =wire
-  $%  ::REVIEW  what if this in place of .ken? [%ames %keen =spar:ames]
-      [%behn %wait =time]                       ::  1 gift, end
-      :: [%clay %warp =ship =desk]                 ::  1+ gifts, could sometimes know end?
-      :: [%eyre ?(%connect %serve) =binding:eyre]  ::  1 gift, know end mb
-      :: [%eyre %set-response url=@t]              ::  0 gifts
-      [%iris %request]                          ::  1+ gifts, know end
-      :: [%khan ?(%fard %fyrd %lard)]              ::  1 gift, end
-      [%lick %spin =name:lick]                  ::  0 gifts
-  ==  ==
-::
-+$  task-user-v1
-  $%  [%ames %keen secret=? =spar:ames]
-      [%ames %yawn =spar:ames]
-    ::
-      ::NOTE  not actually into %ames, just gall-side namespace management
-      [%ames %grow =spur =page]
-      [%ames %tomb =case =spur]
-      [%ames %cull =case =spur]
-      [%ames %tend =coop =path =page]
-      [%ames %germ =coop]
-      [%ames %snip =coop]
-    ::
-      [%behn %wait =time]
-      [%behn %rest =time]
-    ::
-      :: [%clay %read id=@ =ship =desk read=(unit $<(%many rave:clay))]
-    ::
-      [%iris %request =request:http =outbound-config:iris]
-      [%iris %cancel-request ~]
-    ::
-      [%lick %spin =name:lick]
-      [%lick %shut =name:lick]
-      [%lick %spit =name:lick =mark =noun]
-    ::
-      [%syscall note-arvo=*]  ::NOTE  DO NOT DOCUMENT (;
-  ==
-::
-+$  gift-user-v1
-  $%  [%ames %sage =sage:mess:ames]
-      [%behn %wake =time]  ::REVIEW
-      :: [%clay %read =riot:clay]
-      [%iris %http-response =client-response:iris]
-      [%lick %soak =name:lick =mark =noun]
-    ::
-      [%syscall actual-kelvin=@ sign-arvo=*]
-      [%unsupported ~]
-  ==
 ::  $yoke: agent runner state
 ::
 ::    control-duct: TODO document
@@ -197,104 +137,6 @@
           pen=(jug spar:ames wire)
           gem=(jug coop [path page])
   ==  ==
-::
-++  agent
-  =<  form
-  |%
-  +$  step  (quip card form)
-  +$  card
-    $+  gall-agent-card
-    (wind note gift)
-  +$  note
-    $+  gall-agent-note
-    $%  [%agent [=ship name=term] =task]
-        [%arvo task-user-v1]
-    ==
-  +$  task
-    $+  gall-agent-task
-    $%  [%watch =path]
-        [%watch-as =mark =path]
-        [%leave ~]
-        [%poke =cage]
-        [%poke-as =mark =cage]
-    ==
-  +$  gift
-    $+  gall-agent-gift
-    $%  [%fact paths=(list path) =cage]
-        [%kick paths=(list path) ship=(unit ship)]
-        [%watch-ack p=(unit tang)]
-        [%poke-ack p=(unit tang)]
-    ==
-  +$  sign
-    $+  gall-agent-sign
-    $%  [%poke-ack p=(unit tang)]
-        [%watch-ack p=(unit tang)]
-        [%fact =cage]
-        [%kick ~]
-    ==
-  ++  form
-    $_  ^|
-    |_  bowl
-    ++  on-init
-      *(quip card _^|(..on-init))
-    ::
-    ++  on-save
-      *vase
-    ::
-    ++  on-load
-      |~  old-state=vase
-      *(quip card _^|(..on-init))
-    ::
-    ++  on-poke
-      |~  [mark vase]
-      *(quip card _^|(..on-init))
-    ::
-    ++  on-watch
-      |~  path
-      *(quip card _^|(..on-init))
-    ::
-    ++  on-leave
-      |~  path
-      *(quip card _^|(..on-init))
-    ::
-    ++  on-peek
-      |~  path
-      *(unit (unit cage))
-    ::
-    ++  on-agent
-      |~  [wire sign]
-      *(quip card _^|(..on-init))
-    ::
-    ++  on-arvo
-      |~  [wire gift-user-v1]
-      *(quip card _^|(..on-init))
-    ::
-    ++  on-fail
-      |~  [term tang]
-      *(quip card _^|(..on-init))
-    --
-  --
-+$  egg                                               ::  migratory agent
-    $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)] ::  state; see /sys/gall
-        $:  %live                                       ::  $yoke
-            control-duct=duct
-            run-nonce=@t
-            sub-nonce=@
-            =stats
-            =bitt
-            =boat
-            =boar
-            resources=(set arvo-resource)
-            code=~
-            old-state=[%| vase]
-            =beak
-            marks=(map duct mark)
-            sky=farm
-            ken=(jug spar:ames wire)
-            pen=(jug spar:ames wire)
-            gem=(jug coop [path page])
-    ==  ==
-  +$  egg-any  $%([%15 egg-15] [%16 egg])
 ::
 ++  of-farm
   |_  =farm
@@ -593,11 +435,11 @@
       flubs=(jug ship app=term)
       halts=(jug app=term [ship duct])
   ==
-+$  spore-19  [%19 spore]
++$  spore-20  [%20 spore]
 --
 ::  adult gall vane interface, for type compatibility with pupa
 ::
-=|  state=state-19
+=|  state=state-20
 |=  [now=@da eny=@uvJ rof=roof]
 =*  gall-payload  .
 ~%  %gall-top  ..part  ~
@@ -3126,11 +2968,12 @@
       =?  old  ?=(%16 -.old)  (spore-16-to-17 +.old)
       =?  old  ?=(%17 -.old)  (spore-17-to-18 +.old)
       =?  old  ?=(%18 -.old)  (spore-18-to-19 +.old)
-      ?>  ?=(%19 -.old)
+      =?  old  ?=(%19 -.old)  (spore-19-to-20 +.old)
+      ?>  ?=(%20 -.old)
       gall-payload(state old)
   ::
   +$  spore-any
-    $%  [%19 spore]
+    $%  [%20 spore]
         [%7 spore-7]
         [%8 spore-8]
         [%9 spore-9]
@@ -3142,15 +2985,28 @@
         [%15 spore-15]
         [%16 spore-16]
         [%17 spore-17]
-        [%18 spore]
+        [%18 spore-18]
+        [%19 spore-19]
     ==
-  +$  spore-18  spore
+  +$  spore-19
+    $:  system-duct=duct
+        outstanding=(map [wire duct] (qeu remote-request))
+        contacts=(set ship)
+        eggs=(map term egg-16)
+        blocked=(map term (qeu blocked-move))
+        =bug
+        leaves=(unit [=duct =wire date=@da])
+        flub-ducts=(map ship duct)
+        flubs=(jug ship app=term)
+        halts=(jug app=term [ship duct])
+    ==
+  +$  spore-18  spore-19
   +$  spore-17  spore-16
   +$  spore-16
     $:  system-duct=duct
         outstanding=(map [wire duct] (qeu remote-request))
         contacts=(set ship)
-        eggs=(map term egg)
+        eggs=(map term egg-16)
         blocked=(map term (qeu blocked-move))
         =bug
         leaves=(unit [=duct =wire date=@da])
@@ -3422,36 +3278,35 @@
         eggs
       %-  ~(urn by eggs.old)
       |=  [=term e=egg-15]
-      ^-  egg
-      !!
-      :: ?:  ?=(%nuke -.e)  [%nuke ~ ~]
-      :: %=    e
-      ::     ken  [ken.e ~ ~]
-      :: ::
-      ::     sky
-      ::   =|  =farm
-      ::   =/  ski  ~(tap by sky.e)
-      ::   |-  ^+  farm
-      ::   ?~  ski
-      ::     farm
-      ::   =/  [=spur p=plot]  i.ski
-      ::   =;  new
-      ::     ?~  nex=(~(put-grow of-farm farm) spur new)
-      ::       ~&  %weird
-      ::       !!  :: shouldn't continue else loss of ref integrity
-      ::       :: $(ski t.ski)
-      ::     $(farm u.nex, ski t.ski)
-      ::   :-  ~
-      ::   =/  m  ~(val by fan.p)
-      ::   %+  gas:on-path  *_fan.p
-      ::   %+  turn
-      ::     ^-  (list @)
-      ::     =/  wit  ~(wyt by fan.p)
-      ::     ?:  =(0 wit)  ~
-      ::     (gulf 1 wit)
-      ::   |=  a=@ud
-      ::   [a (snag (dec a) m)]
-      :: ==
+      ^-  egg-16
+      ?:  ?=(%nuke -.e)  [%nuke ~ ~]
+      %=    e
+          ken  [ken.e ~ ~]
+      ::
+          sky
+        =|  =farm
+        =/  ski  ~(tap by sky.e)
+        |-  ^+  farm
+        ?~  ski
+          farm
+        =/  [=spur p=plot]  i.ski
+        =;  new
+          ?~  nex=(~(put-grow of-farm farm) spur new)
+            ~&  %weird
+            !!  :: shouldn't continue else loss of ref integrity
+            :: $(ski t.ski)
+          $(farm u.nex, ski t.ski)
+        :-  ~
+        =/  m  ~(val by fan.p)
+        %+  gas:on-path  *_fan.p
+        %+  turn
+          ^-  (list @)
+          =/  wit  ~(wyt by fan.p)
+          ?:  =(0 wit)  ~
+          (gulf 1 wit)
+        |=  a=@ud
+        [a (snag (dec a) m)]
+      ==
     ==
   ::  drop unto blocked moves
   ::
@@ -3487,8 +3342,8 @@
   ::
   ++  spore-18-to-19
     |=  old=spore-18
-    ^-  spore-19
     :-  %19
+    ^-  spore-19
     %_    old
         blocked
       %-  ~(run by blocked.old)
@@ -3500,7 +3355,12 @@
         t.duct.blocked-move
       blocked-move
     ==
+  ::TODO  add arvo resources
   ::
+  ++  spore-19-to-20
+    |=  old=spore-19
+    ^-  spore-20
+    !!
   --
 ::  +scry: standard scry
 ::
@@ -3649,7 +3509,7 @@
           p.agent.u.yok
         on-save:p.agent.u.yok
       ==
-    ``noun+!>(`egg-any`[%16 egg]) :: XX egg-18 same as 17 and 16
+    ``noun+!>(`egg-any`[%20 egg])
   ::
   ?:  ?&  =(%w care)
           =([%$ %da now] coin)
@@ -3777,23 +3637,23 @@
     ==
   ~
 ::  +stay: save without cache; suspend non-%base agents
+::REVIEW  wrt resource suspension
 ::
 ++  stay
-  ^-  spore-19
+  ^-  spore-20
   =;  eggs=(map term egg)  state(yokes eggs)
   %-  ~(run by yokes.state)
   |=  =yoke
   ^-  egg
   ?:  ?=(%nuke -.yoke)  yoke
-  !!  ::TMP
-  :: %=    yoke
-  ::     code   ~
-  ::     agent
-  ::   :-  %|
-  ::   ?:  ?=(%| -.agent.yoke)
-  ::     p.agent.yoke
-  ::   on-save:p.agent.yoke
-  :: ==
+  %=    yoke
+      code   ~
+      agent
+    :-  %|
+    ?:  ?=(%| -.agent.yoke)
+      p.agent.yoke
+    on-save:p.agent.yoke
+  ==
 ::  +take: response
 ::
 ++  take

@@ -3728,6 +3728,18 @@
         [%plot p=(unit plot) q=(map @ta farm)]
     ==
   ::
+  +$  arvo-resource
+    $:  =wire
+    $%  ::REVIEW  what if this in place of .ken? [%ames %keen =spar:ames]
+        [%behn %wait =time]                       ::  1 gift, end
+        :: [%clay %warp =ship =desk]                 ::  1+ gifts, could sometimes know end?
+        :: [%eyre ?(%connect %serve) =binding:eyre]  ::  1 gift, know end mb
+        :: [%eyre %set-response url=@t]              ::  0 gifts
+        [%iris %request]                          ::  1+ gifts, know end
+        :: [%khan ?(%fard %fyrd %lard)]              ::  1 gift, end
+        [%lick %spin =name:lick]                  ::  0 gifts
+    ==  ==
+  ::
   +$  egg                                               ::  migratory agent
     $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)] ::  state; see /sys/gall
         $:  %live                                       ::  $yoke
@@ -3738,6 +3750,7 @@
             =bitt
             =boat
             =boar
+            resources=(set arvo-resource)
             code=~
             old-state=[%| vase]
             =beak
@@ -3747,7 +3760,7 @@
             pen=(jug spar:ames wire)
             gem=(jug coop [path page])
     ==  ==
-  +$  egg-any  $%([%15 egg-15] [%16 egg])
+  +$  egg-any  $%([%15 egg-15] [%16 egg-16] [%20 egg])
   +$  egg-15
     $%  [%nuke sky=(map spur @ud)]
     $:  %live
@@ -3764,6 +3777,25 @@
         marks=(map duct mark)
         sky=(map spur plot)
         ken=(jug spar:ames wire)
+    ==  ==
+  +$  egg-16
+    $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)]
+        $:  %live
+            control-duct=duct
+            run-nonce=@t
+            sub-nonce=@
+            =stats
+            =bitt
+            =boat
+            =boar
+            code=~
+            old-state=[%| vase]
+            =beak
+            marks=(map duct mark)
+            sky=farm
+            ken=(jug spar:ames wire)
+            pen=(jug spar:ames wire)
+            gem=(jug coop [path page])
     ==  ==
   ::
   +$  bowl                                              ::  standard app state
@@ -3805,6 +3837,46 @@
   +$  verb  ?(%odd)
   +$  coop  spur
   ::
+  ::  userspace api
+  ::
+  +$  task-user-v1
+    $%  [%ames %keen secret=? =spar:ames]
+        [%ames %yawn =spar:ames]
+      ::
+        ::NOTE  not actually into %ames, just gall-side namespace management
+        [%ames %grow =spur =page]
+        [%ames %tomb =case =spur]
+        [%ames %cull =case =spur]
+        [%ames %tend =coop =path =page]
+        [%ames %germ =coop]
+        [%ames %snip =coop]
+      ::
+        [%behn %wait =time]
+        [%behn %rest =time]
+      ::
+        :: [%clay %read id=@ =ship =desk read=(unit $<(%many rave:clay))]
+      ::
+        [%iris %request =request:http =outbound-config:iris]
+        [%iris %cancel-request ~]
+      ::
+        [%lick %spin =name:lick]
+        [%lick %shut =name:lick]
+        [%lick %spit =name:lick =mark =noun]
+      ::
+        [%syscall note-arvo=*]  ::NOTE  secretly $note-arvo, DO NOT DOCUMENT (;
+    ==
+  ::
+  +$  gift-user-v1
+    $%  [%ames %sage =sage:mess:ames]
+        [%behn %wake =time]  ::REVIEW
+        :: [%clay %read =riot:clay]
+        [%iris %http-response =client-response:iris]
+        [%lick %soak =name:lick =mark =noun]
+      ::
+        [%syscall actual-kelvin=@ sign-arvo=*]  ::NOTE  secretly $sign-arvo, DO NOT DOCUMENT (;
+        [%unsupported ~]
+    ==
+  ::
   ::  +agent: app core
   ::
   ++  agent
@@ -3817,18 +3889,7 @@
     +$  note
       $+  gall-agent-note
       $%  [%agent [=ship name=term] =task]
-          [%arvo note-arvo]
-          [%pyre =tang]
-      ::
-          [%grow =spur =page]
-          [%tomb =case =spur]
-          [%cull =case =spur]
-      ::
-          [%tend =coop =path =page]
-          [%germ =coop]
-          [%snip =coop]
-      ::
-          [%keen secret=? spar:ames]
+          [%arvo task-user-v1]
       ==
     +$  task
       $+  gall-agent-task
@@ -3886,7 +3947,7 @@
         *(quip card _^|(..on-init))
       ::
       ++  on-arvo
-        |~  [wire sign-arvo]
+        |~  [wire gift-user-v1]
         *(quip card _^|(..on-init))
       ::
       ++  on-fail
