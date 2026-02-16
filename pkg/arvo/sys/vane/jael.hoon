@@ -1301,7 +1301,7 @@
   ::
   ::  XX review for security, stability, cases other than now
   ::
-  ?.  &(=(lot [%$ %da now]) =([~ ~] lyc))  ~
+  ?.  =(lot [%$ %da now])  ~
   ::
   ?:  &(?=(%x ren) =(tyl //whey))
     =/  maz=(list mass)
@@ -1309,6 +1309,16 @@
           etn+&+etn.lex
       ==
     ``mass+!>(maz)
+  ::
+  ?.  ?|  =([~ ~] lyc)
+      ?=  $?  %lyfe  %life  %rift  %ryft
+              %deed  %sein  %saxo  %turf
+              %fief  %pont  %pynt  %sponsors
+              %lamp
+          ==
+          syd
+      ==
+    ~
   ::
   ?.  =(%$ ren)  [~ ~]
   ?+    syd
