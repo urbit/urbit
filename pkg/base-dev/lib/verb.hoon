@@ -98,15 +98,21 @@
   ==
 ::
 ++  on-arvo
-  |=  [=wire =sign-arvo]
+  |=  [=wire gift=gift-user-v1:gall]
   ^-  (quip card:agent:gall agent:gall)
   %-  %+  print  bowl  |.
-      "{<dap.bowl>}: on-arvo on wire {<wire>}, {<[- +<]:sign-arvo>}"
-  =^  cards  agent  (on-arvo:ag wire sign-arvo)
+      ?:  ?=(%unsupported -.gift)
+        "{<dap.bowl>}: on-arvo on wire {<wire>}, %unsupported"
+      "{<dap.bowl>}: on-arvo on wire {<wire>}, {<[- +<]:gift>}"
+  =^  cards  agent  (on-arvo:ag wire gift)
   :_  this
+  ?:  ?=(%unsupported -.gift)
+    :_  :_  cards
+      (emit-event %on-arvo wire %$ %unsupported)
+    (emit-event-plus bowl [%on-arvo wire %$ %unsupported] cards)
   :_  :_  cards
-    (emit-event %on-arvo wire [- +<]:sign-arvo)
-  (emit-event-plus bowl [%on-arvo wire [- +<]:sign-arvo] cards)
+    (emit-event %on-arvo wire [- +<]:gift)
+  (emit-event-plus bowl [%on-arvo wire [- +<]:gift] cards)
 ::
 ++  on-fail
   |=  [=term =tang]
@@ -170,11 +176,11 @@
     ~|  %explicit-ack
     !!  ::  shouldn't be given explicitly
   ::
+      [%pass * %arvo %syscall *]
+    [%arvo p.card %$ %syscall]  ::TODO  pluck out deets from note-arvo naively?
+  ::
       [%pass * %arvo *]
     [%arvo p.card -.q.card +<.q.card]
-  ::
-      [%pass *]
-    [%arvo p.card %$ -.q.card]
   ::
       [%slip *]
     $(card [%pass //slip p.card])

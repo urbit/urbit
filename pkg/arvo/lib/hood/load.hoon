@@ -24,13 +24,13 @@
 ::
 ++  eyre-clean
   |=  [our=ship now=@da]
-  ^-   (list card:agent:gall)
+  ^-  (list card:agent:gall)
   =/  m-gall  (gall-raw our)
   =/  yokes   .^((map term yoke:m-gall) %gy /(scot %p our)//(scot %da now)/$)
   =/  channel
     .^(channel-state:eyre %e /(scot %p our)/channel-state/(scot %da now)/$)
   =;  subs=(list [%g ship term duct])
-    [%pass /helm %arvo %g %lave subs]~
+    [%pass /helm %arvo %syscall %g %lave subs]~
   ::
   %+  roll  ~(tap by yokes)
   |=  [[=dude:gall =yoke:m-gall] subs=(list [%g ship term duct])]

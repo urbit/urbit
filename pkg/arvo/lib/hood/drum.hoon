@@ -294,7 +294,7 @@
   (se-drop %| gyl)
 ::
 ++  hear-logs
-  `card:agent:gall`[%pass /drum/dill/logs %arvo %d %logs [~ ~]]
+  `card:agent:gall`[%pass /drum/dill/logs %arvo %syscall %d %logs [~ ~]]
 ::
 ++  take-arvo
   |=  [way=wire syn=sign-arvo]
