@@ -1667,6 +1667,8 @@
     ::
         ?(%authentication %eauth %auth %logout)
       ::NOTE  expiry timer will clean up cancelled eauth attempts
+      ::TODOxx  investigate if we need to clean up tmp-tokens or w/e
+      ::        answer: probably yes
       [~ state]
     ::
         %channel
@@ -1803,7 +1805,8 @@
       =.  connections.state
         %+  ~(jab by connections.state)  duct
         |=  o=outstanding-connection
-        o(session-id session.fex)  ::TODOxx  doesn't update the identity!
+        ::NOTE  updating identity.o doesn't actually matter, but it's good form
+        o(session-id session.fex, identity identity.fex)
       ::  store the hostname used for this login, later reuse it for eauth
       ::
       =?  endpoint.auth.state
@@ -2286,7 +2289,8 @@
           =.  connections.state
             %+  ~(jab by connections.state)  duct
             |=  o=outstanding-connection
-            o(session-id sid)  ::TODOxx  doesn't update the identity
+            ::NOTE  doesn't update identity, but that's fine
+            o(session-id sid)
           =^  moz3  state
             =;  hed  (handle-response %start 303^hed ~ &)
             :~  ['location' last]
@@ -2687,7 +2691,7 @@
           ;body
             ;div
               ;p:"Let {(trip client)} log in to {(trip scope)} on {(scow %p our)}?"
-              ;form(action "/~/auth", method "post")  ::TODOxx  review form submission deets
+              ;form(action "/~/auth", method "post")
                 ;input(type "hidden", name "scope", value (trip scope));
                 ;input(type "hidden", name "return", value (trip return));
                 ;button(type "submit", name "deny"):"Deny"
