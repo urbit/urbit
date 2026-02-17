@@ -853,10 +853,8 @@
         (rush u.host thor:de-purl:html)
       ?~  doom  ~
       ?:  ?=(%| -.doom.u.doom)
-        ::TODOxx  if ip support not enabled, produce ~
         ?.  risk.state  ~
         `[%| p.doom port]:u.doom
-      =.  domains.state  (~(put in domains.state) ~['localhost'])  ::TODOxx tmp
       =-  ?:  =(hit *turf)  ~
           %-  some
           :-  %&
@@ -4092,7 +4090,7 @@
   ::  %init: tells us what our ship name is
   ::
   ?:  ?=(%init -.task)
-    ::  initial value for the login handler
+    ::  set up system bindings and always-known domains
     ::
     =.  bindings.server-state.ax
       =-  (roll - insert-binding)
@@ -4108,8 +4106,11 @@
           [/~/ip duct [%ip ~]]
           [/~/boot duct [%boot ~]]
           [/~/sponsor duct [%sponsor ~]]
-          [/~/xxauth duct [%xxauth ~]]
+          [/~/xxauth duct [%xxauth ~]]  ::TODO  add to migration
       ==
+    =.  domains.server-state.ax
+      ::TODO  add to migration
+      (~(put in domains.server-state.ax) 'localhost' ~)
     [~ http-server-gate]
   ::  %trim: in response to memory pressure
   ::
