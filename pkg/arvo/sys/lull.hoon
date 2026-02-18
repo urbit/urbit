@@ -3173,9 +3173,9 @@
     $:  ::  sessions: a mapping of session cookies to session information
         ::
         sessions=(map @uv session)
-        ::  tokensxx: temporary tokens for authenticating into scopes
+        ::  authlets: temporary tokens for authenticating into scopes
         ::
-        tokensxx=(map @uv session=@uv)
+        authlets=(map @uv session=@uv)
         ::  visitors: in-progress incoming eauth flows
         ::
         visitors=(map @uv visitor)
@@ -3431,9 +3431,9 @@
         ::  respond with the default file not found page
         ::
         [%four-oh-four ~]
-        ::  xx-auth: %jump to top domain, %sink down to sub, %gain the cookie
+        ::  subdomain auth; %jump to top, %sink to sub, %gain the cookie
         ::
-        [%xxauth ~]
+        [%holm ~]
     ==
   ::  +generator: a generator on the local ship that handles requests
   ::

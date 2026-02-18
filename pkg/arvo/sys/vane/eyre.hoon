@@ -656,7 +656,7 @@
     %+  rap  3
     :~  '//'
         (host-string top port)
-        '/~/xxauth/'  sub
+        '/~/holm/'  sub
         target-path
     ==
   :+  %start
@@ -981,10 +981,10 @@
     ::    %have:      known and valid session.
     ::    %made       created a new session from whole cloth. (we will mint new
     ::                guest sessions for auth-less requests to top-level domain,
-    ::                or new scoped sessions for action=%xxauth on subdomains.)
+    ::                or new scoped sessions for action=%holm on subdomains.)
     ::    %negotiate: request lacks auth but came in on a subdomain. if we
     ::                serve it the +build-subdomain-negotiation it may be able to
-    ::                obtain auth automagically.
+    ::                obtain auth automagically. (this is %holm %jump.)
     ::
     =/  t
       $%  [%invalid session=@uv]
@@ -1017,7 +1017,7 @@
       ?:  ?=(%| -.target)  [[%invalid u.sid] state]
       [[%negotiate ?~(desk.p.target domain.p.target full-turf) ~] state]
     ::  normally, %negotiate on a subdomain means that we _start_ auth
-    ::  negotiation. however, if the request binds to %xxauth, this means we're
+    ::  negotiation. however, if the request binds to %holm, this means we're
     ::  returning to the subdomain after having started negotiation through the
     ::  top-level domain. in that case, we can turn auth-state into a %made
     ::  instead by minting the cookie (xx invalid cases). the action handling
@@ -1025,18 +1025,18 @@
     ::
     =^  auth-state=t  state
       ?.  ?&  ?=(%negotiate -.auth-state)
-              ?=(%xxauth -.action)
+              ?=(%holm -.action)
               ?=([%& * ^] target)
           ==
         [auth-state state]
       =/  [tmp-token=@uv target-url=tape]
         %+  rash  url.request
-        ;~  pfix  (jest '/~/xxauth/')
+        ;~  pfix  (jest '/~/holm/')
         ;~  plug
           ;~(pfix (jest '0v') viz:ag)
           (star next)
         ==  ==
-      ?~  parent=(~(get by tokensxx.auth.state) tmp-token)
+      ?~  parent=(~(get by authlets.auth.state) tmp-token)
         ::TODOxx  what to do about invalid tmp-token?
         ::NOTE  this will serve 500, adding token url into browser history,
         ::      but the token apparently isn't valid, so that's fine
@@ -1045,7 +1045,7 @@
         ~|(%unknown-parent-session !!)
       =/  new-id=identity
         identity.u.parent-session(scope desk.p.target)
-      =.  tokensxx.auth.state  (~(del by tokensxx.auth.state) tmp-token)
+      =.  authlets.auth.state  (~(del by authlets.auth.state) tmp-token)
       [[%made -] +]:(start-session:authentication new-id parent)
     ::
     ?:  ?=(%invalid -.auth-state)
@@ -1079,7 +1079,7 @@
     ::
     ?:  ?=(%negotiate -.auth-state)
       ?>  ?=(%& -.target)
-      ::TODOxx  this is the equivalent of doing a [%xxauth %jump],
+      ::TODOxx  this is the equivalent of doing a [%holm %jump],
       ::        can imagine implementing it as such, =. action or w/e
       :_  state
       =;  =http-event:http
@@ -1196,7 +1196,7 @@
       (handle-cache-req authenticated request u.val.u.cached)
     ::
     ?-    -.action
-        %xxauth
+        %holm
       ::TODOxx  this factoring smh
       ::NOTE  %jump case handled in %negotiate auth-state above
       :: ?:  ?=([~ * ^] target)
@@ -1208,28 +1208,28 @@
         ::  doesn't make sense to hit in the ip address case
         ::
         %^  return-static-data-on-duct  400  'text/html'
-        (error-page 400 & url.request "no ip xxauth")
+        (error-page 400 & url.request "holm: no domain")
       ::  top domain, %sink case
       ::
       ?~  desk.p.target
         ::  at this point, we expect the url.request to be of the shape
-        ::  /~/xxauth/[scope]/[target-path]. get those values out.
+        ::  /~/holm/[scope]/[target-path]. get those values out.
         ::
         =/  [scope=@t target-url=tape]
           %+  rash  url.request
-          ;~  pfix  (jest '/~/xxauth/')
+          ;~  pfix  (jest '/~/holm/')
           ;~  plug
             sym
             (star next)  ::REVIEWxx  doesn't enforce slash separator after sym
           ==  ==
-        =^  tmp-token=@uv  tokensxx.auth.state
-          =+  t=(end 3^8 (shas %xxauth eny))
+        =^  tmp-token=@uv  authlets.auth.state
+          =+  t=(end 3^8 (shas %holm eny))
           :-  t
-          (~(put by tokensxx.auth.state) t suv)
+          (~(put by authlets.auth.state) t suv)
         =/  expire=move
-          [duct %pass /xx-auth/(scot %uv tmp-token) %b %wait (add now tmp-token-timeout)]
+          [duct %pass /holm/(scot %uv tmp-token) %b %wait (add now tmp-token-timeout)]
         =/  redirect-url=tape
-          "//{(trip scope)}.{(trip (host-string -.p.target))}/~/xxauth/{(scow %uv tmp-token)}{target-url}"
+          "//{(trip scope)}.{(trip (host-string -.p.target))}/~/holm/{(scow %uv tmp-token)}{target-url}"
         =^  moz=(list move)  state
           %-  handle-response
           [%start [303 ['location' (crip redirect-url)]~] ~ &]
@@ -1237,15 +1237,15 @@
       ::  subdomain, %gain case
       ::
       ::  at this point, we expect the url.request to be of the shape
-      ::  /~/xxauth/[tmp-token]/[target-path]. get those values out.
+      ::  /~/holm/[tmp-token]/[target-path]. get those values out.
       ::
       ::NOTE  tmp-token was already checked and turned into a new session
-      ::      in the %negotiate %xxauth logic above
+      ::      in the %negotiate %holm logic above
       ::REVIEWxx  comments for accuracy and clarity
       ::
       =/  [@uv target-url=tape]
         %+  rash  url.request
-        ;~  pfix  (jest '/~/xxauth/')
+        ;~  pfix  (jest '/~/holm/')
         ;~  plug
           ;~(pfix (jest '0v') viz:ag)
           (star next)
@@ -1674,7 +1674,7 @@
         %channel
       on-cancel-request:by-channel
     ::
-        ?(%scry %four-oh-four %name %host %ip %boot %sponsor %xxauth)
+        ?(%scry %four-oh-four %name %host %ip %boot %sponsor %holm)
       ::  it should be impossible for these to be asynchronous,
       ::  but also no clean-up needed, so don't crash just in case.
       ::  (crashing during %born handling is Very Bad.)
@@ -1855,7 +1855,7 @@
               %&  (host-string -.p.target)
               %|  (ip-string p.target)
             ==
-            '/~/xxauth/'  u.actual-desk
+            '/~/holm/'  u.actual-desk
             actual-redirect
         ==
       [%start 303^~['location'^actual-redirect col] `bod &]
@@ -4110,7 +4110,7 @@
           [/~/ip duct [%ip ~]]
           [/~/boot duct [%boot ~]]
           [/~/sponsor duct [%sponsor ~]]
-          [/~/xxauth duct [%xxauth ~]]  ::TODO  add to migration
+          [/~/holm duct [%holm ~]]  ::TODO  add to migration
       ==
     =.  domains.server-state.ax
       ::TODO  add to migration
@@ -4371,7 +4371,7 @@
         %run-app-request   run-app-request
         %watch-response    watch-response
         %sessions          sessions
-        %xx-auth           xx-auth
+        %holm              holm
         %channel           channel
         %acme              acme-ack
         %conversion-cache  `http-server-gate
@@ -4524,11 +4524,11 @@
     ?:  =(*@da next)  expiry-time
     (min next expiry-time)
   ::
-  ++  xx-auth
+  ++  holm
     ?>  ?=([%behn %wake *] sign)
-    =*  tokens  tokensxx.auth.server-state.ax
+    =*  tokens  authlets.auth.server-state.ax
     ?^  error.sign
-      %-  (slog 'eyre: xx-auth wake crashed, nuking tmp tokens' ~)
+      %-  (slog 'eyre: holm wake crashed, nuking tmp tokens' ~)
       =.  tokens  ~
       [~ http-server-gate]
     ?>  ?=([@ ~] t.wire)
@@ -4874,7 +4874,7 @@
   ::
       %~2025.1.31
     =.  bindings.old
-      (insert-binding [/~/xxauth outgoing-duct.old [%xxauth ~]] bindings.old)
+      (insert-binding [/~/holm outgoing-duct.old [%holm ~]] bindings.old)
     http-server-gate(ax old)
   ::
   ==
