@@ -645,7 +645,7 @@
     ==
     ;body:"{msg}"
   ==
-::  +build-subdomain-negotiation: render "negotiation script page"  xxtodo description
+::  +build-subdomain-negotiation: generate %holm redirect response
 ::
 ++  build-subdomain-negotiation
   |=  [[host=turf port=(unit @ud)] target-path=@t expire=(unit @t)]
@@ -960,7 +960,6 @@
       ::  (a desk that did not bind that path,) we cannot resolve the request.
       ::
       ?.  =(u.desk.p.target u.pathowner)
-        ~&  [%for-oh-ofr-b url=url.request]
         [[%four-oh-four ~] url.request]
       ::  finally, if we are serving under a known domain, whose subdomain
       ::  maps to a desk that owns the request path, resolve to the configured
@@ -1203,7 +1202,6 @@
       ::   %^  return-static-data-on-duct  200  'text/html'
       ::   (build-subdomain-negotiation domain.p.target suburl)
       ?:  ?=(%| -.target)
-        ~&  %xxauth-hit-without-domain
         ::  this binding is for cross-domain auth negotiation,
         ::  doesn't make sense to hit in the ip address case
         ::
