@@ -87,6 +87,7 @@
       flub-ducts=(map ship duct)
       flubs=(jug ship app=term)
       halts=(jug app=term [ship =duct])
+      perms=(map desk [peg=(set perm) peq=(set perm)])
   ==
 ::  $routes: new cuff; TODO: document
 ::
@@ -427,6 +428,7 @@
       flub-ducts=(map ship duct)
       flubs=(jug ship app=term)
       halts=(jug app=term [ship duct])
+      perms=(map desk [peg=(set perm) peq=(set perm)])
   ==
 +$  spore-19  [%19 spore]
 --
@@ -550,7 +552,7 @@
   ::
   ++  mo-receive-core
     ~/  %mo-receive-core
-    |=  [prov=path dap=term bek=beak per=(set perm) =agent]
+    |=  [prov=path dap=term bek=beak per=[peg=(set perm) peq=(set perm)] =agent]
     ^+  mo-core
     ::
     =/  yak  (~(get by yokes.state) dap)
@@ -566,6 +568,8 @@
       ==
     =+  ?~  tex  ~
         ~>  %slog.[0 leaf+"gall: {u.tex} {<dap>}"]  ~
+    ::
+    =.  perms.state  (~(gas by perms.state) [q.bek per]~)
     ::
     ?:  ?=([~ %live *] yak)
       ?:  &(=(q.beak.u.yak q.bek) =(code.u.yak agent) =(-.agent.u.yak &))
@@ -1162,7 +1166,7 @@
   ::  +mo-load: install agents
   ::
   ++  mo-load
-    |=  [prov=path agents=(list [=dude =beak per=(set perm) =agent])]
+    |=  [prov=path agents=(list [=dude =beak per=[peg=(set perm) peq=(set perm)] =agent])]
     =.  mo-core
       |-  ^+  mo-core
       ?~  agents  mo-core
@@ -2004,6 +2008,10 @@
               eny=eny.stats.yoke                      ::  nonce
               now=time.stats.yoke                     ::  time
               byk=beak.yoke                           ::  source
+              ^=  peg                                 ::  granted permissions
+              ?~  perms=(~(get by perms.state) q.beak.yoke)
+                *(set perm)
+              peg.u.perms
       ==  ==
     ::  +ap-reinstall: reinstall.
     ::

@@ -212,6 +212,7 @@
       pud=(unit [=desk =yoki])                          ::  pending update
       sad=(map ship @da)                                ::  scry known broken
       bug=[veb=@ mas=@]                                 ::  verbosity
+      pes=(set duct)                                    ::  perm subs
   ==                                                    ::
 ::
 ::  Unvalidated response to a request.
@@ -264,7 +265,7 @@
   ==                                                    ::
 ::
 +$  bill  (list dude:gall)
-+$  seal  [%0 (list perm:clay)]
++$  seal  [%0 (list perm:gall)]
 ::
 ::  Active downloads
 ::
@@ -631,7 +632,7 @@
       |_  =seal
       ++  grab
         |%
-        ++  noun  ,[%0 (list perm:clay)]
+        ++  noun  ,[%0 (list perm:gall)]
         ++  mime
           |=  [=mite len=@ud tex=@]
           !<(^seal (slap !>([%0 ~]) (ream tex)))
@@ -649,7 +650,7 @@
           %-  of-wall:format
           %-  snoc  :_  "=="
           %+  turn  +.seal
-          |=(=perm:clay <perm>)
+          |=(=perm:gall <perm>)
         --
       ++  grad  %noun
     --
@@ -1537,16 +1538,16 @@
   ::  +get-perm: read the desk's required permissions from /seal/desk
   ++  get-perm
     |=  =yoki
-    ^-  (set perm:clay)
+    ^-  (set perm:gall)
     |^  ?-  -.yoki
         %|
       ?~  per=(~(get by q.p.yoki) /desk/seal)
-        *(set perm:clay)
+        *(set perm:gall)
       %-  silt
       +:(lobe-to-seal (~(got by q.p.yoki) /desk/seal))  ::  return lobe
         %&
       ?~  lob=(~(get by q.p.yoki) /desk/seal)
-        *(set perm:clay)
+        *(set perm:gall)
       %-  silt
       ?-  -.u.lob
         %|  +:(lobe-to-seal p.u.lob)
@@ -1569,6 +1570,12 @@
           %mime  !<(seal (slap !>([%0 ~]) (ream q.q:;;(mime q.page))))
         ==
     --
+  ::
+  ++  send-ward
+    %-  emil 
+    %+  turn  ~(tap in pes)
+    |=  =duct
+    [duct %give %ward syd peg.dom peq.dom]
   ::
   ++  case-to-date
     |=  =case
@@ -1957,7 +1964,7 @@
       !!
     ::  find desk seal
     ::
-    =/  per=(set perm:clay)  (get-perm yoki)
+    =/  per=(set perm:gall)  (get-perm yoki)
     ~&  >>  %checking-permissions
     ::  TODO:  itterate over permissions and check if it's been granted 
     =/  has-peg  =(~ (~(dif in per) peg.dom))
@@ -3314,7 +3321,7 @@
     r(who (~(del in who.r) |+nom))
   ::
   ++  set-pine 
-    |=  [add=? pes=(set perm:clay)]
+    |=  [add=? pes=(set perm:gall)]
     ^+  ..park
     ::  TODO: notify about changes 
     ?:  add  ..park(peq.dom (~(uni in peq.dom) pes))
@@ -3326,11 +3333,14 @@
     ..park(ren.dom ren)
   ::
   ++  set-seal
-    |=  [add=? pes=(set perm:clay)]
+    |=  [add=? pes=(set perm:gall)]
     ^+  ..park
-    ::  TODO: notify about changes 
-    ?:  add  ..park(peg.dom (~(uni in peg.dom) pes))
-    ?:  =(%live liv.dom)  (mean leaf+"can't remove permissions desk is %live, suspend first" ~)
+    ?:  add  
+      ..park(peg.dom (~(uni in peg.dom) pes))
+    =/  per=(set perm:gall)  (get-perm [%| (aeon-to-yaki:ze let.dom)])
+    =/  in-per  (~(any in pes) |=(p=perm:gall (~(has in per) p)))
+    ?:  &(=(%live liv.dom) in-per)
+      (mean leaf+"can't remove permissions desk is %live, suspend first" ~)
     ..park(peg.dom (~(dif in peg.dom) pes))
   ::
   ++  set-zest                                          ::  [goad] <
@@ -3349,7 +3359,7 @@
     ?.  (~(has in kel) zuse+zuse)
       =/  msg  "clay: can't set {<syd>} live, it doesn't support zuse {<zuse>}"
       ((slog leaf+msg ~) ..park)
-    =/  per=(set perm:clay)
+    =/  per=(set perm:gall)
       %+  fall
         (mole |.((get-perm [%| (aeon-to-yaki:ze let.dom)])))  
       ~
@@ -4915,11 +4925,10 @@
       =^  =vase  nub.f
         %-  road  |.
         (build-file:f /app/[i.bill.i.sat]/hoon)
-      ::=/  per  !<(-:!>(*(set perm:gall)) !>(peg.den))
       ~&  passing-granted-perm/peg.dom.den
       =/  agent  ~|  [%building-app bill.i.sat]  !<(agent:gall vase)
       =^  lid  nub.f  $(bill.i.sat t.bill.i.sat)
-      [[[i.bill.i.sat [our desk.i.sat da+now] peg.dom.den agent] lid] nub.f]
+      [[[i.bill.i.sat [our desk.i.sat da+now] [peg.dom.den peq.dom.den] agent] lid] nub.f]
     =.  lad  (weld lad new)
     $(sat t.sat)
   ::  build-dais for each mark
@@ -5230,8 +5239,9 @@
       %pine 
     =^  mos  ruf 
       =/  den  ((de now rof hen ruf) our des.req)
-      abet:(set-pine:den add.req pes.req)
-    [mos ..^$]
+      abet:send-ward:(set-pine:den add.req pes.req) 
+    =^  mos2  ruf  abet:goad:(lu now rof hen ruf)
+    [(weld mos mos2) ..^$]
   ::
       %rein
     =^  m1  ruf
@@ -5243,10 +5253,8 @@
       %seal
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our des.req)
-      abet:(set-seal:den add.req pes.req)
-    ::  TODO: review this logic 
-    =^  mos2  ruf
-      abet:tare:(lu now rof hen ruf)
+      abet:send-ward:(set-seal:den add.req pes.req)
+    =^  mos2  ruf  abet:goad:(lu now rof hen ruf)
     [(weld mos mos2) ..^$]
     ::  
   ::
@@ -5327,6 +5335,14 @@
       [(weld moves-1 moves-2) ..^^$]
     [wake-moves ..^$]
   ::
+      %ward
+    =.  pes.ruf  (~(put in pes.ruf) hen)
+    =/  roml=(list [desk dojo])  ~(tap by dos.rom.ruf)
+    :_  ..^$
+    %+  turn  roml
+    |=  [=desk =dojo]
+    [hen %give %ward desk peg.dom.dojo peq.dom.dojo]
+  ::
       ?(%warp %werp)
     ::  capture whether this read is on behalf of another ship
     ::  for permissions enforcement
@@ -5353,6 +5369,10 @@
     =^  mos  ruf
       abet:wick:((de now rof hen ruf) our %base)        ::  [wick]
     [mos ..^$]
+  ::
+      %wink
+    =.  pes.ruf  (~(del in pes.ruf) hen)
+    [~ ..^$]
   ::
       %zeal
     =^  m1  ruf

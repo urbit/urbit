@@ -2430,6 +2430,7 @@
         [%ogre p=@tas]                                  ::  delete mount point
         [%rule red=dict wit=dict]                       ::  node r+w permissions
         [%tire p=(each rock:tire wave:tire)]            ::  app state
+        [%ward =desk peg=(set perm:gall) peq=(set perm:gall)]  ::  permission state
         [%writ p=riot]                                  ::  response
         [%wris p=[%da p=@da] q=(set (pair care path))]  ::  many changes
     ==                                                  ::
@@ -2459,19 +2460,21 @@
         [%ogre pot=$@(term beam)]                       ::  delete mount point
         [%park des=desk yok=yoki ran=rang]              ::  synchronous commit
         [%perm des=desk pax=path rit=rite]              ::  change permissions
-        [%pine des=desk add=? pes=(set perm)]           ::  requesting permissions
+        [%pine des=desk add=? pes=(set perm:gall)]      ::  requesting permissions
         [%pork ~]                                       ::  resume commit
         [%prep lat=(map lobe page)]                     ::  prime clay store
         [%rein des=desk ren=rein]                       ::  extra apps
-        [%seal des=desk add=? pes=(set perm)]           ::  granting and revoking permissions
+        [%seal des=desk add=? pes=(set perm:gall)]      ::  granting or revoking permissions
         [%stir arg=*]                                   ::  debug
         [%tire p=(unit ~)]                              ::  app state subscribe
         [%tomb =clue]                                   ::  tombstone specific
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
+        [%ward ~]                                       ::  permission update
         [%warp wer=ship rif=riff]                       ::  internal file req
         [%werp who=ship wer=ship rif=riff-any]          ::  external file req
         [%wick ~]                                       ::  try upgrade
+        [%wink ~]                                       ::  close subscription to permissions
         [%zeal lit=(list [=desk =zest])]                ::  batch zest
         [%zest des=desk liv=zest]                       ::  live
         $>(%plea vane-task)                             ::  ames request
@@ -2528,8 +2531,8 @@
         wic=(map weft yoki)                             ::  commit-in-waiting
         liv=zest                                        ::  running agents
         ren=rein                                        ::  force agents on/off
-        peg=(set perm)                                  ::  granted permissions
-        peq=(set perm)                                  ::  requested permissions
+        peg=(set perm:gall)                             ::  granted permissions
+        peq=(set perm:gall)                             ::  requested permissions
     ==                                                  ::
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission
@@ -2580,10 +2583,6 @@
   +$  norm  (axal ?)                                    ::  tombstone policy
   +$  open  $-(path vase)                               ::  get prelude
   +$  page  ^page                                       ::  export for compat
-  +$  perm  
-    $%  [%behn %timer]
-        [%eyre %serve]
-    ==
   +$  pour                                              ::  ford build w/content
     $%  [%file =path]
         [%nave =mark]
@@ -3789,6 +3788,7 @@
             eny=@uvJ                                    ::  entropy
             now=@da                                     ::  current time
             byk=beak                                    ::  load source
+            peg=(set perm)                              ::  granted permissions
     ==  ==                                              ::                                                  ::
   +$  dude  term                                        ::  server identity
   +$  gill  (pair ship term)                            ::  general contact
@@ -3796,7 +3796,7 @@
     $%  [%behn %timer]
         [%eyre %serve]
     ==
-  +$  load  (list [=dude =beak per=(set perm) =agent])  ::  loadout
+  +$  load  (list [=dude =beak per=[peg=(set perm) peq=(set perm)] =agent])  ::  loadout
   +$  scar                                              ::  opaque duct
     $:  p=@ud                                           ::  bone sequence
         q=(map duct bone)                               ::  by duct
@@ -4321,6 +4321,7 @@
         eny=@uvJ
         now=@da
         byk=beak
+        peg=(set perm:gall)
     ==
   ::
   ::  cards:  cards to send immediately.  These will go out even if a

@@ -5,7 +5,7 @@
 ::
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
-        [des=desk add=? per=(list perm:clay) ~]  ~
+        [des=desk add=? per=(list perm:gall) ~]  ~
     ==
 =+  .^(desks=(set desk) %cd /(scot %p p.bec)//(scot %da now))
 ?.  (~(has in desks) des)
