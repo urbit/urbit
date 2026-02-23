@@ -1037,6 +1037,9 @@
       mo-core
     ::
     ?.  ?=([%out @ @ *] t.t.wire)
+      =^  syscall=?  t.t.t.wire
+        ?.  ?=([%hug *] t.t.t.wire)  [& t.t.t.wire]
+        [| t.t.t.t.wire]
       ?>  ?=([@ *] t.t.t.wire)
       ?:  ?=(%| -.agent.u.yoke)
         %-  (slog leaf+"gall: {<dap>} dozing, dropping {<+<.sign-arvo>}" ~)
@@ -1051,7 +1054,7 @@
         =+  c=(need (slay i.t.t.t.wire))
         ?>(?=(%blob -.c) p.c)
       ::
-      =.  app  (ap-generic-take:app deets t.t.t.t.wire sign-arvo)
+      =.  app  (ap-generic-take:app syscall deets t.t.t.t.wire sign-arvo)
       ap-abet:app
     ?>  ?=([?(%gall %behn) %unto *] sign-arvo)
     =/  =ship  (slav %p i.t.t.t.wire)
@@ -1539,7 +1542,7 @@
         ::  if we are not given a key, tell the agent "no result" immediately
         ::
         ?~  bod.bud
-          =.  ap-core  (ap-generic-take ~ i.wis %ames %sage [ship t.wire] ~)
+          =.  ap-core  (ap-generic-take | ~ i.wis %ames %sage [ship t.wire] ~)
           $(wis t.wis)
         ::  now that we have the key, request the data
         ::NOTE  we don't store the key, accounting for rekeys etc
@@ -1557,7 +1560,7 @@
           =.  pen.yoke  (~(del by pen.yoke) [ship t.wire])
           ap-core
         =.  ap-core
-          %.  (ap-generic-take ~ i.wis %ames %sage [ship t.wire] ~)
+          %.  (ap-generic-take | ~ i.wis %ames %sage [ship t.wire] ~)
           %+  trace  odd.veb.bug.state
           &+"bad brood res {<ship>} {<t.wire>}"
         $(wis t.wis)
@@ -1906,7 +1909,8 @@
             %agent  [%out (scot %p ship.neet) name.neet wire]
             %huck   [%out (scot %p ship.neet) name.neet wire]
             %jump   [(scot %p ship.attributing.agent-routes) %$ wire]
-            %arvo   ::TODO  need to disambiguate syscalls
+            %arvo   =-  ?:  ?=(%syscall +<.neet)  -
+                        [%hug -]
                     :+  (scot %p ship.attributing.agent-routes)  ::REVIEW  mb change?
                       ::  pack identifying resource id details into the wire
                       ::
@@ -2210,13 +2214,13 @@
         ?.  (~(has in resources.yoke) res)  ap-core
         ::  we depend on +ap-generic-take to untrack the resource
         ::
-        (ap-generic-take ~ wire.res [%iris %http-response %cancel ~])
+        (ap-generic-take | ~ wire.res [%iris %http-response %cancel ~])
       ::
           [%lick %spin *]
         ?.  (~(has in resources.yoke) res)
           ap-core(inflating (~(del in inflating) &+res))
         =.  ap-core
-          (ap-generic-take ~ wire.res [%lick %soak [agent-name name.res] %disconnect ~])
+          (ap-generic-take | ~ wire.res [%lick %soak [agent-name name.res] %disconnect ~])
         =.  inflating  (~(del in inflating) &+res)
         ?.  (~(has in resources.yoke) res)  ap-core
         %-  ap-move
@@ -2271,12 +2275,16 @@
     ::
     ++  ap-generic-take
       ~/  %ap-generic-take
-      ::TODO  needs to take syscall=? so we can give appropriate sign/gift
-      |=  [deets=* =wire =sign-arvo]
+      |=  [syscall=? deets=* =wire =sign-arvo]
       ^+  ap-core
       ~>  %spin.[(crip "on-arvo/{<agent-name>}")]
       =/  gift=gift-user-v1
-        ?+  sign-arvo  [%syscall kelvin=zuse sign-arvo]
+        ?:  syscall  [%syscall kelvin=zuse sign-arvo]
+        ?+  sign-arvo
+            ~&  [%gall-unexpected-sign [- +<]:sign-arvo]
+            ~&  %gall-will-inject-syscall  ::REVIEW
+            [%syscall kelvin=zuse sign-arvo]
+        ::
           [%ames %sage *]           sign-arvo
           [%behn %wake *]           [%behn %wake ;;(time deets)]
           [%iris %http-response *]  sign-arvo
