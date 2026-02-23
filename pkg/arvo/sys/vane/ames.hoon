@@ -8044,7 +8044,7 @@
               |-  ^+  fine
               ?:  |(=(~ nex.keen) =(inx max))
                 fine
-              =^  =want  nex.keen  nex.keen
+              =^  =want  nex.keen  ?>  ?=(^ nex.keen)  nex.keen
               =.  last-sent.want   now
               =.      tries.want   +(tries.want)
               =.        wan.keen   (put:fi-mop wan.keen [fra .]:want)
