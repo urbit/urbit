@@ -9763,6 +9763,8 @@
       |-(?~(p.gen sut $(p.gen t.p.gen, sut ^$(gen i.p.gen))))
     ?:  ?&(!how ?=([%wtbr *] gen))
       |-(?~(p.gen sut $(p.gen t.p.gen, sut ^$(gen i.p.gen))))
+    ?:  ?=([%wtzp *] gen)
+      $(how !how, gen p.gen)
     =+  neg=~(open ap gen)
     ?:(=(neg gen) sut $(gen neg))
   ::
