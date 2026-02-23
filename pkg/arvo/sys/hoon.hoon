@@ -13901,12 +13901,37 @@
 ::
 ++  h135  .
 ++  h136
+  =,  h135
+  |%
+  ::  hoon 136 omitted leading zeroes from @da's date rendering. these helpers
+  ::  are provided to make rendering in the old style easier.
+  ::
+  ++  scot  |=(mol=dime ~(rent co %$ mol))
+  ++  scow  |=(mol=dime ~(rend co %$ mol))
+  ++  co
+    =>  [+>:co:h135 .]
+    |_  lot=coin
+    +*  co135  ~(. co:h135 lot)
+    ++  rear  rear:co135
+    ++  rent  ~+  `@ta`(rap 3 rend)
+    ++  rend
+      ^-  tape
+      ?.  ?=([%$ %da @] lot)  rend:co135
+      =+  yod=(yore q.p.lot)
+      =?  rep  ?=(^ f.t.yod)  ['.' (s-co f.t.yod)]
+      =?  rep  !&(?=(~ f) =(0 h) =(0 m) =(0 s)):t.yod
+        =.  rep  ['.' (y-co s.t.yod)]
+        =.  rep  ['.' (y-co m.t.yod)]
+        ['.' '.' (y-co h.t.yod)]
+      =.  rep  ['.' (a-co d.t.yod)]
+      =.  rep  ['.' (a-co m.yod)]
+      =?  rep  !a.yod  ['-' rep]
+      ['~' (a-co y.yod)]
+    --
   ::  hoon 136 had doccords, in $spec's %gist, $skin's and $note's %help,
   ::  and in $tome. dropped types replaced with * below for brevity.
   ::  migration helpers at the end of this core.
   ::
-  =,  h135
-  |%
   +$  abel  typo                                          ::  original sin: type
   +$  alas  (list (pair term hoon))                       ::  alias list
   +$  woof  $@(@ [~ p=hoon])                              ::  simple embed
