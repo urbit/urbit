@@ -3731,13 +3731,13 @@
   +$  arvo-resource
     $:  =wire
     $%  ::REVIEW  what if this in place of .ken? [%ames %keen =spar:ames]
-        [%behn %wait =time]                       ::  1 gift, end
-        :: [%clay %warp =ship =desk]                 ::  1+ gifts, could sometimes know end?
-        :: [%eyre ?(%connect %serve) =binding:eyre]  ::  1 gift, know end mb
-        :: [%eyre %set-response url=@t]              ::  0 gifts
-        [%iris %request]                          ::  1+ gifts, know end
-        :: [%khan ?(%fard %fyrd %lard)]              ::  1 gift, end
-        [%lick %spin =name:lick]                  ::  0 gifts
+        [%behn %wait =time]
+        :: [%clay %warp =ship =desk]
+        [%eyre %binding =binding:eyre wat=$@(term generator:eyre)]
+        [%eyre %cache url=@t]  ::TODO  if we had the data we could reinflate...
+        [%iris %request]
+        :: [%khan ?(%fard %fyrd %lard)]
+        [%lick %spin =name:lick]
     ==  ==
   ::
   +$  egg                                               ::  migratory agent
@@ -3856,6 +3856,15 @@
       ::
         :: [%clay %read id=@ =ship =desk read=(unit $<(%many rave:clay))]
       ::
+        [%eyre %rule =http-rule:eyre]
+        [%eyre %eauth-host host=(unit @t)]
+        [%eyre %connect =binding:eyre wat=$@(term generator:eyre)]
+        [%eyre %disconnect =binding:eyre wat=$@(term generator:eyre)]
+        [%eyre %approve-origin =origin:eyre]
+        [%eyre %reject-origin =origin:eyre]
+        [%eyre %spew veb=@]
+        [%eyre %set-response url=@t entry=(unit cache-entry:eyre)]
+      ::
         [%iris %request =request:http =outbound-config:iris]
         [%iris %cancel-request ~]
       ::
@@ -3870,6 +3879,7 @@
     $%  [%ames %sage =sage:mess:ames]
         [%behn %wake =time]  ::REVIEW
         :: [%clay %read =riot:clay]
+        [%eyre %bound bound=? =binding:eyre wat=$@(term generator:eyre)]  ::NOTE  could become unbound _after_ binding!
         [%iris %http-response =client-response:iris]
         [%lick %soak =name:lick =mark =noun]
       ::

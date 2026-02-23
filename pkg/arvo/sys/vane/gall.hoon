@@ -1640,9 +1640,11 @@
         ::  TODO ripped from ap-nuke -> helper
         ::
         ?-  +.res
-          [%behn %wait *]   [%behn %rest time.res]
-          [%iris %request]  [%iris %cancel-request ~]
-          [%lick %spin *]   [%lick %shut name.res]
+          [%behn %wait *]     [%behn %rest time.res]
+          [%eyre %binding *]  [%eyre %disconnect binding wat]:res
+          [%eyre %cache *]    [%eyre %set-response url.res ~]
+          [%iris %request]    [%iris %cancel-request ~]
+          [%lick %spin *]     [%lick %shut name.res]
         ==
       ==
     ::
@@ -1672,9 +1674,11 @@
           ^-  card:agent
           =-  [%pass wire.res %arvo -]
           ?-  +.res
-            [%behn %wait *]   [%behn %rest time.res]
-            [%iris %request]  [%iris %cancel-request ~]
-            [%lick %spin *]   [%lick %shut name.res]
+            [%behn %wait *]     [%behn %rest time.res]
+            [%eyre %binding *]  [%eyre %disconnect binding wat]:res
+            [%eyre %cache *]    [%eyre %set-response url.res ~]
+            [%iris %request]    [%iris %cancel-request ~]
+            [%lick %spin *]     [%lick %shut name.res]
           ==
         ==
       =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent]))
@@ -1918,6 +1922,7 @@
                         ?~(deet '' (crip ~(rend co %blob u.deet)))
                       ?+  +.neet  ~
                         [%behn *]  `time.neet
+                        [%eyre %connect *]  `wat.neet
                       ==
                     wire
           ==
@@ -1932,6 +1937,16 @@
               %arvo
             ?-  +.neet
               [%behn *]        [%b +>.neet]
+            ::
+                [%eyre *]
+              ?+  +>-.neet  [%e +>.neet]
+                %disconnect  [%e %disconnect binding.neet]
+              ::
+                  %connect
+                ?^  wat.neet  [%e %serve binding.neet wat.neet]
+                [%e %connect binding.neet wat.neet]
+              ==
+            ::
               [%iris *]        [%i +>.neet]
               [%lick %spit *]  [%l +>.neet(name [agent-name name.neet])]
               [%lick *]        [%l +>.neet(name [agent-name name.neet])]
@@ -2202,12 +2217,20 @@
       |=  [res=arvo-resource acc=_ap-core]
       =.  ap-core  acc
       ?-    +.res
-          [%behn %wait *]
+          ?([%behn %wait *] [%eyre %binding *])
         =.  inflating  (~(del in inflating) &+res)
         ?.  (~(has in resources.yoke) res)  ap-core
         %-  ap-move
         %-  ap-from-internal
-        [%pass wire.res %arvo [%behn %wait time.res]]
+        :^  %pass  wire.res  %arvo
+        ?-  +.res
+          [%behn %wait *]     [%behn %wait time.res]
+          [%eyre %binding *]  [%eyre %connect binding wat]:res
+        ==
+      ::
+          [%eyre %cache *]
+        ::TODO  consider
+        ap-core
       ::
           [%iris %request]
         =.  inflating  (~(del in inflating) &+res)
@@ -2287,6 +2310,10 @@
         ::
           [%ames %sage *]           sign-arvo
           [%behn %wake *]           [%behn %wake ;;(time deets)]
+          [%eyre %bound *]          :*  %eyre  %bound
+                                        accepted.sign-arvo  binding.sign-arvo
+                                        ;;($@(term generator:eyre) deets)
+                                    ==
           [%iris %http-response *]  sign-arvo
           [%lick %soak *]           ~|  [%gall-lick-bad-name name.sign-arvo]
                                     ?>  &(?=(^ name.sign-arvo) =(agent-name i.name.sign-arvo))
@@ -2700,6 +2727,7 @@
         ?+  +.q.card  ~
           :: [%ames %yawn *]                 &+[p.card %ames %keen spar.task]
           [%behn %rest *]                 &+[p.card %behn %wait time.task]
+          [%eyre %disconnect *]           &+[p.card %eyre %binding [binding wat]:task]
           [%iris %cancel-request ~]       &+[p.card %iris %request]
           [%lick %shut *]                 &+[p.card %lick %spin name.task]
         ==
@@ -2729,8 +2757,9 @@
         [%behn %wait *]                 [& %behn %wait time.task]
         [%behn %rest *]                 [| %behn %wait time.task]
         :: [%c %warp *]                 `[%clay %warp wer p.rif]:task
-        :: [%e ?(%connect %serve) *]    `[%eyre +< binding]:task
-        :: [%e %set-response *]         `[%eyre %set-response url.task]
+        [%eyre %connect *]              [& %eyre %binding binding wat]:task
+        [%eyre %disconnect *]           [| %eyre %binding binding wat]:task
+        [%eyre %set-response *]         [& %eyre %cache url.task]
         [%iris %request *]              [& %iris %request]
         [%iris %cancel-request ~]       [| %iris %request]
         :: [%k ?(%fard %fyrd %lard) *]  [& %khan +<]:task
@@ -2747,6 +2776,8 @@
         (~(del in resources.yoke) wire u.del)
       ?+  gift  ~
         [%behn *]  `[%behn %wait time.gift]
+        [%eyre *]  ?:  bound.gift  ~
+                   `[%eyre %binding binding wat]:gift
         [%iris *]  `[%iris %request]
         [%lick *]  ~
       ==
