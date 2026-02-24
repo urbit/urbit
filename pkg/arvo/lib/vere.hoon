@@ -224,19 +224,18 @@
   ::  +veri:dawn: validate keys, life, discontinuity, &c
   ::
   ++  veri
-    |=  [=ship =feed:jael =point:azimuth =live]
+    |=  [=ship =feed:jael =point:jael =live az=?]
     ^-  (each feed:jael (lest error=term))
     |^  ?@  -.feed
           =/  rac  (clan:title who.feed)
-          ?:  ?&  ?!  |(=(rac %earl) =(rac %pawn))
-                  ?=(~ net.point)
+          ?:  ?&  ?!  |(=(rac %earl) &(az =(rac %pawn)))
+                  ?=(~ keys.point)
               ==
             |+[%not-keyed ~]
           =/  ryf
             ?<  =(rac %earl)
-            ?:  =(rac %pawn)  0
-            ?~  net.point  !!
-            continuity-number.u.net.point
+            ?:  &(az =(rac %pawn))  0
+            rift.point
           =/  fed=feed:jael
             [[%2 ~] who.feed ryf [lyf.feed key.feed]~]
           ?^  err=(test fed)  |+[u.err ~]
@@ -245,9 +244,8 @@
         =/  ryf
           ?:  ?=([%1 ~] -.feed)
             ?<  =(rac %earl)
-            ?:  =(rac %pawn)  0
-            ?~  net.point  !!
-            continuity-number.u.net.point
+            ?:  &(az =(rac %pawn))  0
+            rift.point
           ryf.feed
         =/  kyz=(list [lyf=life key=ring])
           ?:  ?=([%1 ~] -.feed)  kyz.feed
@@ -283,7 +281,7 @@
           `%already-booted
         ::  a comet can never be re-keyed
         ::
-        ?.  ?=(%1 lyf.i.kyz.feed)
+        ?:  &(az !?=(%1 lyf.i.kyz.feed))
           `%invalid-life
         ~
       ::
@@ -293,48 +291,69 @@
           *
         ::  on-chain ships must be launched
         ::
-        ?~  net.point
+        ?~  key=(~(get by keys.point) life.point)
           `%not-keyed
-        =*  net  u.net.point
         ::  boot keys must match the contract
         ::
-        ?.  =(pub:ex:cic pass.net)
+        ?.  =(pub:ex:cic pass.u.key)
           `%key-mismatch
         ::  life must match the contract
         ::
-        ?.  =(lyf.i.kyz.feed life.net)
+        ?.  =(lyf.i.kyz.feed life.point)
           `%life-mismatch
         ::  the boot life must be greater than and discontinuous with
         ::  the last seen life (per the sponsor)
         ::
         ?:  ?&  ?=(^ live)
                 ?|  ?=(%| breach.u.live)
-                    (lte life.net life.u.live)
+                    (lte life.point life.u.live)
             ==  ==
           `%already-booted
         ::  produce the sponsor for vere
         ::
-        ~?  !has.sponsor.net
-          [%no-sponsorship-guarantees-from who.sponsor.net]
+        ~?  ?=(~ sponsor.point)
+          %no-sponsor
         ~
       ==
     --
   ::  +sponsor:dawn: retreive sponsor from point
   ::
   ++  sponsor
-    |=  [who=ship =point:azimuth]
+    |=  [who=ship =point:jael az=?]
     ^-  (each ship error=term)
     ?-    (clan:title who)
-        %pawn  [%& (^sein:title who)]
         %earl  [%& (^sein:title who)]
         %czar  [%& (^sein:title who)]
         *
-      ?~  net.point
+      ?:  &(az ?=(%pawn (clan:title who)))
+        [%& (^sein:title who)]
+      ?~  keys.point
         [%| %not-booted]
-      ?.  has.sponsor.u.net.point
+      ?~  sponsor.point
         [%| %no-sponsor]
-      [%& who.sponsor.u.net.point]
+      [%& u.sponsor.point]
     ==
+  ::  +suite:dawn: check whether crypto suite %c or %b
+  ::
+  ++  suite
+    |=  =feed:jael
+    ^-  (unit ?(%c %b))
+    =/  rnu=(unit ring)
+      ?@  -.feed
+        `key.feed
+      =/  kyz=(list [lyf=life key=ring])
+        ?:  ?=([%1 ~] -.feed)  kyz.feed
+        kyz.feed
+      =.  kyz
+        %+  sort  kyz
+        |=([[a=@ *] [b=@ *]] (gth a b))
+      ?~  kyz  ~
+      `key.i.kyz
+    ?~  rnu  ~
+    =/  num=@  num:ex:(nol:nu:cric:crypto u.rnu)
+    ?:  =(1 num)  `%b
+    ?:  =(2 num)  `%c
+    ~
   --
 --
 ::

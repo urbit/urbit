@@ -274,11 +274,11 @@
     ::
     ::  boot from keys
     ::    $:  %dawn
+    ::        %1
     ::        =feed
-    ::        spon=ship
-    ::        czar=(map ship [=rift =life =pass])
+    ::        spon=(list [=ship point])
+    ::        lams=(map ship point)
     ::        turf=(list turf)
-    ::        bloq=@ud
     ::        node=purl
     ::        srcs=(list [p=term q=*])
     ::    ==
