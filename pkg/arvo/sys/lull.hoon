@@ -3816,7 +3816,7 @@
     ==  ==                                              ::                                                  ::
   +$  dude  term                                        ::  server identity
   +$  gill  (pair ship term)                            ::  general contact
-  +$  load  (list [=dude =beak =agent])                 ::  loadout
+  +$  load  (list [=dude =beak =agent-any])             ::  loadout
   +$  scar                                              ::  opaque duct
     $:  p=@ud                                           ::  bone sequence
         q=(map duct bone)                               ::  by duct
@@ -3887,10 +3887,14 @@
         [%unsupported ~]
     ==
   ::
+  +$  agent-any
+    $%  agent
+        agent-old
+    ==
   ::  +agent: app core
   ::
   ++  agent
-    =<  form
+    =<  ,[mod=%new-agent fom=form]
     |%
     +$  step  (quip card form)
     +$  card
@@ -3958,6 +3962,94 @@
       ::
       ++  on-arvo
         |~  [wire gift-user-v1]
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-fail
+        |~  [term tang]
+        *(quip card _^|(..on-init))
+      --
+    --
+  ::
+  ++  agent-old
+    =<  ,[mod=%old-agent fom=form]
+    |%
+    +$  step  (quip card form)
+    +$  card
+      $+  gall-agent-card
+      (wind note gift)
+    +$  note
+      $+  gall-agent-note
+      $%  [%agent [=ship name=term] =task]
+          [%arvo note-arvo]
+          [%pyre =tang]
+      ::
+          [%grow =spur =page]
+          [%tomb =case =spur]
+          [%cull =case =spur]
+      ::
+          [%tend =coop =path =page]
+          [%germ =coop]
+          [%snip =coop]
+      ::
+          [%keen secret=? spar:ames]
+      ==
+    +$  task
+      $+  gall-agent-task
+      $%  [%watch =path]
+          [%watch-as =mark =path]
+          [%leave ~]
+          [%poke =cage]
+          [%poke-as =mark =cage]
+      ==
+    +$  gift
+      $+  gall-agent-gift
+      $%  [%fact paths=(list path) =cage]
+          [%kick paths=(list path) ship=(unit ship)]
+          [%watch-ack p=(unit tang)]
+          [%poke-ack p=(unit tang)]
+      ==
+    +$  sign
+      $+  gall-agent-sign
+      $%  [%poke-ack p=(unit tang)]
+          [%watch-ack p=(unit tang)]
+          [%fact =cage]
+          [%kick ~]
+      ==
+    ++  form
+      $_  ^|
+      |_  bowl
+      ++  on-init
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-save
+        *vase
+      ::
+      ++  on-load
+        |~  old-state=vase
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-poke
+        |~  [mark vase]
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-watch
+        |~  path
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-leave
+        |~  path
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-peek
+        |~  path
+        *(unit (unit cage))
+      ::
+      ++  on-agent
+        |~  [wire sign]
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-arvo
+        |~  [wire sign-arvo]
         *(quip card _^|(..on-init))
       ::
       ++  on-fail
