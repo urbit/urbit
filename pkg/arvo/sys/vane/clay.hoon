@@ -4803,9 +4803,10 @@
       =^  =vase  nub.f
         %-  road  |.
         (build-file:f /app/[i.bill.i.sat]/hoon)
-      =/  agent  ~|  [%building-app bill.i.sat]  !<(agent:gall vase)
+      =/  agent-any  ~|  [%building-app bill.i.sat]
+        !<(agent-any:gall vase)
       =^  lid  nub.f  $(bill.i.sat t.bill.i.sat)
-      [[[i.bill.i.sat [our desk.i.sat da+now] agent] lid] nub.f]
+      [[[i.bill.i.sat [our desk.i.sat da+now] agent-any] lid] nub.f]
     =.  lad  (weld lad new)
     $(sat t.sat)
   ::  build-dais for each mark

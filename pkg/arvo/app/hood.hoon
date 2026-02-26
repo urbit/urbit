@@ -44,6 +44,7 @@
 --
 ^-  agent:gall
 =|  =state
+:-  %new-agent
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)

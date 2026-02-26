@@ -1673,6 +1673,7 @@
   --
 --
 ^-  agent:gall
+:-  %new-agent
 |_  hid=bowl:gall
 ++  on-init
   `..on-init

@@ -129,7 +129,7 @@
           =boar
           resources=(set arvo-resource)
           code=*
-          agent=(each agent vase)
+          agent=(each agent-any vase)
           =beak
           marks=(map duct mark)
           sky=farm
@@ -557,8 +557,9 @@
   ::
   ++  mo-receive-core
     ~/  %mo-receive-core
-    |=  [prov=path dap=term bek=beak =agent]
+    |=  [prov=path dap=term bek=beak =agent-any]
     ^+  mo-core
+    ?>  ?=(%new-agent mod.agent-any)  ::  XX
     ::
     =/  yak  (~(get by yokes.state) dap)
     =/  tex=(unit tape)
@@ -567,7 +568,7 @@
       ?-    -.agent.u.yak
           %|  `"reviving"
           %&
-        ?:  =(code.u.yak agent)
+        ?:  =(code.u.yak agent-any)
           ~
         `"reloading"
       ==
@@ -575,13 +576,16 @@
         ~>  %slog.[0 leaf+"gall: {u.tex} {<dap>}"]  ~
     ::
     ?:  ?=([~ %live *] yak)
-      ?:  &(=(q.beak.u.yak q.bek) =(code.u.yak agent) =(-.agent.u.yak &))
+      ?:  ?&  =(q.beak.u.yak q.bek)
+              =(code.u.yak agent-any)
+              =(-.agent.u.yak &)
+          ==
         mo-core
       ::
       =.  yokes.state
-        (~(put by yokes.state) dap u.yak(beak bek, code agent))
+        (~(put by yokes.state) dap u.yak(beak bek, code agent-any))
       =/  ap-core  (ap-abed:ap dap [~ our prov])
-      =.  ap-core  (ap-reinstall:ap-core agent)
+      =.  ap-core  (ap-reinstall:ap-core agent-any)
       =.  mo-core  ap-abet:ap-core
       =.  mo-core  (mo-give-halts dap)
       (mo-clear-queue dap)
@@ -591,8 +595,8 @@
       %*    .  *$>(%live yoke)
           control-duct  hen
           beak          bek
-          code          agent
-          agent         &+agent
+          code          agent-any
+          agent         &+agent-any
           run-nonce     (scot %uw (end 5 (shas %yoke-nonce eny)))
       ::
           sky
@@ -1183,12 +1187,12 @@
   ::  +mo-load: install agents
   ::
   ++  mo-load
-    |=  [prov=path agents=(list [=dude =beak =agent])]
+    |=  [prov=path agents=(list [=dude =beak =agent-any])]
     =.  mo-core
       |-  ^+  mo-core
       ?~  agents  mo-core
       =/  [=dude =desk]  [dude q.beak]:i.agents
-      ::  ~>  %slog.0^leaf/"gall: starting {<dude>} on {<desk>}"
+       ~>  %slog.0^leaf/"gall: starting {<dude>} on {<desk>}"
       $(agents t.agents, mo-core (mo-receive-core prov i.agents))
     ::
     =/  kil
@@ -1611,7 +1615,8 @@
       ^+  ap-core
       ?:  ?=(%| -.agent.yoke)  ap-core
       ~>  %spin.[(crip "on-save/{<agent-name>}")]
-      =>  [ken=ken.yoke (ap-ingest ~ |.([ap-yawn-all p.agent.yoke]))]
+      ?>  ?=(%new-agent mod.p.agent.yoke)
+      =>  [ken=ken.yoke (ap-ingest ~ |.([ap-yawn-all fom.p.agent.yoke]))]
       ::  arvo-resources -> generate appropriate cleanup card
       ::
       %-  ap-move(ken.yoke ken, agent.yoke |+on-save:ap-agent-core)
@@ -1674,7 +1679,7 @@
             [%lick %spin *]   [%lick %shut name.res]
           ==
         ==
-      =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent]))
+      =^  maybe-tang  ap-core  (ap-ingest ~ |.([will fom:*agent]))
       ap-core
     ::
     ++  ap-match-coop
@@ -1984,7 +1989,12 @@
     ::
     ++  ap-agent-core
       ?>  ?=(%& -.agent.yoke)
-      ~(. p.agent.yoke ap-construct-bowl)
+      ?>  ?=(%new-agent mod.p.agent.yoke)
+      ~(. fom.p.agent.yoke ap-construct-bowl)
+      :: ?-  p.p.agent.yoke
+      ::   %new-agent  ~(. q.p.agent.yoke ap-construct-bowl)
+      ::   %old-agent  ~(. q.p.agent.yoke ap-construct-bowl)
+      :: ==
     ::  +ap-ducts-from-paths: get ducts subscribed to paths
     ::
     ++  ap-ducts-from-paths
@@ -2124,7 +2134,8 @@
     ::
     ++  ap-reinstall
       ~/  %ap-reinstall
-      |=  =agent
+      |=  =agent-any
+      ?>  ?=(%new-agent mod.agent-any)
       ^+  ap-core
       ::  sanity check, .inflating should only contain entries for the
       ::  duration of this arm
@@ -2142,7 +2153,8 @@
         ::  load the agent back up
         ::
         =^  error  ap-core
-          (ap-install(agent.yoke &+agent) `old-state)
+          ?>  ?=(%new-agent mod.agent-any)
+          (ap-install(agent.yoke &+agent-any) `old-state)
         ?^  error
           (mean >%load-failed< u.error)
         ap-core
@@ -2159,7 +2171,7 @@
       ::  (+ap-idle stopped them)
       ::
       =?  ap-core  ?=(^ ken.yoke)
-        =-  +:(ap-ingest ~ |.([+< agent]))
+        =-  +:(ap-ingest ~ |.([+< fom.agent-any]))
         %-  zing
         %+  turn  ~(tap by `(jug spar:ames wire)`ken.yoke)
         |=  [=spar:ames wyz=(set wire)]
@@ -2173,7 +2185,8 @@
       ::  load the agent back up
       ::
       =^  error  ap-core
-        (ap-install(agent.yoke &+agent) `old-state)
+        ?>  ?=(%new-agent mod.agent-any)
+        (ap-install(agent.yoke &+agent-any) `old-state)
       ?^  error
         (mean >%load-failed< u.error)
       ::  simulate kicks on the subscriptions that we closed for them
@@ -2657,7 +2670,10 @@
       ?:  ?=(%| -.result)
         `ap-core
       ::
-      =.  agent.yoke  &++.p.result
+      =.  agent.yoke
+        ?>  ?=(%& -.agent.yoke)              ::  XX
+        ?>  ?=(%new-agent mod.p.agent.yoke)  ::  XX
+        [%& mod.p.agent.yoke +.p.result]
       ::TODO  if we filter out "duplicate resource creation" cards here,
       ::      then we don't have to account for them in +ap-handle-peers and co
       ::      (and if we don't, we have to update handle-peers and co)
@@ -3507,7 +3523,10 @@
         :-  %|
         ?:  ?=(%| -.agent.u.yok)
           p.agent.u.yok
-        on-save:p.agent.u.yok
+        ?-  mod.p.agent.u.yok
+          %new-agent  on-save:fom.p.agent.u.yok
+          %old-agent  on-save:fom.p.agent.u.yok
+        ==
       ==
     ``noun+!>(`egg-any`[%20 egg])
   ::
@@ -3652,7 +3671,10 @@
     :-  %|
     ?:  ?=(%| -.agent.yoke)
       p.agent.yoke
-    on-save:p.agent.yoke
+    ?-  mod.p.agent.yoke
+      %new-agent  on-save:fom.p.agent.yoke
+      %old-agent  on-save:fom.p.agent.yoke
+    ==
   ==
 ::  +take: response
 ::
