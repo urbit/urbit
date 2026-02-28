@@ -585,6 +585,7 @@
     %kiln-jump-ask           =;(f (f !<(_+<.f vase)) poke-jump-ask)
     %kiln-jump-opt           =;(f (f !<(_+<.f vase)) poke-jump-opt)
     %kiln-jump-propose       =;(f (f !<(_+<.f vase)) poke-jump-propose)
+    %kiln-new-desk           =;(f (f !<(_+<.f vase)) poke-new-desk)
     %kiln-nuke               =;(f (f !<(_+<.f vase)) poke-nuke)
     %kiln-pause              =;(f (f !<(_+<.f vase)) poke-pause)
     %kiln-permission         =;(f (f !<(_+<.f vase)) poke-permission)
@@ -894,6 +895,27 @@
   %-  emil
   %+  turn  (get-apps-have our term now)
   |=([=dude ?] [%pass /nuke %arvo %g [%nuke dude]])
+::
+++  poke-new-desk
+  |=  =desk
+  ~>  %slog.(fmt "creating new desk {<desk>}")
+  =/  files=(map path page:clay)
+    %-  ~(gas by *(map path page:clay))
+    %+  turn
+      ^-  (list path)
+      :~  /mar/noun/hoon
+          /mar/hoon/hoon
+          /mar/txt/hoon
+          /mar/kelvin/hoon
+          /sys/kelvin
+      ==
+    |=  =path
+    ^-  [^path page:clay]
+    :-  path
+    ^-  page:clay
+    :-  (rear path)
+    .^(* %cx (welp /(scot %p our)/base/(scot %da now) path))
+  abet:(emit %pass /kiln/new-desk %arvo (new-desk:cloy desk ~ files))
 ::
 ++  poke-pause
   |=  =desk
