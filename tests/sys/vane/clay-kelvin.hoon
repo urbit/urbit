@@ -78,7 +78,10 @@
 ++  eval-mare
   =/  m  (mare ,~)
   |=  computation=form:m
-  ^-  tang
+  ::NOTE  use +vi so that we can leverage persistent memoization,
+  ::      which is important because we build lull, zuse and clay all the time
+  =;  comp  (need (~(mole vi |) comp))
+  |.  ^-  tang
   =/  res  (computation clay-gate ~1111.1.1 `@uvJ`0xdead.beef)
   ?-  -.res
     %&  ~
@@ -441,16 +444,15 @@
 ::  applying zuse update to clay
 ++  next-kelvin
   |=  kel=@ud
+  ~>  %memo./test/build
+  =/  nex
+    =/  lul  (slub !>(..part) (ream lull))
+    =/  zus  (slub lul (ream (zuse-upd kel)))
+    (slub zus (ream clay-src))
   =/  m  (mare ,~)
   ~&  'building files, stand by'
   ;<  ~  bind:m
     |=  =state
-    ::  build lull
-    =/  lul  (slap !>(..part) (ream lull))
-    ::  build zuse
-    =/  zus  (slap lul (ream (zuse-upd kel)))
-    ::  build clay
-    =/  nex  (slap zus (ream clay-src))
     :: apply update
     =/  old-ruf  ruf.gate.state
     =.  gate.state  !<(_gate.state [-:!>(gate.state) q:(slam nex !>(~nul))])
