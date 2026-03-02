@@ -445,7 +445,7 @@
 ++  next-kelvin
   |=  kel=@ud
   ~>  %memo./test/build
-  =/  nex
+  =/  nex=vase
     =/  lul  (slub !>(..part) (ream lull))
     =/  zus  (slub lul (ream (zuse-upd kel)))
     (slub zus (ream clay-src))
@@ -454,9 +454,22 @@
   ;<  ~  bind:m
     |=  =state
     :: apply update
-    =/  old-ruf  ruf.gate.state
-    =.  gate.state  !<(_gate.state [-:!>(gate.state) q:(slam nex !>(~nul))])
-    =.  ruf.gate.state  old-ruf
+    =/  old-ruf
+      =<  stay
+      %:  gate.state
+        now=now.state
+        eny=`@uvJ`0xdead.beef
+        scry=scry-gate
+      ==
+    =.  gate.state
+      %.  old-ruf
+      =<  load
+      ::TODO  gross! can we do better?
+      %:  !<(_gate.state [-:!>(gate.state) q:(slam nex !>(~nul))])
+        now=now.state
+        eny=`@uvJ`0xdead.beef
+        scry=scry-gate
+      ==
     &+`state
   (pure:m ~)
 ::
