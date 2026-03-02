@@ -205,6 +205,7 @@
   ;<  *                bind:m  do-pork
   ;<  mov=(list move)  bind:m  (call ~[/blah] [%zest %base `zest:clay`%live])
   ;<  ~                bind:m  (expect-moves mov ex-wick ex-load ~)
+  ;<  *                bind:m  do-wick  ::  just a formality
   ::  set up any other desks we want
   ::
   |-  =*  loop  $
@@ -216,6 +217,7 @@
     (call ~[/blah] [%esse desk %.y])
   ;<  mov=(list move)  bind:m  (call ~[/blah] [%zest desk `zest:clay`%live])
   ;<  ~                bind:m  (expect-moves mov ex-wick ex-load ~)
+  ;<  *                bind:m  do-wick  ::  just a formality
   $(desks t.desks)
 ::
 ::  expectation checkers
