@@ -129,7 +129,7 @@
           =boar
           resources=(set arvo-resource)
           code=*
-          agent=(each agent vase)
+          agent=(each agent [clean=? state=vase])
           =beak
           marks=(map duct mark)
           sky=farm
@@ -1617,7 +1617,7 @@
       =>  [ken=ken.yoke (ap-ingest ~ |.([ap-yawn-all p.agent.yoke]))]
       ::  arvo-resources -> generate appropriate cleanup card
       ::
-      %-  ap-move(ken.yoke ken, agent.yoke |+on-save:ap-agent-core)
+      %-  ap-move(ken.yoke ken, agent.yoke |+[clean=& on-save:ap-agent-core])
       ;:  weld
         ::  close outgoing subscriptions
         ::
@@ -2156,16 +2156,20 @@
       =/  old-state=vase
         ?:  ?=(%& -.agent.yoke)
           on-save:ap-agent-core
-        p.agent.yoke
-      ?.  =(%| -.agent.yoke)
-        ::  load the agent back up
+        state.p.agent.yoke
+      ::NOTE  tmi...
+      ?:  ?|  =(%& -.agent.yoke)        ::  running, or
+              ?=([%| %| *] agent.yoke)  ::  dirty suspend
+          ==
+        ::  agent was already running, reload with the new core
         ::
         =^  error  ap-core
           (ap-install(agent.yoke &+agent) `old-state)
         ?^  error
           (mean >%load-failed< u.error)
         ap-core
-      ::  mark all the resources as to-be-inflated
+      ::  agent was suspended, we need to inflate its resources.
+      ::  mark all the resources as to-be-inflated.
       ::TODO  consider the %keen inflation (and its ordering) in this light
       ::
       =.  inflating
@@ -3394,7 +3398,7 @@
         t.duct.blocked-move
       blocked-move
     ==
-  ::TODO  add arvo resources
+  ::TODO  update yoke: add arvo resources, .clean.p.agent flag
   ::
   ++  spore-19-to-20
     |=  old=spore-19
@@ -3546,7 +3550,7 @@
         :-  %|
         ?:  ?=(%| -.agent.u.yok)
           p.agent.u.yok
-        on-save:p.agent.u.yok
+        [clean=| on-save:p.agent.u.yok]
       ==
     ``noun+!>(`egg-any`[%20 egg])
   ::
@@ -3675,8 +3679,7 @@
       [~ @ %& *]  ``noun/!>(`@uvI`(shax (jam p.q.u.res)))
     ==
   ~
-::  +stay: save without cache; suspend non-%base agents
-::REVIEW  wrt resource suspension
+::  +stay: save without cache; temporarily suspend agents w/o resource cleanup
 ::
 ++  stay
   ^-  spore-20
@@ -3691,7 +3694,7 @@
     :-  %|
     ?:  ?=(%| -.agent.yoke)
       p.agent.yoke
-    on-save:p.agent.yoke
+    [clean=| on-save:p.agent.yoke]
   ==
 ::  +take: response
 ::

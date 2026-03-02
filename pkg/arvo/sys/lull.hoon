@@ -3752,7 +3752,7 @@
             =boar
             resources=(set arvo-resource)
             code=~
-            old-state=[%| vase]
+            old-state=[%| clean=? state=vase]
             =beak
             marks=(map duct mark)
             sky=farm
