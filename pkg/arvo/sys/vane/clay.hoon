@@ -5474,6 +5474,7 @@
             pud=(unit [=desk =yoki])
             sad=(map ship @da)
             bug=[veb=@ mas=@]
+            pes=(set duct)  ::  TODO: tmp remove
         ==
       +$  room-15
         $:  hun=duct
@@ -5560,6 +5561,10 @@
             wic=(map weft yoki)
             liv=zest
             ren=rein
+            ::  TODO: tmp remove
+            peg=*
+            peq=*
+            per=*
         ==
       +$  rung-13
         $:  rus=(map desk rede-13)
@@ -5892,7 +5897,7 @@
       %-  ~(run by dos.rom.raf)
       |=  doj=dojo-15
       ^-  dojo
-      doj(fod.dom *flue)
+      doj(fod.dom *flue, ren.dom ren.dom.doj, peg.dom ~, peq.dom ~, per.dom ~)
     ::
         hoy
       %-  ~(run by hoy.raf)
@@ -5900,7 +5905,7 @@
       %-  ~(run by rus.rung-14)
       |=  =rede-14
       ^-  rede
-      rede-14(dom dom.rede-14(fod *flue))
+      rede-14(dom dom.rede-14(fod *flue, ren ren.dom.rede-14, peg ~, peq ~, per ~))
     ==
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
   ::
@@ -6156,7 +6161,7 @@
     ++  dome-11-to-13
       |=  dom=dome-11
       ^-  dome-13
-      dom(fod [fod.dom ~ liv=%dead ren=~])
+      dom(fod [fod.dom ~ liv=%dead ren=~ peg=~ peq=~ per=~])
     --
   ::
   ::  +raft-13-to-14: add sad, change busy
@@ -6198,6 +6203,7 @@
       %-  ~(run by dos.rom.raf)
       |=  d=dojo-13
       d(fiz [fiz.d ese=%.y])
+      bug  [bug.raf pes=~]
     ==
   --
 ::
@@ -6405,7 +6411,7 @@
   =+  `flow`flo
   :-  ver
   ^-  raft-15:load
-  %=    ruf
+  %_    ruf
       fad  flo
       dos.rom
     %-  ~(run by dos.rom.ruf)
@@ -6421,6 +6427,8 @@
       |=  =rede
       rede(fod.dom flu)
     ==
+      bug  bug.ruf
+      pes  ~
   ==
 ::
 ++  take                                              ::  accept response

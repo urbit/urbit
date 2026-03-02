@@ -3051,7 +3051,7 @@
     ^-  spore-18
     %=    old
         leaves
-      [leaves.old flub-ducts=~ flubs=~ halts=~]
+      [leaves.old flub-ducts=~ flubs=~ halts=~ perms=~]
     ==
   ::
   ::  drop /gall-use-wire from blocked moves
