@@ -15,6 +15,7 @@
 =/  clay-gate  (clay-raw ~nul)
 ::
 |%
+::  test engine
 ::
 ++  form-raw
   |$  [a]
@@ -58,23 +59,6 @@
     ==
   --
 ::
-++  move  move:clay-gate
-::
-::  advance time
-::
-++  wait
-  |=  =@dr
-  =/  m  (mare ,~)
-  ^-  form:m
-  |=  =state
-  [%& ~ state(now (add now.state dr))]
-::
-++  get-now
-  =/  m  (mare ,@da)
-  ^-  form:m
-  |=  =state
-  [%& now.state state]
-::
 ++  eval-mare
   =/  m  (mare ,~)
   |=  computation=form:m
@@ -87,6 +71,54 @@
     %&  ~
     %|  p.res
   ==
+::
+++  move  move:clay-gate
+::
+::  state helpers
+::
+++  wait  ::  pass time
+  |=  =@dr
+  =/  m  (mare ,~)
+  ^-  form:m
+  |=  =state
+  [%& ~ state(now (add now.state dr))]
+::
+++  set-kelvin  ::  load new clay core at kelvin
+  |=  kel=@ud
+  ~>  %memo./test/build
+  =/  nex=vase
+    =/  lul  (slub !>(..part) (ream lull))
+    =/  zus  (slub lul (ream (zuse-upd kel)))
+    (slub zus (ream clay-src))
+  =/  m  (mare ,~)
+  ~&  'building files, stand by'
+  ;<  ~  bind:m
+    |=  =state
+    :: apply update
+    =/  old-ruf
+      =<  stay
+      %:  gate.state
+        now=now.state
+        eny=`@uvJ`0xdead.beef
+        scry=scry-gate
+      ==
+    =.  gate.state
+      %.  old-ruf
+      =<  load
+      ::TODO  gross! can we do better?
+      %:  !<(_gate.state [-:!>(gate.state) q:(slam nex !>(~nul))])
+        now=now.state
+        eny=`@uvJ`0xdead.beef
+        scry=scry-gate
+      ==
+    &+`state
+  (pure:m ~)
+::
+++  get-now
+  =/  m  (mare ,@da)
+  ^-  form:m
+  |=  =state
+  [%& now.state state]
 ::
 ++  read-moves
   |=  [moves=(list move) =state]
@@ -130,6 +162,63 @@
 ::
 ++  do-wick  (take /wick ~[/blah] [%behn %wake ~])
 ++  do-pork  (call ~[/blah] [%pork ~])
+::
+++  do-park
+  |=  [=desk kel=@ud fil=(list [path (each page:clay lobe:clay)])]
+  %+  call  ~[/blah]
+  ^-  (hobo task:clay-gate)
+  =/  files
+    %-  ~(gas by *(map path (each page:clay lobe:clay)))
+    ^-  (list [path (each page:clay lobe:clay)])
+    ;:  welp
+      fil
+      ?:  =(%base desk)
+        [/sys/zuse/hoon [%& ;;(page:clay hoon+(zuse-upd kel))]]~
+      :~
+        [/app/bar/hoon [%& agent]]
+        [/lib/skeleton/hoon [%& ;;(page:clay hoon+lib-skel)]]
+        [/lib/default-agent/hoon [%& ;;(page:clay hoon+lib-def)]]
+        [/mar/bill/hoon [%& ;;(page:clay hoon+mar-bill)]]
+        [/desk/bill [%& ;;(page:clay noun+:~(%bar))]]
+      ==
+    :~
+      [/mar/noun/hoon [%& ;;(page:clay hoon+mar-noun)]]
+      [/mar/hoon/hoon [%& ;;(page:clay hoon+mar-hoon)]]
+      [/mar/txt/hoon [%& ;;(page:clay hoon+mar-txt)]]
+      [/mar/kelvin/hoon [%& ;;(page:clay hoon+mar-kel)]]
+      [/sys/kelvin [%& ;;(page:clay kelvin+[%zuse kel])]]
+    ==
+  ==
+  =/  =yoki:clay  [%& [*(list tako:clay) files]]
+  [%park desk yoki *rang:clay]
+::
+++  do-new-desk
+  |=  =desk
+  (do-park desk 409 ~)
+::
+++  do-setup-desks
+  |=  desks=(list [=desk esse=?])
+  =/  m  (mare ,~)
+  ::  set up the base desk unconditionally
+  ::
+  ;<  *                bind:m  (do-new-desk %base)
+  ;<  *                bind:m  do-pork
+  ;<  mov=(list move)  bind:m  (call ~[/blah] [%zest %base `zest:clay`%live])
+  ;<  ~                bind:m  (expect-moves mov ex-wick ex-load ~)
+  ::  set up any other desks we want
+  ::
+  |-  =*  loop  $
+  ?~  desks  (pure:m ~)
+  =,  i.desks
+  ;<  *                bind:m  (do-new-desk desk)
+  ;<  *                bind:m
+    ?.  esse  (pure:m ~)
+    (call ~[/blah] [%esse desk %.y])
+  ;<  mov=(list move)  bind:m  (call ~[/blah] [%zest desk `zest:clay`%live])
+  ;<  ~                bind:m  (expect-moves mov ex-wick ex-load ~)
+  $(desks t.desks)
+::
+::  expectation checkers
 ::
 ++  expect-moves
   |=  [mos=(list move) exes=(list $-(move tang))]
@@ -198,6 +287,66 @@
       ex-what
       (ex [~[/blah] %slip %c %pork ~])
   ==
+::
+::  data constuctors
+::
+++  desk-seal
+  ^-  (list [path (each page:clay lobe:clay)])
+  [/desk/seal [%& ;;(page:clay seal+[%0 :~([%behn %timer])])]]~
+::
+++  zuse-upd
+  |=  kel=@ud
+  ^-  @t
+  =/  old-zuse  (trip zus)
+  =/  i  (find "++  zuse" old-zuse)
+  ?~  i  !!
+  =/  next-zuse  "++  zuse  `@`%{(scow %ud kel)}"
+    %-  crip
+    ;:  welp
+      (scag u.i old-zuse)
+      next-zuse
+      (slag (add u.i (lent next-zuse)) old-zuse)
+    ==
+::
+++  agent
+  ^-  page:clay
+  :-  %hoon
+  '''
+  /+  default-agent
+  |%
+  +$  state-0  [%0 val=@ud]
+  --
+  =|  state-0
+  =*  state  -
+  ^-  agent:gall
+  |_  =bowl:gall
+  +*  this  .
+      def   ~(. (default-agent this %.n) bowl)
+  ::
+  ++  on-init
+    ^-  (quip card:agent:gall _this)
+    `this(val 42)
+  ::
+  ++  on-save
+    ^-  vase
+    !>(state)
+  ::
+  ++  on-load
+    |=  old=vase
+    ^-  (quip card:agent:gall _this)
+    `this(state [%0 42])
+  ::
+  ++  on-poke   on-poke:def
+  ++  on-watch  on-watch:def
+  ++  on-leave  on-leave:def
+  ++  on-peek   on-peek:def
+  ++  on-agent  on-agent:def
+  ++  on-arvo   on-arvo:def
+  ++  on-fail   on-fail:def
+  --
+  '''
+::
+::  tests
 ::
 ++  test-blocked-on-kelvin
   %-  eval-mare
@@ -470,171 +619,4 @@
 ::   ;<  *                 bind:m  do-wick
 ::   ;<  mov9=(list move)  bind:m  (take /park-held/foo ~[/blah] [%behn %wake ~])
 ::   (expect-moves mov9 ex-load ~)
-::
-++  do-setup-desks
-  |=  desks=(list [=desk esse=?])
-  =/  m  (mare ,~)
-  ::  set up the base desk unconditionally
-  ::
-  ;<  *                bind:m  (do-new-desk %base)
-  ;<  *                bind:m  do-pork
-  ;<  mov=(list move)  bind:m  (call ~[/blah] [%zest %base `zest:clay`%live])
-  ;<  ~                bind:m  (expect-moves mov ex-wick ex-load ~)
-  ::  set up any other desks we want
-  ::
-  |-  =*  loop  $
-  ?~  desks  (pure:m ~)
-  =,  i.desks
-  ;<  *                bind:m  (do-new-desk desk)
-  ;<  *                bind:m
-    ?.  esse  (pure:m ~)
-    (call ~[/blah] [%esse desk %.y])
-  ;<  mov=(list move)  bind:m  (call ~[/blah] [%zest desk `zest:clay`%live])
-  ;<  ~                bind:m  (expect-moves mov ex-wick ex-load ~)
-  $(desks t.desks)
-::
-::  applying zuse update to clay
-++  set-kelvin
-  |=  kel=@ud
-  ~>  %memo./test/build
-  =/  nex=vase
-    =/  lul  (slub !>(..part) (ream lull))
-    =/  zus  (slub lul (ream (zuse-upd kel)))
-    (slub zus (ream clay-src))
-  =/  m  (mare ,~)
-  ~&  'building files, stand by'
-  ;<  ~  bind:m
-    |=  =state
-    :: apply update
-    =/  old-ruf
-      =<  stay
-      %:  gate.state
-        now=now.state
-        eny=`@uvJ`0xdead.beef
-        scry=scry-gate
-      ==
-    =.  gate.state
-      %.  old-ruf
-      =<  load
-      ::TODO  gross! can we do better?
-      %:  !<(_gate.state [-:!>(gate.state) q:(slam nex !>(~nul))])
-        now=now.state
-        eny=`@uvJ`0xdead.beef
-        scry=scry-gate
-      ==
-    &+`state
-  (pure:m ~)
-::
-++  do-new-desk
-  |=  =desk
-  (do-park desk 409 ~)
-::   =/  files
-::     %-  ~(gas by *(map path (each page:clay lobe:clay)))
-::     ^-  (list [path (each page:clay lobe:clay)])
-::     %+  welp
-::       ?:  =(%base desk)
-::         [/sys/zuse/hoon [%& ;;(page:clay hoon+zus)]]~
-::       :~
-::         [/app/bar/hoon [%& agent]]
-::         [/lib/skeleton/hoon [%& ;;(page:clay hoon+lib-skel)]]
-::         [/lib/default-agent/hoon [%& ;;(page:clay hoon+lib-def)]]
-::         [/mar/bill/hoon [%& ;;(page:clay hoon+mar-bill)]]
-::         [/desk/bill [%& ;;(page:clay noun+:~(%bar))]]
-::         [/desk/seal [%& ;;(page:clay seal+[%0 ~])]]
-::       ==
-::     :~
-::       [/mar/noun/hoon [%& ;;(page:clay hoon+mar-noun)]]
-::       [/mar/hoon/hoon [%& ;;(page:clay hoon+mar-hoon)]]
-::       [/mar/txt/hoon [%& ;;(page:clay hoon+mar-txt)]]
-::       [/mar/kelvin/hoon [%& ;;(page:clay hoon+mar-kel)]]
-::       [/sys/kelvin [%& ;;(page:clay kelvin+[%zuse 409])]]
-::     ==
-::   =/  =yoki:clay  [%& [*(list tako:clay) files]]
-::   [%park desk yoki *rang:clay]
-:: ::
-++  desk-seal
-  ^-  (list [path (each page:clay lobe:clay)])
-  [/desk/seal [%& ;;(page:clay seal+[%0 :~([%behn %timer])])]]~
-::
-++  do-park
-  |=  [=desk kel=@ud fil=(list [path (each page:clay lobe:clay)])]
-  %+  call  ~[/blah]
-  ^-  (hobo task:clay-gate)
-  =/  files
-    %-  ~(gas by *(map path (each page:clay lobe:clay)))
-    ^-  (list [path (each page:clay lobe:clay)])
-    ;:  welp
-      fil
-      ?:  =(%base desk)
-        [/sys/zuse/hoon [%& ;;(page:clay hoon+(zuse-upd kel))]]~
-      :~
-        [/app/bar/hoon [%& agent]]
-        [/lib/skeleton/hoon [%& ;;(page:clay hoon+lib-skel)]]
-        [/lib/default-agent/hoon [%& ;;(page:clay hoon+lib-def)]]
-        [/mar/bill/hoon [%& ;;(page:clay hoon+mar-bill)]]
-        [/desk/bill [%& ;;(page:clay noun+:~(%bar))]]
-      ==
-    :~
-      [/mar/noun/hoon [%& ;;(page:clay hoon+mar-noun)]]
-      [/mar/hoon/hoon [%& ;;(page:clay hoon+mar-hoon)]]
-      [/mar/txt/hoon [%& ;;(page:clay hoon+mar-txt)]]
-      [/mar/kelvin/hoon [%& ;;(page:clay hoon+mar-kel)]]
-      [/sys/kelvin [%& ;;(page:clay kelvin+[%zuse kel])]]
-    ==
-  ==
-  =/  =yoki:clay  [%& [*(list tako:clay) files]]
-  [%park desk yoki *rang:clay]
-::
-++  zuse-upd
-  |=  kel=@ud
-  ^-  @t
-  =/  old-zuse  (trip zus)
-  =/  i  (find "++  zuse" old-zuse)
-  ?~  i  !!
-  =/  next-zuse  "++  zuse  `@`%{(scow %ud kel)}"
-    %-  crip
-    ;:  welp
-      (scag u.i old-zuse)
-      next-zuse
-      (slag (add u.i (lent next-zuse)) old-zuse)
-    ==
-::
-++  agent
-  ^-  page:clay
-  :-  %hoon
-  '''
-  /+  default-agent
-  |%
-  +$  state-0  [%0 val=@ud]
-  --
-  =|  state-0
-  =*  state  -
-  ^-  agent:gall
-  |_  =bowl:gall
-  +*  this  .
-      def   ~(. (default-agent this %.n) bowl)
-  ::
-  ++  on-init
-    ^-  (quip card:agent:gall _this)
-    `this(val 42)
-  ::
-  ++  on-save
-    ^-  vase
-    !>(state)
-  ::
-  ++  on-load
-    |=  old=vase
-    ^-  (quip card:agent:gall _this)
-    `this(state [%0 42])
-  ::
-  ++  on-poke   on-poke:def
-  ++  on-watch  on-watch:def
-  ++  on-leave  on-leave:def
-  ++  on-peek   on-peek:def
-  ++  on-agent  on-agent:def
-  ++  on-arvo   on-arvo:def
-  ++  on-fail   on-fail:def
-  --
-  '''
-::
 --
