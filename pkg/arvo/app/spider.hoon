@@ -717,6 +717,7 @@
       eny.bowl
       now.bowl
       (yarn-to-byk yarn bowl)
+      peg.bowl
   ==
 ::
 ++  yarn-to-tid
