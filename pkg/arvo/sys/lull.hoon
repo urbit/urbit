@@ -2430,7 +2430,7 @@
         [%ogre p=@tas]                                  ::  delete mount point
         [%rule red=dict wit=dict]                       ::  node r+w permissions
         [%tire p=(each rock:tire wave:tire)]            ::  app state
-        [%ward =desk peg=(set perm:gall) peq=(set perm:gall)]  ::  permission state
+        [%ward =cast:ward]                              ::  permission state
         [%writ p=riot]                                  ::  response
         [%wris p=[%da p=@da] q=(set (pair care path))]  ::  many changes
     ==                                                  ::
@@ -2533,6 +2533,7 @@
         ren=rein                                        ::  force agents on/off
         peg=(set perm:gall)                             ::  granted permissions
         peq=(set perm:gall)                             ::  requested permissions
+        per=(unit [(set perm:gall) yoki])                             ::  required permissions
     ==                                                  ::
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission
@@ -2662,7 +2663,27 @@
         t=@da                                           ::  date
     ==                                                  ::
   +$  zest  $~(%dead ?(%dead %live %held))              ::  how live
-  ::                                                    ::
+  ::
+  ++  ward                                              ::  permission state
+    |%
+    +$  writ  [=desk peg=(set perm:gall) peq=(set perm:gall) per=(set perm:gall)]
+    +$  cast
+      $%  [%need =desk per=(set perm:gall)]                
+          ::  permissions missing on commit
+          [%have =desk peg=(set perm:gall) peq=(set perm:gall)]
+          ::  got permissions for a desk
+      ==
+    ::
+    ++  tell
+    |=  =writ
+    ^-  (list cast)
+    ?:  =(~ per.writ)  [%have [desk peg peq]:writ]~
+    =/  per  (~(dif in per.writ) peg.writ)
+    :~  [%have [desk peg peq]:writ]
+        [%need desk.writ per]
+    ==
+  --
+  ::                                             ::
   ++  tire                                              ::  app state
     |%                                                  ::
     +$  rock  (map desk [=zest wic=(set weft)])         ::
@@ -3792,6 +3813,7 @@
     ==  ==                                              ::                                                  ::
   +$  dude  term                                        ::  server identity
   +$  gill  (pair ship term)                            ::  general contact
+  ::
   +$  perm
     $%  [%behn %timer]
         [%eyre %serve]

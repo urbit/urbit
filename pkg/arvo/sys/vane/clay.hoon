@@ -1572,10 +1572,19 @@
     --
   ::
   ++  send-ward
-    %-  emil 
+    %-  emil
+    ?:  =(~ pes)  ~
+    =/  casts=(list cast:ward)  
+      %:  tell:ward  syd
+          peg.dom  peq.dom
+          ?~(per.dom ~ -.u.per.dom)
+      ==
+    %-  zing
     %+  turn  ~(tap in pes)
     |=  =duct
-    [duct %give %ward syd peg.dom peq.dom]
+    %+  turn  casts
+    |=  =cast:ward
+    [duct %give %ward cast]
   ::
   ++  case-to-date
     |=  =case
@@ -1967,10 +1976,16 @@
     =/  per=(set perm:gall)  (get-perm yoki)
     ~&  >>  %checking-permissions
     ::  TODO:  itterate over permissions and check if it's been granted 
-    =/  has-peg  =(~ (~(dif in per) peg.dom))
-    ?.  |(has-peg =(%dead liv.dom) =(%base syd))
-      ::  TODO:  store missing perms in state, but how?
-      (mean leaf+"{<syd>} need permissions: {<per>}; has: {<peg.dom>}" ~)
+    =/  has-perm
+      ?:  ?=(%base syd)  &
+      =(~ (~(dif in per) peg.dom))
+    ::  TODO: check if incoming commit is a current version of kelvin
+    ::        if permissions missing store in wic.dom
+    ::        
+    =.  per.dom  ?:(has-perm ~ `[per yoki])
+    ?.  |(has-perm =(%dead liv.dom))
+      %-  (slog leaf+"{<syd>} need permissions: {<per>}; has: {<peg.dom>}" ~)
+      send-ward
     ::  find desk kelvin
     ::
     =/  kel=(set weft)  (waft-to-wefts (get-kelvin yoki))
@@ -3323,7 +3338,6 @@
   ++  set-pine 
     |=  [add=? pes=(set perm:gall)]
     ^+  ..park
-    ::  TODO: notify about changes 
     ?:  add  ..park(peq.dom (~(uni in peq.dom) pes))
     ..park(peq.dom (~(dif in peq.dom) pes))
   ::
@@ -3336,7 +3350,14 @@
     |=  [add=? pes=(set perm:gall)]
     ^+  ..park
     ?:  add  
-      ..park(peg.dom (~(uni in peg.dom) pes))
+      =.  peg.dom  (~(uni in peg.dom) pes)
+      ::  TODO:  check if desk awaiting commit 
+      ?~  per.dom  ..park
+      ?~  (~(dif in -.u.per.dom) peg.dom)
+        ::  calling park here
+        ::  updated %.y ?
+        (park | | +.u.per.dom *rang)
+      ..park
     =/  per=(set perm:gall)  (get-perm [%| (aeon-to-yaki:ze let.dom)])
     =/  in-per  (~(any in pes) |=(p=perm:gall (~(has in per) p)))
     ?:  &(=(%live liv.dom) in-per)
@@ -4925,7 +4946,6 @@
       =^  =vase  nub.f
         %-  road  |.
         (build-file:f /app/[i.bill.i.sat]/hoon)
-      ~&  passing-granted-perm/peg.dom.den
       =/  agent  ~|  [%building-app bill.i.sat]  !<(agent:gall vase)
       =^  lid  nub.f  $(bill.i.sat t.bill.i.sat)
       [[[i.bill.i.sat [our desk.i.sat da+now] [peg.dom.den peq.dom.den] agent] lid] nub.f]
@@ -5339,9 +5359,17 @@
     =.  pes.ruf  (~(put in pes.ruf) hen)
     =/  roml=(list [desk dojo])  ~(tap by dos.rom.ruf)
     :_  ..^$
+    %-  zing
     %+  turn  roml
     |=  [=desk =dojo]
-    [hen %give %ward desk peg.dom.dojo peq.dom.dojo]
+    =/  casts=(list cast:ward)
+      %:  tell:ward  desk
+        peg.dom.dojo  peq.dom.dojo
+        ?~(per.dom.dojo ~ -.u.per.dom.dojo)
+      ==
+    %+  turn  casts 
+    |=  =cast:ward
+    [hen %give %ward cast]
   ::
       ?(%warp %werp)
     ::  capture whether this read is on behalf of another ship
