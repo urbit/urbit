@@ -641,7 +641,7 @@
         |%
         ++  noun  seal
         ++  mime  `^mime`[/text/x-seal (as-octs:mimes:html hoon)]
-        ++  hoon 
+        ++  hoon
           ^-  @t
           %-  crip
           ?~  +.seal  "[%0 ~]"
@@ -1574,7 +1574,7 @@
   ++  send-ward
     %-  emil
     ?:  =(~ pes)  ~
-    =/  casts=(list cast:ward)  
+    =/  casts=(list cast:ward)
       %:  tell:ward  syd
           peg.dom  peq.dom
           ?~(per.dom ~ -.u.per.dom)
@@ -1975,13 +1975,13 @@
     ::
     =/  per=(set perm:gall)  (get-perm yoki)
     ~&  >>  %checking-permissions
-    ::  TODO:  itterate over permissions and check if it's been granted 
+    ::  TODO:  itterate over permissions and check if it's been granted
     =/  has-perm
       ?:  ?=(%base syd)  &
       =(~ (~(dif in per) peg.dom))
     ::  TODO: check if incoming commit is a current version of kelvin
     ::        if permissions missing store in wic.dom
-    ::        
+    ::
     =.  per.dom  ?:(has-perm ~ `[per yoki])
     ?.  |(has-perm =(%dead liv.dom))
       %-  (slog leaf+"{<syd>} need permissions: {<per>}; has: {<peg.dom>}" ~)
@@ -3335,7 +3335,7 @@
     |=  r=rule
     r(who (~(del in who.r) |+nom))
   ::
-  ++  set-pine 
+  ++  set-pine
     |=  [add=? pes=(set perm:gall)]
     ^+  ..park
     ?:  add  ..park(peq.dom (~(uni in peq.dom) pes))
@@ -3349,9 +3349,9 @@
   ++  set-seal
     |=  [add=? pes=(set perm:gall)]
     ^+  ..park
-    ?:  add  
+    ?:  add
       =.  peg.dom  (~(uni in peg.dom) pes)
-      ::  TODO:  check if desk awaiting commit 
+      ::  TODO:  check if desk awaiting commit
       ?~  per.dom  ..park
       ?~  (~(dif in -.u.per.dom) peg.dom)
         ::  calling park here
@@ -3382,11 +3382,11 @@
       ((slog leaf+msg ~) ..park)
     =/  per=(set perm:gall)
       %+  fall
-        (mole |.((get-perm [%| (aeon-to-yaki:ze let.dom)])))  
+        (mole |.((get-perm [%| (aeon-to-yaki:ze let.dom)])))
       ~
     ~&  >>  %checking-permissions
-    ::  TODO: do not do hard equality check 
-    ?:  &(=(liv %live) !=(~ (~(dif in per) peg.dom))) 
+    ::  TODO: do not do hard equality check
+    ?:  &(=(liv %live) !=(~ (~(dif in per) peg.dom)))
       =/  msg   "clay: can't set {<syd>} live, it doesn't have required permissions"
       =/  msg1  "need: {<per>}, have: {<peg.dom>}"
       ((slog leaf+msg leaf+msg1 ~) ..park)
@@ -5256,10 +5256,10 @@
       abet:(perm:den pax.req rit.req)
     [mos ..^$]
   ::
-      %pine 
-    =^  mos  ruf 
+      %pine
+    =^  mos  ruf
       =/  den  ((de now rof hen ruf) our des.req)
-      abet:send-ward:(set-pine:den add.req pes.req) 
+      abet:send-ward:(set-pine:den add.req pes.req)
     =^  mos2  ruf  abet:goad:(lu now rof hen ruf)
     [(weld mos mos2) ..^$]
   ::
@@ -5276,7 +5276,7 @@
       abet:send-ward:(set-seal:den add.req pes.req)
     =^  mos2  ruf  abet:goad:(lu now rof hen ruf)
     [(weld mos mos2) ..^$]
-    ::  
+    ::
   ::
       %stir
     ?+    arg.req  ~|(%strange-stir !!)
@@ -5367,7 +5367,7 @@
         peg.dom.dojo  peq.dom.dojo
         ?~(per.dom.dojo ~ -.u.per.dom.dojo)
       ==
-    %+  turn  casts 
+    %+  turn  casts
     |=  =cast:ward
     [hen %give %ward cast]
   ::

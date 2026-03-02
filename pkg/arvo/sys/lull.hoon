@@ -2668,7 +2668,7 @@
     |%
     +$  writ  [=desk peg=(set perm:gall) peq=(set perm:gall) per=(set perm:gall)]
     +$  cast
-      $%  [%need =desk per=(set perm:gall)]                
+      $%  [%need =desk per=(set perm:gall)]
           ::  permissions missing on commit
           [%have =desk peg=(set perm:gall) peq=(set perm:gall)]
           ::  got permissions for a desk

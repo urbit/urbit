@@ -162,23 +162,23 @@
 |=  =tape
   (ex ~ %pass /note [%d [%text tape]])
 ::
-++  ex-load 
+++  ex-load
   |=  mov=move
   ?:  ?=([* %pass * [%g [%load *]]] mov)  ~
   :~  'expected %load'
   ==
 ::
-++  ex-what 
+++  ex-what
 |=  mov=move
   ?:  ?=([* %pass * [%$ [%what *]]] mov)  ~
   :~  'expected %what'
   ==
 ::
 ++  test-blocked-on-kelvin
-  %-  eval-mare 
+  %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                  bind:m  commit-desks
-  ::  send next kelvin update to a desk 
+  ::  send next kelvin update to a desk
   ;<  mov=(list move)   bind:m  (call ~[/blah] (desk-upd %foo 408 ~))
   ;<  mov2=(list move)  bind:m  (take /wick ~[/blah] [%behn %wake ~])
   ::  send next kelvin update to %base
@@ -187,7 +187,7 @@
   ;<  ~                  bind:m  (next-kelvin 408)
   ;<  mov4=(list move)   bind:m  (call ~[/blah] [%pork ~])
   ;<  now=@da  bind:m  get-now
-  ::  
+  ::
   =/  ex-wait    (ex-pass /wick [%b [%wait now]])
   =/  ex-text    (ex-pass-text ": /~nul/base/2/sys/zuse/hoon")
   =/  ex-text-2  (ex-pass-text ": /~nul/base/2/sys/kelvin")
@@ -197,10 +197,10 @@
   (expect-moves mov6 ~)
 ::
 ++  test-blocked-on-kelvin-1
-%-  eval-mare 
+%-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  commit-desks
-  ::  send kelvin-1 update to a desk 
+  ::  send kelvin-1 update to a desk
   ;<  mov2=(list move)  bind:m  (call ~[/blah] (desk-upd %foo 407 ~))
   ;<  *                 bind:m  (take /wick ~[/blah] [%behn %wake ~])
   ;<  mov3=(list move)  bind:m  (call ~[/blah] (desk-upd %base 407 ~))
@@ -208,7 +208,7 @@
   ;<  ~  bind:m  (next-kelvin 407)
   ;<  mov5=(list move)  bind:m  (call ~[/blah] [%pork ~])
   ;<  now=@da  bind:m  get-now
-  ::  
+  ::
   =/  ex-wait    (ex-pass /wick [%b [%wait now]])
   =/  ex-text    (ex-pass-text ": /~nul/base/2/sys/zuse/hoon")
   =/  ex-text-2  (ex-pass-text ": /~nul/base/2/sys/kelvin")
@@ -218,13 +218,13 @@
   (expect-moves mov6 ~)
 ::
 ++  test-blocked-on-kelvin-and-kelvin-1
-%-  eval-mare 
+%-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  commit-desks
-  ::  send kelvin update to a desk 
+  ::  send kelvin update to a desk
   ;<  mov=(list move)   bind:m  (call ~[/blah] (desk-upd %foo 408 ~))
   ;<  *                 bind:m  (take /wick ~[/blah] [%behn %wake ~])
-  ::  send kelvin-1 update to a desk 
+  ::  send kelvin-1 update to a desk
   ;<  mov2=(list move)  bind:m  (call ~[/blah] (desk-upd %foo 407 ~))
   ;<  *                 bind:m  (take /wick ~[/blah] [%behn %wake ~])
   ::  apply kelvin-1 update to base
@@ -232,7 +232,7 @@
   ;<  ~                 bind:m  (next-kelvin 407)
   ;<  mov4=(list move)  bind:m  (call ~[/blah] [%pork ~])
   ;<  now=@da  bind:m  get-now
-  ::  
+  ::
   =/  ex-wait    (ex-pass /wick [%b [%wait now]])
   =/  ex-text    (ex-pass-text ": /~nul/base/2/sys/zuse/hoon")
   =/  ex-text-2  (ex-pass-text ": /~nul/base/2/sys/kelvin")
@@ -242,7 +242,7 @@
   (expect-moves mov5 ~)
 ::
 ++  test-blocked-on-esse
-%-  eval-mare 
+%-  eval-mare
   =/  m  (mare ,~)
   ;<  ~  bind:m  commit-base
   ::  create desk
@@ -254,7 +254,7 @@
   ;<  mov=(list move)   bind:m  (call ~[/blah] [%tire `~])
   ::  update base to next kelvin
   ;<  mov2=(list move)  bind:m  (call ~[/blah] (desk-upd %base 408 ~))
-  ::  
+  ::
   ::  NOTE:  could be a walk tire bug
   =/  ex-tire-1  (ex-gift [%tire %| [%zest %foo %live]])
   =/  ex-tire-2  (ex-gift [%tire %| [%zest %base %live]])
@@ -262,7 +262,7 @@
   (expect-moves mov2 ex-tire-1 ex-tire-2 ex-tire-3 ~)
 ::
 ++  test-apply-kel-suspend-foo
-%-  eval-mare 
+%-  eval-mare
   =/  m  (mare ,~)
   ;<  *                bind:m  commit-desks
   ;<  mov=(list move)  bind:m  (call ~[/blah] (desk-upd %base 408 ~))
@@ -273,7 +273,7 @@
   ;<  mov2=(list move)  bind:m  (call ~[/blah] [%zeal [%foo %held]~])
   ;<  mov3=(list move)  bind:m  (call ~[/blah] [%pork ~])
   ;<  now=@da  bind:m  get-now
-  ::  
+  ::
   =/  ex-wait    (ex-pass /wick [%b [%wait now]])
   =/  ex-text    (ex-pass-text ": /~nul/base/2/sys/zuse/hoon")
   =/  ex-text-2  (ex-pass-text ": /~nul/base/2/sys/kelvin")
@@ -282,19 +282,19 @@
   (expect-moves mov4 ~)
 ::
 ++  test-missing-perm-on-commit
-  %-  eval-mare 
+  %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  commit-desks
   ;<  mov=(list move)   bind:m  (call ~[/blah] (desk-upd %foo 409 desk-seal))
   ;<  mov2=(list move)  bind:m  (call ~[/blah] [%seal %foo & (silt [%behn %timer]~)])
   ;<  now=@da  bind:m  get-now
-  ::  
+  ::
   =/  ex-wait    (ex-pass /wick [%b [%wait now]])
   =/  ex-text    (ex-pass-text ": /~nul/foo/2/desk/seal")
   (expect-moves mov2 ex-wait ex-load ~)
 ::
 ++  test-missing-perm-on-kel-update
-%-  eval-mare 
+%-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  commit-desks
   ;<  mov=(list move)   bind:m  (call ~[/blah] (desk-upd %foo 408 desk-seal))
@@ -308,7 +308,7 @@
   ;<  mov4=(list move)  bind:m  (call ~[/blah] [%pork ~])
   ;<  mov5=(list move)  bind:m  (call ~[/blah] [%seal %foo & (silt [%behn %timer]~)])
   ;<  now=@da  bind:m  get-now
-  ::  
+  ::
   =/  ex-wait    (ex-pass /wick [%b [%wait now]])
   =/  ex-text    (ex-pass-text ": /~nul/foo/2/desk/seal")
   =/  ex-text-2  (ex-pass-text ": /~nul/foo/2/sys/kelvin")
@@ -318,10 +318,10 @@
   ;<  mov6=(list move)  bind:m  (take /park-held/foo ~[/blah] [%behn %wake ~])
   (expect-moves mov6 ex-load ~)
 ::
-::  case: blocking on required perms and next kelvin, 
+::  case: blocking on required perms and next kelvin,
 ::  receive perms, then receive kelvin, must proceed.
 ++  test-missing-perm-on-kel-update-2
-%-  eval-mare 
+%-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  commit-desks
   ;<  mov=(list move)   bind:m  (call ~[/blah] (desk-upd %foo 408 desk-seal))
@@ -349,10 +349,10 @@
   ;<  *                 bind:m  commit-desks
   ;<  mov=(list move)   bind:m  (call ~[/blah] (desk-upd %foo 408 desk-seal))
   ;<  mov2=(list move)  bind:m  (call ~[/blah] (desk-upd %foo 407 [/desk/seal [%& ;;(page:clay seal+[%0 :~([%behn %timer] [%eyre %serve])])]]~))
-  (expect-moves mov2 ~) 
+  (expect-moves mov2 ~)
 ::
 ++  test-apply-kelvin2-and-perms2
-  %-  eval-mare 
+  %-  eval-mare
   =/  m  (mare ,~)
   ;<  ~                 bind:m  foo-apply-kel2
   ;<  mov=(list move)   bind:m  (call ~[/blah] (desk-upd %base 407 ~))
@@ -379,7 +379,7 @@
   (expect-moves mov6 ex-load ~)
 ::
 ++  test-apply-kelvin-1-and-perms2
-  %-  eval-mare 
+  %-  eval-mare
   =/  m  (mare ,~)
   ;<  ~                 bind:m  foo-apply-kel2
   ;<  mov=(list move)   bind:m  (call ~[/blah] (desk-upd %base 408 ~))
@@ -395,9 +395,9 @@
   =/  ex-text-2  (ex-pass-text ": /~nul/base/2/sys/kelvin")
   ;<  ~  bind:m  (expect-moves mov3 ex-wait ex-text ex-text-2 ex-load ~)
   ;<  mov4=(list move)  bind:m  (call ~[/blah] [%seal %foo & (silt :~([%behn %timer]))])
-  ::  NOTE, current bug: desk isn't live, 
-  ::   still has an asssumption of missing permissions, 
-  ::   even tho permissions for current version of zuse are fulfilled 
+  ::  NOTE, current bug: desk isn't live,
+  ::   still has an asssumption of missing permissions,
+  ::   even tho permissions for current version of zuse are fulfilled
   ;<  ~  bind:m  (expect-moves mov4 ex-load ~)
   ;<  mov5=(list move)   bind:m  (call ~[/blah] (desk-upd %base 407 ~))
   =/  ex-zeal    (ex-pass /kiln/bump/zeal [%c %zeal [%foo %held]~])
@@ -445,11 +445,11 @@
   ~&  'building files, stand by'
   ;<  ~  bind:m
     |=  =state
-    ::  build lull 
+    ::  build lull
     =/  lul  (slap !>(..part) (ream lull))
     ::  build zuse
     =/  zus  (slap lul (ream (zuse-upd kel)))
-    ::  build clay 
+    ::  build clay
     =/  nex  (slap zus (ream clay-src))
     :: apply update
     =/  old-ruf  ruf.gate.state
@@ -464,7 +464,7 @@
   =/  files
     %-  ~(gas by *(map path (each page:clay lobe:clay)))
     ^-  (list [path (each page:clay lobe:clay)])
-    %+  welp 
+    %+  welp
       ?:  =(%base desk)
         [/sys/zuse/hoon [%& ;;(page:clay hoon+zus)]]~
       :~
@@ -495,7 +495,7 @@
   =/  files
     %-  ~(gas by *(map path (each page:clay lobe:clay)))
     ^-  (list [path (each page:clay lobe:clay)])
-    ;:  welp  
+    ;:  welp
       fil
       ?:  =(%base desk)
         [/sys/zuse/hoon [%& ;;(page:clay hoon+(zuse-upd kel))]]~
@@ -525,7 +525,7 @@
   ?~  i  !!
   =/  next-zuse  "++  zuse  `@`%{(scow %ud kel)}"
     %-  crip
-    ;:  welp  
+    ;:  welp
       (scag u.i old-zuse)
       next-zuse
       (slag (add u.i (lent next-zuse)) old-zuse)
@@ -568,5 +568,5 @@
   ++  on-fail   on-fail:def
   --
   '''
-::    
+::
 --
