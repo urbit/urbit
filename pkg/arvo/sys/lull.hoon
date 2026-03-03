@@ -3814,10 +3814,39 @@
   +$  dude  term                                        ::  server identity
   +$  gill  (pair ship term)                            ::  general contact
   ::
+  +$  dash  [desk=(unit desk) =spur]
+  +$  cash  [care=(unit) dash]
+  ::
   +$  perm
-    $%  [%behn %timer]
-        [%eyre %serve]
+    $%  perm-arvo
+        perm-gall
+        [%super ~]  ::  anything, required for syscalls
     ==
+  +$  perm-gall
+    $%  [%write dude=?(~ dude)]        ::  local pokes
+        [%watch dude=?(~ dude) =path]  ::  local watches
+        [%reads vane=term cash]        ::  local scries
+        [%fling ~]                     ::  anything over the network
+    ==
+  +$  perm-arvo  ::TODO  expand
+    $%  [%ames ~]
+        [%behn ~]
+      ::
+        $:  %clay
+        $%  [%write dash]  ::  %info %merg %fuse
+            [%local cash]  ::  %warp for local
+            [%peers cash]  ::  %warp for remote
+        ==  ==
+      ::
+        [%dill ~]
+        [%eyre ~]
+        [%gall ~]
+        [%iris ~]
+        [%jael ~]
+        [%khan ~]
+        [%lick ~]
+    ==
+  ::
   +$  load  (list [=dude =beak per=[peg=(set perm) peq=(set perm)] =agent])  ::  loadout
   +$  scar                                              ::  opaque duct
     $:  p=@ud                                           ::  bone sequence
@@ -3927,6 +3956,37 @@
         |~  [term tang]
         *(quip card _^|(..on-init))
       --
+    --
+  ::
+  ++  guard  !:  ::  perm check utils
+    |%
+    ++  rite  ::  namespace permission check
+      |=  [our=ship pes=(set perm) [=view =beam]]
+      ^-  ?
+      ?:  (~(has in pes) %super ~)  &
+      |  ::TODO
+    ::
+    ++  cred  ::  userspace permission check
+      |=  [our=ship pes=(set perm) =card:agent]
+      ^-  ?
+      |  ::TODO
+    ::
+    ++  have  ::  .pes has .mus or broader
+      |=  [pes=(set perm) mus=perm]
+      ^-  ?
+      ?:  (~(has in pes) %super ~)  &
+      ?+  mus  (~(has in pes) mus)
+        [%write *]  |  ::TODO
+        [%watch *]  |  ::TODO
+        [%reads *]  |  ::TODO
+        [%clay *]   |  ::TODO
+      ==
+    ::
+    ++  must  ::  perm required for card
+      |=  [our=ship =card:agent]
+      ^-  $@(? perm)  ::  always/never allowed, or perm
+      ?:  ?=(%give -.card)  &
+      |  ::TODO
     --
   --  ::gall
 ::  %iris http-client interface
