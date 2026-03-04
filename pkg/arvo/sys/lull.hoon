@@ -3966,6 +3966,11 @@
       ?:  (~(has in pes) %super ~)  &
       |  ::TODO
     ::
+    ++  cres
+      |=  [our=ship pes=(set perm) caz=(list card:agent)]
+      ^-  ?
+      (levy caz (cury (cury cred our) pes))
+    ::
     ++  cred  ::  userspace permission check
       |=  [our=ship pes=(set perm) =card:agent]
       ^-  ?
