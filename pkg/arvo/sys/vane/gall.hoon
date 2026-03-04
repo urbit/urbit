@@ -2025,6 +2025,8 @@
           on-save:ap-agent-core
         p.agent.yoke
       =?  ap-core  &(?=(%| -.agent.yoke) ?=(^ ken.yoke))
+        ::TODO  don't want this to be subject to permission checks!
+        ::      we're doing this on the agent's behalf, it should always succeed
         =-  +:(ap-ingest ~ |.([+< agent]))
         %-  zing
         %+  turn  ~(tap by `(jug spar:ames wire)`ken.yoke)
@@ -2440,6 +2442,24 @@
       |=  [ack=?(%poke-ack %watch-ack ~) run=_^?(|.(*step:agent))]
       ^-  [(unit tang) _ap-core]
       =/  result  (ap-mule run)
+      =/  allowed=?
+        ?-  -.result
+          %&  %^  cres:guard  our
+                peg:(~(gut by perms.state) q.beak.yoke [peg=~ peq=~])
+              -.p.result
+          %|  &
+        ==
+      ::  if agent tried doing something without permission,
+      ::  we must never persist the .run result. instead:
+      ::  if we don't need to n/ack, return the failure right away.
+      ::  otherwise set the result to failure, and proceed as normal,
+      ::  optionally sending nacks.
+      ::
+      ?:  &(!allowed ?=(~ ack))
+        [`~['not permitted' 'maybe details'] ap-core]
+      =?  result  !allowed
+        [%| 'not-permitted' 'maybe details' ~]
+      ::
       =^  new-moves  ap-core  (ap-handle-result result)
       =/  maybe-tang=(unit tang)
         ?:  ?=(%& -.result)
