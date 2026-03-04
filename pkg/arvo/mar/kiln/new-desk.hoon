@@ -1,13 +1,26 @@
-|_  =desk
+|%
++$  new-desk  [=desk overwrite=?]
+--
+|_  n=new-desk
 ++  grad  %noun
 ++  grow
   |%
-  ++  noun  desk
-  ++  json  s+desk
+  ++  noun  n
+  ++  json
+    %-  pairs:enjs:format
+    :~  desk+s+desk.n
+        overwrite+b+overwrite.n
+    ==
   --
 ++  grab
   |%
-  ++  noun  ^desk
-  ++  json  so:dejs:format
+  ++  noun  new-desk
+  ++  json
+    ^-  $-(^json new-desk)
+    =,  dejs:format
+    %-  ot
+    :~  desk+so
+        overwrite+bo
+    ==
   --
 --

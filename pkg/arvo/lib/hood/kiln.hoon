@@ -897,7 +897,12 @@
   |=([=dude ?] [%pass /nuke %arvo %g [%nuke dude]])
 ::
 ++  poke-new-desk
-  |=  =desk
+  |=  [=desk overwrite=?]
+  =/  desks  .^((set ^desk) %cd /(scot %p our)//(scot %da now))
+  ?:  ?&  (~(has in desks) desk)
+          !overwrite
+      ==
+    abet:(spam leaf+"desk already exists: {<desk>}" ~)
   ~>  %slog.(fmt "creating new desk {<desk>}")
   =/  files=(map path page:clay)
     %-  ~(gas by *(map path page:clay))
