@@ -1572,8 +1572,8 @@
     --
   ::
   ++  send-ward
+    ?:  =(~ pes)  ..abet
     %-  emil
-    ?:  =(~ pes)  ~
     =/  casts=(list cast:ward)
       %:  tell:ward  syd
           peg.dom  peq.dom
@@ -1978,7 +1978,7 @@
     ::  TODO:  itterate over permissions and check if it's been granted
     =/  has-perm
       ?:  ?=(%base syd)  &
-      =(~ (~(dif in per) peg.dom))
+      (~(all in per) |=(p=perm:gall (have:guard:gall peg.dom p)))
     ::  TODO: check if incoming commit is a current version of kelvin
     ::        if permissions missing store in wic.dom
     ::
@@ -3353,7 +3353,7 @@
       =.  peg.dom  (~(uni in peg.dom) pes)
       ::  TODO:  check if desk awaiting commit
       ?~  per.dom  ..park
-      ?~  (~(dif in -.u.per.dom) peg.dom)
+      ?~  (~(all in -.u.per.dom) |=(per=perm:gall (have:guard:gall peg.dom per)))
         ::  calling park here
         ::  updated %.y ?
         (park | | +.u.per.dom *rang)
@@ -3386,7 +3386,7 @@
       ~
     ~&  >>  %checking-permissions
     ::  TODO: do not do hard equality check
-    ?:  &(=(liv %live) !=(~ (~(dif in per) peg.dom)))
+    ?:  &(=(liv %live) !(~(all in per) |=(p=perm:gall (have:guard:gall peg.dom p))))
       =/  msg   "clay: can't set {<syd>} live, it doesn't have required permissions"
       =/  msg1  "need: {<per>}, have: {<peg.dom>}"
       ((slog leaf+msg leaf+msg1 ~) ..park)

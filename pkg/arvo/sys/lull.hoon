@@ -3974,7 +3974,8 @@
     ++  cred  ::  userspace permission check
       |=  [our=ship pes=(set perm) =card:agent]
       ^-  ?
-      |  ::TODO
+      ?@  per=(must our card)  per
+      (have pes ;;(perm per))
     ::
     ++  have  ::  .pes has .mus or broader
       |=  [pes=(set perm) mus=perm]
@@ -3990,8 +3991,35 @@
     ++  must  ::  perm required for card
       |=  [our=ship =card:agent]
       ^-  $@(? perm)  ::  always/never allowed, or perm
-      ?:  ?=(%give -.card)  &
-      |  ::TODO
+      ?-  -.card
+          %give  &
+          %slip  |
+          %pass
+        =/  =note:agent  q.card
+        ?+  -.note  |
+            %agent   
+          ?-  -.task.note
+            %watch             [%watch name.note path.task.note]
+            %watch-as          [%watch name.note path.task.note]
+            %leave             [%watch name.note ~]
+            ?(%poke %poke-as)  [%write name.note]
+          ==
+            %arvo
+          =/  =note-arvo  +.note
+          ?+  -.note-arvo  |
+            %b  [%behn ~]
+            %e  [%eyre ~]
+            %g  [%gall ~]
+            %i  [%iris ~]
+            %j  [%jael ~]
+            %k  [%khan ~]
+            %l  [%lick ~]
+            ::  TODO
+          ==
+            %pyre  &
+          ::  TODO
+        ==
+      ==
     --
   --  ::gall
 ::  %iris http-client interface
