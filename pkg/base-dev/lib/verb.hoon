@@ -2,16 +2,16 @@
 ::
 /-  *verb
 ::
-|=  [loud=? =agent:gall]
+|=  [loud=? agent=form:agent:gall]
 =|  bowl-print=_|
-^-  agent:gall
-|^  !.
+^-  form:agent:gall
+|^
 |_  =bowl:gall
 +*  this  .
     ag    ~(. agent bowl)
 ::
 ++  on-init
-  ^-  (quip card:agent:gall agent:gall)
+  ^-  (quip card:agent:gall _this)
   %-  (print bowl |.("{<dap.bowl>}: on-init"))
   =^  cards  agent  on-init:ag
   :_  this
@@ -26,7 +26,7 @@
 ::
 ++  on-load
   |=  old-state=vase
-  ^-  (quip card:agent:gall agent:gall)
+  ^-  (quip card:agent:gall _this)
   %-  (print bowl |.("{<dap.bowl>}: on-load"))
   =^  cards  agent  (on-load:ag old-state)
   :_  this
@@ -36,7 +36,7 @@
 ::
 ++  on-poke
   |=  [=mark =vase]
-  ^-  (quip card:agent:gall agent:gall)
+  ^-  (quip card:agent:gall _this)
   %-  (print bowl |.("{<dap.bowl>}: on-poke with mark {<mark>}"))
   ?:  ?=(%verb mark)
     ?-  !<(?(%loud %bowl) vase)
@@ -51,7 +51,7 @@
 ::
 ++  on-watch
   |=  =path
-  ^-  (quip card:agent:gall agent:gall)
+  ^-  (quip card:agent:gall _this)
   %-  (print bowl |.("{<dap.bowl>}: on-watch on path {<path>}"))
   =^  cards  agent
     ?:  ?=([%verb ?(%events %events-plus) ~] path)
@@ -64,7 +64,7 @@
 ::
 ++  on-leave
   |=  =path
-  ^-  (quip card:agent:gall agent:gall)
+  ^-  (quip card:agent:gall _this)
   %-  (print bowl |.("{<dap.bowl>}: on-leave on path {<path>}"))
   ?:  ?=([%verb %event ~] path)
     [~ this]
@@ -82,7 +82,7 @@
 ::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
-  ^-  (quip card:agent:gall agent:gall)
+  ^-  (quip card:agent:gall _this)
   %-  (print bowl |.("{<dap.bowl>}: on-agent on wire {<wire>}, {<-.sign>}"))
   =^  cards  agent  (on-agent:ag wire sign)
   :_  this
@@ -99,7 +99,7 @@
 ::
 ++  on-arvo
   |=  [=wire gift=gift-user-v1:gall]
-  ^-  (quip card:agent:gall agent:gall)
+  ^-  (quip card:agent:gall _this)
   %-  %+  print  bowl  |.
       ?:  ?=(%unsupported -.gift)
         "{<dap.bowl>}: on-arvo on wire {<wire>}, %unsupported"
@@ -116,7 +116,7 @@
 ::
 ++  on-fail
   |=  [=term =tang]
-  ^-  (quip card:agent:gall agent:gall)
+  ^-  (quip card:agent:gall _this)
   %-  (print bowl |.("{<dap.bowl>}: on-fail with term {<term>}"))
   =^  cards  agent  (on-fail:ag term tang)
   :_  this
