@@ -2520,7 +2520,7 @@
   ::  having changed; this lets us short-circuit that in some cases.
   ::  Whenever you give an `%ergo`, you must update this.
   ::
-  +$  dome
+  +$  dome  $+  dome
     $:  let=aeon                                        ::  top id
         hit=(map aeon tako)                             ::  versions by id
         lab=(map @tas aeon)                             ::  labels
@@ -2533,7 +2533,7 @@
         ren=rein                                        ::  force agents on/off
         peg=(set perm:gall)                             ::  granted permissions
         peq=(set perm:gall)                             ::  requested permissions
-        per=(unit [(set perm:gall) yoki])                             ::  required permissions
+        per=(unit [(set perm:gall) yoki])               ::  required permissions
     ==                                                  ::
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission

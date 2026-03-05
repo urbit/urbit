@@ -146,7 +146,7 @@
 ::  Includes subscriber list, dome (desk content), possible commit state (for
 ::  local changes), possible merge state (for incoming merges), and permissions.
 ::
-+$  dojo
++$  dojo  $+  dojo
   $:  qyx=cult                                          ::  subscribers
       dom=dome                                          ::  desk state
       per=regs                                          ::  read perms per path
@@ -199,7 +199,7 @@
 ::  --  `cez` is a collection of named permission groups.
 ::  --  `pud` is an update that's waiting on a kernel upgrade
 ::
-+$  raft                                                ::  filesystem
++$  raft  $+  raft                                      ::  filesystem
   $:  rom=room                                          ::  domestic
       hoy=(map ship rung)                               ::  foreign
       ran=rang                                          ::  hashes
@@ -282,7 +282,7 @@
 ::
 ::  `hun` is the duct to dill, and `dos` is a collection of our desks.
 ::
-+$  room                                                ::  fs per ship
++$  room  $+  room                                      ::  fs per ship
           $:  hun=duct                                  ::  terminal duct
               dos=(map desk dojo)                       ::  native desk
           ==                                            ::
@@ -310,7 +310,7 @@
 ::
 ::  Foreign desk data.
 ::
-+$  rung
++$  rung  $+  rung
           $:  rus=(map desk rede)                       ::  neighbor desks
           ==
 ::
@@ -5043,7 +5043,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%15                                       ::  vane version
+    $:  ver=%16                                       ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
@@ -5448,8 +5448,16 @@
 ::
 ++  load
   =>  |%
+      ::  we redefine the latest raft with * for the ford caches in fad.raft and
+      ::  fod.dome. this change cascades through $room, $rung, $rede and $dojo,
+      ::  resulting in many type redefinitions. the silver lining is that we
+      ::  now already have the old types here in-line if the canonical/latest
+      ::  types ever change.
+      ::  +clear-cache upgrades to full $raft.
+      ::
       +$  raft-any
-        $%  [%15 raft-15]
+        $%  [%16 raft-16]
+            [%15 raft-15]
             [%14 raft-14]
             [%13 raft-13]
             [%12 raft-12]
@@ -5460,6 +5468,61 @@
             [%7 raft-7]
             [%6 raft-6]
         ==
+      +$  raft-16  $+  raft-16
+        $:  rom=room-16
+            hoy=(map ship rung-16)
+            ran=rang
+            fad=*
+            mon=(map term beam)
+            hez=(unit duct)
+            cez=(map @ta crew)
+            tyr=(set duct)
+            tur=rock:tire
+            pud=(unit [=desk =yoki])
+            sad=(map ship @da)
+            bug=[veb=@ mas=@]
+            pes=(set duct)
+        ==
+      +$  room-16  $+  room-16
+        $:  hun=duct
+            dos=(map desk dojo-16)
+        ==
+      +$  rung-16  $+  rung-16
+        $:  rus=(map desk rede-16)
+        ==
+      +$  rede-16  $+  rede-16
+        $:  lim=@da
+            ref=(unit rind)
+            qyx=cult
+            dom=dome-16
+            per=regs
+            pew=regs
+            fiz=melt
+        ==
+      +$  dojo-16  $+  dojo-16
+        $:  qyx=cult
+            dom=dome-16
+            per=regs
+            pew=regs
+            fiz=melt
+            ese=?
+        ==
+      +$  dome-16  $+  dome-16
+        $:  let=aeon
+            hit=(map aeon tako)
+            lab=(map @tas aeon)
+            tom=(map tako norm)
+            nor=norm
+            mim=(map path mime)
+            fod=*
+            wic=(map weft yoki)
+            liv=zest
+            ren=rein
+            peg=(set perm:gall)
+            peq=(set perm:gall)
+            per=(unit [(set perm:gall) yoki])
+        ==
+      ::
       +$  raft-15
         $+  raft-15
         $:  rom=room-15
@@ -5474,7 +5537,6 @@
             pud=(unit [=desk =yoki])
             sad=(map ship @da)
             bug=[veb=@ mas=@]
-            pes=(set duct)  ::  TODO: tmp remove
         ==
       +$  room-15
         $:  hun=duct
@@ -5488,8 +5550,6 @@
             fiz=melt
             ese=?
         ==
-      ::  We redefine the latest raft with * for the ford caches.
-      ::  +clear-cache upgrades to +raft
       ::
       +$  raft-14
         $+  raft-14
@@ -5561,10 +5621,6 @@
             wic=(map weft yoki)
             liv=zest
             ren=rein
-            ::  TODO: tmp remove
-            peg=*
-            peq=*
-            per=*
         ==
       +$  rung-13
         $:  rus=(map desk rede-13)
@@ -5881,7 +5937,8 @@
   =?  old  ?=(%12 -.old)  13+(raft-12-to-13 +.old)
   =?  old  ?=(%13 -.old)  14+(raft-13-to-14 +.old)
   =?  old  ?=(%14 -.old)  15+(raft-14-to-15 +.old)
-  ?>  ?=(%15 -.old)
+  =?  old  ?=(%15 -.old)  16+(raft-15-to-16 +.old)
+  ?>  ?=(%16 -.old)
   ..^^$(ruf (clear-cache +.old))
   ::
   ::  We clear the ford cache so we don't have to know how to upgrade
@@ -5889,23 +5946,23 @@
   ::  Also, many of the results would be different if zuse is different.
   ::
   ++  clear-cache
-    |=  raf=raft-15
+    |=  raf=raft-16
     ^-  raft
     %=    raf
         fad  *flow
         dos.rom
       %-  ~(run by dos.rom.raf)
-      |=  doj=dojo-15
+      |=  doj=dojo-16
       ^-  dojo
-      doj(fod.dom *flue, ren.dom ren.dom.doj, peg.dom ~, peq.dom ~, per.dom ~)
+      doj(fod.dom *flue)
     ::
         hoy
       %-  ~(run by hoy.raf)
-      |=  =rung-14
-      %-  ~(run by rus.rung-14)
-      |=  =rede-14
+      |=  rug=rung-16
+      %-  ~(run by rus.rug)
+      |=  red=rede-16
       ^-  rede
-      rede-14(dom dom.rede-14(fod *flue, ren ren.dom.rede-14, peg ~, peq ~, per ~))
+      red(dom dom.red(fod *flue))
     ==
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
   ::
@@ -6161,7 +6218,7 @@
     ++  dome-11-to-13
       |=  dom=dome-11
       ^-  dome-13
-      dom(fod [fod.dom ~ liv=%dead ren=~ peg=~ peq=~ per=~])
+      dom(fod [fod.dom ~ liv=%dead ren=~])
     --
   ::
   ::  +raft-13-to-14: add sad, change busy
@@ -6199,10 +6256,33 @@
     |=  raf=raft-14
     ^-  raft-15
     %=  raf
-      dos.rom
+        dos.rom
       %-  ~(run by dos.rom.raf)
       |=  d=dojo-13
       d(fiz [fiz.d ese=%.y])
+    ==
+  ::  +raft-15-to-16: add userperms
+  ::
+  ++  raft-15-to-16
+    |=  raf=raft-15
+    ^-  raft-16
+    %=  raf
+        dos.rom
+      %-  ~(run by dos.rom.raf)
+      |=  d=dojo-15
+      ^-  dojo-16
+      d(dom `dome-16`dom.d(ren [ren.dom.d peg=~ peq=~ per=~]))
+    ::
+        hoy
+      %-  ~(run by hoy.raf)
+      |=  rug=rung-14
+      %-  ~(run by rus.rug)
+      |=  red=rede-14
+      ^-  rede-16
+      %=  red
+        dom  `dome-16`dom.red(ren [ren.dom.red peg=~ peq=~ per=~])
+      ==
+    ::
       bug  [bug.raf pes=~]
     ==
   --
@@ -6403,6 +6483,7 @@
 ::  objects.  Otherwise we would be contravariant in those types, which
 ::  makes them harder to change.
 ::
+::NOTE  redundant with +clear-cache:load, work should happen there instead
 ++  stay
   ^-  raft-any:load
   =/  flu  [~ ~]
@@ -6410,8 +6491,8 @@
   =/  flo  ~
   =+  `flow`flo
   :-  ver
-  ^-  raft-15:load
-  %_    ruf
+  ^-  raft-16:load
+  %=    ruf
       fad  flo
       dos.rom
     %-  ~(run by dos.rom.ruf)
@@ -6427,8 +6508,6 @@
       |=  =rede
       rede(fod.dom flu)
     ==
-      bug  bug.ruf
-      pes  ~
   ==
 ::
 ++  take                                              ::  accept response
