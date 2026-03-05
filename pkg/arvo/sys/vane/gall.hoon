@@ -2444,7 +2444,8 @@
       =/  result  (ap-mule run)
       =/  allowed=?
         ?-  -.result
-          %&  %^  cres:guard  our
+          %&  ?:  =(%base q.beak.yoke)  &
+              %^  cres:guard  our
                 peg:(~(gut by perms.state) q.beak.yoke [peg=~ peq=~])
               -.p.result
           %|  &
