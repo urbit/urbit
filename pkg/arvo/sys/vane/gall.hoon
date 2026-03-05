@@ -2416,7 +2416,7 @@
     ++  ap-mule
       |=  run=_^?(|.(*step:agent))
       ^-  (each step:agent tang)
-      =/  res  (mock [run %9 2 %0 1] (look rof [~ ~] /gall/[agent-name]))
+      =/  res  (mock [run %9 2 %0 1] (ap-look rof [~ ~] /gall/[agent-name]))
       ?-  -.res
         %0  [%& !<(step:agent [-:!>(*step:agent) p.res])]
         %1  [%| (smyt ;;(path p.res)) ~]
@@ -2427,12 +2427,28 @@
     ++  ap-mule-peek
       |=  run=_^?(|.(*(unit (unit cage))))
       ^-  (each (unit (unit cage)) tang)
-      =/  res  (mock [run %9 2 %0 1] (look rof [~ ~] /gall/[agent-name]))
+      =/  res  (mock [run %9 2 %0 1] (ap-look rof [~ ~] /gall/[agent-name]))
       ?-  -.res
         %0  [%& !<((unit (unit cage)) [-:!>(*(unit (unit cage))) p.res])]
         %1  [%| (smyt ;;(path p.res)) ~]
         %2  [%| p.res]
       ==
+    ::  +ap-look: namespase permission check 
+    ::
+    ++  ap-look
+      |=  [rof=roof lyc=gang pov=path]
+      =;  ruf=roof  (look ruf lyc pov)
+      |=  [lyc=gang pov=path =omen]
+      ^-  (unit (unit (cask vase)))
+      ?.  ?|  =(%base q.beak.yoke)
+          (rite:guard our peg:(~(gut by perms.state) q.beak.yoke [peg=~ peq=~]) [vis.omen bem.omen])
+          ==
+        =/  sef=tape  "%{(trip q.beak.yoke)}/{(trip agent-name)}"
+        =/  tar=tape  "{<vis.omen>} {(spud (en-beam bem.omen))}"
+        %.  ~
+        %+  trace  odd.veb.bug.state
+        |+[leaf+"insufficient permission: {sef} scrying for {tar}" ~]
+      (rof lyc pov omen)
     ::  +ap-ingest: call agent arm
     ::
     ::    Handle acks here because they need to be emitted before the
