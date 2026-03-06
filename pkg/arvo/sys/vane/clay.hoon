@@ -1971,24 +1971,29 @@
         =-  (mean leaf/- ~)
         "clay: commit failed, file tombstoned: {<path>} {<`@uv`p.tum>}"
       !!
+    ::  find desk kelvin
+    ::
+    =/  kel=(set weft)       (waft-to-wefts (get-kelvin yoki))
     ::  find desk seal
     ::
     =/  per=(set perm:gall)  (get-perm yoki)
     ~&  >>  %checking-permissions
     ::  TODO:  itterate over permissions and check if it's been granted
     =/  has-perm
-      ?:  ?=(%base syd)  &
+      ?:  ?|  ?=(%base syd)
+              !(~(all in kel) |=(=weft (gte num.weft zuse)))
+          ==
+        &
       (~(all in per) |=(p=perm:gall (have:guard:gall peg.dom p)))
     ::  TODO: check if incoming commit is a current version of kelvin
     ::        if permissions missing store in wic.dom
     ::
-    =.  per.dom  ?:(has-perm ~ `[per yoki])
     ?.  |(has-perm =(%dead liv.dom))
+      =.  per.dom  `[per yoki]
+      =.  ..park  (emit hen %pass /perm/zeal/[syd] %c %zeal [[syd %held] ~])
       %-  (slog leaf+"{<syd>} need permissions: {<per>}; has: {<peg.dom>}" ~)
       send-ward
-    ::  find desk kelvin
-    ::
-    =/  kel=(set weft)  (waft-to-wefts (get-kelvin yoki))
+    =?  per.dom  ?~(per.dom | =(+.u.per.dom yoki))  ~
     ?.  ?|  (~(has in kel) zuse+zuse)                   ::  kelvin match
             ?&  !=(%base syd)                           ::  best-effort compat
                 %-  ~(any in kel)
