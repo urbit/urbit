@@ -1978,16 +1978,14 @@
     ::
     =/  per=(set perm:gall)  (get-perm yoki)
     ~&  >>  %checking-permissions
-    ::  TODO:  itterate over permissions and check if it's been granted
+    ::  incoming commit permission check
+    ::
     =/  has-perm
       ?:  ?|  ?=(%base syd)
               !(~(all in kel) |=(=weft (gte num.weft zuse)))
           ==
         &
       (~(all in per) |=(p=perm:gall (have:guard:gall peg.dom p)))
-    ::  TODO: check if incoming commit is a current version of kelvin
-    ::        if permissions missing store in wic.dom
-    ::
     ?.  |(has-perm =(%dead liv.dom))
       =.  per.dom  `[per yoki]
       =.  ..park  (emit hen %pass /perm/zeal/[syd] %c %zeal [[syd %held] ~])
@@ -2001,12 +1999,15 @@
                 &(=(%zuse lal.weft) (gth num.weft zuse))
             ==
             ?&  =(%base syd)                            ::  ready to upgrade
-                %+  levy  ~(tap by tore:(lu now rof hen ruf))
-                |=  [=desk =zest wic=(set weft)]
+                ?=([* ~ ~] kel)
+                %+  levy  ~(tap by dos.rom)
+                |=  [=desk =dojo]
                 ?|  =(%base desk)
-                    !ese:(~(got by dos.rom.ruf) desk)
-                    !?=(%live zest)
-                    !=(~ (~(int in wic) kel))
+                    !ese.dojo
+                    !?=(%live liv.dom.dojo)
+                    ::  has update and perms
+                    ?~  y=(~(get by wic.dom.dojo) n.kel)  |
+                    (~(all in (get-perm u.y)) |=(p=perm:gall (have:guard:gall peg.dom.dojo p)))
                 ==
             ==
         ==
@@ -2019,7 +2020,7 @@
         (~(put by wic) weft yoki)
       =?  ..park  !?=(%base syd)  wick                  ::  [wick]
       %-  (slog leaf+"clay: wait-for-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
-      tare                                              ::  [tare] >
+      tare:send-ward                                              ::  [send-ward] > [tare] >
     =.  wic.dom
       %-  ~(gas by *(map weft ^yoki))
       %+  skip  ~(tap by wic.dom)
