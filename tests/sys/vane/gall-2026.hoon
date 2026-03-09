@@ -1,5 +1,5 @@
 /+  test
-/=  gall-raw   /gall  ::  not the real gall!
+/=  gall-raw   /sys/vane/gall
 =/  gall       (gall-raw ~dev)  ::  intentionally shadow for new types
 ::
 |%
@@ -188,7 +188,7 @@
   (call:g default-duct ~ %deal [our.g our.g /] dude deal)
 ::
 ++  do-take
-  |=  [[=wire =duct] =sign-arvo:gall]  ::REVIEW  default duct awkard?
+  |=  [[=wire =duct] =sign-arvo]  ::REVIEW  default duct awkard?
   %-  do
   |=  g=_(g:*state)
   (take:g wire duct ~ sign-arvo)
@@ -219,7 +219,7 @@
   =/  m  (mare egg:gall)
   ^-  form:m
   ;<  e=egg-any:gall  bind:m  (get-scry egg-any:gall %v dude /$)
-  (pure:m ?>(?=(%16 -.e) +.e))
+  (pure:m ?>(?=(%20 -.e) +.e))
 ::
 ++  get-live-egg
   |=  =dude:gall
@@ -305,7 +305,7 @@
   |=  [=dude:gall =wire]
   =/  m  (mare ,^wire)
   ;<  src=ship  bind:m  get-our  ::NOTE  !
-  (use-wire dude (scot %p src) wire)
+  (use-wire dude %hug (scot %p src) wire)
 ::
 ++  use-wire
   |=  [=dude:gall =wire]
@@ -480,10 +480,10 @@
   ;<  ~  bind:m
     ::NOTE  moves sorted because otherwise dependent on set order
     %+  ex-moves  (sort moz aor)
-    :~  (ex-move ~[/sysduct] %pass gall-wire-a [%g %deal [~dev ~fun /gall/mock] %bar %leave ~])  ::TODO  deal constructor
-        (ex-move ~[/sysduct] %pass gall-wire [%i %cancel-request ~])
+    :~  (ex-move ~[/sysduct] %pass gall-wire [%i %cancel-request ~])
         (ex-move ~[/sysduct] %pass gall-wire [%l %shut [%mock /mysocket]])
         (ex-move ~[/sysduct] %pass gall-wire-b [%b %rest ~2345.6.7])
+        (ex-move ~[/sysduct] %pass gall-wire-a [%g %deal [~dev ~fun /gall/mock] %bar %leave ~])  ::TODO  deal constructor
     ==
   ::TODO  test that resources still tracked
   ;<  y=yoke:gall  bind:m  (get-yoke %mock)
@@ -495,11 +495,11 @@
     ::NOTE  moves sorted because otherwise dependent on set order
     %+  ex-moves  (sort moz aor)
     :~  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
+        (ex-move ~[/sysduct] %pass gall-wire [%l %spin [%mock /mysocket]])
+        (ex-move ~[/sysduct] %pass gall-wire-b [%b %wait ~2345.6.7])
         (ex-on-agent /agent/wire %kick ~)
         (ex-on-arvo /agent/wire [%iris %http-response %cancel ~])
         (ex-on-arvo /agent/wire [%lick %soak /mysocket %disconnect ~])
-        (ex-move ~[/sysduct] %pass gall-wire [%l %spin [%mock /mysocket]])
-        (ex-move ~[/sysduct] %pass gall-wire-b [%b %wait ~2345.6.7])
     ==
   (pure:m ~)
 ::
