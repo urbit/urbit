@@ -1747,6 +1747,7 @@
                                    :: and to only send the ack to the vane once
           nax=(map seq=@ud error)  :: messages you have nacked,
                                    :: (last-acked - 10 <= ack <= last-acked)
+          buf=(map @ud gage:mess)  ::  out-of-order buffer
     ==  ==
   ::  atom ops
   ::

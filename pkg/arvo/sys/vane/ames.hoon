@@ -1895,11 +1895,24 @@
           =qos
           corked=(set side)
           =ossuary
-          flows=(map side flow-state)
+          flows=(map side flow-state-28-29)
           pit=(map path request-state)
           =client=chain
           tip=(jug =user=path [duct =ames=path])
           weir=(jug side [tag=term data=*])
+      ==
+    ::
+    +$  flow-state-28-29
+      $:  closing=?(%.y %.n)
+          line=@ud
+          halt=?(%.y %.n)
+          $=  snd
+          $:  %outbound
+              loads=((mop ,@ud mesa-message) lte)
+              @  @  @
+              acks=((mop ,@ud ack) lte)
+          ==
+          rcv=[%incoming acked=@ud pending-ack=_`?`%.n nax=(map seq=@ud error)]
       ==
     ::
     +$  axle-26-27
@@ -3781,7 +3794,7 @@
               flows
             %-  ~(run by flows.c)
             |=  flow=flow-state-26-27
-            =|  =flow-state
+            =|  flow-state=flow-state-28-29
             %_  flow-state
               closing  closing.flow
                  line  line.flow
@@ -3814,9 +3827,7 @@
           m
         ?~  bone=(slaw %ud bone.i.hen)
           m
-        =/  flow=flow-state  (~(got by flows.per-sat) u.bone %for)
-        =+  fo-core=%*(fo-core fo:ev:mesa:adult-core state flow)
-        :: =+  fo-core=(fo-abed:fo:ev-core u.bone %for)
+        =/  flow=flow-state-28-29  (~(got by flows.per-sat) u.bone %for)
         ::  if the flow is in closing, we are the forward side, and we are
         ::  resending the %cork $plea, the other side could have corked the
         ::  flow so we try to peek for the %corked flow. as soon as either the
@@ -3839,7 +3850,7 @@
         ::  version of their respective state, so we need to manually
         ::  fill-out the parts of the state referred by +fo-peek-cork
         ::
-        %*  fo-peek-cork  fo-core
+        %*  fo-peek-cork  fo:ev:mesa:adult-core
                       her  ship
                     -.per  (azimuth-state-29-to-30 +<.per-sat)
            bug.ames-state  bug.state
@@ -3880,10 +3891,21 @@
               qos           qos.c
               corked        corked.c
               ossuary       ossuary.c
-              flows         flows.c
               pit           pit.c
               client-chain  client-chain.c
               tip           tip.c
+            ::
+              flows
+            %-  ~(run by flows.c)
+            |=  flow=flow-state-28-29
+            =|  =flow-state
+            %_  flow-state
+              closing  closing.flow
+                 line  line.flow
+                  snd  snd.flow
+                  rcv  %=  rcv.flow
+                         nax  [nax.rcv.flow ~]
+            ==         ==
           ==
         ==
       ::
@@ -10018,13 +10040,19 @@
                     |.("cork [bon, seq]={<[bone seq]>} already acked")
                 ::
                 (fo-send-ack seq)
-              ?:  (gth seq +(last-acked.rcv))
-                ::  we only take one message at a time; no-op if future message
+              ?:  (gth seq (add last-acked.rcv 10))
+                ::  future message; drop
                 ::
                 %-  %+  ev-tace  odd.veb.bug.ames-state
-                    |.("skip sink; future ack {<flow-state>}")
+                    |.("skip sink; beyond recv-win {<flow-state>}")
                 fo-core
               ?.  (lte seq last-acked.rcv)
+                ::  seq == +(last-acked): in-order; sink directly
+                ::  seq >  +(last-acked): out-of-order within window; enqueue
+                ::
+                ?.  =(seq +(last-acked.rcv))
+                  =.  buf.rcv  (~(put by buf.rcv) seq gage)
+                  fo-core
                 ::  a %plea sinks on the backward receiver (from a forward flow)
                 ::  a %boon sinks on the forward receiver (from a backward flow)
                 ::
@@ -10161,6 +10189,22 @@
           ::
           +|  %request-receiver
           ::
+          ++  fo-drain-buf
+            ::  deliver buffered messages in sequence
+            ::  (mirrors ames pending-vane-ack drain)
+            ::
+            |-  ^+  fo-core
+            ?:  pending-ack.rcv
+              fo-core
+            =/  next-seq  +(last-acked.rcv)
+            ?~  cached=(~(get by buf.rcv) next-seq)
+              fo-core
+            ?>  ?=([%message mark *] u.cached)
+            =.  buf.rcv  (~(del by buf.rcv) next-seq)
+            =.  fo-core
+              %.([+.u.cached ok=%.y] ?-(dire %bak fo-sink-boon, %for fo-sink-plea))
+            fo-drain-buf
+          ::
           ++  fo-sink-boon
             |=  [=page ok=?]
             ^+  fo-core
@@ -10183,7 +10227,7 @@
             =.  last-acked.rcv  +(last-acked.rcv)
             %-  %+  ev-tace  msg.veb.bug.ames-state
                 |.("hear complete %boon {<[bone=bone seq=last-acked.rcv]>}")
-            (fo-send-ack last-acked.rcv)
+            fo-drain-buf:(fo-send-ack last-acked.rcv)
           ::
           ++  fo-sink-plea
             |=  [=page ok=?]
@@ -10282,7 +10326,7 @@
                 ::
                 (~(del by nax.rcv) (sub seq 10))
               (~(put by nax.rcv) seq u.error)
-            (fo-send-ack seq)
+            fo-drain-buf:(fo-send-ack seq)
           ::
           +|  %from-network
           ::
