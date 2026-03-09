@@ -1037,9 +1037,9 @@
       mo-core
     ::
     ?.  ?=([%out @ @ *] t.t.wire)
-      =^  syscall=?  t.t.t.wire
-        ?.  ?=([%hug *] t.t.t.wire)  [& t.t.t.wire]
-        [| t.t.t.t.wire]
+      =^  syscall=?  t.t.wire
+        ?.  ?=([%hug @ *] t.t.wire)  [& t.t.wire]
+        [| t.t.t.wire]
       ?>  ?=([@ *] t.t.t.wire)
       ?:  ?=(%| -.agent.u.yoke)
         %-  (slog leaf+"gall: {<dap>} dozing, dropping {<+<.sign-arvo>}" ~)
