@@ -1912,7 +1912,7 @@
           ?-  -.neet
             %agent  [%out (scot %p ship.neet) name.neet wire]
             %huck   [%out (scot %p ship.neet) name.neet wire]
-            %jump   [(scot %p ship.attributing.agent-routes) %$ wire]
+            %jump   [%hug (scot %p ship.attributing.agent-routes) %$ wire]
             %arvo   =-  ?:  ?=(%syscall +<.neet)  -
                         [%hug -]
                     :+  (scot %p ship.attributing.agent-routes)  ::REVIEW  mb change?
