@@ -3842,6 +3842,7 @@
   +$  task-user-v1
     $%  [%ames %keen secret=? =spar:ames]
         [%ames %yawn =spar:ames]
+        [%ames %snub form=?(%allow %deny) ships=(list ship)]
       ::
         ::NOTE  not actually into %ames, just gall-side namespace management
         [%ames %grow =spur =page]

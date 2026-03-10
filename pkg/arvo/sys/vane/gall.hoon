@@ -1829,9 +1829,13 @@
     ::    "after the remote scry handling, but before other card transforms"
     ::
     +$  carp  $+  carp  (wind neet gift:agent)
+    +$  tick  ::TODO  ugly!
+      $%  $<(%ames task-user-v1)  ::  remote scry already processed
+          [%ames %snub form=?(%allow %deny) ships=(list ship)]  ::  but not snub
+      ==
     +$  neet  $+  neet
       $%  [%agent [=ship name=term] task=$%(task:agent [%raw-poke =mark =noun])]
-          [%arvo $<(%ames task-user-v1)]  ::  remote scry already processed
+          [%arvo tick]
           [%huck [=ship name=term] note-arvo=[%b %huck sign-arvo=[%gall %unto %kick ~]]]
           [%jump =note-arvo]  ::  "out" for doing sys stuff post-post-processing on agent behalf
       ==
@@ -1936,6 +1940,7 @@
           ::
               %arvo
             ?-  +.neet
+              [%ames *]        [%a +>.neet]
               [%behn *]        [%b +>.neet]
             ::
                 [%eyre *]

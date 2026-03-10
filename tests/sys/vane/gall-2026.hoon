@@ -649,6 +649,29 @@
   :~  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
       (ex-on-arvo /agent/wire [%lick %soak /mysocket %disconnect ~])
   ==
+::
+++  test-misc-untracked-tasks
+  %-  zing
+  %+  turn
+    ^-  (list [task-user-v1:gall note-arvo])
+    :~  :-  [%ames %snub %deny ~fed ~]
+        [%a %snub %deny ~fed ~]
+    ==
+  ::
+  |=  [task=task-user-v1:gall note=note-arvo]
+  %-  eval-mare
+  ;<  *                     bind:m
+    (do-load %mock easy:mock)
+  ;<  moz=(list move:gall)  bind:m
+    (mock-card %pass /agent/wire %arvo task)
+  ::
+  ;<  gall-wire=wire        bind:m
+    (a2k-wire %mock //agent/wire)
+  ;<  ~  bind:m  (ex-resources %mock ~)
+  %+  ex-moves  moz
+  :~  (ex-move default-duct %give %unto %poke-ack ~)
+      (ex-move ~[/sysduct] %pass gall-wire note)
+  ==
 --
 ::
 ::TODO  test duplicate resource creation for failure
