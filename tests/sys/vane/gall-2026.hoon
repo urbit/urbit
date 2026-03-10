@@ -278,13 +278,12 @@
 ++  ex-echo
   |=  =vase
   |=  move:gall
-  ~|  -.move
-  ~!  -.move
-  ?>  ?=(%pass -.move)
-  ~|  p.move
-  ?>  ?=([%use @ @ @ %$ %$ %echo ~] p.move)
-  ~|  q.move
-  ?>  ?=([%b %drip *] q.move)
+  ?.  ?=(%pass -.move)
+    (expect-eq:test !>(-.move) !>(%pass))
+  ?.  ?=([%use @ @ @ %$ %$ %echo ~] p.move)
+    (expect-eq:test !>(p.move) !>(`wire`/use/some-dude/some-nonce/some-ship/$/$/echo))
+  ?.  ?=([%b %drip *] q.move)
+    (expect-eq:test !>(q.move) !>([%b %drip *^vase]))
   (expect-eq:test p.q.move vase)
 ::
 ++  ex-on-arvo
