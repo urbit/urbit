@@ -209,14 +209,23 @@
   ::  set up any other desks we want
   ::
   |-  =*  loop  $
-  ?~  desks  (pure:m ~)
+  ?~  desks  
+    ::  TODO: check mov3 and mov4
+    ;<  mov3=(list move)  bind:m  (call ~[/blah] [%tire `~])
+    ~&  mov3/mov3
+    ;<  mov4=(list move)  bind:m  (call ~[/blah] [%ward ~])
+    (pure:m ~)
   =,  i.desks
   ;<  *                bind:m  (do-new-desk desk)
   ;<  *                bind:m
     ?.  esse  (pure:m ~)
     (call ~[/blah] [%esse desk %.y])
   ;<  mov=(list move)  bind:m  (call ~[/blah] [%zest desk `zest:clay`%live])
-  ;<  ~                bind:m  (expect-moves mov ex-wick ex-load ~)
+  ;<  ~                bind:m
+    %+  expect-moves  mov
+    :~  ex-wick
+        ex-load
+    ==
   ;<  *                bind:m  do-wick  ::  just a formality
   $(desks t.desks)
 ::
@@ -250,6 +259,14 @@
 ++  ex-gift
   |=  =gift:clay-gate
   (ex ~[/blah] %give gift)
+::
+++  ex-ward-have
+|=  [=desk peg=(set perm:gall)]
+(ex-gift [%ward [%have desk peg=peg peq=perm-none]])
+::
+++  ex-ward-need
+|=  [=desk per=(set perm:gall)]
+(ex-gift [%ward [%need desk per=per]])
 ::
 ++  ex-pass
   |=  [=wire =note:clay-gate]
@@ -295,21 +312,70 @@
   ==
 ::
 ++  ex-resume-commit-missing-perm
-  |=  [v=@ud liz=(list desk)]
+  |=  [v=@ud susp=(list desk) perm=(list [desk peg=(set perm:gall) per=(set perm:gall)])]
   ^-  (list $-(move tang))
   ;:  welp
+    ::  %base
     :~  ex-wick
         (ex-text ": /~nul/base/{<v>}/sys/zuse/hoon")
         (ex-text ": /~nul/base/{<v>}/sys/kelvin")
     ==
-    %+  turn  liz
+    ::  suspend desk on perm check
+    %+  turn  susp
     |=(=desk (ex-zeal-held desk))
+    ::
+    ::  ward gift
+    %-  zing
+    %+  turn  (snoc perm [%base ~ ~])
+    |=  [=desk peg=(set perm:gall) per=(set perm:gall)]
+    %+  welp
+      :~  (ex-ward-have desk peg)
+      ==
+    ?~  per  ~
+    :~  (ex-ward-need desk per)
+    ==
+    :~  ex-load
+    ==
+  ==
+::
+++  expect-resume-commit-missing-kel
+  |=  [v=@ud kel=@ud deku=(list [desk per=?]) deks=(list desk)]
+  ^-  (list $-(move tang))
+  ;:  welp
+    ::  %base
+    :~  ex-wick
+        (ex-text ": /~nul/base/{<v>}/sys/zuse/hoon")
+        (ex-text ": /~nul/base/{<v>}/sys/kelvin")
+    ==
+    ::  update per desk w/w-o perm seal file
+    ^-  (list $-(move tang))
+    %-  zing
+    :: ^-  (list (list $-(move tang)))
+    %+  turn  deku
+    |=  [=desk per=?]
+    ^-  (list $-(move tang))
+    ?:  ?=(%base desk)  ~
+    %+  welp
+      :~  ex-wick
+          (ex-text ": /~nul/{(scow %tas desk)}/{<v>}/sys/kelvin")
+      ==
+    ?.  per  ~
+    :~  (ex-text "+ /~nul/{(scow %tas desk)}/{<v>}/desk/seal")
+    ==
+    ::  tire gift per desk
+    %+  turn  deku
+    |=([=desk *] (ex-gift [%tire %| [%warp desk [%zuse kel]]]))
+    ::  suspend desk on perm check
+    (turn deks |=(=desk (ex-zeal-held desk)))
+    ::  todo: ward-gift
+    ::
     :~  ex-load
     ==
   ==
 ::
 ::  data constuctors
 ::
+++  perm-none  *(set perm:gall)
 ++  desk-seal
   ^-  (list [path (each page:clay lobe:clay)])
   [/desk/seal [%& ;;(page:clay seal+[%0 :~([%behn ~])])]]~
@@ -369,6 +435,9 @@
 ::  tests
 ::
 ++  test-blocked-on-kelvin
+::  non-essential desk ready before base desk commit
+::  kelvin update applied on base desk and on non-essential desk
+::
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                  bind:m  (do-setup-desks [%foo |] ~)
@@ -384,17 +453,15 @@
   ::
   ;<  ~  bind:m
     %+  expect-moves  mov4
-    :~  ex-wick
-        (ex-text ": /~nul/base/2/sys/zuse/hoon")
-        (ex-text ": /~nul/base/2/sys/kelvin")
-        ex-wick
-        (ex-text ": /~nul/foo/2/sys/kelvin")
-        ex-load
-    ==
+    (expect-resume-commit-missing-kel 2 408 [[%foo |] ~] ~)
   ;<  mov6=(list move)  bind:m  do-wick
   (expect-moves mov6 ~)
 ::
 ++  test-blocked-on-kelvin-1
+::  non-essential desk ready for kelvin and kelvin-1 update, before base desk
+::  kelvin update skipped in favour of kelvin-1, 
+::  kelvin-1 update applied on base desk and on non-essential desk
+::
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
@@ -408,17 +475,15 @@
   ::
   ;<  ~  bind:m
     %+  expect-moves  mov5
-    :~  ex-wick
-        (ex-text ": /~nul/base/2/sys/zuse/hoon")
-        (ex-text ": /~nul/base/2/sys/kelvin")
-        ex-wick
-        (ex-text ": /~nul/foo/2/sys/kelvin")
-        ex-load
-    ==
+    (expect-resume-commit-missing-kel 2 407 [[%foo |] ~] ~)
   ;<  mov6=(list move)  bind:m  do-wick
   (expect-moves mov6 ~)
 ::
 ++  test-blocked-on-kelvin-and-kelvin-1
+::  non-essential desk ready for kelvin and kelvin-1 update, before base desk
+::  kelvin update applied on base desk and non-essential desk
+::  kelvin-1 update applied on base desk and non-essential desk
+::
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
@@ -440,27 +505,36 @@
         (ex-text ": /~nul/base/2/sys/kelvin")
         ex-wick
         (ex-text ": /~nul/foo/2/sys/kelvin")
+        (ex-gift [%tire %| [%warp %foo [%zuse 407]]])
+        (ex-gift [%tire %| [%warp %foo [%zuse 408]]])
         ex-load
     ==
   ;<  mov5=(list move)  bind:m  do-wick
   (expect-moves mov5 ~)
 ::
-++  test-blocked-on-esse
+++  test-blocked-on-essential-desk-kelvin-update
+::  kelvin update recieved on base desk, but essential desk not ready
+::  no-op, notify
+::
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  ~                 bind:m  (do-setup-desks [%foo &] ~)
-  ;<  mov=(list move)   bind:m  (call ~[/blah] [%tire `~])
   ::  update base to next kelvin
   ;<  mov2=(list move)  bind:m  (do-park %base 408 ~)
   ::
   ::  NOTE:  %zest despite unchanged could be a walk tire bug
   %+  expect-moves  mov2
-  :~  (ex-gift [%tire %| [%zest %foo %live]])
+  :~  (ex-ward-have %foo perm-none)
+      (ex-ward-have %base perm-none)
+      (ex-gift [%tire %| [%zest %foo %live]])
       (ex-gift [%tire %| [%zest %base %live]])
       (ex-gift [%tire %| [%wait %base [%zuse 408]]])
   ==
 ::
 ++  test-apply-kel-suspend-foo
+::  kelvin update recieved on base desk, but non-essential desk not ready
+::  suspend non-essential desks, apply base update
+::
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                bind:m  (do-setup-desks [%foo |] ~)
@@ -474,15 +548,14 @@
   ::
   ;<  ~  bind:m
     %+  expect-moves  mov3
-    :~  ex-wick
-        (ex-text ": /~nul/base/2/sys/zuse/hoon")
-        (ex-text ": /~nul/base/2/sys/kelvin")
-        ex-load
-    ==
+    (expect-resume-commit-missing-kel 2 408 ~ ~)
   ;<  mov4=(list move)  bind:m  do-wick
   (expect-moves mov4 ~)
 ::
 ++  test-missing-perm-on-commit
+::  non-essential desk recieve commit, with updated required perms,
+::  commit suspended, recieves perms, commit applied and notify on perms update
+::
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
@@ -492,10 +565,17 @@
   %+  expect-moves  mov2
   :~  ex-wick
       (ex-text "+ /~nul/foo/2/desk/seal")
+      (ex-gift [%tire %| [%zest %foo %live]])
+      (ex-gift [%tire %| [%zest %base %live]])
       ex-load
   ==
 ::
 ++  test-missing-perm-on-kel-update
+::  kelvin update recieved on base desk, non-essential desk ready on kelvin, blocked on perms
+::  non-essential desk suspended, kelvin update applied on base
+::  non-essential desk recieves required perms
+::  non-essential desk commit applied and revived
+::
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
@@ -507,34 +587,39 @@
   ;<  ~                 bind:m  (set-kelvin 408)
   ;<  mov3=(list move)  bind:m  do-pork
   ;<  ~                 bind:m 
-  %+  expect-moves  mov3
-  (ex-resume-commit-missing-perm 2 [%foo ~])
+    %+  expect-moves  mov3
+    (ex-resume-commit-missing-perm 2 [%foo ~] [[%foo perm-none (silt :~([%behn ~]))] ~])
   ;<  mov4=(list move)  bind:m  (call ~[/blah] [%zeal [%foo %held]~])
   ;<  mov5=(list move)  bind:m  (call ~[/blah] [%seal %foo & (silt [%behn ~]~)])
   ::
   ;<  now=@da           bind:m  get-now
-  ::  NOTE: failing per.dom update isn't being stored on sys-update, due to unfinished migrations 
   ;<  ~  bind:m
     %+  expect-moves  mov5
     :~  ex-wick
         (ex-text ": /~nul/foo/2/sys/kelvin")
         (ex-text "+ /~nul/foo/2/desk/seal")
         (ex-pass /park-held/foo [%b [%wait now]])
+        (ex-gift [%tire %| [%warp %foo [%zuse 408]]])
         ex-load
     ==
-  ;<  *                 bind:m  do-wick
-  ;<  mov6=(list move)  bind:m  (take /park-held/foo ~[/blah] [%behn %wake ~])
-  (expect-moves mov6 ex-load ~)
+  ;<  mov6=(list move)  bind:m  do-wick
+  ;<  ~  bind:m  (expect-moves mov6 ~)
+  ;<  mov7=(list move)  bind:m  (take /park-held/foo ~[/blah] [%behn %wake ~])
+  %+  expect-moves  mov7 
+  :~  (ex-gift [%tire %| [%zest %foo %live]]) 
+      ex-load
+  ==
 ::
-::  case: blocking on required perms and next kelvin,
-::  receive perms, then receive kelvin, must proceed.
 ++  test-missing-perm-on-kel-update-2
+::  kelvin update recieved on base desk, non-essential desk ready on kelvin and on perms
+::  kelvin update applied on base and non-essential desk
+::
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
   ;<  mov=(list move)   bind:m  (do-park %foo 408 desk-seal)
   ;<  mov2=(list move)  bind:m  (call ~[/blah] [%seal %foo & (silt [%behn ~]~)])
-  ;<  ~  bind:m  (expect-moves mov2 ex-load ~)
+  ;<  ~  bind:m  (expect-moves mov2 (ex-ward-have %foo (silt [%behn ~]~)) (ex-ward-have %base perm-none) ex-load ~)
   ;<  mov3=(list move)  bind:m  (do-park %base 408 ~)
   ;<  ~  bind:m
     %+  expect-moves  mov3
@@ -542,24 +627,29 @@
   ;<  ~  bind:m  (set-kelvin 408)
   ;<  mov4=(list move)  bind:m  do-pork
   %+  expect-moves  mov4
-  :~  ex-wick
-      (ex-text ": /~nul/base/2/sys/zuse/hoon")
-      (ex-text ": /~nul/base/2/sys/kelvin")
-      ex-wick
-      (ex-text ": /~nul/foo/2/sys/kelvin")
-      (ex-text "+ /~nul/foo/2/desk/seal")
-      ex-load
-  ==
+  (expect-resume-commit-missing-kel 2 408 [[%foo &] ~] ~)
 ::
-:: case: blocking on perms1+kelvin1 and perms2+kelvin2
 ++  foo-apply-kel2
+::  non-essesntial desk, blocked on kelvin and kelvin-1 and perms
+::
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
   ;<  mov=(list move)   bind:m  (do-park %foo 408 desk-seal)
   ;<  mov2=(list move)  bind:m  (do-park %foo 407 [/desk/seal [%& ;;(page:clay seal+[%0 :~([%behn ~] [%eyre ~])])]]~)
-  (expect-moves mov2 ex-wick ~)
+  %+  expect-moves  mov2 
+  :~  ex-wick 
+      (ex-ward-have %foo perm-none)
+      (ex-ward-have %base perm-none)
+      (ex-gift [%tire %| [%wait %foo [%zuse 407]]])
+  ==
 ::
 ++  test-apply-kelvin2-and-perms2
+::  non-essential desk ready for kelvin, blocked on perms and ready on kelvin-1 update, blocked on perms
+::  kelvin update skipped in favour of kelvin-1
+::  suspend non-essential desks, kelvin-1 update applied on base desk
+::  non-essential desk recieves required perms
+::  non-essential desk update to kelvin-1 applied and revived
+::
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  ~                 bind:m  foo-apply-kel2
@@ -569,12 +659,11 @@
     (ex-kernel-build ~)
   ;<  ~                 bind:m  (set-kelvin 407)
   ;<  mov2=(list move)  bind:m  do-pork
+  =/  perms  (silt `(list perm:gall)`:~([%eyre ~] [%behn ~]))
   ;<  ~  bind:m
     %+  expect-moves  mov2
-    (ex-resume-commit-missing-perm 2 [%foo ~])
+    (ex-resume-commit-missing-perm 2 [%foo ~] [[%foo perm-none perms] ~])
   ;<  mov3=(list move)  bind:m  (call ~[/blah] [%zeal [%foo %held]~])
-  =/  perms
-    (silt `(list perm:gall)`:~([%eyre ~] [%behn ~]))
   ;<  mov4=(list move)  bind:m  (call ~[/blah] [%seal %foo & perms])
   ;<  now=@da           bind:m  get-now
   ;<  ~  bind:m
@@ -583,13 +672,27 @@
         (ex-text ": /~nul/foo/2/sys/kelvin")
         (ex-text "+ /~nul/foo/2/desk/seal")
         (ex-pass /park-held/foo [%b [%wait now]])
+        (ex-gift [%tire %| [%warp %foo zuse+407]])
+        (ex-gift [%tire %| [%warp %foo zuse+408]])
         ex-load
     ==
   ;<  mov5=(list move)  bind:m  do-wick
+  ;<  ~                 bind:m  (expect-moves mov5 ~)
   ;<  mov6=(list move)  bind:m  (take /park-held/foo ~[/blah] [%behn %wake ~])
-  (expect-moves mov6 ex-load ~)
+  %+  expect-moves  mov6 
+  :~  (ex-gift [%tire %| [%zest %foo %live]])
+      ex-load
+  ==
 ::
 ++  test-apply-kelvin-1-and-perms2
+::  non-essential desk ready for kelvin, blocked on perms and ready on kelvin-1 update, blocked on perms
+::  suspend non-essential desks, kelvin update applied on base desk
+::  non-essential desk recieves required perms
+::  non-essential desk kelvin update applied and revived
+::  suspend non-essential desks, kelvin-1 update applied on base desk
+::  non-essential desk recieves required perms
+::  non-essential desk kelvin-1 update applied and revived
+::
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  ~                 bind:m  foo-apply-kel2
@@ -599,9 +702,9 @@
     (ex-kernel-build ~)
   ;<  ~                 bind:m  (set-kelvin 408)
   ;<  mov2=(list move)  bind:m  do-pork
-  ;<  ~  bind:m
+  ;<  ~                 bind:m
     %+  expect-moves  mov2
-    (ex-resume-commit-missing-perm 2 [%foo ~])
+    (ex-resume-commit-missing-perm 2 [%foo ~] [[%foo perm-none (silt :~([%behn ~]))] ~])
   ;<  mov3=(list move)  bind:m  (call ~[/blah] [%zeal [%foo %held]~])
   ;<  mov4=(list move)  bind:m  (call ~[/blah] [%seal %foo & (silt :~([%behn ~]))])
   ;<  now=@da           bind:m  get-now
@@ -611,32 +714,42 @@
         (ex-text ": /~nul/foo/2/sys/kelvin")
         (ex-text "+ /~nul/foo/2/desk/seal")
         (ex-pass /park-held/foo [%b [%wait now]])
+        (ex-gift [%tire %| [%warp %foo [%zuse 408]]])
         ex-load
     ==
   ;<  *                 bind:m  do-wick
-  ;<  *                 bind:m  (take /park-held/foo ~[/blah] [%behn %wake ~])
-  ;<  mov5=(list move)   bind:m  (do-park %base 407 ~)
+  ;<  mov5=(list move)  bind:m  (take /park-held/foo ~[/blah] [%behn %wake ~])
   ;<  ~  bind:m
     %+  expect-moves  mov5
-    (ex-kernel-build ~)
-  ;<  ~                 bind:m  (set-kelvin 407)
-  ;<  mov6=(list move)  bind:m  do-pork
-  ;<  now=@da           bind:m  get-now
+    :~  (ex-gift [%tire %| [%zest %foo %live]])
+        ex-load
+    ==
+  ;<  mov6=(list move)   bind:m  (do-park %base 407 ~)
   ;<  ~  bind:m
     %+  expect-moves  mov6
-    (ex-resume-commit-missing-perm 3 [%foo ~])
-  ;<  *                 bind:m  do-wick
-  ;<  mov7=(list move)  bind:m  (call ~[/blah] [%zeal [%foo %held]~])
-  ;<  mov8=(list move)  bind:m  (call ~[/blah] [%seal %foo & (silt :~([%eyre ~]))])
+    (ex-kernel-build ~)
+  ;<  ~                 bind:m  (set-kelvin 407)
+  ;<  mov7=(list move)  bind:m  do-pork
+  ;<  now=@da           bind:m  get-now
   ;<  ~  bind:m
-    %+  expect-moves  mov8
+    %+  expect-moves  mov7
+    (ex-resume-commit-missing-perm 3 [%foo ~] [[%foo (silt :~([%behn ~])) (silt :~([%eyre ~]))] ~])
+  ;<  *                 bind:m  do-wick
+  ;<  mov8=(list move)  bind:m  (call ~[/blah] [%zeal [%foo %held]~])
+  ;<  mov9=(list move)  bind:m  (call ~[/blah] [%seal %foo & (silt :~([%eyre ~]))])
+  ;<  ~  bind:m
+    %+  expect-moves  mov9
     :~  ex-wick
         (ex-text ": /~nul/foo/3/desk/seal")
         (ex-text ": /~nul/foo/3/sys/kelvin")
         (ex-pass /park-held/foo [%b [%wait now]])
+        (ex-gift [%tire %| [%warp %foo [%zuse 407]]])
         ex-load
     ==
-  ;<  *                 bind:m  do-wick
-  ;<  mov9=(list move)  bind:m  (take /park-held/foo ~[/blah] [%behn %wake ~])
-  (expect-moves mov9 ex-load ~)
+  ;<  *                  bind:m  do-wick
+  ;<  mov10=(list move)  bind:m  (take /park-held/foo ~[/blah] [%behn %wake ~])
+  %+  expect-moves  mov10 
+  :~  (ex-gift [%tire %| [%zest %foo %live]])
+      ex-load
+  ==
 --
