@@ -209,7 +209,7 @@
   ::  set up any other desks we want
   ::
   |-  =*  loop  $
-  ?~  desks  
+  ?~  desks
     ::  TODO: check mov3 and mov4
     ;<  mov3=(list move)  bind:m  (call ~[/blah] [%tire `~])
     ~&  mov3/mov3
@@ -459,7 +459,7 @@
 ::
 ++  test-blocked-on-kelvin-1
 ::  non-essential desk ready for kelvin and kelvin-1 update, before base desk
-::  kelvin update skipped in favour of kelvin-1, 
+::  kelvin update skipped in favour of kelvin-1,
 ::  kelvin-1 update applied on base desk and on non-essential desk
 ::
   %-  eval-mare
@@ -586,7 +586,7 @@
     (ex-kernel-build ~)
   ;<  ~                 bind:m  (set-kelvin 408)
   ;<  mov3=(list move)  bind:m  do-pork
-  ;<  ~                 bind:m 
+  ;<  ~                 bind:m
     %+  expect-moves  mov3
     (ex-resume-commit-missing-perm 2 [%foo ~] [[%foo perm-none (silt :~([%behn ~]))] ~])
   ;<  mov4=(list move)  bind:m  (call ~[/blah] [%zeal [%foo %held]~])
@@ -605,8 +605,8 @@
   ;<  mov6=(list move)  bind:m  do-wick
   ;<  ~  bind:m  (expect-moves mov6 ~)
   ;<  mov7=(list move)  bind:m  (take /park-held/foo ~[/blah] [%behn %wake ~])
-  %+  expect-moves  mov7 
-  :~  (ex-gift [%tire %| [%zest %foo %live]]) 
+  %+  expect-moves  mov7
+  :~  (ex-gift [%tire %| [%zest %foo %live]])
       ex-load
   ==
 ::
@@ -636,8 +636,8 @@
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
   ;<  mov=(list move)   bind:m  (do-park %foo 408 desk-seal)
   ;<  mov2=(list move)  bind:m  (do-park %foo 407 [/desk/seal [%& ;;(page:clay seal+[%0 :~([%behn ~] [%eyre ~])])]]~)
-  %+  expect-moves  mov2 
-  :~  ex-wick 
+  %+  expect-moves  mov2
+  :~  ex-wick
       (ex-ward-have %foo perm-none)
       (ex-ward-have %base perm-none)
       (ex-gift [%tire %| [%wait %foo [%zuse 407]]])
@@ -679,7 +679,7 @@
   ;<  mov5=(list move)  bind:m  do-wick
   ;<  ~                 bind:m  (expect-moves mov5 ~)
   ;<  mov6=(list move)  bind:m  (take /park-held/foo ~[/blah] [%behn %wake ~])
-  %+  expect-moves  mov6 
+  %+  expect-moves  mov6
   :~  (ex-gift [%tire %| [%zest %foo %live]])
       ex-load
   ==
@@ -708,7 +708,7 @@
   ;<  mov3=(list move)  bind:m  (call ~[/blah] [%zeal [%foo %held]~])
   ;<  mov4=(list move)  bind:m  (call ~[/blah] [%seal %foo & (silt :~([%behn ~]))])
   ;<  now=@da           bind:m  get-now
-  ;<  ~  bind:m  
+  ;<  ~  bind:m
     %+  expect-moves  mov4
     :~  ex-wick
         (ex-text ": /~nul/foo/2/sys/kelvin")

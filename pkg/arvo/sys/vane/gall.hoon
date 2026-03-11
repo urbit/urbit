@@ -2433,7 +2433,7 @@
         %1  [%| (smyt ;;(path p.res)) ~]
         %2  [%| p.res]
       ==
-    ::  +ap-look: namespase permission check 
+    ::  +ap-look: namespase permission check
     ::
     ++  ap-look
       |=  [rof=roof lyc=gang pov=path]

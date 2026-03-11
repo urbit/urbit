@@ -1575,7 +1575,7 @@
     ?:  =(~ pes)  ..abet
     %-  emil
     =/  casts=(list cast:ward)
-      %-  zing 
+      %-  zing
       %+  turn  ~(tap by dos.rom)
       |=  [=desk =dojo]
       =?  dojo  =(syd desk)
