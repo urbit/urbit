@@ -13,6 +13,6 @@
 ;<  ~  bind:m  (breach-and-hear ~dev ~bud)
 ;<  ~  bind:m  (send-hi-not-responding ~bud ~dev)
 ;<  ~  bind:m  (init-ship ~dev |)
-;<  ~  bind:m  (wait-for-output ~bud "hi ~dev successful")
+;<  ~  bind:m  (send-hi ~bud ~dev)
 ;<  ~  bind:m  end
 (pure:m *vase)

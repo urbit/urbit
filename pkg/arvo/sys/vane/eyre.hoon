@@ -3583,6 +3583,7 @@
   ~/  %eyre-call
   |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _http-server-gate]
+  ~>  %spin.['call/eyre']
   ::
   =/  task=task  ((harden task) wrapped-task)
   ::
@@ -3886,6 +3887,7 @@
   ~/  %eyre-take
   |=  [=wire =duct dud=(unit goof) =sign]
   ^-  [(list move) _http-server-gate]
+  ~>  %spin.['take/eyre']
   =>  %=    .
           sign
         ?:  ?=(%gall -.sign)
@@ -4044,7 +4046,7 @@
     =*  sessions  sessions.auth.server-state.ax
     =.  sessions.auth.server-state.ax
       %-  ~(gas by *(map @uv session))
-      %+  skip  ~(tap in sessions)
+      %+  skip  ~(tap by sessions)
       |=  [cookie=@uv session]
       (lth expiry-time now)
     ::  if there's any cookies left, set a timer for the next expected expiry
@@ -4276,6 +4278,7 @@
       --
   |=  old=axle-any
   ^+  http-server-gate
+  ~>  %spin.['load/eyre']
   ?-    -.old
   ::
   ::  adds /~/name
@@ -4406,6 +4409,7 @@
   ^-  roon
   |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
+  ~>  %spin.['scry/eyre']
   =*  ren  car
   =*  why=shop  &/p.bem
   =*  syd  q.bem
