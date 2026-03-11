@@ -326,7 +326,7 @@
     ::
     ::  ward gift
     %-  zing
-    %+  turn  (snoc perm [%base ~ ~])
+    %+  turn  perm
     |=  [=desk peg=(set perm:gall) per=(set perm:gall)]
     %+  welp
       :~  (ex-ward-have desk peg)
@@ -525,7 +525,6 @@
   ::  NOTE:  %zest despite unchanged could be a walk tire bug
   %+  expect-moves  mov2
   :~  (ex-ward-have %foo perm-none)
-      (ex-ward-have %base perm-none)
       (ex-gift [%tire %| [%zest %foo %live]])
       (ex-gift [%tire %| [%zest %base %live]])
       (ex-gift [%tire %| [%wait %base [%zuse 408]]])
@@ -619,7 +618,7 @@
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
   ;<  mov=(list move)   bind:m  (do-park %foo 408 desk-seal)
   ;<  mov2=(list move)  bind:m  (call ~[/blah] [%seal %foo & (silt [%behn ~]~)])
-  ;<  ~  bind:m  (expect-moves mov2 (ex-ward-have %foo (silt [%behn ~]~)) (ex-ward-have %base perm-none) ex-load ~)
+  ;<  ~  bind:m  (expect-moves mov2 (ex-ward-have %foo (silt [%behn ~]~)) ex-load ~)
   ;<  mov3=(list move)  bind:m  (do-park %base 408 ~)
   ;<  ~  bind:m
     %+  expect-moves  mov3
@@ -639,7 +638,6 @@
   %+  expect-moves  mov2
   :~  ex-wick
       (ex-ward-have %foo perm-none)
-      (ex-ward-have %base perm-none)
       (ex-gift [%tire %| [%wait %foo [%zuse 407]]])
   ==
 ::
@@ -748,7 +746,7 @@
     ==
   ;<  *                  bind:m  do-wick
   ;<  mov10=(list move)  bind:m  (take /park-held/foo ~[/blah] [%behn %wake ~])
-  %+  expect-moves  mov10 
+  %+  expect-moves  mov10
   :~  (ex-gift [%tire %| [%zest %foo %live]])
       ex-load
   ==
