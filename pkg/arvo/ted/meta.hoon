@@ -1,28 +1,36 @@
 /-  spider
 /+  strandio
+/=  gall-raw  /sys/vane/gall
 =,  strand=strand:spider
 ^-  thread:spider
+^-  thread:spider
+::
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
 =+  !<([~ =spar:ames] arg)
-;<  ~              bind:m  (meta:strandio /meta spar)
-;<  =cage  bind:m  (take-sage:strandio /meta)
-;<  ~              bind:m  (yawn:strandio /meta spar)
-?>  ?=(%sage p.cage)
-=+  !<(=sage:mess:ames q.cage)
-~&  sage/sage
-?:  ?=(~ q.sage)
-  (pure:m !>(~))
+;<  ~                bind:m  (meta:strandio /meta spar)
+;<  =sage:mess:ames  bind:m  (take-sage:strandio /meta)  :: restored in 409k
+;<  ~                bind:m  (yawn:strandio /meta spar)
+?~  q.sage
+  (pure:m !>([leaf+"... empty response ..." ~]))
 ?>  ?=(%message p.q.sage)
+?:  ?=(%nax -.q.q.sage)
+  =+  ;;([tag=@tas =tang] +.q.q.sage)
+  ;<  ~  bind:m  (flog-tang:strandio tang)
+  (pure:m !>(["naxplanation: " "{<tag>}"]))
 %-  pure:m  !>
-~&  q.q.sage
-?+  -.q.q.sage  !!
-  %clogs  "closing bones: "^;;((set bone:ames) +.q.q.sage)
-  %gone   "flow is corked"
-  %line   "migration line: "^;;(@ud +.q.q.sage)
-  %lods   "unacked payloads: "^;;(@ud +.q.q.sage)::(wyt:fo-mop:fo-core loads.snd))
-  %next   "next payload: "^;;(@ud +.q.q.sage)::next.snd)
-  %last   "last acked: "^;;(@ud +.q.q.sage)::last-acked.rcv)
-  %naxp   ?:(;;(? +.q.q.sage) "nacked" "acked")
+?+  -.q.q.sage  ~|(q.q.sage !!)
+    ?(%gone %cork)
+  ["flow is corked? " "%.y"]
+::
+  %sent  ["message sent? " "%.y"]
+  %ack   ["message acked? " "%.y"]
+::
+  %plea  =+  ;;(=plea:ames +.q.q.sage)
+         =+  ;;(req=ames-request-all:$:gall-raw payload.plea)
+         ["payload (plea): " "{<[[vane path]:plea req]>}"]
+::
+  %boon  =+  ;;(resp=ames-response:$:gall-raw +.q.q.sage)
+         ["payload (boon): " "{<+.q.q.sage>}"]
 ==

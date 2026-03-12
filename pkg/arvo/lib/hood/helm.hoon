@@ -99,7 +99,7 @@
   |=  [hot=host:eyre dat=@]
   ?>  ?=(%& -.hot)
   =.  p.hot  (scag 2 p.hot)      :: ignore subdomain
-  =.  dat  (scot %uw (en:crub:crypto ames-secret dat))
+  =.  dat  (scot %uw (en:cyf:cric:crypto ames-secret dat))
   =-  abet:(emit %pass /write %arvo %c %info -)
   =/  byk=path  (en-beam byk.bowl(r da+now.bowl) ~)
   =+  .^(=tube:clay cc+(welp byk /mime/atom))
@@ -193,27 +193,76 @@
       %helm-hi  !>(mes)
   ==
 ::
-++  poke-send-ahoy
-  |=  [her=ship test=?]  =<  abet
+++  poke-start-ahoy
+  |=  [her=ship test=? force-test=?]  =<  abet
   =/  =wire
     :+  %helm  %ahoy
     ?.(test /(scot %p her) /test/(scot %p her))
-  =/  =path  ?:(test /test/mesa /mesa)
-  (emit %pass wire %arvo %a %plea her %$ path %ahoy ~)
+  =/  =path  ?:(test /test/mesa-2 /mesa-2)
+  ::  before migrating, test if we can migrate, regress, and check that there
+  ::  are not flows in a weird state. if we get a [%done ~], send the %ahoy $plea
+  ::
+  ?.  force-test
+    ::  skip test, ahoy right away; only for certain cases in ames.hoon
+    ::
+    (emit %pass wire %arvo %a %plea her %$ path %ahoy ~)
+  ::  wait for the %done of the local %mate
+  ::
+  =^  mate-moves  sat  %*($ poke-mass-mate dry test, +< `her)
+  (emil mate-moves)
+::
+++  poke-mass-mate
+  =|  dry=?
+  |=  ship=(unit ship)
+  =/  =wire
+    :+  %helm  %mate
+    ?~  ship  /test
+    ?:  dry   /test/(scot %p u.ship)
+    /(scot %p u.ship)
+  abet:(emit %pass wire %arvo %a %mate ship dry=%.y)
+::
+++  poke-mass-rege
+  |=  [ship=(unit ship) dry=?]
+  =/  =wire
+    :+  %helm  %rege
+    ?.(dry ~ /test)
+  abet:(emit %pass wire %arvo %a %rege ship dry)
+::
+++  take-test-mate
+  |=  [way=wire error=(unit error:ames)]
+  =/  =path
+    ?:(?=([%test her=@ ~] way) /test/mesa-2 /mesa-2)
+  =/  her=@p
+    ?:  ?=([%test her=@ ~] way)
+      (slav %p i.t.way)
+    ?>  ?=([her=@ ~] way)
+    (slav %p i.way)
+  ?^  error
+    ~&  >>>   %local-migration-failed
+    abet
+  ~&  >   %local-migration-worked
+  abet:(emit %pass [%helm %ahoy way] %arvo %a %plea her %$ path %ahoy ~)
+::
+++  take-migrate
+  |=  [way=wire error=(unit error:ames)]
+  ?^  error
+    ~&  >>>   %local-migration-failed
+    abet
+  ~&  >   %local-migration-worked
+  abet
 ::
 ++  take-ahoy
   |=  [way=wire error=(unit error:ames)]
   ?:  ?=([%test @ *] way)
     ?~  error
       ~&  >   %migration-test-worked
-      ~&  >>  %test-local-migration
-      abet:(emit %pass /helm/migrate %arvo %a %mate (slaw %p i.t.way) dry=%.y)
+      abet
     %-  (slog %take-ahoy-test-failed u.error)
     abet
   ?>  ?=([@ ~] way)
   ?~  error
       ~&  >   %remote-migration-worked
-      ~&  >>  %try-local-migration
+      ~&  >>  %do-local-migration
     abet:(emit %pass /helm/migrate %arvo %a %mate (slaw %p i.way) dry=%.n)
   ~&  >>>  %ahoy-crash
   ::  XX retry?
@@ -226,7 +275,7 @@
   |=  [way=wire error=(unit tang)]
   ?>  ?=([@ ~] way)
   ?~  error
-    (poke-send-ahoy (slav %p i.way) |)
+    (poke-start-ahoy (slav %p i.way) | force=&)
   ~&  >>>  %ahoy-wake-crash
   ::  XX retry?
   ::
@@ -239,7 +288,12 @@
     :+  %helm  %rege
     ?.(test /(scot %p her) /test/(scot %p her))
   =/  =path  ?:(test /test/ames /ames)
-  (emit %pass wire %arvo %a %plea her %$ path %back ~)
+  ::  before regressing, test if we can regress, migrate, and check that there
+  ::  are not flows in a weird state. if we don't crash, send the %back $plea
+  ::
+  =^  rege-moves  sat  (poke-mass-rege `her test=%.y)
+  =^  back-moves  sat  abet:(emit %pass wire %arvo %a %plea her %$ path %back ~)
+  (emil (weld rege-moves back-moves))
 ::
 ++  take-rege
   |=  [way=wire error=(unit error:ames)]
@@ -263,12 +317,15 @@
   :: abet:(emit %pass `wire`[%helm %ahoy-crash way] %arvo %b %wait (add now.bowl ~s30)) :: XX exp backoff?
 ::
 ++  poke-hi
-  |=  mes=@t
+  |=  mes=@t  =<  abet
   ~|  %poke-hi-fail
   ?:  =(%fail mes)
     ~&  %poke-hi-fail
     !!
-  abet:(flog %text "< {<src.bowl>}: {(scow %ud (met 3 mes))}")
+  =+  size=(met 3 mes)
+  =+  hash=`@ux`(mug mes)
+  %+  flog  %text
+  "< {<src.bowl>}: {?:((gth size 100) <[hash=hash size=size]> (trip mes))}"
 ::
 ++  poke-ames-prod
   |=  ships=(list ship)
@@ -316,6 +373,11 @@
 ::
 ++  poke-gall-lave
   |=  [dry=? subs=(list [?(%g %a) ship term duct])]  =<  abet
+  ?:  dry  this
+  (emit %pass /helm %arvo %g %lave subs)
+::
+++  poke-eyre-lave
+  |=  [dry=? subs=(list [%g ship term duct])]  =<  abet
   ?:  dry  this
   (emit %pass /helm %arvo %g %lave subs)
 ::
@@ -638,6 +700,7 @@
     %helm-gall-sift        =;(f (f !<(_+<.f vase)) poke-gall-sift)
     %helm-gall-verb        =;(f (f !<(_+<.f vase)) poke-gall-verb)
     %helm-gall-lave        =;(f (f !<(_+<.f vase)) poke-gall-lave)
+    %helm-eyre-lave        =;(f (f !<(_+<.f vase)) poke-eyre-lave)
     %helm-hi               =;(f (f !<(_+<.f vase)) poke-hi)
     %helm-pans             =;(f (f !<(_+<.f vase)) poke-pans)
     %helm-mass             =;(f (f !<(_+<.f vase)) poke-mass)
@@ -648,8 +711,10 @@
     %helm-pass             =;(f (f !<(_+<.f vase)) poke-pass)
     %helm-rekey            =;(f (f !<(_+<.f vase)) poke-rekey)
     %helm-send-hi          =;(f (f !<(_+<.f vase)) poke-send-hi)
-    %helm-send-ahoy        =;(f (f !<(_+<.f vase)) poke-send-ahoy)
+    %helm-send-ahoy        =;(f (f !<(_+<.f vase)) poke-start-ahoy)
+    %helm-mass-mate        =;(f (f !<(_+<.f vase)) poke-mass-mate)
     %helm-send-rege        =;(f (f !<(_+<.f vase)) poke-send-rege)
+    %helm-mass-rege        =;(f (f !<(_+<.f vase)) poke-mass-rege)
     %helm-serve            =;(f (f !<(_+<.f vase)) poke-serve)
     %helm-trim             =;(f (f !<(_+<.f vase)) poke-trim)
     %helm-verb             =;(f (f !<(_+<.f vase)) poke-verb)
@@ -681,6 +746,10 @@
     [%moon-breach *]  %+  take-wake-moon-breach  t.wire
                       ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
     [%ahoy *]         %+  take-ahoy  t.wire
+                      ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
+    [%mate *]         %+  take-test-mate  t.wire
+                      ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
+    [%migrate *]      %+  take-migrate  t.wire
                       ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
     [%rege *]         %+  take-rege  t.wire
                       ?>(?=(%done +<.sign-arvo) +>.sign-arvo)

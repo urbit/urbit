@@ -182,21 +182,6 @@
       `[%done ~]
     `[%fail %timer-error u.error.sign-arvo.u.in.tin]
   ==
-::
-++  take-tune
-  |=  =wire
-  =/  m  (strand ,[spar:ames (unit roar:ames)])
-  ^-  form:m
-  |=  tin=strand-input:strand
-  ?+    in.tin  `[%skip ~]
-      ~  `[%wait ~]
-    ::
-      [~ %sign * %ames %tune ^ *]
-    ?.  =(wire wire.u.in.tin)
-      `[%skip ~]
-    `[%done +>.sign-arvo.u.in.tin]
-  ==
-::
 ++  take-whey
   |=  =wire
   =/  m  (strand ,[spar:ames boq=@ud tot=@ud])
@@ -218,7 +203,7 @@
 ::
 ++  take-sage
   |=  =wire  ::  XX control ignoring %rate gift
-  =/  m  (strand ,cage)
+  =/  m  (strand ,sage:mess:ames)
   ^-  form:m
   |=  tin=strand-input:strand
   ?+    in.tin  `[%skip ~]
@@ -234,6 +219,7 @@
       `[%skip ~]
     `[%done rate/!>(+>.sign-arvo.u.in.tin)]
   ==
+::  XX deprecate in 409k
 ::
 ++  take-near
   |=  =wire
@@ -402,12 +388,6 @@
   ==
 ::
 ++  keen
-  |=  [=wire =spar:ames]
-  =/  m  (strand ,~)
-  ^-  form:m
-  (send-raw-card %pass wire %arvo %a %keen ~ spar)
-::
-++  meen
   |=  [=wire =spar:ames sec=(unit [@ @])]
   =/  m  (strand ,~)
   ^-  form:m
@@ -424,6 +404,12 @@
   =/  m  (strand ,~)
   ^-  form:m
   (send-raw-card %pass wire %arvo %a %prog task feq)
+::
+++  chum
+  |=  [=wire =spar:ames]
+  =/  m  (strand ,~)
+  ^-  form:m
+  (send-raw-card %pass wire %arvo %a %chum spar)
 ::
 ++  keen-shut
   |=  [=wire =spar:ames]
@@ -443,31 +429,27 @@
   ^-  form:m
   ::  encrypted using %chum namespace
   ::
-  =.  path.spar  [%a %x '1' %$ %whey (scot %ud boq) path.spar]
-  (send-raw-card %pass wire %arvo %a %chum spar)
+  ;<  our=@p  bind:m  get-our
+  =.  path.spar
+    [%a %x '1' %$ %whey (scot %ud boq) (scot %p our) path.spar]
+  (chum wire spar)
 ::
 ++  meta
   |=  [=wire =spar:ames]
   =/  m  (strand ,~)
   ^-  form:m
-  ?+    path.spar  (pure:m ~)
-      $%  [%flow bone=@ =dire:ames ~]
-          [%flow bone=@ =dire:ames %clos ~]
+  ?+    path.spar  !!
+      $%  [%ames bone=@ %cork ~]
+          [%ames bone=@ %sent seq=@ ~]
           [%flow bone=@ =dire:ames %cork ~]
-          [%flow bone=@ =dire:ames %line ~]
-          [%flow bone=@ =dire:ames %lods ~]
-          [%flow bone=@ =dire:ames %next ~]
-          [%flow bone=@ =dire:ames %last ~]
-          [%flow bone=@ =dire:ames %mess mess=@ %whey ~]
-          [%flow bone=@ =dire:ames %mess mess=@ %naxp ~]
+          [?(%ames %flow) bone=@ =dire:ames ?(%sent %loads %naxp %acked) seq=@ ~]
       ==
     ::  encrypted using %chum namespace
     ::
-    ~&  >  path.spar
     ;<  our=@p  bind:m  get-our
     %-  send-raw-card
     :*  %pass  wire  %arvo  %a  %chum
-        spar(path [%a %x '1' %$ %meta %ship (scot %p our) path.spar])
+        spar(path [%a %x '1' %$ %meta (scot %p our) path.spar])
     ==
   ==
 ::

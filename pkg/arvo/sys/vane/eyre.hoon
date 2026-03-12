@@ -31,7 +31,7 @@
 ::  +sign: private response from another vane to eyre
 ::
 +$  sign
-  $%  [%ames $>(?(%done %boon %lost %tune) gift:ames)]
+  $%  [%ames $>(?(%done %boon %lost %sage) gift:ames)]
       [%behn $>(%wake gift:behn)]
       [%gall gift:gall]
       [%clay gift:clay]
@@ -43,7 +43,7 @@
 ++  axle
   $:  ::  date: date at which http-server's state was updated to this data structure
       ::
-      date=%~2024.8.20
+      date=%~2025.1.31
       ::  server-state: state of inbound requests
       ::
       =server-state
@@ -91,6 +91,10 @@
       ::  verb: verbosity
       ::
       verb=@
+      ::  check-session-timer: set to true for ships prior to ~2025.01.31,
+      ::                       who may have been affected by urbit/urbit#7103
+      ::
+      check-session-timer=_|
   ==
 ::  channel-request: an action requested on a channel
 ::
@@ -125,7 +129,11 @@
 ++  channel-timeout  ~h12
 ::  session-timeout: the delay before an idle session expires
 ::
-++  session-timeout  ~d7
+++  session-timeout
+  |%
+  ++  auth   ~d30
+  ++  guest  ~d7
+  --
 ::  eauth-timeout: max time we wait for remote scry response before serving 504
 ::  eauth-cache-rounding: scry case rounding for cache hits & clock skew aid
 ::
@@ -630,24 +638,6 @@
   |=  [wid=@u tan=tang]
   ^-  wall
   (zing (turn tan |=(a=tank (wash 0^wid a))))
-::  +wall-to-octs: text to binary output
-::
-++  wall-to-octs
-  |=  =wall
-  ^-  (unit octs)
-  ::
-  ?:  =(~ wall)
-    ~
-  ::
-  :-  ~
-  %-  as-octs:mimes:html
-  %-  crip
-  %-  zing  ^-  ^wall
-  %-  zing  ^-  (list ^wall)
-  %+  turn  wall
-  |=  t=tape
-  ^-  ^wall
-  ~[t "\0a"]
 ::  +internal-server-error: 500 page, with a tang
 ::
 ++  internal-server-error
@@ -809,8 +799,35 @@
     ::      perhaps that distinction, where userspace requests are async, but
     ::      eyre-handled requests are always synchronous, provides a fruitful
     ::      angle for refactoring...
-    =^  [suv=@uv =identity som=(list move)]  state
+    =^  ?(invalid=@uv [suv=@uv =identity som=(list move)])  state
       (session-for-request:authentication request)
+    ?@  -
+      ::  the request provided a session cookie that's not (or no longer)
+      ::  valid. to make sure they're aware, tell them 401
+      ::
+      ::NOTE  some code duplication with below, but request handling deserves
+      ::      a refactor anyway
+      =.  connections.state
+        ::NOTE  required by +handle-response.
+        ::      the session identity we provide here doesn't actually exist.
+        ::      that's fine: we call +handle-response for this connection right
+        ::      away, that no-ops for the non-existing session, and then
+        ::      deletes the connection from state.
+        %+  ~(put by connections.state)  duct
+        ^-  outstanding-connection
+        [action [| secure address request] [invalid %fake *@p] ~ 0]
+      ::  their cookie was invalid, make sure they expire it
+      ::
+      =/  bod=octs  (as-octs:mimes:html 'bad session auth')
+      %-  handle-response
+      :*  %start
+          :-  401
+          :~  ['set-cookie' (session-cookie-string:authentication invalid ~)]
+              ['content-length' (crip (a-co:co p.bod))]
+          ==
+          `bod
+          complete=%.y
+      ==
     =;  [moz=(list move) sat=server-state]
       [(weld som moz) sat]
     ::
@@ -1079,7 +1096,8 @@
       %^  return-static-data-on-duct  405  'text/html'
       (error-page 405 & url.request "may only GET boot data")
     =/  crumbs  q:(rash url.request apat:de-purl:html)
-    ?.  ?=([@t @t @t *] crumbs)
+    =>  .(crumbs `(pole knot)`crumbs)
+    ?.  ?=([%'~' %boot ship=@t req=*] crumbs)
       %^  return-static-data-on-duct  400  'text/html'
       %:  error-page
         400
@@ -1087,15 +1105,12 @@
         url.request
         "Invalid input: Expected /~/boot/<ship=@p> or /~/boot/<ship=@p>/<bone=@u>"
       ==
-    =/  ship  %+(slaw %p i.t.t.crumbs)
-    =/  bone
-      %+  slaw
-        %ud
-      ?:  ?=([@t @t @t @t ~] crumbs)
-        i.t.t.t.crumbs
-      ''
+    =/  ship=(unit ship)  (slaw %p ship.crumbs)
+    =/  bone=(unit @ud)
+      ?.  ?=([bone=@t ~] req.crumbs)  ~
+      (rush bone.req.crumbs dem)
     ?:  ?|  ?=(~ ship)
-            ?&(?=([@t @t @t @t ~] crumbs) ?=(~ bone))
+            &(?=([bone=@ ~] req.crumbs) ?=(~ bone))
         ==
       %^  return-static-data-on-duct  400  'text/html'
       %:  error-page
@@ -1104,47 +1119,25 @@
         url.request
         "Invalid input: Expected /~/boot/<ship=@p> or /~/boot/<ship=@p>/<bone=@u>"
       ==
+    ::
     =/  des=(unit (unit cage))
       %:  rof
         [~ ~]
         /eyre
         %ax
         [our %$ da+now]
-        /peers/(scot %p u.ship)
+        :+  %boot  (scot %p u.ship)
+        ?~(bone ~ [(scot %ud u.bone) ~])  :: XX
       ==
     ?.  ?=([~ ~ %noun *] des)
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 & url.request "Peer {(scow %p u.ship)} not found.")
-    =/  ship-state
-      !<  ship-state:ames  q.u.u.des
-    ?>  ?=(%known -.ship-state)
-    ?~  bone
-      %^  return-static-data-on-duct  200  'application/octet-stream'
-      %-  as-octs:mimes:html
-      %-  jam
-      ^-  boot
-      [%1 (galaxy-for u.ship) rift.-.+.ship-state life.-.+.ship-state ~ ~]
-    =/  rcv=(map bone:ames message-sink-state:ames)  rcv.+.ship-state
-    =/  mss=(unit message-sink-state:ames)  (~(get by rcv) u.bone)
-    ?~  mss
-      %^  return-static-data-on-duct  404  'text/html'
-      %:  error-page
-        404
-        &
-        url.request
-        "Bone {(scow %u u.bone)} of peer {(scow %p u.ship)} not found."
-      ==
+    =+  !<  [rift=@ud life=@ud bone=(unit @ud) last-acked=(unit @ud)]  q.u.u.des
     %^  return-static-data-on-duct  200  'application/octet-stream'
     %-  as-octs:mimes:html
     %-  jam
     ^-  boot
-    :*  %1
-        (galaxy-for u.ship)
-        rift.-.+.ship-state
-        life.-.+.ship-state
-        bone
-        [~ last-acked.u.mss]
-    ==
+    [%1 (galaxy-for u.ship) rift life bone last-acked]
   ::  +handle-name: respond with the requester's @p
   ::
   ++  handle-name
@@ -1471,10 +1464,17 @@
         out(moves [give-session-tokens :(weld moz moves.fex moves.out)])
       ::NOTE  that we don't provide a 'set-cookie' header here.
       ::      +handle-response does that for us.
+      ::TODO  that should really also handle the content-length header for us,
+      ::      somewhat surprising that it doesn't...
+      %-  handle-response
+      =/  bod=octs
+        (as-octs:mimes:html (scot %uv session.fex))
+      =/  col=[key=@t value=@t]
+        ['content-length' (crip (a-co:co p.bod))]
       ?~  redirect
-        (handle-response %start 204^~ ~ &)
+        [%start 200^~[col] `bod &]
       =/  actual-redirect  ?:(=(u.redirect '') '/' u.redirect)
-      (handle-response %start 303^['location' actual-redirect]~ ~ &)
+      [%start 303^~['location'^actual-redirect col] `bod &]
     ::  +handle-logout: handles an http request for logging out
     ::
     ++  handle-logout
@@ -1528,17 +1528,24 @@
       ::
       =?  headers.response-header.response  =(u.sid session-id)
         :_  headers.response-header.response
-        ['set-cookie' (session-cookie-string session-id |)]
+        ['set-cookie' (session-cookie-string session-id ~)]
       ::  close the session as requested, then send the response
       ::
       =^  moz1  state  (close-session u.sid all)
       =^  moz2  state  (handle-response response)
       [[give-session-tokens (weld moz1 moz2)] state]
-    ::  +session-id-from-request: attempt to find a session cookie
+    ::  +session-id-from-request: attempt to find a session token
+    ::
+    ::    looks in the authorization header first. if there is no such header,
+    ::    looks in the cookie header(s) instead.
     ::
     ++  session-id-from-request
       |=  =request:http
       ^-  (unit @uv)
+      ::  is there an authorization header?
+      ::
+      ?^  auth=(get-header:http 'authorization' header-list.request)
+        (rush u.auth ;~(pfix (jest 'Bearer 0v') viz:ag))
       ::  are there cookies passed with this request?
       ::
       =/  cookie-header=@t
@@ -1593,15 +1600,18 @@
       |=  kind=?(%local %guest [%eauth who=@p])
       ^-  [[session=@uv =identity moves=(list move)] server-state]
       =;  [key=@uv sid=identity]
+        =/  timeout=@dr
+          =,  session-timeout
+          ?:(?=(%guest kind) guest auth)
         :-  :+  key  sid
             ::  if no session existed previously, we must kick off the
             ::  session expiry timer
             ::
             ?^  sessions.auth.state  ~
-            [duct %pass /sessions/expire %b %wait (add now session-timeout)]~
+            [duct %pass /sessions/expire %b %wait (add now timeout)]~
         =-  state(sessions.auth -)
         %+  ~(put by sessions.auth.state)  key
-        [sid (add now session-timeout) ~]
+        [sid (add now timeout) ~]
       ::  create a new session with a fake identity
       ::
       =/  sik=@uv  new-session-key
@@ -1624,20 +1634,20 @@
       (~(raw og (shas %fake-name eny)) 128)
     ::  +session-for-request: get the session details for the request
     ::
-    ::    creates a guest session if the request does not have a valid session.
+    ::    returns the @ case if an invalid session is provided.
+    ::    creates a guest session if the request does not have any session.
     ::    there is no need to call +give-session-tokens after this, because
-    ::    guest session do not make valid "auth session" tokens.
+    ::    guest sessions do not make valid "auth session" tokens.
     ::
     ++  session-for-request
       |=  =request:http
-      ^-  [[session=@uv =identity moves=(list move)] server-state]
-      =*  new  (start-session %guest)
+      ^-  [$@(session=@uv [session=@uv =identity moves=(list move)]) server-state]
       ?~  sid=(session-id-from-request request)
-        new
+        (start-session %guest)
       ?~  ses=(~(get by sessions.auth.state) u.sid)
-        new
+        [u.sid state]
       ?:  (gth now expiry-time.u.ses)
-        new
+        [u.sid state]
       [[u.sid identity.u.ses ~] state]
     ::  +close-session: delete a session and its associated channels
     ::
@@ -1705,14 +1715,15 @@
     ::  +session-cookie-string: compose session cookie
     ::
     ++  session-cookie-string
-      |=  [session=@uv extend=?]
+      |=  [session=@uv extend=(unit ?(%auth %guest))]
       ^-  @t
       %-  crip
       =;  max-age=tape
         "urbauth-{(scow %p our)}={(scow %uv session)}; Path=/; Max-Age={max-age}"
       %-  a-co:co
-      ?.  extend  0
-      (div (msec:milly session-timeout) 1.000)
+      ?~  extend  0
+      =,  session-timeout
+      (div (msec:milly ?-(u.extend %auth auth, %guest guest)) 1.000)
     ::
     ::
     ++  eauth
@@ -1872,7 +1883,7 @@
           =^  moz3  state
             =;  hed  (handle-response %start 303^hed ~ &)
             :~  ['location' last]
-                ['set-cookie' (session-cookie-string sid &)]
+                ['set-cookie' (session-cookie-string sid `%auth)]
             ==
           [:(weld moz1 moz2 moz3) state]
         ::  +on-fail: we crashed or received an empty %tune, clean up
@@ -2262,7 +2273,9 @@
         ::  POST methods are used solely for deleting channels
         (on-put-request channel-id identity request)
       ::
-      ((trace 0 |.("session not a put")) `state)
+      %-  (trace 0 |.("session not a put"))
+      %^  return-static-data-on-duct  405  'text/html'
+      (error-page 405 & url.request "bad method for session endpoint")
     ::  +on-cancel-request: cancels an ongoing subscription
     ::
     ::    One of our long lived sessions just got closed. We put the associated
@@ -2390,7 +2403,7 @@
       ::
       =/  mode=?(%json %jam)
         (find-channel-mode %'GET' header-list.request)
-      =^  [exit=? =wall moves=(list move)]  state
+      =^  [exit=? c=cord moves=(list move)]  state
         ::  the request may include a 'Last-Event-Id' header
         ::
         =/  maybe-last-event-id=(unit @ud)
@@ -2408,7 +2421,7 @@
           =^  mos  state
             %^  return-static-data-on-duct  403  'text/html'
             (error-page 403 | url.request ~)
-          [[& ~ mos] state]
+          [[& '' mos] state]
         ::  make sure the request "mode" doesn't conflict with a prior request
         ::
         ::TODO  or could we change that on the spot, given that only a single
@@ -2418,7 +2431,7 @@
             %^  return-static-data-on-duct  406  'text/html'
             =;  msg=tape  (error-page 406 %.y url.request msg)
             "channel already established in {(trip mode.channel)} mode"
-          [[& ~ mos] state]
+          [[& '' mos] state]
         ::  when opening an event-stream, we must cancel our timeout timer
         ::  if there's no duct already bound. else, kill the old request,
         ::  we will replace its duct at the end of this arm
@@ -2447,12 +2460,12 @@
         ::
         ::  combine the remaining queued events to send to the client
         ::
-        =;  event-replay=wall
+        =;  event-replay=cord
           [[| - cancel-moves] state]
-        %-  zing
-        %-  flop
+        %-  roll  :_
+          |=([a=cord b=cord] (cat 3 a b))
         =/  queue  events.channel
-        =|  events=(list wall)
+        =|  events=(list cord)
         |-
         ^+  events
         ?:  =(~ queue)
@@ -2463,9 +2476,9 @@
         ::      since conversion failure also gets caught during first receive.
         ::      we can't do anything about this, so consider it unsupported.
         =/  said
-          (channel-event-to-tape channel request-id channel-event)
+          (channel-event-to-cord channel request-id channel-event)
         ?~  said  $
-        $(events [(event-tape-to-wall id +.u.said) events])
+        $(events [(event-cord-to-event-stream id +.u.said) events])
       ?:  exit  [moves state]
       ::  send the start event to the client
       ::
@@ -2482,7 +2495,7 @@
             ::  instead. some clients won't consider the connection established
             ::  until they've heard some bytes come over the wire.
             ::
-            ?.  =(~ wall)  (wall-to-octs wall)
+            ?.  =(~ c)  (some (as-octs:mimes:html c))
             (some (as-octs:mimes:html ':\0a'))
           ::
             complete=%.n
@@ -2693,7 +2706,7 @@
           ^-  move
           =,  u.maybe-subscription
           %-  (trace 1 |.("leaving subscription to {<app>}"))
-          %+  deal-as
+          %+  deal-as(duct duc)
             (subscription-wire channel-id subscription-id from ship app)
           [from ship app %leave ~]
         ::
@@ -2790,8 +2803,8 @@
         (sign-to-channel-event sign u.channel request-id)
       ?~  maybe-channel-event  [~ state]
       =/  =channel-event  u.maybe-channel-event
-      =/  said=(unit (quip move tape))
-        (channel-event-to-tape u.channel request-id channel-event)
+      =/  said=(unit (quip move cord))
+        (channel-event-to-cord u.channel request-id channel-event)
       =?  moves  ?=(^ said)
         (weld moves -.u.said)
       =*  sending  &(?=([%| *] state.u.channel) ?=(^ said))
@@ -2814,8 +2827,9 @@
         :*  %response  %continue
         ::
             ^=  data
-            %-  wall-to-octs
-            (event-tape-to-wall next-id +:(need said))
+            :-  ~
+            %-  as-octs:mimes:html
+            (event-cord-to-event-stream next-id +:(need said))
         ::
             complete=%.n
         ==
@@ -2876,9 +2890,10 @@
         :*  %response  %continue
         ::
             ^=  data
-            %-  wall-to-octs
-            %+  event-tape-to-wall  next-id
-            +:(need (channel-event-to-tape u.channel request-id %kick ~))
+            :-  ~
+            %-  as-octs:mimes:html
+            %+  event-cord-to-event-stream  next-id
+            +:(need (channel-event-to-cord u.channel request-id %kick ~))
         ::
             complete=%.n
         ==
@@ -2912,15 +2927,15 @@
       ?.  ?=([~ ~ *] des)
         ((trace 0 |.("no desk for app {<app.u.sub>}")) ~)
       `!<(=desk q.u.u.des)
-    ::  +channel-event-to-tape: render channel-event from request-id in specified mode
+    ::  +channel-event-to-cord: render channel-event from request-id in specified mode
     ::
-    ++  channel-event-to-tape
+    ++  channel-event-to-cord
       |=  [=channel request-id=@ud =channel-event]
-      ^-  (unit (quip move tape))
+      ^-  (unit (quip move cord))
       ?-  mode.channel
         %json  %+  bind  (channel-event-to-json channel request-id channel-event)
-               |=((quip move json) [+<- (trip (en:json:html +<+))])
-        %jam   =-  `[~ (scow %uw (jam -))]
+               |=((quip move json) [+<- (en:json:html +<+)])
+        %jam   =-  `[~ (scot %uw (jam -))]
                [request-id channel-event]
       ==
     ::  +channel-event-to-json: render channel event as json channel event
@@ -2993,14 +3008,13 @@
         ==
       ==
     ::
-    ++  event-tape-to-wall
-      ~%  %eyre-tape-to-wall  ..part  ~
-      |=  [event-id=@ud =tape]
-      ^-  wall
-      :~  (weld "id: " (a-co:co event-id))
-          (weld "data: " tape)
-          ""
-      ==
+    ++  event-cord-to-event-stream
+      ~%  %eyre-cord-to-event-stream  ..part  ~
+      |=  [event-id=@ud data=cord]
+      ^-  cord
+      %^  cat  3
+      (cat 3 (cat 3 'id: ' (crip (a-co:co event-id))) '\0a')
+      (cat 3 (cat 3 'data: ' data) '\0a\0a')
     ::
     ++  on-channel-heartbeat
       |=  channel-id=@t
@@ -3064,7 +3078,7 @@
       |=  [request-id=@ud ship=@p app=term =path duc=^duct]
       ^-  move
       %-  (trace 1 |.("{<channel-id>} leaving subscription to {<app>}"))
-      %+  deal-as
+      %+  deal-as(duct duc)
         (subscription-wire channel-id request-id identity.session ship app)
       [identity.session ship app %leave ~]
     --
@@ -3126,17 +3140,20 @@
             =*  inbound     inbound-request.u.connection-state
             =*  headers     headers.response-header.http-event
             ::
-            ?.  (~(has by sessions) session-id)
+            ?~  ses=(~(get by sessions) session-id)
               ::  if the session has expired since the request was opened,
               ::  tough luck, we don't create/revive sessions here
               ::
               [response-header.http-event sessions]
-            :_  %+  ~(jab by sessions)  session-id
-                |=  =session
-                session(expiry-time (add now session-timeout))
+            =/  kind  ?:(?=(%fake -.identity.u.ses) %guest %auth)
+            =/  timeout
+              =,  session-timeout
+              ?:(?=(%guest kind) guest auth)
+            :_  %+  ~(put by sessions)  session-id
+                u.ses(expiry-time (add now timeout))
             =-  response-header.http-event(headers -)
             =/  cookie=(pair @t @t)
-              ['set-cookie' (session-cookie-string session-id &)]
+              ['set-cookie' (session-cookie-string session-id `kind)]
             |-
             ?~  headers
               [cookie ~]
@@ -3541,6 +3558,7 @@
   ~/  %eyre-call
   |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _http-server-gate]
+  ~>  %spin.['call/eyre']
   ::
   =/  task=task  ((harden task) wrapped-task)
   ::
@@ -3562,6 +3580,43 @@
           ['content-length' (crip (a-co:co p.data))]
       ==
     [duct %give %response %start 500^head `data &]~
+  ::  due to an error handling bug in earlier versions of +take,
+  ::  we may need to make sure the timeout timer for sessions still exists.
+  ::  see also urbit/urbit#7103
+  ::
+  ?:  check-session-timer.server-state.ax
+    ::  we do this cleanup exactly once
+    ::
+    =.  check-session-timer.server-state.ax  |
+    ::  if there are no sessions after running the +call,
+    ::  we don't need a timer, so we don't need to set it
+    ::
+    ::NOTE  hazard, must get state from .etc going forward
+    =/  [moz=(list move) etc=_http-server-gate]  $
+    :_  etc
+    ^-  (list move)
+    ?:  =(~ sessions.auth.server-state.ax.etc)  moz
+    ::  if .moz is already setting the timer,
+    ::  we don't need to do it here
+    ::
+    ?:  %+  lien  moz
+        |=  m=move
+        ?=([* %pass [%sessions %expire ~] *] m)
+      moz
+    ::  find out from behn if there isn't already a timer set.
+    ::  this is not ideal, but we have no other way of knowing,
+    ::  and don't want to set duplicate timers...
+    ::
+    ?:  ?~  res=(rof [~ ~] /eyre %bx [our %$ da+now] /debug/timers)  |
+        ?~  u.res  |
+        %+  lien  !<((list [@da ^duct]) q.u.u.res)
+        |=  [@da d=^duct]
+        ?=([[%eyre %sessions %expire ~] *] d)
+      moz
+    ::  we need a timer, but aren't setting one, and don't have one,
+    ::  so prepend a session expire timer to the .moz
+    ::
+    [[duct %pass /sessions/expire %b %wait now] moz]
   ::  %init: tells us what our ship name is
   ::
   ?:  ?=(%init -.task)
@@ -3807,6 +3862,7 @@
   ~/  %eyre-take
   |=  [=wire =duct dud=(unit goof) =sign]
   ^-  [(list move) _http-server-gate]
+  ~>  %spin.['take/eyre']
   =>  %=    .
           sign
         ?:  ?=(%gall -.sign)
@@ -3950,7 +4006,13 @@
     ?>  ?=([%behn %wake *] sign)
     ::
     ?^  error.sign
-      [[duct %slip %d %flog %crud %wake u.error.sign]~ http-server-gate]
+      :_  http-server-gate
+      ::  we must not drop the timer! so we kick the can down the road a day,
+      ::  and hope it will run successfully later...
+      ::
+      :~  [duct %slip %d %flog %crud %wake u.error.sign]
+          [duct %pass /sessions/expire %b %wait (add now ~d1)]
+      ==
     ::NOTE  we are not concerned with expiring channels that are still in
     ::      use. we require acks for messages, which bump their session's
     ::      timer. channels have their own expiry timer, too.
@@ -3959,7 +4021,7 @@
     =*  sessions  sessions.auth.server-state.ax
     =.  sessions.auth.server-state.ax
       %-  ~(gas by *(map @uv session))
-      %+  skip  ~(tap in sessions)
+      %+  skip  ~(tap by sessions)
       |=  [cookie=@uv session]
       (lth expiry-time now)
     ::  if there's any cookies left, set a timer for the next expected expiry
@@ -4019,12 +4081,12 @@
           on-fail:server:eauth:authentication:(per-server-event args)
         [moz http-server-gate]
       ::
-      ?>  ?=([%ames %tune *] sign)
-      ?>  =(client ship.sign)
+      ?>  ?&  ?=([%ames %sage *] sign)
+              =(client ship.p.sage.sign)
+          ==
       =/  url=(unit @t)
-        ?~  roar.sign  ~
-        ?~  q.dat.u.roar.sign  ~
-        ;;((unit @t) q.u.q.dat.u.roar.sign)
+        ?~  q.sage.sign  ~
+        ;;((unit @t) q.q.sage.sign)
       =^  moz  server-state.ax
         ?~  url
           %.  [client nonce]
@@ -4073,8 +4135,9 @@
             [date=%~2023.2.17 server-state=server-state-1]
             [date=%~2023.3.16 server-state=server-state-2]
             [date=%~2023.4.11 server-state-3]
-            [date=%~2023.5.15 server-state]
-            [date=%~2024.8.20 server-state]
+            [date=%~2023.5.15 server-state-4]
+            [date=%~2024.8.20 server-state-4]
+            [date=%~2025.1.31 server-state]
         ==
       ::
       +$  server-state-0
@@ -4173,9 +4236,24 @@
             subscriptions=(map @ud [ship=@p app=term =path duc=duct])
             heartbeat=(unit timer)
         ==
+      ::
+      +$  server-state-4
+        $:  bindings=(list [=binding =duct =action])
+            cache=(map url=@t [aeon=@ud val=(unit cache-entry)])
+            =cors-registry
+            connections=(map duct outstanding-connection)
+            auth=authentication-state
+            =channel-state
+            domains=(set turf)
+            =http-config
+            ports=[insecure=@ud secure=(unit @ud)]
+            outgoing-duct=duct
+            verb=@
+        ==
       --
   |=  old=axle-any
   ^+  http-server-gate
+  ~>  %spin.['load/eyre']
   ?-    -.old
   ::
   ::  adds /~/name
@@ -4287,6 +4365,12 @@
     ==
   ::
       %~2024.8.20
+    %=  $
+      date.old  %~2025.1.31
+      verb.old  [verb.old check-session-timer=&]
+    ==
+  ::
+      %~2025.1.31
     http-server-gate(ax old)
   ::
   ==
@@ -4300,6 +4384,7 @@
   ^-  roon
   |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
+  ~>  %spin.['scry/eyre']
   =*  ren  car
   =*  why=shop  &/p.bem
   =*  syd  q.bem

@@ -4,7 +4,7 @@
 =>  ..part
 ~%  %lull  ..part  ~
 |%
-++  lull  %322
+++  lull  %320
 ::                                                      ::  ::
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
@@ -879,24 +879,27 @@
     ::  when changing any of the tasks above, please follow the same patterns
     ::  that exist in ames.hoon.
     ::
-        [%mate (unit ship) dry=?]     ::  per-peer migration
-        [%rege (unit ship) dry=?]     ::  per-peer regression
-        [%load ?(%mesa %ames)]        ::  load core for new peers; XX [... term]
+        [%mate (unit ship) dry=?]   :: per-peer migration
+        [%rege (unit ship) dry=?]   :: per-peer regression
+        [%load ?(%mesa %ames)]      :: load core for new peers; XX [... term]
     ::
-        [%heer =lane:pact p=@]       ::  receive a packet, from unix
-        [%mess =mess]                ::  receive a message (XX implement fully)
-        [%moke =space =spar =path]   ::  initiate %poke request
-        [%meek =space =spar]         ::  initiate %peek request
-        [%mage =space =spar]         ::  send %page of data; intended for acks
-        [%rate =spar rate]           ::  get rate progress for +peeks, from unix
-        $:  %prog                    ::  subscribe to progress %rate
-            $%  [%keen sec=(unit [idx=@ key=@]) spar]
-                [%chum spar]
-            ==
+        [%heer =lane:pact p=@]      :: receive a packet
+        [%mess =mess]               :: receive a message
+        [%moke =space =spar =path]  :: initiate %poke request
+        [%meek =space =spar]        :: initiate %peek request
+        [%mage =space =spar]        :: send %page of data; intended for acks
+        [%rate =spar rate]          :: get rate progress for +peeks, from unix
+        $:  %prog                   :: subscribe to progress %rate
+            =spar                   :: if ?=(^ task), use it to modify path.spar
+            $=  task
+            $@(~ ?([%chum ~] [%keen kid=(unit @)]))
             feq=@ud
         ==
-        [%whey spar boq=@ud]         ::  weight of noun bounded at .path.spar
-                                     ::  as measured by .boq
+        [%whey =spar boq=@ud]       :: weight of noun bounded at .path.spar
+                                    :: as measured by .boq
+        [%gulp path]                :: like %plug, but for |mesa
+        $>(%halt deep)              :: halt flow after we hear a remote %flub
+        [%goad =ship]               :: re-start flow after remote agent is %live
     ==
   ::
   ::  $gift: effect from ames
@@ -940,35 +943,10 @@
         [%push p=(list lane:pact) q=@]   :: send a request/response packet
         [%sage =sage:mess]               :: give deserialized/open payload
         $>(%page mess)                   :: give serialized/sealed payload
+        $>(%rate task)
     ==
   ::
   ::::                                                  ::  (1a2)
-    ::
-  ++  acru  $_  ^?                                      ::  asym cryptosuite
-    |%                                                  ::  opaque object
-    ++  as  ^?                                          ::  asym ops
-      |%  ++  seal  |~([a=pass b=@] *@)                 ::  encrypt to a
-          ++  sign  |~(a=@ *@)                          ::  certify as us
-          ++  sigh  |~(a=@ *@)                          ::  certification only
-          ++  sure  |~(a=@ *(unit @))                   ::  authenticate from us
-          ++  safe  |~([a=@ b=@] *?)                    ::  authentication only
-          ++  tear  |~([a=pass b=@] *(unit @))          ::  accept from a
-      --  ::as                                          ::
-    ++  de  |~([a=@ b=@] *(unit @))                     ::  symmetric de, soft
-    ++  dy  |~([a=@ b=@] *@)                            ::  symmetric de, hard
-    ++  en  |~([a=@ b=@] *@)                            ::  symmetric en
-    ++  ex  ^?                                          ::  export
-      |%  ++  fig  *@uvH                                ::  fingerprint
-          ++  pac  *@uvG                                ::  default passcode
-          ++  pub  *pass                                ::  public key
-          ++  sec  *ring                                ::  private key
-      --  ::ex                                          ::
-    ++  nu  ^?                                          ::  reconstructors
-      |%  ++  pit  |~([a=@ b=@] ^?(..nu))               ::  from [width seed]
-          ++  nol  |~(a=ring ^?(..nu))                  ::  from ring
-          ++  com  |~(a=pass ^?(..nu))                  ::  from pass
-      --  ::nu                                          ::
-    --  ::acru                                          ::
   ::  +protocol-version: current version of the ames wire protocol
   ::
   ++  protocol-version  `?(%0 %1 %2 %3 %4 %5 %6 %7)`%0
@@ -1043,6 +1021,8 @@
         [%kill =ship =bone]
         :: [%diet =ship =path]
         [%ahoy =ship =bone]  :: XX remove bone; it's just next-bone.ossuary
+        [%prun =ship =user=path =duct =ames=path]
+        [%halt =ship agent=term =bone] :: XX add [=agent=path cork=?]
     ==
   ::  $stun: STUN notifications, from unix
   ::
@@ -1060,8 +1040,9 @@
   +$  fragment-num   @udfragmentnum
   +$  message-blob   @udmessageblob
   +$  message-num    @udmessagenum
-  +$  public-key     @uwpublickey
-  +$  private-key    @uwprivatekey
+  +$  public-keys    [cry=@uxpoint sgn=@uxpoint]
+  +$  private-keys   [cry=@uxscalar sgn=@uxscalar]
+  +$  keypairs       [pub=public-keys sek=private-keys]
   +$  symmetric-key  @uwsymmetrickey
   ::
   ::  $hoot: request packet payload
@@ -1127,8 +1108,8 @@
   +$  alien-agenda
     $:  messages=(list [=duct =plea])
         packets=(set =blob)
-        keens=(jug path duct)
-        chums=(jug path duct)
+        keens=(jug [path ints] duct)
+        chums=(jug [path ints] duct)
     ==
   +$  chain  ((mop ,@ ,[key=@ =path]) lte)
   ::  $peer-state: state for a peer with known life and keys
@@ -1152,12 +1133,8 @@
   ::    corked:  bones closed on both sender and receiver
   ::
   +$  peer-state
-    $:  $:  =symmetric-key
-            =life
-            =rift
-            =public-key
-            sponsor=ship
-        ==
+    $+  peer-state
+    $:  azimuth-state
         route=(unit [direct=? =lane])  ::  XX (list)
         =qos
         =ossuary
@@ -1168,6 +1145,8 @@
         corked=(set bone)
         keens=(map path keen-state)
         =chain
+        tip=(jug =user=path [duct =ames=path])
+        halt=(set bone)
     ==
   +$  keen-state
     $+  keen-state
@@ -1585,14 +1564,23 @@
   ::
   ::  $axle: state for entire vane
   ::
+  ::    peers:       states of connections to other ships
+  ::    unix-duct:   handle to give moves to unix
+  ::    life:        our $life; how many times we've rekeyed
+  ::    rift:        our $rift
+  ::    bug:         debug printing configuration
+  ::    snub:        blocklist for incoming packets
+  ::    cong:        parameters for marking a flow as clogged
+  ::    dead:        dead flow consolidation timer and recork timer, if set
+  ::
   +$  axle
-    $:  peers=(map ship ship-state)         :: connections to other ships
-        =unix=duct  ::  [//ames/0v0 ~]      :: handle to give moves to unix
-        =life                               :: our $life; times we've rekeyed
-        =rift                               :: our $rift; times we've breached
-        =bug                                :: debug printing configuration
-        snub=[form=?(%allow %deny) ships=(set ship)]  :: black/white lists
-        cong=[msg=_5 mem=_100.000]          ::  when to mark  a flow as clogged
+    $:  peers=(map ship ship-state)         ::  %ames protocol peers
+        =unix=duct  ::  [//ames/0v0 ~]
+        =life
+        =rift
+        =bug
+        snub=[form=?(%allow %deny) ships=(set ship)]
+        cong=[msg=_5 mem=_100.000]
         $=  dead                            ::  dead-flow consolidation timers
         $:  flow=[%flow (unit dead-timer)]  ::  ... for |ames
             chum=[%chum (unit dead-timer)]  ::  ... for |mesa
@@ -1601,9 +1589,9 @@
         ==
         ::
         =server=chain                       ::  for serving %shut requests
-        priv=private-key
+        [saf=keypairs =ring =pass]
         chums=(map ship chum-state)         ::  migrated peers
-        core=_`?(%ames %mesa)`%ames         ::  XX use migrated core by default
+        core=_`?(%ames %mesa)`%mesa         ::  %mesa protocol peers
         ::  TODOs
         :: XX tmp=(map @ux page)            :: temporary hash-addressed bindings
     ==
@@ -1627,9 +1615,14 @@
   ::
   +$  dire           ?(%bak %for)
   +$  side           [=bone =dire]
-  +$  ints           ?(%sage %tune [%rate boq=@ud feq=@ud])
-  +$  rate           [boq=@ud fag=(unit @ud) tot=@ud]
-  +$  azimuth-state  [=symmetric-key =life =rift =public-key sponsor=ship]
+  +$  azimuth-state
+    $:  =symmetric-key
+        =life
+        =rift
+        [=public-keys =pass]
+        sponsor=ship
+    ==
+  ::
   +$  chum-state
     $+  chum-state-24
     $%  [%known fren-state]
@@ -1638,27 +1631,30 @@
   ::
   +$  ovni-state
     $:  pokes=(list [=duct message=mesa-message])
-        peeks=(jug path duct)
-        chums=(jug path duct)
+        peeks=(jug [path ints] duct)
+        chums=(jug [path ints] duct)
     ==
   ::
   +$  fren-state
     $:  azimuth-state
-        lane=(unit lane:pact)
+        lane=(unit [hop=@ =lane:pact])  :: XX (list)
         =qos
         corked=(set side)  ::  can be +peeked in the namespace
                            ::  XX how many flows to keep here?
-        =ossuary      ::  XX redefine ossuary in terms of bone^side
+        =ossuary           ::  XX redefine ossuary in terms of bone^side
         flows=(map side flow-state)
-      ::  outgoing/incoming requests  - sndr -    - rcvr -
-        ::  write-data: path=pok-path  (~zod) /poke/~nec/flow/bone=0/mess=1
-        ::  read data:  path=pek-path
-        ::              path=ack-path  (~nec) /ack/~zod/flow/bone=0/mess=1
-        ::
-        pit=(map path request-state)
-        =client=chain            ::  stores keys for %shut requests
+        pit=(map path request-state)           :: active +peek namespace paths
+        =client=chain                          :: stores keys for %shut requests
+        tip=(jug =user=path [duct =ames=path]) :: reverse .pit lookup map
     ==
   ::
+  ::  interest gifts per path in the pith
+  ::    %sage used by |mesa
+  ::    %tune used by |fine
+  ::    %rate  XX give $rate every .feq of bloq size .boq
+  ::
+  +$  ints  ?(%sage %tune [%rate boq=@ud feq=@ud])
+  +$  rate  $@(~ [boq=@ud fag=@ud tot=@ud])
   +$  request-state
     $:  for=(jug duct ints)
         pay=(unit path)
@@ -1691,8 +1687,8 @@
   ::
   +$  flow-state
     $:  ::  a flow switches to closing when:
-        ::    - forward: a %cork %plea %poke request is sent
-        ::    - backward: a %cork %plea %poke request is received
+        ::    - forward:  a %cork $plea %poke request is sent
+        ::    - backward: a %cork $plea %poke request is received
         ::
         ::  the flow is deleted first on the forward side when it can read the
         ::  %ack for the %cork, and then on the backward side when it can +peek
@@ -1702,6 +1698,11 @@
         ::  line: high-water mark for the last-acked message before migration
         ::
         line=@ud
+        ::  a flow halts when:
+        ::    - forward: %gall passes a %flub to %ames
+        ::    - backward: a %plea gets %flubbed over the wire
+        ::
+        halt=?(%.y %.n)
         ::  outbound %poke payloads, bounded in the ship's namespace
         ::  always and only for requests
         ::
@@ -1717,17 +1718,18 @@
           ::  the ordered map guarantees that we receive the acks in ordered
           ::  if (dec received-ack=@ud) has not been acked, we drop it
           ::
-          ::  payloads can be +peek'ed via a well-formed path with a known structure
-          ::  e.g.  /flow/bone=0/plea/~zod/seq=1
+          ::  payloads can be +peek'ed via a well-formed path with the format:
+          ::  e.g.  /flow/[bone=0]/[load]/?[%for %bak]/[ship]/[seq=1]
           ::
-          ::  XX option to include messages that won't be bounded into the namespace (two-layer queue)
+          ::  XX option to include messages that won't be bounded into the
+          ::  namespace (two-layer queue)
+          ::
           loads=((mop ,@ud mesa-message) lte)         :: all unacked
           next=_1                                     :: =(next +(last-acked))
           ::
           send-window-max=_1                          :: how many pleas to send
-          send-window=_1                              ::
-          ::nax=(map seq=@ud [?(%wait %done) error])  :: XX last 10 nacked loads
-          :: cache=((mop ,@ud ?) lte)                 :: XX out-of-order acks
+          send-window=_1                              :: XX
+          acks=((mop ,@ud ack) lte)                   :: out-of-order acks
         ==
         ::  incoming %pokes, pending their ack from the vane
         ::
@@ -1781,7 +1783,7 @@
     =|  s=(list)
     |-  ^-  *
     ?:  =(i n)
-      =^  d  s  s
+      =^  d  s  ?>  ?=(^ s)  s
       |-(?~(s d $(d [i.s d], s t.s)))
     ::
     =/  d=*  i
@@ -1790,7 +1792,7 @@
     |-  ^-  *
     ?:  =(0 j)
       ^$(s [d s])
-    =^  e  s  s
+    =^  e  s  ?>  ?=(^ s)  s
     $(d [e d], j (dec j))
   ::
   ++  unroll
@@ -1895,8 +1897,8 @@
         ==
       =/  gum
         (end [0 20] (mug (cut -.c [(rig b -.c) +.c] dat)))
-      :: ~&  gum.hed^gum
-      ::?>(=(gum.hed gum) [pac c])  :: XX jumbo fragments have wrong mug
+      ~|  gum.hed^gum
+      ?>  =(gum.hed gum)  :: XX jumbo fragments have wrong mug; fixed?
       [pac c]
     --
   ::
@@ -2012,7 +2014,7 @@
       =/  [nit=@ tau=@ gaf=@ gyf=@ fag=@]
         ?~  wan
           [0b1 0b0 0b0 0 0]
-        =/  gaf  (dec (xeb (met 3 (max 1 fag.wan))))  :: XX xeb wrong here; fragments > 0xffff?
+        =/  gaf  (xeb (dec (met 3 (max 1 fag.wan))))
         [0b0 ?:(?=(%auth typ.wan) 0b1 0b0) gaf (bex gaf) fag.wan]
       ::
       =/  tap  =-([p=(met 3 -) q=-] `@t`(rap 3 (join '/' pat)))
@@ -2068,15 +2070,22 @@
     ++  en
       |=  [tob=@ud aut=auth:pact dat=@]
       ^-  plot
-      =/  lot  (dec (met 3 (max 1 tob)))
+      =/  lot  (xeb (dec (met 3 (max 1 tob))))
       ?>  (lte lot 3)
       ::
       =/  [aub=@ubB aum=plat:plot]
         ?-  aut
-          [%& %& *]   [0b0 64 +.p.aut]
-          [%& %| *]   [0b10 16 +.p.aut]
+          [%& %& *]   ?>  (lte (met 3 +.p.aut) 64)
+                      [0b0 64 +.p.aut]
+        ::
           [%| ~]      [0b1 0]
-          [%| ^]      [0b11 s+~ 8 [1 p] [1 q] ~]:u.p.aut
+        ::
+          [%& %| *]   ?>  (lte (met 3 +.p.aut) 16)
+                      [0b10 16 +.p.aut]
+        ::
+          [%| ^]      ?>  (lte (met 3 p.u.p.aut) 32)
+                      ?>  (lte (met 3 q.u.p.aut) 32)
+                      [0b11 s+~ 3 [32 p] [32 q] ~]:u.p.aut
         ==
       ::
       =/  len  (met 3 dat)
@@ -2292,7 +2301,7 @@
           ++  frag  (=+(aura -(zer |)) 'udF')
           ++  hash  (aura 'uxI')
           ++  mess-auth
-            (pick (both (just %&) (aura 'uxJ')) (both (just %|) hash))
+            (pick (both (just %&) (aura 'uxJ')) (both (just %|) (aura 'uxH')))
           ++  auth
             ;:  pick
               :(both (just %|) (pick (just ~) :(both (just ~) hash hash)))
@@ -3648,7 +3657,8 @@
     $%  [%boon payload=*]                               ::  ames response
         [%noon id=* payload=*]
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
-        [%flub ~]                                       ::  not ready to handle plea
+        [%flub $@(~ [blocked=? dap=(unit term)])]       ::  refuse to take plea
+        [%spur ~]                                       ::  ready to take plea
         [%unto p=unto]                                  ::
     ==                                                  ::
   +$  task                                              ::  incoming request
@@ -3663,6 +3673,7 @@
         [%doff dude=(unit dude) ship=(unit ship)]       ::  kill subscriptions
         [%rake dude=(unit dude) all=?]                  ::  reclaim old subs
         [%lave subs=(list [?(%g %a) ship dude duct])]   ::  delete stale bitt(s)
+        $>(%halt deep:ames)                             ::  send remote %flub
         $>(%init vane-task)                             ::  set owner
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
@@ -3676,7 +3687,7 @@
   ::
   +$  fans  ((mop @ud (pair @da (each page @uvI))) lte)
   +$  plot
-    $:  bob=(unit @ud)
+    $:  bob=(unit @ud)                                  ::  latest revision
         fan=fans
     ==
   +$  stats                                             ::  statistics
@@ -3693,9 +3704,9 @@
         [%plot p=(unit plot) q=(map @ta farm)]
     ==
   ::
-  +$  egg                                               ::  migratory agent state
-    $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)] ::  see /sys/gall $yoke
-        $:  %live
+  +$  egg                                               ::  migratory agent
+    $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)] ::  state; see /sys/gall
+        $:  %live                                       ::  $yoke
             control-duct=duct
             run-nonce=@t
             sub-nonce=@
@@ -3712,7 +3723,7 @@
             pen=(jug spar:ames wire)
             gem=(jug coop [path page])
     ==  ==
-  +$  egg-any  $%([%15 egg-15] [%16 egg])
+  +$  egg-any  $%([%15 egg-15] [%16 egg-16] [%20 egg])
   +$  egg-15
     $%  [%nuke sky=(map spur @ud)]
     $:  %live
@@ -3724,11 +3735,30 @@
         =boat
         =boar
         code=~
-        old-state=[%| vase]
+        old-state=[%| vase:h136]
         =beak
         marks=(map duct mark)
         sky=(map spur plot)
         ken=(jug spar:ames wire)
+    ==  ==
+  +$  egg-16
+    $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)]
+        $:  %live
+            control-duct=duct
+            run-nonce=@t
+            sub-nonce=@
+            =stats
+            =bitt
+            =boat
+            =boar
+            code=~
+            old-state=[%| vase:h136]
+            =beak
+            marks=(map duct mark)
+            sky=farm
+            ken=(jug spar:ames wire)
+            pen=(jug spar:ames wire)
+            gem=(jug coop [path page])
     ==  ==
   ::
   +$  bowl                                              ::  standard app state
