@@ -2004,7 +2004,6 @@
       =(~ mis)
     ?.  |(has-perm =(%dead liv.dom))
       =.  pew.dom  `[mis yoki]
-      =.  ..park  (emit hen %pass /perm/zeal/[syd] %c %zeal [[syd %held] ~])  ::TODO  REVIEW
       %-  (slog leaf+"{<syd>} need permissions: {<per>}; has: {<peg.dom>}" ~)
       (send-ward syd)
     =?  pew.dom  ?~(pew.dom | =(+.u.pew.dom yoki))  ~
@@ -2022,6 +2021,7 @@
                     !ese.dojo
                     !?=(%live liv.dom.dojo)
                     ::  has update and perms
+                    ::  REVIEW  should we check if hit.dom latest version supports n.kel alike +suspend-non-essentials logic
                     ?~  yok=(~(get by wic.dom.dojo) n.kel)  |
                     %-  ~(all in (seal-at-commit u.yok))
                     |=(p=perm:gall (have:guard:gall peg.dom.dojo p))
@@ -2476,8 +2476,7 @@
       ?>  =(~ pud)
       =.  pud  `[syd yoki]
       |^
-      =.  ..park
-        %-  emit  suspend-non-essentials
+      =.  ..park  suspend-non-essentials
       %.  [hen %slip %c %pork ~]
       emit:(pass-what files)
       ::
@@ -2503,22 +2502,56 @@
         (emit hen %pass /what %$ what/fil)
       ::
       ++  suspend-non-essentials
+        ::  iterate over non-essential desks, find blocked on update desks:
+        ::    blocked on kelvin: no pending commit and
+        ::                       current version doesn't support kel update,
+        ::    blocked on perms:  has pending commit, missing required permissions
+        ::  for perm blocked desks: store missing perms in state, send-ward
+        ::  suspend all blocked desks
+        ^+  ..park
         =/  sys-kel=weft
           =/  w=waft  (get-kelvin yoki)
           ?@  -.w  w  !!
+        =/  sus=(list [=desk (unit [mis=(set perm:gall) =^yoki])])
+          %-  ~(rep by dos.rom.ruf)
+          |=  [[=desk =dojo] sus=(list [desk (unit [(set perm:gall) ^yoki])])]
+          ::  essential desk check
+          ?:  ese.dojo  sus
+          ?~  yok=(~(get by wic.dom.dojo) sys-kel)
+            ::  has no pending commit for current kel update case
+            ?~  t=(~(get by hit.dom.dojo) let.dom.dojo)
+              ::  desk never had a commit, no-op
+              sus
+            =/  kel=(set weft)
+              (waft-to-wefts (get-kelvin %| (tako-to-yaki:ze u.t)))
+            ?:  (~(has in kel) sys-kel)
+              ::  desk alredy supports kel update case
+              sus
+            ::  desk doesn't support kel update
+            [[desk ~] sus]
+          =/  mis=(set perm:gall)
+          %-  ~(gas in *(set perm:gall))
+          %+  skip  ~(tap in (seal-at-commit u.yok))
+          (cury have:guard:gall peg.dom.dojo)
+          ::  desk is ready to be updated
+          ?:  =(~ mis)  sus
+          ::  desk missing permissions
+          [[desk `[mis u.yok]] sus]
+        ::
+        =.  ..park
+          |-
+          ?~  sus  ..park
+          ?~  +.i.sus  $(sus t.sus)
+          =.  dos.rom                                     ::  [send-ward] <
+            %+  ~(jab by dos.rom)  desk.i.sus
+            |=(=dojo dojo(pew.dom `[mis yoki]:u.+.i.sus))
+          =.  ..park  (send-ward desk.i.sus)              ::  [send-ward] >
+          %-  (slog leaf+"clay: {<desk.i.sus>} missing permissions, suspended" ~)
+          $(sus t.sus)
+        ::
+        %-  emit
         :*  hen  %pass  /kiln/bump/zeal  %c  %zeal
-        %+  roll  ~(tap by dos.rom.ruf)
-        |=  [[=desk =dojo] l=(list [desk zest])]
-        ?:  ese.dojo  l
-        =/  kel=(set weft)
-          ?:  (~(has by wic.dom.dojo) sys-kel)
-            [sys-kel ~ ~]
-          =/  t=(unit tako)  (~(get by hit.dom.dojo) let.dom.dojo)
-          ?~  t  [sys-kel ~ ~]
-          %-  waft-to-wefts
-          (get-kelvin %| (tako-to-yaki:ze u.t))
-        ?:  (~(has in kel) sys-kel)  l
-        [[desk %held] l]
+        (roll sus |=([[=desk *] l=(list [desk zest])] [[desk %held] l]))
         ==
       --
     --
