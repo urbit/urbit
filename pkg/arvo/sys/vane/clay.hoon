@@ -2008,32 +2008,15 @@
       (send-ward syd)
     =?  pew.dom  ?~(pew.dom | =(+.u.pew.dom yoki))  ~
     ?.  ?|  (~(has in kel) zuse+zuse)                   ::  kelvin match
+            =(%base syd)
             ?&  !=(%base syd)                           ::  best-effort compat
                 %-  ~(any in kel)
                 |=  =weft
                 &(=(%zuse lal.weft) (gth num.weft zuse))
             ==
-            ?&  =(%base syd)                            ::  ready to upgrade
-                ?=([* ~ ~] kel)  ::  guaranteed because ?> above
-                %+  levy  ~(tap by dos.rom)
-                |=  [=desk =dojo]
-                ?|  =(%base desk)
-                    !ese.dojo
-                    !?=(%live liv.dom.dojo)
-                    ::  has update and perms
-                    ::  REVIEW  should we check if hit.dom latest version supports n.kel alike +suspend-non-essentials logic
-                    ?~  yok=(~(get by wic.dom.dojo) n.kel)  |
-                    %-  ~(all in (seal-at-commit u.yok))
-                    |=(p=perm:gall (have:guard:gall peg.dom.dojo p))
-                ==
-            ==
         ==
       ::  not ready for any of the above reasons.
-      ::  if this is not the base desk, this commit not compatible with +zuse.
-      ::  if this is base desk, one or more desks not ready because they are:
-      ::    essential AND live AND
-      ::    EITHER  no nu-base-compatible commit pending
-      ::    OR missing perms for the pending compatible commit.
+      ::  commit not compatible with +zuse.
       ::
       ::  prevent downgrading (on base)
       ::
@@ -2046,42 +2029,14 @@
         %+  roll  ~(tap in kel)
         |:  [weft=*weft wic=wic.dom]
         (~(put by wic) weft yoki)
-      ::  if not base, we're waiting on kelvin, cannot do anything else
+      ::  we're waiting on kelvin, cannot do anything else
       ::  (kelvin blockage takes prio over perm blockage, we don't store perms
       ::  until unblocked on kelvin)
       ::
-      ?:  !?=(%base syd)
-        =.  ..park  wick                                ::  [wick]
-        %-  (slog leaf+"clay: {<syd>} wait-for-kelvin, {<[compat=kel have=zuse+zuse]>}" ~)
-        tare                                            ::  [tare] >
-      ::  if this is the base desk, the commit was blocked due to other desks.
-      ::  for each desk: find if it's blocking on perms,
-      ::  then store those perms in state & notify about them
+      =.  ..park  wick                                ::  [wick]
+      %-  (slog leaf+"clay: {<syd>} wait-for-kelvin, {<[compat=kel have=zuse+zuse]>}" ~)
+      tare                                            ::  [tare] >
       ::
-      ?>  ?=([* ~ ~] kel)  ::NOTE  already asserted above, but compiler dumb (probably)
-      =/  pez=(list [=desk mis=(set perm:gall) =^yoki])
-        %-  ~(rep by (~(del by dos.rom) %base))
-        |=  [[=desk =dojo] pez=(list [desk (set perm:gall) ^yoki])]
-        =/  yok  (~(get by wic.dom.dojo) n.kel)
-        ?~  yok  pez
-        =/  mis=(set perm:gall)
-          %-  ~(gas in *(set perm:gall))
-          %+  skip  ~(tap in (seal-at-commit u.yok))
-          (cury have:guard:gall peg.dom.dojo)
-        ?:  =(~ mis)  pez
-        [[desk mis u.yok] pez]
-      ::
-      =.  ..park
-        |-
-        ?~  pez  ..park
-        =.  dos.rom                                     ::  [send-ward] <
-          %+  ~(jab by dos.rom)  desk.i.pez
-          |=(=dojo dojo(pew.dom `[mis yoki]:i.pez))
-        =.  ..park  (send-ward desk.i.pez)              ::  [send-ward] >
-        %-  (slog leaf+"clay: {<desk.i.pez>} wait-for-perms" ~)
-        $(pez t.pez)
-      ::
-      tare                                              ::  [tare] >
     =.  wic.dom
       %-  ~(gas by *(map weft ^yoki))
       %+  skip  ~(tap by wic.dom)
@@ -2473,9 +2428,22 @@
               data=(map path (each page lobe))
           ==
       ^+  ..park
+      |^
+      ::  check if system update is blocked due to other desks.
+      ::  for each desk: find if it's blocking on commit or on perms,
+      ::  then store those perms in state & notify about them
+      ::
+      =^  deb=(list desk)  ..park
+        (find-blocked %.y)
+      ?.  =(~ deb)
+        ::  store blocked commit as awaiting
+        =.  wic.dom                                     ::  [tare] <
+          %+  roll  ~(tap in (waft-to-wefts (get-kelvin yoki)))
+          |:  [weft=*weft wic=wic.dom]
+          (~(put by wic) weft yoki)
+        tare                                            ::  [tare] >
       ?>  =(~ pud)
       =.  pud  `[syd yoki]
-      |^
       =.  ..park  suspend-non-essentials
       %.  [hen %slip %c %pork ~]
       emit:(pass-what files)
@@ -2502,21 +2470,34 @@
         (emit hen %pass /what %$ what/fil)
       ::
       ++  suspend-non-essentials
-        ::  iterate over non-essential desks, find blocked on update desks:
+        ::  suspend all blocked on update desks
+        ::
+        ^+  ..park
+        =^  sus=(list desk)  ..park
+          (find-blocked %.n)
+        %-  emit
+        :*  hen  %pass  /kiln/bump/zeal  %c  %zeal
+        (roll sus |=([=desk l=(list [desk zest])] [[desk %held] l]))
+        ==
+      ::
+      ++  find-blocked
+        ::  find blocked on sys-update desks:
         ::    blocked on kelvin: no pending commit and
         ::                       current version doesn't support kel update,
         ::    blocked on perms:  has pending commit, missing required permissions
         ::  for perm blocked desks: store missing perms in state, send-ward
-        ::  suspend all blocked desks
-        ^+  ..park
+        ::
+        |=  ese=?
+        ^-  [(list desk) _..park]
         =/  sys-kel=weft
           =/  w=waft  (get-kelvin yoki)
           ?@  -.w  w  !!
         =/  sus=(list [=desk (unit [mis=(set perm:gall) =^yoki])])
-          %-  ~(rep by dos.rom.ruf)
+          %-  ~(rep by (~(del by dos.rom.ruf) %base))
           |=  [[=desk =dojo] sus=(list [desk (unit [(set perm:gall) ^yoki])])]
-          ::  essential desk check
-          ?:  ese.dojo  sus
+          ::  essential/non-essential desk check
+          ~&  [desk ese-dojo=ese.dojo ese=ese]
+          ?.  =(ese ese.dojo)  sus
           ?~  yok=(~(get by wic.dom.dojo) sys-kel)
             ::  has no pending commit for current kel update case
             ?~  t=(~(get by hit.dom.dojo) let.dom.dojo)
@@ -2549,10 +2530,8 @@
           %-  (slog leaf+"clay: {<desk.i.sus>} missing permissions, suspended" ~)
           $(sus t.sus)
         ::
-        %-  emit
-        :*  hen  %pass  /kiln/bump/zeal  %c  %zeal
-        (roll sus |=([[=desk *] l=(list [desk zest])] [[desk %held] l]))
-        ==
+        :_  ..park
+        (roll sus |=([[=desk *] l=(list desk)] [desk l]))
       --
     --
   ::
