@@ -524,8 +524,7 @@
   ::
   ::  NOTE:  %zest despite unchanged could be a walk tire bug
   %+  expect-moves  mov2
-  :~  (ex-ward-have %foo perm-none)
-      (ex-gift [%tire %| [%zest %foo %live]])
+  :~  (ex-gift [%tire %| [%zest %foo %live]])
       (ex-gift [%tire %| [%zest %base %live]])
       (ex-gift [%tire %| [%wait %base [%zuse 408]]])
   ==
@@ -637,7 +636,6 @@
   ;<  mov2=(list move)  bind:m  (do-park %foo 407 [/desk/seal [%& ;;(page:clay seal+[%0 :~([%behn ~] [%eyre ~])])]]~)
   %+  expect-moves  mov2
   :~  ex-wick
-      (ex-ward-have %foo perm-none)
       (ex-gift [%tire %| [%wait %foo [%zuse 407]]])
   ==
 ::
