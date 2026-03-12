@@ -261,8 +261,8 @@
   (ex ~[/blah] %give gift)
 ::
 ++  ex-ward-have
-|=  [=desk peg=(set perm:gall)]
-(ex-gift [%ward [%have desk peg=peg peq=perm-none]])
+|=  [=desk ped=(set perm:gall) peg=(set perm:gall)]
+(ex-gift [%ward [%have desk ped=ped peg=peg peq=perm-none]])
 ::
 ++  ex-ward-need
 |=  [=desk per=(set perm:gall)]
@@ -312,7 +312,7 @@
   ==
 ::
 ++  ex-resume-commit-missing-perm
-  |=  [v=@ud susp=(list desk) perm=(list [desk peg=(set perm:gall) per=(set perm:gall)])]
+  |=  [v=@ud susp=(list desk) perm=(list [desk ped=(set perm:gall) peg=(set perm:gall) per=(set perm:gall)])]
   ^-  (list $-(move tang))
   ;:  welp
     ::  %base
@@ -327,9 +327,9 @@
     ::  ward gift
     %-  zing
     %+  turn  perm
-    |=  [=desk peg=(set perm:gall) per=(set perm:gall)]
+    |=  [=desk ped=(set perm:gall) peg=(set perm:gall) per=(set perm:gall)]
     %+  welp
-      :~  (ex-ward-have desk peg)
+      :~  (ex-ward-have desk ped peg)
       ==
     ?~  per  ~
     :~  (ex-ward-need desk per)
@@ -376,9 +376,21 @@
 ::  data constuctors
 ::
 ++  perm-none  *(set perm:gall)
+++  perl-1  (perl-n 1)
+++  perl-2  (perl-n 2)
+++  pers-1  (pers-n 1)
+++  pers-2  (pers-n 2)
+++  perl-n  (curr scag def-perms)
+++  pers-n  (cork (curr scag def-perms) sy)
+++  def-perms
+  ^-  (list perm:gall)
+  :~  [%behn ~]
+      [%eyre ~]
+  ==
 ++  desk-seal
+  |=  pern=@ud
   ^-  (list [path (each page:clay lobe:clay)])
-  [/desk/seal [%& ;;(page:clay seal+[%0 :~([%behn ~])])]]~
+  [/desk/seal [%& ;;(page:clay seal+[%0 (perl-n pern)])]]~
 ::
 ++  zuse-upd
   |=  kel=@ud
@@ -557,8 +569,8 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
-  ;<  mov=(list move)   bind:m  (do-park %foo 409 desk-seal)
-  ;<  mov2=(list move)  bind:m  (call ~[/blah] [%seal %foo & (silt [%behn ~]~)])
+  ;<  mov=(list move)   bind:m  (do-park %foo 409 (desk-seal 1))
+  ;<  mov2=(list move)  bind:m  (call ~[/blah] [%seal %foo & pers-1])
   ::
   %+  expect-moves  mov2
   :~  ex-wick
@@ -577,7 +589,7 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
-  ;<  mov=(list move)   bind:m  (do-park %foo 408 desk-seal)
+  ;<  mov=(list move)   bind:m  (do-park %foo 408 (desk-seal 1))
   ;<  mov2=(list move)  bind:m  (do-park %base 408 ~)
   ;<  ~  bind:m
     %+  expect-moves  mov2
@@ -586,9 +598,9 @@
   ;<  mov3=(list move)  bind:m  do-pork
   ;<  ~                 bind:m
     %+  expect-moves  mov3
-    (ex-resume-commit-missing-perm 2 [%foo ~] [[%foo perm-none (silt :~([%behn ~]))] ~])
+    (ex-resume-commit-missing-perm 2 [%foo ~] [[%foo perm-none perm-none pers-1] ~])
   ;<  mov4=(list move)  bind:m  (call ~[/blah] [%zeal [%foo %held]~])
-  ;<  mov5=(list move)  bind:m  (call ~[/blah] [%seal %foo & (silt [%behn ~]~)])
+  ;<  mov5=(list move)  bind:m  (call ~[/blah] [%seal %foo & pers-1])
   ::
   ;<  now=@da           bind:m  get-now
   ;<  ~  bind:m
@@ -615,9 +627,9 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
-  ;<  mov=(list move)   bind:m  (do-park %foo 408 desk-seal)
-  ;<  mov2=(list move)  bind:m  (call ~[/blah] [%seal %foo & (silt [%behn ~]~)])
-  ;<  ~  bind:m  (expect-moves mov2 (ex-ward-have %foo (silt [%behn ~]~)) ex-load ~)
+  ;<  mov=(list move)   bind:m  (do-park %foo 408 (desk-seal 1))
+  ;<  mov2=(list move)  bind:m  (call ~[/blah] [%seal %foo & pers-1])
+  ;<  ~  bind:m  (expect-moves mov2 (ex-ward-have %foo perm-none pers-1) ex-load ~)
   ;<  mov3=(list move)  bind:m  (do-park %base 408 ~)
   ;<  ~  bind:m
     %+  expect-moves  mov3
@@ -632,8 +644,8 @@
 ::
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
-  ;<  mov=(list move)   bind:m  (do-park %foo 408 desk-seal)
-  ;<  mov2=(list move)  bind:m  (do-park %foo 407 [/desk/seal [%& ;;(page:clay seal+[%0 :~([%behn ~] [%eyre ~])])]]~)
+  ;<  mov=(list move)   bind:m  (do-park %foo 408 (desk-seal 1))
+  ;<  mov2=(list move)  bind:m  (do-park %foo 407 (desk-seal 2))
   %+  expect-moves  mov2
   :~  ex-wick
       (ex-gift [%tire %| [%wait %foo [%zuse 407]]])
@@ -655,12 +667,11 @@
     (ex-kernel-build ~)
   ;<  ~                 bind:m  (set-kelvin 407)
   ;<  mov2=(list move)  bind:m  do-pork
-  =/  perms  (silt `(list perm:gall)`:~([%eyre ~] [%behn ~]))
   ;<  ~  bind:m
     %+  expect-moves  mov2
-    (ex-resume-commit-missing-perm 2 [%foo ~] [[%foo perm-none perms] ~])
+    (ex-resume-commit-missing-perm 2 [%foo ~] [[%foo perm-none perm-none pers-2] ~])
   ;<  mov3=(list move)  bind:m  (call ~[/blah] [%zeal [%foo %held]~])
-  ;<  mov4=(list move)  bind:m  (call ~[/blah] [%seal %foo & perms])
+  ;<  mov4=(list move)  bind:m  (call ~[/blah] [%seal %foo & pers-2])
   ;<  now=@da           bind:m  get-now
   ;<  ~  bind:m
     %+  expect-moves  mov4
@@ -700,9 +711,9 @@
   ;<  mov2=(list move)  bind:m  do-pork
   ;<  ~                 bind:m
     %+  expect-moves  mov2
-    (ex-resume-commit-missing-perm 2 [%foo ~] [[%foo perm-none (silt :~([%behn ~]))] ~])
+    (ex-resume-commit-missing-perm 2 [%foo ~] [[%foo perm-none perm-none pers-1] ~])
   ;<  mov3=(list move)  bind:m  (call ~[/blah] [%zeal [%foo %held]~])
-  ;<  mov4=(list move)  bind:m  (call ~[/blah] [%seal %foo & (silt :~([%behn ~]))])
+  ;<  mov4=(list move)  bind:m  (call ~[/blah] [%seal %foo & pers-1])
   ;<  now=@da           bind:m  get-now
   ;<  ~  bind:m
     %+  expect-moves  mov4
@@ -729,14 +740,14 @@
   ;<  now=@da           bind:m  get-now
   ;<  ~  bind:m
     %+  expect-moves  mov7
-    (ex-resume-commit-missing-perm 3 [%foo ~] [[%foo (silt :~([%behn ~])) (silt :~([%eyre ~]))] ~])
+    (ex-resume-commit-missing-perm 3 [%foo ~] [[%foo pers-1 pers-1 (silt :~([%eyre ~]))] ~])
   ;<  *                 bind:m  do-wick
   ;<  mov8=(list move)  bind:m  (call ~[/blah] [%zeal [%foo %held]~])
   ;<  mov9=(list move)  bind:m  (call ~[/blah] [%seal %foo & (silt :~([%eyre ~]))])
   ;<  ~  bind:m
     %+  expect-moves  mov9
     :~  ex-wick
-        (ex-text ": /~nul/foo/3/desk/seal")
+        (ex-text ": /~nul/foo/3/desk/seal")  ::TODO  expect %ward because this file changed!
         (ex-text ": /~nul/foo/3/sys/kelvin")
         (ex-pass /park-held/foo [%b [%wait now]])
         (ex-gift [%tire %| [%warp %foo [%zuse 407]]])

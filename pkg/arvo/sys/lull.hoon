@@ -2531,9 +2531,9 @@
         wic=(map weft yoki)                             ::  commit-in-waiting
         liv=zest                                        ::  running agents
         ren=rein                                        ::  force agents on/off
-        peg=(set perm:gall)                             ::  granted permissions
-        peq=(set perm:gall)                             ::  requested permissions
-        per=(unit [(set perm:gall) yoki])               ::  required permissions
+        peg=(set perm:gall)                             ::  granted perms
+        peq=(set perm:gall)                             ::  requested opt perms
+        pew=(unit [(set perm:gall) yoki])               ::  awaiting req perms
     ==                                                  ::
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission
@@ -2666,21 +2666,27 @@
   ::
   ++  ward                                              ::  permission state
     |%
-    +$  writ  [=desk peg=(set perm:gall) peq=(set perm:gall) per=(set perm:gall)]
+    +$  writ
+      $:  =desk
+          ped=(set perm:gall)  ::  required perms (desk.seal)
+          peg=(set perm:gall)  ::  granted perms
+          peq=(set perm:gall)  ::  requested opt perms
+          pew=(set perm:gall)  ::  awaiting req perms
+      ==
     +$  cast
-      $%  [%need =desk per=(set perm:gall)]
-          ::  permissions missing on commit
-          [%have =desk peg=(set perm:gall) peq=(set perm:gall)]
-          ::  got permissions for a desk
+      $%  ::  %have: got permissions for a desk  ::TODO  mb split?
+          ::  %need: permissions missing on commit
+          ::
+          [%have =desk ped=(set perm:gall) peg=(set perm:gall) peq=(set perm:gall)]
+          [%need =desk pew=(set perm:gall)]
       ==
     ::
     ++  tell
     |=  =writ
     ^-  (list cast)
-    ?:  =(~ per.writ)  [%have [desk peg peq]:writ]~
-    =/  per  (~(dif in per.writ) peg.writ)
-    :~  [%have [desk peg peq]:writ]
-        [%need desk.writ per]
+    ?:  =(~ pew.writ)  [%have [desk ped peg peq]:writ]~
+    :~  [%have desk ped peg peq]:writ
+        [%need desk pew]:writ
     ==
   --
   ::                                             ::

@@ -1535,8 +1535,11 @@
       ==
     --
   ::
-  ::  +get-perm: read the desk's required permissions from /seal/desk
-  ++  get-perm
+  ::  +get-seal: read the desk's current required permissions from /seal/desk
+  ::  +seal-at-commit: read required permissions from target commit
+  ::
+  ++  get-seal  (seal-at-commit [%| (aeon-to-yaki:ze let.dom)])
+  ++  seal-at-commit
     |=  =yoki
     ^-  (set perm:gall)
     |^  ?-  -.yoki
@@ -1580,8 +1583,9 @@
     %-  emil
     =/  casts=(list cast:ward)
       %:  tell:ward  desk
+          ?:(=(desk syd) get-seal get-seal:^$(syd desk))
           peg.dom  peq.dom
-          ?~(per.dom ~ -.u.per.dom)
+          ?~(pew.dom ~ -.u.pew.dom)
       ==
     %-  zing
     %+  turn  ~(tap in pes)
@@ -1984,22 +1988,26 @@
     ?>  |(!?=(%base syd) ?=([[%zuse @] ~ ~] kel))
     ::  find desk seal
     ::
-    =/  per=(set perm:gall)  (get-perm yoki)
+    =/  per=(set perm:gall)  (seal-at-commit yoki)
     ~&  >>  %checking-permissions
     ::  incoming commit permission check
     ::
+    =/  mis=(set perm:gall)
+      %-  ~(gas in *(set perm:gall))
+      %+  skip  ~(tap in per)
+      (cury have:guard:gall peg.dom)
     =/  has-perm
       ?:  ?|  ?=(%base syd)
               !(~(all in kel) |=(=weft (gte num.weft zuse)))  ::TODO  REVIEW
           ==
         &
-      (~(all in per) |=(p=perm:gall (have:guard:gall peg.dom p)))
+      =(~ mis)
     ?.  |(has-perm =(%dead liv.dom))
-      =.  per.dom  `[per yoki]
+      =.  pew.dom  `[mis yoki]
       =.  ..park  (emit hen %pass /perm/zeal/[syd] %c %zeal [[syd %held] ~])  ::TODO  REVIEW
       %-  (slog leaf+"{<syd>} need permissions: {<per>}; has: {<peg.dom>}" ~)
       (send-ward syd)
-    =?  per.dom  ?~(per.dom | =(+.u.per.dom yoki))  ~
+    =?  pew.dom  ?~(pew.dom | =(+.u.pew.dom yoki))  ~
     ?.  ?|  (~(has in kel) zuse+zuse)                   ::  kelvin match
             ?&  !=(%base syd)                           ::  best-effort compat
                 %-  ~(any in kel)
@@ -2015,7 +2023,8 @@
                     !?=(%live liv.dom.dojo)
                     ::  has update and perms
                     ?~  yok=(~(get by wic.dom.dojo) n.kel)  |
-                    (~(all in (get-perm u.yok)) |=(p=perm:gall (have:guard:gall peg.dom.dojo p)))
+                    %-  ~(all in (seal-at-commit u.yok))
+                    |=(p=perm:gall (have:guard:gall peg.dom.dojo p))
                 ==
             ==
         ==
@@ -2050,14 +2059,14 @@
       ::  then store those perms in state & notify about them
       ::
       ?>  ?=([* ~ ~] kel)  ::NOTE  already asserted above, but compiler dumb (probably)
-      =/  pez=(list [=desk per=(set perm:gall) =^yoki])
+      =/  pez=(list [=desk mis=(set perm:gall) =^yoki])
         %-  ~(rep by (~(del by dos.rom) %base))
         |=  [[=desk =dojo] pez=(list [desk (set perm:gall) ^yoki])]
         =/  yok  (~(get by wic.dom.dojo) n.kel)
         ?~  yok  pez
         =/  mis=(set perm:gall)
           %-  ~(gas in *(set perm:gall))
-          %+  skip  ~(tap in (get-perm u.yok))
+          %+  skip  ~(tap in (seal-at-commit u.yok))
           (cury have:guard:gall peg.dom.dojo)
         ?:  =(~ mis)  pez
         [[desk mis u.yok] pez]
@@ -2067,7 +2076,7 @@
         ?~  pez  ..park
         =.  dos.rom                                     ::  [send-ward] <
           %+  ~(jab by dos.rom)  desk.i.pez
-          |=(=dojo dojo(per.dom `[per yoki]:i.pez))
+          |=(=dojo dojo(pew.dom `[mis yoki]:i.pez))
         =.  ..park  (send-ward desk.i.pez)              ::  [send-ward] >
         %-  (slog leaf+"clay: {<desk.i.pez>} wait-for-perms" ~)
         $(pez t.pez)
@@ -3410,16 +3419,16 @@
     ?:  add
       =.  peg.dom  (~(uni in peg.dom) pes)
       ::  TODO:  check if desk awaiting commit
-      ?~  per.dom  (send-ward syd)
-      ?~  (~(all in -.u.per.dom) |=(per=perm:gall (have:guard:gall peg.dom per)))
+      ?~  pew.dom  (send-ward syd)
+      ?~  (~(all in -.u.pew.dom) |=(per=perm:gall (have:guard:gall peg.dom per)))
         ::  calling park here
         ::  updated %.y ?
-        (park | | +.u.per.dom *rang)
+        (park | | +.u.pew.dom *rang)
       (send-ward syd)
-    =/  per=(set perm:gall)  (get-perm [%| (aeon-to-yaki:ze let.dom)])
-    =/  in-per  (~(any in pes) |=(p=perm:gall (~(has in per) p)))
+    =/  ped=(set perm:gall)  get-seal
+    =/  in-per  (~(any in pes) |=(p=perm:gall (~(has in ped) p)))
     ?:  &(=(%live liv.dom) in-per)
-      (mean leaf+"can't remove permissions desk is %live, suspend first" ~)
+      (mean leaf+"can't remove required permissions: desk is %live, suspend first" ~)
     (send-ward(peg.dom (~(dif in peg.dom) pes)) syd)
   ::
   ++  set-zest                                          ::  [goad] <
@@ -3440,7 +3449,7 @@
       ((slog leaf+msg ~) ..park)
     =/  per=(set perm:gall)
       %+  fall
-        (mole |.((get-perm [%| (aeon-to-yaki:ze let.dom)])))
+        (mole |.(get-seal))
       ~
     ~&  >>  %checking-permissions
     ::  TODO: do not do hard equality check
@@ -5415,15 +5424,15 @@
   ::
       %ward
     =.  pes.ruf  (~(put in pes.ruf) hen)
-    =/  roml=(list [desk dojo])  ~(tap by dos.rom.ruf)
     :_  ..^$
     %-  zing
-    %+  turn  roml
+    %+  turn  ~(tap by dos.rom.ruf)
     |=  [=desk =dojo]
     =/  casts=(list cast:ward)
       %:  tell:ward  desk
+        get-seal:((de now rof hen ruf) [our desk])
         peg.dom.dojo  peq.dom.dojo
-        ?~(per.dom.dojo ~ -.u.per.dom.dojo)
+        ?~(pew.dom.dojo ~ -.u.pew.dom.dojo)
       ==
     %+  turn  casts
     |=  =cast:ward
