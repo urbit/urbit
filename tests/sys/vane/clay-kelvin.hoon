@@ -304,27 +304,10 @@
   ==
 ::
 ++  ex-kernel-build
-  |=  liz=(list [=desk =zest:clay])
+  |=  [liz=(list [=desk =zest:clay]) perm=(list [desk ped=(set perm:gall) peg=(set perm:gall) per=(set perm:gall)])]
   ^-  (list $-(move tang))
-  :~  (ex-pass /kiln/bump/zeal [%c %zeal liz])
-      ex-what
-      (ex [~[/blah] %slip %c %pork ~])
-  ==
-::
-++  ex-resume-commit-missing-perm
-  |=  [v=@ud susp=(list desk) perm=(list [desk ped=(set perm:gall) peg=(set perm:gall) per=(set perm:gall)])]
-  ^-  (list $-(move tang))
-  ;:  welp
-    ::  %base
-    :~  ex-wick
-        (ex-text ": /~nul/base/{<v>}/sys/zuse/hoon")
-        (ex-text ": /~nul/base/{<v>}/sys/kelvin")
-    ==
-    ::  suspend desk on perm check
-    %+  turn  susp
-    |=(=desk (ex-zeal-held desk))
-    ::
-    ::  ward gift
+  ::  sending ward gifts on awaiting required permissions update
+  %+  welp
     %-  zing
     %+  turn  perm
     |=  [=desk ped=(set perm:gall) peg=(set perm:gall) per=(set perm:gall)]
@@ -334,12 +317,19 @@
     ?~  per  ~
     :~  (ex-ward-need desk per)
     ==
-    :~  ex-load
-    ==
+  ::  suspending desks without pending commit or with insufficient permissions
+  :~  %+  ex-pass  /kiln/bump/zeal
+      :+  %c  %zeal
+      %+  welp  liz
+      %+  roll  perm
+      |=([[=desk *] l=(list [desk zest:clay])] [[desk %held] l])
+      ::
+      ex-what
+      (ex [~[/blah] %slip %c %pork ~])
   ==
 ::
-++  expect-resume-commit-missing-kel
-  |=  [v=@ud kel=@ud deku=(list [desk per=?]) deks=(list desk)]
+++  ex-resume-commit
+  |=  [v=@ud kel=@ud deku=(list [desk per=?])]
   ^-  (list $-(move tang))
   ;:  welp
     ::  %base
@@ -350,7 +340,6 @@
     ::  update per desk w/w-o perm seal file
     ^-  (list $-(move tang))
     %-  zing
-    :: ^-  (list (list $-(move tang)))
     %+  turn  deku
     |=  [=desk per=?]
     ^-  (list $-(move tang))
@@ -365,9 +354,7 @@
     ::  tire gift per desk
     %+  turn  deku
     |=([=desk *] (ex-gift [%tire %| [%warp desk [%zuse kel]]]))
-    ::  suspend desk on perm check
-    (turn deks |=(=desk (ex-zeal-held desk)))
-    ::  todo: ward-gift
+    ::  TODO: ward-gift, desk.seal been updated!
     ::
     :~  ex-load
     ==
@@ -465,7 +452,7 @@
   ::
   ;<  ~  bind:m
     %+  expect-moves  mov4
-    (expect-resume-commit-missing-kel 2 408 [[%foo |] ~] ~)
+    (ex-resume-commit 2 408 [[%foo |] ~])
   ;<  mov6=(list move)  bind:m  do-wick
   (expect-moves mov6 ~)
 ::
@@ -487,7 +474,7 @@
   ::
   ;<  ~  bind:m
     %+  expect-moves  mov5
-    (expect-resume-commit-missing-kel 2 407 [[%foo |] ~] ~)
+    (ex-resume-commit 2 407 [[%foo |] ~])
   ;<  mov6=(list move)  bind:m  do-wick
   (expect-moves mov6 ~)
 ::
@@ -551,14 +538,14 @@
   ;<  mov=(list move)  bind:m  (do-park %base 408 ~)
   ;<  ~  bind:m
     %+  expect-moves  mov
-    (ex-kernel-build [%foo %held]~)
-  ;<  ~                 bind:m  (set-kelvin 408)
+    (ex-kernel-build [%foo %held]~ ~)
   ;<  mov2=(list move)  bind:m  (call ~[/blah] [%zeal [%foo %held]~])
+  ;<  ~                 bind:m  (set-kelvin 408)
   ;<  mov3=(list move)  bind:m  do-pork
   ::
   ;<  ~  bind:m
     %+  expect-moves  mov3
-    (expect-resume-commit-missing-kel 2 408 ~ ~)
+    (ex-resume-commit 2 408 ~)
   ;<  mov4=(list move)  bind:m  do-wick
   (expect-moves mov4 ~)
 ::
@@ -593,13 +580,13 @@
   ;<  mov2=(list move)  bind:m  (do-park %base 408 ~)
   ;<  ~  bind:m
     %+  expect-moves  mov2
-    (ex-kernel-build ~)
+    (ex-kernel-build ~ [[%foo perm-none perm-none pers-1] ~])
+  ;<  *                 bind:m  (call ~[/blah] [%zeal [%foo %held]~])
   ;<  ~                 bind:m  (set-kelvin 408)
   ;<  mov3=(list move)  bind:m  do-pork
   ;<  ~                 bind:m
     %+  expect-moves  mov3
-    (ex-resume-commit-missing-perm 2 [%foo ~] [[%foo perm-none perm-none pers-1] ~])
-  ;<  mov4=(list move)  bind:m  (call ~[/blah] [%zeal [%foo %held]~])
+    (ex-resume-commit 2 408 ~)
   ;<  mov5=(list move)  bind:m  (call ~[/blah] [%seal %foo & pers-1])
   ::
   ;<  now=@da           bind:m  get-now
@@ -633,11 +620,11 @@
   ;<  mov3=(list move)  bind:m  (do-park %base 408 ~)
   ;<  ~  bind:m
     %+  expect-moves  mov3
-    (ex-kernel-build ~)
+    (ex-kernel-build ~ ~)
   ;<  ~  bind:m  (set-kelvin 408)
   ;<  mov4=(list move)  bind:m  do-pork
   %+  expect-moves  mov4
-  (expect-resume-commit-missing-kel 2 408 [[%foo &] ~] ~)
+  (ex-resume-commit 2 408 [[%foo &] ~])
 ::
 ++  foo-apply-kel2
 ::  non-essesntial desk, blocked on kelvin and kelvin-1 and perms
@@ -664,13 +651,13 @@
   ;<  mov=(list move)   bind:m  (do-park %base 407 ~)
   ;<  ~  bind:m
     %+  expect-moves  mov
-    (ex-kernel-build ~)
+    (ex-kernel-build ~ [[%foo perm-none perm-none pers-2] ~])
+  ;<  mov2=(list move)  bind:m  (call ~[/blah] [%zeal [%foo %held]~])
   ;<  ~                 bind:m  (set-kelvin 407)
-  ;<  mov2=(list move)  bind:m  do-pork
+  ;<  mov3=(list move)  bind:m  do-pork
   ;<  ~  bind:m
-    %+  expect-moves  mov2
-    (ex-resume-commit-missing-perm 2 [%foo ~] [[%foo perm-none perm-none pers-2] ~])
-  ;<  mov3=(list move)  bind:m  (call ~[/blah] [%zeal [%foo %held]~])
+    %+  expect-moves  mov3
+    (ex-resume-commit 2 407 ~)
   ;<  mov4=(list move)  bind:m  (call ~[/blah] [%seal %foo & pers-2])
   ;<  now=@da           bind:m  get-now
   ;<  ~  bind:m
@@ -706,13 +693,13 @@
   ;<  mov=(list move)   bind:m  (do-park %base 408 ~)
   ;<  ~  bind:m
     %+  expect-moves  mov
-    (ex-kernel-build ~)
+    (ex-kernel-build ~ [[%foo perm-none perm-none pers-1] ~])
+  ;<  mov2=(list move)  bind:m  (call ~[/blah] [%zeal [%foo %held]~])
   ;<  ~                 bind:m  (set-kelvin 408)
-  ;<  mov2=(list move)  bind:m  do-pork
+  ;<  mov3=(list move)  bind:m  do-pork
   ;<  ~                 bind:m
-    %+  expect-moves  mov2
-    (ex-resume-commit-missing-perm 2 [%foo ~] [[%foo perm-none perm-none pers-1] ~])
-  ;<  mov3=(list move)  bind:m  (call ~[/blah] [%zeal [%foo %held]~])
+    %+  expect-moves  mov3
+    (ex-resume-commit 2 408 ~)
   ;<  mov4=(list move)  bind:m  (call ~[/blah] [%seal %foo & pers-1])
   ;<  now=@da           bind:m  get-now
   ;<  ~  bind:m
@@ -734,15 +721,15 @@
   ;<  mov6=(list move)   bind:m  (do-park %base 407 ~)
   ;<  ~  bind:m
     %+  expect-moves  mov6
-    (ex-kernel-build ~)
+    (ex-kernel-build ~ [[%foo pers-1 pers-1 (silt :~([%eyre ~]))] ~])
+  ;<  mov7=(list move)  bind:m  (call ~[/blah] [%zeal [%foo %held]~])
   ;<  ~                 bind:m  (set-kelvin 407)
-  ;<  mov7=(list move)  bind:m  do-pork
+  ;<  mov8=(list move)  bind:m  do-pork
   ;<  now=@da           bind:m  get-now
   ;<  ~  bind:m
-    %+  expect-moves  mov7
-    (ex-resume-commit-missing-perm 3 [%foo ~] [[%foo pers-1 pers-1 (silt :~([%eyre ~]))] ~])
+    %+  expect-moves  mov8
+    (ex-resume-commit 3 407 ~)
   ;<  *                 bind:m  do-wick
-  ;<  mov8=(list move)  bind:m  (call ~[/blah] [%zeal [%foo %held]~])
   ;<  mov9=(list move)  bind:m  (call ~[/blah] [%seal %foo & (silt :~([%eyre ~]))])
   ;<  ~  bind:m
     %+  expect-moves  mov9
