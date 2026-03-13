@@ -1271,7 +1271,8 @@
       mo-core
     ~>  %slog.0^leaf/"gall: nuking {<dap>}"
     =.  mo-core
-      ?>  ?=(%& -.agent.u.yoke)
+      ?:  ?=(%| -.agent.u.yoke)
+        mo-core
       ?-  mod.p.agent.u.yoke
         %new-agent  ap-abet:ap-nuke:(ap-abed:ap dap [~ our prov])
         %old-agent  op-abet:op-nuke:(op-abed:op dap [~ our prov])
