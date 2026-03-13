@@ -212,7 +212,6 @@
   ?~  desks
     ::  TODO: check mov3 and mov4
     ;<  mov3=(list move)  bind:m  (call ~[/blah] [%tire `~])
-    ~&  mov3/mov3
     ;<  mov4=(list move)  bind:m  (call ~[/blah] [%ward ~])
     (pure:m ~)
   =,  i.desks
@@ -329,7 +328,7 @@
   ==
 ::
 ++  ex-resume-commit
-  |=  [v=@ud kel=@ud deku=(list [desk per=?])]
+  |=  [v=@ud kel=@ud deku=(list [desk ped=(set perm:gall) peg=(set perm:gall)])]
   ^-  (list $-(move tang))
   ;:  welp
     ::  %base
@@ -341,20 +340,23 @@
     ^-  (list $-(move tang))
     %-  zing
     %+  turn  deku
-    |=  [=desk per=?]
+    |=  [=desk ped=(set perm:gall) *]
     ^-  (list $-(move tang))
     ?:  ?=(%base desk)  ~
     %+  welp
       :~  ex-wick
           (ex-text ": /~nul/{(scow %tas desk)}/{<v>}/sys/kelvin")
       ==
-    ?.  per  ~
+    ?~  ped  ~
     :~  (ex-text "+ /~nul/{(scow %tas desk)}/{<v>}/desk/seal")
     ==
+    ::  ward gift per desk
+    %+  roll  deku
+    |=  [[=desk ped=(set perm:gall) peg=(set perm:gall)] l=(list $-(move tang))]
+    ?~  ped  l  [(ex-ward-have [desk ped peg]) l]
     ::  tire gift per desk
     %+  turn  deku
     |=([=desk *] (ex-gift [%tire %| [%warp desk [%zuse kel]]]))
-    ::  TODO: ward-gift, desk.seal been updated!
     ::
     :~  ex-load
     ==
@@ -452,7 +454,7 @@
   ::
   ;<  ~  bind:m
     %+  expect-moves  mov4
-    (ex-resume-commit 2 408 [[%foo |] ~])
+    (ex-resume-commit 2 408 [[%foo perm-none perm-none] ~])
   ;<  mov6=(list move)  bind:m  do-wick
   (expect-moves mov6 ~)
 ::
@@ -474,7 +476,7 @@
   ::
   ;<  ~  bind:m
     %+  expect-moves  mov5
-    (ex-resume-commit 2 407 [[%foo |] ~])
+    (ex-resume-commit 2 407 [[%foo perm-none perm-none] ~])
   ;<  mov6=(list move)  bind:m  do-wick
   (expect-moves mov6 ~)
 ::
@@ -562,6 +564,7 @@
   %+  expect-moves  mov2
   :~  ex-wick
       (ex-text "+ /~nul/foo/2/desk/seal")
+      (ex-ward-have %foo pers-1 pers-1)
       (ex-gift [%tire %| [%zest %foo %live]])
       (ex-gift [%tire %| [%zest %base %live]])
       ex-load
@@ -595,6 +598,7 @@
     :~  ex-wick
         (ex-text ": /~nul/foo/2/sys/kelvin")
         (ex-text "+ /~nul/foo/2/desk/seal")
+        (ex-ward-have %foo pers-1 pers-1)
         (ex-pass /park-held/foo [%b [%wait now]])
         (ex-gift [%tire %| [%warp %foo [%zuse 408]]])
         ex-load
@@ -624,7 +628,7 @@
   ;<  ~  bind:m  (set-kelvin 408)
   ;<  mov4=(list move)  bind:m  do-pork
   %+  expect-moves  mov4
-  (ex-resume-commit 2 408 [[%foo &] ~])
+  (ex-resume-commit 2 408 [[%foo pers-1 pers-1] ~])
 ::
 ++  foo-apply-kel2
 ::  non-essesntial desk, blocked on kelvin and kelvin-1 and perms
@@ -665,6 +669,7 @@
     :~  ex-wick
         (ex-text ": /~nul/foo/2/sys/kelvin")
         (ex-text "+ /~nul/foo/2/desk/seal")
+        (ex-ward-have %foo pers-2 pers-2)
         (ex-pass /park-held/foo [%b [%wait now]])
         (ex-gift [%tire %| [%warp %foo zuse+407]])
         (ex-gift [%tire %| [%warp %foo zuse+408]])
@@ -707,6 +712,7 @@
     :~  ex-wick
         (ex-text ": /~nul/foo/2/sys/kelvin")
         (ex-text "+ /~nul/foo/2/desk/seal")
+        (ex-ward-have %foo pers-1 pers-1)
         (ex-pass /park-held/foo [%b [%wait now]])
         (ex-gift [%tire %| [%warp %foo [%zuse 408]]])
         ex-load
@@ -734,8 +740,9 @@
   ;<  ~  bind:m
     %+  expect-moves  mov9
     :~  ex-wick
-        (ex-text ": /~nul/foo/3/desk/seal")  ::TODO  expect %ward because this file changed!
+        (ex-text ": /~nul/foo/3/desk/seal")
         (ex-text ": /~nul/foo/3/sys/kelvin")
+        (ex-ward-have %foo pers-2 pers-2)
         (ex-pass /park-held/foo [%b [%wait now]])
         (ex-gift [%tire %| [%warp %foo [%zuse 407]]])
         ex-load
