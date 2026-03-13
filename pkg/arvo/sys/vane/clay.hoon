@@ -2187,6 +2187,10 @@
       =^  moves-3  ruf  abet:(park:den | | u.wat *^rang)
       =.  moves-2  (weld moves-2 moves-3)
       $(desks t.desks)
+    ::  send-ward only if desk.seal been updated
+    =?  ..park                                          ::  [send-ward] >
+        (~(any in invalid) |=(p=path ?=([%desk %seal ~] p)))
+      (send-ward syd)
     ::  tell gall to try to run agents if %held
     ::
     ::  [goad] > if goat or desk not running.  %held uses park-held to
