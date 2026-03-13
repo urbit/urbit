@@ -1998,6 +1998,8 @@
       (cury have:guard:gall peg.dom)
     =/  has-perm
       ?:  ?|  ?=(%base syd)
+              ::  if commit is greater or current version of kelvin
+              ::  check permissions
               !(~(all in kel) |=(=weft (gte num.weft zuse)))  ::TODO  REVIEW
           ==
         &
@@ -2018,11 +2020,6 @@
       ::  not ready for any of the above reasons.
       ::  commit not compatible with +zuse.
       ::
-      ::  prevent downgrading (on base)
-      ::
-      ?:  (~(all in kel) |=(=weft (gth num.weft zuse)))
-        %-  (slog leaf+"clay: old-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
-        ..park
       ::  store this blocked commit as awaiting, could come in handy later
       ::
       =.  wic.dom                                       ::  [tare] <
@@ -2037,6 +2034,11 @@
       %-  (slog leaf+"clay: {<syd>} wait-for-kelvin, {<[compat=kel have=zuse+zuse]>}" ~)
       tare                                            ::  [tare] >
       ::
+    ::  prevent downgrading (on base)
+    ::
+    ?:  (~(all in kel) |=(=weft (gth num.weft zuse)))
+      %-  (slog leaf+"clay: old-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
+      ..park
     =.  wic.dom
       %-  ~(gas by *(map weft ^yoki))
       %+  skip  ~(tap by wic.dom)
