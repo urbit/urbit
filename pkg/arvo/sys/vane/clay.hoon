@@ -621,7 +621,7 @@
     $(vaz t.vaz)
   ::
   ++  ford
-    !.
+    !:
     =>  |%
         +$  state
           $:  cache=flow
@@ -648,6 +648,70 @@
     =.  sprig.nub  sprig
     ~%  %ford-core  ..$  ~
     |%
+    ++  make-bud
+      |=  zus=vase
+      ^+  bud
+      =/  zuse  !>(..zus)
+      =>  [zus=zus zuse=zuse ..slap]
+      :*  zuse=zus
+          nave=(slap zus !,(*hoon nave:clay))
+          cork=(slap zus !,(*hoon cork))
+          same=(slap zus !,(*hoon same))
+          mime=(slap zus !,(*hoon mime))
+          cass=(slap zus !,(*hoon cass:clay))
+      ==
+    ++  get-kernel-files
+      ^-  (unit [h=@ a=@ l=@ z=@])
+      ;:  both
+        (get-kernel-file /sys/hoon/hoon)
+        (get-kernel-file /sys/arvo/hoon)
+        (get-kernel-file /sys/lull/hoon)
+        (get-kernel-file /sys/zuse/hoon)
+      ==
+    ::
+    ++  get-kernel-file
+      |=  =path
+      ^-  (unit @)
+      =/  fil  (~(get by files) path)
+        :: ~&  >>  [files=~(key by files) path=path]
+      ?+  fil
+        ~&  >>  [files=~(key by files) path=path]  ~
+        [~ %& %hoon @]  `(page-to-cord p.u.fil)
+        [~ %| @]        `(lobe-to-cord p.u.fil)
+      ==
+    ::
+    ++  page-to-cord
+      |=  =page
+      ^-  @t
+      ?+  p.page  ~|([%sys-bad-mark p.page] !!)
+        %hoon  ;;(@t q.page)
+        %mime  q.q:;;(mime q.page)
+      ==
+    ::
+    ++  lobe-to-cord
+      |=  =lobe
+      ^-  @t
+      =/  peg=(unit page)  (~(get by file-store) lobe)
+      ?~  peg
+        ~|([%lobe-to-cord-tombstoned lobe] !!)
+      ;;(@t q.u.peg)
+    ::
+    ++  build-zuse
+      |=  [h=@ a=@ l=@ z=@]
+      ^-  vase
+      =/  hoon-core=vase
+        %-  (slog 'clay: compiling hoon' ~)
+        =-  (slot 7 -)
+        (road |.((slap *vase (ream h))))
+      =/  arvo-core=vase
+        %-  (slog 'clay: compiling arvo' ~)
+        =-  (slap - (ream '..part'))
+        (road |.((slap hoon-core (ream a))))
+      =/  lull-core=vase
+        %-  (slog 'clay: compiling lull' ~)
+        (road |.((slap arvo-core (rain /sys/lull/hoon l))))
+      %-  (slog 'clay: compiling zuse' ~)
+      (road |.((slap lull-core (rain /sys/zuse/hoon z))))
     ::  +read-file: retrieve marked, validated file contents at path
     ::
     ++  read-file
@@ -1549,6 +1613,17 @@
   ::
   ++  tako-ford
     |=  tak=tako
+    =?  bud  !?=(%base syd)
+      ~&  >  %tako-ford^syd
+      =/  f
+        %-  ford:fusion
+        :-  (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
+        [lat.ran veb.bug fad ?:(=(tak (aeon-to-tako:ze let.dom)) fod.dom [~ ~])]
+      =/  sys  get-kernel-files:f
+      ~&  >  [%tako-ford-sys ?=(~ sys)]
+      =/  zus  ?~(sys ~ (make-bud:f (build-zuse:f u.sys)))
+      ~&  >  [%tako-ford-zus ?=(~ zus)]
+      ?~(zus bud zus)
     %-  ford:fusion
     :-  (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
     [lat.ran veb.bug fad ?:(=(tak (aeon-to-tako:ze let.dom)) fod.dom [~ ~])]
@@ -2841,6 +2916,7 @@
           ~
         =/  [=cage *]
           %-  wrap:fusion
+          ~&  >  [%lobe-to-cage lobe syd]
           (page-to-cage:(tako-ford (~(got by hit.dom) let.dom)) u.peg)
         `cage
       ::
@@ -2849,6 +2925,7 @@
         ^-  dais
         =/  [=dais *]
           %-  wrap:fusion
+          ~&  >  [%lobe-to-cage mark syd]
           (build-dais:(tako-ford (~(got by hit.dom) let.dom)) mark)
         dais
       ::
@@ -3246,8 +3323,9 @@
         (mole |.((get-kelvin %| (aeon-to-yaki:ze let.dom))))
       [[%1 ~] ~]
     ?.  (~(has in kel) zuse+zuse)
-      =/  msg  "clay: can't set {<syd>} live, it doesn't support zuse {<zuse>}"
-      ((slog leaf+msg ~) ..park)
+      :: =/  msg  "clay: can't set {<syd>} live, it doesn't support zuse {<zuse>}"
+      :: ((slog leaf+msg ~) ..park)
+      ..park(liv.dom liv)
     ..park(liv.dom liv)
   ::
   ++  rise                                              ::  [goad] <
@@ -3479,6 +3557,7 @@
         ::
         =/  base-dome  dom:(~(got by dos.rom) %base)
         =/  f
+          ~&  >  [%validate-x pax]
           %-  %*(. tako-ford dom base-dome)
           (~(got by hit.base-dome) let.base-dome)
         (page-to-cage:f peg)
@@ -4674,6 +4753,7 @@
   ++  ford
     |=  [her=ship syd=desk yon=(unit aeon)]
     =/  den  ((de now rof hen ruf) her syd)
+    ~&  >  [%ford-wrapper syd]
     %-  tako-ford:den
     ::TODO  is this +got after +got semantically correct?
     (~(got by hit.dom:(~(got by dos.rom) syd)) ?~(yon let.dom:den u.yon))
