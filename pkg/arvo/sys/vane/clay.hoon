@@ -2497,7 +2497,14 @@
           |=  [[=desk =dojo] sus=(list [desk (unit [(set perm:gall) ^yoki])])]
           ::  essential/non-essential desk check
           ~&  [desk ese-dojo=ese.dojo ese=ese]
-          ?.  =(ese ese.dojo)  sus
+          =/  check
+            ?:  ese
+              ?&  =(ese ese.dojo)
+                  =(%live liv.dom.dojo)
+              ==
+            ::  NOTE:  should we check if non-essential desk is not %dead
+            =(ese ese.dojo)
+          ?.  check  sus
           ?~  yok=(~(get by wic.dom.dojo) sys-kel)
             ::  has no pending commit for current kel update case
             ?~  t=(~(get by hit.dom.dojo) let.dom.dojo)
