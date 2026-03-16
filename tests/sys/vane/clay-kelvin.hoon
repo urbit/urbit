@@ -755,4 +755,5 @@
   ==
 ::
 ::TODO  test for base downgrade protection
+::TODO  test for desk downgrade-into-incompat protection
 --

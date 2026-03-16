@@ -2036,11 +2036,11 @@
       %-  (slog leaf+"clay: {<syd>} wait-for-kelvin, {<[compat=kel have=zuse+zuse]>}" ~)
       tare                                            ::  [tare] >
       ::
-    ::  prevent downgrading (on base)
+    ::  prevent downgrading of base,
+    ::  and prevent applying commits that will never become compatible
+    ::  (because they're only compat with old, and base never downgrades)
     ::
-    ?:  ?&  ?=(%base syd)
-            (~(all in kel) |=(=weft (gth num.weft zuse)))  ::NOTE  1 weft in practice
-        ==
+    ?:  (~(all in kel) |=(=weft (gth num.weft zuse)))
       %-  (slog leaf+"clay: old-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
       ..park
     =.  wic.dom
