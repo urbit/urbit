@@ -753,4 +753,6 @@
   :~  (ex-gift [%tire %| [%zest %foo %live]])
       ex-load
   ==
+::
+::TODO  test for base downgrade protection
 --

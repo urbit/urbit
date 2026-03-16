@@ -1997,9 +1997,11 @@
       %+  skip  ~(tap in per)
       (cury have:guard:gall peg.dom)
     =/  has-perm
+      ::  if commit is greater or current version of kelvin
+      ::  check permissions (exempting base)
+      ::  (future kelvin commits will not be applied anyway, so don't need perms)
+      ::
       ?:  ?|  ?=(%base syd)
-              ::  if commit is greater or current version of kelvin
-              ::  check permissions
               !(~(all in kel) |=(=weft (gte num.weft zuse)))  ::TODO  REVIEW
           ==
         &
@@ -2036,7 +2038,9 @@
       ::
     ::  prevent downgrading (on base)
     ::
-    ?:  (~(all in kel) |=(=weft (gth num.weft zuse)))
+    ?:  ?&  ?=(%base syd)
+            (~(all in kel) |=(=weft (gth num.weft zuse)))  ::NOTE  1 weft in practice
+        ==
       %-  (slog leaf+"clay: old-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
       ..park
     =.  wic.dom
@@ -2189,9 +2193,9 @@
       =^  moves-3  ruf  abet:(park:den | | u.wat *^rang)
       =.  moves-2  (weld moves-2 moves-3)
       $(desks t.desks)
-    ::  send-ward only if desk.seal been updated
-    =?  ..park                                          ::  [send-ward] >
-        (~(any in invalid) |=(p=path ?=([%desk %seal ~] p)))
+    ::  send-ward if desk.seal been updated
+    ::
+    =?  ..park  (~(has in invalid) /desk/seal)          ::  [send-ward] >
       (send-ward syd)
     ::  tell gall to try to run agents if %held
     ::
@@ -2503,14 +2507,11 @@
           |=  [[=desk =dojo] sus=(list [desk (unit [(set perm:gall) ^yoki])])]
           ::  essential/non-essential desk check
           ~&  [desk ese-dojo=ese.dojo ese=ese]
-          =/  check
-            ?:  ese
-              ?&  =(ese ese.dojo)
-                  =(%live liv.dom.dojo)
-              ==
-            ::  NOTE:  should we check if non-essential desk is not %dead
-            =(ese ese.dojo)
-          ?.  check  sus
+          ::  non-live desks are never blocking/relevant,
+          ::  only live .ese desks are relevant
+          ::
+          ?.  &(?=(%live liv.dom.dojo) =(ese ese.dojo))
+            sus
           ?~  yok=(~(get by wic.dom.dojo) sys-kel)
             ::  has no pending commit for current kel update case
             ?~  t=(~(get by hit.dom.dojo) let.dom.dojo)
