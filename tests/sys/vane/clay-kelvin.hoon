@@ -754,6 +754,36 @@
       ex-load
   ==
 ::
-::TODO  test for base downgrade protection
-::TODO  test for desk downgrade-into-incompat protection
+++  test-downgrade-base
+  ::  %base got downgrade commit, prevent applying commit
+  ::
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  *                 bind:m  (do-setup-desks ~)
+  ::  send next kelvin update to a desk
+  ;<  mov=(list move)   bind:m  (do-park %base 410 ~)
+  %+  expect-moves  mov
+  ~
+::
+++  test-downgrade-desk
+  ::  desk got downgrade commit, prevent applying commit
+  ::
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
+  ::  send next kelvin update to a desk
+  ;<  mov=(list move)   bind:m  (do-park %foo 410 ~)
+  ;<  ~                 bind:m  (expect-moves mov ~)
+  =/  files
+    %-  ~(gas by *(map path (each page:clay lobe:clay)))
+    :~  [/mar/noun/hoon [%& hoon+mar-noun]]
+        [/mar/hoon/hoon [%& hoon+mar-hoon]]
+        [/mar/txt/hoon [%& hoon+mar-txt]]
+        [/mar/kelvin/hoon [%& hoon+mar-kel]]
+        [/sys/kelvin [%& kelvin+[[%1 ~] (silt :~(zuse+411 zuse+410))]]]
+    ==
+  ;<  mov2=(list move)  bind:m
+    %+  call  ~[/blah]
+    [%park %foo `yoki:clay`[%& [*(list tako:clay) files]] *rang:clay]
+  (expect-moves mov2 ~)
 --
