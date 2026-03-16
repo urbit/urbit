@@ -649,12 +649,28 @@
       (ex-on-arvo /agent/wire [%lick %soak /mysocket %disconnect ~])
   ==
 ::
+::TODO  same style for simple +test-simply-tracked-tasks
 ++  test-misc-untracked-tasks
   %-  zing
   %+  turn
     ^-  (list [task-user-v1:gall note-arvo])
-    :~  :-  [%ames %snub %deny ~fed ~]
-        [%a %snub %deny ~fed ~]
+    :~  :-  [%ames %snub %deny ~fed ~]  [%a %snub %deny ~fed ~]
+        :-  [%ames %prod ~]             [%a %prod ~]
+        :-  [%ames %sift ~]             [%a %sift ~]
+        :-  [%ames %spew ~]             [%a %spew ~]
+        :-  [%ames %cong 1 2]           [%a %cong 1 2]
+        :-  [%ames %stir 'a']           [%a %stir 'a']
+        :-  [%ames %trim 1]             [%a %trim 1]
+      ::
+        :-  [%behn %trim 1]             [%b %trim 1]
+        :-  [%clay %trim 1]             [%c %trim 1]
+        :-  [%dill %trim 1]             [%d %trim 1]
+        :-  [%eyre %trim 1]             [%e %trim 1]
+        :-  [%gall %trim 1]             [%g %trim 1]
+        :-  [%iris %trim 1]             [%i %trim 1]
+        :-  [%jael %trim 1]             [%j %trim 1]
+        :-  [%khan %trim 1]             [%k %trim 1]
+        :-  [%lick %trim 1]             [%l %trim 1]
     ==
   ::
   |=  [task=task-user-v1:gall note=note-arvo]

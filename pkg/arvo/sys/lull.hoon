@@ -3840,22 +3840,34 @@
   ::  userspace api
   ::
   +$  task-user-v1
-    $%  [%ames %keen secret=? =spar:ames]
-        [%ames %yawn =spar:ames]
-        [%ames %snub form=?(%allow %deny) ships=(list ship)]
-      ::
-        ::NOTE  not actually into %ames, just gall-side namespace management
-        [%ames %grow =spur =page]
-        [%ames %tomb =case =spur]
-        [%ames %cull =case =spur]
-        [%ames %tend =coop =path =page]
-        [%ames %germ =coop]
-        [%ames %snip =coop]
+    $%  $:  %ames
+        $%  [%prod ships=(list ship)]
+            [%sift ships=(list ship)]
+            [%snub form=?(%allow %deny) ships=(list ship)]
+            [%spew veb=(list verb)]
+            [%cong msg=@ud mem=@ud]
+            [%stir arg=@t]
+          ::
+            ::NOTE  not actually into %ames, just gall-side namespace management
+            [%keen secret=? =spar:ames]
+            [%yawn =spar:ames]
+            [%grow =spur =page]
+            [%tomb =case =spur]
+            [%cull =case =spur]
+            [%tend =coop =path =page]
+            [%germ =coop]
+            [%snip =coop]
+            [%trim p=@ud]
+        ==  ==
       ::
         [%behn %wait =time]
         [%behn %rest =time]
+        [%behn %trim p=@ud]
       ::
         :: [%clay %read id=@ =ship =desk read=(unit $<(%many rave:clay))]
+        [%clay %trim p=@ud]
+      ::
+        [%dill %trim p=@ud]
       ::
         [%eyre %rule =http-rule:eyre]
         [%eyre %eauth-host host=(unit @t)]
@@ -3865,13 +3877,22 @@
         [%eyre %reject-origin =origin:eyre]
         [%eyre %spew veb=@]
         [%eyre %set-response url=@t entry=(unit cache-entry:eyre)]
+        [%eyre %trim p=@ud]
+      ::
+        [%gall %trim p=@ud]
       ::
         [%iris %request =request:http =outbound-config:iris]
         [%iris %cancel-request ~]
+        [%iris %trim p=@ud]
+      ::
+        [%jael %trim p=@ud]
+      ::
+        [%khan %trim p=@ud]
       ::
         [%lick %spin =name:lick]
         [%lick %shut =name:lick]
         [%lick %spit =name:lick =mark =noun]
+        [%lick %trim p=@ud]
       ::
         [%syscall note-arvo=*]  ::NOTE  secretly $note-arvo, DO NOT DOCUMENT (;
     ==

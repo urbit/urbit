@@ -1830,9 +1830,17 @@
     ::
     +$  carp  $+  carp  (wind neet gift:agent)
     +$  tick  ::TODO  ugly!
-      $%  $<(%ames task-user-v1)  ::  remote scry already processed
-          [%ames %snub form=?(%allow %deny) ships=(list ship)]  ::  but not snub
-      ==
+      ::  remote scry already processed, exclude those cards
+      $%  $<(%ames task-user-v1)
+      $:  %ames
+      $%  [%prod ships=(list ship)]
+          [%sift ships=(list ship)]
+          [%snub form=?(%allow %deny) ships=(list ship)]
+          [%spew veb=(list verb)]
+          [%cong msg=@ud mem=@ud]
+          [%stir arg=@t]
+          [%trim p=@ud]
+      ==  ==  ==
     +$  neet  $+  neet
       $%  [%agent [=ship name=term] task=$%(task:agent [%raw-poke =mark =noun])]
           [%arvo tick]
@@ -1925,7 +1933,8 @@
                       =;  deet=(unit *)
                         ?~(deet '' (crip ~(rend co %blob u.deet)))
                       ?+  +.neet  ~
-                        [%behn *]  `time.neet
+                        [@ %trim *]         ~
+                        [%behn *]           `time.neet
                         [%eyre %connect *]  `wat.neet
                       ==
                     wire
@@ -1942,6 +1951,8 @@
             ?-  +.neet
               [%ames *]        [%a +>.neet]
               [%behn *]        [%b +>.neet]
+              [%clay *]        [%c +>.neet]
+              [%dill *]        [%d +>.neet]
             ::
                 [%eyre *]
               ?+  +>-.neet  [%e +>.neet]
@@ -1952,9 +1963,15 @@
                 [%e %connect binding.neet wat.neet]
               ==
             ::
+              [%gall *]        [%g +>.neet]
               [%iris *]        [%i +>.neet]
+              [%jael *]        [%j +>.neet]
+              [%khan *]        [%k +>.neet]
+            ::
+              [%lick %spin *]  [%l +>.neet(name [agent-name name.neet])]
+              [%lick %shut *]  [%l +>.neet(name [agent-name name.neet])]
               [%lick %spit *]  [%l +>.neet(name [agent-name name.neet])]
-              [%lick *]        [%l +>.neet(name [agent-name name.neet])]
+              [%lick *]        [%l +>.neet]
             ::
                 [%syscall *]
               ::NOTE  fake vase because ;; too slow for these kinds of types
