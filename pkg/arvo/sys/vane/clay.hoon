@@ -541,7 +541,6 @@
 ++  pile-rule
   =>  [..lull parsing-rules]
   =,  clay
-  =,  parsing-rules
   |=  pax=path
   %-  full
   %+  ifix
