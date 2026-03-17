@@ -15,7 +15,7 @@
       ::    resistance...but if your private keys are compromised, your
       ::    adversary can determine which signatures you made.
       ::
-      y=(unit @udpoint)
+      y=(unit @uxpoint)
   ==
 ::  +ring-signature: higher level ring signature type
 ::
