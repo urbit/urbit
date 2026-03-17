@@ -946,32 +946,6 @@
     ==
   ::
   ::::                                                  ::  (1a2)
-    ::
-  ++  acru  $_  ^?                                      ::  asym cryptosuite
-    |%                                                  ::  opaque object
-    ++  as  ^?                                          ::  asym ops
-      |%  ++  seal  |~([a=pass b=@] *@)                 ::  encrypt to a
-          ++  sign  |~(a=@ *@)                          ::  certify as us
-          ++  sigh  |~(a=@ *@)                          ::  certification only
-          ++  sure  |~(a=@ *(unit @))                   ::  authenticate from us
-          ++  safe  |~([a=@ b=@] *?)                    ::  authentication only
-          ++  tear  |~([a=pass b=@] *(unit @))          ::  accept from a
-      --  ::as                                          ::
-    ++  de  |~([a=@ b=@] *(unit @))                     ::  symmetric de, soft
-    ++  dy  |~([a=@ b=@] *@)                            ::  symmetric de, hard
-    ++  en  |~([a=@ b=@] *@)                            ::  symmetric en
-    ++  ex  ^?                                          ::  export
-      |%  ++  fig  *@uvH                                ::  fingerprint
-          ++  pac  *@uvG                                ::  default passcode
-          ++  pub  *pass                                ::  public key
-          ++  sec  *ring                                ::  private key
-      --  ::ex                                          ::
-    ++  nu  ^?                                          ::  reconstructors
-      |%  ++  pit  |~([a=@ b=@] ^?(..nu))               ::  from [width seed]
-          ++  nol  |~(a=ring ^?(..nu))                  ::  from ring
-          ++  com  |~(a=pass ^?(..nu))                  ::  from pass
-      --  ::nu                                          ::
-    --  ::acru                                          ::
   ::  +protocol-version: current version of the ames wire protocol
   ::
   ++  protocol-version  `?(%0 %1 %2 %3 %4 %5 %6 %7)`%0
@@ -1064,8 +1038,9 @@
   +$  fragment-num   @udfragmentnum
   +$  message-blob   @udmessageblob
   +$  message-num    @udmessagenum
-  +$  public-key     @uwpublickey
-  +$  private-key    @uwprivatekey
+  +$  public-keys    [cry=@uxpoint sgn=@uxpoint]
+  +$  private-keys   [cry=@uxscalar sgn=@uxscalar]
+  +$  keypairs       [pub=public-keys sek=private-keys]
   +$  symmetric-key  @uwsymmetrickey
   ::
   ::  $hoot: request packet payload
@@ -1157,12 +1132,7 @@
   ::
   +$  peer-state
     $+  peer-state
-    $:  $:  =symmetric-key
-            =life
-            =rift
-            =public-key
-            sponsor=ship
-        ==
+    $:  azimuth-state
         route=(unit [direct=? =lane])  ::  XX (list)
         =qos
         =ossuary
@@ -1617,7 +1587,7 @@
         ==
         ::
         =server=chain                       ::  for serving %shut requests
-        priv=private-key
+        [saf=keypairs =ring =pass]
         chums=(map ship chum-state)         ::  XX migrated peers
         core=_`?(%ames %mesa)`%ames         ::  XX use |mesa core by default
         ::  TODOs
@@ -1643,7 +1613,14 @@
   ::
   +$  dire           ?(%bak %for)
   +$  side           [=bone =dire]
-  +$  azimuth-state  [=symmetric-key =life =rift =public-key sponsor=ship]
+  +$  azimuth-state
+    $:  =symmetric-key
+        =life
+        =rift
+        [=public-keys =pass]
+        sponsor=ship
+    ==
+  ::
   +$  chum-state
     $+  chum-state
     $%  [%known fren-state]
@@ -1808,7 +1785,7 @@
     =|  s=(list)
     |-  ^-  *
     ?:  =(i n)
-      =^  d  s  s
+      =^  d  s  ?>  ?=(^ s)  s
       |-(?~(s d $(d [i.s d], s t.s)))
     ::
     =/  d=*  i
@@ -1817,7 +1794,7 @@
     |-  ^-  *
     ?:  =(0 j)
       ^$(s [d s])
-    =^  e  s  s
+    =^  e  s  ?>  ?=(^ s)  s
     $(d [e d], j (dec j))
   ::
   ++  unroll

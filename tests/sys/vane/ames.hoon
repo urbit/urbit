@@ -18,28 +18,30 @@
 =.  life.ames-state.nec  2
 =.  rift.ames-state.nec  0
 =.  rof.nec  |=(* ``[%noun !>(*(list turf))])
-=+  crypto-core=(pit:nu:crub:crypto 512 (shaz 'nec'))
-=/  nec-pub   pub:ex:crypto-core
-=.  priv.ames-state.nec  sec:ex:crypto-core
+=+  crypto-core=(pit:nu:cric:crypto 512 (shaz 'nec') %b ~)
+=.  saf.ames-state.nec   saf:ex:crypto-core
+=.  ring.ames-state.nec  sec:ex:crypto-core
+=.  pass.ames-state.nec  pub:ex:crypto-core
 ::
 =.  now.bud        ~1111.1.1
 =.  eny.bud        `@uvJ`0xbeef.dead
 =.  life.ames-state.bud  3
 =.  rift.ames-state.bud  0
 =.  rof.bud  |=(* ``[%noun !>(*(list turf))])
-=+  crypto-core=(pit:nu:crub:crypto 512 (shaz 'bud'))
-=/  bud-pub  pub:ex:crypto-core
-=/  bud-sec  sec:ex:crypto-core
-=.  priv.ames-state.bud  sec:ex:crypto-core
+=+  crypto-core=(pit:nu:cric:crypto 512 (shaz 'bud') %b ~)
+=.  saf.ames-state.bud   saf:ex:crypto-core
+=.  ring.ames-state.bud  sec:ex:crypto-core
+=.  pass.ames-state.bud  pub:ex:crypto-core
 ::
 =.  now.marbud        ~1111.1.1
 =.  eny.marbud        `@uvJ`0xbeef.beef
 =.  life.ames-state.marbud  4
 =.  rift.ames-state.marbud  0
 =.  rof.marbud  |=(* ``[%noun !>(*(list turf))])
-=+  crypto-core=(pit:nu:crub:crypto 512 (shaz 'marbud'))
-=/  marbud-pub   pub:ex:crypto-core
-=.  priv.ames-state.marbud  sec:ex:crypto-core
+=+  crypto-core=(pit:nu:cric:crypto 512 (shaz 'marbud') %b ~)
+=.  saf.ames-state.marbud   saf:ex:crypto-core
+=.  ring.ames-state.marbud  sec:ex:crypto-core
+=.  pass.ames-state.marbud  pub:ex:crypto-core
 ::
 =.  now.comet        ~1111.1.1
 =.  eny.comet        `@uvJ`0xbeef.cafe
@@ -47,32 +49,42 @@
 =.  rift.ames-state.comet  0
 =.  rof.comet  |=(* ``[%noun !>(*(list turf))])
 =/  crypto-core
-  %-  nol:nu:crub:crypto
+  %-  nol:nu:cric:crypto
   0w9N.5uIvA.Jg0cx.NCD2R.o~MtZ.uEQOB.9uTbp.6LHvg.0yYTP.
   3q3td.T4UF0.d5sDL.JGpZq.S3A92.QUuWg.IHdw7.izyny.j9W92
-=/  comet-pub   pub:ex:crypto-core
-=.  priv.ames-state.comet  sec:ex:crypto-core
+=.  saf.ames-state.comet   saf:ex:crypto-core
+=.  ring.ames-state.comet  sec:ex:crypto-core
+=.  pass.ames-state.comet  pub:ex:crypto-core
 ::
 =.  now.comet2        ~1111.1.1
 =.  eny.comet2        `@uvJ`0xcafe.cafe
 =.  life.ames-state.comet2  1
 =.  rift.ames-state.comet2  0
 =.  rof.comet2  |=(* ``[%noun !>(*(list turf))])
-=+  crypto-core=(pit:nu:crub:crypto 512 0v1eb4)
-=/  comet2-pub   pub:ex:crypto-core
-=.  priv.ames-state.comet2  sec:ex:crypto-core
+=+  crypto-core=(pit:nu:cric:crypto 512 0v1eb4 %b ~)
+=.  saf.ames-state.comet2   saf:ex:crypto-core
+=.  ring.ames-state.comet2  sec:ex:crypto-core
+=.  pass.ames-state.comet2  pub:ex:crypto-core
 ::
-=/  nec-sym  (derive-symmetric-key:ames bud-pub priv.ames-state.nec)
-=/  bud-sym  (derive-symmetric-key:ames nec-pub priv.ames-state.bud)
+=/  nec-sym
+  (derive-symmetric-key:ames pub.saf.ames-state.bud sek.saf.ames-state.nec)
+=/  bud-sym
+  (derive-symmetric-key:ames pub.saf.ames-state.nec sek.saf.ames-state.bud)
 ?>  =(nec-sym bud-sym)
-=/  nec-marbud-sym  (derive-symmetric-key:ames marbud-pub priv.ames-state.nec)
+=/  nec-marbud-sym
+  (derive-symmetric-key:ames pub.saf.ames-state.marbud sek.saf.ames-state.nec)
 ::
-=/  marbud-sym  (derive-symmetric-key:ames marbud-pub priv.ames-state.comet)
-=/  marbud2-sym  (derive-symmetric-key:ames marbud-pub priv.ames-state.comet2)
-=/  bud-marbud-sym  (derive-symmetric-key:ames bud-pub priv.ames-state.marbud)
-=/  bud-comet-sym  (derive-symmetric-key:ames nec-pub priv.ames-state.comet)
+=/  marbud-sym
+  (derive-symmetric-key:ames pub.saf.ames-state.marbud sek.saf.ames-state.comet)
+=/  marbud2-sym
+  (derive-symmetric-key:ames pub.saf.ames-state.marbud sek.saf.ames-state.comet2)
+=/  bud-marbud-sym
+  (derive-symmetric-key:ames pub.saf.ames-state.bud sek.saf.ames-state.marbud)
+=/  bud-comet-sym
+  (derive-symmetric-key:ames pub.saf.ames-state.nec sek.saf.ames-state.comet)
 ::
-=/  comet-sym  (derive-symmetric-key:ames bud-pub priv.ames-state.comet)
+=/  comet-sym
+  (derive-symmetric-key:ames pub.saf.ames-state.bud sek.saf.ames-state.comet)
 ::
 =.  peers.ames-state.nec
   %+  ~(put by peers.ames-state.nec)  ~bud
@@ -81,7 +93,7 @@
     :*  symmetric-key=bud-sym
         life=3
         rift=0
-        public-key=bud-pub
+        [public-keys=pub.saf pass=pass]:ames-state.bud
         sponsor=~nec
     ==
   =.  route.peer-state  `[direct=%.y `lane:ames`[%& ~nec]]
@@ -94,7 +106,7 @@
     :*  symmetric-key=nec-marbud-sym
         life=5
         rift=0
-        public-key=marbud-pub
+        [public-keys=pub.saf pass=pass]:ames-state.marbud
         sponsor=~bud
     ==
   =.  route.peer-state  `[direct=%.y `lane:ames`[%| `@`0xffff.7f00.0001]]
@@ -107,7 +119,7 @@
     :*  symmetric-key=nec-sym
         life=2
         rift=0
-        public-key=nec-pub
+        [public-keys=pub.saf pass=pass]:ames-state.nec
         sponsor=~nec
     ==
   =.  route.peer-state  `[direct=%.y `lane:ames`[%| `@`0xffff.7f00.0001]]
@@ -120,7 +132,7 @@
     :*  symmetric-key=marbud-sym
         life=5
         rift=0
-        public-key=marbud-pub
+        [public-keys=pub.saf pass=pass]:ames-state.marbud
         sponsor=~bud
     ==
   =.  route.peer-state  `[direct=%.y `lane:ames`[%| `@`0xffff.7f00.0001]]
@@ -132,7 +144,7 @@
     :*  symmetric-key=bud-marbud-sym
         life=3
         rift=0
-        public-key=bud-pub
+        [public-keys=pub.saf pass=pass]:ames-state.bud
         sponsor=~bud
     ==
   =.  route.peer-state  `[direct=%.y `lane:ames`[%| `@`0xffff.7f00.0001]]
@@ -144,7 +156,7 @@
     :*  symmetric-key=marbud2-sym
         life=5
         rift=0
-        public-key=marbud-pub
+        [public-keys=pub.saf pass=pass]:ames-state.marbud
         sponsor=~bud
     ==
   =.  route.peer-state  `[direct=%.y `lane:ames`[%| `@`0xffff.7f00.0001]]
@@ -156,7 +168,7 @@
     :*  symmetric-key=bud-marbud-sym
         life=3
         rift=0
-        public-key=bud-pub
+        [public-keys=pub.saf pass=pass]:ames-state.bud
         sponsor=~bud
     ==
   =.  route.peer-state  `[direct=%.y `lane:ames`[%| `@`%lane-bar]]
@@ -174,7 +186,7 @@
     :*  symmetric-key=bud-comet-sym
         life=3
         rift=0
-        public-key=bud-pub
+        [public-keys=pub.saf pass=pass]:ames-state.bud
         sponsor=~bud
     ==
   =.  lane.fren-state  `[hop=0 `lane:pact:ames``@`~bud]
@@ -464,7 +476,7 @@
     =/  =point:ames
       :*  rift=0
           life=4
-          keys=[[life=4 [crypto-suite=1 `@`nec-pub]] ~ ~]
+          keys=[[life=4 [crypto-suite=1 `@`pass.ames-state.nec]] ~ ~]
           sponsor=`~bus
       ==
     %-  take
@@ -541,7 +553,7 @@
     =/  =point:ames
       :*  rift=1
           life=2
-          keys=[[life=2 [crypto-suite=1 `@`nec-pub]] ~ ~]
+          keys=[[life=2 [crypto-suite=1 `@`pass.ames-state.nec]] ~ ~]
           sponsor=`~nec
       ==
     %-  take
@@ -942,7 +954,7 @@
       :*  symmetric-key=bud-comet-sym
           life=3
           rift=0
-          public-key=bud-pub
+          [public-keys=pub.saf pass=pass]:ames-state.bud
           sponsor=~bud
       ==
     =.  route.peer-state  `[direct=%.y `lane:ames`[%& `@`~bud]]
@@ -974,17 +986,16 @@
   =^  moves1  bud  (call bud ~[/hood] %load %mesa)
   =.  peers.ames-state.comet  (~(del by peers.ames-state.bud) our-comet)
   =/  crypto-core
-    %-  nol:nu:crub:crypto
+    %-  nol:nu:cric:crypto
     0w9N.5uIvA.Jg0cx.NCD2R.o~MtZ.uEQOB.9uTbp.6LHvg.0yYTP.
     3q3td.T4UF0.d5sDL.JGpZq.S3A92.QUuWg.IHdw7.izyny.j9W92
-  =/  comet-pub   pub:ex:crypto-core
   =.  chums.ames-state.bud
     %+  ~(put by chums.ames-state.bud)  our-comet
     :+  %known
       :*  symmetric-key=bud-comet-sym
           life=1
           rift=0
-          public-key=comet-pub
+          [public-keys=pub.saf pass=pass]:ames-state.comet
           sponsor=~bud
       ==
     +:*fren-state:ames
@@ -996,7 +1007,7 @@
       :*  symmetric-key=bud-comet-sym
           life=3
           rift=0
-          public-key=bud-pub
+          [public-keys=pub.saf pass=pass]:ames-state.bud
           sponsor=~bud
       ==
     =.  route.peer-state  `[direct=%.y `lane:ames`[%& `@`~bud]]
