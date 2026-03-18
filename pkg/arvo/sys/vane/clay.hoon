@@ -625,6 +625,7 @@
   ++  built-ins
     |^  ^-  (list [path vase])
         :~  [/mar/seal/hoon seal]
+            [/mar/mime/hoon mime]
         ==
     ::
     ++  seal  !>
@@ -653,7 +654,37 @@
           |=(=perm:gall <perm>)
         --
       ++  grad  %noun
-    --
+      --
+    ::
+    ++  mime  !>
+      =>  [mime=^mime ..zuse]
+      |_  own=mime
+      ++  grow
+        ^?
+        |%
+        ++  jam  `@`q.q.own
+        --
+      ::
+      ++  grab                                                ::  convert from
+        ^?
+        |%
+        ++  noun  mime                                  ::  clam from %noun
+        ++  tape
+          |=(a=_"" [/application/x-urb-unknown (as-octt:mimes:html a)])
+        --
+      ++  grad
+        ^?
+        |%
+        ++  form  %mime
+        ++  diff  |=(mime +<)
+        ++  pact  |=(mime +<)
+        ++  join  |=([mime mime] `(unit mime)`~)
+        ++  mash
+          |=  [[ship desk mime] [ship desk mime]]
+          ^-  mime
+          ~|(%mime-mash !!)
+        --
+      --
     --
   ::
   ++  ford
@@ -1019,7 +1050,7 @@
       ^-  [vase state]
       =/  =path
         ?:(?=(%| -.dep) p.dep fil.p.dep)
-      ?:  (~(has by trunk) path)
+      ?:  (~(has by trunk) path)  ::REVIEW  order
         [(~(got by trunk) path) nub]
       ~|  %error-building^path
       %-  soak-vase
@@ -1175,7 +1206,7 @@
       ?~  paz
         ~_(leaf/"clay: no files match /{(trip pre)}/{(trip pax)}/hoon" !!)
       =/  pux=path  pre^(snoc i.paz %hoon)
-      ?:  (~(has by trunk) pux)  pux
+      ?:  (~(has by trunk) pux)  pux  ::REVIEW  order
       ?:  (~(has by files) pux)  pux
       $(paz t.paz)
     ::
