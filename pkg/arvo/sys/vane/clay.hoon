@@ -1239,12 +1239,11 @@
   ::
   ++  aver
     |=  [for=(unit ship) mun=mood]
-    ^-  [(unit (unit cage)) _..park]
+    ^-  (unit (unit cage))
     =+  ezy=?~(ref ~ (~(get by haw.u.ref) mun))
     ?^  ezy
-      [`u.ezy ..park]
+      `u.ezy
     ?:  ?=([%s [%ud *] %late *] mun)
-      :_  ..park
       ^-  (unit (unit cage))
       :+  ~  ~
       ^-  cage
@@ -1255,8 +1254,8 @@
     =+  tak=(case-to-tako case.mun)
     ?:  ?=([%s case %case ~] mun)
       ::  case existence check
-      [``[%flag !>(!=(~ tak))] ..park]
-    ?~(tak [~ ..park] (read-at-tako:ze for u.tak mun))
+      ``[%flag !>(!=(~ tak))]
+    ?~(tak ~ (read-at-tako:ze for u.tak mun))
   ::
   ::  Queue a move.
   ::
@@ -3119,7 +3118,7 @@
     ?:  &(?=(^ for) !(foreign-capable rav))
       ~&  [%bad-foreign-request-care from=for rav]
       ..start-request
-    =^  [new-sub=(unit rove) cards=(list card)]  ..start-request
+    =/  [new-sub=(unit rove) cards=(list card)]
       (try-fill-sub for (rave-to-rove rav))
     =.  ..start-request  (send-cards cards [hen ~ ~])
     ?~  new-sub
@@ -3578,7 +3577,7 @@
       ..wake(qyx qux)
     ?:  =(~ ducts.i.subs)
       $(subs t.subs)
-    =^  [new-sub=(unit rove) cards=(list card)]  ..park
+    =/  [new-sub=(unit rove) cards=(list card)]
       (try-fill-sub wove.i.subs)
     =.  ..wake  (send-cards cards ducts.i.subs)
     =?  qux  ?=(^ new-sub)
@@ -3591,7 +3590,7 @@
   ::
   ++  try-fill-sub
     |=  [far=(unit [=ship ver=@ud]) rov=rove]
-    ^-  [[(unit rove) (list card)] _..park]
+    ^-  [(unit rove) (list card)]
     =/  for=(unit ship)  ?~(far ~ `ship.u.far)
     ?-    -.rov
         %sing
@@ -3600,28 +3599,28 @@
       ?^  cache-value
         ::  if we have a result in our cache, produce it
         ::
-        :_  ..park  :-  ~  :_  ~
+        :-  ~  :_  ~
         (writ ?~(u.cache-value ~ `[mood.rov u.u.cache-value]))
       ::  else, check to see if rove is for an aeon we know
       ::
       =/  tako=(unit tako)  (case-to-tako case.mood.rov)
       ?~  tako
-        [[`rov ~] ..park]
+        [`rov ~]
       ::  we have the appropriate tako, so read in the data
       ::
-      =^  value=(unit (unit cage))  ..park
+      =/  value=(unit (unit cage))
         (read-at-tako:ze for u.tako mood.rov)
       ?~  value
         ::  we don't have the data directly.  how can we fetch it?
         ::
         ?:  =(0v0 u.tako)
           ~&  [%clay-sing-indirect-data-0 `path`[syd '0' path.mood.rov]]
-          [[~ ~] ..park]
+          [~ ~]
         ~&  [%clay-sing-indirect-data desk=syd mood=mood.rov tako=u.tako]
-        [[`rov ~] ..park]
+        [`rov ~]
       ::  we have the data, so produce the results
       ::
-      :_  ..park  :-  ~  :_  ~
+      :-  ~  :_  ~
       %-  writ
       ?~  u.value
         ~
@@ -3633,7 +3632,7 @@
       ?.  ?=(~ for)
       ::  reject if foreign (doesn't work over the network)
       ::
-        [[~ ~] ..park]
+        [~ ~]
       ::  because %mult requests need to wait on multiple files for each
       ::  revision that needs to be checked for changes, we keep two
       ::  cache maps.  {old} is the revision at {(dec aeon)}, {new} is
@@ -3660,36 +3659,29 @@
         =/  aeon=(unit aeon)  (case-to-aeon case.mool.rov)
         ::  if we still don't, wait.
         ::
-        ?~  aeon  [(store rov) ..park]
+        ?~  aeon  (store rov)
         ::  if we do, update the request and retry.
         ::
         $(aeon.rov `+(u.aeon), old-cach.rov ~, new-cach.rov ~)
       ::  if old isn't complete, try filling in the gaps.
       ::
-      =^  o  ..park
-        ?:  (complete old-cach.rov)
-          [old-cach.rov ..park]
+      =?  old-cach.rov  !(complete old-cach.rov)
         (read-unknown mool.rov(case [%ud (dec u.aeon.rov)]) old-cach.rov)
-      =.  old-cach.rov  o
       ::  if the next aeon we want to compare is in the future, wait again.
       ::
       =/  next-aeon=(unit aeon)  (case-to-aeon [%ud u.aeon.rov])
-      ?~  next-aeon  [(store rov) ..park]
+      ?~  next-aeon  (store rov)
       ::  if new isn't complete, try filling in the gaps.
       ::
-      =^  n  ..park
-        ?:  (complete new-cach.rov)
-          [new-cach.rov ..park]
+      =?  new-cach.rov  !(complete new-cach.rov)
         (read-unknown mool.rov(case [%ud u.aeon.rov]) new-cach.rov)
-      =.  new-cach.rov  n
       ::  if new still isn't complete, wait again.
       ::
       ?.  (complete new-cach.rov)
-        [(store rov) ..park]
+        (store rov)
       ::  if old not complete, give a result (possible false positive).
       ::
       ?:  !(complete old-cach.rov)
-        :_  ..park
         %-  respond
         %-  malt
         %+  murn  ~(tap in paths.mool.rov)
@@ -3734,7 +3726,7 @@
       ::  if there are any changes, send response. if none, move on to
       ::  next aeon.
       ::
-      ?^  changes  [(respond changes) ..park]
+      ?^  changes  (respond changes)
       $(u.aeon.rov +(u.aeon.rov), new-cach.rov ~)
       ::
       ::  check again later
@@ -3791,7 +3783,7 @@
       ::
       ++  read-unknown
         |=  [=mool hav=(map (pair care path) cach)]
-        ^-  [_hav _..park]
+        ^+  hav
         =?  hav  ?=(~ hav)
           %-  malt  ^-  (list (pair (pair care path) cach))
           %+  turn
@@ -3799,22 +3791,16 @@
           |=  [c=care p=path]
           ^-  [[care path] cach]
           [[c p] ~]
-        |-  ^+  [hav ..park]
-        ?~  hav  [hav ..park]
-        =^  lef  ..park  $(hav l.hav)
-        =.  l.hav  lef
-        =^  rig  ..park  $(hav r.hav)
-        =.  r.hav  rig
+        |-  ^+  hav
+        ?~  hav  hav
+        =.  l.hav  $(hav l.hav)
+        =.  r.hav  $(hav r.hav)
         =/  [[=care =path] =cach]  n.hav
-        ?^  cach
-          [hav ..park]
-        =^  q  ..park  (aver for care case.mool path)
-        =.  q.n.hav  q
-        [hav ..park]
+        ?^  cach  hav
+        hav(q.n (aver for care case.mool path))
       --
     ::
         %many
-      :_  ..park
       ?.  |(?=(~ for) (allowed-by:ze u.for path.moat.rov per.red))
         [~ ~]
       =/  from-aeon  (case-to-aeon from.moat.rov)
@@ -4356,7 +4342,7 @@
     ::
     ++  read-at-tako                                    ::    read-at-tako:ze
       |=  [for=(unit ship) tak=tako mun=mood]           ::  seek and read
-      ^-  [(unit (unit cage)) _..park]
+      ^-  (unit (unit cage))
       ::  non-zero commits must be known, and reachable from within this desk
       ::
       ?.  ?|  =(0v0 tak)
@@ -4371,17 +4357,16 @@
               ==
               |(?=(~ for) (may-read u.for care.mun tak path.mun))
           ==  ==
-        [~ ..park]
+        ~
       ::  virtualize to catch and produce deterministic failures
       ::
       |^  =/  res  (mule |.(read))
           ?:  ?=(%& -.res)  p.res
-          %.  [[~ ~] ..park]
+          %.  [~ ~]
           (slog leaf+"clay: read-at-tako fail {<[desk=syd mun]>}" (flop p.res))
       ::
       ++  read
-        ^-  [(unit (unit cage)) _..park]
-        :_  ..park
+        ^-  (unit (unit cage))
         ?-  care.mun
           %a  (read-a tak path.mun)
           %b  (read-b tak path.mun)
@@ -4430,14 +4415,6 @@
     %-  tako-ford:den
     ::TODO  is this +got after +got semantically correct?
     (~(got by hit.dom:(~(got by dos.rom) syd)) ?~(yon let.dom:den u.yon))
-  ::  +wrap: save ford cache  XX deprecate?
-  ::
-  ++  wrap
-    |*  [her=ship syd=desk yon=(unit aeon) res=*]
-    =^  moves  ruf
-      =/  den  ((de now rof hen ruf) her syd)
-      abet:..park:den
-    [res (emil moves)]
   ::
   ++  trace
     |=  [pri=@ print=(trap tape)]
@@ -4465,7 +4442,7 @@
       ?.  =(%live liv.dom.den)
         %-  (trace 2 |.("{<i.desks>} is not live"))
         $(desks t.desks)
-      =^  res  den  (aver:den ~ %x da+now /desk/bill)
+      =/  res  (aver:den ~ %x da+now /desk/bill)
       =.  ruf  +:abet:den
       =/  bill
         ?.  ?=([~ ~ *] res)  *bill
@@ -4484,11 +4461,10 @@
         %+  turn  sat
         |=  [=desk =bill]
         leaf+"goad: output: {<desk>}: {<bill>}"
-    =^  agents  ..abet  (build-agents sat)
+    =/  agents  (build-agents sat)
     ::  TODO: enable if we can reduce memory usage
     ::
-    ::  =.  ..abet
-    ::    (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
+    ::  =+  (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
     ::
     =.  ..abet  tare                                    ::  [tare] >
     (emit hen %pass /lu/load %g %load agents)
@@ -4541,14 +4517,13 @@
   ::
   ++  build-agents
     |=  sat=(list [=desk =bill])
-    ^-  [load:gall _..abet]
+    ^-  load:gall
     =|  lad=load:gall
-    |-  ^-  [load:gall _..abet]
+    |-  ^-  load:gall
     ?~  sat
-      [lad ..abet]
+      lad
     =/  f  (ford our desk.i.sat ~)
-    =^  new=load:gall  ..abet
-      %-  wrap  :^  our  desk.i.sat  ~
+    =/  new=load:gall
       |-  ^-  load:gall
       ?~  bill.i.sat
         ~
@@ -4564,50 +4539,48 @@
   ::
   ++  build-marks
     |=  desks=(list desk)
-    ^+  ..abet
-    ?~  desks
-      ..abet
+    ^-  ~
+    ?~  desks  ~
+    =-  $(desks t.desks)
     =/  f  (ford our i.desks ~)
-    =^  null  ..abet
-      %-  wrap  :^  our  i.desks  ~
-      =/  marks=(list mark)
-        =/  pax=path  /
-        |-  ^-  (list mark)
-        =/  den  ((de now rof hen ruf) our i.desks)
-        =^  res  den  (aver:den ~ %y da+now mar+pax)
-        ?.  ?=([~ ~ *] res)
-          ~
-        =/  arch  ~|  [%building-arch i.desks]  !<(arch q.u.u.res)
-        =/  m1=(list mark)
-          ?.  ?&  ?=(^ fil.arch)
-                  ?=(^ pax)
-                  =(/hoon (slag (dec (lent pax)) `path`pax))
-              ==
-            ~
-          :_  ~
-          ?~  t.pax
-            ''
-          |-  ^-  mark
-          ?~  t.t.pax
-            i.pax
-          (rap 3 i.pax '-' $(pax t.pax) ~)
-        ::
-        =/  m2
-          |-  ^-  (list mark)
-          ?~  dir.arch
-            ~
-          =/  n1  ^$(pax (weld pax /[p.n.dir.arch]))
-          =/  n2  $(dir.arch l.dir.arch)
-          =/  n3  $(dir.arch r.dir.arch)
-          :(weld n1 n2 n3)
-        (weld m1 m2)
-      ::
-      |-  ^-  ~
-      ?~  marks
+    =/  marks=(list mark)
+      =/  pax=path  /
+      |-  ^-  (list mark)
+      =/  den  ((de now rof hen ruf) our i.desks)
+      =/  res  (aver:den ~ %y da+now mar+pax)
+      ?.  ?=([~ ~ *] res)
         ~
-      =/  =dais  (build-dais:f i.marks)
-      $(marks t.marks)
-    $(desks t.desks)
+      =/  arch  ~|  [%building-arch i.desks]  !<(arch q.u.u.res)
+      =/  m1=(list mark)
+        ?.  ?&  ?=(^ fil.arch)
+                ?=(^ pax)
+                =(/hoon (slag (dec (lent pax)) `path`pax))
+            ==
+          ~
+        :_  ~
+        ?~  t.pax
+          ''
+        |-  ^-  mark
+        ?~  t.t.pax
+          i.pax
+        (rap 3 i.pax '-' $(pax t.pax) ~)
+      ::
+      =/  m2
+        |-  ^-  (list mark)
+        ?~  dir.arch
+          ~
+        =/  n1  ^$(pax (weld pax /[p.n.dir.arch]))
+        =/  n2  $(dir.arch l.dir.arch)
+        =/  n3  $(dir.arch r.dir.arch)
+        :(weld n1 n2 n3)
+      (weld m1 m2)
+    ::
+    |-  ^-  ~
+    ?~  marks  ~
+    =-  $(marks t.marks)
+    ~|  i.desks
+    %-  road  |.
+    ~:(build-dais:f i.marks)
   ::
   ++  tore
     ^-  rock:tire
@@ -5902,7 +5875,7 @@
   ?.  aut  ~
   =/  for=(unit ship)  ?~(lyc ~ ?~(u.lyc ~ `n.u.lyc))
   =/  den  ((de now rof [/scryduct ~] ruf) his syd)
-  =/  result  (mule |.(-:(aver:den for u.run u.luk tyl)))
+  =/  result  (mule |.((aver:den for u.run u.luk tyl)))
   ?:  ?=(%| -.result)
     %-  (slog >%clay-scry-fail< p.result)
     ~
