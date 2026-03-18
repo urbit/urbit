@@ -620,7 +620,7 @@
     $(vaz t.vaz)
   ::
   ++  ford
-    !.
+    !:
     =>  |%
         +$  args
           $+  args
@@ -633,7 +633,7 @@
           $%  [%file =cage]
               [%hoon text=@t deps=(list (pair (unit term) bush)) =path]
               [%arch =spec files=(map @ta bush) =path]
-              [%mark grad=(unit (trel bush bush bush)) cor=vase]
+              [%mark grad=(unit (trel bush bush bush)) cor=vase =mark]
               [%tube p=$@(?(%same %mime) [a=[=mark =bush] b=[=mark =bush]])]  ::  identity/mime -> hoon
           ==
         ::
@@ -661,6 +661,7 @@
             =;  tus=vase
               ?:  only-prelude  tus
               ~>  %memo./clay/ford
+              :: %-  (trace 1 |.("make: hoon: {(spud path.bush)}"))
               (slub tus hoon:(parse-pile path.bush text.bush))
             =.  only-prelude  |
             ~>  %memo./clay/ford
@@ -672,6 +673,7 @@
           ::
               %arch
             ~>  %memo./clay/ford
+            :: %-  (trace 1 |.("make: arch: {(spud path.bush)}"))
             =/  [type-val=type type-map=type]
               =>  [sut=sut spec=spec.bush ..ut]
               ~>  %memo./clay/ford
@@ -696,6 +698,7 @@
               %mark
             =.  sut  *vase
             ~>  %memo./clay/ford
+            :: %-  (trace 1 |.("make: mark: %{(trip mark.bush)}"))
             =*  cor  cor.bush
             ?~  grad.bush
               %+  slub  (slop (with-face cor+cor) zuse.bud)
@@ -749,14 +752,21 @@
             =.  sut  *vase
             ~>  %memo./clay/ford
             ?@  p.bush
-              ?-  p.bush
-                %same  same.bud
-                %mime  =>(..zuse !>(|=(m=mime q.q.m)))
+              ?-    p.bush
+                  %same
+                :: %-  (trace 4 |.("make: tube: identity shortcircuit"))
+                same.bud
+              ::
+                  %mime
+                :: %-  (trace 4 |.("make: tube: hoon -> mime"))
+                =>(..zuse !>(|=(m=mime q.q.m)))
               ==
             =/  a  a.p.bush
             =/  b  b.p.bush
+            :: %-  (trace 1 |.("make: tube: %{(trip mark.a)} -> %{(trip mark.b)}"))
             =/  old  (bush-to-vase bush.a)
             ?:  (has-arm %grow mark.b old)
+              :: %-  (trace 4 |.("+grow:{(trip mark.a)}"))
               %+  slub  (with-faces cor+old ~)
               ^-  hoon
               :+  %brcl  !,(*hoon v=+<.cor)
@@ -775,8 +785,11 @@
               tsgl/[limb/mark.a limb/%grab]
             ::
             ?:  &(arm ?=(%& -.rab) ?=(^ q.p.rab))
+              :: %-  (trace 4 |.("+grab:{(trip mark.b)}"))
               p.rab
-            ?:  ?=(%noun mark.b)  same.bud
+            ?:  ?=(%noun mark.b)
+              :: %-  (trace 4 |.("default"))
+              same.bud
             ~|(no-cast-between+[mark.a mark.b] !!)  ::  XX +jump arm, +grab with @tas product
           ::
           ==
@@ -887,6 +900,14 @@
       ::
       ~>  %loop.'clay: loop detected'
       ~>  %memo./clay/ford
+      %-  %+  trace  1  |.
+          ?-  -.nod
+            %hoon  "bush: hoon: {(spud path.nod)}"
+            %file  "bush: file: mar=%{(trip mark.nod)} {(spud path.nod)}"
+            %mark  "bush: mark: %{(trip mark.nod)}"
+            %tube  "bush: tube: %{(trip a.mars.nod)} -> %{(trip b.mars.nod)}"
+            %arch  "bush: arch: {(spud path.nod)}"
+          ==
       =|  cycle=(set bush-node)
       |-  ^-  bush
       =*  bush-loop  $
@@ -913,11 +934,11 @@
           %mark
         =/  cor=vase  (build-fit %mar mark.nod)
         =/  gad=vase  (slap cor limb/%grad)
-        ?^  q.gad  [%mark ~ cor]
+        ?^  q.gad  [%mark ~ cor mark.nod]
         =/  deg  bush-loop(nod mark+q.gad)
         =/  tub  bush-loop(nod tube+[mark.nod q.gad])
         =/  but  bush-loop(nod tube+[q.gad mark.nod])
-        [%mark `[deg tub but] cor]
+        [%mark `[deg tub but] cor mark.nod]
       ::
           %tube
         ?:  =(a.mars.nod b.mars.nod)  tube+%same
