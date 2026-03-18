@@ -620,7 +620,7 @@
     $(vaz t.vaz)
   ::
   ++  ford
-    !:
+    !.
     =>  |%
         +$  args
           $+  args
