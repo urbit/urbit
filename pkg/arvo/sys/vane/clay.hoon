@@ -213,6 +213,7 @@
       sad=(map ship @da)                                ::  scry known broken
       bug=[veb=@ mas=@]                                 ::  verbosity
       pes=(set duct)                                    ::  perm subs
+      waw=writ:ward                                     ::  last ward
   ==                                                    ::
 ::
 ::  Unvalidated response to a request.
@@ -1611,13 +1612,16 @@
     =/  dom=dome
       ?:  =(desk syd)  dom
       dom:(~(got by dos.rom) desk)
-    %-  emil
-    =/  casts=(list cast:ward)
-      %:  tell:ward  desk
-          ?:(=(desk syd) get-seal get-seal:^$(syd desk))
+    =/  writ
+      %-  ~(put by *writ:ward)
+      :-  desk
+      :*  ?:(=(desk syd) get-seal get-seal:^$(syd desk))
           peg.dom  peq.dom
           ?~(pew.dom ~ -.u.pew.dom)
       ==
+    =/  casts=(list cast:ward)  (tell:ward writ waw)
+    =.  waw  (~(uni by waw) writ)
+    %-  emil
     %-  zing
     %+  turn  ~(tap in pes)
     |=  =duct
@@ -2064,6 +2068,7 @@
       ::  until unblocked on kelvin)
       ::
       =.  ..park  wick                                ::  [wick]
+      =.  ..park  (send-ward syd)                     ::  [send-ward]
       %-  (slog leaf+"clay: {<syd>} wait-for-kelvin, {<[compat=kel have=zuse+zuse]>}" ~)
       tare                                            ::  [tare] >
       ::
@@ -5482,16 +5487,7 @@
       %ward
     =.  pes.ruf  (~(put in pes.ruf) hen)
     :_  ..^$
-    %-  zing
-    %+  turn  ~(tap by dos.rom.ruf)
-    |=  [=desk =dojo]
-    =/  casts=(list cast:ward)
-      %:  tell:ward  desk
-        get-seal:((de now rof hen ruf) [our desk])
-        peg.dom.dojo  peq.dom.dojo
-        ?~(pew.dom.dojo ~ -.u.pew.dom.dojo)
-      ==
-    %+  turn  casts
+    %+  turn  (tell:ward waw.ruf *writ:ward)
     |=  =cast:ward
     [hen %give %ward cast]
   ::
@@ -5606,6 +5602,7 @@
             sad=(map ship @da)
             bug=[veb=@ mas=@]
             pes=(set duct)
+            waw=writ:ward
         ==
       +$  room-16  $+  room-16
         $:  hun=duct
@@ -6407,7 +6404,8 @@
         dom  `dome-16`dom.red(ren [ren.dom.red peg=~ peq=~ per=~])
       ==
     ::
-      bug  [bug.raf pes=~]
+    ::
+      bug  [bug.raf pes=~ waw=~]
     ==
   --
 ::
