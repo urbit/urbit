@@ -60,9 +60,10 @@
 =|  state-0
 =*  state  -
 =<
+  :-  %new-agent
   %-  agent:dbug
   %+  verb  |
-  ^-  agent:gall
+  ^-  form:agent:gall
   |_  =bowl:gall
   +*  this       .
       aqua-core  +>
@@ -118,11 +119,12 @@
   ++  on-agent  on-agent:def
   ::
   ++  on-arvo
-    |=  [=wire sign=sign-arvo]
+    |=  [=wire gift=gift-user-v1:gall]
     ^-  step:agent:gall
-    ?+  wire  (on-arvo:def wire sign)
+    ?>  ?=(%syscall -.gift)
+    ?+  wire  (on-arvo:def wire gift)
         [%wait @ ~]
-      ?>  ?=(%wake +<.sign)
+      ?>  ?=(%wake +<.gift)
       =/  wen=@da  (slav %da i.t.wire)
       =^  cards  state
         (handle-wake:ac wen)
@@ -819,7 +821,7 @@
   =/  until=@da  (add now.hid ~s40)
   =.  tym.azi.piers  until
   %-  emit-cards
-  [%pass /wait/(scot %da until) %arvo %b %wait until]~
+  [%pass /wait/(scot %da until) %arvo %syscall %b %wait until]~
 ::
 ++  stop-azimuth-timer
   ^+  this
@@ -827,7 +829,7 @@
   ?:  =(tym *@da)
     this
   %-  emit-cards
-  [%pass /wait/(scot %da tym) %arvo %b %rest tym]~
+  [%pass /wait/(scot %da tym) %arvo %syscall %b %rest tym]~
 ::  +spam-logs: fill out the logs with as many events as needed using a dummy ship
 ::  (needed to advance the blocknumber in eth-wathcher)
 ::
