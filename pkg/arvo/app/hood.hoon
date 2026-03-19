@@ -3,7 +3,7 @@
     kiln=hood-kiln, load=hood-load,
     ahoy=hood-ahoy
 |%
-+$  card  card:shoe
++$  card  card:agent:gall
 +$  state
   $~  [%29 *state:drum *state:helm *state:kiln *state:ahoy]
   $>(%29 any-state)
@@ -38,6 +38,7 @@
           kiln=state-12:kiln
           ahoy=state-0:ahoy
   ==  ==
+::
 +$  any-state-tuple
   $:  drum=any-state:drum
       helm=any-state:helm
@@ -51,21 +52,14 @@
       [%kiln any-state:kiln]
       [%write *]  ::  gets deleted
   ==
-::  XX  expand
-+$  command
-  $?  %help
-  ==
 --
 ::
 %-  agent:dbug
 ^-  agent:gall
-%-  (agent:shoe command)
-^-  (shoe:shoe command)
 =|  =state
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
-    des   ~(. (default:shoe this command) bowl)
     drum-core  (drum bowl drum.state)
     helm-core  (helm bowl helm.state)
     kiln-core  (kiln bowl kiln.state)
@@ -125,7 +119,7 @@
   ::
   ?+  mark  (on-poke:def mark vase)
     %atom            poke-helm(mark %helm-atom)
-    %dill-poke       poke-drum
+    %dill-poke       poke-dill
     %hood-sync       poke-kiln(mark %kiln-sync)
     %write-sec-atom  poke-helm(mark %helm-write-sec-atom)
     %rate            poke-kiln(mark %kiln-rate)
@@ -134,15 +128,22 @@
   ++  poke-helm  =^(c helm.state (poke:helm-core mark vase) [c this])
   ++  poke-kiln  =^(c kiln.state (poke:kiln-core mark vase) [c this])
   ++  poke-ahoy  =^(c ahoy.state (poke:ahoy-core mark vase) [c this])
+  ++  poke-dill
+    =+  !<([ses=@tas belt=dill-belt:dill] vase)
+    ?.  =(%dl ses)
+      poke-drum
+    =^(c kiln.state (take-dill-poke:kiln-core belt) [c this])
+  ::
   --
 ::
 ++  on-watch
   |=  =path
   ^-  (quip card _this)
   ?+  path  (on-watch:def +<)
-    [%drum *]  =^(c drum.state (peer:drum-core t.path) [c this])
-    [%kiln *]  =^(c kiln.state (peer:kiln-core t.path) [c this])
-    [%dill *]  =^(c drum.state (peer:drum-core +<) [c this])
+    [%drum *]      =^(c drum.state (peer:drum-core t.path) [c this])
+    [%kiln *]      =^(c kiln.state (peer:kiln-core t.path) [c this])
+    [%dill %dl ~]  =^(c kiln.state peer-dill:kiln-core [c this])
+    [%dill *]      =^(c drum.state (peer:drum-core +<) [c this])
   ==
 ::
 ++  on-agent
@@ -163,22 +164,5 @@
     [%kiln *]  =^(c kiln.state (take-arvo:kiln-core t.wire syn) [c this])
     [%ahoy *]  =^(c ahoy.state (take-arvo:ahoy-core t.wire syn) [c this])
   ==
-::  XX expand
-++  command-parser  command-parser:des
-++  tab-list        tab-list:des
-++  on-command      on-command:des
-++  can-connect
-  |=  =sole-id:shoe
-  ^-  ?
-  ?|  =(~zod src.bowl)
-      (team:title [our src]:bowl)
-  ==
 ::
-++  on-connect
-  |=  =sole-id:shoe
-  ^-  (quip card _this)
-  =^  cards  kiln.state  (put-sole:kiln-core sole-id)
-  [cards this]
-::
-++  on-disconnect   on-disconnect:des
 --

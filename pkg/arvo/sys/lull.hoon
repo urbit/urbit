@@ -889,12 +889,7 @@
         [%meek =space =spar]        :: initiate %peek request
         [%mage =space =spar]        :: send %page of data; intended for acks
         [%rate =spar rate]          :: get rate progress for +peeks, from unix
-        $:  %prog                   :: subscribe to progress %rate
-            =spar                   :: if ?=(^ task), use it to modify path.spar
-            $=  task
-            $@(~ ?([%chum ~] [%keen kid=(unit @)]))
-            feq=@ud
-        ==
+        [%prog =spar feq=@ud]       :: subscribe to progress %rate
         [%whey =spar boq=@ud]       :: weight of noun bounded at .path.spar
                                     :: as measured by .boq
         [%gulp path]                :: like %plug, but for |mesa
@@ -935,7 +930,6 @@
         [%stub num=@ud key=@]
         [%near spar dat=(unit (unit page))]
         [%tune spar roar=(unit roar)]
-        $>(%rate task)
     ::
         [%turf turfs=(list turf)]
         [%saxo sponsors=(list ship)]

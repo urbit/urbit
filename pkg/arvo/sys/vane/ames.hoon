@@ -9621,19 +9621,29 @@
             %.  (ev-emit:c hen %give %sage her^path gage)
             (ev-tace fin.veb.bug.ames-state |.("give %sage={(spud path)}"))
           %.  (ev-emit:c hen %give %rate her^path ~)
-          (ev-tace fin.veb.bug.ames-state |.("give %rate={(spud path)}"))
+          (ev-tace fin.veb.bug.ames-state |.("give last %rate={(spud path)}"))
         ::
         ++  ev-give-rate
           |=  [=spar =rate]
           |=  [[hen=duct ints=(set ints)] core=_ev-core]
+          =/  user-path=path
+            :: =-  ?>  ?=(^ -)  -
+            %-  ~(rep by tip.per.core)
+            |=  [[=path ls=(set [duct =ames=path])] out=path]
+            ^+  out
+            ?.  (~(has in ls) hen path.spar)
+              out
+            path
           %-  ~(rep by ints)
           |=  [int=^ints c=_core]
           ?@  int  c
-          ?>  &(?=(^ rate) =(boq.rate boq.int))
+          ~|  [rate=rate int=int]
+          :: ?>  &(?=(^ rate) =(boq.rate boq.int))  :: XX
+          ?>  ?=(^ rate)
           ?.   =(0 (mod fag.rate feq.int))
             c
-          %.  (ev-emit:c hen %give %rate spar rate)
-          (ev-tace fin.veb.bug.ames-state |.("give %rate={(spud path.spar)}"))
+          %.  (ev-emit:c hen %give %rate spar(path user-path) rate)
+          (ev-tace fin.veb.bug.ames-state |.("give %rate={(spud user-path)}"))
         ::
         :: ++  ev-give-ints
         ::   |=  $:  =spar
@@ -9659,32 +9669,40 @@
         ::   (ev-tace fin.veb.bug.ames-state |.("give %rate={(spud path.spar)}"))
         ::
         ++  ev-add-rate
-          |=  [=path task=?(~ ?([%chum ~] [%keen kid=(unit @)])) freq=@ud]
+          |=  [=path feq=@ud]
           ^+  ev-core
-          =/  =space
-            ?@  task  [%none ~]
-            ?-  -.task
-              %chum  chum-to-our:ev-core
-              %keen  ?~  kid.task  publ/life.ames-state
-                     :+  %shut  u.kid.task
-                     -:(got:key-chain client-chain.per u.kid.task)
-            ==
-          =.  path  (make-space-path space path)
-          ::  path should be the one given by the first bunted %rate after
-          ::  recording interest in this path
+          :: =/  =space
+          ::   ?@  task  [%none ~]
+          ::   ?-  -.task
+          ::     %chum  chum-to-our:ev-core
+          ::     %keen  ?~  kid.task  publ/life.ames-state
+          ::            :+  %shut  u.kid.task
+          ::            -:(got:key-chain client-chain.per u.kid.task)
+          ::   ==
+          :: =.  path  (make-space-path space path)
+          ::  we only allow the same listener to subscribe to progress %rates
           ::
-          ?^  ms=(~(get by pit.per) path)
-            =.  pit.per
-              %+  ~(put by pit.per)  path
-              ::  ignore bloq, included in %whey namespace; only used by |fine
-              ::
-              u.ms(for (~(put ju for.u.ms) hen %rate boq=*@ud freq))
+          =+  ls=(~(get ju tip.per) path)
+          ?:  =(~ ls)  :: XX TMI
+            ::  XX crash instead?
+            ::  interest for a %sage needs to exist before %rate
+            ::
+            %-  %+  ev-tace  |(odd.veb.bug.ames-state fin.veb.bug.ames-state)
+                |.("missing path for rate path={(spud path)}}")
             ev-core
-          ::  XX crash instead?
-          ::  interest for a %sage needs to exist before %rate
-          ::
-          %-  %+  ev-tace  |(odd.veb.bug.ames-state fin.veb.bug.ames-state)
-              |.("missing path for rate path={(spud path)}}")
+          =/  ames-path=^path
+            %-  ~(rep in ls)
+            |=  [[=duct =ames=^path] p=^path]  :: XX early exit?
+            ?.  =(hen duct)  p
+            ames-path
+          =+  ms=(~(got by pit.per) ames-path)
+          =.  pit.per
+            %+  ~(put by pit.per)  ames-path
+            ::  XX is this still true?
+            ::
+            ::  ignore bloq, included in %whey namespace; only used by |fine
+            ::
+            ms(for (~(put ju for.ms) hen %rate boq=*@ud feq))
           ev-core
         ::
         ++  ev-cancel-peek
@@ -9734,23 +9752,6 @@
             core(tip.per (~(del ju tip.per.core) path hen ames-path))
           =+  ?^  listener  ~
               ((ev-tace odd.veb.bug.ames-state |.("listener not in pit")) ~)
-          ev-core
-        ::
-        ++  ev-add-rate
-          |=  [=path freq=@ud]
-          ^+  ev-core
-          ?^  ms=(~(get by pit.per) path)
-            =.  pit.per
-              %+  ~(put by pit.per)  path
-              ::  ignore bloq, included in %whey namespace; only used by |fine
-              ::
-              u.ms(for (~(put ju for.u.ms) hen %rate boq=*@ud freq))
-            ev-core
-          ::  XX crash instead?
-          ::  interest for a %sage needs to exist before %rate
-          ::
-          %-  %+  ev-tace  |(odd.veb.bug.ames-state fin.veb.bug.ames-state)
-              |.("missing path for rate path={(spud path)}}")
           ev-core
         ::
         +|  %internals
@@ -13074,8 +13075,7 @@
     ++  pe-prog
       |=  $:  dud=(unit goof)
               =spar
-              task=$@(~ ?([%chum ~] [%keen key=(unit @ud)]))
-              freq=@ud
+              feq=@ud
           ==
       ::  XX also for |ames; move to common tasks when supported
       ::
@@ -13088,7 +13088,7 @@
         ?.  ?=([~ %known *] +.ship-state)
           !!  :: no %aliens allowed
         =<  ev-abet
-        %.  [path.spar task freq]
+        %.  [path.spar feq]
         ev-add-rate:(ev-abed:ev-core hen ship.spar +.u.ship-state)
       moves^vane-gate
     ::
@@ -13129,13 +13129,6 @@
       ::   (call:me-core hen dud %soft %prod ship ~)
       :: (weld moves moves-prod)^vane-gate
       moves^vane-gate
-    ::
-    ++  pe-whey
-      |=  [dud=(unit goof) spar:^ames boq=@ud]
-      =/  ship-state  (pe-find-peer ship)
-      ?:  ?=(%mesa -.ship-state)
-        (pe-chum ship %a %x '1' %$ %whey (scot %ud boq) path)
-      (call:am-core hen dud %soft %whey ship^path boq)
     ::
     +|  %mesa-tasks
     ::
@@ -13443,45 +13436,6 @@
           hear-page:ev-mess:(ev-abed:ev-core hen ship.p.mess +.u.chum)
         ::
         ==
-      moves^vane-gate
-    ::
-    ++  pe-rate
-      |=  [dud=(unit goof) =spar =rate]
-      ::
-      =/  ship-state  (pe-find-peer ship.spar)
-      ?>  ?=(%mesa -.ship-state)
-      =^  moves  ames-state
-        ?.  ?=([~ %known *] +.ship-state)
-          !!  :: no %aliens allowed
-        =<  ev-abet
-        (ev-give-rate:(ev-foco:ev-core ship.spar +.u.ship-state) spar rate)
-      moves^vane-gate
-    ::  register interest in the %rate of the peek for this path
-    ::
-    ++  pe-prog
-      |=  $:  dud=(unit goof)
-              $=  task
-              $%  [%keen sec=(unit [idx=@ key=@]) spar:ames]
-                  [%chum spar:ames]
-              ==
-              freq=@ud
-          ==
-      ::  XX also for |ames; move to common tasks
-      ::
-      =/  [=space =ship =path]
-        ?-  -.task
-          %chum  [chum-to-our:ev-core [ship path]:task]
-          %keen  :_  [ship path]:task
-                 ?~(sec.task publ/life.ames-state shut/u.sec.task)
-        ==
-      =/  ship-state  (pe-find-peer ship)
-      ?:  ?=(%ames -.ship-state)  !!
-      =^  moves  ames-state
-        ?.  ?=([~ %known *] +.ship-state)
-          !!  :: no %aliens allowed
-        =.  path  (make-space-path space path)
-        =<  ev-abet
-        (ev-add-rate:(ev-foco:ev-core ship +.u.ship-state) path freq)
       moves^vane-gate
     ::
     --
