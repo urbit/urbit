@@ -2666,13 +2666,15 @@
   ::
   ++  ward                                              ::  permission state
     |%
-    +$  writ
-      $:  =desk
-          ped=(set perm:gall)  ::  required perms (desk.seal)
+    +$  bond
+      $:  ped=(set perm:gall)  ::  required perms (desk.seal)
           peg=(set perm:gall)  ::  granted perms
           peq=(set perm:gall)  ::  requested opt perms
           pew=(set perm:gall)  ::  awaiting req perms
       ==
+    ::
+    +$  writ  (map desk bond)
+    ::
     +$  cast
       $%  ::  %have: got permissions for a desk  ::TODO  mb split?
           ::  %need: permissions missing on commit
@@ -2682,12 +2684,28 @@
       ==
     ::
     ++  tell
-    |=  =writ
+    |=  [new=writ old=writ]
     ^-  (list cast)
-    ?:  =(~ pew.writ)  [%have [desk ped peg peq]:writ]~
-    :~  [%have desk ped peg peq]:writ
-        [%need desk pew]:writ
-    ==
+    %-  ~(rep by new)
+    |=  [[=desk bond] acc=(list cast)]
+    ^-  (list cast)
+    =/  has-perms  |(!=(~ ped) !=(~ peg) !=(~ peq))
+    %+  welp  acc
+    ?~  bond=(~(get by old) desk)
+      %+  welp
+        ?:(has-perms [%have desk ped peg peq]~ ~)
+      ?~(pew ~ [%need desk pew]~)
+    ::  if any permissions changed and all of them not null send have
+    %+  welp
+      ?.  ?&  ?|  !=(ped ped.u.bond)
+                  !=(peg peg.u.bond)
+                  !=(peq peq.u.bond)
+              ==
+              has-perms
+          ==
+        ~
+      [%have desk ped peg peq]~
+    ?:(=(pew pew.u.bond) ~ [[%need desk pew] ~])
   --
   ::                                             ::
   ++  tire                                              ::  app state
@@ -4003,7 +4021,7 @@
           %pass
         =/  =note:agent  q.card
         ?+  -.note  |
-            %agent   
+            %agent
           ?-  -.task.note
             %watch             [%watch name.note path.task.note]
             %watch-as          [%watch name.note path.task.note]
