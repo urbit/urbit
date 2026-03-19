@@ -174,13 +174,14 @@
       fil
       ?:  =(%base desk)
         [/sys/zuse/hoon [%& ;;(page:clay hoon+(zuse-upd kel))]]~
-      :~
-        [/app/bar/hoon [%& agent]]
-        [/lib/skeleton/hoon [%& ;;(page:clay hoon+lib-skel)]]
-        [/lib/default-agent/hoon [%& ;;(page:clay hoon+lib-def)]]
-        [/mar/bill/hoon [%& ;;(page:clay hoon+mar-bill)]]
-        [/desk/bill [%& ;;(page:clay noun+:~(%bar))]]
-      ==
+      ?:  =(%foo desk)
+        :~  [/app/bar/hoon [%& agent]]
+            [/desk/bill [%& ;;(page:clay noun+:~(%bar))]]
+            [/lib/skeleton/hoon [%& ;;(page:clay hoon+lib-skel)]]
+            [/lib/default-agent/hoon [%& ;;(page:clay hoon+lib-def)]]
+            [/mar/bill/hoon [%& ;;(page:clay hoon+mar-bill)]]
+        ==
+      ~
     :~
       [/mar/noun/hoon [%& ;;(page:clay hoon+mar-noun)]]
       [/mar/hoon/hoon [%& ;;(page:clay hoon+mar-hoon)]]
@@ -303,32 +304,56 @@
   ==
 ::
 ++  ex-kernel-build
-  |=  [liz=(list [=desk =zest:clay]) perm=(list [desk ped=(set perm:gall) peg=(set perm:gall) per=(set perm:gall)])]
+  |=  [suspend=(list [=desk =zest:clay]) perm=(list [desk ese=? ped=(set perm:gall) peg=(set perm:gall) per=(set perm:gall)])]
   ^-  (list $-(move tang))
-  ::  sending ward gifts on awaiting required permissions update
-  %+  welp
-    %-  zing
-    %+  turn  perm
-    |=  [=desk ped=(set perm:gall) peg=(set perm:gall) per=(set perm:gall)]
-    %+  welp
-      :~  (ex-ward-have desk ped peg)
-      ==
-    ?~  per  ~
-    :~  (ex-ward-need desk per)
-    ==
-  ::  suspending desks without pending commit or with insufficient permissions
+  ::  ward gift moves on awaiting required permission update
+  ::  flag indicates essential desks readines for %base update
+  ::
+  =/  [movl=(list (list $-(move tang))) ese-ready=?]
+    %^  spin  perm  &
+    |=  [[=desk ese=? ped=(set perm:gall) peg=(set perm:gall) per=(set perm:gall)] ese-ready=?]
+    ::  checking required perms
+    =/  ward-have
+      ?:(&(=(~ ped) =(~ peg)) ~ [(ex-ward-have desk ped peg) ~])
+    ?~  per  [ward-have ese-ready]
+    ?:  ese
+      [(snoc ward-have (ex-ward-need desk per)) %.n]
+    [(snoc ward-have (ex-ward-need desk per)) ese-ready]
+  ::
+  ::  list of desks to suspend and
+  ::  ward gifts on awaiting required permissions for non-esential desks
+  ::
+  =/  [nese-zeal=(list [desk zest:clay]) nese-ward=(list $-(move tang))]
+    %+  roll  perm
+    |=  [[=desk ese=? ped=(set perm:gall) peg=(set perm:gall) per=(set perm:gall)] [nese-zeal=(list [desk zest:clay]) nese-ward=(list $-(move tang))]]
+    ?:  ese  [nese-zeal nese-ward]
+    =/  ward-have
+      ?:(&(=(~ ped) =(~ peg)) ~ [(ex-ward-have desk ped peg) ~])
+    =/  ward-mov=(list $-(move tang))
+      ?~  per
+        ward-have
+      (snoc ward-have (ex-ward-need desk per))
+    [?~(per nese-zeal [[desk %held] nese-zeal]) (welp ward-mov nese-ward)]
+  ::
+  ?.  ese-ready
+    ::  essential not ready on perms
+    ::
+    %+  welp  `(list $-(move tang))`(zing movl)
+    [(ex-gift [%tire %| [%wait %base [%zuse 408]]]) ~]
+  ::  esential desks ready to apply base update,
+  ::  suspending desks without commit or with insufficient permissions
+  ::
+  %+  welp  nese-ward
   :~  %+  ex-pass  /kiln/bump/zeal
       :+  %c  %zeal
-      %+  welp  liz
-      %+  roll  perm
-      |=([[=desk *] l=(list [desk zest:clay])] [[desk %held] l])
+      (welp suspend nese-zeal)
       ::
       ex-what
       (ex [~[/blah] %slip %c %pork ~])
   ==
 ::
 ++  ex-resume-commit
-  |=  [v=@ud kel=@ud deku=(list [desk ped=(set perm:gall) peg=(set perm:gall)])]
+  |=  [v=@ud kel=@ud deku=(list [=desk ese=? ped=(set perm:gall) peg=(set perm:gall)])]
   ^-  (list $-(move tang))
   ;:  welp
     ::  %base
@@ -336,27 +361,36 @@
         (ex-text ": /~nul/base/{<v>}/sys/zuse/hoon")
         (ex-text ": /~nul/base/{<v>}/sys/kelvin")
     ==
+    ::
+    =/  one-ese  =(1 (lent (skim deku |=([@ ese=? *] ese))))
     ::  update per desk w/w-o perm seal file
-    ^-  (list $-(move tang))
-    %-  zing
-    %+  turn  deku
-    |=  [=desk ped=(set perm:gall) *]
-    ^-  (list $-(move tang))
-    ?:  ?=(%base desk)  ~
-    %+  welp
-      :~  ex-wick
-          (ex-text ": /~nul/{(scow %tas desk)}/{<v>}/sys/kelvin")
-      ==
-    ?~  ped  ~
-    :~  (ex-text "+ /~nul/{(scow %tas desk)}/{<v>}/desk/seal")
+    ::
+    =/  l  *(list $-(move tang))
+    |-  ^-  (list $-(move tang))
+    ?~  deku  l
+    =,  i.deku
+    ::  if essential and none of the remaining desks on the list are esential
+    =/  is-last-ese=?  |(&(ese (levy t.deku |=([@ e=? *] !e))) !ese)
+    %=  $
+      l
+        ;:  welp
+          l
+          :~  ex-wick
+              (ex-text ": /~nul/{(scow %tas desk)}/{<v>}/sys/kelvin")
+          ==
+          ?~  ped  ~
+          [(ex-text "+ /~nul/{(scow %tas desk)}/{<v>}/desk/seal") ~]
+          ?~(peg ~ [(ex-ward-have [desk ped peg]) ~])        ::  ward gift per desk
+          [(ex-gift [%tire %| [%warp desk [%zuse kel]]]) ~]  ::  tire gift per desk
+          ::  if desk updated is essential ex-gift tire for %base,
+          ::  unless %base is ready to proceed with update
+          ?.  one-ese
+            ?:  is-last-ese  ~
+            [(ex-gift [%tire %| [%warp %base [%zuse kel]]]) ~]
+          [(ex-gift [%tire %| [%warp %base [%zuse kel]]]) ~]
+        ==
+      deku  t.deku
     ==
-    ::  ward gift per desk
-    %+  roll  deku
-    |=  [[=desk ped=(set perm:gall) peg=(set perm:gall)] l=(list $-(move tang))]
-    ?~  ped  l  [(ex-ward-have [desk ped peg]) l]
-    ::  tire gift per desk
-    %+  turn  deku
-    |=([=desk *] (ex-gift [%tire %| [%warp desk [%zuse kel]]]))
     ::
     :~  ex-load
     ==
@@ -435,7 +469,7 @@
 ::
 ::  tests
 ::
-++  test-blocked-on-kelvin
+++  test-apply-kel-update
 ::  non-essential desk ready before base desk commit
 ::  kelvin update applied on base desk and on non-essential desk
 ::
@@ -454,7 +488,7 @@
   ::
   ;<  ~  bind:m
     %+  expect-moves  mov4
-    (ex-resume-commit 2 408 [[%foo perm-none perm-none] ~])
+    (ex-resume-commit 2 408 [[%foo | perm-none perm-none] ~])
   ;<  mov6=(list move)  bind:m  do-wick
   (expect-moves mov6 ~)
 ::
@@ -476,7 +510,7 @@
   ::
   ;<  ~  bind:m
     %+  expect-moves  mov5
-    (ex-resume-commit 2 407 [[%foo perm-none perm-none] ~])
+    (ex-resume-commit 2 407 [[%foo | perm-none perm-none] ~])
   ;<  mov6=(list move)  bind:m  do-wick
   (expect-moves mov6 ~)
 ::
@@ -513,13 +547,13 @@
   ;<  mov5=(list move)  bind:m  do-wick
   (expect-moves mov5 ~)
 ::
-++  test-blocked-on-essential-desk-kelvin-update
-::  kelvin update recieved on base desk, but essential desk not ready
+++  test-blocked-on-essential-desk-during-kel-update
+::  kelvin update received on base desk, but essential desk not ready
 ::  no-op, notify
 ::
   %-  eval-mare
   =/  m  (mare ,~)
-  ;<  ~                 bind:m  (do-setup-desks [%foo &] ~)
+  ;<  *                 bind:m  (do-setup-desks [%foo &] ~)
   ::  update base to next kelvin
   ;<  mov2=(list move)  bind:m  (do-park %base 408 ~)
   ::
@@ -530,8 +564,8 @@
       (ex-gift [%tire %| [%wait %base [%zuse 408]]])
   ==
 ::
-++  test-apply-kel-suspend-foo
-::  kelvin update recieved on base desk, but non-essential desk not ready
+++  test-apply-kel-suspend-non-essential
+::  kelvin update received on base desk, but non-essential desk not ready
 ::  suspend non-essential desks, apply base update
 ::
   %-  eval-mare
@@ -553,7 +587,7 @@
 ::
 ++  test-missing-perm-on-commit
 ::  non-essential desk recieve commit, with updated required perms,
-::  commit suspended, recieves perms, commit applied and notify on perms update
+::  commit suspended, receives perms, commit applied and notify on perms update
 ::
   %-  eval-mare
   =/  m  (mare ,~)
@@ -565,15 +599,16 @@
   :~  ex-wick
       (ex-text "+ /~nul/foo/2/desk/seal")
       (ex-ward-have %foo pers-1 pers-1)
+      (ex-ward-need %foo perm-none)
       (ex-gift [%tire %| [%zest %foo %live]])
       (ex-gift [%tire %| [%zest %base %live]])
       ex-load
   ==
 ::
-++  test-missing-perm-on-kel-update
-::  kelvin update recieved on base desk, non-essential desk ready on kelvin, blocked on perms
+++  test-non-essential-desk-missing-perm-on-kel-update
+::  kelvin update received on base desk, non-essential desk ready on kelvin, blocked on perms
 ::  non-essential desk suspended, kelvin update applied on base
-::  non-essential desk recieves required perms
+::  non-essential desk receives required perms
 ::  non-essential desk commit applied and revived
 ::
   %-  eval-mare
@@ -583,7 +618,7 @@
   ;<  mov2=(list move)  bind:m  (do-park %base 408 ~)
   ;<  ~  bind:m
     %+  expect-moves  mov2
-    (ex-kernel-build ~ [[%foo perm-none perm-none pers-1] ~])
+    (ex-kernel-build ~ [[%foo | perm-none perm-none pers-1] ~])
   ;<  *                 bind:m  (call ~[/blah] [%zeal [%foo %held]~])
   ;<  ~                 bind:m  (set-kelvin 408)
   ;<  mov3=(list move)  bind:m  do-pork
@@ -599,6 +634,7 @@
         (ex-text ": /~nul/foo/2/sys/kelvin")
         (ex-text "+ /~nul/foo/2/desk/seal")
         (ex-ward-have %foo pers-1 pers-1)
+        (ex-ward-need %foo perm-none)
         (ex-pass /park-held/foo [%b [%wait now]])
         (ex-gift [%tire %| [%warp %foo [%zuse 408]]])
         ex-load
@@ -611,8 +647,8 @@
       ex-load
   ==
 ::
-++  test-missing-perm-on-kel-update-2
-::  kelvin update recieved on base desk, non-essential desk ready on kelvin and on perms
+++  test-apply-kel-update-with-perms
+::  kelvin update received on base desk, non-essential desk ready on kelvin and on perms
 ::  kelvin update applied on base and non-essential desk
 ::
   %-  eval-mare
@@ -628,10 +664,10 @@
   ;<  ~  bind:m  (set-kelvin 408)
   ;<  mov4=(list move)  bind:m  do-pork
   %+  expect-moves  mov4
-  (ex-resume-commit 2 408 [[%foo pers-1 pers-1] ~])
+  (ex-resume-commit 2 408 [[%foo | pers-1 pers-1] ~])
 ::
 ++  foo-apply-kel2
-::  non-essesntial desk, blocked on kelvin and kelvin-1 and perms
+::  non-essential desk, blocked on kelvin and kelvin-1 and perms
 ::
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
@@ -646,7 +682,7 @@
 ::  non-essential desk ready for kelvin, blocked on perms and ready on kelvin-1 update, blocked on perms
 ::  kelvin update skipped in favour of kelvin-1
 ::  suspend non-essential desks, kelvin-1 update applied on base desk
-::  non-essential desk recieves required perms
+::  non-essential desk receives required perms
 ::  non-essential desk update to kelvin-1 applied and revived
 ::
   %-  eval-mare
@@ -655,7 +691,7 @@
   ;<  mov=(list move)   bind:m  (do-park %base 407 ~)
   ;<  ~  bind:m
     %+  expect-moves  mov
-    (ex-kernel-build ~ [[%foo perm-none perm-none pers-2] ~])
+    (ex-kernel-build ~ [[%foo | perm-none perm-none pers-2] ~])
   ;<  mov2=(list move)  bind:m  (call ~[/blah] [%zeal [%foo %held]~])
   ;<  ~                 bind:m  (set-kelvin 407)
   ;<  mov3=(list move)  bind:m  do-pork
@@ -670,6 +706,7 @@
         (ex-text ": /~nul/foo/2/sys/kelvin")
         (ex-text "+ /~nul/foo/2/desk/seal")
         (ex-ward-have %foo pers-2 pers-2)
+        (ex-ward-need %foo perm-none)
         (ex-pass /park-held/foo [%b [%wait now]])
         (ex-gift [%tire %| [%warp %foo zuse+407]])
         (ex-gift [%tire %| [%warp %foo zuse+408]])
@@ -686,10 +723,10 @@
 ++  test-apply-kelvin-1-and-perms2
 ::  non-essential desk ready for kelvin, blocked on perms and ready on kelvin-1 update, blocked on perms
 ::  suspend non-essential desks, kelvin update applied on base desk
-::  non-essential desk recieves required perms
+::  non-essential desk receives required perms
 ::  non-essential desk kelvin update applied and revived
 ::  suspend non-essential desks, kelvin-1 update applied on base desk
-::  non-essential desk recieves required perms
+::  non-essential desk receives required perms
 ::  non-essential desk kelvin-1 update applied and revived
 ::
   %-  eval-mare
@@ -698,7 +735,7 @@
   ;<  mov=(list move)   bind:m  (do-park %base 408 ~)
   ;<  ~  bind:m
     %+  expect-moves  mov
-    (ex-kernel-build ~ [[%foo perm-none perm-none pers-1] ~])
+    (ex-kernel-build ~ [[%foo | perm-none perm-none pers-1] ~])
   ;<  mov2=(list move)  bind:m  (call ~[/blah] [%zeal [%foo %held]~])
   ;<  ~                 bind:m  (set-kelvin 408)
   ;<  mov3=(list move)  bind:m  do-pork
@@ -713,6 +750,7 @@
         (ex-text ": /~nul/foo/2/sys/kelvin")
         (ex-text "+ /~nul/foo/2/desk/seal")
         (ex-ward-have %foo pers-1 pers-1)
+        (ex-ward-need %foo perm-none)
         (ex-pass /park-held/foo [%b [%wait now]])
         (ex-gift [%tire %| [%warp %foo [%zuse 408]]])
         ex-load
@@ -727,7 +765,8 @@
   ;<  mov6=(list move)   bind:m  (do-park %base 407 ~)
   ;<  ~  bind:m
     %+  expect-moves  mov6
-    (ex-kernel-build ~ [[%foo pers-1 pers-1 (silt :~([%eyre ~]))] ~])
+    ::  not passing perms here, already got %ward for them on %seal
+    (ex-kernel-build ~ [[%foo | ~ ~ (silt :~([%eyre ~]))] ~])
   ;<  mov7=(list move)  bind:m  (call ~[/blah] [%zeal [%foo %held]~])
   ;<  ~                 bind:m  (set-kelvin 407)
   ;<  mov8=(list move)  bind:m  do-pork
@@ -743,6 +782,7 @@
         (ex-text ": /~nul/foo/3/desk/seal")
         (ex-text ": /~nul/foo/3/sys/kelvin")
         (ex-ward-have %foo pers-2 pers-2)
+        (ex-ward-need %foo perm-none)
         (ex-pass /park-held/foo [%b [%wait now]])
         (ex-gift [%tire %| [%warp %foo [%zuse 407]]])
         ex-load
