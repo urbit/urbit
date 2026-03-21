@@ -446,6 +446,27 @@
   ::
   [deletes changes]
 ::
+++  page-to-cord
+  |=  =page
+  ^-  @t
+  ?+  p.page  ~|([%sys-bad-mark p.page] !!)
+    %hoon  ;;(@t q.page)
+    %mime  q.q:;;(mime q.page)
+  ==
+::
+++  make-bud
+  |=  zus=vase
+  ^+  bud
+  =/  zuse  !>(..zus)
+  =>  [zus=zus zuse=zuse ..slap]
+  :*  zuse=zus
+      nave=(slap zus !,(*hoon nave:clay))
+      cork=(slap zus !,(*hoon cork))
+      same=(slap zus !,(*hoon same))
+      mime=(slap zus !,(*hoon mime))
+      cass=(slap zus !,(*hoon cass:clay))
+  ==
+::
 ++  fell-to-page
   |=  =fell
   ^-  (unit page)
@@ -759,7 +780,8 @@
               ::
                   %mime
                 :: %-  (trace 4 |.("make: tube: hoon -> mime"))
-                =>(..zuse !>(|=(m=mime q.q.m)))
+                :: =>(..zuse !>(|=(m=mime q.q.m)))
+                (slap zuse.bud !,(*hoon |=(m=mime q.q.m)))
               ==
             =/  a  a.p.bush
             =/  b  b.p.bush
@@ -798,70 +820,6 @@
     |=  args
     ~%  %ford-core  ..$  ~
     |%
-    :: ++  make-bud
-    ::   |=  zus=vase
-    ::   ^+  bud
-    ::   =/  zuse  !>(..zus)
-    ::   =>  [zus=zus zuse=zuse ..slap]
-    ::   :*  zuse=zus
-    ::       nave=(slap zus !,(*hoon nave:clay))
-    ::       cork=(slap zus !,(*hoon cork))
-    ::       same=(slap zus !,(*hoon same))
-    ::       mime=(slap zus !,(*hoon mime))
-    ::       cass=(slap zus !,(*hoon cass:clay))
-    ::   ==
-    :: ++  get-kernel-files
-    ::   ^-  (unit [h=@ a=@ l=@ z=@])
-    ::   ;:  both
-    ::     (get-kernel-file /sys/hoon/hoon)
-    ::     (get-kernel-file /sys/arvo/hoon)
-    ::     (get-kernel-file /sys/lull/hoon)
-    ::     (get-kernel-file /sys/zuse/hoon)
-    ::   ==
-    :: ::
-    :: ++  get-kernel-file
-    ::   |=  =path
-    ::   ^-  (unit @)
-    ::   =/  fil  (~(get by files) path)
-    ::     :: ~&  >>  [files=~(key by files) path=path]
-    ::   ?+  fil
-    ::     ~&  >>  [files=~(key by files) path=path]  ~
-    ::     [~ %& %hoon @]  `(page-to-cord p.u.fil)
-    ::     [~ %| @]        `(lobe-to-cord p.u.fil)
-    ::   ==
-    :: ::
-    :: ++  page-to-cord
-    ::   |=  =page
-    ::   ^-  @t
-    ::   ?+  p.page  ~|([%sys-bad-mark p.page] !!)
-    ::     %hoon  ;;(@t q.page)
-    ::     %mime  q.q:;;(mime q.page)
-    ::   ==
-    :: ::
-    :: ++  lobe-to-cord
-    ::   |=  =lobe
-    ::   ^-  @t
-    ::   =/  peg=(unit page)  (~(get by file-store) lobe)
-    ::   ?~  peg
-    ::     ~|([%lobe-to-cord-tombstoned lobe] !!)
-    ::   ;;(@t q.u.peg)
-    :: ::
-    :: ++  build-zuse
-    ::   |=  [h=@ a=@ l=@ z=@]
-    ::   ^-  vase
-    ::   =/  hoon-core=vase
-    ::     %-  (slog 'clay: compiling hoon' ~)
-    ::     =-  (slot 7 -)
-    ::     (road |.((slap *vase (ream h))))
-    ::   =/  arvo-core=vase
-    ::     %-  (slog 'clay: compiling arvo' ~)
-    ::     =-  (slap - (ream '..part'))
-    ::     (road |.((slap hoon-core (ream a))))
-    ::   =/  lull-core=vase
-    ::     %-  (slog 'clay: compiling lull' ~)
-    ::     (road |.((slap arvo-core (rain /sys/lull/hoon l))))
-    ::   %-  (slog 'clay: compiling zuse' ~)
-    ::   (road |.((slap lull-core (rain /sys/zuse/hoon z))))
     ::  Chapter for constructing $bush (dependency graph of a file) given its
     ::  desk-wide identifier
     ::
@@ -1034,6 +992,58 @@
         $(fiz t.fiz, rez (~(put by rez) nom res))
       ==
     ::
+    ++  build-zuse
+      |=  [h=@ a=@ l=@ z=@]
+      ^-  vase
+      =/  hoon-core=vase
+        %-  (slog 'clay: compiling hoon' ~)
+        =-  (slot 7 -)
+        (road |.((slap *vase (ream h))))
+      =.  hoon-core
+        %+  slap  (slop !>(h=h) hoon-core)
+        !,  *hoon
+        =-  (slot 7 -)
+        (road |.((slap *vase (ream h))))
+      =/  arvo-core=vase
+        %-  (slog 'clay: compiling arvo' ~)
+        %+  slap  (slop !>(a=a) hoon-core)
+        !,  *hoon
+        =-  (slap - (ream '..part'))
+        (road |.((slap hoon-core (ream a))))
+      =/  lull-core=vase
+        %-  (slog 'clay: compiling lull' ~)
+        (road |.((slap arvo-core (rain /sys/lull/hoon l))))
+      %-  (slog 'clay: compiling zuse' ~)
+      (road |.((slap lull-core (rain /sys/zuse/hoon z))))
+    ::
+    ++  get-kernel-files
+      ^-  (unit [h=@ a=@ l=@ z=@])
+      ;:  both
+        (get-kernel-file /sys/hoon/hoon)
+        (get-kernel-file /sys/arvo/hoon)
+        (get-kernel-file /sys/lull/hoon)
+        (get-kernel-file /sys/zuse/hoon)
+      ==
+    ::
+    ++  get-kernel-file
+      |=  =path
+      ^-  (unit @)
+      =/  fil  (~(get by files) path)
+        :: ~&  >>  [files=~(key by files) path=path]
+      ?+  fil
+        ~&  >>  [files=~(key by files) path=path]  ~
+        [~ %& %hoon @]  `(page-to-cord p.u.fil)
+        [~ %| @]        `(lobe-to-cord p.u.fil)
+      ==
+    ::
+    ++  lobe-to-cord
+      |=  =lobe
+      ^-  @t
+      =/  peg=(unit page)  (~(get by file-store) lobe)
+      ?~  peg
+        ~|([%lobe-to-cord-tombstoned lobe] !!)
+      ;;(@t q.u.peg)
+    ::
     +|  %external-interface
     ::
     ::  +read-file: retrieve marked, validated file contents at path
@@ -1074,8 +1084,10 @@
       ~|  %error-building-dais^mak
       =/  nav=vase  (build-nave mak)
       %-  (trace 1 |.("make dais {<mak>}"))
-      ^-  dais
-      =>  [nav=nav ..zuse]
+      !<  dais
+      %+  slap  (slop !>(nav=nav) zuse.bud)
+      !,  *hoon
+      ^-  dais:clay
       ~>  %memo./clay/ford
       |_  sam=vase
       ++  diff
@@ -1126,7 +1138,10 @@
       ~|  error-building-tube+[a b]
       =/  gat=vase  (build-cast a b)
       %-  (trace 1 |.("make tube {<a>} -> {<b>}"))
-      =>  [gat=gat ..zuse]
+      !<  tube
+      %+  slap  (slop !>(gat=gat) zuse.bud)
+      !,  *hoon
+      ^-  tube:clay
       ~>  %memo./clay/ford
       |=(v=vase (slam gat v))
     ::
@@ -1147,7 +1162,9 @@
       ?:  =(%hoon p.page)
         [%hoon [%atom %t ~] ;;(@ q.page)]
       ?:  =(%mime p.page)
-        [%mime =>([;;(mime q.page) ..zuse] !>(-))]
+        ::  XX does this actually reduce memory usage? PR #5652
+        :: [%mime =>([;;(mime q.page) ..zuse] !>(-))]
+        [%mime !>(;;(mime q.page))]
       =/  =dais  (build-dais p.page)
       :-  p.page
       =>  [dais=dais dat=q.page]
@@ -1479,17 +1496,17 @@
   ::
   ++  tako-ford
     |=  tak=tako
-    :: =?  bud  !?=(%base syd)
-    ::   ~&  >  %tako-ford^syd
-    ::   =/  f
-    ::     %-  ford:fusion
-    ::     :_  [lat.ran veb.bug]
-    ::     (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
-    ::   =/  sys  get-kernel-files:f
-    ::   ~&  >  [%tako-ford-sys ?=(~ sys)]
-    ::   =/  zus  ?~(sys ~ (make-bud:f (build-zuse:f u.sys)))
-    ::   ~&  >  [%tako-ford-zus ?=(~ zus)]
-    ::   ?~(zus bud zus)
+    =?  bud  !?=(%base syd)
+      ~&  >  %tako-ford^syd
+      =/  f
+        %-  ford:fusion
+        :_  [lat.ran veb.bug]
+        (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
+      =/  sys  get-kernel-files:f
+      ~&  >  [%tako-ford-sys ?=(~ sys)]
+      =/  zus  ?~(sys ~ (make-bud:f (build-zuse:f u.sys)))
+      ~&  >  [%tako-ford-zus ?=(~ zus)]
+      ?~(zus bud zus)
     %-  ford:fusion
     :_  [lat.ran veb.bug]
     (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
@@ -2045,14 +2062,6 @@
         (~(del by old) pax)
       =/  pre=_changes  (~(run by old) |=(lob=lobe |+lob))
       (~(uni by pre) changes)
-    ::
-    ++  page-to-cord
-      |=  =page
-      ^-  @t
-      ?+  p.page  ~|([%sys-bad-mark p.page] !!)
-        %hoon  ;;(@t q.page)
-        %mime  q.q:;;(mime q.page)
-      ==
     ::
     ++  lobe-to-cord
       |=  =lobe
