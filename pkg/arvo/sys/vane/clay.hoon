@@ -1608,7 +1608,6 @@
   ::
   ++  send-ward
     |=  =desk
-    ?:  =(~ pes)  ..abet  ::  no subs, can no-op
     =/  dom=dome
       ?:  =(desk syd)  dom
       dom:(~(got by dos.rom) desk)
@@ -1619,6 +1618,9 @@
           peg.dom  peq.dom
           ?~(pew.dom ~ -.u.pew.dom)
       ==
+    ?:  =(~ pes)
+      =.  waw  (~(uni by waw) writ)
+      ..abet  ::  no subs, can no-op
     =/  casts=(list cast:ward)  (tell:ward writ waw)
     =.  waw  (~(uni by waw) writ)
     %-  emil
