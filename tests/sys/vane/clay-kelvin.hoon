@@ -404,6 +404,58 @@
     ==
   ==
 ::
+++  branch
+  =/  m  (mare ,~)
+  |=  l=(list [t=@t f=form:m])  ::NOTE  can't seem to use $^ here
+  ^-  form:m
+  =/  e=tang  ~
+  |=  s=state
+  |-  ^-  output:m
+  ?~  l
+    ?.  =(~ e)  [%| e]
+    [%& ~ s]
+  =/  o  (f.i.l s)
+  =?  e  ?=(%| -.o)
+    =-  (weld e `tang`-)
+    [(rap 3 'failed in branch \'' t.i.l '\':' ~) p.o]
+  $(l t.l)
+::
+++  merge  ::  branch with shared, cached continuation
+  |*  a=mold  ::  arg for constructing continuation, comes out of branches
+  =/  w  (mare a)
+  =/  m  (mare ,~)
+  |=  [l=(list [t=@t f=form:w]) n=$-(a form:m)]
+  ^-  form:m
+  =|  err=tang
+  =|  per=(map tang @t)
+  =|  cac=(map @ output:m)
+  |=  sat=state
+  |-  ^-  output:m
+  ?~  l
+    ?.  =(~ err)  [%| err]
+    [%& ~ sat]
+  =^  res=output:m  cac
+    ::  the below is essentially (((bind:m a) f.i.l n) sat)
+    ::  but with the n invocation cached
+    ::
+    =/  wes=output:w  (f.i.l sat)
+    ?:  ?=(%| -.wes)  [wes cac]
+    ?^  hit=(~(get by cac) (mug p.wes))
+      [u.hit cac]
+    =/  res=output:m  ((n out.p.wes) state.p.wes)
+    [res (~(put by cac) (mug p.wes) res)]
+  ::  when printing fail traces, if a previous branch had an identical failure,
+  ::  just print a reference to that for brevity
+  ::
+  =?  err  ?=(%| -.res)
+    =-  (weld err `tang`-)
+    :-  (rap 3 'failed in merge branch \'' t.i.l '\':' ~)
+    ?~  pev=(~(get by per) p.res)  p.res
+    [(rap 3 '[same as in merge branch \'' u.pev '\']' ~)]~
+  =?  per  &(?=(%| -.res) !(~(has by per) p.res))
+    (~(put by per) p.res t.i.l)
+  $(l t.l)
+::
 ::  data constuctors
 ::
 ++  perm-none  *(set perm:gall)
