@@ -489,9 +489,7 @@
   ;<  ~  bind:m
     %+  expect-moves  mov
     :~  ex-wick
-        (ex-gift [%tire %| [%zest %foo %live]])
         (ex-gift [%tire %| [%wait %foo [%zuse 408]]])
-        (ex-gift [%tire %| [%zest %base %live]])
     ==
   ;<  mov2=(list move)   bind:m  do-wick
   ;<  ~  bind:m  (expect-moves mov2 ~)
@@ -522,9 +520,7 @@
   ;<  ~  bind:m
     %+  expect-moves  mov2
     :~  ex-wick
-        (ex-gift [%tire %| [%zest %foo %live]])
         (ex-gift [%tire %| [%wait %foo [%zuse 407]]])
-        (ex-gift [%tire %| [%zest %base %live]])
     ==
   ;<  *                 bind:m  do-wick
   ;<  mov3=(list move)  bind:m  (do-park %base 407 ~)
@@ -584,12 +580,7 @@
   ::  update base to next kelvin
   ;<  mov2=(list move)  bind:m  (do-park %base 408 ~)
   ::
-  ::  NOTE:  %zest despite unchanged could be a walk tire bug
-  %+  expect-moves  mov2
-  :~  (ex-gift [%tire %| [%zest %foo %live]])
-      (ex-gift [%tire %| [%zest %base %live]])
-      (ex-gift [%tire %| [%wait %base [%zuse 408]]])
-  ==
+  (expect-moves mov2 (ex-gift [%tire %| [%wait %base [%zuse 408]]]) ~)
 ::
 ++  test-update-blocked-on-multiple-essential-desks
 ::  kelvin update received on base desk, multiple essential desks not ready
@@ -655,9 +646,7 @@
   ;<  ~  bind:m
     %+  expect-moves  mov
     :~  ex-wick
-        (ex-gift [%tire %| [%zest %foo %live]])
         (ex-gift [%tire %| [%wait %foo [%zuse 408]]])
-        (ex-gift [%tire %| [%zest %base %live]])
     ==
   ;<  mov2=(list move)  bind:m  (do-park %base 408 ~)
   ;<  ~  bind:m
@@ -696,10 +685,7 @@
   ;<  ~  bind:m
     %+  expect-moves  mov
     :~  ex-wick
-        (ex-gift [%tire %| [%zest %foo %live]])
         (ex-gift [%tire %| [%wait %foo [%zuse 408]]])
-        (ex-gift [%tire %| [%zest %baz %live]])
-        (ex-gift [%tire %| [%zest %base %live]])
     ==
   ;<  mov2=(list move)  bind:m  (do-park %base 408 ~)
   ;<  ~  bind:m
@@ -750,7 +736,6 @@
     %+  expect-moves  mov2
     :~  ex-wick
         (ex-gift [%tire %| [%zest %foo %held]])
-        (ex-gift [%tire %| [%zest %base %live]])
         ex-load
     ==
   ;<  ~                 bind:m  (set-kelvin 408)
@@ -855,9 +840,7 @@
   ;<  ~  bind:m
     %+  expect-moves  mov
     :~  ex-wick
-        (ex-gift [%tire %| [%zest %foo %live]])
         (ex-gift [%tire %| [%wait %foo zuse+408]])
-        (ex-gift [%tire %| [%zest %base %live]])
     ==
   ;<  mov2=(list move)  bind:m  (do-park %base 408 ~)
   ;<  ~  bind:m
