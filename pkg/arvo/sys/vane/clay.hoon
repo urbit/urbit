@@ -5140,9 +5140,10 @@
   ::  but if you're not calling +goad, you may need to call this.
   ::
   ++  tare
-    ?:  =(~ tyr)
-      ..abet
     =/  tor  tore
+    ?:  =(~ tyr)
+      =.  tur  tor
+      ..abet
     =/  waves=(list wave:tire)  (walk:tire tur tor)
     ?~  waves
       ..abet
