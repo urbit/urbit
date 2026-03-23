@@ -4021,7 +4021,7 @@
     =*  sessions  sessions.auth.server-state.ax
     =.  sessions.auth.server-state.ax
       %-  ~(gas by *(map @uv session))
-      %+  skip  ~(tap in sessions)
+      %+  skip  ~(tap by sessions)
       |=  [cookie=@uv session]
       (lth expiry-time now)
     ::  if there's any cookies left, set a timer for the next expected expiry

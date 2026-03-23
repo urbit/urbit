@@ -5,7 +5,7 @@
 ::  /+  pill
 ::  :aqua &pill .^(pill:pill %cx %/urbit/pill)
 ::    OR
-::  :aqua &pill +pill/solid
+::  :aqua &pill +pill/brass
 ::
 ::  XX: update these examples
 ::  Then try stuff:
@@ -117,7 +117,6 @@
   ::
   ++  on-leave  on-leave:def
   ++  on-peek   peek:ac
-  ::
   ++  on-agent  on-agent:def
   ::
   ++  on-arvo
@@ -218,7 +217,10 @@
     ?.  processing-events
       ..abet-pe
     =^  ue  next-events  ~(get to next-events)
-    =.  tym.pier-data   (max +(tym.pier-data) now.hid)
+    =/  poke-arm  (mox +23.snap)
+    ?>  ?=(%0 -.poke-arm)
+    =/  poke  p.poke-arm
+    =.  tym.pier-data  (max +(tym.pier-data) now.hid)
     =/  poke-gate=vase  [-:!>(poke:arvo-core) poke:snap]
     =/  poke-result=(each vase tang)
       (mule |.((slym poke-gate event=[tym.pier-data ue])))

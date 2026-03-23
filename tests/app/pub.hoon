@@ -11,7 +11,7 @@
   ==
 +$  state-0  [%0 ~]
 +$  action
-  $%  [%send data=@]
+  $%  [%send data=(list [path @])]
       [%bye who=ship]
       [%flus data=@]
       [%flas who=ship]
@@ -42,12 +42,12 @@
     ^-  (quip card _this)
     ?.  ?=(%noun mark)
       (on-poke:def mark vase)
-    =+  action=;;(action !<(* vase))
+    =+  !<(=action vase)
     ~&  >  %out
     :_  this
     ~&  >>  -.action
     ?-  -.action
-      %send  ~&(%sending [%give %fact [/subs]~ atom+!>(data.action)]~)
+      %send  ~&(%sending [%give %fact [/subs]~ noun+!>(data.action)]~)
       %bye   ~&(%kicking [%give %kick [/subs]~ `who.action]~)
       %flus  ~&(%flushing [%give %fact [/flus]~ atom+!>(data.action)]~)
       %flas  ~&(%flashing [%give %kick [/flus]~ `who.action]~)
@@ -76,9 +76,9 @@
   ?+  path  (on-watch:def path)
     :: XX allow users for crashes here to trigger naxplanations
     ::
-      [%subs ~]  ~&  subs+src.bowl  ~ :: (on-watch:def path)  
-      [%sabs ~]  ~&  sabs+src.bowl  ~ :: (on-watch:def path)
-      [%sups ~]  ~&  sups+src.bowl
+      [%subs ~]  ~&  subs+[our=our src=src]:bowl  ~ :: (on-watch:def path)
+      [%sabs ~]  ~&  sabs+[our=our src=src]:bowl  ~ :: (on-watch:def path)
+      [%sups ~]  ~&  sups+[our=our src=src]:bowl
     :~  [%give %fact ~ atom+!>(%done)]
         [%give %kick ~ ~]
     ==
@@ -92,7 +92,7 @@
   ~&  leave+[src.bowl path]
   :: XX allow users for crashes here to trigger naxplanations
   ::
-  ?:  &  !!
+  :: ?:  &  !!  :: XX
   `this
   :: ?.  ?=([%subs ~] path)  `this
   :: :_  this
