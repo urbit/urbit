@@ -3482,8 +3482,17 @@
     ^+  ..park
     ?:  add
       =.  peg.dom  (~(uni in peg.dom) pes)
-      ::  TODO:  check if desk awaiting commit
-      ?~  pew.dom  (send-ward syd)
+      =?  ..park  =(~ pew.dom)
+        (send-ward syd)
+      ?~  pew.dom
+        ?.  =(%held liv.dom)  ..park
+        ::  held desk, might be blocked on permissions,
+        ::  if all required permissions been granted, attempt to revive the desk.
+        ::
+        =/  per=(set perm:gall)  (fall (mole |.(get-seal)) ~)
+        ?:  (~(all in per) |=(p=perm:gall (have:guard:gall peg.dom p)))
+          (emit hen %pass /park-held/[syd] %b %wait now)
+        ..park
       ?~  (~(all in -.u.pew.dom) |=(per=perm:gall (have:guard:gall peg.dom per)))
         ::  calling park here
         ::  updated %.y ?
@@ -3513,17 +3522,16 @@
       [[%1 ~] ~]
     ?.  (~(has in kel) zuse+zuse)
       =/  msg  "clay: can't set {<syd>} live, it doesn't support zuse {<zuse>}"
-      ((slog leaf+msg ~) ..park)
+      =/  msg2  "clay: {<syd>} set to held, waiting for {<zuse>} support"
+      ((slog leaf+msg leaf+msg2 ~) ..park(liv.dom %held))
     =/  per=(set perm:gall)
       %+  fall
         (mole |.(get-seal))
       ~
-    ~&  >>  %checking-permissions
-    ::  TODO: do not do hard equality check
     ?:  &(=(liv %live) !(~(all in per) |=(p=perm:gall (have:guard:gall peg.dom p))))
-      =/  msg   "clay: can't set {<syd>} live, it doesn't have required permissions"
-      =/  msg1  "need: {<per>}, have: {<peg.dom>}"
-      ((slog leaf+msg leaf+msg1 ~) ..park)
+      =/  msg   "clay: can't set {<syd>} live, missing required permissions"
+      =/  msg2  "clay: {<syd>} set to held, need: {<per>}, have: {<peg.dom>}"
+      ((slog leaf+msg leaf+msg2 ~) ..park(liv.dom %held))
     ..park(liv.dom liv)
   ::
   ++  rise                                              ::  [goad] <
