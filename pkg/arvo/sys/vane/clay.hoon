@@ -3405,7 +3405,11 @@
       ::  this is the last rate
       ::
       ..take-rate
-    ?>  ?=([~ ^] busy.u.sat)
+    ?.  ?=([~ ^] busy.u.sat)
+      ::  XX maybe clay just finished but a rate still comes in?
+      ::  XX could be due to a crash during handling the %rate task
+      ::
+      ..take-rate
     =/  =wire      (request-wire kind her syd inx)
     =/  old=time   time.u.busy.u.sat
     =/  =time      (add now scry-timeout-time)
@@ -3588,33 +3592,37 @@
         ::  XX better to request the size of the whole desk instead?
         ::  XX desk size namespace?
         ::
+        =;  paths=(set (pair care path))
+          ^+  ..foreign-update  =<  ?>(?=(^ ref) .)
+          %-  emit  ^-  move
+          [duct.sat %give %wris da+now paths]
         %+  roll  need.sat
-        |=  [i=$@(lobe [=tako =path =lobe]) c=_..foreign-update]
+        |=  [i=$@(lobe [=tako =path =lobe]) paths=(set (pair care path))]
         ?:  ?=([~ %ames] busy.sat)
           ::  if we are using %ames, don't attemp to use remote-scry for anything
           ::
-          c
-        ?@  i  c
-        =?  c  ?=(^ path.i)
-          ::  instead of doing %whey here, we find the listener (kiln) and give
-          ::  all the paths to deal with wheys there
-          ::
-          =<  ?>(?=(^ ref) .)
-          %-  emit:c
-          :*  duct.sat  %give  %writ  ~
-              ^-  rant
-              [[%q uv+tako.i syd] path.i whey/!>(~)]
-          ==
-          ::  XX handles wheys directly in %clay
-          ::
-          :: =/  =wire  (request-wire %keen-whey her syd inx)
-          :: :: =.  path.i  [%a %x '1' %$ %whey (scot %ud 3) path.i]
-          :: :: =>((emit:c hen %pass wire %a %chum her path.i) ?>(?=(^ ref) .))
-          :: ::  XX  this will fail if the peer has not ben %ahoyed
-          :: ::
-          :: =>((emit:c hen %pass wire %a %whey her^path.i boq=13) ?>(?=(^ ref) .))
-        c
-
+          paths
+        ?@  i  paths
+        ?.  ?=(^ path.i)  paths
+        ::  instead of doing %whey here, we find the listener (kiln) and give
+        ::  all the paths to deal with wheys there
+        ::
+        =.  path.i  [%c %q (scot %uv tako.i) syd path.i]
+        (~(put in paths) %q path.i)
+        :: =<  ?>(?=(^ ref) .)
+        :: %-  emit:c
+        :: :*  duct.sat  %give  %writ  ~
+        ::     ^-  rant
+        ::     [[%q uv+tako.i syd] path.i whey/!>(~)]
+        :: ==
+        ::  XX handles wheys directly in %clay
+        ::
+        :: =/  =wire  (request-wire %keen-whey her syd inx)
+        :: :: =.  path.i  [%a %x '1' %$ %whey (scot %ud 3) path.i]
+        :: :: =>((emit:c hen %pass wire %a %chum her path.i) ?>(?=(^ ref) .))
+        :: ::  XX  this will fail if the peer has not ben %ahoyed
+        :: ::
+        :: =>((emit:c hen %pass wire %a %whey her^path.i boq=13) ?>(?=(^ ref) .))
       work
     ::
     ++  missing-lobes

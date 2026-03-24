@@ -706,9 +706,37 @@
     ?.  =(wire wire.u.in.tin)
       `[%skip ~]
     `[%done writ/!>(+>.sign-arvo.u.in.tin)]
+    ::
+      [~ %sign * ?(%behn %clay) %wris *]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    `[%done wris/!>(+>.sign-arvo.u.in.tin)]
   ==
 ::
 ++  rate
+  =>  |%  ++  peel-path
+            |=  =path
+            =>  .(path `(pole knot)`path)
+            ?.  ?=  [van=%a car=@ cas=%'1' des=%$ %whey boq=@ who=@ pur=*]
+                    path
+              `path
+            `pur.path  :: XX ignore meta
+          ::
+          ++  make-path
+            |=  =riot:clay
+            ^-  path
+            ?>  ?=(^ riot)
+            :*  %c                  ::  always clay
+                `term`p.p.u.riot    ::  care
+                ?+  q.p.u.riot  %$  ::  case
+                  [%uv @]  (scot %uv +.q.p.u.riot)
+                  [%ud @]  (scot %ud +.q.p.u.riot)
+                ==
+                r.p.u.riot          ::  desk
+                q.u.riot            ::  path
+            ==
+          ::
+      --
   |=  [=ship =riff:clay]
   ?>  ?=([@ ~ %sing *] riff)
   =/  m  (strand ,riot:clay)
@@ -718,17 +746,14 @@
   =|  boq=@ud
   =|  pat=path
   =|  nuk=?  :: first time; reset how many files we expect
+  =|  =riot:clay
   |-  ^-  form:m
   =*  loop  $
   ;<  =cage  bind:m  (take-rate /rate)
   ?:  ?=(%sage p.cage)
     =;  [=spar:ames boq=@ud tot=@ud]
-      =^  meta  path.spar
-        =>  .(path.spar `(pole knot)`path.spar)
-        ?.  ?=  [van=%a car=@ cas=%'1' des=%$ %whey boq=@ who=@ pur=*]
-                path.spar
-          `path.spar
-        `pur.path.spar  :: XX ignore meta
+      ~&  >>  got-whey/spar^boq^tot
+      =^  meta  path.spar  (peel-path path.spar)
       ;<  ~  bind:m  (poke-our %hood %kiln-rate-file-size !>([path.spar boq tot]))
       loop
     =+  !<(=sage:mess:ames q.cage)
@@ -737,39 +762,54 @@
       [boq=13 tot=0]
     =<  [boq tot]
     ;;([%whey boq=@ud tot=@ud] q.sage)
+  ::  list of all files we are peeking.
+  ::
+  ?:  ?=(%wris p.cage)
+    ::  unpack wris to extrack all paths
+    ::
+    ~|  q.cage
+    =+  !<(wris=_+:*$>(%wris gift:clay) q.cage)
+    ;<  ~  bind:m
+      =/  paz=(list [care:clay =path])  ~(tap in q.wris)
+      =/  m  (strand ,~)
+      |-  ^-  form:m
+      =*  loop  $
+      ?~  paz  (pure:m ~)
+      ;<  ~  bind:m  (whey /rate boq=3 ship^path.i.paz)
+      loop(paz t.paz)
+    ;<  ~  bind:m
+      %+  poke-our  %hood
+      [%kiln-rate-desk-files !>((turn ~(tap in q.wris) tail)^nuk=%.y)]
+    loop
   ?:  ?=(%writ p.cage)
     ::  unpack riot to extrack path
     ::
-    =+   !<(=riot:clay q.cage)
-    ?~  riot  loop  :: XX log?
-    =.  pat
-      :*  %c                  ::  always clay
-          `term`p.p.u.riot    ::  care
-          ?+  q.p.u.riot  %$  ::  case
-            [%uv @]  (scot %uv +.q.p.u.riot)
-            [%ud @]  (scot %ud +.q.p.u.riot)
-          ==
-          r.p.u.riot          ::  desk
-          q.u.riot            ::  path
-      ==
-    ::  if the contents of the riot is a vase tagged with %whey we are
-    ::  getting from clay a list of all files we are peeking.
+    =+   !<(=new=riot:clay q.cage)
+    ?~  new-riot  loop  :: XX log?
+    =.  pat  (make-path new-riot)
+    ::  XX  save riot, and wait for last rate
     ::
-    ?:  ?=(%whey -.r.u.riot)
-      ;<  ~  bind:m  (whey /rate boq=3 ship^pat)
-      ;<  ~  bind:m  (poke-our %hood %kiln-rate-desk-file !>(pat^nuk))
-      loop(nuk %.n)
-    =?  tot  =(0 tot)  1
-    ;<  ~  bind:m  (poke-our %hood %kiln-rate !>([pat boq tot tot]))
+    ~&  >  "got riot"^pat
+    =.  riot  new-riot
+    ;<  ~  bind:m  (poke-our %hood %kiln-rate-done !>(pat))
     (pure:m riot)
-  =+  !<([[who=^ship wat=path] =current=rate:ames] q.cage)
+  ?>  ?=(%rate p.cage)
+  ~|  q.cage
+  =+  !<([=spar:ames =current=rate:ames] q.cage)
   ?~  current-rate  :: XX this would be the last rate, but %writ would happen before
-    loop
+    :: ~&  >>  path-last-rate/path.spar
+    =^  meta  path.spar  (peel-path path.spar)
+    :: ~&  >>>  last-rate/meta^path.spar
+    ;<  ~  bind:m  (poke-our %hood %kiln-rate !>([path.spar ~]))
+    ?~  riot
+      loop
+    (pure:m riot)
   =.  tot  tot.current-rate
   =.  boq  boq.current-rate
-  =.  pat  wat
+  =.  pat  path.spar
+  :: ~&  >>  spar^current-rate
   ;<  ~  bind:m
-    (poke-our %hood kiln-rate/!>([wat [boq fag tot]:current-rate]))
+    (poke-our %hood kiln-rate/!>([path.spar [boq fag tot]:current-rate]))
   loop
 ::
 ++  rate-old

@@ -701,8 +701,9 @@
     %kiln-unsync             =;(f (f !<(_+<.f vase)) poke-unsync)
     %kiln-rate               =;(f (f !<(_+<.f vase)) poke-rate)
     %kiln-peek-rate          =;(f (f !<(_+<.f vase)) poke-peek-rate)
-    %kiln-rate-desk-file     =;(f (f !<(_+<.f vase)) poke-rate-desk-file)
+    %kiln-rate-desk-files    =;(f (f !<(_+<.f vase)) poke-rate-desk-files)
     %kiln-rate-file-size     =;(f (f !<(_+<.f vase)) poke-rate-file-size)
+    %kiln-rate-done          =;(f (f !<(_+<.f vase)) poke-rate-done)
     %kiln-essential-desk     =;(f (f !<(_+<.f vase)) poke-essential-desk)
   ==
 ::
@@ -1190,7 +1191,10 @@
 ++  poke-rate
   ::   progress for desk sync (assumes only one file at a time)
   ::
-  |=  [=path boq=@ud fag=@ud tot=@ud]
+  |=  [=path =rate:ames]
+  =+  ^-  [boq=@ud fag=@ud tot=@ud]
+      ?@  rate  [0 1 1]
+      rate
   =/  pct=@ud  ?:(=(0 tot) 0 (div (mul 100 fag) tot))
   ::  open a dill session on first peek (if it's been closed)
   ::
@@ -1222,17 +1226,21 @@
     =.  desks.dl     (~(put by desks.dl) des.meta desk(header-row hrow))
     =.  next-row.dl  (add 2 hrow)
     ?~  ses.dl  ..abet
-    %-  emit
-    [%give %fact ~[/dill/[u.ses.dl]] %dill-blit !>(^-(blit:dill (dl-blit-header hrow des.meta 0 0 0 "")))]
+    %^  emit  %give  %fact
+    :*  ~[/dill/[u.ses.dl]]  %dill-blit  !>
+        ^-  blit:dill
+        (dl-blit-header hrow des.meta 0 0 0 "")
+    ==
   ::  update pct for this path
   ::
   =/  this-desk=dl-desk  (~(got by desks.dl) des.meta)
-  =/  pct-tot=@ud  ?:(=(0 bys.load.this-desk) 0 (div (mul 100 fag) bys.load.this-desk))
-  ::  if 100 pct, decrease want
+  ::  if 100 pct, mark file complete
   ::
   =.  cur.this-desk  `[path pct]
-  =?  have.this-desk   =(100 pct)  ::  will reset on bext download
-    +(have.this-desk)
+  =?  have.this-desk  =(100 pct)  +(have.this-desk)
+  ::  global pct = files done / files total (avoids bys/frag unit mismatch)
+  =/  pct-tot=@ud
+    ?:(=(0 wait.this-desk) 0 (div (mul 100 have.this-desk) wait.this-desk))
   =/  row=@ud   +(header-row.this-desk)  :: one more than the header row
   =.  desks.dl  (~(put by desks.dl) des.meta this-desk)
   ::  send in-place row update
@@ -1327,28 +1335,35 @@
   ::
   --
 ::
-++  poke-rate-desk-file
-  |=  [=path nuke=?]
+++  poke-rate-desk-files
+  |=  [paths=(list path) nuke=?]
   ^+  abet
-  =^  meta  path
-    =>  .(path `(pole knot)`path)
-    ?.  ?=([van=%c car=@ cas=@ des=@ pur=*] path)
-      `path
-    :_  pur.path
+  ?~  paths  :: at least one path
+    abet
+  =^  meta  i.paths
+    ::  XX check all desks are the same?
+    ::
+    =>  .(i.paths `(pole knot)`i.paths)
+    ?.  ?=([van=%c car=@ cas=@ des=@ pur=*] i.paths)
+      `i.paths
+    :_  pur.i.paths
     ^-  (unit [van=term car=term cas=term des=term])
-    [~ van car cas des]:path
+    [~ van car cas des]:i.paths
+  ::  XX  save all these paths somewhere?
+  ::
   ?~  meta  abet
   ::  update wants
   ::
   =|  flag=?
-  =.  desks.dl
+  =?  desks.dl  (~(has by desks.dl) des.u.meta)
     %+  ~(jab by desks.dl)  des.u.meta
     |=  this-desk=dl-desk
     =?  wait.this-desk  &(flag nuke)  0
     =?  have.this-desk  &(flag nuke)  0
     =?  load.this-desk  &(flag nuke)  0^0
-    =.  flag  %.n
-    this-desk(wait +(wait.this-desk))
+    =.  flag  %.n  ::  switch flag so we only do it once
+    this-desk(wait (add wait.this-desk (lent paths)))
+  ~&  >>>  (~(got by desks.dl) des.u.meta)
   abet
 ::
 ++  poke-rate-file-size
@@ -1361,7 +1376,6 @@
     :_  pur.path
     ^-  (unit [van=term car=term cas=term des=term])
     [~ van car cas des]:path
-  ~&  >>>  meta^path
   ?~  meta  abet
   ::  update wants
   ::
@@ -1370,6 +1384,21 @@
     |=  this-desk=dl-desk
     this-desk(load [boq (add bys.load.this-desk tot)])
   abet
+::
+++  poke-rate-done
+  |=  =path
+  ^+  abet
+  :: =^  meta  path
+  ::   =>  .(path `(pole knot)`path)
+  ::   ?.  ?=([van=%c car=@ cas=@ des=@ pur=*] path)
+  ::     `path
+  ::   :_  pur.path
+  ::   ^-  (unit [van=term car=term cas=term des=term])
+  ::   [~ van car cas des]:path
+  ~&  >>>  poke-rate-done/path
+  ::  XX  extract desk
+  ::
+  (poke-rate path ~)
 ::
 ++  peer-dill
   ::  dill subscribed to /dill/%dl on hood — send initial screen
@@ -1419,8 +1448,10 @@
     ^-  (list blit:dill)
     =/  hrow  header-row.dl-desk
     =/  frow  +(hrow)
+    =/  pct-tot=@ud
+      ?:(=(0 wait.dl-desk) 0 (div (mul 100 have.dl-desk) wait.dl-desk))
     %+  weld
-      ~[(dl-blit-header hrow desk have.dl-desk wait.dl-desk 0 "")]
+      ~[(dl-blit-header hrow desk have.dl-desk wait.dl-desk pct-tot (fmt-size load.dl-desk))]
     ?~  cur.dl-desk  ~
     ~[(dl-blit-row frow path.u.cur.dl-desk pct.u.cur.dl-desk 0 0)]
   ;:  weld
@@ -1433,7 +1464,7 @@
 ++  dl-blit-header
   |=  [row=@ud desk=@tas hv=@ud wt=@ud pct-tot=@ud siz=tape]
   ^-  blit:dill
-  =/  txt=tape  "{(trip desk)} [{<wt>}/{<hv>} files] {<pct-tot>}% {siz}"
+  =/  txt=tape  "{(trip desk)} [{<hv>}/{<wt>} files] {<pct-tot>}% {siz}"
   [%mor ~[[%hop [0 row]] [%wyp ~] [%klr ~[[[~ %c ~] (tuba txt)]]]]]
 ::
 ++  dl-desk-header
@@ -1475,7 +1506,9 @@
         [[~ ~ ~] (tuba "% ")]
         [[~ %c ~] (tuba (dl-bandwidth bytes ms))]
         [[~ ~ ~] (tuba " ")]
-        [[~ ~ ~] (tuba (trip (spat file)))]
+        :-  [~ ~ ~]
+        ?~  file  (tuba "all done!")
+        (tuba (trip (spat file)))
     ==
   [%mor ~[[%hop [0 row]] [%wyp ~] [%klr stub]]]
 ::
@@ -1825,7 +1858,6 @@
     ::  directory listing
     ::
     ;<  =riot:clay  bind:m  (warp:strandio her sud ~ %sing %y ud+1 /)
-    ~&  riot/riot
     ?>  ?=(^ riot)
     ~>  %slog.(fmt "activated install into {here}")
     ;<  now=@da     bind:m  get-time:strandio
@@ -1849,8 +1881,9 @@
     ?.  (~(has by zyx) syd her sud)
       (pure:m !>(%done))
     ~>  %slog.(fmt "downloading update for {here}")
+    ::  XX choose rate vs warp?
+    ::
     ;<  =riot:clay  bind:m  (rate:strandio her sud ~ %sing %v ud+let /)
-
     ?>  ?=(^ riot)
     (pure:m !>(%done))
   ::
