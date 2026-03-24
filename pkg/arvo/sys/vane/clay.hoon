@@ -3502,7 +3502,10 @@
     ?:  =(%kids syd)
       ..park(liv.dom %dead)
     ?.  ?=(%live liv)
-      ..park(liv.dom liv)
+      =/  ese  ese:(~(got by dos.rom) syd)
+      ?.  ese  ..park(liv.dom liv)
+      =/  msg  "clay: can't set essential desk {<syd>} to {(scow %tas liv)}"
+      ((slog leaf+msg ~) ..park)
     =/  kel=(set weft)
       %-  waft-to-wefts
       %+  fall
