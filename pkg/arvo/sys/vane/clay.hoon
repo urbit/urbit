@@ -3521,17 +3521,21 @@
         (mole |.((get-kelvin %| (aeon-to-yaki:ze let.dom))))
       [[%1 ~] ~]
     ?.  (~(has in kel) zuse+zuse)
-      =/  msg  "clay: can't set {<syd>} live, it doesn't support zuse {<zuse>}"
-      =/  msg2  "clay: {<syd>} set to held, waiting for {<zuse>} support"
-      ((slog leaf+msg leaf+msg2 ~) ..park(liv.dom %held))
+      %.  ..park(liv.dom %held)
+      %-  slog
+      :~  leaf+"clay: can't set {<syd>} live, it doesn't support zuse {<zuse>}"
+          leaf+"clay: {<syd>} set to held, waiting for {<zuse>} support"
+      ==
     =/  per=(set perm:gall)
       %+  fall
         (mole |.(get-seal))
       ~
-    ?:  &(=(liv %live) !(~(all in per) |=(p=perm:gall (have:guard:gall peg.dom p))))
-      =/  msg   "clay: can't set {<syd>} live, missing required permissions"
-      =/  msg2  "clay: {<syd>} set to held, need: {<per>}, have: {<peg.dom>}"
-      ((slog leaf+msg leaf+msg2 ~) ..park(liv.dom %held))
+    ?:  !(~(all in per) |=(p=perm:gall (have:guard:gall peg.dom p)))
+      %.  ..park(liv.dom %held)
+      %-  slog
+      :~  leaf+"clay: can't set {<syd>} live, missing required permissions"
+          leaf+"clay: {<syd>} set to held, need: {<per>}, have: {<peg.dom>}"
+      ==
     ..park(liv.dom liv)
   ::
   ++  rise                                              ::  [goad] <
