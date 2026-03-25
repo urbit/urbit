@@ -4272,6 +4272,8 @@
                 [%gall %spur *]  (on-take-spur:event-core wire)
               ::
                 [%jael %fief *]  (on-take-fief:event-core fiefs-result.sign)
+              ::
+                [%jael %turf *]  (on-take-turf:event-core turf.sign)
               ==
             ::
             [moves vane-gate]
@@ -4394,6 +4396,16 @@
           ?~  unix-duct.ames-state
             event-core
           (emit [unix-duct.ames-state %give %fief fiefs-result])
+        ::  +on-take-turf: handle turf updates from jael
+        ::
+        ++  on-take-turf
+          |=  turf=(list turf)
+          ^+  event-core
+          ?~  unix-duct.ames-state
+            event-core
+          ?~  turf
+            event-core
+          (emit [unix-duct.ames-state %give %turf turf])
         ::  +on-take-done: handle notice from vane that it processed a message
         ::
         ++  on-take-done
