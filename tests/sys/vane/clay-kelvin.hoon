@@ -172,7 +172,7 @@
 ++  do-pork  (call ~[/blah] [%pork ~])
 ::
 ++  do-park
-  |=  [=desk kel=@ud fil=(list [path (each page:clay lobe:clay)])]
+  |=  [=desk kel=$@(@ud (lest @ud)) fil=(list [path (each page:clay lobe:clay)])]
   %+  call  ~[/blah]
   ^-  (hobo task:clay-gate)
   =/  files
@@ -180,7 +180,7 @@
     ^-  (list [path (each page:clay lobe:clay)])
     ;:  welp
       ?:  =(%base desk)
-        [/sys/zuse/hoon [%& ;;(page:clay hoon+(zuse-upd kel))]]~
+        [/sys/zuse/hoon [%& ;;(page:clay hoon+(zuse-upd ?@(kel kel i.kel)))]]~
       ?:  =(%foo desk)
         :~  [/app/bar/hoon [%& agent]]
             [/desk/bill [%& ;;(page:clay noun+:~(%bar))]]
@@ -194,7 +194,10 @@
         [/mar/hoon/hoon [%& ;;(page:clay hoon+mar-hoon)]]
         [/mar/txt/hoon [%& ;;(page:clay hoon+mar-txt)]]
         [/mar/kelvin/hoon [%& ;;(page:clay hoon+mar-kel)]]
-        [/sys/kelvin [%& ;;(page:clay kelvin+[%zuse kel])]]
+      ::
+        :-  /sys/kelvin
+        :-  %&  ;;  page:clay
+        kelvin+?@(kel [%zuse kel] [%1 ~]^(sy (turn kel (lead %zuse))))
       ==
       fil
     ==
@@ -646,9 +649,7 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                bind:m  (do-setup-desks [%foo &] ~)
-  =/  sys-kel=(list [path (each page:clay lobe:clay)])
-    [/sys/kelvin [%& ;;(page:clay kelvin+[[%1 ~] (silt :~([%zuse 409] [%zuse 408]))])]]~
-  ;<  mov=(list move)  bind:m  (do-park %foo 409 sys-kel)
+  ;<  mov=(list move)  bind:m  (do-park %foo ~[409 408] ~)
   ;<  ~                bind:m
     %+  expect-moves  mov
     :~  ex-wick
@@ -819,9 +820,7 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
-  =/  sys-kel=(list [path (each page:clay lobe:clay)])
-    [/sys/kelvin [%& ;;(page:clay kelvin+[[%1 ~] (silt :~([%zuse 409] [%zuse 408]))])]]~
-  ;<  mov2=(list move)  bind:m  (do-park %foo 409 sys-kel)
+  ;<  mov2=(list move)  bind:m  (do-park %foo ~[409 408] ~)
   ;<  ~                 bind:m
     %+  expect-moves  mov2
     :~  ex-wick
@@ -939,9 +938,7 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
-  =/  sys-kel=(list [path (each page:clay lobe:clay)])
-    [/sys/kelvin [%& ;;(page:clay kelvin+[[%1 ~] (silt :~([%zuse 409] [%zuse 408]))])]]~
-  ;<  *                bind:m  (do-park %foo 409 sys-kel)
+  ;<  *                bind:m  (do-park %foo ~[409 408] ~)
   ;<  *                bind:m  (do-park %foo 409 (desk-seal 1))
   ;<  ~                bind:m  (ex-pew %foo pers-1)
   ;<  mov=(list move)  bind:m  (do-park %base 408 ~)
@@ -1236,9 +1233,7 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
-  =/  sys-kel=(list [path (each page:clay lobe:clay)])
-    [/sys/kelvin [%& ;;(page:clay kelvin+[[%1 ~] (silt :~([%zuse 409] [%zuse 407]))])]]~
-  ;<  mov=(list move)  bind:m  (do-park %foo 409 sys-kel)
+  ;<  mov=(list move)  bind:m  (do-park %foo ~[409 407] ~)
   ;<  ~                bind:m
     %+  expect-moves  mov
     :~  ex-wick
@@ -1339,18 +1334,14 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
-  =/  sys-kel=(list [path (each page:clay lobe:clay)])
-    [/sys/kelvin [%& ;;(page:clay kelvin+[[%1 ~] (silt :~([%zuse 409] [%zuse 410]))])]]~
-  ;<  mov2=(list move)  bind:m  (do-park %foo 409 sys-kel)
+  ;<  mov2=(list move)  bind:m  (do-park %foo ~[409 410] ~)
   ;<  ~  bind:m
     %+  expect-moves  mov2
     :~  ex-wick
         (ex-text ": /~nul/foo/2/sys/kelvin")
         ex-load
     ==
-  =/  sys-kel=(list [path (each page:clay lobe:clay)])
-    [/sys/kelvin [%& ;;(page:clay kelvin+[[%1 ~] (silt :~([%zuse 409] [%zuse 408]))])]]~
-  ;<  mov3=(list move)  bind:m  (do-park %foo 409 sys-kel)
+  ;<  mov3=(list move)  bind:m  (do-park %foo ~[409 408] ~)
   %+  expect-moves  mov3
     :~  ex-wick
         (ex-text ": /~nul/foo/3/sys/kelvin")
