@@ -1073,6 +1073,7 @@
   ;<  mov2=(list move)  bind:m  (take /park-held/foo ~[/blah] [%behn %wake ~])
   (expect-moves mov2 (ex-gift [%tire %| [%zest %foo %live]]) ex-load ~)
 ::
+++  setup-non-esse-2wic  ::  TODO: change name
 ::  non-essential desk, blocked on kelvin and kelvin-1 and perms
 ::
   =/  m  (mare ,~)
@@ -1082,9 +1083,7 @@
   ;<  ~                 bind:m
     %+  expect-moves  mov
     :~  ex-wick
-        (ex-gift [%tire %| [%zest %foo %live]])
         (ex-gift [%tire %| [%wait %foo [%zuse 408]]])
-        (ex-gift [%tire %| [%zest %base %live]])
     ==
   ;<  mov2=(list move)  bind:m  (do-park %foo 407 (desk-seal 2))
   %+  expect-moves  mov2
@@ -1101,7 +1100,7 @@
 ::
   %-  eval-mare
   =/  m  (mare ,~)
-  ;<  ~                 bind:m  foo-apply-kel2
+  ;<  ~                 bind:m  setup-non-esse-2wic
   ;<  mov=(list move)   bind:m  (do-park %base 407 ~)
   ;<  ~  bind:m
     %+  expect-moves  mov
@@ -1141,7 +1140,7 @@
 ::
   %-  eval-mare
   =/  m  (mare ,~)
-  ;<  ~                 bind:m  foo-apply-kel2
+  ;<  ~                 bind:m  setup-non-esse-2wic
   ;<  mov=(list move)   bind:m  (do-park %base 408 ~)
   ;<  ~  bind:m
     %+  expect-moves  mov
@@ -1197,6 +1196,7 @@
 ::
 ::
 ::
+++  test-downgrade-base
   ::  %base got downgrade commit, prevent applying commit
   ::
   %-  eval-mare
