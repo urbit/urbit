@@ -3495,8 +3495,7 @@
     ^+  ..park
     ?:  add
       =.  peg.dom  (~(uni in peg.dom) pes)
-      =?  ..park  =(~ pew.dom)
-        (send-ward syd)
+      =.  ..park   (send-ward syd)
       ?~  pew.dom
         ?.  =(%held liv.dom)  ..park
         ::  held desk, might be blocked on permissions,
@@ -3510,7 +3509,7 @@
         ::  calling park here
         ::  updated %.y ?
         (park | | +.u.pew.dom *rang)
-      (send-ward syd)
+      ..park
     =/  ped=(set perm:gall)  get-seal
     =/  in-per  (~(any in pes) |=(p=perm:gall (~(has in ped) p)))
     ?:  &(=(%live liv.dom) in-per)
