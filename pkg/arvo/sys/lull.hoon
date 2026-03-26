@@ -946,6 +946,32 @@
     ==
   ::
   ::::                                                  ::  (1a2)
+    ::
+  ++  acru  $_  ^?                                      ::  asym cryptosuite
+    |%                                                  ::  opaque object
+    ++  as  ^?                                          ::  asym ops
+      |%  ++  seal  |~([a=pass b=@] *@)                 ::  encrypt to a
+          ++  sign  |~(a=@ *@)                          ::  certify as us
+          ++  sigh  |~(a=@ *@)                          ::  certification only
+          ++  sure  |~(a=@ *(unit @))                   ::  authenticate from us
+          ++  safe  |~([a=@ b=@] *?)                    ::  authentication only
+          ++  tear  |~([a=pass b=@] *(unit @))          ::  accept from a
+      --  ::as                                          ::
+    ++  de  |~([a=@ b=@] *(unit @))                     ::  symmetric de, soft
+    ++  dy  |~([a=@ b=@] *@)                            ::  symmetric de, hard
+    ++  en  |~([a=@ b=@] *@)                            ::  symmetric en
+    ++  ex  ^?                                          ::  export
+      |%  ++  fig  *@uvH                                ::  fingerprint
+          ++  pac  *@uvG                                ::  default passcode
+          ++  pub  *pass                                ::  public key
+          ++  sec  *ring                                ::  private key
+      --  ::ex                                          ::
+    ++  nu  ^?                                          ::  reconstructors
+      |%  ++  pit  |~([a=@ b=@] ^?(..nu))               ::  from [width seed]
+          ++  nol  |~(a=ring ^?(..nu))                  ::  from ring
+          ++  com  |~(a=pass ^?(..nu))                  ::  from pass
+      --  ::nu                                          ::
+    --  ::acru                                          :::::                                                  ::  (1a2)
   ::  +protocol-version: current version of the ames wire protocol
   ::
   ++  protocol-version  `?(%0 %1 %2 %3 %4 %5 %6 %7)`%0
