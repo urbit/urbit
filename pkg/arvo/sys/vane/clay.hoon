@@ -2068,27 +2068,7 @@
     ::  find desk seal
     ::
     =/  per=(set perm:gall)  (seal-at-commit yoki)
-    ::  incoming commit permission check
     ::
-    =/  mis=(set perm:gall)
-      %-  ~(gas in *(set perm:gall))
-      %+  skip  ~(tap in per)
-      (cury have:guard:gall peg.dom)
-    =/  has-perm
-      ::  if commit is greater or current version of kelvin
-      ::  check permissions (exempting base)
-      ::  (future kelvin commits will not be applied anyway, so don't need perms)
-      ::
-      ?:  ?|  ?=(%base syd)
-              !(~(all in kel) |=(=weft (gte num.weft zuse)))  ::TODO  REVIEW
-          ==
-        &
-      =(~ mis)
-    ?.  |(has-perm =(%dead liv.dom))
-      =.  pew.dom  `[mis yoki]
-      %-  (slog leaf+"{<syd>} need permissions: {<per>}; has: {<peg.dom>}" ~)
-      (send-ward syd)
-    =?  pew.dom  ?~(pew.dom | =(+.u.pew.dom yoki))  ~
     ?.  ?|  (~(has in kel) zuse+zuse)                   ::  kelvin match
             =(%base syd)
             ?&  !=(%base syd)                           ::  best-effort compat
@@ -2122,6 +2102,20 @@
     ?:  (~(all in kel) |=(=weft (gth num.weft zuse)))
       %-  (slog leaf+"clay: old-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
       ..park
+    ::
+    ::  incoming commit permission check
+    ::
+    =/  mis=(set perm:gall)
+      %-  ~(gas in *(set perm:gall))
+      %+  skip  ~(tap in per)
+      (cury have:guard:gall peg.dom)
+    =/  has-perm  |(?=(%base syd) =(mis ~))
+    ?:  &(!has-perm =(%live liv.dom))
+      =.  pew.dom  `[mis yoki]
+      %-  (slog leaf+"{<syd>} need permissions: {<per>}; has: {<peg.dom>}" ~)
+      (send-ward syd)
+    =?  pew.dom  ?~(pew.dom | =(+.u.pew.dom yoki))  ~
+    ::
     =.  wic.dom
       %-  ~(gas by *(map weft ^yoki))
       %+  skip  ~(tap by wic.dom)
