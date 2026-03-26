@@ -1758,6 +1758,48 @@
       |=  =care
       (~(has in ^~((silt `(list ^care)`~[%q %u %w %x %y %z]))) care)
     --
+  ::  +find-blocked: find blocked on sys-update desks:
+  ::
+  ::    .yoki is the sys commit we want to find blockers for
+  ::
+  ::    blocked on kelvin: no pending commit and
+  ::                       current version doesn't support kel update,
+  ::    blocked on perms:  has pending commit, missing required permissions
+  ::
+  ++  find-blocked
+    |=  [=yoki ese=?]
+    ^-  (list desk)
+    ?>  =(%base syd)
+    =/  sys-kel=weft
+      =/  w=waft  (get-kelvin yoki)
+      ?@  -.w  w  !!
+    %-  ~(rep by (~(del by dos.rom.ruf) %base))
+    |=  [[=desk =dojo] des=(list desk)]
+    ::  non-live desks are never blocking/relevant,
+    ::  only live .ese desks are relevant
+    ::
+    ?.  &(?=(%live liv.dom.dojo) =(ese ese.dojo))
+      des
+    ?~  yok=(~(get by wic.dom.dojo) sys-kel)
+      ::  has no pending commit for current kel update case
+      ?~  t=(~(get by hit.dom.dojo) let.dom.dojo)
+        ::  desk never had a commit, no-op
+        des
+      =/  kel=(set weft)
+        (waft-to-wefts (get-kelvin %| (tako-to-yaki:ze u.t)))
+      ?:  (~(has in kel) sys-kel)
+        ::  desk alredy supports kel update case
+        des
+      ::  desk doesn't support kel update
+      [desk des]
+    =/  mis=(set perm:gall)
+      %-  ~(gas in *(set perm:gall))
+      %+  skip  ~(tap in (seal-at-commit u.yok))
+      (cury have:guard:gall peg.dom.dojo)
+    ::  desk is ready to be updated
+    ?:  =(~ mis)  des
+    ::  desk missing permissions
+    [desk des]
   ::
   ::  Build and send agents to gall
   ::
@@ -2476,15 +2518,15 @@
               data=(map path (each page lobe))
           ==
       ^+  ..park
-      |^
+      |^  ?>  =(%base syd)
       ::  check if system update is blocked due to other desks.
       ::  for each desk: find if it's blocking on commit or on perms,
       ::  then store those perms in state & notify about them
       ::
-      =^  deb=(list desk)  ..park
-        (find-blocked %.y)
+      =/  deb=(list desk)  (find-blocked yoki %.y)
+      =.  ..park           update-pews
       ?.  =(~ deb)
-        ::  store blocked commit as awaiting
+        ::  store blocked sys update commit as awaiting
         =.  wic.dom                                     ::  [tare] <
           %+  roll  ~(tap in (waft-to-wefts (get-kelvin yoki)))
           |:  [weft=*weft wic=wic.dom]
@@ -2521,69 +2563,41 @@
         ::  suspend all blocked on update desks
         ::
         ^+  ..park
-        =^  sus=(list desk)  ..park
-          (find-blocked %.n)
         %-  emit
         :*  hen  %pass  /kiln/bump/zeal  %c  %zeal
-        (roll sus |=([=desk l=(list [desk zest])] [[desk %held] l]))
+            (turn (find-blocked yoki %.n) (late %held))
         ==
+      ::  +update-pews: fill .pew for other desks
       ::
-      ++  find-blocked
-        ::  find blocked on sys-update desks:
-        ::    blocked on kelvin: no pending commit and
-        ::                       current version doesn't support kel update,
-        ::    blocked on perms:  has pending commit, missing required permissions
-        ::  for perm blocked desks: store missing perms in state, send-ward
-        ::
-        |=  ese=?
-        ^-  [(list desk) _..park]
+      ::    if other desks were awaiting a kelvin, but now we have that kelvin,
+      ::    they may now be awaiting permissions instead. update their .pew
+      ::    and notify about the change, if that's the case.
+      ::
+      ++  update-pews
+        ^+  ..park
+        ?>  =(%base syd)
         =/  sys-kel=weft
           =/  w=waft  (get-kelvin yoki)
           ?@  -.w  w  !!
-        =/  sus=(list [=desk (unit [mis=(set perm:gall) =^yoki])])
-          %-  ~(rep by (~(del by dos.rom.ruf) %base))
-          |=  [[=desk =dojo] sus=(list [desk (unit [(set perm:gall) ^yoki])])]
-          ::  essential/non-essential desk check
-          ~&  [desk ese-dojo=ese.dojo ese=ese]
-          ::  non-live desks are never blocking/relevant,
-          ::  only live .ese desks are relevant
-          ::
-          ?.  &(?=(%live liv.dom.dojo) =(ese ese.dojo))
-            sus
-          ?~  yok=(~(get by wic.dom.dojo) sys-kel)
-            ::  has no pending commit for current kel update case
-            ?~  t=(~(get by hit.dom.dojo) let.dom.dojo)
-              ::  desk never had a commit, no-op
-              sus
-            =/  kel=(set weft)
-              (waft-to-wefts (get-kelvin %| (tako-to-yaki:ze u.t)))
-            ?:  (~(has in kel) sys-kel)
-              ::  desk alredy supports kel update case
-              sus
-            ::  desk doesn't support kel update
-            [[desk ~] sus]
-          =/  mis=(set perm:gall)
+        =+  doz=~(tap by (~(del by dos.rom.ruf) %base))
+        |-
+        ?~  doz  ..park
+        =*  desk  p.i.doz
+        =*  dojo  q.i.doz
+        =*  next  $(doz t.doz)
+        ::  only live desks can be blocking on perms,
+        ::  and we only block on perms _after_ we're unblocked on kelvin
+        ::
+        ?.  ?=(%live liv.dom.dojo)                next
+        ?~  yok=(~(get by wic.dom.dojo) sys-kel)  next
+        =/  mis=(set perm:gall)
           %-  ~(gas in *(set perm:gall))
           %+  skip  ~(tap in (seal-at-commit u.yok))
           (cury have:guard:gall peg.dom.dojo)
-          ::  desk is ready to be updated
-          ?:  =(~ mis)  sus
-          ::  desk missing permissions
-          [[desk `[mis u.yok]] sus]
-        ::
-        =.  ..park
-          |-
-          ?~  sus  ..park
-          ?~  +.i.sus  $(sus t.sus)
-          =.  dos.rom                                     ::  [send-ward] <
-            %+  ~(jab by dos.rom)  desk.i.sus
-            |=(=dojo dojo(pew.dom `[mis yoki]:u.+.i.sus))
-          =.  ..park  (send-ward desk.i.sus)              ::  [send-ward] >
-          %-  (slog leaf+"clay: {<desk.i.sus>} missing permissions, suspended" ~)
-          $(sus t.sus)
-        ::
-        :_  ..park
-        (roll sus |=([[=desk *] l=(list desk)] [desk l]))
+        ?:  =(~ mis)  next
+        =.  dos.rom.ruf  (~(put by dos.rom.ruf) desk dojo(pew.dom `[mis u.yok]))
+        =.  ..park       (send-ward desk)
+        next
       --
     --
   ::
@@ -3573,14 +3587,20 @@
     ?^  err
       ((slog leaf+"clay: failed to upgrade kelvin (wick)" u.err) ..park)
     ?>  ?=(%base syd)
+    ::  start with the oldest new kelvin, but if that doesn't apply
+    ::  try progressively newer kelvins
+    ::
     =/  wis=(list [weft =yoki])
       %+  sort  ~(tap by wic.dom)
       |=  [a=[weft yoki] b=[weft yoki]]
       (gth num.a num.b)
     =.  wis  (skip wis |=([[* a=@ud] *] (gte a zuse)))
+    |-
     ?~  wis  ::  Every commit bottoms out here ?
       ..park
-    (park | & yoki.i.wis *rang)
+    ?:  =(~ (find-blocked yoki.i.wis %.y))
+      (park | & yoki.i.wis *rang)
+    $(wis t.wis)
   ::
   ::  Cancel a request.
   ::
