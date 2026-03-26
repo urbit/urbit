@@ -2068,7 +2068,6 @@
     ::  find desk seal
     ::
     =/  per=(set perm:gall)  (seal-at-commit yoki)
-    ~&  >>  %checking-permissions
     ::  incoming commit permission check
     ::
     =/  mis=(set perm:gall)
@@ -3525,8 +3524,7 @@
     ?:  =(%kids syd)
       ..park(liv.dom %dead)
     ?.  ?=(%live liv)
-      =/  ese  ese:(~(got by dos.rom) syd)
-      ?.  ese  ..park(liv.dom liv)
+      ?.  ese:(~(got by dos.rom) syd)  ..park(liv.dom liv)
       =/  msg  "clay: can't set essential desk {<syd>} to {(scow %tas liv)}"
       ((slog leaf+msg ~) ..park)
     =/  kel=(set weft)
