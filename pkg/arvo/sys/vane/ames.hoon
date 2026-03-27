@@ -2579,7 +2579,7 @@
       ~>  %slog.0^leaf/"ames: metamorphosis on %take"
       [:(weld molt-moves queu-moves take-moves) adult-gate]
     ::
-    ++  stay  [%29 larva/ames-state]
+    ++  stay  [%30 larva/ames-state]
     ++  scry  scry:adult-core
     ++  load
       |=  $=  old
@@ -8077,7 +8077,7 @@
               |-  ^+  fine
               ?:  |(=(~ nex.keen) =(inx max))
                 fine
-              =^  =want  nex.keen  nex.keen
+              =^  =want  nex.keen  ?>  ?=(^ nex.keen)  nex.keen
               =.  last-sent.want   now
               =.      tries.want   +(tries.want)
               =.        wan.keen   (put:fi-mop wan.keen [fra .]:want)
@@ -13548,7 +13548,7 @@
   take:am-core
 ::  +stay: extract state before reload
 ::
-++  stay  [%29 adult/ames-state]
+++  stay  [%30 adult/ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
