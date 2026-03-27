@@ -1823,13 +1823,44 @@
     ::
     +|  %attestation-path
     ::
-    +$  poof-pith
+    ++  poof-pith
+    =<  poof
+    |%
+    ::
+    +$  poof
       $:  %pawn
           %proof
+          [%ud com-life=@ud]  :: XX redundant?
           [%p rcvr=@p]
           [%ud life=@ud]  :: XX redundant?
           ~
       ==
+    ::
+    +$  pok
+      $:  %pawn
+          %proof
+          com-life=@  :: XX redundant?
+          rcvr=@
+          life=@  :: XX redundant?
+          ~
+      ==
+    ::
+    +$  muth
+      $:  %muth
+          our-life=@
+          her=@
+          her-life=@
+          ~
+      ==
+    ::
+    +$  muth-iota
+      $:  %muth
+          [%ud our-life=@ud]
+          [%p her=@p]
+          [%ud her-life=@ud]
+          ~
+      ==
+    --
     ::
     +|  %state-migrations
     ::
@@ -3955,9 +3986,11 @@
     ++  make-lanes
       |=  [her=ship lan=(unit [hop=@ =lane:pact]) =qos]
       ^-  (list lane:pact:ames)
-      ?:  =(%czar (clan:title her))
+      ?~  sponsor=(get-sponsor her)
         [lane:(need lan)]~
-      =/  sponsor=(unit @ux)  (get-sponsor her)
+      ?:  =(her u.sponsor)
+        :: XX zif: hmm
+        [lane:(fall lan [0 lane=`@ux`her])]~
       =/  spon-lane=(unit lane:pact)
         ?.  ?&  ?=(^ lan)
                 =(0 hop.u.lan)
@@ -8838,6 +8871,7 @@
         +|  %helpers
         ::
         ++  ev-core  .
+        ++  al-core  (al-abed:al hen)
         ++  ev-abed  |=([d=duct h=ship p=_per] ev-core(hen d, her h, per p))
         ++  ev-abet
           :-  (flop moves)
@@ -8880,6 +8914,20 @@
           =>  .(wire `(pole iota)`(mesa-pave wire))
           ?.  ?=(ev-flow-wire wire)  ~
           `wire
+        ::
+        ++  ev-parse-poof-pith
+          |=  =path
+          ^-  (unit poof:poof-pith)
+          =>  .(path `(pole iota)`(mesa-pave path))
+          ?.  ?=(poof:poof-pith path)  ~
+          `path
+        ::
+        ++  ev-parse-muth-pith
+          |=  =path
+          ^-  (unit muth:poof-pith)
+          =>  .(path `(pole iota)`(mesa-pave path))
+          ?.  ?=(muth:poof-pith path)  ~
+          `path
         ::
         +|  %request-flow
         ::
@@ -9328,6 +9376,21 @@
               [`[bone dire]:u.flow-wire `were.u.flow-wire]
             %-  %+  ev-tace  odd.veb.bug.ames-state
                   |.("ignore {<(trip -.sign)>} for old rift")
+            [~ ~]^ev-core
+          ?^  puf-wire=(ev-parse-poof-pith wire)
+            ?>  ?=(%sage -.sign)
+            =*  sage  sage.sign
+            ?>  ?=(^ q.sage.sign)
+            ?>  =(%azimuth-peer-state p.q.sage)
+            =+  ;;(mut=azimuth-state [0 q.q.sage])
+            =/  per  (~(got by chums.ames-state) ship.p.sage)
+            ?>  ?=(%known -.per)
+            ::?>  =(symmetric-key.mut symmetric-key.per)
+            ?>  =(life.ames-state life.mut)
+            ?>  =(rift.ames-state rift.mut)
+            ?>  =(pub.saf.ames-state public-keys.mut)
+            ?>  =(pass.ames-state pass.mut)
+            :: maybe we could do something actually interesting here one day
             [~ ~]^ev-core
           ?~  bone-wire=(parse-bone-wire wire)
             %-  %+  ev-tace  odd.veb.bug.ames-state
@@ -11150,6 +11213,14 @@
                 ev-abet:c
               %-  ~(rep by pit.per.ev-core)
               |=  [[=path req=request-state] core=_ev-core]
+              :: XX zif: would resend too many times?
+              =?  core  ?&  ?=(%pawn (clan:title our))
+                            ?=([%chum *] path)
+                            ?=(%unborn -.qos.per.core)
+                        ==
+                =^  moves  ames-state.core
+                  al-abet:(al-poke-proof:al-core:core ship per.core)
+                (ev-emil:core moves)
               ::  update and print connection status
               ::
               =?  core  (is-peer-dead:core now [her qos.per]:core)
@@ -11807,36 +11878,39 @@
           ::
           (al-emit hen %pass /public-keys %j %public-keys [n=ship ~ ~])
         ::
-        ++  al-register-comet
-          |=  [comet=@p open-packet signature=@ signed=@]  :: XX to %lull
-          ^+  al-core
+        ++  al-verify-packet
+          |=  [comet=@p com-life=@ open-packet]
+          ^-  ?
           =/  cic  (com:nu:cric:crypto pass)
-          ::  XX  comet proofs use the /publ namespace, so the signature
-          ::  verification has already happened in +al-take-proof
-          ::
-          ::  verify signature
-          ::
-          ?>  (veri:ed:crypto signature signed sgn:ded:ex:cic)
           ::  assert the contents of the proof match those of a comet
           ::
-          ?>  &(=(sndr comet) =(sndr-life 1))
-          ::  assert the contents of the proof match ours
-          ::
-          ?>  &(=(rcvr our) =(rcvr-life life.ames-state))
-          ::  only a star can sponsor a comet
-          ::
-          ?>  =(%king (clan:title (^sein:title comet)))
-          ::  comet public-key must hash to its @p address
-          ::
-          ?>  =(comet fig:ex:cic)
-          =/  keys  (~(put by *(map life [suite=@ud ^pass])) 1 num:ex:cic pass)
+          ?&  =(sndr comet)  =(com-life sndr-life)  =(1 com-life)
+              ::  assert the contents of the proof match ours
+              ::
+              =(rcvr our)  =(rcvr-life life.ames-state)
+              ::  comet public-key must hash to its @p address
+              ::
+              =(comet fig:ex:cic)
+          ==
+        ::
+        ++  al-register-comet
+          |=  [comet=@p com-life=@ open-packet]  :: XX to %lull
+          ^+  al-core
+          ?>  (al-verify-packet +<)
+          ?>  =(1 com-life)
+          =/  cic  (com:nu:cric:crypto pass)
+          =/  keys  (~(put by *(map life [suite=@ud ^pass])) sndr-life num:ex:cic pass)
           =/  ship-state  (~(get by chums.ames-state) comet)
           ?:  ?=([~ %known *] ship-state)
             al-core
           ::  insert comet
           ::
-          =?  chums.ames-state  =(~ ship-state)
-            (~(put by chums.ames-state) comet %alien *ovni-state)
+          =?  .  =(~ ship-state)
+            %_    .
+                ship-state  [~ %alien *ovni-state]
+                chums.ames-state
+              (~(put by chums.ames-state) comet %alien *ovni-state)
+            ==
           ?>  ?=([~ %alien *] ship-state)
           %-  %^  al-tace  sun.veb.bug.ames-state  comet
               =+  :+  pokes=(lent pokes.u.ship-state)
@@ -11850,7 +11924,12 @@
             %^  ~(sy-publ sy hen)  /comet  %full
             %+  ~(put by *(map ship point:jael))  comet
             =|  =point:jael
-            point(rift 0, life 1, keys keys, sponsor `(^sein:title comet))
+            %=  point
+              rift     0
+              life     1
+              keys     keys
+              sponsor  `(^^sein:title rof /ames our now comet)
+            ==
           ::
           (al-emil publ-moves)
         ::
@@ -11860,7 +11939,7 @@
           =/  =space  [%publ life=1]
           =/  =path
             %+  make-space-path  space
-            /a/x/1//pawn/proof/[(scot %p our)]/[(scot %ud life.ames-state)]
+            /a/x/1//pawn/proof/1/[(scot %p our)]/[(scot %ud life.ames-state)]
           ::  XX set up a timer to resend faster than the ~m2 retry?
           ::
           ::  we call the arm directly instead of sending a %meek task
@@ -11873,6 +11952,30 @@
           %-  %^  al-tace  fin.veb.bug.ames-state  comet
               |.("peek for comet attestation proof")
           (al-emit (push-pact comet u.pact (make-lanes comet `[0 lane] *qos)))
+        ::
+        ++  al-poke-proof
+          |=  [her=@ per=fren-state]
+          =/   poof-path=path
+            :~  %pawn  %proof
+                (scot %ud life.ames-state)
+                (scot %p her)
+                (scot %ud life.per)
+            ==
+          ~!  -
+          %:  al-emit
+              ~[/ames]  %pass  poof-path  %a
+              %moke
+              [%publ life.ames-state]
+              :-  her
+              :~  %a  %x  %'1'  %$  %muth
+                  (scot %ud life.per)
+                  (scot %p our)
+                  (scot %ud life.ames-state)
+              ==
+              :*  %a  %x  %'1'  %$
+                  poof-path
+              ==
+          ==
         ::
         ++  al-take-proof
           |=  [=lane:pact hop=@ud =name:pact =data:pact =next:pact]
@@ -11894,23 +11997,18 @@
           ?>  =(1 (div (add tob.data 1.023) 1.024))
           ?>  ?=(%& -.aut.data)
           ::
-          ~|  [name=name data=data]
-          ::
-          =+  ;;(proof=gage:mess (cue dat.data))
-          ?>  ?=([%message %proof *] proof)
-          ::  XX refactor with sift-open-packet?
-          ::
-          =+  ;;  [signature=@ signed=@]  (cue ;;(@ +>.proof))
-          =+  ;;  =open-packet            (cue signed)
-          ::
-          ?>  %-  verify-sig:crypt
-              :^    (end 8 (rsh 3 pass.open-packet))
-                  p.p.aut.data
-                (en-beam [[her.name %$ ud+1] pat.name])
-              (root:lss tob.data^dat.data)
+          =/  res=@  dat.data
+          =+  ;;(=gage:mess (cue res))
+          ?>  ?=(^ gage)
+          ?>  ?=(%open-packet p.gage)
+          =+  ;;(=open-packet q.gage)
+          =/  =public-keys  ded:ex:(com:nu:cric:crypto pass.open-packet)
+          ?>  =/  ful  (en-beam [[her.name %$ ud+1] pat.name])
+              =/  rut  (root:lss tob.data^dat.data)
+              (verify-sig:crypt sgn.public-keys p.p.aut.data ful rut)
           ::
           =.  al-core
-            (al-register-comet her.name open-packet signature signed)
+            (al-register-comet her.name com-life.path open-packet)
           =.  ames-state
             ::  discard moves; %nail gift is included in +sy-publ
             ::
@@ -12381,7 +12479,7 @@
         ++  peek-pawn
           |=  tyl=(pole knot)
           ^-  (unit (unit cage))
-          ?.  ?=([%pawn %proof rcvr=@ life=@ ~] tyl)
+          ?.  ?=([%pawn %proof com-life=@ rcvr=@ life=@ ~] tyl)
             ~
           ::  only comets have this
           ::
@@ -12394,11 +12492,28 @@
           ::
           =/  =open-packet
             [pass.ames-state our life.ames-state u.rcvr u.life]
-          =/  sig
-            %+  sign-raw:ed:crypto  (jam open-packet)
-            [sgn.pub sgn.sek]:saf.ames-state
           :+  ~  ~
-          [%message !>(proof/sig)]
+          [%open-packet !>(open-packet)]
+        ::  peek azimuth-state
+        ::
+        ++  peek-muth
+          |=  [tyl=(pole knot)]
+          ^-  (unit (unit cage))
+          ?.  ?=(muth:poof-pith tyl)  ~
+          ?~  her=(slaw %p her.tyl)  ~
+          ?~  her-lyf=(slaw %ud her-life.tyl)  ~
+          ?~  our-lyf=(slaw %ud our-life.tyl)  ~
+          ?.  =(life.ames-state u.our-lyf)  [~ ~]
+          =/  muth=(unit azimuth-state)
+            ?^  chum=(~(get by chums.ames-state) u.her)
+              ?.  ?=([%known *] u.chum)  ~
+              `+<.u.chum
+            ?~  peer=(~(get by peers.ames-state) u.her)  ~
+            ?.  ?=([%known *] u.peer)  ~
+            `+<.u.peer
+          ?~  muth  [~ ~]
+          ?.  =(life.u.muth u.her-lyf)  [~ ~]
+          ``azimuth-peer-state/!>(+.u.muth)
         ::  publisher-side, weight of a noun at .pat, as measured by .boq
         ::
         ++  peek-whey
@@ -12516,16 +12631,17 @@
                 ~
               ::  publisher-side, protocol-level
               ::
-                [%mess ryf=@ res=*]                (peek-mess bem tyl)
+                [%mess ryf=@ res=*]                        (peek-mess bem tyl)
               ::  client-side, protocol-level (authentication namespace)
               ::
-                [%veri ?(%sign %hmac) @ @ @ *]     (peek-veri tyl)
+                [%veri ?(%sign %hmac) @ @ @ *]             (peek-veri tyl)
               ::  message-level public namespaces
               ::
-                [%publ lyf=@ pat=*]                (peek-publ bem tyl)
-                [%chum lyf=@ her=@ hyf=@ cyf=@ ~]  (peek-chum bem tyl)
-                [%shut kid=@ cyf=@ ~]              (peek-shut bem tyl)
-                [%pawn %proof rcvr=@ life=@ ~]     (peek-pawn tyl)
+                [%publ lyf=@ pat=*]                        (peek-publ bem tyl)
+                [%chum lyf=@ her=@ hyf=@ cyf=@ ~]          (peek-chum bem tyl)
+                [%shut kid=@ cyf=@ ~]                      (peek-shut bem tyl)
+                [%muth *]                                  (peek-muth tyl)
+                [%pawn %proof com-live=@ rcvr=@ life=@ ~]  (peek-pawn tyl)
               ::  message-level private namespaces
               ::
                 $%([%flow *] [%meta *] [%whey *])
@@ -13062,7 +13178,43 @@
             %-  %+  %*(ev-tace ev-core her her-pok)  rcv.veb.bug.ames-state
                 |.("snubbed")
             `ames-state
+          =>  %=  .
+                pat.pok.pact  `(pole term)`pat.pok.pact
+                pat.ack.pact  `(pole term)`pat.ack.pact
+              ==
           =/  chum-state  (find-peer her-pok)
+          ?:  ?=([%publ @ %a %x %'1' %$ mut=muth:poof-pith] pat.ack.pact)
+            ?:  ?=([~ %known *] +.chum-state)  `ames-state
+            ?>  ?=([%publ @ %a %x %'1' %$ puf=pok:poof-pith] pat.pok.pact)
+            =/  puf
+              =>  [puf.pat.pok.pact ..ride]
+              :*  com-life=(slav %ud com-life)
+                  rcvr=(slav %p rcvr)
+                  life=(slav %ud life)
+              ==
+            =/  mut
+              =>  [mut.pat.ack.pact ..ride]
+              :*  our-life=(slav %ud our-life)
+                  her=(slav %p her)
+                  her-life=(slav %ud her-life)
+              ==
+            ?>  ?&  =(our her.ack.pact)
+                    =(our rcvr.puf)
+                    =(her.mut her.pok.pact)
+                    =(our-life.mut life.ames-state)
+                    =(our-life.mut life.puf)
+                    =(her-life.mut com-life.puf)
+                ==
+            :: todo: also check ship part of names and lifes
+            :: hack, cuz al-take-proof expects a page not a poke
+            =^  moves  ames-state
+              al-abet:(al-take-proof:al-core lane 0 [pok data ~]:pact)
+            :_  ames-state
+            :_  moves
+            :*  [/ames]~
+                %pass  /make-page  %a
+                mage/[[%publ life.ames-state] her.pok.pact^+>.pat.ack.pact]
+            ==
           ?.  ?=([%ames ~ %known *] chum-state)
             ::  [%mesa ~]
             ::    only if %mesa core enabled (not by default)
@@ -13379,6 +13531,7 @@
     ::
     ~>  %slog.0^leaf/"mesa: taking weird {<[[- +<]:sign]>} for {(spud wire)}"
     take:me-core
+  ?:  ?=([%pawn %proof *] wire)  (take:me-core sample)
   ?~  parsed-wire=(parse-bone-wire wire)
     ::  not a /bone wire—used when passing %pleas to a local vane; use |ames
     ::  XX this is not a |mesa wire so it shouldn't happen for migrated flows
@@ -13417,10 +13570,10 @@
           =(%x car)
       ==
     =/  tyl=(pole knot)  s.bem
-    ?:  ?=(?(%mess %publ %shut %veri %pawn %fine %chum) -.tyl)
+    ?:  ?=(?(%mess %publ %shut %veri %pawn %fine %chum %muth) -.tyl)
       ?-    -.tyl
-          %fine                              (scry:am-core sample)
-          ?(%mess %publ %shut %veri %pawn)   (scry:me-core sample)
+          %fine                                    (scry:am-core sample)
+          ?(%mess %publ %shut %veri %pawn %muth)   (scry:me-core sample)
       ::
           %chum
         ?+  +.tyl  ~
