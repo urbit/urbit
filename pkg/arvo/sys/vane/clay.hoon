@@ -319,7 +319,10 @@
           $>(%what waif)                                ::
       ==                                                ::
       $:  %a                                            ::  to %ames
-          $>(?(%plea %keen %yawn %whey) task:ames)      ::
+          $>  $?  %plea  %keen  %yawn
+                  %chum  %prog  %whey
+              ==
+          task:ames
       ==                                                ::
       $:  %b                                            ::  to %behn
           $>  $?  %drip                                 ::
@@ -365,6 +368,7 @@
                   %done                                 ::  (n)ack
                   %lost                                 ::  lost boon
                   %sage                                 ::  %keen response
+                  %rate                                 ::  scry progress rate
               ==                                        ::
           gift:ames                                     ::
       ==                                                ::
@@ -376,6 +380,7 @@
           $>  $?  %mere                                 ::
                   %writ                                 ::
                   %wris                                 ::
+                  %rate                                 ::
               ==                                        ::
           gift                                          ::
       ==                                                ::
@@ -1445,6 +1450,9 @@
     :-  [time path]
     %-  emil
     :~  [hen %pass wire %a %keen ~ ship path]
+        ::  XX don't subscribe to progress %rate by default
+        ::  XX use right .freq
+        [hen %pass wire %a %prog ship^path feq=1]
         [hen %pass wire %b %wait time]
     ==
   ::
@@ -3176,6 +3184,33 @@
     =.  bom.u.ref  (~(put by bom.u.ref) inx sat(busy ~))
     abet:work:(foreign-update inx)
   ::
+  ++  take-rate
+    |=  [kind=@ta inx=@ud =spar:ames =rate:ames]
+    ^+  ..take-rate
+    ~|  [%strange-take-rate-no-request kind her syd inx]
+    ?>  ?=(%back-index kind)
+    ?.  ?=(^ ref)
+      ..take-rate
+    ?~  sat=(~(get by bom.u.ref) inx)
+      ::  a %sage has been delivered by ames to clay;
+      ::  this is the last rate
+      ::
+      ..take-rate
+    ?.  ?=([~ ^] busy.u.sat)
+      ::  XX maybe clay just finished but a rate still comes in?
+      ::  XX could be due to a crash during handling the %rate task
+      ::
+      ..take-rate
+    =/  =wire      (request-wire kind her syd inx)
+    =/  old=time   time.u.busy.u.sat
+    =/  =time      (add now scry-timeout-time)
+    =.  bom.u.ref  (~(put by bom.u.ref) inx u.sat(time.u.busy time))
+    %-  emil
+    :~  [hen %pass wire %b %rest old]
+        [duct.u.sat %give %rate spar rate]
+        [hen %pass wire %b %wait time]
+    ==
+  ::
   ::  Called when a foreign ship answers one of our requests.
   ::
   ::  If it's a `%many` request, process in +take-foreign-update
@@ -3341,6 +3376,43 @@
       ::
       =.  need.sat  (welp need.sat (missing-lobes nako))
       =.  nako.sat  (~(put to nako.sat) ~ nako)
+      =.  ..foreign-update
+        ::  we request sizes for all the paths in the desk to know beforehand
+        ::  how much data we are expecting
+        ::  XX better to request the size of the whole desk instead?
+        ::  XX desk size namespace?
+        ::
+        =;  paths=(set (pair care path))
+          ^+  ..foreign-update  =<  ?>(?=(^ ref) .)
+          %-  emit  ^-  move
+          [duct.sat %give %wris da+now paths]
+        %+  roll  need.sat
+        |=  [i=$@(lobe [=tako =path =lobe]) paths=(set (pair care path))]
+        ?:  ?=([~ %ames] busy.sat)
+          ::  if we are using %ames, don't attemp to use remote-scry for anything
+          ::
+          paths
+        ?@  i  paths
+        ?.  ?=(^ path.i)  paths
+        ::  instead of doing %whey here, we find the listener (kiln) and give
+        ::  all the paths to deal with wheys there
+        ::
+        =.  path.i  [%c %q (scot %uv tako.i) syd path.i]
+        (~(put in paths) %q path.i)
+        :: =<  ?>(?=(^ ref) .)
+        :: %-  emit:c
+        :: :*  duct.sat  %give  %writ  ~
+        ::     ^-  rant
+        ::     [[%q uv+tako.i syd] path.i whey/!>(~)]
+        :: ==
+        ::  XX handles wheys directly in %clay
+        ::
+        :: =/  =wire  (request-wire %keen-whey her syd inx)
+        :: :: =.  path.i  [%a %x '1' %$ %whey (scot %ud 3) path.i]
+        :: :: =>((emit:c hen %pass wire %a %chum her path.i) ?>(?=(^ ref) .))
+        :: ::  XX  this will fail if the peer has not ben %ahoyed
+        :: ::
+        :: =>((emit:c hen %pass wire %a %whey her^path.i boq=13) ?>(?=(^ ref) .))
       work
     ::
     ++  missing-lobes
@@ -3429,6 +3501,7 @@
         ?:  ?&  ?=(^ i.need.sat)
             ?|  !(~(has by sad) her)
                 (gth now (add scry-retry-time (~(got by sad) her)))
+                &
             ==  ==
           ::  make the request over remote scry
           ::
@@ -6108,19 +6181,21 @@
       %-  (slog leaf+"clay: lost backfill from {<tea>}" ~)
       [~ ..^$]
     ::
-        ?(%boon %sage)
+        ?(%boon %sage %rate)
       =/  her=ship   (slav %p i.t.tea)
       =/  =desk      (slav %tas i.t.t.tea)
       =/  index=@ud  (slav %ud i.t.t.t.tea)
       ::
       =/  fell=(unit fell)
-        ?:  ?=(%boon +<.hin)  `;;(fell payload.hin)
-        =/  =spar:ames  p.sage.hin
-        ?~  q.sage.hin  ~
-        `[%1 `q.sage.hin]
+        ?+  +<.hin  ~
+          %boon  `;;(fell payload.hin)
+          %sage  ?~(q.sage.hin ~ `[%1 `q.sage.hin])
+        ==
       ::
       =^  mos  ruf
         =/  den  ((de now rof hen ruf) her desk)
+        ?:  ?=(%rate +<.hin)
+          abet:(take-rate:den -.tea index +>.hin)
         ?~  fell
           ::  We shouldn't get back null on any of the fine requests we
           ::  make unless they're out of date
@@ -6129,7 +6204,16 @@
           abet:(retry-with-ames:den %back-index index)
         =?  den  ?=(%sage +<.hin)
           (cancel-scry-timeout:den index)
+        :: ~&  >>  [+<.hin index]
         abet:abet:(take-backfill:(foreign-update:den index) u.fell)
+        :: ?>  ?=(^ ref.den)
+        :: =/  sat=update-state  (~(got by bom.u.ref.den) index) :: XX cache
+        :: =^  bas  ruf
+        ::   abet:abet:(take-backfill:(foreign-update:den index) u.fell)
+        :: ?.  ?=([~ ^] busy.sat)
+        ::   bas^ruf2
+        :: :_  ruf
+        :: [duct.u.sat %give %rate her.den^path.u.busy.sat [0 0 0]]^bas
       [mos ..^$]
     ::
          %wake
@@ -6234,6 +6318,7 @@
       ::
       %boon  !!
       %sage  !!
+      %rate  !!
       %lost  !!
       %unto  !!
       %wris  ~&  %strange-wris  !!

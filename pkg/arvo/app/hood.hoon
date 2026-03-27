@@ -1,9 +1,12 @@
-/+  default-agent
-/+  drum=hood-drum, helm=hood-helm, kiln=hood-kiln, load=hood-load
+/+  default-agent, dbug
+/+  drum=hood-drum, helm=hood-helm,
+    kiln=hood-kiln, load=hood-load,
+    ahoy=hood-ahoy
 |%
++$  card  card:agent:gall
 +$  state
-  $~  [%28 *state:drum *state:helm *state:kiln]
-  $>(%28 any-state)
+  $~  [%29 *state:drum *state:helm *state:kiln *state:ahoy]
+  $>(%29 any-state)
 ::
 +$  any-state
   $%  [ver=?(%1 %2 %3 %4 %5 %6) lac=(map @tas fin-any-state)]
@@ -29,12 +32,20 @@
       [%26 drum=state-6:drum helm=state-2:helm kiln=state-10:kiln]
       [%27 drum=state-6:drum helm=state-2:helm kiln=state-11:kiln]
       [%28 drum=state-6:drum helm=state-2:helm kiln=state-11:kiln]
-  ==
+      $:  %29
+          drum=state-6:drum
+          helm=state-2:helm
+          kiln=state-12:kiln
+          ahoy=state-0:ahoy
+  ==  ==
+::
 +$  any-state-tuple
   $:  drum=any-state:drum
       helm=any-state:helm
       kiln=any-state:kiln
+      ahoy=any-state:ahoy
   ==
+::
 +$  fin-any-state
   $%  [%drum any-state:drum]
       [%helm any-state:helm]
@@ -42,6 +53,8 @@
       [%write *]  ::  gets deleted
   ==
 --
+::
+%-  agent:dbug
 ^-  agent:gall
 =|  =state
 |_  =bowl:gall
@@ -50,14 +63,16 @@
     drum-core  (drum bowl drum.state)
     helm-core  (helm bowl helm.state)
     kiln-core  (kiln bowl kiln.state)
+    ahoy-core  (ahoy bowl ahoy.state)
 ::
 ++  on-fail   on-fail:def
 ++  on-init
-  ^-  step:agent:gall
+  ^-  (quip card _this)
   =^  h  helm.state  on-init:helm-core
   =^  d  drum.state  on-init:drum-core
   =^  k  kiln.state  on-init:kiln-core
-  [:(welp d k) this]
+  =^  a  ahoy.state  on-init:ahoy-core
+  [:(welp h d k a) this]
 ::
 ++  on-leave  on-leave:def
 ++  on-peek
@@ -70,56 +85,70 @@
 ++  on-save   !>(state)
 ++  on-load
   |=  =old-state=vase
-  ^-  step:agent:gall
+  =|  cards=(list card:agent:gall)
   =+  !<(old=any-state old-state-vase)
+  |-  ^-  step:agent:gall
   ?:  ?=(%27 -.old)
-    :_  this(state old(- %28))
-    (eyre-clean:load [our now]:bowl)
+    $(old old(- %28), cards (eyre-clean:load [our now]:bowl))
   =/  tup=any-state-tuple
-    ?+    -.old  +.old
+    ?:  ?=(%29 -.old)
+      +.old
+    ?+    -.old  +.old(kiln [kiln.old *any-state:ahoy])
         ?(%1 %2 %3 %4 %5 %6)
       :*  =-(?>(?=(%drum -<) ->) (~(got by lac.old) %drum))
           =-(?>(?=(%helm -<) ->) (~(got by lac.old) %helm))
           =-(?>(?=(%kiln -<) ->) (~(got by lac.old) %kiln))
+          *any-state:ahoy
       ==
     ==
   =^  d  drum.state  (on-load:(drum bowl *state:drum) -.old drum.tup)
   =^  h  helm.state  (on-load:(helm bowl *state:helm) -.old helm.tup)
   =^  k  kiln.state  (on-load:(kiln bowl *state:kiln) -.old kiln.tup)
-  [:(welp d h k) this]
+  =^  a  ahoy.state  (on-load:(ahoy bowl *state:ahoy) -.old ahoy.tup)
+  [:(welp d h k a cards) this]
 ::
 ++  on-poke
   |=  [=mark =vase]
-  ^-  step:agent:gall
+  ^-  (quip card _this)
   |^
   =/  fin  (end [3 4] mark)
   ?:  =(%drum fin)  poke-drum
   ?:  =(%helm fin)  poke-helm
   ?:  =(%kiln fin)  poke-kiln
+  ?:  =(%ahoy fin)  poke-ahoy
   ::
   ?+  mark  (on-poke:def mark vase)
     %atom            poke-helm(mark %helm-atom)
-    %dill-poke       poke-drum
+    %dill-poke       poke-dill
     %hood-sync       poke-kiln(mark %kiln-sync)
     %write-sec-atom  poke-helm(mark %helm-write-sec-atom)
+    %rate            poke-kiln(mark %kiln-rate)
   ==
   ++  poke-drum  =^(c drum.state (poke:drum-core mark vase) [c this])
   ++  poke-helm  =^(c helm.state (poke:helm-core mark vase) [c this])
   ++  poke-kiln  =^(c kiln.state (poke:kiln-core mark vase) [c this])
+  ++  poke-ahoy  =^(c ahoy.state (poke:ahoy-core mark vase) [c this])
+  ++  poke-dill
+    =+  !<([ses=@tas belt=dill-belt:dill] vase)
+    ?.  =(%dl ses)
+      poke-drum
+    =^(c kiln.state (take-dill-poke:kiln-core belt) [c this])
+  ::
   --
 ::
 ++  on-watch
   |=  =path
-  ^-  step:agent:gall
+  ^-  (quip card _this)
   ?+  path  (on-watch:def +<)
-    [%drum *]  =^(c drum.state (peer:drum-core t.path) [c this])
-    [%kiln *]  =^(c kiln.state (peer:kiln-core t.path) [c this])
-    [%dill *]  =^(c drum.state (peer:drum-core +<) [c this])
+    [%drum *]      =^(c drum.state (peer:drum-core t.path) [c this])
+    [%kiln *]      =^(c kiln.state (peer:kiln-core t.path) [c this])
+    [%dill %dl ~]  =^(c kiln.state peer-dill:kiln-core [c this])
+    [%dill *]      =^(c drum.state (peer:drum-core +<) [c this])
   ==
 ::
 ++  on-agent
   |=  [=wire syn=sign:agent:gall]
-  ^-  step:agent:gall
+  ^-  (quip card _this)
   ?+  wire  ~|([%hood-bad-wire wire] !!)
     [%drum *]  =^(c drum.state (take-agent:drum-core t.wire syn) [c this])
     [%helm *]  =^(c helm.state (take-agent:helm-core t.wire syn) [c this])
@@ -128,10 +157,12 @@
 ::
 ++  on-arvo
   |=  [=wire syn=sign-arvo]
-  ^-  step:agent:gall
+  ^-  (quip card _this)
   ?+  wire  ~|([%hood-bad-wire wire] !!)
     [%drum *]  =^(c drum.state (take-arvo:drum-core t.wire syn) [c this])
     [%helm *]  =^(c helm.state (take-arvo:helm-core t.wire syn) [c this])
     [%kiln *]  =^(c kiln.state (take-arvo:kiln-core t.wire syn) [c this])
+    [%ahoy *]  =^(c ahoy.state (take-arvo:ahoy-core t.wire syn) [c this])
   ==
+::
 --

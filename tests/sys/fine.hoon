@@ -128,8 +128,10 @@
       ==
       :~  [~[//fine] %pass /qos %d %flog %text "; ~bud is your neighbor"]
           [~[/keen-duct-2] %give %sage sage]
+          :: [~[/keen-duct-2] %give %rate [~bud scry-path] 1^1]
           :^  ~[/keen-duct-2]  %pass  /prune-tip
           [%a %deep %prun ~bud scry-path ~[/keen-duct-2] scry-path]
+          :: [~[/keen-duct-1] %give %rate [~bud scry-path] 1^1]
           [~[/keen-duct-1] %give %sage sage]
           :^  ~[/keen-duct-1]  %pass  /prune-tip
           [%a %deep %prun ~bud scry-path ~[/keen-duct-1] scry-path]
@@ -310,7 +312,8 @@
       :*  %hear  [%& ~bud]
           (etch-shot:ames resp2)
       ==
-      :~  [~[/keen-duct-1] %give %sage sage]
+      :~  ::[~[/keen-duct-1] %give %rate [~bud scry-path] 3^3]
+          [~[/keen-duct-1] %give %sage sage]
           :^  ~[/keen-duct-1]  %pass  /prune-tip
           [%a %deep %prun ~bud scry-path ~[/keen-duct-1] scry-path]
           [~[/ames] %pass fine-behn-wire %b %rest ~1111.1.2..00.02.00]

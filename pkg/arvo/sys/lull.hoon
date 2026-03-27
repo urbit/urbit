@@ -837,7 +837,7 @@
   ::    %snub: set packet blocklist to .ships
   ::    %spew: set verbosity toggles
   ::    %cong: adjust congestion control parameters
-  ::    %stir: recover from timer desync and assorted debug commands
+  ::    %stir: recover frofm timer desync and assorted debug commands
   ::    %trim: release memory
   ::    %vega: kernel reload notification
   ::
@@ -889,12 +889,7 @@
         [%meek =space =spar]        :: initiate %peek request
         [%mage =space =spar]        :: send %page of data; intended for acks
         [%rate =spar rate]          :: get rate progress for +peeks, from unix
-        $:  %prog                   :: subscribe to progress %rate
-            =spar                   :: if ?=(^ task), use it to modify path.spar
-            $=  task
-            $@(~ ?([%chum ~] [%keen kid=(unit @)]))
-            feq=@ud
-        ==
+        [%prog =spar feq=@ud]       :: subscribe to progress %rate
         [%whey =spar boq=@ud]       :: weight of noun bounded at .path.spar
                                     :: as measured by .boq
         [%gulp path]                :: like %plug, but for |mesa
@@ -1044,6 +1039,7 @@
         [%drop =ship =nack=bone =message-num]
         [%cork =ship =bone]
         [%kill =ship =bone]
+        :: [%diet =ship =path]
         [%ahoy =ship =bone]  :: XX remove bone; it's just next-bone.ossuary
         [%prun =ship =user=path =duct =ames=path]
         [%halt =ship agent=term =bone] :: XX add [=agent=path cork=?]
@@ -1119,7 +1115,6 @@
   ::    %known: we know their life and public keys, so we have a channel
   ::
   +$  ship-state
-    $+  ship-state
     $%  [%alien alien-agenda]
         [%known peer-state]
     ==
@@ -1127,9 +1122,10 @@
   ::
   ::    messages: pleas local vanes have asked us to send
   ::    packets: packets we've tried to send
+  ::    heeds: local tracking requests; passed through into $peer-state
+  ::    keens: remote scry request vanes have asked us to send
   ::
   +$  alien-agenda
-    $+  alien-agenda
     $:  messages=(list [=duct =plea])
         packets=(set =blob)
         keens=(jug [path ints] duct)
@@ -1598,7 +1594,7 @@
   ::    dead:        dead flow consolidation timer and recork timer, if set
   ::
   +$  axle
-    $:  peers=(map ship ship-state)
+    $:  peers=(map ship ship-state)         ::  %ames protocol peers
         =unix=duct  ::  [//ames/0v0 ~]
         =life
         =rift
@@ -1614,8 +1610,8 @@
         ::
         =server=chain                       ::  for serving %shut requests
         [saf=keypairs =ring =pass]
-        chums=(map ship chum-state)         ::  XX migrated peers
-        core=_`?(%ames %mesa)`%ames         ::  XX use |mesa core by default
+        chums=(map ship chum-state)         ::  migrated peers
+        core=_`?(%ames %mesa)`%mesa         ::  %mesa protocol peers
         ::  TODOs
         :: XX tmp=(map @ux page)            :: temporary hash-addressed bindings
     ==
@@ -1648,13 +1644,12 @@
     ==
   ::
   +$  chum-state
-    $+  chum-state
+    $+  chum-state-24
     $%  [%known fren-state]
         [%alien ovni-state]
     ==
   ::
   +$  ovni-state
-    $+  ovni-state
     $:  pokes=(list [=duct message=mesa-message])
         peeks=(jug [path ints] duct)
         chums=(jug [path ints] duct)
@@ -1671,9 +1666,6 @@
         pit=(map path request-state)           :: active +peek namespace paths
         =client=chain                          :: stores keys for %shut requests
         tip=(jug =user=path [duct =ames=path]) :: reverse .pit lookup map
-        ::  a migrated flow in a weird state is tagged with a $term, and data
-        ::
-        weir=(jug side [tag=term data=*])
     ==
   ::
   ::  interest gifts per path in the pith
@@ -1740,7 +1732,7 @@
           ::  the queue since that proof that they have processed the message
           ::
           ::  (n)acks are considered payload responses, and are part of
-          ::  received pokes, so we track them in the nax map
+          ::  received pokes, so we XX track them in the nax map
           ::
           ::  both for boons and pleas, and per (seq)message
           ::  the ordered map guarantees that we receive the acks in ordered
@@ -2430,6 +2422,7 @@
         [%hill p=(list @tas)]                           ::  mount points
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
         [%mere p=(each (set path) (pair term tang))]    ::  merge result
+        $>(%rate gift:ames)                             ::  XX  $peek progress
         [%ogre p=@tas]                                  ::  delete mount point
         [%rule red=dict wit=dict]                       ::  node r+w permissions
         [%tire p=(each rock:tire wave:tire)]            ::  app state
@@ -4787,9 +4780,9 @@
       ::  %dill: reset terminal configuration
       ::
       $>(%hail task:dill)
-      ::  %ames: hear packet
+      ::  %ames: hear packet and rate
       ::
-      $>(?(%hear %heer) task:ames)
+      $>(?(%hear %heer %rate) task:ames)
       ::  %clay: external edit
       ::
       $>(%into task:clay)

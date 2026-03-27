@@ -5,7 +5,8 @@
 =,  format
 =*  dude  dude:gall
 |%
-+$  state     state-11
++$  state     state-12
++$  state-12  [%12 pith-12]
 +$  state-11  [%11 pith-11]
 +$  state-10  [%10 pith-10]
 +$  state-9   [%9 pith-9]
@@ -20,7 +21,8 @@
 +$  state-0   [%0 pith-0]
 +$  any-state
   $~  *state
-  $%  state-11
+  $%  state-12
+      state-11
       state-10
       state-9
       state-8
@@ -34,6 +36,24 @@
       state-0
   ==
 ::
++$  pith-12  [dl=dl-state pith-11]
++$  dl-state
+  $:  ses=(unit @tas)  :: XX ses=@tas
+      wid=_80
+      next-row=_1  :: space for header
+      ::  XX each agent/thread should get a separate row
+      ::  for independent requesters
+      ::
+      peeks=(map path [row=@ud pct=@ud])  :: XX threads?
+      desks=(map @tas dl-desk)
+  ==
++$  dl-desk
+  $:  header-row=@ud
+      have=@ud
+      wait=@ud
+      load=[boq=@ud bys=@ud]
+      cur=(unit [=path pct=@ud])
+  ==
 +$  pith-11
   $:  rem=(map desk per-desk)
       nyz=@ud
@@ -299,6 +319,7 @@
 +$  kiln-fuse-list  (unit desk)
 --
 |=  [bowl:gall state]
+=*  bowl  +<-
 =|  moz=(list card:agent:gall)
 |%
 ++  kiln  .
@@ -348,6 +369,10 @@
   ::
   =?  ..on-init  ?=(?(%earl %duke %king) (clan:title our))
     abet:init:(apex:(sync %base sop %kids) `%kids)
+  =.  ..on-init
+    (emit [%pass /kiln/dl-open %arvo %d %shot %dl [%open %hood ~]])
+  =.  ses.dl  `%dl
+  ::
   ::  install other desks and make them public
   ::
   =/  dez=(list desk)  ~(tap in desks)
@@ -362,6 +387,16 @@
   =/  src  (get-publisher our i.dez now)
   =?  ..on-init  &(?=(^ src) !=(our u.src))
     abet:init:(sync i.dez u.src i.dez)
+  ::  set up meta info for each desk
+  ::
+  =|  desk=dl-desk
+  =/  hrow         next-row.dl  :: XX cache
+  =.  desks.dl     (~(put by desks.dl) i.dez desk(header-row hrow))
+  =.  next-row.dl  (add 2 next-row.dl)
+  =.  ..on-init
+    %-  emit
+    :^  %give  %fact  ~[/dill/[(need ses.dl)]]
+    [%dill-blit !>(^-(blit:dill (dl-blit-header hrow i.dez 0 0 0 "")))]
   $(dez t.dez)
 ::
 ++  on-load
@@ -506,9 +541,73 @@
            [nun kid let ~ ~ |]
     ==
   ::
-  ?>  ?=(%11 -.old)
+  =^  cards-11  old
+    ?.  ?=(%11 -.old)  `old
+    =|  dl=dl-state
+    =.  ses.dl  `%dl
+    ?>  ?=(^ ses.dl)
+    =;  [cards=(list card:agent:gall) dl=_dl]
+      :_   [%12 dl(next-row +(next-row.dl)) +.old]  :: one more for peek header
+      ^-  (list card:agent:gall)
+      :*  [%pass /kiln/dl-open %arvo %d %shot %dl [%open %hood ~]]
+          :^  %give  %fact  ~[/dill/[(need ses.dl)]]
+          [%dill-blit !>(^-(blit:dill (dl-desk-header 0)))]
+          :^  %give  %fact  ~[/dill/[(need ses.dl)]]
+          [%dill-blit !>(^-(blit:dill (dl-peek-header next-row.dl.state)))]
+          cards
+      ==
+    =.  next-row.dl  +(next-row.dl)  :: space for desk header
+    %-  ~(rep by zyn)
+    |=  [[sync-record *] cards=(list card:agent:gall) dl=_dl]
+    ::  set up meta info for each desk
+    ::
+    =|  desk=dl-desk
+    =/  hrow         next-row.dl   :: XX cache
+    =.  desks.dl     (~(put by desks.dl) syd desk(header-row hrow))
+    =.  next-row.dl  (add 2 hrow)
+    :_  dl
+    :_  cards  ^-  card:agent:gall
+    :^  %give  %fact  ~[/dill/[u.ses.dl]]
+    [%dill-blit !>(^-(blit:dill (dl-blit-header hrow syd 0 0 0 "")))]
+  ::
+  ?>  ?=(%12 -.old)
   =.  state  old
-  abet:(emil cards-9)
+  =.  ses.dl  `%dl
+  :::::::::
+  =.  next-row.dl.state  1
+  =/  clear=blit:dill  [%clr ~]
+  =^  new-cards  dl.state
+    %-  ~(rep by zyn)
+    |=  [[sync-record *] cards=(list card:agent:gall) dl=_dl.state]
+    ::  set up meta info for each desk
+    ::
+    =|  desk=dl-desk
+    =/  hrow         next-row.dl  :: XX cache
+    =.  desks.dl     (~(put by desks.dl) syd desk(header-row hrow))
+    =.  next-row.dl  (add 2 next-row.dl)
+    :_  dl
+    %+  weld  %+  weld
+      :_  ~  ^-  card:agent:gall
+      :^  %give  %fact  ~[/dill/[(need ses.dl)]]
+      [%dill-blit !>(^-(blit:dill clear))]
+    :_  ~
+    ^-   card:agent:gall
+    :^  %give  %fact  ~[/dill/[(need ses.dl)]]
+    [%dill-blit !>(^-(blit:dill (dl-blit-header hrow syd 0 0 0 "")))]
+    cards
+  =.  new-cards
+    :*  :^  %give  %fact  ~[/dill/[(need ses.dl.state)]]
+        [%dill-blit !>(^-(blit:dill (dl-peek-header next-row.dl.state)))]
+        :^  %give  %fact  ~[/dill/[(need ses.dl.state)]]
+        [%dill-blit !>(^-(blit:dill (dl-desk-header 0)))]
+        new-cards
+    ==
+  =.  next-row.dl.state  +(next-row.dl.state)
+  =.  peeks.dl.state  ~
+  =.  ..abet
+    (emil `(list card:agent:gall)`new-cards)
+  :::::::::
+  abet:(emil (weld cards-9 cards-11))
 ::
 ++  on-peek
   |=  =path
@@ -600,6 +699,11 @@
     %kiln-uninstall          =;(f (f !<(_+<.f vase)) poke-uninstall)
     %kiln-unmount            =;(f (f !<(_+<.f vase)) poke-unmount)
     %kiln-unsync             =;(f (f !<(_+<.f vase)) poke-unsync)
+    %kiln-rate               =;(f (f !<(_+<.f vase)) poke-rate)
+    %kiln-peek-rate          =;(f (f !<(_+<.f vase)) poke-peek-rate)
+    %kiln-rate-desk-files    =;(f (f !<(_+<.f vase)) poke-rate-desk-files)
+    %kiln-rate-file-size     =;(f (f !<(_+<.f vase)) poke-rate-file-size)
+    %kiln-rate-done          =;(f (f !<(_+<.f vase)) poke-rate-done)
     %kiln-essential-desk     =;(f (f !<(_+<.f vase)) poke-essential-desk)
   ==
 ::
@@ -1020,6 +1124,436 @@
   =.  zyn  (~(del by zyn) hus)
   abet:(spam (render "cancelling sync" sud.hus her.hus syd.hus kid.u.got) ~)
 ::
+++  poke-rate-old
+  |=  $:  [i=@ud t=@ud]
+          file=path
+          [have=@ud wait=@ud]
+          [size=@ud total=@ud]
+          [bytes=@ud ms=@ud]
+      ==
+  |^
+  ::  extract desk from head of file path before normalization
+  ::
+  =/  desk=@tas  `@tas`-.file
+  ::  open a dill session on first download
+  ::
+  =?  ..abet  =(~ ses.dl)
+    =.  ses.dl      `%dl
+    =.  wid.dl       80
+    =.  next-row.dl  1
+    =.  desks.dl     ~
+    (emit [%pass /kiln/dl-open %arvo %d %shot %dl [%open %hood ~]])
+  ::  ensure desk entry exists; assign two rows (header + file) if new desk
+  ::
+  =?  ..abet  !(~(has by desks.dl) desk)
+    =|  =dl-desk
+    =/  hrow         next-row.dl
+    =.  desks.dl     (~(put by desks.dl) desk dl-desk(header-row hrow))
+    =.  next-row.dl  (add 2 hrow)
+    ?~  ses.dl  ..abet
+    %^  emit  %give  %fact
+    [~[/dill/[u.ses.dl]] %dill-blit !>(^-(blit:dill (dl-blit-header hrow desk 0 0 0 "")))]
+  ::  update desk state: have/wait/cur/pct
+  ::
+  =/  this-desk=dl-desk  (~(got by desks.dl) desk)
+  =.  have.this-desk  have
+  =.  wait.this-desk  wait
+  =.  cur.this-desk   `[file i]
+  =.  desks.dl        (~(put by desks.dl) desk this-desk)
+  ::  send header + file-row updates
+  ::
+  =?  ..abet  ?=(^ ses.dl)
+    =/  hrow  header-row.this-desk
+    =/  frow  +(hrow)
+    %-  emit
+    :*  %give  %fact  ~[/dill/[u.ses.dl]]  %dill-blit
+        !>  ^-  blit:dill  :-  %mor
+            :~  (dl-blit-header hrow desk have wait 0 "")
+                (dl-blit-row frow file i bytes ms)
+    ==      ==
+  abet
+  ::
+  --
+::
+++  fmt-size
+  |=  [boq=@ud tot=@ud]
+  =+  size=(mul (div (bex boq) (bex 3)) tot)
+  ^-  tape
+  ?:  (lth size 1.024)
+    ?:  =(1 size)  "1 byte"
+    "{<size>} bytes"
+  ?:  (lth size 1.048.576)
+    "{<(div size 1.024)>} KB"
+  =+  mb-int=(div size 1.048.576)
+  =+  mb-dec=(div (mul 10 (mod size 1.048.576)) 1.048.576)
+  "{<mb-int>}.{<mb-dec>} MB"
+::
+++  poke-rate
+  ::   progress for desk sync (assumes only one file at a time)
+  ::
+  |=  [=path =rate:ames]
+  =+  ^-  [boq=@ud fag=@ud tot=@ud]
+      ?@  rate  [0 1 1]
+      rate
+  =/  pct=@ud  ?:(=(0 tot) 0 (div (mul 100 fag) tot))
+  ::  open a dill session on first peek (if it's been closed)
+  ::
+  :: =?  kiln  ?=(~ ses.dl)
+  ::   ~&  >>  %cleaning
+  ::   =.  ses.dl      `%dl
+  ::   =.  wid.dl       80
+  ::   =.  next-row.dl  1  :: XX 0 saved for header
+  ::   =.  peeks.dl     ~
+  ::   =.  desks.dl     ~
+  ::   kiln
+  ::   (emit [%pass /kiln/dl-open %arvo %d %shot %dl [%open %hood ~]])  :: XX restore
+  =^  meta  path
+    =>  .(path `(pole knot)`path)
+    ~|  path
+    ?.  ?=([van=@ car=@ cas=@ des=@ pur=*] path)
+      `path
+    :_  pur.path
+    ^-  (unit [van=term car=term cas=term des=term])
+    `[van car cas des]:path
+  ::  ensure desk entry exists; assign two rows (header + file) if new desk
+  ::
+  ?~  meta
+    abet
+  =/  meta  u.meta
+  =?  ..abet  !(~(has by desks.dl) des.meta)
+    =/  hrow         next-row.dl
+    =|  desk=dl-desk
+    =.  desks.dl     (~(put by desks.dl) des.meta desk(header-row hrow))
+    =.  next-row.dl  (add 2 hrow)
+    ?~  ses.dl  ..abet
+    %^  emit  %give  %fact
+    :*  ~[/dill/[u.ses.dl]]  %dill-blit  !>
+        ^-  blit:dill
+        (dl-blit-header hrow des.meta 0 0 0 "")
+    ==
+  ::  update pct for this path
+  ::
+  =/  this-desk=dl-desk  (~(got by desks.dl) des.meta)
+  ::  if 100 pct, mark file complete
+  ::
+  =.  cur.this-desk  `[path pct]
+  =?  have.this-desk  =(100 pct)  +(have.this-desk)
+  ::  global pct = files done / files total (avoids bys/frag unit mismatch)
+  =/  pct-tot=@ud
+    ?:(=(0 wait.this-desk) 0 (div (mul 100 have.this-desk) wait.this-desk))
+  =/  row=@ud   +(header-row.this-desk)  :: one more than the header row
+  =.  desks.dl  (~(put by desks.dl) des.meta this-desk)
+  ::  send in-place row update
+  ::
+  =?  ..abet  ?=(^ ses.dl)
+    =/  hrow  header-row.this-desk
+    =/  frow  +(hrow)
+    %-  emit
+    :*  %give  %fact  ~[/dill/[u.ses.dl]]  %dill-blit
+        !>  ^-  blit:dill  :-  %mor
+            :~  %-  dl-blit-header
+                [hrow des.meta have.this-desk wait.this-desk pct-tot (fmt-size load.this-desk)]
+                (dl-blit-row frow path pct 0 0)
+    ==      ==
+  ::  XX clean up "done" peeks on a timer
+  ::
+  |^
+  :: =?  ..abet  all-peeks-done
+  ::   =/  old-ses  ses.dl
+  ::   =.  ses.dl      ~
+  ::   =.  peeks.dl    ~
+  ::   =.  next-row.dl  0
+  ::   ?~  old-ses  ..abet
+  ::   (emit [%pass /kiln/dl-shut %arvo %d %shot u.old-ses [%shut ~]])
+  abet
+  ::
+  ++  all-peeks-done
+    ^-  ?
+    ?:  =(0 ~(wyt by peeks.dl))  |
+    ?:  !=(0 ~(wyt by desks.dl))  |
+    %+  levy  ~(val by peeks.dl)
+    |=  [row=@ud pct=@ud]
+    =(pct 100)
+  ::
+  --
+::
+++  poke-peek-rate
+  ::  progress for a single on-demand file peek (not a desk sync)
+  ::
+  |=  [=path fag=@ud tot=@ud]
+  =/  pct=@ud  ?:(=(0 tot) 0 (div (mul 100 fag) tot))
+  ::  open a dill session on first peek (if it's been closed)
+  ::
+  :: =?  kiln  ?=(^ ses.dl)
+  ::   ~&  >>  %cleaning
+  ::   =.  ses.dl      `%dl
+  ::   =.  wid.dl       80
+  ::   =.  next-row.dl  8   :: XX 0 saved for header
+  ::   =.  peeks.dl     ~
+  ::   :: =.  desks.dl     ~
+  ::   kiln
+  ::   (emit [%pass /kiln/dl-open %arvo %d %shot %dl [%open %hood ~]]) :: XX restore
+  ::  assign a row if this path is new
+  ::
+  :: ~&  path^next-row.dl
+  =?  kiln  !(~(has by peeks.dl) path)
+    =/  row          next-row.dl
+    =.  peeks.dl     (~(put by peeks.dl) path [row 0])
+    =.  next-row.dl  +(row)
+    kiln
+  :: ~&  next-row.dl
+  ::  update pct for this path
+  ::
+  =/  row=@ud   row:(~(got by peeks.dl) path)
+  =.  peeks.dl  (~(put by peeks.dl) path [row pct])
+  ::  send in-place row update
+  ::
+  =?  ..abet  ?=(^ ses.dl)
+    %-  emit
+    :*  %give  %fact  ~[/dill/[u.ses.dl]]  %dill-blit
+        !>(^-(blit:dill (dl-blit-peek row path pct)))
+    ==
+  ::  XX clean up "done" peeks on a timer
+  ::
+  |^
+  :: =?  ..abet  all-peeks-done
+  ::   =/  old-ses  ses.dl
+  ::   =.  ses.dl      ~
+  ::   =.  peeks.dl    ~
+  ::   =.  next-row.dl  0
+  ::   ?~  old-ses  ..abet
+  ::   (emit [%pass /kiln/dl-shut %arvo %d %shot u.old-ses [%shut ~]])
+  abet
+  ::
+  ++  all-peeks-done
+    ^-  ?
+    ?:  =(0 ~(wyt by peeks.dl))  |
+    ?:  !=(0 ~(wyt by desks.dl))  |
+    %+  levy  ~(val by peeks.dl)
+    |=  [row=@ud pct=@ud]
+    =(pct 100)
+  ::
+  --
+::
+++  poke-rate-desk-files
+  |=  [paths=(list path) nuke=?]
+  ^+  abet
+  ?~  paths  :: at least one path
+    abet
+  =^  meta  i.paths
+    ::  XX check all desks are the same?
+    ::
+    =>  .(i.paths `(pole knot)`i.paths)
+    ?.  ?=([van=%c car=@ cas=@ des=@ pur=*] i.paths)
+      `i.paths
+    :_  pur.i.paths
+    ^-  (unit [van=term car=term cas=term des=term])
+    [~ van car cas des]:i.paths
+  ::  XX  save all these paths somewhere?
+  ::
+  ?~  meta  abet
+  ::  update wants
+  ::
+  =|  flag=?
+  =?  desks.dl  (~(has by desks.dl) des.u.meta)
+    %+  ~(jab by desks.dl)  des.u.meta
+    |=  this-desk=dl-desk
+    =?  wait.this-desk  &(flag nuke)  0
+    =?  have.this-desk  &(flag nuke)  0
+    =?  load.this-desk  &(flag nuke)  0^0
+    =.  flag  %.n  ::  switch flag so we only do it once
+    this-desk(wait (add wait.this-desk (lent paths)))
+  ~&  >>>  (~(got by desks.dl) des.u.meta)
+  abet
+::
+++  poke-rate-file-size
+  |=  [=path boq=@ud tot=@ud]
+  ^+  abet
+  =^  meta  path
+    =>  .(path `(pole knot)`path)
+    ?.  ?=([van=%c car=@ cas=@ des=@ pur=*] path)
+      `path
+    :_  pur.path
+    ^-  (unit [van=term car=term cas=term des=term])
+    [~ van car cas des]:path
+  ?~  meta  abet
+  ::  update wants
+  ::
+  =.  desks.dl
+    %+  ~(jab by desks.dl)  des.u.meta
+    |=  this-desk=dl-desk
+    this-desk(load [boq (add bys.load.this-desk tot)])
+  abet
+::
+++  poke-rate-done
+  |=  =path
+  ^+  abet
+  :: =^  meta  path
+  ::   =>  .(path `(pole knot)`path)
+  ::   ?.  ?=([van=%c car=@ cas=@ des=@ pur=*] path)
+  ::     `path
+  ::   :_  pur.path
+  ::   ^-  (unit [van=term car=term cas=term des=term])
+  ::   [~ van car cas des]:path
+  ~&  >>>  poke-rate-done/path
+  ::  XX  extract desk
+  ::
+  (poke-rate path ~)
+::
+++  peer-dill
+  ::  dill subscribed to /dill/%dl on hood — send initial screen
+  ::
+  ^+  abet
+  ?~  ses.dl  abet
+  =<  abet
+  %-  emit
+  :*  %give  %fact  ~[/dill/[u.ses.dl]]  %dill-blit
+      !>([%mor dl-blit-all])
+  ==
+::
+++  take-dill-poke
+  |=  =dill-belt:dill
+  ^+  abet
+  ?~  ses.dl  abet
+  =<  abet
+  ?.  ?=(?(%hey %rez) -.dill-belt)  kiln
+  =?  wid.dl  ?=([%rez p=@ q=@] dill-belt)
+    p.dill-belt
+  %-  emit
+  :*  %give  %fact  ~[/dill/[u.ses.dl]]  %dill-blit
+      !>(^-(blit:dill [%mor dl-blit-all]))
+  ==
+::
+++  dl-blit-all
+  ^-  (list blit:dill)
+  =/  peek-rows=(list blit:dill)
+    ?:  =(~ peeks.dl)  ~  :: XX TMI
+    =+  qeu=((on ,@ud path) lte)
+    =;  [fist=((mop ,@ud path) lte) bs=(list blit:dill)]
+      %+  weld  ^-  (list blit:dill)
+        =+  row=key:(need (pry:qeu fist))
+        [(dl-peek-header (dec row))]~  :: XX  have a index here instead of a qeu
+      bs
+    %-  ~(rep by `(map path [row=@ud pct=@ud])`peeks.dl)
+    |=  $:  [=path [row=@ud pct=@ud]]
+            fist=((mop ,@ud path) lte)
+            bs=(list blit:dill)
+        ==
+    ^+  [fist bs]
+    [(put:qeu fist row path) (dl-blit-peek row path pct)^bs]
+  =/  desk-rows=(list blit:dill)
+    %-  zing
+    %+  turn  ~(tap by desks.dl)
+    |=  [desk=@tas =dl-desk]
+    ^-  (list blit:dill)
+    =/  hrow  header-row.dl-desk
+    =/  frow  +(hrow)
+    =/  pct-tot=@ud
+      ?:(=(0 wait.dl-desk) 0 (div (mul 100 have.dl-desk) wait.dl-desk))
+    %+  weld
+      ~[(dl-blit-header hrow desk have.dl-desk wait.dl-desk pct-tot (fmt-size load.dl-desk))]
+    ?~  cur.dl-desk  ~
+    ~[(dl-blit-row frow path.u.cur.dl-desk pct.u.cur.dl-desk 0 0)]
+  ;:  weld
+    [[%clr ~] ~]  :: XX clear everything before
+    [(dl-desk-header 0)]~
+    peek-rows
+    desk-rows
+  ==
+::
+++  dl-blit-header
+  |=  [row=@ud desk=@tas hv=@ud wt=@ud pct-tot=@ud siz=tape]
+  ^-  blit:dill
+  =/  txt=tape  "{(trip desk)} [{<hv>}/{<wt>} files] {<pct-tot>}% {siz}"
+  [%mor ~[[%hop [0 row]] [%wyp ~] [%klr ~[[[~ %c ~] (tuba txt)]]]]]
+::
+++  dl-desk-header
+  |=  row=@ud
+  ^-  blit:dill
+  :: =/  txt=tape  "[{<~(wyt by peeks.dl)>} peeks]"
+  =/  txt=tape  "[desks]"
+  ~&  desk/row
+  [%mor ~[[%hop [0 row]] [%wyp ~] [%klr ~[[[~ %r ~] (tuba txt)]]]]]
+::
+++  dl-peek-header
+  |=  row=@ud
+  ^-  blit:dill
+  :: =/  txt=tape  "[{<~(wyt by peeks.dl)>} peeks]"
+  =/  txt=tape  "[peeks]"
+  ~&  row/row
+  [%mor ~[[%hop [0 row]] [%wyp ~] [%klr ~[[[~ %y ~] (tuba txt)]]]]]
+::
+++  dl-blit-row
+  |=  [row=@ud file=path pct=@ud bytes=@ud ms=@ud]
+  ^-  blit:dill
+  =/  bar-width=@ud  20
+  =/  filled=@ud     (min bar-width (div (mul pct bar-width) 100))
+  =/  empty=@ud      (sub bar-width filled)
+  =/  done=?         =(pct 100)
+  =/  bar-color=tint  ?:(done %g %y)
+  =^  meta  file
+    =>  .(file `(pole knot)`file)
+    ?.  ?=([van=@ car=@ cas=@ des=@ pur=*] file)
+      `file
+    :_  pur.file
+    [~ van car cas des]:file
+  =/  =stub
+    :~  [[~ ~ ~] (tuba "[")]
+        [[~ bar-color ~] (tuba (reap filled '#'))]
+        [[~ ~ ~] (tuba (reap empty '-'))]
+        [[~ ~ ~] (tuba "] ")]
+        [[~ bar-color ~] (tuba <pct>)]
+        [[~ ~ ~] (tuba "% ")]
+        [[~ %c ~] (tuba (dl-bandwidth bytes ms))]
+        [[~ ~ ~] (tuba " ")]
+        :-  [~ ~ ~]
+        ?~  file  (tuba "all done!")
+        (tuba (trip (spat file)))
+    ==
+  [%mor ~[[%hop [0 row]] [%wyp ~] [%klr stub]]]
+::
+++  dl-blit-peek
+  |=  [row=@ud =path pct=@ud]
+  ^-  blit:dill
+  =/  bar-width=@ud  20
+  =/  filled=@ud     (min bar-width (div (mul pct bar-width) 100))
+  =/  empty=@ud      (sub bar-width filled)
+  =/  done=?         =(pct 100)
+  =/  bar-color=tint  ?:(done %g %y)
+  =^  meta  path
+    =>  .(path `(pole knot)`path)
+    ?.  ?=([van=@ car=@ cas=@ des=@ pur=*] path)
+      `path
+    :_  pur.path
+    [~ van car cas des]:path
+  =/  =stub
+    :~  [[~ ~ ~] (tuba "[")]
+        [[~ bar-color ~] (tuba (reap filled '#'))]
+        [[~ ~ ~] (tuba (reap empty '-'))]
+        [[~ ~ ~] (tuba "] ")]
+        [[~ bar-color ~] (tuba <pct>)]
+        [[~ ~ ~] (tuba "% ")]
+        [[~ ~ ~] (tuba (trip (spat path)))]
+    ==
+  [%mor ~[[%hop [0 row]] [%wyp ~] [%klr stub]]]
+::
+++  dl-bandwidth
+  |=  [bytes=@ud ms=@ud]
+  ^-  tape
+  =/  band=@rs
+    %+  mul:rs  .1e3
+    ?:  =(0 ms)  (sun:rs bytes)
+    (div:rs (sun:rs bytes) (sun:rs ms))
+  =+  int=(need (toi:rs band))
+  ?:  &((lth int 1.000) (gte int 100))
+    "{<(abs:si int)>}KB/s"
+  ?.  (gth int 1.000)
+    "{<(abs:si int)>}B/s"
+  =+  short=(div:rs band (sun:rs 1.000))
+  =+  int2=(need (toi:rs short))
+  =+  dec=(abs:si (need (toi:rs (mul:rs .100 (sub:rs short (san:rs int2))))))
+  "{<(abs:si int2)>}.{<dec>}MB/s"
+::
 ++  poke-essential-desk
   |=  [=desk ese=?]
   abet:(emit %pass /kiln/essential-desk %arvo %c %esse desk ese)
@@ -1100,6 +1634,9 @@
                         abet
                       %-  (slog leaf+"failed fuse for {<syd>}" p.p.sign-arvo)
                       abet
+      [%dl-open *]  ::  ignore dill blits on the session-open wire
+                    ::
+                    abet
       *
     ?+    +<.sign-arvo
         ((slog leaf+"kiln: strange card {<+<.sign-arvo wire>}" ~) abet)
@@ -1140,7 +1677,6 @@
   :~  [%pass /commit %arvo %c [%dirk mon.commit-timer]]
       [%pass way.commit-timer %arvo %b [%wait nex.commit-timer]]
   ==
-::
 ::
 ++  spam
   |=  mes=(list tank)
@@ -1319,6 +1855,8 @@
     =.  let  0
     %+  lard  /init
     =/  m  (strand:rand ,vase)
+    ::  directory listing
+    ::
     ;<  =riot:clay  bind:m  (warp:strandio her sud ~ %sing %y ud+1 /)
     ?>  ?=(^ riot)
     ~>  %slog.(fmt "activated install into {here}")
@@ -1343,7 +1881,9 @@
     ?.  (~(has by zyx) syd her sud)
       (pure:m !>(%done))
     ~>  %slog.(fmt "downloading update for {here}")
-    ;<  =riot:clay  bind:m  (warp:strandio her sud ~ %sing %v ud+let /)
+    ::  XX choose rate vs warp?
+    ::
+    ;<  =riot:clay  bind:m  (rate:strandio her sud ~ %sing %v ud+let /)
     ?>  ?=(^ riot)
     (pure:m !>(%done))
   ::
@@ -1382,8 +1922,10 @@
         %next
       ?>  ?=(%arow +<.sign-arvo)
       ?:  ?=(%| -.p.sign-arvo)
-        ::  ~>  %slog.(fmt "download failed into {here}; retrying sync")
-        ::  %-  (slog p.p.sign-arvo)
+         ~>  %slog.(fmt "download failed into {here}; retrying sync")
+         %-  (slog p.p.sign-arvo)
+        ::  XX notify clay to remove the thread from the listeners?
+        ::
         =.  ..abet  drop
         init
       ::

@@ -182,9 +182,10 @@
       `[%done ~]
     `[%fail %timer-error u.error.sign-arvo.u.in.tin]
   ==
+::
 ++  take-whey
   |=  =wire
-  =/  m  (strand ,[spar:ames fragment-size=@ud num-fragments=@ud])
+  =/  m  (strand ,[spar:ames boq=@ud tot=@ud])
   ^-  form:m
   |=  tin=strand-input:strand
   ?+    in.tin  `[%skip ~]
@@ -202,17 +203,18 @@
   ==
 ::
 ++  take-sage
-  |=  =wire
+  |=  =wire  ::  XX control ignoring %rate gift
   =/  m  (strand ,sage:mess:ames)
   ^-  form:m
   |=  tin=strand-input:strand
   ?+    in.tin  `[%skip ~]
       ~  `[%wait ~]
     ::
-      [~ %sign * %ames %sage sage=*]
+      [~ %sign * %ames %sage *]
     ?.  =(wire wire.u.in.tin)
       `[%skip ~]
-    `[%done sage.sign-arvo.u.in.tin]
+    `[%done +>.sign-arvo.u.in.tin]  :: XX skip spar
+    ::
   ==
 ::  XX deprecate in 409k
 ::
@@ -388,6 +390,20 @@
   ^-  form:m
   (send-raw-card %pass wire %arvo %a %keen sec spar)
 ::
+++  prog
+  |=  $:  =wire
+          $=  task
+          $:  =spar:ames
+              sec=(unit [@ @])
+              feq=@ud
+      ==  ==
+  =/  m  (strand ,~)
+  ^-  form:m
+  %-  send-raw-cards
+  :~  [%pass wire %arvo %a %keen sec.task spar.task]
+      [%pass wire %arvo %a %prog spar.task feq.task]
+  ==
+::
 ++  chum
   |=  [=wire =spar:ames]
   =/  m  (strand ,~)
@@ -422,13 +438,10 @@
   =/  m  (strand ,~)
   ^-  form:m
   ?+    path.spar  !!
-      $%  [%ames bone=@ ?(%clos %cork %next %last %curr) ~]
-          [%flow bone=@ =dire:ames ~]
-          [%flow bone=@ =dire:ames ?(%clos %cork %line %lods %next %last) ~]
-          :: XX rewrite in terms of %whey namespace
-          ::
-          [%flow bone=@ =dire:ames %whey boq=@ ~]
-          [%flow bone=@ =dire:ames seq=@ %naxp ~]
+      $%  [%ames bone=@ %cork ~]
+          [%ames bone=@ %sent seq=@ ~]
+          [%flow bone=@ =dire:ames %cork ~]
+          [?(%ames %flow) bone=@ =dire:ames ?(%sent %loads %naxp %acked) seq=@ ~]
       ==
     ::  encrypted using %chum namespace
     ::
@@ -670,6 +683,220 @@
   =/  m  (strand ,riot:clay)
   ;<  ~  bind:m  (send-raw-card %pass /warp %arvo %c %warp ship riff)
   (take-writ /warp)
+::
+++  take-rate
+  |=  =wire
+  =/  m  (strand ,cage)
+  ^-  form:m
+  |=  tin=strand-input:strand
+  ?+  in.tin  `[%skip ~]
+      ~  `[%wait ~]
+    ::
+      [~ %sign * %ames %sage *]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    `[%done sage/!>(+>.sign-arvo.u.in.tin)]  :: XX skip spar
+    ::
+    ::
+      [~ %sign * ?(%ames %clay) %rate *]
+    ?.  =(wire wire.u.in.tin)  `[%skip ~]
+    `[%done rate/!>(+>.sign-arvo.u.in.tin)]
+    ::
+      [~ %sign * ?(%behn %clay) %writ *]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    `[%done writ/!>(+>.sign-arvo.u.in.tin)]
+    ::
+      [~ %sign * ?(%behn %clay) %wris *]
+    ?.  =(wire wire.u.in.tin)
+      `[%skip ~]
+    `[%done wris/!>(+>.sign-arvo.u.in.tin)]
+  ==
+::
+++  rate
+  =>  |%  ++  peel-path
+            |=  =path
+            =>  .(path `(pole knot)`path)
+            ?.  ?=  [van=%a car=@ cas=%'1' des=%$ %whey boq=@ who=@ pur=*]
+                    path
+              `path
+            `pur.path  :: XX ignore meta
+          ::
+          ++  make-path
+            |=  =riot:clay
+            ^-  path
+            ?>  ?=(^ riot)
+            :*  %c                  ::  always clay
+                `term`p.p.u.riot    ::  care
+                ?+  q.p.u.riot  %$  ::  case
+                  [%uv @]  (scot %uv +.q.p.u.riot)
+                  [%ud @]  (scot %ud +.q.p.u.riot)
+                ==
+                r.p.u.riot          ::  desk
+                q.u.riot            ::  path
+            ==
+          ::
+      --
+  |=  [=ship =riff:clay]
+  ?>  ?=([@ ~ %sing *] riff)
+  =/  m  (strand ,riot:clay)
+  =|  num-fragments=@ud  :: XX TODO
+  ;<  ~  bind:m  (send-raw-card %pass /rate %arvo %c %warp ship riff)
+  =|  tot=_num-fragments
+  =|  boq=@ud
+  =|  pat=path
+  =|  nuk=?  :: first time; reset how many files we expect
+  =|  =riot:clay
+  |-  ^-  form:m
+  =*  loop  $
+  ;<  =cage  bind:m  (take-rate /rate)
+  ?:  ?=(%sage p.cage)
+    =;  [=spar:ames boq=@ud tot=@ud]
+      ~&  >>  got-whey/spar^boq^tot
+      =^  meta  path.spar  (peel-path path.spar)
+      ;<  ~  bind:m  (poke-our %hood %kiln-rate-file-size !>([path.spar boq tot]))
+      loop
+    =+  !<(=sage:mess:ames q.cage)
+    :-  p.sage
+    ?~  q.sage
+      [boq=13 tot=0]
+    =<  [boq tot]
+    ;;([%whey boq=@ud tot=@ud] q.sage)
+  ::  list of all files we are peeking.
+  ::
+  ?:  ?=(%wris p.cage)
+    ::  unpack wris to extrack all paths
+    ::
+    ~|  q.cage
+    =+  !<(wris=_+:*$>(%wris gift:clay) q.cage)
+    ;<  ~  bind:m
+      =/  paz=(list [care:clay =path])  ~(tap in q.wris)
+      =/  m  (strand ,~)
+      |-  ^-  form:m
+      =*  loop  $
+      ?~  paz  (pure:m ~)
+      ;<  ~  bind:m  (whey /rate boq=3 ship^path.i.paz)
+      loop(paz t.paz)
+    ;<  ~  bind:m
+      %+  poke-our  %hood
+      [%kiln-rate-desk-files !>((turn ~(tap in q.wris) tail)^nuk=%.y)]
+    loop
+  ?:  ?=(%writ p.cage)
+    ::  unpack riot to extrack path
+    ::
+    =+   !<(=new=riot:clay q.cage)
+    ?~  new-riot  loop  :: XX log?
+    =.  pat  (make-path new-riot)
+    ::  XX  save riot, and wait for last rate
+    ::
+    ~&  >  "got riot"^pat
+    =.  riot  new-riot
+    ;<  ~  bind:m  (poke-our %hood %kiln-rate-done !>(pat))
+    (pure:m riot)
+  ?>  ?=(%rate p.cage)
+  ~|  q.cage
+  =+  !<([=spar:ames =current=rate:ames] q.cage)
+  ?~  current-rate  :: XX this would be the last rate, but %writ would happen before
+    :: ~&  >>  path-last-rate/path.spar
+    =^  meta  path.spar  (peel-path path.spar)
+    :: ~&  >>>  last-rate/meta^path.spar
+    ;<  ~  bind:m  (poke-our %hood %kiln-rate !>([path.spar ~]))
+    ?~  riot
+      loop
+    (pure:m riot)
+  =.  tot  tot.current-rate
+  =.  boq  boq.current-rate
+  =.  pat  path.spar
+  :: ~&  >>  spar^current-rate
+  ;<  ~  bind:m
+    (poke-our %hood kiln-rate/!>([path.spar [boq fag tot]:current-rate]))
+  loop
+::
+++  rate-old
+  =>  |%
+      +$  rate  [fag=@ud tot=@ud]
+      +$  size  [fragment=@ud total=@ud]
+      ::
+      ++  calculate-progress
+        |=  [a=@ud b=@ud]
+        ^-  [int=@ud dec=@ud]
+        =/  progress=@rs
+          (mul:rs (div:rs (sun:rs a) (sun:rs b)) (sun:rs 100))
+        =+  int=(need (toi:rs progress))
+        =/  dec=@ud  =,  rs
+          (abs:si (need (toi (mul .100 (sub progress (san int))))))
+        [(abs:si int) dec]
+      ::
+      --
+  |=  [=ship =riff:clay]
+  =/  m  (strand ,riot:clay)
+  =|  needs=(map path total=@ud)
+  =|  haves=(map path received=@ud)
+  =|  total-frags=@ud
+  =|  received=@ud
+  =|  =riot:clay
+  =|  acc-rate=rate
+  =|  bloq=@ud
+  =|  last-path=path
+  ;<  ~  bind:m  (send-raw-card %pass /rate %arvo %c %warp ship riff)
+  ::
+  |-  ^-  form:m
+  ?:  ?=(^ riot)
+    (pure:m riot)
+  ;<  now-1=@da  bind:m  get-time
+  ;<  =cage  bind:m  (take-rate /rate)
+  ?:  ?=(%rate p.cage)
+    ;<  now-2=@da  bind:m  get-time
+    =/  time=@dr  (sub now-2 now-1)
+    ::
+    =+  !<([loc=path =current=rate:ames] q.cage)
+    ~&  loc/loc
+    ?~  current-rate  $  ::  XX ignore bunted rate
+    ::
+    =.  bloq  boq.current-rate
+    :: ?~  fag.current-rate
+    ?:  =(0 fag.current-rate)
+      ::  this is the first rate after a %whey; update $needs with the path
+      ::
+      =?  tot.acc-rate  !(~(has by needs) loc)
+        (add tot.acc-rate tot.current-rate)  :: accumulate tot for each file in the desk
+      $(needs (~(put by needs) [loc tot.current-rate]))
+    ::
+    =*  current-fag  fag.current-rate
+    =/  byte=@ud
+      %+  div
+        (mul (div (bex bloq) (bex 3)) (sub current-fag fag.acc-rate))
+      (bex 10)
+    =>  .(loc `(pole knot)`loc)
+    ?>  ?=([van=@t car=@t cas=@t file-path=*] loc)
+    =?  haves  =(current-fag tot.acc-rate)
+      (~(put by haves) [`path`file-path.loc current-fag])
+    =/  received=@ud
+      %+  add  ?:(=(current-fag tot.acc-rate) 0 current-fag)
+      (~(rep by haves) |=([[* t=@ud] a=@ud] (add t a)))
+    ;<  ~  bind:m
+      %^  poke-our  %hood  %rate  !>
+      :*  ::[(abs:si int) dec]                        ::  XX rate per path
+          (calculate-progress received tot.acc-rate)  ::  XX global rate
+          `path`file-path.loc
+          [~(wyt by haves) ~(wyt by needs)]
+          ::  XX poke only one time with the total? adds extra state to %kiln...
+          ::
+          [bloq total=tot.acc-rate]
+          [byte (div time (div ~s1 1.000))]
+      ==
+    $(fag.acc-rate current-fag)
+  ?>  ?=(%writ p.cage)
+  ::  XX print completion of all files -- move to %hood
+  :: ;<  ~  bind:m
+  ::   ?~  sole-id  (flog-text "")
+  ::   =/  =sole-effect:sole
+  ::     klr+~[[[`%un ~ `%g] "file: {<file-path>} [100%]"]]
+  ::   (poke-our %hood rate/!>(sole-effect))
+  ;<  ~  bind:m
+    (poke-our %hood rate/!>([0^0 / [~(wyt in haves) ~(wyt in needs)] 0^0 0^0]))
+  =+  !<(maybe=riot:clay q.cage)
+  $(riot maybe)
 ::
 ++  read-file
   |=  [[=ship =desk =case] =spur]
