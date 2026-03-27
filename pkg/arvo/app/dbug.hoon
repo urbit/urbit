@@ -2,6 +2,8 @@
 ::
 /-  spider
 /+  server, default-agent, verb, dbug
+/=  gall-raw   /sys/vane/gall
+=/  gall-vane  (gall-raw)
 ::
 |%
 +$  state-0  [%0 passcode=(unit @t)]
@@ -1082,7 +1084,7 @@
           %-  tape
           "{<[bone=bone dire=dire]>}"
         ::
-          'scries'^(scries ~(tap by pit))
+          'tip'^(tip-to-json ~(tap by tip))
       ==
     ::
     ++  flow-with-side
@@ -1092,22 +1094,31 @@
       %-  pairs
       :*  'closing'^b+closing
           'corked'^b+corked
+          'halt'^b+halt
           'line'^(numb line)
         ::  %outgoing
         ::
           'next'^(numb next.snd)
         ::
-          :-  'unsent-messages'  ::  as byte sizes
-          =|  loads-set=(set mesa-message)
-          =.  loads-set
-            ^+  loads-set
-            =;  [loads=_loads-set *]
-              loads
-            %^  (dip:mop _loads-set)  loads.snd
-              loads-set
-            |=  [loads=_loads-set seq=@ud req=mesa-message]
-            [~ | (~(put in loads) req)]
-          (set-array loads-set (cork jam (cork (cury met 3) numb)))
+          :-  'acks'
+          =+  mop-acks=((on ,@ud ack) lte)
+          :-  %a
+          %+  turn  (tap:mop-acks acks.snd)
+          |=  [seq=@ud =ack]
+          %-  pairs
+          :~  'seq'^(numb seq)
+              'ack'^s+-.ack
+          ==
+        ::
+          :-  'unsent-messages'
+          :-  %a
+          %+  turn  (tap:mop loads.snd)
+          |=  [seq=@ud msg=mesa-message]
+          %-  pairs
+          :~  'seq'^(numb seq)
+              'size'^(numb (met 3 (jam msg)))
+              'info'^(describe-message msg dire.side)
+          ==
         ::
           'send-window'^(numb send-window.snd)
           'send-window-max'^(numb send-window-max.snd)
@@ -1176,7 +1187,69 @@
           ?:  ?=(%bak dire.side)  ~
           (from-duct (~(got by by-bone) bone.side))
       ==
-    :: ::
+    ::
+    ++  describe-message
+      |=  [msg=mesa-message =dire]
+      ^-  json
+      ?-  -.msg
+        %boon
+          ::  for forward flows, boons are responses (ames-response from gall)
+          ::  for backward flows, boons are what we're sending
+          ::
+          =/  pay  payload.msg
+          ?.  ?=(ames-response:gall-vane pay)  ~
+          ?-  -.pay
+            %d
+              %-  pairs
+              :~  'type'^s+'fact'
+                  'mark'^s+(scot %tas +<.pay)
+              ==
+            %x  s+'kick'
+          ==
+        %plea
+          =/  =plea  +.msg
+          %-  pairs
+          :~  'type'^s+'plea'
+              'vane'^s+vane.plea
+              'path'^(path:enjs:format path.plea)
+              :-  'detail'
+              ?:  ?=([%$ [%flow *] *] plea)
+                (pairs ~['action'^s+'cork'])
+              ?.  =(%g vane.plea)
+                ::  XX TODO %c %j %e
+                ::
+                ~
+              ?.  ?=([%ge *] path.plea)
+                 ::  XX TODO: /gf /gk
+                 ::
+                 ~
+              ::  gall: payload is ames-request-all = [%0 ames-request]
+              ::
+              ::  XX fish loop
+              :: ?>  ?=(ames-request-all:gall-vane payload.plea)
+              ?>  ?=([%0 *] payload.plea)
+              =+  ;;(req=ames-request:gall-vane +.payload.plea)
+              ?-  -.req
+                %m  ::  %poke
+                  %-  pairs
+                  :~  'action'^s+'poke'
+                      'mark'^s+(scot %tas mark.req)
+                  ==
+                %s  ::  %watch
+                  %-  pairs
+                  :~  'action'^s+'watch'
+                      'path'^s+(spat ;;(^path path.req))
+                  ==
+                %l  ::  %watch-as
+                  %-  pairs
+                  :~  'action'^s+'watch-as'
+                      'mark'^s+(scot %tas mark.req)
+                  ==
+                %u  (pairs ~['action'^s+'leave'])
+              ==
+          ==
+      ==
+    ::
     ++  maybe
       |*  [unit=(unit) enjs=$-(* json)]
       ^-  json
@@ -1191,6 +1264,25 @@
     ++  from-duct
       |=  =duct
       a+(turn duct path)
+    ::
+    ++  tip-to-json
+      |=  tips=(list [user-path=^path listeners=(set [=duct ames-path=^path])])
+      ^-  json
+      :-  %a
+      %+  turn  tips
+      |=  [user-path=^path listeners=(set [=duct ames-path=^path])]
+      %-  pairs
+      :~  'user-path'^(path:enjs:format user-path)
+        ::
+          :-  'listeners'
+          :-  %a
+          %+  turn  ~(tap in listeners)
+          |=  [=duct ames-path=^path]
+          %-  pairs
+          :~  'duct'^(from-duct duct)
+              'ames-path'^(path:enjs:format ames-path)
+          ==
+      ==
     ::
     ++  scries
       |=  keens=(list [^path request-state])

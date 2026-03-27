@@ -243,7 +243,7 @@
   |=  =move:ames
   ^-  cage
   ::
-  ?>  ?=([%pass [%ahoy ~] %g %deal ^ %hood %poke %helm-send-ahoy *] +.move)
+  ?>  ?=([%pass [%ahoy ~] %g %deal ^ %hood %poke %ahoy-prob *] +.move)
   ~!  |8:move
   |8:move
 ::
@@ -265,7 +265,7 @@
 ++  is-move-ahoy
   |=  =move:ames
   ^-  ?
-  ?=([%pass [%ahoy ~] %g %deal ^ %hood %poke %helm-send-ahoy *] card.move)
+  ?=([%pass [%ahoy ~] %g %deal ^ %hood %poke %ahoy-prob *] card.move)
 ::
 ++  is-move-plea
   |=  =move:ames
@@ -469,7 +469,7 @@
       rcvr-life=3
     ==
   ::
-  =/  ahoy-plea  helm-send-ahoy/!>(~nec^test=|)
+  =/  ahoy-plea  ahoy-prob/!>(~nec^test=|^dry=|)
   =/  =blob:ames   (etch-shot:ames shot)
   =^  moves1  bud  (call bud ~[//unix] %hear lane-foo blob)
   =^  moves2  bud
@@ -544,8 +544,8 @@
 ::    request comet's self-attestation directly
 ::
 ++  test-comet-message-flow  ^-  tang
-  ::=^  *       nec   (call nec ~[//nemo] %spew ~[%snd %rcv %odd %msg])
-  ::=^  *     comet   (call comet ~[//nemo] %spew ~[%snd %rcv %odd %msg])
+  =^  *       nec   (call nec ~[//nemo] %spew ~[%snd %rcv %odd %msg])
+  =^  *     comet   (call comet ~[//nemo] %spew ~[%snd %rcv %odd %msg])
   ::
   =^  moves0  nec    (call nec ~[/g/talk] %plea our-comet %g /talk [%get %post])
   =^  moves1  comet  (call comet ~[//unix] %hear (snag-packet 0 moves0))
@@ -872,7 +872,7 @@
   ::   (call bud ~[/g/hood] %spew ~[%fin %for %ges %kay %msg %odd %rcv %rot %snd %sun])
   =/  poke-plea    [%g /talk [%get %post]]
   =^  moves1       nec  (call nec ~[/g/talk] %plea ~bud poke-plea)
-  =^  move-ahoy-1  nec  (call nec ~[/g/ahoy] %plea ~bud %$ /mesa-1 %ahoy ~)
+  =^  move-ahoy-1  nec  (call nec ~[/g/ahoy] %plea ~bud %$ /mesa-2 %ahoy ~)
   =^  move-ahoy-2  bud  (call bud ~[//unix] %hear (snag-packet 0 move-ahoy-1))
   ?>  ?=([* [^ %pass *] *] move-ahoy-2)
   =^  ack-ahoy  bud
@@ -966,7 +966,7 @@
   ::  drop packet, move .chum to .peer, and enqueue %ahoy $plea
   ::
   =^  moves2  bud  (call bud ~[//unix] %hear (snag-packet 0 moves1))
-  =/  ahoy-plea  helm-send-ahoy/!>(our-comet^test=|^force=|)
+  =/  ahoy-plea  ahoy-prob/!>(our-comet^test=|^force=|)
   %+  weld
     %+  expect-eq
       +:ahoy-plea
@@ -1019,7 +1019,7 @@
   ::  inject plea packet, move .chum to .peer, and enqueue %ahoy $plea
   ::
   =^  moves2  bud    (call bud ~[//unix] %hear (snag-packet 0 moves1))
-  =/  ahoy-plea  helm-send-ahoy/!>(our-comet^test=|^force=|)
+  =/  ahoy-plea  ahoy-prob/!>(our-comet^test=|^force=|)
   =/  gall-plea  [our-comet poke-plea]
   ;:  weld
     %+  expect-eq

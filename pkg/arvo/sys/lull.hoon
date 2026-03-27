@@ -1598,7 +1598,7 @@
   ::    dead:        dead flow consolidation timer and recork timer, if set
   ::
   +$  axle
-    $:  peers=(map ship ship-state)
+    $:  peers=(map ship ship-state)         ::  %ames protocol peers
         =unix=duct  ::  [//ames/0v0 ~]
         =life
         =rift
@@ -1614,8 +1614,8 @@
         ::
         =server=chain                       ::  for serving %shut requests
         [saf=keypairs =ring =pass]
-        chums=(map ship chum-state)         ::  XX migrated peers
-        core=_`?(%ames %mesa)`%ames         ::  XX use |mesa core by default
+        chums=(map ship chum-state)         ::  migrated peers
+        core=_`?(%ames %mesa)`%mesa         ::  %mesa protocol peers
         ::  TODOs
         :: XX tmp=(map @ux page)            :: temporary hash-addressed bindings
     ==
@@ -1671,9 +1671,6 @@
         pit=(map path request-state)           :: active +peek namespace paths
         =client=chain                          :: stores keys for %shut requests
         tip=(jug =user=path [duct =ames=path]) :: reverse .pit lookup map
-        ::  a migrated flow in a weird state is tagged with a $term, and data
-        ::
-        weir=(jug side [tag=term data=*])
     ==
   ::
   ::  interest gifts per path in the pith
@@ -1776,6 +1773,7 @@
                                    :: and to only send the ack to the vane once
           nax=(map seq=@ud error)  :: messages you have nacked,
                                    :: (last-acked - 10 <= ack <= last-acked)
+          buf=(map @ud gage:mess)  ::  out-of-order buffer
     ==  ==
   ::  atom ops
   ::
