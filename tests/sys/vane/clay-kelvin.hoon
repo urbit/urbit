@@ -770,6 +770,21 @@
   %+  do-sys-update  408
   park-compat:(ex-commit `[2 408] [%foo 2 & | ~ ~] ~)
 ::
+++  test-update-ready-essential-desk-ready
+::  kelvin update received on base desk,
+::  essential desk ready, apply update
+::
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  *                 bind:m  (do-setup-desks [%foo &] ~)
+  ;<  mov=(list move)   bind:m  (do-park %foo 408 ~)
+  ;<  ~                 bind:m  (expect-moves mov (ex-wait %foo 408))
+  ;<  ~                 bind:m  (do-wick ~)
+  ;<  mov2=(list move)  bind:m  (do-park %base 408 ~)
+  ;<  ~                 bind:m  (expect-moves mov2 (ex-kernel-build ~ [%foo & ~ ~ ~] ~))
+  %+  do-sys-update  408
+  park:(ex-commit `[2 408] [%foo 2 & | ~ ~] ~)
+::
 ++  test-update-blocked-on-essential-desk
 ::  kelvin update received on base desk, but essential desk not ready
 ::  no-op, notify
@@ -991,10 +1006,10 @@
 ::  kelvin update received on base desk, apply update, non-essential desk stays live, commit stays in pew
   %-  eval-mare
   =/  m  (mare ,~)
-  ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
+  ;<  *                bind:m  (do-setup-desks [%foo |] ~)
   ;<  *                bind:m  (do-park %foo ~[409 408] ~)
-  ;<  *                bind:m  (do-park %foo 409 (desk-seal 1))
-  ;<  ~                bind:m  (ex-pew %foo pers-1)
+  ;<  *                bind:m  (do-park %foo ~[409 408] (desk-seal 1))
+  ;<  ~                bind:m  (ex-pew %foo `pers-1)
   ;<  mov=(list move)  bind:m  (do-park %base 408 ~)
   ;<  ~                bind:m  (expect-moves mov (ex-kernel-build ~ [%foo | ~ ~ ~] ~))
   ;<  ~  bind:m
