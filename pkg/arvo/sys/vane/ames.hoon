@@ -12394,11 +12394,12 @@
           ::
           =/  =open-packet
             [pass.ames-state our life.ames-state u.rcvr u.life]
-          =/  sig
-            %+  sign-raw:ed:crypto  (jam open-packet)
-            [sgn.pub sgn.sek]:saf.ames-state
+          =/  ded
+            =/  msg  (jam open-packet)
+            =/  sig  (sign-raw:ed:crypto msg [sgn.pub sgn.sek]:saf.ames-state)
+            (jam sig msg)
           :+  ~  ~
-          [%message !>(proof/sig)]
+          [%message !>(proof/ded)]
         ::  publisher-side, weight of a noun at .pat, as measured by .boq
         ::
         ++  peek-whey
