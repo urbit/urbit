@@ -3732,13 +3732,20 @@
     $:  =wire
     $%  ::REVIEW  what if this in place of .ken? [%ames %keen =spar:ames]
         [%behn %wait =time]
-        :: [%clay %warp =ship =desk]
+        [%clay %warp id=*]
         [%eyre %binding =binding:eyre wat=$@(term generator:eyre)]
         [%eyre %cache url=@t]  ::TODO  if we had the data we could reinflate...
         [%iris %request]
         :: [%khan ?(%fard %fyrd %lard)]
         [%lick %spin =name:lick]
     ==  ==
+  ::
+  +$  resource-deet
+    $~  [%clay %warp ~zod %$ %sing %x *case *path]
+    $%  ::TODO  [%eyre %binding wat=$@(term generator:eyre)]
+        ::TODO  [%eyre %cache data=*]
+        [%clay %warp =ship =desk =rave:clay]
+    ==
   ::
   +$  egg                                               ::  migratory agent
     $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)] ::  state; see /sys/gall
@@ -3751,6 +3758,7 @@
             =boat
             =boar
             resources=(set arvo-resource)
+            resource-deets=(map arvo-resource resource-deet)
             code=~
             old-state=[%| clean=? state=vase]
             =beak
@@ -3864,7 +3872,9 @@
         [%behn %rest =time]
         [%behn %trim p=@ud]
       ::
-        :: [%clay %read id=@ =ship =desk read=(unit $<(%many rave:clay))]
+        [%clay %read id=* =ship =desk =rave:clay]  ::  %warp
+        [%clay %drop id=*]
+        :: [%clay %nuke ~]  ::TODO  support dropping all from wire?
         [%clay %trim p=@ud]
       ::
         [%dill %trim p=@ud]
@@ -3900,7 +3910,7 @@
   +$  gift-user-v1
     $%  [%ames %sage =sage:mess:ames]
         [%behn %wake =time]  ::REVIEW
-        :: [%clay %read =riot:clay]
+        [%clay %read id=* =riot:clay]
         [%eyre %bound bound=? =binding:eyre wat=$@(term generator:eyre)]  ::NOTE  could become unbound _after_ binding!
         [%iris %http-response =client-response:iris]
         [%lick %soak =name:lick =mark =noun]

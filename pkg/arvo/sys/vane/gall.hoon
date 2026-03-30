@@ -128,6 +128,7 @@
           =boat
           =boar
           resources=(set arvo-resource)
+          resource-deets=(map arvo-resource resource-deet)  ::TODO  rename???
           code=*
           agent=(each agent [clean=? state=vase])
           =beak
@@ -1641,6 +1642,7 @@
         ::
         ?-  +.res
           [%behn %wait *]     [%behn %rest time.res]
+          [%clay %warp *]     [%clay %drop id.res]
           [%eyre %binding *]  [%eyre %disconnect binding wat]:res
           [%eyre %cache *]    [%eyre %set-response url.res ~]
           [%iris %request]    [%iris %cancel-request ~]
@@ -1675,6 +1677,7 @@
           =-  [%pass wire.res %arvo -]
           ?-  +.res
             [%behn %wait *]     [%behn %rest time.res]
+            [%clay %warp *]     [%clay %drop id.res]
             [%eyre %binding *]  [%eyre %disconnect binding wat]:res
             [%eyre %cache *]    [%eyre %set-response url.res ~]
             [%iris %request]    [%iris %cancel-request ~]
@@ -1935,6 +1938,8 @@
                       ?+  +.neet  ~
                         [@ %trim *]         ~
                         [%behn *]           `time.neet
+                        [%clay %read *]     `id.neet
+                        [%clay %drop *]     `id.neet
                         [%eyre %connect *]  `wat.neet
                       ==
                     wire
@@ -1951,7 +1956,15 @@
             ?-  +.neet
               [%ames *]        [%a +>.neet]
               [%behn *]        [%b +>.neet]
-              [%clay *]        [%c +>.neet]
+            ::
+                [%clay *]
+              ?+  +>-.neet     [%c +>.neet]
+                %read  [%c %warp ship desk `rave]:neet
+                %drop  =-  [%c %warp ship desk ~]
+                       =;  req  ?>(?=([%clay %warp *] req) +>.req)
+                       (~(got by resource-deets.yoke) p.card %clay %warp id.neet)
+              ==
+            ::
               [%dill *]        [%d +>.neet]
             ::
                 [%eyre *]
@@ -2254,6 +2267,14 @@
           [%eyre %binding *]  [%eyre %connect binding wat]:res
         ==
       ::
+          [%clay %warp *]
+        =.  inflating  (~(del in inflating) &+res)
+        ?.  (~(has in resources.yoke) res)  ap-core
+        %-  ap-move
+        %-  ap-from-internal
+        =+  =+((~(got by resource-deets.yoke) res) ?>(?=([%clay %warp *] -) -))
+        [%pass wire.res %arvo %clay %read id.res ship desk rave]
+      ::
           [%eyre %cache *]
         ::TODO  consider
         ap-core
@@ -2336,6 +2357,7 @@
         ::
           [%ames %sage *]           sign-arvo
           [%behn %wake *]           [%behn %wake ;;(time deets)]
+          [%clay %writ *]           [%clay %read deets p.sign-arvo]
           [%eyre %bound *]          :*  %eyre  %bound
                                         accepted.sign-arvo  binding.sign-arvo
                                         ;;($@(term generator:eyre) deets)
@@ -2345,7 +2367,7 @@
                                     ?>  &(?=(^ name.sign-arvo) =(agent-name i.name.sign-arvo))
                                     sign-arvo(name (tail name.sign-arvo))
         ==
-      =.  resources.yoke  (ap-handle-resource-gift wire gift)
+      =.  yoke  (ap-handle-resource-gift wire gift)
       =?  ken.yoke   ?=([%ames %sage *] sign-arvo)
         (~(del ju ken.yoke) p.sage.sign-arvo wire)
       =^  maybe-tang  ap-core
@@ -2722,14 +2744,16 @@
       ::TODO  if we filter out "duplicate resource creation" cards here,
       ::      then we don't have to account for them in +ap-handle-peers and co
       ::      (and if we don't, we have to update handle-peers and co)
-      =.  resources.yoke   (ap-handle-resources -.p.result)
-      =.  boat.yoke        (ap-handle-peers-tracking -.p.result)
-      =.  -.p.result       (skip -.p.result ap-redundant)
+      =/  og-deets      resource-deets.yoke
+      =.  yoke          (ap-handle-resources -.p.result)
+      =.  boat.yoke     (ap-handle-peers-tracking -.p.result)
+      =.  -.p.result    (skip -.p.result ap-redundant)
       =^  caz=(list card:agent)  ap-core
         (ap-handle-peers-transforms -.p.result)
       ::
       =^  fex  ap-core  (ap-handle-sky -.p.result)
-      =/  moves         (zing (turn fex ap-from-internal))
+      ::NOTE  hacky, mb do +uni:by with og-deets
+      =/  moves         (zing (turn fex ap-from-internal(resource-deets.yoke og-deets)))
       ::TODO  why +ap-handle-kicks here, on .moves? those only result from
       ::      formal %kick already present in the -.p.result cards
       ::      same for +ap-handle-peers, none of the transforms above add/remove watches or leaves
@@ -2753,6 +2777,7 @@
         ?+  +.q.card  ~
           :: [%ames %yawn *]                 &+[p.card %ames %keen spar.task]
           [%behn %rest *]                 &+[p.card %behn %wait time.task]
+          [%clay %drop *]                 &+[p.card %clay %warp id.q.card]
           [%eyre %disconnect *]           &+[p.card %eyre %binding [binding wat]:task]
           [%iris %cancel-request ~]       &+[p.card %iris %request]
           [%lick %shut *]                 &+[p.card %lick %spin name.task]
@@ -2767,22 +2792,33 @@
     ::
     ++  ap-handle-resources
       |=  caz=(list card:agent)
-      ^+  resources.yoke
-      ?~  caz  resources.yoke
+      ^+  yoke  ::NOTE  just .resources and .resource-deets, should unify those
+      ?~  caz  yoke
       ?.  ?=([%pass * %arvo *] i.caz)  $(caz t.caz)
-      =;  $@(~ [add=? res=_+:*arvo-resource])
+      =;  $@(~ [add=$@(? resource-deet) res=_+:*arvo-resource])
         ?@  -  $(caz t.caz)
-        ?:  add
+        ?:  |(?=(^ add) add)
           ::TODO  prevent agent from creating the same resources twice
-          $(caz t.caz, resources.yoke (~(put in resources.yoke) p.i.caz res))
-        $(caz t.caz, resources.yoke (~(del in resources.yoke) p.i.caz res))
+          %_  $
+            caz                  t.caz
+            resources.yoke       (~(put in resources.yoke) p.i.caz res)
+            resource-deets.yoke  ?@  add  resource-deets.yoke
+                                 (~(put by resource-deets.yoke) [p.i.caz res] add)
+          ==
+        %_  $
+          caz                  t.caz
+          resources.yoke       (~(del in resources.yoke) p.i.caz res)
+          resource-deets.yoke  (~(del by resource-deets.yoke) p.i.caz res)
+        ==
       =*  task  +.q.i.caz
       ?+  +.q.i.caz  ~
         :: [%ames %keen *]                 [& %ames %keen spar.task]
         :: [%ames %yawn *]                 [| %ames %keen spar.task]
         [%behn %wait *]                 [& %behn %wait time.task]
         [%behn %rest *]                 [| %behn %wait time.task]
-        :: [%c %warp *]                 `[%clay %warp wer p.rif]:task
+        [%clay %read *]                 :-  [%clay %warp ship desk rave]:task
+                                        [%clay %warp id.task]
+        [%clay %drop *]                 [| %clay %warp id.task]
         [%eyre %connect *]              [& %eyre %binding binding wat]:task
         [%eyre %disconnect *]           [| %eyre %binding binding wat]:task
         [%eyre %set-response *]         [& %eyre %cache url.task]
@@ -2795,16 +2831,41 @@
     ::  +ap-handle-resource-gift: update tracked resource based on gift
     ::
     ++  ap-handle-resource-gift
+      ::REVIEW  updating tracked _kernel_ resource based on _userspace_ gift
       |=  [=wire gift=gift-user-v1]
-      ^+  resources.yoke
-      =;  del=(unit _+:*arvo-resource)
-        ?~  del  resources.yoke
-        (~(del in resources.yoke) wire u.del)
+      ^+  yoke
+      =;  upd=(unit (each [_+:*arvo-resource resource-deet] _+:*arvo-resource))
+        ?-  upd
+          ~         yoke
+          [~ %& *]  yoke(resource-deets (~(put by resource-deets.yoke) [wire -.p.u.upd] +.p.u.upd))
+          [~ %| *]  %_  yoke
+                      resources       (~(del in resources.yoke) wire p.u.upd)
+                      resource-deets  (~(del by resource-deets.yoke) wire p.u.upd)
+                    ==
+        ==
       ?+  gift  ~
-        [%behn *]  `[%behn %wait time.gift]
+        [%behn *]  `|+[%behn %wait time.gift]
+      ::
+          [%clay *]
+        ?>  ?=(%read +<.gift)
+        =*  rid  [%clay %warp id.gift]
+        =+  det=(~(got by resource-deets.yoke) wire rid)
+        ?>  ?=([%clay %warp *] det)
+        ::  %sing and %mult are always single-shot,
+        ::  %many gives a range of responses and has explicit "end" signal
+        ::
+        ?.  ?=(%many -.rave.det)  `|+[%clay %warp id.gift]
+        ?~  riot.gift             `|+[%clay %warp id.gift]
+        ::NOTE  %many requests always get %ud case in the response
+        ::NOTE  we don't care about resolving the original case, just increment
+        ::      past what we've received
+        ?>  ?=(%ud -.q.p.u.riot.gift)
+        =/  nex=@ud  +(p.q.p.u.riot.gift)
+        `&+[rid det(from.moat.rave ud+nex)]
+      ::
         [%eyre *]  ?:  bound.gift  ~
-                   `[%eyre %binding binding wat]:gift
-        [%iris *]  `[%iris %request]
+                   `|+[%eyre %binding binding wat]:gift
+        [%iris *]  `|+[%iris %request]
         [%lick *]  ~
       ==
     ::  +ap-handle-sky: apply effects to the agent's scry namespace
