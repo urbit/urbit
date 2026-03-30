@@ -2165,6 +2165,7 @@
                        padding: 1rem;
                        align-items: stretch;
                        font-size: 14px;
+                       box-sizing: border-box;
                      }
                      .red {
                        background: var(--black05) !important;
