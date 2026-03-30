@@ -262,6 +262,13 @@
   ::  if we reached this, we have an invalid action key. fail parsing.
   ::
   ~
+::  +auth-favicon: icon link for login and eauth pages
+::
+++  auth-favicon
+  "data:image/svg+xml;utf8,".
+  "<svg width='10' height='10' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'>".
+    "<circle r='3.09' cx='5' cy='5' />".
+  "</svg>"
 ::  +auth-styling: css for login and eauth pages
 ::
 ++  auth-styling
@@ -414,14 +421,11 @@
   %-  as-octs:mimes:html
   %-  crip
   %-  en-xml:html
-  =/  favicon  %+
-    weld  "<svg width='10' height='10' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'>"
-          "<circle r='3.09' cx='5' cy='5' /></svg>"
   ;html
     ;head
       ;meta(charset "utf-8");
       ;meta(name "viewport", content "width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no");
-      ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
+      ;link(rel "icon", type "image/svg+xml", href auth-favicon);
       ;title:"Urbit"
       ;style:"{(trip auth-styling)}"
       ;script:"our = '{(scow %p our)}';"
@@ -544,9 +548,6 @@
                    (crip (en-urlt:html (trip last.return)))
       [%client *]  `goal.return  ::TODO  plus nonce? or abort?
     ==
-  =/  favicon  %+
-    weld  "<svg width='10' height='10' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'>"
-          "<circle r='3.09' cx='5' cy='5' /></svg>"
   =/  msg=tape
     ?~  return  "Something went wrong!"
     "Something went wrong! You will be redirected back..."
@@ -557,7 +558,7 @@
           ;meta(http-equiv "Refresh", content "5; url={(trip u.return)}");
       ;meta(charset "utf-8");
       ;meta(name "viewport", content "width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no");
-      ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
+      ;link(rel "icon", type "image/svg+xml", href auth-favicon);
       ;title:"Urbit"
       ;style:'''
              @import url("https://rsms.me/inter/inter.css");
@@ -2059,14 +2060,11 @@
           %-  as-octs:mimes:html
           %-  crip
           %-  en-xml:html
-          =/  favicon  %+
-            weld  "<svg width='10' height='10' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'>"
-                  "<circle r='3.09' cx='5' cy='5' /></svg>"
           ;html
             ;head
               ;meta(charset "utf-8");
               ;meta(name "viewport", content "width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no");
-              ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
+              ;link(rel "icon", type "image/svg+xml", href auth-favicon);
               ;title:"Urbit"
               ;style:"{(trip auth-styling)}"
               ;style:'''
