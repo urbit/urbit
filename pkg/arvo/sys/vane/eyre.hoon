@@ -420,7 +420,7 @@
   ;html
     ;head
       ;meta(charset "utf-8");
-      ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
+      ;meta(name "viewport", content "width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no");
       ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
       ;title:"Urbit"
       ;style:"{(trip auth-styling)}"
@@ -556,7 +556,7 @@
           :_  ~
           ;meta(http-equiv "Refresh", content "5; url={(trip u.return)}");
       ;meta(charset "utf-8");
-      ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
+      ;meta(name "viewport", content "width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no");
       ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
       ;title:"Urbit"
       ;style:'''
@@ -2065,7 +2065,7 @@
           ;html
             ;head
               ;meta(charset "utf-8");
-              ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
+              ;meta(name "viewport", content "width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no");
               ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
               ;title:"Urbit"
               ;style:"{(trip auth-styling)}"
