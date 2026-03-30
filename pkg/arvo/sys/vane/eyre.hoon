@@ -262,6 +262,14 @@
   ::  if we reached this, we have an invalid action key. fail parsing.
   ::
   ~
+::  +html-octs: manx to octs with <!DOCTYPE html>
+::
+++  html-octs  :: NOTE: should this be in zuse's +html core?
+  |=  =manx
+  ^-  octs
+  %-  as-octt:mimes:html
+  %+  weld  "<!DOCTYPE html>"
+  (en-xml:html manx)
 ::  +auth-favicon: icon link for login and eauth pages
 ::
 ++  auth-favicon
@@ -338,6 +346,7 @@
     color: var(--gray-800);
     box-shadow: none;
     width: 100%;
+    box-sizing: border-box;
   }
   input:disabled {
     background: var(--gray-100);
@@ -447,9 +456,7 @@
   |=  [redirect-url=(unit @t) our=@p =identity eauth=(unit ?) failed=?]
   ^-  octs
   =+  redirect-str=?~(redirect-url "" (trip u.redirect-url))
-  %-  as-octs:mimes:html
-  %-  crip
-  %-  en-xml:html
+  %-  html-octs
   ;html
     ;head
       ;meta(charset "utf-8");
@@ -501,7 +508,7 @@
       =onload  "setup({?:(=(`& eauth) "true" "false")})"
       ;div#local
         ;p:"Urbit ID"
-        ;input(value "{(scow %p our)}", disabled "true", class "mono");
+        ;input(id "our", value "{(scow %p our)}", disabled "true", class "mono");
         ;+  ?:  =(%ours -.identity)
               ;div
                 ;p:"Already authenticated"
@@ -515,6 +522,7 @@
               =name  "password"
               =id    "pass"
               =placeholder  "sampel-ticlyt-migfun-falmel"
+              =spellcheck  "false"
               =class  "mono"
               =required  "true"
               =minlength  "27"
@@ -582,6 +590,7 @@
           ;input.mono
             =name  "name"
             =id    "name"
+            =autocomplete  "off"
             =placeholder  "{(scow %p our)}"
             =required   "true"
             =minlength  "4"
@@ -627,9 +636,7 @@
           [%client goal=@t]  ::  we are the client, return to host
       ==
   ^-  octs
-  %-  as-octs:mimes:html
-  %-  crip
-  %-  en-xml:html
+  %-  html-octs
   =/  return=(unit @t)
     ?-  return
       ~            ~
@@ -703,9 +710,7 @@
 ++  internal-server-error
   |=  [authorized=? url=@t t=tang]
   ^-  octs
-  %-  as-octs:mimes:html
-  %-  crip
-  %-  en-xml:html
+  %-  html-octs
   ;html
     ;head
       ;title:"500 Internal Server Error"
@@ -734,9 +739,7 @@
       %500  "Internal Server Error"
     ==
   ::
-  %-  as-octs:mimes:html
-  %-  crip
-  %-  en-xml:html
+  %-  html-octs
   ;html
     ;head
       ;title:"{(a-co:co code)} {message}"
@@ -2147,9 +2150,7 @@
         ++  confirmation-page
           |=  [server=ship nonce=@uv]
           ^-  octs
-          %-  as-octs:mimes:html
-          %-  crip
-          %-  en-xml:html
+          %-  html-octs
           ;html
             ;head
               ;meta(charset "utf-8");
