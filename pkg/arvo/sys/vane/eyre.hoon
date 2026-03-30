@@ -307,7 +307,7 @@
     display: flex;
     flex-flow: column nowrap;
     justify-content: center;
-    max-width: 300px;
+    max-width: 320px;
     padding: 1rem;
     width: 100%;
   }
@@ -354,6 +354,35 @@
     outline: none;
     color: var(--red);
   }
+  #access-key-row {
+    position: relative;
+    width: 100%;
+  }
+  #access-key-row input {
+    padding-right: 2rem;
+  }
+  #secret-toggle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    padding: 0 0.6rem;
+    background: none;
+    border: none;
+    color: inherit;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  #secret-toggle svg {
+    color: var(--gray-400);
+  }
+  #secret-toggle.secret .eye-open {
+    display: none;
+  }
+  #secret-toggle:not(.secret) .eye-closed {
+    display: none;
+  }
   button[type=submit] {
     margin-top: 1rem;
   }
@@ -367,7 +396,7 @@
     font-weight: 600;
     text-decoration: none;
   }
-  input:invalid ~ button[type=submit] {
+  form:invalid button[type=submit] {
     border-color: currentColor;
     background: var(--gray-100);
     color: var(--gray-400);
@@ -435,6 +464,10 @@
                 name = document.getElementById('name');
                 pass = document.getElementById('pass');
                 if (isEauth) goEauth(); else goLocal();
+                setSecretMode(
+                  document.getElementById('secret-toggle'),
+                  localStorage.getItem('urbitLoginSecretMode') == 'true'
+                );
               }
               function goLocal() {
                 document.body.className = 'local';
@@ -449,6 +482,17 @@
                   event.preventDefault();
                   goLocal();
                 }
+              }
+              function setSecretMode(btn, val) {
+                let inputType = val ? 'password' : 'text';
+                pass.setAttribute('type', inputType);
+                pass.focus();
+                if (val) {
+                  btn.classList.remove('secret');
+                } else {
+                  btn.classList.add('secret');
+                }
+                localStorage.setItem('urbitLoginSecretMode', val)
               }
               '''
     ==
@@ -465,16 +509,62 @@
               ==
         ;form(action "/~/login", method "post", enctype "application/x-www-form-urlencoded")
           ;p:"Access Key"
-          ;input
-            =type  "password"
-            =name  "password"
-            =id    "pass"
-            =placeholder  "sampel-ticlyt-migfun-falmel"
-            =class  "mono"
-            =required  "true"
-            =minlength  "27"
-            =maxlength  "27"
-            =pattern  "((?:[a-z]\{6}-)\{3}(?:[a-z]\{6}))";
+          ;div#access-key-row
+            ;input
+              =type  "password"
+              =name  "password"
+              =id    "pass"
+              =placeholder  "sampel-ticlyt-migfun-falmel"
+              =class  "mono"
+              =required  "true"
+              =minlength  "27"
+              =maxlength  "27"
+              =pattern  "((?:[a-z]\{6}-)\{3}(?:[a-z]\{6}))";
+            ;button#secret-toggle.secret
+              =type  "button"
+              =onclick  "setSecretMode(this, pass.getAttribute('type') == 'text')"
+              ;svg.eye-open
+                =xmlns  "http://www.w3.org/2000/svg"
+                =width  "18"
+                =height  "18"
+                =viewBox  "0 0 24 24"
+                =fill  "none"
+                =stroke  "currentColor"
+                =stroke-width  "2"
+                =stroke-linecap  "round"
+                =stroke-linejoin  "round"
+                ;path
+                  =d  "M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 ".
+                      "1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"
+                  ;*  ~
+                ==
+                ;circle(cx "12", cy "12", r "3");
+              ==
+              ;svg.eye-closed
+                =xmlns  "http://www.w3.org/2000/svg"
+                =width  "18"
+                =height  "18"
+                =viewBox  "0 0 24 24"
+                =fill  "none"
+                =stroke  "currentColor"
+                =stroke-width  "2"
+                =stroke-linecap  "round"
+                =stroke-linejoin  "round"
+                ;path
+                  =d  "M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 ".
+                      "1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"
+                  ;*  ~
+                ==
+                ;path(d "M14.084 14.158a3 3 0 0 1-4.242-4.242");
+                ;path
+                  =d  "M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 ".
+                      "0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"
+                  ;*  ~
+                ==
+                ;path(d "m2 2 20 20");
+              ==
+            ==
+          ==
           ;input(type "hidden", name "redirect", value redirect-str);
           ;+  ?.  failed  ;span;
             ;span.failed
