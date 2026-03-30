@@ -313,36 +313,6 @@
     /*NOTE dumb hack to get approx equal height with #local */
     margin-bottom: 15px;
   }
-  body nav {
-    background: var(--gray-100);
-    border-radius: 2rem;
-    display: flex;
-    justify-content: space-around;
-    overflow: hidden;
-    margin-bottom: 1rem;
-  }
-  body nav div {
-    width: 50%;
-    padding: 0.5rem 1rem;
-    text-align: center;
-    cursor: pointer;
-  }
-  body.local nav div.local,
-  body.eauth nav div.eauth {
-    background: var(--gray-800);
-    color: var(--white);
-    cursor: default;
-  }
-  nav div.local {
-    border-right: none;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-  }
-  nav div.eauth {
-    border-left: none;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-  }
   body > *,
   form > input {
     width: 100%;
@@ -454,7 +424,6 @@
       ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
       ;title:"Urbit"
       ;style:"{(trip auth-styling)}"
-      ;style:"{?^(eauth "" "nav \{ display: none; }")}"
       ;script:"our = '{(scow %p our)}';"
       ;script:'''
               let name, pass;
