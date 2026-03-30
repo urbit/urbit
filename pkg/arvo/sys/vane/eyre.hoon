@@ -607,10 +607,13 @@
         ==
       ==
       ;*  ?:  ?=(%ours -.identity)  ~
-          =+  as="proceed as{?:(?=(%fake -.identity) " guest" "")}"
           ;+  ;span.guest.mono
                 ; Or try to
-                ;a/"{(trip (fall redirect-url '/'))}":"{as}"
+                ;a/"{(trip (fall redirect-url '/'))}"
+                  ;-  "proceed as "
+                  ;-  ?:  ?=(%fake -.identity)  "guest"
+                      (scow %p who.identity)
+                ==
                 ; .
               ==
     ==
