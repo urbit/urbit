@@ -2111,10 +2111,12 @@
       (cury have:guard:gall peg.dom)
     =/  has-perm  |(?=(%base syd) =(mis ~))
     ?:  &(!has-perm =(%live liv.dom))
-      =.  pew.dom  `[mis yoki]
+      =.  pew.dom  `[mis `yoki]
       %-  (slog leaf+"{<syd>} need permissions: {<per>}; has: {<peg.dom>}" ~)
       (send-ward syd)
-    =?  pew.dom  ?~(pew.dom | =(+.u.pew.dom yoki))  ~
+    =?  pew.dom
+        ?~(pew.dom | =(+.u.pew.dom `yoki))
+      ?~(mis ~ `[mis ~])
     ::
     =.  wic.dom
       %-  ~(gas by *(map weft ^yoki))
@@ -2268,8 +2270,7 @@
       $(desks t.desks)
     ::  send-ward if desk.seal been updated
     ::
-    =?  ..park  (~(has in invalid) /desk/seal)          ::  [send-ward] >
-      (send-ward syd)
+    =.  ..park  (send-ward syd)                           ::  [send-ward] >
     ::  tell gall to try to run agents if %held
     ::
     ::  [goad] > if goat or desk not running.  %held uses park-held to
@@ -2588,7 +2589,7 @@
           %+  skip  ~(tap in (seal-at-commit u.yok))
           (cury have:guard:gall peg.dom.dojo)
         ?:  =(~ mis)  next
-        =.  dos.rom.ruf  (~(put by dos.rom.ruf) desk dojo(pew.dom `[mis u.yok]))
+        =.  dos.rom.ruf  (~(put by dos.rom.ruf) desk dojo(pew.dom `[mis `u.yok]))
         =.  ..park       (send-ward desk)
         next
       --
@@ -2601,7 +2602,7 @@
     ^+  ..park
     ?^  err
       ((slog leaf+"clay: desk {<syd>} failed to unsuspend" u.err) ..park)
-    =.  liv.dom  %live
+    =.  ..park  (set-zest %live)
     goad
   ::
   ::  We always say we're merging from 'ali' to 'bob'.  The basic steps,
@@ -3490,20 +3491,12 @@
     ?:  add
       =.  peg.dom  (~(uni in peg.dom) pes)
       =.  ..park   (send-ward syd)
-      ?~  pew.dom
-        ?.  =(%held liv.dom)  ..park
-        ::  held desk, might be blocked on permissions,
-        ::  if all required permissions been granted, attempt to revive the desk.
-        ::
-        =/  per=(set perm:gall)  (fall (mole |.(get-seal)) ~)
-        ?:  (~(all in per) |=(p=perm:gall (have:guard:gall peg.dom p)))
-          (emit hen %pass /park-held/[syd] %b %wait now)
-        ..park
-      ?~  (~(all in -.u.pew.dom) |=(per=perm:gall (have:guard:gall peg.dom per)))
-        ::  calling park here
-        ::  updated %.y ?
-        (park | | +.u.pew.dom *rang)
-      ..park
+      ::
+      ::  we are relying on +park and +set-zest to update missing permissions
+      ::
+      ?:  ?=([~ * ^] pew.dom)  (park | | u.+.u.pew.dom *rang)
+      ?.  =(%held liv.dom)  ..park
+      (emit hen %pass /park-held/[syd] %b %wait now)
     =/  ped=(set perm:gall)  get-seal
     =/  in-per  (~(any in pes) |=(p=perm:gall (~(has in ped) p)))
     ?:  &(=(%live liv.dom) in-per)
@@ -3535,13 +3528,20 @@
       %+  fall
         (mole |.(get-seal))
       ~
-    ?:  !(~(all in per) |=(p=perm:gall (have:guard:gall peg.dom p)))
-      %.  ..park(liv.dom %held)
+    =/  mis=(set perm:gall)
+      %-  ~(gas in *(set perm:gall))
+      %+  skip  ~(tap in per)
+      (cury have:guard:gall peg.dom)
+    ?:  !=(~ mis)
+      =?  pew.dom   |(?=(~ pew.dom) !?=(^ +.u.pew.dom))
+        `[mis ~]
+      %.  (send-ward(liv.dom %held) syd)
       %-  slog
       :~  leaf+"clay: can't set {<syd>} live, missing required permissions"
           leaf+"clay: {<syd>} set to held, need: {<per>}, have: {<peg.dom>}"
       ==
-    ..park(liv.dom liv)
+    =?  pew.dom  &(?=(^ pew.dom) !?=(^ +.u.pew.dom))  ~
+    (send-ward(liv.dom liv) syd)
   ::
   ++  rise                                              ::  [goad] <
     |=  [=dude:gall on=(unit ?)]
@@ -5670,7 +5670,7 @@
             ren=rein
             peg=(set perm:gall)
             peq=(set perm:gall)
-            per=(unit [(set perm:gall) yoki])
+            per=(unit [(set perm:gall) (unit yoki)])
         ==
       ::
       +$  raft-15
