@@ -2533,7 +2533,7 @@
         ren=rein                                        ::  force agents on/off
         peg=(set perm:gall)                             ::  granted perms
         peq=(set perm:gall)                             ::  requested opt perms
-        pew=(unit [(set perm:gall) yoki])               ::  awaiting req perms
+        pew=(unit [(set perm:gall) (unit yoki)])        ::  awaiting req perms
     ==                                                  ::
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission
