@@ -309,6 +309,12 @@
   ;<  ~                bind:m  (do-wick ~)  ::  just a formality
   $(desks t.desks)
 ::
+++  do-sys-update-skip-kel
+  |=  [=desk ex-moves=(list $-(move tang))]
+  %+  do-sys-update  407
+  %^  into  ex-moves  (sub (lent ex-moves) 1)
+  `$-(move tang)`(ex-gift [%tire %| [%warp desk [%zuse 408]]])
+::
 ++  do-sys-update
   |=  [kel=@ud ex-pork=(list $-(move tang))]
   =/  m  (mare ,~)
@@ -366,10 +372,6 @@
   |=  mov=move
   ?:  ?=([[[%blah ~] ~] %pass [%wick ~] %b %wait @] mov)  ~
   ((ex ~[/blah] %pass /wick %b %wait ~1337.4.20) mov)
-::
-++  ex-zeal-held
-  |=  =desk
-  (ex ~[/blah] %pass [%perm %zeal [desk] ~] %c [%zeal [[desk %held] ~]])
 ::
 ++  ex-text
   |=  =tape
@@ -481,6 +483,8 @@
     ++  park         (moves | | |)
     ::
     ++  park-compat  (moves | & |)
+    ::
+    ++  park-held    (moves | | &)
     ::
     ++  ex-base
       ?~  base  ~
@@ -740,14 +744,7 @@
   ::  apply kelvin-1 update to base
   ;<  mov3=(list move)  bind:m  (do-park %base 407 ~)
   =/  ex-com  (ex-commit `[2 407] [%foo 2 & | ~ ~]~)
-  %+  do-sys-update  407
-  ;:  welp
-      ex-base:ex-com
-      (ex-desk:ex-com | | |)
-      :~  (ex-gift [%tire %| [%warp %foo [%zuse 408]]])
-          ex-load
-      ==
-  ==
+  (do-sys-update-skip-kel %foo park:ex-com)
 ::
 ++  test-skip-kelvin-with-esse
 ::  kelvin and kelvin-1 update received on base,
@@ -768,9 +765,7 @@
   ::
   =/  ex-pork=(list $-(move tang))
     (ex-resume-commit 2 407 [[%foo & perm-none perm-none] ~])
-  %+  do-sys-update  407
-  %^  into  ex-pork  (sub (lent ex-pork) 1)
-  `$-(move tang)`(ex-gift [%tire %| [%warp %base [%zuse 408]]])
+  (do-sys-update-skip-kel %base ex-pork)
 ::
 ::  essential desk kelvin update behavior tests
 ::
@@ -1229,15 +1224,7 @@
     (ex-kernel-build ~ [[%foo | perm-none perm-none pers-2] ~])
   ;<  ~  bind:m  (do-zeal [%foo %held]~)
   =/  ex-com  (ex-commit `[2 407] [%foo 2 | & pers-2 ~]~)
-  ;<  ~  bind:m
-    %+  do-sys-update  407
-    ;:  welp
-        ex-base:ex-com
-        (ex-desk:ex-com | | |)
-        :~  (ex-gift [%tire %| [%warp %foo [%zuse 408]]])
-            ex-load
-        ==
-    ==
+  ;<  ~  bind:m  (do-sys-update-skip-kel %foo park:ex-com)
   ;<  mov3=(list move)  bind:m  (take /park-held/foo ~[/blah] [%behn %wake ~])
   ;<  ~                 bind:m  (expect-moves mov3 ex-load ~)
   (do-seal-held %foo pers-2 pers-2)
@@ -1269,7 +1256,8 @@
     ::  not passing perms here, already got %ward on %seal
     (ex-kernel-build ~ [[%foo | ~ ~ (silt :~([%eyre ~]))] ~])
   ;<  ~        bind:m  (do-zeal [%foo %held]~)
-  ;<  ~        bind:m  (do-sys-update 407 (moves:(ex-commit `[3 407] [%foo 3 | & pers-2 pers-1]~) | | &))
+  ;<  ~        bind:m
+    (do-sys-update 407 park-held:(ex-commit `[3 407] [%foo 3 | & pers-2 pers-1]~))
   ;<  mov4=(list move)  bind:m  (take /park-held/foo ~[/blah] [%behn %wake ~])
   ;<  ~                 bind:m  (expect-moves mov4 ex-load ~)
   ::
@@ -1385,7 +1373,7 @@
   ;<  mov=(list move)   bind:m  (do-park %base 408 ~)
   ;<  ~  bind:m  (expect-moves mov (ex-kernel-build ~ ~))
   ;<  ~  bind:m
-    (do-sys-update 408 (moves:(ex-commit `[2 408] [%foo 2 | | pers-1 perm-none]~) | | &))
+    (do-sys-update 408 park-held:(ex-commit `[2 408] [%foo 2 | | pers-1 perm-none]~))
   ::
   ;<  mov2=(list move)   bind:m  (call ~[/blah] [%zeal [%foo %live]~])
   ;<  ~  bind:m
