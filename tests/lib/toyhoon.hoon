@@ -12,12 +12,29 @@
         $(p.res (drop:th p.res))
       (expect-eq !>(expect) !>(res))
     ::
+    ++  test-nest-sut
+      |=  [sut=vase:th gol=type:th]
+      |=  [a=naty:th b=naty:th]
+      ^-  tang
+      =+  va=(slap:th sut gol a)
+      =+  vb=(slap:th sut gol b)
+      ?:  (nest:th p.va p.vb)  ~
+      :~  'b fails to nest in a'
+          'b:'  >p.vb<
+          'a:'  >p.va<
+      ==
+    ::
+    ++  test-nest
+      (test-nest-sut [%noun ~] %noun)
+    ::
     ++  pre
       |%
       ++  loob  ^-  type:th
         [%bcwt (my [%& %f] [%| %f] ~)]
       ++  numb  ^-  type:th
         [%atom %ud ~]
+      ++  cell  ^-  type:th
+        [%cell numb numb]
       --
     --
 |%
@@ -94,12 +111,12 @@
 ++  test-brcn
   ::  "|%  ++  $  42  --"
   =/  arm=naty:th  [%noun numb:pre 42]
-  =/  =naty:th  [%brcn %gold [%$ arm] ~ ~]
+  =/  =naty:th  [%brcn %gold ~ [%$ arm] ~ ~]
   %:  test-slap
     [%noun ~]
     %noun
     naty
-    `type:th`[%core %noun %gold %noun [%$ arm] ~ ~]
+    `type:th`[%core %noun %gold %noun arm [%$ 1] ~ ~]
     [[1 42] 0]
   ==
 ::
@@ -107,9 +124,29 @@
   ::  "=>  |%  ++  $  42  --  $"
   =/  =naty:th
     :+  %tsgr
-      [%brcn %gold [%$ [%noun numb:pre 42]] ~ ~]
+      [%brcn %gold ~ [%$ [%noun numb:pre 42]] ~ ~]
     [%cnts `wing`[%| 0 `%$]~ ~]
   (test-slap [%noun ~] %noun naty numb:pre 42)
+::
+++  test-core-nesting-match
+  ::TODO  same names & geometries nest
+  =/  c1=naty:th
+    :^  %brcn  %gold  ~
+    %-  my
+    :~  [%a %noun numb:pre 42]
+        [%b %noun cell:pre [42 42]]
+    ==
+  =/  c2=naty:th
+    :^  %brcn  %gold  `[%b %a]
+    %-  my
+    :~  [%a %noun numb:pre 42]
+        [%b %noun cell:pre [42 42]]
+    ==
+  %+  weld  (test-nest c1 c2)
+  (test-nest c2 c1)
+::
+::TODO  same names & different geometries don't nest
+::TODO  dif names & same geometries don't nest
 ::
 ++  test-parse-nuck
   ;:  weld

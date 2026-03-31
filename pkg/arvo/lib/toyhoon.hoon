@@ -27,8 +27,8 @@
     ::
       ::  hoon constructs
       ::
-      [%brcn var=?(%gold %iron %lead) bat=(map term naty)]
-      [%brpt bat=(map term naty)]
+      [%brcn var=?(%gold %iron %lead) lay=(unit layout) bat=(map term naty)]
+      [%brpt lay=(unit layout) bat=(map term naty)]
     ::
       ::  type operations
       ::
@@ -49,7 +49,7 @@
       ::  .p: current payload type
       ::  .pay: formal payload type
       ::TODO  rename .cur and .for ?
-      [%core p=type var=?(%wet ?(%gold %iron %lead)) pay=type bat=(map term naty)]
+      [%core p=type var=?(%wet ?(%gold %iron %lead)) pay=type bat=naty nam=(map term axis)]
       [%face p=term q=type]
       [%bcpt tom=type cel=type]
       [%bccn p=(map @ [=aura type=$~(%noun type)])]  ::NOTE  strange compiler bug
@@ -58,6 +58,9 @@
       [%hold p=type q=naty]
   ==
 +$  vase  (pair type noun)
+::
+++  dupe  |$  [a]  (pair a a)
++$  layout  $@(term ?([~ ~] (dupe layout)))
 ::
 +$  vial  ?(%read %rite %both %free)
 +$  opal
@@ -131,22 +134,20 @@
                  dext(sut q.sut, ref q.ref)
              ==
     ::
-      %core
-             ?.  ?=([%core *] ref)  sint
-             ?:  =(+>.sut +>.ref)  dext(sut p.sut, ref p.ref)
-             ?:  ?=(%wet var.sut)
-                 ?&(=(%wet var.ref) =(bat.sut bat.ref))
-             ?:  ?=(%wet var.ref)  |
+      %core  ?.  ?=([%core *] ref)  sint
+             ?:  =(+>.sut +>.ref)   dext(sut p.sut, ref p.ref)
+             ?:  ?=(%wet var.sut)   ?&(=(%wet var.ref) =(bat.sut bat.ref))
+             ?:  ?=(%wet var.ref)   |
              ?&
                &(dext(sut pay.sut, ref p.sut) dext(sut p.sut, ref pay.sut)) ::meet
                dext(sut pay.ref, ref p.ref)
                (deem(sut pay.sut, ref pay.ref) var.sut var.ref)
+               =(nam.sut nam.ref)
                ?|  (~(has in cil) [sut ref])
-                   %.  [bat.sut bat.ref]
-                   %=  deep
+                   %_  dext
                      cil  (~(put in cil) [sut ref])
-                     sut  sut(p pay.sut, var %gold)
-                     ref  ref(p pay.ref, var %gold)
+                     sut  (play sut(p pay.sut, var %gold) bat.sut)
+                     ref  (play ref(p pay.ref, var %gold) bat.ref)
                ==  ==
              ==
     ::
@@ -256,8 +257,10 @@
     ::
         [%core *]
       =^  zem=(unit (pair axis naty))  p.heg
-        ?~  axe=(look u.q.heg bat.sut)  [~ p.heg]
-        ?.  =(0 p.heg)                  [~ (dec p.heg)]
+        ?~  axe=(look-cone u.q.heg bat.sut nam.sut)
+          [~ p.heg]
+        ?.  =(0 p.heg)
+          [~ (dec p.heg)]
         [axe p.heg]
       ?^  zem
         :+  %pale  [`axe ~]
@@ -435,17 +438,15 @@
       [%11 tag.naty +.pro]
     [%11 [p.tag.naty +:$(naty q.tag.naty)] +.pro]
   ::
-    %brcn  =/  typ  (nice gol [%core sut var.naty sut bat.naty])
+    %brcn  =/  [nam=(map term axis) bat=^naty]  (make-cone-battery [lay bat]:naty)
+           =/  typ  (nice gol [%core sut var.naty sut bat nam])
            :-  typ
-           =;  bat  [[%1 (make-battery bat)] %0 1]
-           %-  ~(run by bat.naty)
-           |=(n=^naty +:^$(sut typ, naty n))
+           [[%1 +:$(sut typ, naty bat)] %0 1]
   ::
-    %brpt  =/  typ  (nice gol [%core sut %wet sut bat.naty])
+    %brpt  =/  [nam=(map term axis) bat=^naty]  (make-cone-battery [lay bat]:naty)
+           =/  typ  (nice gol [%core sut %wet sut bat nam])
            :-  typ
-           =;  bat  [[%1 (make-battery bat)] %0 1]
-           %-  ~(run by bat.naty)
-           |=(n=^naty +:^$(sut typ, naty n))
+           [[%1 +:$(sut typ, naty bat)] %0 1]
   ::
       %ktls
     =/  sam  $(naty p.naty, gol %noun)
@@ -480,6 +481,73 @@
   =+  gun=(mint p.sut gol naty)
   ~|  q.gun
   [p.gun .*(q.sut q.gun)]
+::
+::TODO  names, faces ):
+++  make-cone-battery
+  |=  [lay=(unit layout) bat=(map term naty)]
+  ?~  lay  (auto-layout 1 bat)
+  =/  [bay=naty nam=(map term axis) rem=(unit [hol=axis rem=(map term naty)])]
+    (tree-layout u.lay bat)
+  ?~  rem  [nam bay]
+  =/  [nam=(map term axis) =naty]
+    (auto-layout u.rem)
+  :-  (~(uni by ^nam) nam)
+  |-  ^-  ^naty
+  ?:  =(1 hol.u.rem)  naty
+  ?>  ?=([^ *] bay)
+  ?-  (cap hol.u.rem)
+    %2  [$(bay -.bay) +.bay]
+    %3  [-.bay $(bay +.bay)]
+  ==
+::
+++  tree-layout
+  |=  [lay=layout bat=(map term naty)]
+  ^-  [bat=naty nam=(map term axis) (unit [hol=axis rem=(map term naty)])]
+  =;  [bat=naty nam=(map term axis) def=(unit axis) rem=(map term naty)]
+    ?>  |(?=(^ def) =(~ rem))
+    [bat nam ?~(def ~ `[u.def rem])]
+  =|  axe=axis
+  =|  nam=(map term axis)
+  =|  def=(unit axis)
+  =/  rem=(map term naty)  bat
+  |-  ^+  [p=*naty q=nam r=def s=rem]
+  ?@  lay
+    ~|  lay=lay
+    ~|  rem=~(key by rem)
+    [(~(got by rem) lay) (~(put by nam) lay axe) def (~(del by rem) lay)]
+  ?:  ?=([~ ~] lay)
+    ?>  ?=(~ def)
+    [*naty nam `axe rem]
+  =+  l=$(lay -.lay, axe (peg axe 2))
+  =+  r=$(lay +.lay, axe (peg axe 3), nam q.l, def r.l, rem s.l)
+  [[p.l p.r] +.r]
+::
+++  auto-layout
+  |=  [axe=axis bat=(map term naty)]
+  =|  nam=(map term axis)
+  |-  ^-  [_nam naty]
+  ?-  bat
+    ~        !!
+    [* ~ ~]  [(~(put by nam) p.n.bat axe) q.n.bat]
+    [* * ~]  =+  l=$(bat l.bat, axe (peg axe 3), nam (~(put by nam) p.n.bat (peg axe 2)))
+             [-.l [q.n.bat +.l]]
+    [* ~ *]  =+  r=$(bat r.bat, axe (peg axe 3), nam (~(put by nam) p.n.bat (peg axe 2)))
+             [-.r [q.n.bat +.r]]
+    [* * *]  =+  l=$(bat l.bat, axe (peg axe 6), nam (~(put by nam) p.n.bat (peg axe 2)))
+             =+  r=$(bat r.bat, axe (peg axe 7), nam -.l)
+             [-.r [q.n.bat +.l +.r]]
+  ==
+::
+++  look-cone
+  |=  [cog=term bat=naty nam=(map term axis)]
+  ^-  (unit [p=axis q=naty])
+  =+  (~(get by nam) cog)
+  ?@  -  ~
+  =>  [[axe=u oge=u] +]
+  |-  ^-  (unit [p=axis q=naty])
+  ?:  =(1 axe)  `[oge bat]
+  ?.  ?=([^ *] bat)  ~
+  $(axe (mas axe), bat ?:(?=(%2 (cap axe)) -.bat +.bat))
 ::
 ++  make-battery
   |=  bat=(map term nock)
