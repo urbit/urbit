@@ -426,48 +426,39 @@
 ++  ex-kernel-build
   |=  [suspend=(list [=desk =zest:clay]) perm=(list [desk ese=? ped=(set perm:gall) peg=(set perm:gall) per=(set perm:gall)])]
   ^-  (list $-(move tang))
-  ::  ward gift moves on awaiting required permission update
-  ::  flag indicates essential desks readines for %base update
   ::
-  =/  [movl=(list (list $-(move tang))) ese-ready=?]
-    %^  spin  perm  &
-    |=  [[=desk ese=? ped=(set perm:gall) peg=(set perm:gall) per=(set perm:gall)] ese-ready=?]
-    ::  checking required perms
-    =/  ward-have
-      ?:(&(=(~ ped) =(~ peg)) ~ [(ex-ward-have desk ped peg) ~])
-    ?~  per  [ward-have ese-ready]
-    ?:  ese
-      [(snoc ward-have (ex-ward-need desk per)) %.n]
-    [(snoc ward-have (ex-ward-need desk per)) ese-ready]
-  ::
-  ::  list of desks to suspend and
-  ::  ward gifts on awaiting required permissions for non-esential desks
-  ::
-  =/  [nese-zeal=(list [desk zest:clay]) nese-ward=(list $-(move tang))]
-    %+  roll  perm
-    |=  [[=desk ese=? ped=(set perm:gall) peg=(set perm:gall) per=(set perm:gall)] [nese-zeal=(list [desk zest:clay]) nese-ward=(list $-(move tang))]]
-    ?:  ese  [nese-zeal nese-ward]
-    =/  ward-have
-      ?:(&(=(~ ped) =(~ peg)) ~ [(ex-ward-have desk ped peg) ~])
+  =/  [ward=(list $-(move tang)) nese-ward=(list $-(move tang)) ready=? zeal=(list [desk zest:clay])]
+  %+  roll  perm
+    |=  $:  [=desk ese=? ped=(set perm:gall) peg=(set perm:gall) per=(set perm:gall)]
+            ward=(list $-(move tang))
+            nese-ward=(list $-(move tang))
+            ready=?
+            zeal=(list [desk zest:clay])
+        ==
     =/  ward-mov=(list $-(move tang))
-      ?~  per
-        ward-have
-      (snoc ward-have (ex-ward-need desk per))
-    [?~(per nese-zeal [[desk %held] nese-zeal]) (welp ward-mov nese-ward)]
-  ::
-  ?.  ese-ready
-    ::  essential not ready on perms
+      %+  welp
+        ?:  &(=(~ ped) =(~ peg))  ~
+        [(ex-ward-have desk ped peg)]~
+      ?~  per  ~  [(ex-ward-need desk per)]~
     ::
-    %+  welp  `(list $-(move tang))`(zing movl)
-    [(ex-gift [%tire %| [%wait %base [%zuse 408]]]) ~]
+    :*  (welp ward ward-mov)
+        ?:  ese  nese-ward  (welp nese-ward ward-mov)
+        ::  desk is essential and have required awaiting perms - not ready for update
+        ?:  &(ese !=(~ per))   %.n  ready
+        ::  desk is not essential and have required awaiting perms - suspend
+        ?:  &(!ese !=(~ per))  [[desk %held] zeal]  zeal
+    ==
+  ::
+  ?.  ready
+    ::  essential desks not ready, blocked on perms
+    ::
+    %+  snoc  ward
+    (ex-gift [%tire %| [%wait %base [%zuse 408]]])
   ::  esential desks ready to apply base update,
-  ::  suspending desks without commit or with insufficient permissions
+  ::  suspending desks without wic and with awaiting req permissions
   ::
   %+  welp  nese-ward
-  :~  %+  ex-pass  /kiln/bump/zeal
-      :+  %c  %zeal
-      (welp suspend nese-zeal)
-      ::
+  :~  (ex-pass /kiln/bump/zeal %c %zeal (welp suspend zeal))
       ex-what
       (ex [~[/blah] %slip %c %pork ~])
   ==
