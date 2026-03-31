@@ -12595,7 +12595,6 @@
             `+<.u.peer
           ?~  muth  [~ ~]
           ?.  =(life.u.muth u.her-lyf)  [~ ~]
-          ``azimuth-peer-state/!>(+.u.muth)
           =/  ded
             =/  msg  (jam open-packet)
             =/  sig  (sign-raw:ed:crypto msg [sgn.pub sgn.sek]:saf.ames-state)
