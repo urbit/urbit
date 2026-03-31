@@ -196,6 +196,19 @@
   =/  ex  (ex-gift [%tire %| [%zest desk zest]])
   $(dek t.dek, ex-mov (snoc ex-mov ex))
 ::
+++  do-zest
+  |=  [=desk =zest:clay]
+  =/  m  (mare ,~)
+  ;<  mov=(list move)  bind:m  (call ~[/blah] [%zest desk zest])
+  ;<  ~                bind:m  (ex-zest desk zest)
+  ;<  ~                bind:m
+    %+  expect-moves  mov
+    :~  ex-wick
+        (ex-gift [%tire %| [%zest desk zest]])
+        ex-load
+    ==
+  (do-wick ~)
+::
 ::  granting permissions to a held desk
 ++  do-seal-held
   |=  [=desk peg=(set perm:gall) ped=(set perm:gall)]
@@ -1250,14 +1263,7 @@
   ;<  ~                  bind:m  (set-kelvin 408)
   ;<  *                  bind:m  do-pork
   ;<  ~                  bind:m  (do-wick ~)
-  ;<  mov3=(list move)   bind:m  (call ~[/blah] [%zest %foo %dead])
-  ;<  ~                  bind:m
-    %+  expect-moves  mov3
-    :~  ex-wick
-        (ex-gift [%tire %| [%zest %foo %dead]])
-        ex-load
-    ==
-  (do-wick ~)
+  (do-zest %foo %dead)
 ::
 ++  test-revive-desk-awaiting-update
   ::  non-essential desk set to %dead, base got update, update applied
@@ -1267,7 +1273,7 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
-  ;<  ~                 bind:m  (do-zeal [%foo %dead]~)
+  ;<  ~                 bind:m  (do-zest %foo %dead)
   ;<  *                 bind:m  (do-park %base 408 ~)
   ;<  ~                 bind:m  (set-kelvin 408)
   ;<  *                 bind:m  do-pork
@@ -1367,7 +1373,7 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                bind:m  (do-setup-desks [%foo |] ~)
-  ;<  *                bind:m  (call ~[/blah] [%zest %foo `zest:clay`%dead])
+  ;<  *                bind:m  (do-zest %foo %dead)
   ;<  mov=(list move)  bind:m  (do-park %foo 409 (desk-seal 1))
   ;<  ~  bind:m
     %+  expect-moves  mov
