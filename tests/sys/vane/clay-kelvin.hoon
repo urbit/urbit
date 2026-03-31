@@ -1320,6 +1320,13 @@
 ::
 ::  desk liveness tests
 ::
+++  test-dead-to-live
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  *                  bind:m  (do-setup-desks [%foo |] ~)
+  ;<  ~                  bind:m  (do-zest %foo %dead)
+  (do-zest %foo %live)
+
 ++  test-held-to-dead
 ::  non-essential desk held, awaiting base update, set to dead
 ::
@@ -1400,6 +1407,38 @@
   ;<  ~  bind:m  (do-wick ~)
   (do-seal-held %foo pers-1 pers-1)
 ::
+::  commit behaviour tests
+::
+++  test-commit-non-esse
+::  apply commit to live non-essential desk
+::
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  *                bind:m  (do-setup-desks [%baz |] ~)
+  ;<  mov=(list move)  bind:m
+    (do-park %baz 409 [/lib/skeleton/hoon [%& ;;(page:clay hoon+lib-skel)]]~)
+  %+  expect-moves  mov
+  :~  ex-wick
+      (ex-text "+ /~nul/baz/2/lib/skeleton/hoon")
+      ex-load
+  ==
+::
+++  test-base-commit
+::  base desk got commit, commit applied
+::
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  *                 bind:m  (do-setup-desks ~)
+  ;<  mov=(list move)   bind:m
+    (do-park %base 409 [/ted/new/hoon [%& ;;(page:clay hoon+'~')]]~)
+  ;<  ~  bind:m  (expect-moves mov (ex-kernel-build ~ ~))
+  ;<  ~  bind:m
+    %+  do-sys-update  409
+    :~  ex-wick
+        (ex-text "+ /~nul/base/2/ted/new/hoon")
+        ex-load
+    ==
+  (do-wick ~)
 ::
 ++  test-commit-new-sys-kelvin
 ::  non-essential desk receives commit with updated /sys/kelvin,
@@ -1442,6 +1481,30 @@
       (ex-ward-need %foo perm-none)
       ex-load
   ==
+::
+++  test-commit-new-desk-seal
+::  non-essential desk receives commit with updated /desk/seal
+::  permission checked passed, commit applied
+::
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
+  ;<  mov=(list move)   bind:m  (call ~[/blah] [%seal %foo & pers-1])
+  ;<  ~                 bind:m
+    %+  expect-moves  mov
+    :~  (ex-ward-have %foo perm-none pers-1)
+        ex-load
+    ==
+  ;<  ~                 bind:m  (do-wick ~)
+  ;<  mov2=(list move)  bind:m  (do-park %foo 409 (desk-seal 1))
+  ;<  ~  bind:m
+    %+  expect-moves  mov2
+    :~  ex-wick
+        (ex-text "+ /~nul/foo/2/desk/seal")
+        (ex-ward-have %foo pers-1 pers-1)
+        ex-load
+    ==
+  (do-wick ~)
 ::
 ++  test-commit-new-desk-seal-on-dead-desk
 ::  non-essential %dead desk receives commit with updated /desk/seal
