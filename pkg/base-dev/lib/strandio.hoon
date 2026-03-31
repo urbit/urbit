@@ -182,22 +182,6 @@
       `[%done ~]
     `[%fail %timer-error u.error.sign-arvo.u.in.tin]
   ==
-::  XX deprecate in 409k
-::
-++  take-tune
-  |=  =wire
-  =/  m  (strand ,[spar:ames (unit roar:ames)])
-  ^-  form:m
-  |=  tin=strand-input:strand
-  ?+    in.tin  `[%skip ~]
-      ~  `[%wait ~]
-    ::
-      [~ %sign * %ames %tune ^ *]
-    ?.  =(wire wire.u.in.tin)
-      `[%skip ~]
-    `[%done +>.sign-arvo.u.in.tin]
-  ==
-::
 ++  take-whey
   |=  =wire
   =/  m  (strand ,[spar:ames fragment-size=@ud num-fragments=@ud])
@@ -928,7 +912,6 @@
   =/  poke-vase  !>(`start-args:spider`[`tid.bowl `tid byk.bowl file args])
   ;<  ~      bind:m  (watch-our /awaiting/[tid] %spider /thread-result/[tid])
   ;<  ~      bind:m  (poke-our %spider %spider-start poke-vase)
-  ;<  ~      bind:m  (sleep ~s0)  ::  wait for thread to start
   ;<  =cage  bind:m  (take-fact /awaiting/[tid])
   ;<  ~      bind:m  (take-kick /awaiting/[tid])
   ?+  p.cage  ~|([%strange-thread-result p.cage file tid] !!)

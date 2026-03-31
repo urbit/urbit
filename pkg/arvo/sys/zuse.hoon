@@ -4,7 +4,7 @@
 =>  ..lull
 ~%  %zuse  ..part  ~
 |%
-++  zuse  %410
+++  zuse  %409
 ::                                                      ::  ::
 ::::                                                    ::  ::  (2) engines
   ::                                                    ::  ::
@@ -5266,7 +5266,7 @@
         [~ [i.rax ~]]
       =+  `[ext=term [@ @] fyl=tape]`u.q.raf
       :-  `ext
-      ?:(=(~ fyl) ~ [(crip (flop fyl)) ~])
+      [(crip (flop fyl)) ~]
     ::                                                  ::  ++apat:de-purl:html
     ++  apat                                            ::  2396 abs_path
       %+  cook  deft
@@ -6260,33 +6260,112 @@
     =+  vis=(cat 3 van.bulk car.bulk)
     [vis bem]
   --
-
-++  crc
-  ~%  %crc  ..part  ~
-  |%
-  ++  crc32
-    ~/  %crc32
-    |=  data=octs
-    ^-  @ux
-    ?:  =(p.data 0)
-      0x0
-    =/  input-list  (weld (rip 3 q.data) (reap (sub p.data (met 3 q.data)) 0))
-    %+  mix  0xffff.ffff
-    %+  roll  input-list
-    |:  [a=1 acc=0xffff.ffff]
-    (mix (snag (dis (mix acc a) 0xff) crc32-table) (rsh [0 8] acc))
+::  Checksum algorithms
+::
+++  checksum
+  ::  +adler: adler32 checksum
   ::
-  ++  crc32-table
-    ^~
-    ^-  (list @ux)
-    %+  turn  (gulf 0 255)
-    |=  i=@
-    %+  roll  (gulf 0 7)
-    |:  [a=1 acc=i]
-    ?:  (gth (dis acc 1) 0)
-      (mix 0xedb8.8320 (rsh [0 1] acc))
-    (rsh [0 1] acc)
+  ::    Adler-32 checksum follows essentially the
+  ::    Fletcher checksum algorithm, except that the summation
+  ::    is performed modulo 65.521 (base).
+  ::
+  ::    The maximum number of additions that can be added without
+  ::    exceeding 32 bits is determined by .n such that
+  ::    255*n(n+1)/2 + (n+1)*(base-1) < 2^32 - 1
+  ::
+  ::    This is valid for checksum with update, and .n works out to
+  ::    5.552. Although here we compute the checksum without
+  ::    an update, we preserve this bound to follow the
+  ::    standard implementation and in anticipation of a more
+  ::    general adler32 checksum interface.
+  ::
+  ~%  %checksum  ..part  ~
+  |%
+  ++  adler
+    ~%  %adler  ..adler  ~
+    |%
+    ::  +adler32: compute adler32 checksum
+    ::
+    ++  adler32
+      ~/  %adler32
+      |=  a=octs
+      ^-  @uxF
+      ::  .base Adler-32 checksum is computed modulo 65.521 --
+      ::  the largest prime number less than 65.536
+      ::
+      =*  base  65.521
+      ::  .nmax: maximum number of bytes that can be added without
+      ::  overflowing 32-bit word
+      ::
+      =*  nmax  5.552
+      ::
+      ?:  =(0 p.a)
+        0x1
+      =/  adler=@uxE  0x1
+      =/  sum2=@uxE   0x0
+      ::
+      =+  i=0
+      |-
+      =*  len  (sub p.a i)
+      ::  sum .nmax bytes
+      ::
+      ?:  (gth len nmax)
+        =/  [adler=@uxE sum2=@uxE]
+          (adler32-sum adler sum2 i nmax a)
+        %=  $
+          i  (add i nmax)
+          adler  (mod adler base)
+          sum2  (mod sum2 base)
+        ==
+      ::  sum the rest and finish
+      ::
+      =/  [adler=@uxE sum2=@uxE]
+        (adler32-sum adler sum2 i len a)
+      %+  add
+        (mod adler base)
+      (lsh [3 2] (mod sum2 base))
+    ::  +adler32-sum: perform adler32 summation for a run
+    ::  of .len bytes starting at .i
+    ::
+    ++  adler32-sum
+      |=  [adler=@uxE sum2=@uxE i=@ud len=@ud a=octs]
+      =+  end=(add i len)
+      |-
+      ?:  =(end i)
+        [adler sum2]
+      =.  adler  (add adler (cut 3 [i 1] q.a))
+      =.  sum2  (add sum2 adler)
+      $(i +(i))
+    --
+  ::
+  ++  crc
+    ~%  %crc  ..crc  ~
+    |%
+    ++  crc32
+      ~/  %crc32
+      |=  data=octs
+      ^-  @uxF
+      ?:  =(p.data 0)
+        0x0
+      =/  input-list  (weld (rip 3 q.data) (reap (sub p.data (met 3 q.data)) 0))
+      %+  mix  0xffff.ffff
+      %+  roll  input-list
+      |:  [a=1 acc=0xffff.ffff]
+      (mix (snag (dis (mix acc a) 0xff) crc32-table) (rsh [0 8] acc))
+    ::
+    ++  crc32-table
+      ^~
+      ^-  (list @ux)
+      %+  turn  (gulf 0 255)
+      |=  i=@
+      %+  roll  (gulf 0 7)
+      |:  [a=1 acc=i]
+      ?:  (gth (dis acc 1) 0)
+        (mix 0xedb8.8320 (rsh [0 1] acc))
+      (rsh [0 1] acc)
+    --
   --
+::
 ++  lss
   =,  blake:crypto
   |%

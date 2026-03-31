@@ -7,6 +7,7 @@
 ::
 /-  aquarium, spider
 /+  aqua-vane-thread
+/=  ames-raw  /sys/vane/ames
 =,  aquarium
 |%
 ++  emit-aqua-events
@@ -33,8 +34,69 @@
     :_  ~
     :-  %read
     [[[rcvr rcvr-tick.shot] path.peep] [hear-lane sndr-tick.shot] num.peep]
+  =+  ^=  peers
+      ;;  (unit (map ship ?(%alien %known)))
+      .^  *
+          %gx
+          (scot %p our)
+          %aqua
+          (scot %da now)
+          /i/(scot %p rcvr)/ax/(scot %p rcvr)//(scot %da now)/peers/noun
+      ==
+  =/  is-known=?
+    ?.  ?=(^ peers)  |
+    =+  peer=(~(get by u.peers) sndr)
+    ?.  ?=(^ peer)  |
+    =(%known u.peer)
+  ?:  ?&  =-  ~?  -  %is-pawn
+              -
+          ?|  ?=(%pawn (clan:title sndr))
+              ?=(%pawn (clan:title sndr.shot))
+          ==
+          ::  if this is going to be forwarded, skip checks
+          ::
+          :: =-  ~?  -  %not-forwarded
+          ::     -
+          =(rcvr rcvr.shot)
+          =+  ;;(out=(soft [~ signature=@ signed=@]) (mole |.((cue content.shot))))
+          ?|  ?&  ?=(~ out)
+                  ::  if this is not an attestation packet, check that the receiver
+                  ::  has the peer as known
+                  ::
+                  !is-known
+              ==
+              ?&  ?=(^ out)
+                  ?=(^ ;;((soft open-packet:ames-raw) (cue signed:(need (need out)))))
+                  ::  if this is an attestation packet, check if the rcvr has the comet
+                  ::  as %known -- this is a workaround to prevent a bail:evil that will
+                  ::  end up blocking the queue of the %aqua host, when it tries to decrypt
+                  ::  an open-packet
+                  ::
+                  is-known
+      ==  ==  ==
+    :: ~&  >   "skip packet"^content.shot
+    ~
+  :: ~&  >>   "inject packet"^content.shot
   %+  emit-aqua-events  our
   [%event rcvr /a/newt/0v1n.2m9vh %hear hear-lane pac]~
+::  XX  this should use the (TODO) message layer in %ames
+::
+++  handle-push
+  =,  ames
+  |=  [our=ship now=@da sndr=@p way=wire %push lan=(list lane:pact:ames) q=@]
+  ^-  (list card:agent:gall)
+  =/  =pact:pact:ames  (parse-packet:ames-raw q)
+  =/  rcvr=ship
+    ?-  +<.pact
+      %peek  her.name.pact
+      %poke  her.ack.pact
+      %page  ?>  ?=(^ lan)
+             ?>  ?=(@ i.lan)
+             `@p`i.lan
+    ==
+  =/  lan=lane:pact:ames  ?:(?=(%page +<.pact) `@ux`rcvr `@ux`sndr)
+  %+  emit-aqua-events  our
+  [%event rcvr /a/newt/0v1n.2m9vh %heer lan q]~
 ::  +lane-to-ship: decode a ship from an aqua lane
 ::
 ::    Special-case one comet, since its address doesn't fit into a lane.
@@ -48,7 +110,7 @@
     %|  =/  s  `ship``@`p.lane
         ?.  =(s 0xdead.beef.cafe)
           s
-        ~bosrym-podwyl-magnes-dacrys--pander-hablep-masrym-marbud
+        ~londeg-tirlys-somlyd-poltus--pintyn-tarbyl-bicnux-marbud
   ==
 ::  +ship-to-lane: encode a lane to look like it came from .ship
 ::
@@ -60,12 +122,13 @@
   ^-  lane:ames
   :-  %|
   ^-  address:ames  ^-  @
-  ?.  =(ship ~bosrym-podwyl-magnes-dacrys--pander-hablep-masrym-marbud)
+  ?.  =(ship ~londeg-tirlys-somlyd-poltus--pintyn-tarbyl-bicnux-marbud)
     ship
   0xdead.beef.cafe
+::
 --
 ::
-%+  aqua-vane-thread  ~[%restore %send]
+%+  aqua-vane-thread  ~[%restore %send %push]
 |_  =bowl:spider
 +*  this  .
 ++  handle-unix-effect
@@ -75,6 +138,7 @@
     ?+  -.q.ue  ~
       %restore  (handle-restore our.bowl who)
       %send     (handle-send our.bowl now.bowl who ue)
+      %push     (handle-push our.bowl now.bowl who ue)
     ==
   [cards this]
 ::

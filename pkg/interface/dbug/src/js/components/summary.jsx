@@ -19,6 +19,14 @@ const Details = ({ ...props }) => {
     }, [onToggleCallback])
 
 
+    if (!props.details) {
+      return (
+        <div style={{border: '1px solid black', padding: '4px', position: 'relative', ...props.style}}>
+          {props.summary}
+        </div>
+      );
+    }
+
     return (
       <details ref={detailsRef} open={props.open}
         style={{border: '1px solid black', padding: '4px', position: 'relative', ...props.style}}
