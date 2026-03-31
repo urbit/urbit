@@ -968,6 +968,8 @@
               ::
               (~(put by -) u.ship (~(gut by -) u.ship ~))
           (~(del ju flubs.state) u.ship foreign-agent.response)
+        ::  XX check that flubs.state has this agent
+        ::
         %-  ~(rep by outstanding.state)
         |=  [[[=^wire =duct] queue=*] m=_mo-core]
         ?.  =(/sys/way/(scot %p u.ship)/[foreign-agent.response] wire)
