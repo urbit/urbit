@@ -166,6 +166,11 @@
       !>  (scot %da ~2000.12.12)
   ==
 ::
+++  test-render-da-136
+  %+  expect-eq
+    !>  ~.~2000.1.1
+    !>  (scot:h136 %da ~2000.01.01)
+::
 ++  test-sane
   %-  expect
   !>(((sane %t) '🤔'))
