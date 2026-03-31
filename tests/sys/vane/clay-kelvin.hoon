@@ -708,6 +708,20 @@
     (expect-moves mov2 (ex-kernel-build ~ [[%foo | ~ ~ ~] ~]))
   (do-sys-update 408 (ex-resume-commit 2 408 [[%foo | perm-none perm-none] ~]))
 ::
+++  test-apply-kel-updates
+::  apply kelvin and kelvin-1 update to base in order
+::
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  *                 bind:m  (do-setup-desks ~)
+  ;<  mov=(list move)   bind:m  (do-park %base 408 ~)
+  ;<  ~  bind:m  (expect-moves mov (ex-kernel-build ~ ~))
+  ;<  ~  bind:m  (do-sys-update 408 (ex-resume-commit 2 408 ~))
+  ::
+  ;<  mov2=(list move)  bind:m  (do-park %base 407 ~)
+  ;<  ~  bind:m  (expect-moves mov2 (ex-kernel-build ~ ~))
+  (do-sys-update 407 (ex-resume-commit 3 407 ~))
+::
 ++  test-skip-kelvin
 ::  non-essential desk ready for kelvin and kelvin-1 update, before base desk
 ::  kelvin update skipped in favour of kelvin-1,
@@ -1057,42 +1071,45 @@
     ==
   (do-wick ~)
 ::
-++  test-non-essential-desk-missing-perm-on-kel-update
-::  kelvin update received on base desk,
-::  non-essential desk ready on kelvin, blocked on perms
-::  non-essential desk held, kelvin update applied on base and non-esse desks
-::  non-essential desk receives required perms, revived
+++  test-apply-update-non-essential-desk-with-perms
+::  non-essential desk awaiting kel update
 ::
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
   ;<  mov=(list move)   bind:m  (do-park %foo 408 (desk-seal 1))
   ;<  ~                 bind:m  (expect-moves mov (ex-wait %foo 408))
+  %-  branch
+  |^  :~  'got-update-perms-granted'^perms-granted
+          'got-update-insufficient-perms'^insufficient-perms
+      ==
   ::
-  ;<  mov2=(list move)  bind:m  (do-park %base 408 ~)
-  ;<  ~  bind:m
-    %+  expect-moves  mov2
-    (ex-kernel-build ~ [[%foo | perm-none perm-none pers-1] ~])
-  ;<  ~                 bind:m  (do-zeal [%foo %held]~)
-  ;<  ~  bind:m  (do-sys-update 408 park:(ex-commit `[2 408] [%foo 2 | & pers-1 ~]~))
-  ;<  ~  bind:m  (do-wick ~)
-  (do-seal-held %foo pers-1 pers-1)
-::
-++  test-apply-kel-update-with-perms
-::  kelvin update received on base desk, non-essential desk ready on kelvin and on perms
-::  kelvin update applied on base and non-essential desk
-::
-  %-  eval-mare
-  =/  m  (mare ,~)
-  ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
-  ;<  mov=(list move)   bind:m  (do-park %foo 408 (desk-seal 1))
-  ;<  mov2=(list move)  bind:m  (call ~[/blah] [%seal %foo & pers-1])
-  ;<  ~  bind:m  (expect-moves mov2 (ex-ward-have %foo perm-none pers-1) ex-load ~)
-  ;<  mov3=(list move)  bind:m  (do-park %base 408 ~)
-  ;<  ~  bind:m
-    %+  expect-moves  mov3
-    (ex-kernel-build ~ ~)
-  (do-sys-update 408 (moves:(ex-commit `[2 408] [[%foo 2 | | pers-1 pers-1] ~]) | | &))
+  ++  perms-granted
+  ::  kelvin update received on base,
+  ::  non-essential desk perms been granted
+  ::  kelvin update applied
+  ::
+    ;<  mov=(list move)   bind:m  (call ~[/blah] [%seal %foo & pers-1])
+    ;<  ~  bind:m  (expect-moves mov (ex-ward-have %foo perm-none pers-1) ex-load ~)
+    ;<  mov2=(list move)  bind:m  (do-park %base 408 ~)
+    ;<  ~                 bind:m  (expect-moves mov2 (ex-kernel-build ~ ~))
+    =/  ex-com  (ex-commit `[2 408] [[%foo 2 | | pers-1 pers-1] ~])
+    (do-sys-update 408 park-held:ex-com)
+  ::
+  ++  insufficient-perms
+  ::  kelvin update received on base,
+  ::  non-essential desk held, kelvin update applied on desks
+  ::  non-essential desk receives required perms, revived
+  ::
+    ;<  mov=(list move)  bind:m  (do-park %base 408 ~)
+    ;<  ~  bind:m
+      %+  expect-moves  mov
+      (ex-kernel-build ~ [[%foo | perm-none perm-none pers-1] ~])
+    ;<  ~  bind:m  (do-zeal [%foo %held]~)
+    ;<  ~  bind:m  (do-sys-update 408 park:(ex-commit `[2 408] [%foo 2 | & pers-1 ~]~))
+    ;<  ~  bind:m  (do-wick ~)
+    (do-seal-held %foo pers-1 pers-1)
+  --
 ::
 ::  multiple desks tests
 ::
