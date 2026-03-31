@@ -43,7 +43,7 @@
 ++  axle
   $:  ::  date: date at which http-server's state was updated to this data structure
       ::
-      date=%~2025.1.31
+      date=%~2025.10.28
       ::  server-state: state of inbound requests
       ::
       =server-state
@@ -95,6 +95,9 @@
       ::                       who may have been affected by urbit/urbit#7103
       ::
       check-session-timer=_|
+      :: UIP 125
+      ::
+      sockets=(map @ud websocket-connection)
   ==
 ::  channel-request: an action requested on a channel
 ::
@@ -1039,6 +1042,8 @@
       %^  return-static-data-on-duct  404  'text/html'
       (error-page 404 authenticated url.request ~)
     ==
+  ::  WebSockets event
+  ::
   ++  ws-event
     |=  [wid=@ event=websocket-event]
     =/  conn  (~(get by connections.state) duct)
@@ -1046,54 +1051,52 @@
     ?~  conn  `state
     ?.  ?=(%app -.action.u.conn)  `state
     =/  url  url.request.inbound-request.u.conn
-    =/  pat=(unit path)  (rush url stap)
-    ?~  pat  ~&  error-parsing-path=pat  `state
+    =/  pat=(unit (list @t))
+      (rush url ;~(pfix fas (more fas smeg:de-purl:html)))
+    ?~  pat  ~&(error-parsing-path=url `state)
     =/  app  app.action.u.conn
     =/  identity  identity.u.conn
     =/  wsid  (scot %ud wid)
     :: ~&  >>  ws-event=[identity app pat wsid]
     :: TODO damn how
     :: ~&  eyre-ws-event=-.event
-    ?+  -.event  `state
-      %message
-        :_  state
-        :~  %+  deal-as
-            /run-ws-app-request/[wsid]
-            :^  identity  our  app
-            :+  %poke  %websocket-server-message
-            !>([wid u.pat message.event])
-        ==
-      %disconnect
-        =.  connections.state  (~(del by connections.state) duct)
-        :_  state
-        :~  %+  deal-as
-            /ws-watch-response/[wsid]
-            [identity our app %leave ~]
-        ==
+    ?+    -.event  `state
+        %message
+      :_  state
+      :~  %+  deal-as
+          /run-ws-app-request/[wsid]
+          :^  identity  our  app
+          :+  %poke  %websocket-server-message
+          !>([wid u.pat message.event])
+      ==
+    ::
+        %disconnect
+      =.  connections.state  (~(del by connections.state) duct)
+      :_  state
+      :~  %+  deal-as
+          /ws-watch-response/[wsid]
+          [identity our app %leave ~]
+      ==
     ==
+  ::
   ++  ws-handshake
     |=  [wid=@ secure=? =address:eyre =request:http]
     ^-  [(list move) server-state]
-
     =/  host=(unit @t)  (get-header:http 'host' header-list.request)
     =/  [=action suburl=@t]
       (get-action-for-binding host url.request)
     :: TODO enable other actions
     ?.  ?=(%app -.action)  `state
-
-  :: TODO!!  get clear what all the identity thing has to be
+    :: TODO!!  get clear what all the identity thing has to be
     =/  app  app.action
-    =^  ?(invalid=@uv [@uv identity (list move)])  state
+    =^  $@(invalid=@uv [@uv identity (list move)])  state
       (session-for-request:authentication request)
     =/  [session-id=@uv =identity som=(list move)]
-      ?@  -  ~&  invalid-session=-  
-        [invalid [%fake *@p] ~]  -
-
+      ?^  -  -
+      ~&(invalid-session=invalid [invalid [%fake *@p] ~])
     =/  authenticated  ?=(%ours -.identity)
-    
     =/  connection=outstanding-connection
-        [action [authenticated secure address request] [session-id identity] ~ 0]
-
+      [action [authenticated secure address request] [session-id identity] ~ 0]
     =.  connections.state
       (~(put by connections.state) duct connection)
     ::  eyre-id is assigned way up in this arm
@@ -1101,17 +1104,14 @@
     :_  state  
     ~&  som=som
     %+  weld  som
-    :~  %+  deal-as
-          /ws-watch-response/[wsid]
+    :~  %+  deal-as  /ws-watch-response/[wsid]
         [identity our app %watch /websocket-server/[wsid]]
       ::
-        %+  deal-as
-          /run-ws-app-request/[wsid]
+        %+  deal-as  /run-ws-app-request/[wsid]
         :^  identity  our  app
         :+  %poke  %websocket-handshake
         !>(`[@ inbound-request:eyre]`[wid inbound-request.connection])
     ==    
-
   ::  +handle-ip: respond with the requester's ip
   ::
   ++  handle-ip
@@ -3199,6 +3199,30 @@
           tang
       ==
     [(weld moves-1 moves-2) state]
+  ::
+  ++  handle-ws-response
+    |=  [wid=@ event=websocket-event]
+    ^-  [(list move) server-state]    
+    =.  connections.state
+      ?+  -.event  connections.state
+        ?(%reject %disconnect)  (~(del by connections.state) duct)
+      ==
+    =.  sockets.state
+      ?+    -.event  sockets.state
+          ?(%reject %disconnect)
+        (~(del by sockets.state) wid)
+      ::
+          %accept
+        =/  outstanding  (~(get by connections.state) duct)
+        ?~  outstanding
+          ~&  >>>  eyre-ws-error=[wid event]  sockets.state
+        =/  req=inbound-request  inbound-request.u.outstanding
+        ::  TODO this is bad
+        ?>  ?=(%app -.action.u.outstanding)
+        (~(put by sockets.state) wid +.action.u.outstanding req)
+      ==
+    [[duct %give %websocket-response [wid event]]~ state]
+  ::
   ::  +handle-response: check a response for correctness and send to earth
   ::
   ::    All outbound responses including %http-server generated responses need to go
@@ -3206,17 +3230,7 @@
   ::    where we perform logging and state cleanup for connections that we're
   ::    done with.
   ::
-  ++  handle-ws-response
-    |=  [wid=@ event=websocket-event]
-    ^-  [(list move) server-state]    
-    :: TODO remove if not accepted?
-    =.  connections.state
-      ?.  ?=(%reject -.event)  connections.state
-      (~(del by connections.state) duct)
-    
-    :: TODO do all verification shit that handle-response is doing
-    [[duct %give %websocket-response [wid event]]~ state]
-
+  ::
   ++  handle-response
     |=  =http-event:http
     ^-  [(list move) server-state]
@@ -3956,11 +3970,11 @@
       %set-response
     =^  moves  server-state.ax  (set-response:server +.task)
     [moves http-server-gate]
+  ::
       %websocket-event
     =^  moves  server-state.ax  (ws-event:server +.task)
     [moves http-server-gate]
-
-      
+  ::
       %websocket-handshake
     =^  moves  server-state.ax  (ws-handshake:server +.task)
     [moves http-server-gate]
@@ -3990,12 +4004,12 @@
       ?+    i.wire
           ~|([%bad-take-wire wire] !!)
       ::
-        %run-app-request   run-app-request
-        %watch-response    watch-response
-        %sessions          sessions
-        %channel           channel
-        %acme              acme-ack
-        %conversion-cache  `http-server-gate
+        %run-app-request      run-app-request
+        %watch-response       watch-response
+        %sessions             sessions
+        %channel              channel
+        %acme                 acme-ack
+        %conversion-cache     `http-server-gate
         %run-ws-app-request   run-ws-app-request
         %ws-watch-response    watch-ws-response
       ==
@@ -4003,38 +4017,46 @@
   ++  watch-ws-response
     =/  event-args  [[eny duct now rof] server-state.ax]
     ?>  ?=([@ *] t.wire)
-    ?+  sign  `http-server-gate
-      [%gall %unto %watch-ack *]
-        ?~  p.p.sign
-          ::  received a positive acknowledgment: take no action
-          ::
-          [~ http-server-gate]
-        ::  we have an error; propagate it to the client
+    ?+    sign  `http-server-gate
+        [%gall %unto %watch-ack *]
+      ?~  p.p.sign
+        ::  received a positive acknowledgment: take no action
         ::
-        ~&  gall-error=u.p.p.sign
+        [~ http-server-gate]
+      ::  we have an error; propagate it to the client
+      ::
+      ~&  gall-error=u.p.p.sign
+      =/  handle-gall-error
+        handle-gall-error:(per-server-event event-args)
+      =^  moves  server-state.ax  (handle-gall-error u.p.p.sign)
+      [moves http-server-gate]
+    :: 
+        [%gall %unto %kick ~]
+      =/  handle-ws-response  handle-ws-response:(per-server-event event-args)
+      =^  moves  server-state.ax
+        :: TODO not great
+        =/  wids  (head (flop wire))
+        =/  wid  (slav %ud wids)
+        (handle-ws-response wid [%disconnect ~])
+      [moves http-server-gate]
+    ::
+        [%gall %unto %fact *]
+      =/  mark  p.cage.p.sign
+      ?.  ?=(%websocket-response mark)
         =/  handle-gall-error
           handle-gall-error:(per-server-event event-args)
-        =^  moves  server-state.ax  (handle-gall-error u.p.p.sign)
-        [moves http-server-gate]
-      [%gall %unto %fact *]
-        =/  mark  p.cage.p.sign
-        ?.  ?=(%websocket-response mark)
-          =/  handle-gall-error
-            handle-gall-error:(per-server-event event-args)
-          =^  moves  server-state.ax
-            (handle-gall-error leaf+"eyre bad mark {(trip mark)}" ~)
-          [moves http-server-gate]
-        =/  event  !<([@ websocket-event] q.cage.p.sign)
-        =/  handle-ws-response  handle-ws-response:(per-server-event event-args)
         =^  moves  server-state.ax
-          (handle-ws-response event)
+          (handle-gall-error leaf+"eyre bad mark {(trip mark)}" ~)
+        [moves http-server-gate]
+      =/  event  !<([@ websocket-event] q.cage.p.sign)
+      =/  handle-ws-response  handle-ws-response:(per-server-event event-args)
+      =^  moves  server-state.ax
+        (handle-ws-response event)
       [moves http-server-gate]
-
     ==
-  ++  run-ws-app-request
-    
-    `http-server-gate
-
+  ::
+  ++  run-ws-app-request  `http-server-gate
+  ::
   ++  run-app-request
     ::
     ?>  ?=([%gall %unto *] sign)
@@ -4283,7 +4305,8 @@
             [date=%~2023.4.11 server-state-3]
             [date=%~2023.5.15 server-state-4]
             [date=%~2024.8.20 server-state-4]
-            [date=%~2025.1.31 server-state]
+            [date=%~2025.1.31 server-state-5]
+            [date=%~2025.10.28 server-state]
         ==
       ::
       +$  server-state-0
@@ -4395,6 +4418,21 @@
             ports=[insecure=@ud secure=(unit @ud)]
             outgoing-duct=duct
             verb=@
+      ==
+      ::
+      +$  server-state-5
+        $:  bindings=(list [=binding =duct =action])
+            cache=(map url=@t [aeon=@ud val=(unit cache-entry)])
+            =cors-registry
+            connections=(map duct outstanding-connection)
+            auth=authentication-state
+            =channel-state
+            domains=(set turf)
+            =http-config
+            ports=[insecure=@ud secure=(unit @ud)]
+            outgoing-duct=duct
+            verb=@
+            check-session-timer=_|
         ==
       --
   |=  old=axle-any
@@ -4515,7 +4553,15 @@
       verb.old  [verb.old check-session-timer=&]
     ==
   ::
+  ::  adds web sockets: UIP-125
+  ::
       %~2025.1.31
+    %=  $
+      date.old  %~2025.10.28
+      check-session-timer.old  [check-session-timer.old sockets=~]
+    ==
+  ::
+      %~2025.10.28
     http-server-gate(ax old)
   ::
   ==

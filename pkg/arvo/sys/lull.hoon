@@ -4,7 +4,7 @@
 =>  ..part
 ~%  %lull  ..part  ~
 |%
-++  lull  %322
+++  lull  %320
 ::                                                      ::  ::
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
@@ -86,7 +86,7 @@
     |=(p=$ `(pair bloq step)`+:(fax p))
   --
 ::
-::  +mop: constructs and validates ordered ordered map based on key,
+::  +mop: constructs and validates ordered map based on key,
 ::  val, and comparator gate
 ::
 ++  mop
@@ -522,6 +522,10 @@
 +$  tint  $@  ?(%r %g %b %c %m %y %k %w %~)             ::  text color
           [r=@uxD g=@uxD b=@uxD]                        ::  24bit true color
 +$  turf  (list @t)                                     ::  domain, tld first
++$  fief  $%  [%turf p=(list turf) q=@udE]
+              [%if p=@ifF q=@udE]
+              [%is p=@isH q=@udE]
+          ==
 ::                                                      ::::
 ::::                    ++ethereum-types                  ::  eth surs for jael
   ::                                                    ::::
@@ -542,7 +546,38 @@
 ++  azimuth-types
   =,  ethereum-types
   |%
-  ++  point
+  +$  point
+    $:  ::  ownership
+        ::
+        $=  own
+        $:  owner=address
+            management-proxy=address
+            voting-proxy=address
+            transfer-proxy=address
+        ==
+      ::
+        ::  networking
+        ::
+        $=  net
+        %-  unit
+        $:  =life
+            =pass
+            continuity-number=@ud
+            sponsor=[has=? who=@p]
+            escape=(unit @p)
+            fief=(unit fief)
+        ==
+      ::
+        ::  spawning
+        ::
+        $=  kid
+        %-  unit
+        $:  spawn-proxy=address
+            spawned=(set @p)  ::todo  sparse range, pile, see old jael ++py
+        ==
+    ==
+  ::
+  +$  point-0
     $:  ::  ownership
         ::
         $=  own
@@ -568,9 +603,14 @@
         $=  kid
         %-  unit
         $:  spawn-proxy=address
-            spawned=(set @p)  ::TODO  sparse range, pile, see old jael ++py
+            spawned=(set @p)  ::todo  sparse range, pile, see old jael ++py
         ==
     ==
+  ++  point-0-to-1
+    |=  point-0
+    ^-  point
+    ?~  net  +<
+    +<(u.net [life pass continuity-number sponsor escape ~]:u.net)
   ::
   +$  dnses  [pri=@t sec=@t ter=@t]
   ::
@@ -592,6 +632,7 @@
         [%voting-proxy new=address]                 ::  ChangedVotingProxy
         [%spawn-proxy new=address]                  ::  ChangedSpawnProxy
         [%transfer-proxy new=address]               ::  ChangedTransferProxy
+        [%fief fief=(unit fief)]
     ==
   --
 ::  +vane-task: general tasks shared across vanes
@@ -898,6 +939,8 @@
         [%whey =spar boq=@ud]       :: weight of noun bounded at .path.spar
                                     :: as measured by .boq
         [%gulp path]                :: like %plug, but for |mesa
+        $>(%halt deep)              :: halt flow after we hear a remote %flub
+        [%goad =ship]               :: re-start flow after remote agent is %live
     ==
   ::
   ::  $gift: effect from ames
@@ -936,6 +979,7 @@
     ::
         [%turf turfs=(list turf)]
         [%saxo sponsors=(list ship)]
+        [%fief fiefs=(map ship (unit fief))]
     ::
         [%push p=(list lane:pact) q=@]   :: send a request/response packet
         [%sage =sage:mess]               :: give deserialized/open payload
@@ -944,32 +988,6 @@
     ==
   ::
   ::::                                                  ::  (1a2)
-    ::
-  ++  acru  $_  ^?                                      ::  asym cryptosuite
-    |%                                                  ::  opaque object
-    ++  as  ^?                                          ::  asym ops
-      |%  ++  seal  |~([a=pass b=@] *@)                 ::  encrypt to a
-          ++  sign  |~(a=@ *@)                          ::  certify as us
-          ++  sigh  |~(a=@ *@)                          ::  certification only
-          ++  sure  |~(a=@ *(unit @))                   ::  authenticate from us
-          ++  safe  |~([a=@ b=@] *?)                    ::  authentication only
-          ++  tear  |~([a=pass b=@] *(unit @))          ::  accept from a
-      --  ::as                                          ::
-    ++  de  |~([a=@ b=@] *(unit @))                     ::  symmetric de, soft
-    ++  dy  |~([a=@ b=@] *@)                            ::  symmetric de, hard
-    ++  en  |~([a=@ b=@] *@)                            ::  symmetric en
-    ++  ex  ^?                                          ::  export
-      |%  ++  fig  *@uvH                                ::  fingerprint
-          ++  pac  *@uvG                                ::  default passcode
-          ++  pub  *pass                                ::  public key
-          ++  sec  *ring                                ::  private key
-      --  ::ex                                          ::
-    ++  nu  ^?                                          ::  reconstructors
-      |%  ++  pit  |~([a=@ b=@] ^?(..nu))               ::  from [width seed]
-          ++  nol  |~(a=ring ^?(..nu))                  ::  from ring
-          ++  com  |~(a=pass ^?(..nu))                  ::  from pass
-      --  ::nu                                          ::
-    --  ::acru                                          ::
   ::  +protocol-version: current version of the ames wire protocol
   ::
   ++  protocol-version  `?(%0 %1 %2 %3 %4 %5 %6 %7)`%0
@@ -1044,6 +1062,7 @@
         [%kill =ship =bone]
         [%ahoy =ship =bone]  :: XX remove bone; it's just next-bone.ossuary
         [%prun =ship =user=path =duct =ames=path]
+        [%halt =ship agent=term =bone] :: XX add [=agent=path cork=?]
     ==
   ::  $stun: STUN notifications, from unix
   ::
@@ -1061,8 +1080,9 @@
   +$  fragment-num   @udfragmentnum
   +$  message-blob   @udmessageblob
   +$  message-num    @udmessagenum
-  +$  public-key     @uwpublickey
-  +$  private-key    @uwprivatekey
+  +$  public-keys    [cry=@uxpoint sgn=@uxpoint]
+  +$  private-keys   [cry=@uxscalar sgn=@uxscalar]
+  +$  keypairs       [pub=public-keys sek=private-keys]
   +$  symmetric-key  @uwsymmetrickey
   ::
   ::  $hoot: request packet payload
@@ -1154,12 +1174,7 @@
   ::
   +$  peer-state
     $+  peer-state
-    $:  $:  =symmetric-key
-            =life
-            =rift
-            =public-key
-            sponsor=ship
-        ==
+    $:  azimuth-state
         route=(unit [direct=? =lane])  ::  XX (list)
         =qos
         =ossuary
@@ -1171,7 +1186,9 @@
         keens=(map path keen-state)
         =chain
         tip=(jug =user=path [duct =ames=path])
+        halt=(set bone)
     ==
+  ::
   +$  keen-state
     $+  keen-state
     $:  wan=((mop @ud want) lte)  ::  request packets, sent
@@ -1183,11 +1200,13 @@
         listeners=(jug duct ints)
         metrics=pump-metrics
     ==
+  ::
   +$  want
     $:  fra=@ud
         =hoot
         packet-state
     ==
+  ::
   +$  have
     $:  fra=@ud
         meow
@@ -1586,6 +1605,17 @@
     ?:  (lte size 8)  [8 %0b10]
     [16 %0b11]
   ::
+  ::  $axle: state for entire vane
+  ::
+  ::    peers:       states of connections to other ships
+  ::    unix-duct:   handle to give moves to unix
+  ::    life:        our $life; how many times we've rekeyed
+  ::    rift:        our $rift
+  ::    bug:         debug printing configuration
+  ::    snub:        blocklist for incoming packets
+  ::    cong:        parameters for marking a flow as clogged
+  ::    dead:        dead flow consolidation timer and recork timer, if set
+  ::
   +$  axle
     $:  peers=(map ship ship-state)
         =unix=duct  ::  [//ames/0v0 ~]
@@ -1598,13 +1628,13 @@
         $:  flow=[%flow (unit dead-timer)]  ::  ... for |ames
             chum=[%chum (unit dead-timer)]  ::  ... for |mesa
             cork=[%cork (unit dead-timer)]  ::  ... for %nacked corks
-            rots=[%rots (unit dead-timer)]  ::  ... fir expiring direct routes
+            rots=[%rots (unit dead-timer)]  ::  ... for expiring direct routes
         ==
         ::
         =server=chain                       ::  for serving %shut requests
-        priv=private-key
+        [saf=keypairs =ring =pass]
         chums=(map ship chum-state)         ::  XX migrated peers
-        core=_`?(%ames %mesa)`%ames         ::  XX use migrated core by default
+        core=_`?(%ames %mesa)`%ames         ::  XX use |mesa core by default
         ::  TODOs
         :: XX tmp=(map @ux page)            :: temporary hash-addressed bindings
     ==
@@ -1628,7 +1658,15 @@
   ::
   +$  dire           ?(%bak %for)
   +$  side           [=bone =dire]
-  +$  azimuth-state  [=symmetric-key =life =rift =public-key sponsor=ship]
+  +$  azimuth-state
+    $:  =symmetric-key
+        =life
+        =rift
+        [=public-keys =pass]
+        sponsor=ship
+        fief=(unit fief)
+    ==
+  ::
   +$  chum-state
     $+  chum-state
     $%  [%known fren-state]
@@ -1708,6 +1746,11 @@
         ::  line: high-water mark for the last-acked message before migration
         ::
         line=@ud
+        ::  a flow halts when:
+        ::    - forward: %gall passes a %flub to %ames
+        ::    - backward: a %plea gets %flubbed over the wire
+        ::
+        halt=?(%.y %.n)
         ::  outbound %poke payloads, bounded in the ship's namespace
         ::  always and only for requests
         ::
@@ -3117,6 +3160,7 @@
         [%websocket-handshake ws-id=@ secure=? =address =request:http]
     ==
   :: UIP-125
+  :: 
   +$  websocket-connection
     $:  app=term
         =inbound-request
@@ -3131,6 +3175,7 @@
         [%disconnect ~]
         [%message message=websocket-message]
     ==
+
   ::  +origin: request origin as specified in an Origin header
   ::
   +$  origin  @torigin
@@ -3683,7 +3728,8 @@
     $%  [%boon payload=*]                               ::  ames response
         [%noon id=* payload=*]
         [%done error=(unit error:ames)]                 ::  ames message (n)ack
-        [%flub ~]                                       ::  not ready to handle plea
+        [%flub $@(~ [blocked=? dap=(unit term)])]       ::  refuse to take plea
+        [%spur ~]                                       ::  ready to take plea
         [%unto p=unto]                                  ::
     ==                                                  ::
   +$  task                                              ::  incoming request
@@ -3698,6 +3744,7 @@
         [%doff dude=(unit dude) ship=(unit ship)]       ::  kill subscriptions
         [%rake dude=(unit dude) all=?]                  ::  reclaim old subs
         [%lave subs=(list [?(%g %a) ship dude duct])]   ::  delete stale bitt(s)
+        $>(%halt deep:ames)                             ::  send remote %flub
         $>(%init vane-task)                             ::  set owner
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
@@ -3711,7 +3758,7 @@
   ::
   +$  fans  ((mop @ud (pair @da (each page @uvI))) lte)
   +$  plot
-    $:  bob=(unit @ud)
+    $:  bob=(unit @ud)                                  ::  latest revision
         fan=fans
     ==
   +$  stats                                             ::  statistics
@@ -3728,9 +3775,9 @@
         [%plot p=(unit plot) q=(map @ta farm)]
     ==
   ::
-  +$  egg                                               ::  migratory agent state
-    $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)] ::  see /sys/gall $yoke
-        $:  %live
+  +$  egg                                               ::  migratory agent
+    $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)] ::  state; see /sys/gall
+        $:  %live                                       ::  $yoke
             control-duct=duct
             run-nonce=@t
             sub-nonce=@
@@ -3747,7 +3794,7 @@
             pen=(jug spar:ames wire)
             gem=(jug coop [path page])
     ==  ==
-  +$  egg-any  $%([%15 egg-15] [%16 egg])
+  +$  egg-any  $%([%15 egg-15] [%16 egg-16] [%20 egg])
   +$  egg-15
     $%  [%nuke sky=(map spur @ud)]
     $:  %live
@@ -3759,11 +3806,30 @@
         =boat
         =boar
         code=~
-        old-state=[%| vase]
+        old-state=[%| vase:h136]
         =beak
         marks=(map duct mark)
         sky=(map spur plot)
         ken=(jug spar:ames wire)
+    ==  ==
+  +$  egg-16
+    $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)]
+        $:  %live
+            control-duct=duct
+            run-nonce=@t
+            sub-nonce=@
+            =stats
+            =bitt
+            =boat
+            =boar
+            code=~
+            old-state=[%| vase:h136]
+            =beak
+            marks=(map duct mark)
+            sky=farm
+            ken=(jug spar:ames wire)
+            pen=(jug spar:ames wire)
+            gem=(jug coop [path page])
     ==  ==
   ::
   +$  bowl                                              ::  standard app state
@@ -3942,6 +4008,9 @@
         [%receive id=@ud =http-event:http]
         :: UIP-125
         :: 
+        [%cancel-websocket id=@ud]
+        ::  receives websocket event from earth
+        ::
         [%websocket-connect app=term url=@t]
         ::  receives websocket event from earth
         ::
@@ -4028,12 +4097,15 @@
         [%diff who=ship =diff:point]
         [%breach who=ship]
     ==
+  ::
+  +$  fiefs-result  (map ship (unit fief))
   ::                                                  ::
   +$  gift                                            ::  out result <-$
     $%  [%done error=(unit error:ames)]               ::  ames message (n)ack
         [%boon payload=*]                             ::  ames response
         [%private-keys =life vein=(map life ring)]    ::  private keys
-        [%public-keys =public-keys-result]            ::  ethereum changes
+        [%public-keys =public-keys-result]            ::  PKI changes
+        [%fief =fiefs-result]                         ::  route changes
         [%turf turf=(list turf)]                      ::  domains
     ==                                                ::
   ::  +feed: potential boot parameters
@@ -4048,7 +4120,7 @@
   +$  task                                            ::  in request ->$
     $~  [%vega ~]                                     ::
     $%  [%dawn dawn-event]                            ::  boot from keys
-        [%fake =ship]                                 ::  fake boot
+        [%fake $@(=ship [~ =feed])]                   ::  fake boot
         [%listen whos=(set ship) =source]             ::  set ethereum source
         ::TODO  %next for generating/putting new private key
         [%meet =ship =life =pass]                     ::  met after breach
@@ -4056,6 +4128,7 @@
         [%nuke whos=(set ship)]                       ::  cancel tracker from
         [%private-keys ~]                             ::  sub to privates
         [%public-keys ships=(set ship)]               ::  sub to publics
+        [%fief ships=(set ship)]                      ::  sub to routes
         [%rekey =life =ring]                          ::  update private keys
         [%resend ~]                                   ::  resend private key
         [%ruin ships=(set ship)]                      ::  pretend breach
@@ -4066,14 +4139,74 @@
         [%step ~]                                     ::  reset web login code
     ==                                                ::
   ::
-  +$  dawn-event
-    $:  =feed
-        spon=(list [=ship point:azimuth-types])
-        czar=(map ship [=rift =life =pass])
-        turf=(list turf)
-        bloq=@ud
-        node=(unit purl:eyre)
-    ==
+  ++  dawn-event
+    =<  dawn-event
+    |%
+    +$  dawn-event  $^(dawn-0 dawn-1)
+    +$  dawn-0
+      $:  =feed
+          spon=(list [=ship point-0:azimuth-types])
+          czar=(map ship [=rift =life =pass])
+          turf=(list turf)
+          bloq=@ud
+          node=(unit purl:eyre)
+      ==
+    ::
+    +$  dawn-1
+      $:  %1
+          =feed
+          spon=(list [=ship point])
+          lams=(map ship point)
+          turf=(list turf)
+          node=(unit purl:eyre)
+          :: we can make q a mark too, but need to
+          :: specify desk too, and then delay
+          :: til they're installed
+          srcs=(list [p=term q=*])
+      ==
+    ::
+    ++  to-latest
+      |=  tac=dawn-event
+      ^-  dawn-1
+      ?^  -.tac  (dawn-0-to-1 tac)
+      tac
+    ::
+    ++  dawn-0-to-1
+      |=  tac=dawn-0
+      =/  spon-points=(list [ship point])
+        %+  turn  spon.tac
+        |=  [=ship az-point=point-0:azimuth-types]
+        ~|  [%sponsor-point az-point]
+        ?>  ?=(^ net.az-point)
+        :*  ship
+            continuity-number.u.net.az-point
+            life.u.net.az-point
+            (malt [life.u.net.az-point 1 pass.u.net.az-point] ~)
+            ?.  has.sponsor.u.net.az-point
+              ~
+            `who.sponsor.u.net.az-point
+            ~
+        ==
+      ::
+      =/  lam-points=(map =ship =point)
+        %-  ~(urn by czar.tac)
+        |=  [=ship =a=rift =a=life =a=pass]
+        ^-  point
+        [a-rift a-life (malt [a-life 1 a-pass] ~) `ship ~]
+      ::
+      :*  %1
+          feed.tac
+          spon-points
+          lam-points
+          turf.tac
+          node.tac
+          srcs:*dawn-1
+        ::
+::          =<  [%azimuth %watch - %default]~
+::          'http://eth-mainnet.urbit.org:8545'
+        ::
+      ==
+    --
   ::
   ++  block
     =<  block
@@ -4114,6 +4247,7 @@
           =life
           keys=(map life [crypto-suite=@ud =pass])
           sponsor=(unit @p)
+          fief=(unit fief)
       ==
     ::
     +$  key-update  [=life crypto-suite=@ud =pass]
@@ -4124,6 +4258,7 @@
     +$  diff
       $%  [%rift from=rift to=rift]
           [%keys from=key-update to=key-update]
+          [%fief from=(unit fief) to=(unit fief)]
           [%spon from=(unit @p) to=(unit @p)]
       ==
     ::
@@ -4133,6 +4268,7 @@
     +$  udiff
       $:  =id:block
       $%  [%rift =rift boot=?]
+          [%fief fief=(unit fief)]
           [%keys key-update boot=?]
           [%spon sponsor=(unit @p)]
           [%disavow ~]
@@ -4144,6 +4280,7 @@
       ?-    +<.a-udiff
           %disavow  ~|(%udiff-to-diff-disavow !!)
           %spon     `[%spon sponsor.a-point sponsor.a-udiff]
+          %fief     `[%fief fief.a-point fief.a-udiff]
           %rift
         ?.  (gth rift.a-udiff rift.a-point)
           ~
@@ -4169,6 +4306,7 @@
       |=  =diff
       ^-  ^diff
       ?-  -.diff
+        %fief  [%fief to from]:diff
         %rift  [%rift to from]:diff
         %keys  [%keys to from]:diff
         %spon  [%spon to from]:diff
@@ -4186,6 +4324,10 @@
       |:  [*=diff a-point=a]
       ^-  point
       ?-    -.diff
+          %fief
+        ?>  =(fief.a-point from.diff)
+        a-point(fief to.diff)
+      ::
           %rift
         ?>  =(rift.a-point from.diff)
         a-point(rift to.diff)

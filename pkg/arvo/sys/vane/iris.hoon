@@ -21,7 +21,7 @@
       ::
       card=(wind note gift)
   ==
-::  +note: private request from light to another vane
+::  +note: private request from iris to another vane
 ::
 +$  note
   $%  ::  %d: to dill
@@ -30,15 +30,24 @@
           ::
           ::
       $%  [%flog =flog:dill]
-  ==  ==  ==
+      ==  ==
+  ::
+      ::  %g: to gall
+      ::
+      $:  %g
+          ::
+          ::
+      $%  [%deal p=sack q=term r=deal:gall]
+      ==  ==
+  ==
 --
 ::  more structures
 ::
 |%
 +$  axle
-  $:  ::  date: date at which light's state was updated to this data structure
+  $:  ::  date: date at which iris state was updated to this data structure
       ::
-      date=%~2019.2.8
+      date=%~2026.1.1
       ::
       ::
       =state
@@ -46,7 +55,10 @@
 ::  +state:client: state relating to open outbound HTTP connections
 ::
 +$  state
-  $:  ::  next-id: monotonically increasing id number for the next connection
+  $:  ::  sockets: ongoing websocket connections
+      ::
+      sockets=(map @ud websocket-connection)
+      ::  next-id: monotonically increasing id number for the next connection
       ::
       next-id=@ud
       ::  connection-by-id: open connections to the
@@ -86,6 +98,9 @@
       ::  expected-size: the expected content-length of the http request
       ::
       expected-size=(unit @ud)
+      ::  request: the original request, needed for handling redirects
+      ::
+      request=request:http
   ==
 --
 ::
@@ -122,11 +137,15 @@
     =.  connection-by-id.state
       %+  ~(put by connection-by-id.state)  id
       =,  outbound-config
-      [duct [redirects retries ~ ~ 0 ~]]
+      [duct [redirects retries ~ ~ 0 ~ request]]
     ::  keep track of the duct for cancellation
     ::
     =.  connection-by-duct.state
       (~(put by connection-by-duct.state) duct id)
+    :: if we don't have a duct yet just ignore the request, %born will
+    :: cancel it soon. this is not ideal to say the least.
+    ::
+    ?~  outbound-duct.state  [~ state]
     ::  start the download
     ::
     ::  the original eyre keeps track of the duct on %born and then sends a
@@ -149,7 +168,8 @@
       ~&  %iris-invalid-cancel
       [~ state]
     ::
-    :-  [outbound-duct.state %give %cancel-request u.cancel-id]~
+    :-  ?~  outbound-duct.state  ~
+      [outbound-duct.state %give %cancel-request u.cancel-id]~
     (cleanup-connection u.cancel-id)
   ::  +receive: receives a response to an http-request we made
   ::
@@ -186,7 +206,17 @@
           `response-header:http-event
         ::
         [duct in-progress-http-request]
-      ::
+      =*  status-code=@ud  status-code.response-header.http-event
+      ?:  ?|  =(307 status-code)
+              =(303 status-code)
+              =(301 status-code)
+          ==
+          %:        handle-redirect
+                  id
+                http-event
+              remaining-redirects.in-progress-http-request.u.connection
+            request.in-progress-http-request.u.connection
+          ==
       ?:  complete.http-event
         (send-finished id data.http-event)
       ::
@@ -211,6 +241,29 @@
         ~
       ==
     ==
+  ::  +handle-redirect: transparently handle redirects if applicable
+  ::
+  ++  handle-redirect
+    |=  [id=@ud =http-event:http remaining-redirects=@ud =request:http]
+    ?>  ?=(%start -.http-event)
+    ?:  =(0 remaining-redirects)
+      ?:  complete.http-event
+        (send-finished id data.http-event)
+      (record-and-send-progress id data.http-event)
+    ?~  loc=(get-header:http 'location' headers.response-header.http-event)
+      ?:  complete.http-event
+        (send-finished id data.http-event)
+      (record-and-send-progress id data.http-event)
+    =.  connection-by-id.state
+      %+  ~(jab by connection-by-id.state)  id
+      |=  [duct=^duct =in-progress-http-request]
+      :-  duct
+      %=  in-progress-http-request
+          remaining-redirects
+        (dec remaining-redirects.in-progress-http-request)
+      ==
+    :_  state
+    [outbound-duct.state %give %request id request(url u.loc)]~
   ::  +record-and-send-progress: save incoming data and send progress report
   ::
   ++  record-and-send-progress
@@ -287,28 +340,100 @@
       connection-by-id    (~(del by connection-by-id.state) id)
       connection-by-duct  (~(del by connection-by-duct.state) duct.u.con)
     ==
+  ::  UIP-125
+  :: 
   ++  ws-connect
     |=  [desk=term url=@t]
-      ~&  iris-ws-connect=[desk url]
-      :: TODO ... the wid comes from vere tho...?
-      =^  id  next-id.state  [next-id.state +(next-id.state)]
-      ::  add a new open session
-      =/  wid  id
-      ::
-      =.  connection-by-id.state
-        %+  ~(put by connection-by-id.state)  id
-        [duct [0 3 ~ ~ 0 ~]]
-      ::  keep track of the duct for cancellation
-      ::
-      =.  connection-by-duct.state
-        (~(put by connection-by-duct.state) duct id)
-      :-  [outbound-duct.state %give %websocket-handshake wid url]~
-      state
+    ~&  iris-ws-connect=[desk url duct]
+    ?:  (~(has by connection-by-duct.state) duct)
+      ~&  "cant sent second ws-connect on same duct"
+      `state
+    :: TODO ... the wid comes from vere tho...?
+    =^  id  next-id.state  [next-id.state +(next-id.state)]
+    =/  wc=websocket-connection  [desk duct id url %pending]
+    =.  sockets.state  (~(put by sockets.state) id wc)
+    ::  keep track of the duct for cancellation
+    :: This sends it to Vere to actually do the request
+    :_  state
+    [outbound-duct.state %give %websocket-handshake id url]~
+  ::
+  ++  cleanup-ws
+    |=  wid=@ud
+    ^-  [(list move) ^state]
+    ?~  con=(~(get by sockets.state) wid)
+      `state
+    =.  sockets.state  (~(del by sockets.state) wid)
+    :_  state
+    :~  (leave-agent wid app.u.con)
+    ==
+  ::  incoming websockets event to be sent BY VERE NOT USERSPACE
+  ::
   ++  ws-event
-    |=  [id=@ud event=websocket-event:eyre]
-      ~&  iris-ws-event=[id event]
-      :-  [outbound-duct.state %give %websocket-response id event]~
-      state
+    |=  [wid=@ud event=websocket-event:eyre]
+    ~&  iris-ws-event=[wid -.event duct]
+    =/  wc  (~(get by sockets.state) wid)
+    ?~  wc  `state
+    =/  wc  u.wc
+    ~&  wc=wc
+    =^  moves  state
+      ?-    -.event
+          %reject      (cleanup-ws wid)
+          %disconnect  (cleanup-ws wid)
+      ::
+          %accept
+        =.  wc  wc(status %accepted)
+        =.  sockets.state  (~(put by sockets.state) wid wc)
+        :_  state
+        :~  (watch-agent wid app.wc)                         
+        ==
+      ::
+          %message
+        :_  state
+        :~  (poke-agent [wid +.event] app.wc)
+        ==
+      ==
+    =/  m2  (ws-response wc event)
+    [(welp m2 moves) state]
+  ::
+  ++  ws-response
+    |=  [wc=websocket-connection event=websocket-event:eyre]
+    ^-  (list move)
+    ~&  ws-response=wc
+    :~  :*  duct.wc
+            %give
+            %websocket-response
+            id.wc
+            event
+    ==  ==
+  ::    
+  ++  ws-cancel
+    |=  wid=@ud
+    =.  sockets.state  (~(del by sockets.state) wid)
+    :_  state
+    :: TODO this goes to vere
+    [outbound-duct.state %give %cancel-request wid]~
+  ::
+  ++  watch-agent
+    |=  [wid=@ud app=term]
+    ^-  move
+    =/  wids  (scot %ud wid)
+    =/  =note  [%g %deal [our our /iris] app %watch /websocket-client/[wids]]
+    [duct %pass /ws-watch/[wids] note]
+  ::
+  ++  leave-agent
+    |=  [wid=@ud app=term]
+    ^-  move
+    ~&  iris-leave-agent=[wid app]
+    =/  wids  (scot %ud wid)
+    =/  =note  [%g %deal [our our /iris] app %leave ~]
+    [duct %pass /ws-watch/[wids] note]
+  ::
+  ++  poke-agent
+    |=  [msg=[@ud websocket-message:eyre] app=term]
+    ^-  move
+    =/  =note
+      [%g %deal [our our /iris] app %poke %websocket-client-message !>(msg)]
+    [duct %pass /iris-ws-poke note]    
   --
 --
 ::  end the =~
@@ -326,7 +451,8 @@
 |%
 ++  call
   |=  [=duct dud=(unit goof) wrapped-task=(hobo task)]
-  ^-  [(list move) _light-gate]
+  ~>  %spin.['call/iris']
+  ^-  [(list move) _iris-gate]
   ::
   =/  task=task  ((harden task) wrapped-task)
   ::
@@ -335,15 +461,15 @@
   ?^  dud
     =/  moves=(list move)
       [[duct %slip %d %flog %crud [-.task tang.u.dud]] ~]
-    [moves light-gate]
+    [moves iris-gate]
   ::  %trim: in response to memory pressure
   ::
   ?:  ?=(%trim -.task)
-    [~ light-gate]
+    [~ iris-gate]
   ::  %vega: notifies us of a completed kernel upgrade
   ::
   ?:  ?=(%vega -.task)
-    [~ light-gate]
+    [~ iris-gate]
   ::
   =/  event-args  [[eny duct now rof] state.ax]
   =/  client  (per-client-event event-args)
@@ -369,45 +495,144 @@
         outbound-duct.state.ax       duct
     ==
     ::
-    [moves light-gate]
+    [moves iris-gate]
   ::
       %request
     =^  moves  state.ax  (request:client +.task)
-    [moves light-gate]
+    [moves iris-gate]
   ::
       %cancel-request
     =^  moves  state.ax  cancel:client
-    [moves light-gate]
+    [moves iris-gate]
   ::
       %receive
     =^  moves  state.ax  (receive:client +.task)
-    [moves light-gate]
-  ::
+    [moves iris-gate]
   ::  UIP-125
-    %websocket-connect
+  ::
+      %websocket-connect
     =^  moves  state.ax  (ws-connect:client +.task)
-    [moves light-gate]
-    %websocket-event
+    [moves iris-gate]
+  ::
+      %websocket-event
     =^  moves  state.ax  (ws-event:client +.task)
-    [moves light-gate]
+    [moves iris-gate]
+  ::
+      %cancel-websocket
+    =^  moves  state.ax  (ws-cancel:client +.task)
+    [moves iris-gate]
   ==
 ::  http-client issues no requests to other vanes
 ::
 ++  take
-  |=  [=wire =duct dud=(unit goof) sign=*]
-  ^-  [(list move) _light-gate]
+  |=  [wire=(pole knot) =duct dud=(unit goof) hin=sign-arvo]
+  ^-  [(list move) _iris-gate]
+  ~>  %spin.['take/iris']
+  ~&  iris-take=[wire duct]
   ?<  ?=(^ dud)
-  !!
+  :_  iris-gate
+  ?+    wire  ~
+      [%ws-watch wids=@t ~]
+    =/  wid  (slav %ud wids.wire)
+    ~&  iris-ws-take=-.hin
+    ?+    -.hin  ~
+        %gall
+      ?>  ?=([%unto *] +.hin)
+      ~&  hin=-.p.hin
+      ?+    -.p.hin  ~
+          ?(%poke-ack %watch-ack)
+        ?~  p.p.hin  ~
+        ~
+      ::
+          %kick  
+        =/  event-args  [[eny duct now rof] state.ax]
+        =/  client  (per-client-event event-args)
+        =^  movs  state.ax  (cleanup-ws:client wid)
+        movs
+      ::
+          %fact
+        =*  cag  cage.p.hin
+        :: This comes from agent, goes to vere
+        ~&  >  iris-take-ws-fact=p.cag
+        ?+    p.cag  ~&(bad-fact+p.cag !!)
+            %message
+          =/  msg  !<(websocket-message:eyre q.cag)
+          [outbound-duct.state.ax %give %websocket-response wid %message msg]~
+        ::
+            %disconnect
+          ~&  iris-take-ws-disconnect=wid
+          =/  event-args  [[eny duct now rof] state.ax]
+          =/  client  (per-client-event event-args)
+          =^  movs  state.ax  (cleanup-ws:client wid)
+          %+  welp  movs
+          [outbound-duct.state.ax %give %websocket-response wid %disconnect ~]~
+        ==
+      ==
+    ==
+  ==
 ::
-++  light-gate  ..$
+++  iris-gate  ..$
 ::  +load: migrate old state to new state (called on vane reload)
 ::
 ++  load
-  |=  old=axle
-  ^+  ..^$
+  =>  |%
+      +$  axle-any
+        $%  [date=%~2019.2.8 state=state-0]
+            [date=%~2025.7.17 state=state-1]
+            [date=%~2026.1.1 =state]
+        ==
+      ::
+      +$  state-0
+        $:  next-id=@ud
+            connection-by-id=(map @ud [=duct in-progress-http-request=in-progress-http-request-0])
+            connection-by-duct=(map duct @ud)
+            outbound-duct=duct
+        ==
+      +$  in-progress-http-request-0
+        $:  remaining-redirects=@ud
+            remaining-retries=@ud
+            response-header=(unit response-header:http)
+            chunks=(list octs)
+            bytes-read=@ud
+            expected-size=(unit @ud)
+        ==
+      +$  state-1
+        $:  next-id=@ud
+            connection-by-id=(map @ud [=duct =in-progress-http-request])
+            connection-by-duct=(map duct @ud)
+            outbound-duct=duct
+        ==
+      --
+  |=  old=axle-any
+  ^+  iris-gate
+  ~>  %spin.['load/iris']
+  ?-    -.old
+      %~2019.2.8
+    %=    $
+        date.old  %~2025.7.17
+    ::
+        connection-by-id.state.old
+      %-  ~(run by connection-by-id.state.old)
+      |=  [d=duct r=in-progress-http-request-0]
+      ^-  [duct in-progress-http-request]
+      :-  d
+      ::  set remaining redirects to 0 because we don't have the original request.
+      ::  it's safe to bunt the .request because it only gets used if
+      ::  .remaining-redirects is non-zero.
+      ::
+      :-  remaining-redirects=0
+      +.r(expected-size [expected-size.r *request:http])
+    ==
   ::
-  ~!  %loading
-  ..^$(ax old)
+      %~2025.7.17
+    %=  $
+      date.old   %~2026.1.1
+      state.old  [*(map @ud websocket-connection) state.old]
+    ==
+  ::
+      %~2026.1.1
+    iris-gate(ax old)
+  ==
 ::  +stay: produce current state
 ::
 ++  stay  `axle`ax
@@ -417,15 +642,15 @@
   ^-  roon
   |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
+  ~>  %spin.['scry/iris']
   =*  ren  car
-  =*  why=shop  &/p.bem
   =*  syd  q.bem
   =*  lot=coin  $/r.bem
   =*  tyl  s.bem
   ::
-  ?.  ?=(%& -.why)  ~
-  =*  his  p.why
-  ?:  &(?=(%x ren) =(tyl //whey) =([~ ~] lyc))
+  ?.  =([~ ~] lyc)  ~
+  ::
+  ?:  &(?=(%x ren) =(tyl //whey))
     =/  maz=(list mass)
       :~  nex+&+next-id.state.ax
           outbound+&+outbound-duct.state.ax
@@ -434,5 +659,43 @@
           axle+&+ax
       ==
     ``mass+!>(maz)
-  [~ ~]
+  ::
+  ~&  iris-ws-scry-id=tyl
+  ?.  &(?=(%x ren) ?=(%$ syd))  ~
+  ?+    tyl  ~
+      [%ws ~]   ``noun+!>(sockets.state.ax)
+  ::
+      [%ws @ ~]
+    =/  app=@tas  i.t.tyl
+    :^  ~  ~  %noun
+    !>  ^-  (list [wid=@ud url=@t status=?(%accepted %pending)])
+    %+  murn  ~(tap by sockets.state.ax)
+    |=  [wid=@ud conn=websocket-connection]
+    ^-  (unit [wid=@ud url=@t status=?(%accepted %pending)])
+    ?.  =(app app.conn)  ~
+    `[id url status]:conn
+  ::
+      [%ws @ %id @ ~]
+    =/  app=@tas  i.t.tyl
+    =/  wid  (slav %ud i.t.t.t.tyl)
+    ?~  suc=(~(get by sockets.state.ax) wid)
+      ``noun+!>(~)
+    ?.  =(app.u.suc app)  [~ ~]
+    ``noun+!>(`[id url status]:u.suc)
+  ::
+      [%ws @ %url @ ~]
+    =/  app=@tas  i.t.tyl
+    =/  url=@t    i.t.t.t.tyl
+    =/  sockets  ~(tap by sockets.state.ax)
+    ::  pass a (unit websocket-connection)
+    :^  ~  ~  %noun
+    !>
+    |-  ^-  (unit [wid=@ud url=@t status=?(%accepted %pending)])
+    ?~  sockets  ~
+    =/  socket=websocket-connection  q.i.sockets
+    ?.  =(app.socket app)  $(sockets t.sockets)
+    ?.  =(url.socket url)  $(sockets t.sockets)
+    `[id url status]:socket
+  ==
 --
+
