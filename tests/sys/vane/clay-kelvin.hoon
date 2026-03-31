@@ -243,14 +243,13 @@
     ;:  welp
       ?:  =(%base desk)
         [/sys/zuse/hoon [%& ;;(page:clay hoon+(zuse-upd ?@(kel kel i.kel)))]]~
-      ?:  =(%foo desk)
+      ?.  =(%foo desk)  ~
         :~  [/app/bar/hoon [%& agent]]
             [/desk/bill [%& ;;(page:clay noun+:~(%bar))]]
             [/lib/skeleton/hoon [%& ;;(page:clay hoon+lib-skel)]]
             [/lib/default-agent/hoon [%& ;;(page:clay hoon+lib-def)]]
             [/mar/bill/hoon [%& ;;(page:clay hoon+mar-bill)]]
         ==
-      ~
       :~
         [/mar/noun/hoon [%& ;;(page:clay hoon+mar-noun)]]
         [/mar/hoon/hoon [%& ;;(page:clay hoon+mar-hoon)]]
@@ -311,11 +310,11 @@
   $(desks t.desks)
 ::
 ++  do-sys-update
-  |=  [v=@ud ex-pork=(list $-(move tang))]
+  |=  [kel=@ud ex-pork=(list $-(move tang))]
   =/  m  (mare ,~)
   ?~  ex-pork  (pure:m ~)
   ::  applying zuse update to clay
-  ;<  ~                 bind:m  (set-kelvin v)
+  ;<  ~                 bind:m  (set-kelvin kel)
   ;<  mov=(list move)   bind:m  do-pork
   ;<  ~  bind:m  (expect-moves mov ex-pork)
   (do-wick ~)
@@ -352,12 +351,12 @@
   (ex ~[/blah] %give gift)
 ::
 ++  ex-ward-have
-|=  [=desk ped=(set perm:gall) peg=(set perm:gall)]
-(ex-gift [%ward [%have desk ped=ped peg=peg peq=perm-none]])
+  |=  [=desk ped=(set perm:gall) peg=(set perm:gall)]
+  (ex-gift [%ward [%have desk ped=ped peg=peg peq=perm-none]])
 ::
 ++  ex-ward-need
-|=  [=desk per=(set perm:gall)]
-(ex-gift [%ward [%need desk per=per]])
+  |=  [=desk per=(set perm:gall)]
+  (ex-gift [%ward [%need desk per=per]])
 ::
 ++  ex-pass
   |=  [=wire =note:clay-gate]
@@ -480,10 +479,6 @@
     ::
     ++  moves  ::  TODO: rename
       |=  [res=? kel-compat=? perm-compat=?]
-      ?~  base
-        ?~  desks  ~
-        %+  welp  (ex-desk res kel-compat perm-compat)
-        [ex-load ~]
       ;:  welp
           ex-base
           (ex-desks res kel-compat perm-compat)
@@ -1210,8 +1205,8 @@
 ::
 ::
 ++  test-downgrade-base
-  ::  %base got downgrade commit, prevent applying commit
-  ::
+::  %base got downgrade commit, prevent applying commit
+::
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks ~)
@@ -1220,8 +1215,8 @@
   (expect-moves mov ~)
 ::
 ++  test-downgrade-desk
-  ::  desk got downgrade commit, prevent applying commit
-  ::
+::  desk got downgrade commit, prevent applying commit
+::
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
@@ -1248,7 +1243,7 @@
 ::
   %-  eval-mare
   =/  m  (mare ,~)
-  ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
+  ;<  *                bind:m  (do-setup-desks [%foo |] ~)
   ;<  mov=(list move)  bind:m  (do-park %foo ~[409 407] ~)
   ;<  ~                bind:m
     %+  expect-moves  mov
@@ -1278,14 +1273,14 @@
   ;<  ~                 bind:m  (set-kelvin 408)
   ;<  *                 bind:m  do-pork
   ;<  mov=(list move)   bind:m  (call ~[/blah] [%zeal [%foo %live]~])
-  ;<  *  bind:m
+  ;<  *                 bind:m
     %+  expect-moves  mov
     :~  ex-wick
         (ex-gift [%tire %| [%zest %foo %held]])
         ex-load
     ==
   ;<  mov2=(list move)  bind:m  (do-park %foo 408 ~)
-  ;<  now=@da          bind:m  get-now
+  ;<  now=@da           bind:m  get-now
   ;<  ~  bind:m
     %+  expect-moves  mov2
     :~  ex-wick
