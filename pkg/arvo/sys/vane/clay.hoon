@@ -212,6 +212,7 @@
       pud=(unit [=desk =yoki])                          ::  pending update
       sad=(map ship @da)                                ::  scry known broken
       bug=[veb=@ mas=@]                                 ::  verbosity
+      pog=(unit feq=@ud)                                   ::  progress rate, in bytes
   ==                                                    ::
 ::
 ::  Unvalidated response to a request.
@@ -1595,11 +1596,10 @@
       [%c care (scot case) desk path]
     :-  [time path]
     %-  emil
-    :~  [hen %pass wire %a %keen ~ ship path]
-        ::  XX don't subscribe to progress %rate by default
-        ::  XX use right .freq
-        [hen %pass wire %a %prog ship^path feq=1]
-        [hen %pass wire %b %wait time]
+    :*  [hen %pass wire %a %keen ~ ship path]
+        =+  wait=[hen %pass wire %b %wait time]
+        ?~  pog  [wait]~
+        [hen %pass wire %a %prog ship^path feq=u.pog]~
     ==
   ::
   ++  cancel-scry-timeout
@@ -3591,6 +3591,7 @@
         ::  how much data we are expecting
         ::  XX better to request the size of the whole desk instead?
         ::  XX desk size namespace?
+        ::  XX use specfic gift for this instead of %wris?
         ::
         =;  paths=(set (pair care path))
           ^+  ..foreign-update  =<  ?>(?=(^ ref) .)
@@ -4973,7 +4974,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%16                                       ::  vane version
+    $:  ver=%17                                       ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
@@ -5186,6 +5187,9 @@
       abet:(perm:den pax.req rit.req)
     [mos ..^$]
   ::
+      %prog
+    [~ ..^$(pog.ruf [~ feq.req])]
+  ::
       %rein
     =^  m1  ruf
       =/  den  ((de now rof hen ruf) our des.req)
@@ -5348,7 +5352,8 @@
   ::
   =>  |%
       +$  raft-any
-        $%  [%16 raft-16]
+        $%  [%17 raft-17]
+            [%16 raft-16]
             [%15 raft-15]
             [%14 raft-14]
             [%13 raft-13]
@@ -5360,7 +5365,23 @@
             [%7 raft-7]
             [%6 raft-6]
         ==
-      +$  raft-16  _%*(. *raft fad **, rom *room-16, hoy *(map ship rung-16))
+      +$  raft-17  raft
+      +$  raft-16-all
+        $:  rom=room
+            hoy=(map ship rung)
+            rang
+            fad=flow
+            (map term beam)
+            (unit duct)
+            (map @ta crew)
+            (set duct)
+            rock:tire
+            (unit [=desk =yoki])
+            (map ship @da)
+            bug=[veb=@ mas=@]
+        ==
+      ::
+      +$  raft-16  _%*(. *raft-16-all fad **, rom *room-16, hoy *(map ship rung-16))
       +$  room-16  _%*(. *room dos *(map desk dojo-16))
       +$  rung-16  _%*(. *rung rus *(map desk rede-16))
       +$  rede-16  _%*(. *rede dom *dome-16)
@@ -5815,7 +5836,8 @@
   =?  old  ?=(%13 -.old)  14+(raft-13-to-14 +.old)
   =?  old  ?=(%14 -.old)  15+(raft-14-to-15 +.old)
   =?  old  ?=(%15 -.old)  16+(raft-15-to-16 +.old)
-  ?>  ?=(%16 -.old)
+  =?  old  ?=(%16 -.old)  17+(raft-16-to-17 +.old)
+  ?>  ?=(%17 -.old)
   ..^^$(ruf (clear-cache +.old))
   ::
   ::  We clear the ford cache so we don't have to know how to upgrade
@@ -5823,7 +5845,7 @@
   ::  Also, many of the results would be different if zuse is different.
   ::
   ++  clear-cache
-    |=  raf=raft-16
+    |=  raf=raft-17
     ^-  raft
     %=    raf
         fad  *flow
@@ -6186,6 +6208,31 @@
       ?.  ?=([~ ~ *] c)  c
       ``(next-cage:a235 u.u.c)
     --
+  ::  +raft-16-to-17: add progress rate to state
+  ::
+  ++  raft-16-to-17
+    |=  raf=raft-16
+    ^-  raft-17
+    %=    raf
+        bug  [bug.raf pog=~]
+      ::  XX same as clear-cache, so types nest
+      ::
+        fad  *flow
+        dos.rom
+      %-  ~(run by dos.rom.raf)
+      |=  doj=dojo-16
+      ^-  dojo
+      doj(fod.dom *flue)
+    ::
+        hoy
+      %-  ~(run by hoy.raf)
+      |=  =rung-16
+      %-  ~(run by rus.rung-16)
+      |=  =rede-16
+      ^-  rede
+      rede-16(dom dom.rede-16(fod *flue))
+    ==
+  ::
   --
 ::
 ++  scry                                              ::  inspect
@@ -6391,7 +6438,7 @@
   =/  flo  ~
   =+  `flow`flo
   :-  ver
-  ^-  raft-16:load
+  ^-  raft-17:load
   %=    ruf
       fad  flo
       dos.rom

@@ -2442,6 +2442,7 @@
         [%wick ~]                                       ::  try upgrade
         [%zeal lit=(list [=desk =zest])]                ::  batch zest
         [%zest des=desk liv=zest]                       ::  live
+        [%prog feq=@ud]                                 ::  frequency %rate
         $>(%plea vane-task)                             ::  ames request
     ==                                                  ::
   ::                                                    ::

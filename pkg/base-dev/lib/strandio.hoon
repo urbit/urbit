@@ -745,7 +745,6 @@
   =|  tot=_num-fragments
   =|  boq=@ud
   =|  pat=path
-  =|  nuk=?  :: first time; reset how many files we expect
   =|  =riot:clay
   |-  ^-  form:m
   =*  loop  $
@@ -763,6 +762,7 @@
     =<  [boq tot]
     ;;([%whey boq=@ud tot=@ud] q.sage)
   ::  list of all files we are peeking.
+  ::  XX  use custom gift instead?
   ::
   ?:  ?=(%wris p.cage)
     ::  unpack wris to extrack all paths
@@ -777,6 +777,8 @@
       ?~  paz  (pure:m ~)
       ;<  ~  bind:m  (whey /rate boq=3 ship^path.i.paz)
       loop(paz t.paz)
+    :: first time; reset (nuk=%.y) how many files we expect
+    ::
     ;<  ~  bind:m
       %+  poke-our  %hood
       [%kiln-rate-desk-files !>((turn ~(tap in q.wris) tail)^nuk=%.y)]
