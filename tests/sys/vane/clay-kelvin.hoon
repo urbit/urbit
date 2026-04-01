@@ -242,23 +242,22 @@
     ^-  (list [path (each page:clay lobe:clay)])
     ;:  welp
       ?:  =(%base desk)
-        [/sys/zuse/hoon [%& ;;(page:clay hoon+(zuse-upd ?@(kel kel i.kel)))]]~
+        [/sys/zuse/hoon [%& hoon+(zuse-upd ?@(kel kel i.kel))]]~
       ?.  =(%foo desk)  ~
-        :~  [/app/bar/hoon [%& agent]]
-            [/desk/bill [%& ;;(page:clay noun+:~(%bar))]]
-            [/lib/skeleton/hoon [%& ;;(page:clay hoon+lib-skel)]]
-            [/lib/default-agent/hoon [%& ;;(page:clay hoon+lib-def)]]
-            [/mar/bill/hoon [%& ;;(page:clay hoon+mar-bill)]]
-        ==
-      :~
-        [/mar/noun/hoon [%& ;;(page:clay hoon+mar-noun)]]
-        [/mar/hoon/hoon [%& ;;(page:clay hoon+mar-hoon)]]
-        [/mar/txt/hoon [%& ;;(page:clay hoon+mar-txt)]]
-        [/mar/kelvin/hoon [%& ;;(page:clay hoon+mar-kel)]]
+      :~  [/app/bar/hoon [%& agent]]
+          [/desk/bill [%& noun+:~(%bar)]]
+          [/lib/skeleton/hoon [%& hoon+lib-skel]]
+          [/lib/default-agent/hoon [%& hoon+lib-def]]
+          [/mar/bill/hoon [%& hoon+mar-bill]]
+      ==
+      :~  [/mar/noun/hoon [%& hoon+mar-noun]]
+          [/mar/hoon/hoon [%& hoon+mar-hoon]]
+          [/mar/txt/hoon [%& hoon+mar-txt]]
+          [/mar/kelvin/hoon [%& hoon+mar-kel]]
       ::
-        :-  /sys/kelvin
-        :-  %&  ;;  page:clay
-        kelvin+?@(kel [%zuse kel] [%1 ~]^(sy (turn kel (lead %zuse))))
+          :-  /sys/kelvin
+          :-  %&
+          kelvin+?@(kel [%zuse kel] [%1 ~]^(sy (turn kel (lead %zuse))))
       ==
       fil
     ==
@@ -523,7 +522,9 @@
         [(ex-ward-need desk perm-none) ~]
         ::
         ?:(held ex-held ~)
-        %+  welp  (ex-tire desk)
+        ::
+        (ex-tire desk)
+        ::
         ?:(res ex-tire-base ~)
       ==
     ::
@@ -832,7 +833,7 @@
   (expect-moves mov2 (ex-gift [%tire %| [%wait %base [%zuse 408]]]) ~)
 ::
 ++  test-update-blocked-on-essential-desk-wrong-wic
-::  essential desk recieved kelvin-2 update, waiting for kernel
+::  essential desk received kelvin-2 update, waiting for kernel
 ::  kelvin update received on base desk, essential desk not ready
 ::  no-op, notify
 ::
@@ -946,7 +947,7 @@
 ::  non-essential desk kelvin update behavior tests
 ::
 ++  test-apply-update-non-esse-up-to-date
-::  non-essential desk received commit compatabile with current version
+::  non-essential desk received commit compatible with current version
 ::  and future version,
 ::  kelvin update received on base desk, apply update, non-essential desk stays live
 ::
@@ -1035,7 +1036,7 @@
 ::
 ++  test-apply-update-non-essential-desk-with-pew
 ::  non-essential desk received update
-::  non-essential desk recieved commit, blocked on perms
+::  non-essential desk received commit, blocked on perms
 ::  kelvin update received on base desk, apply update, non-essential desk stays live, commit stays in pew
   %-  eval-mare
   =/  m  (mare ,~)
@@ -1115,6 +1116,12 @@
 ::
 ::
 ++  test-apply-update-partial-desks-revival
+::  non-essential desks ready on kelvin-1 awaiting base
+::  kelvin update received on base desk,
+::  non-essential desk not ready, suspended
+::  kelvin-1 update received on base desk, apply update to desks
+::  try to revive non-esse desks, %foo revived, %baz awaiting perms
+::
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] [%baz |] ~)
@@ -1164,10 +1171,10 @@
 ::
 ++  test-update-blocked-on-esse-got-compat-commit
 ::  non-essential desk, ready for kelvin-1 update
-::  essential desk recieved kelvin update, kelvin update received on base desk
-::  update applie, suspend non-esse
+::  essential desk received kelvin update, kelvin update received on base desk
+::  update applied, suspend non-esse
 ::  kelvin-1 received on base, essential desk not ready, no-op
-::  essential desk got compat commit, update appplied on base and desks
+::  essential desk got compat commit, update applied on base and desks
 ::  non-esse revived
 ::
   %-  eval-mare
