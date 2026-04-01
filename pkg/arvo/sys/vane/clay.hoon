@@ -2113,8 +2113,14 @@
       =.  pew.dom  `[mis `yoki]
       %-  (slog leaf+"clay: {<syd>} wait-for-permissions, {<want=mis>}" ~)
       (send-ward syd)
-    =?  pew.dom
-        ?~(pew.dom | =(+.u.pew.dom `yoki))
+    ::  we may or may not be missing permissions, which could keep us from
+    ::  becoming live. register that case without overwriting
+    ::  commit-awaiting-permissions, but overwrite it if it's the current commit.
+    ::  (we're ok with using .pew for both "blocking commit" and "blocking
+    ::  liveness" because non-live desks can't block commits.)
+    ::TODO  rewrite this for readability lol
+    ::
+    =?  pew.dom  ?~(pew.dom & =(+.u.pew.dom `yoki))
       ?~(mis ~ `[mis ~])
     ::
     =.  wic.dom
