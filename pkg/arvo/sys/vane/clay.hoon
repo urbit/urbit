@@ -2062,7 +2062,7 @@
     ::
     =/  kel=(set weft)       (waft-to-wefts (get-kelvin yoki))
     ::  base may only contain one compatible kelvin
-    ::  (and it must be a zuse kelvin)  ::REVIEW
+    ::  (and it must be a zuse kelvin)
     ::
     ?>  |(!?=(%base syd) ?=([[%zuse @] ~ ~] kel))
     ::  find desk seal
@@ -2071,8 +2071,7 @@
     ::
     ?.  ?|  (~(has in kel) zuse+zuse)                   ::  kelvin match
             =(%base syd)
-            ?&  !=(%base syd)                           ::  best-effort compat
-                %-  ~(any in kel)
+            ?&  %-  ~(any in kel)                       ::  best-effort compat
                 |=  =weft
                 &(=(%zuse lal.weft) (gth num.weft zuse))
             ==
@@ -2090,29 +2089,29 @@
       ::  (kelvin blockage takes prio over perm blockage, we don't store perms
       ::  until unblocked on kelvin)
       ::
+      %-  (slog leaf+"clay: {<syd>} wait-for-kelvin, {<[compat=kel have=zuse+zuse]>}" ~)
       =.  ..park  wick                                ::  [wick]
       =.  ..park  (send-ward syd)                     ::  [send-ward]
-      %-  (slog leaf+"clay: {<syd>} wait-for-kelvin, {<[compat=kel have=zuse+zuse]>}" ~)
       tare                                            ::  [tare] >
-      ::
     ::  prevent downgrading of base,
     ::  and prevent applying commits that will never become compatible
     ::  (because they're only compat with old, and base never downgrades)
     ::
     ?:  (~(all in kel) |=(=weft (gth num.weft zuse)))
-      %-  (slog leaf+"clay: old-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
+      %-  (slog leaf+"clay: {<syd>} old-kelvin, {<[compat=kel have=zuse+zuse]>}" ~)
       ..park
-    ::
-    ::  incoming commit permission check
+    ::  incoming commit permission check (for live non-base desks only)
     ::
     =/  mis=(set perm:gall)
       %-  ~(gas in *(set perm:gall))
       %+  skip  ~(tap in per)
       (cury have:guard:gall peg.dom)
-    =/  has-perm  |(?=(%base syd) =(mis ~))
-    ?:  &(!has-perm =(%live liv.dom))
+    ?:  ?&  =(%live liv.dom)
+            !?=(%base syd)
+            !=(~ mis)
+        ==
       =.  pew.dom  `[mis `yoki]
-      %-  (slog leaf+"{<syd>} need permissions: {<per>}; has: {<peg.dom>}" ~)
+      %-  (slog leaf+"clay: {<syd>} wait-for-permissions, {<want=mis>}" ~)
       (send-ward syd)
     =?  pew.dom
         ?~(pew.dom | =(+.u.pew.dom `yoki))
@@ -3485,22 +3484,24 @@
     ^+  ..park
     ..park(ren.dom ren)
   ::
-  ++  set-seal
+  ++  set-seal                                          ::  [goad] <
     |=  [add=? pes=(set perm:gall)]
     ^+  ..park
     ?:  add
       =.  peg.dom  (~(uni in peg.dom) pes)
       =.  ..park   (send-ward syd)
-      ::
-      ::  we are relying on +park and +set-zest to update missing permissions
+      ::  we are relying on +park and +set-zest (through /park-held)
+      ::  to update missing permissions
       ::
       ?:  ?=([~ * ^] pew.dom)  (park | | u.+.u.pew.dom *rang)
       ?.  =(%held liv.dom)  ..park
       (emit hen %pass /park-held/[syd] %b %wait now)
     =/  ped=(set perm:gall)  get-seal
+    ::TODO  instead, run permission check against would-be new granted set
+    ::      using +have:guard:gall to account for superset permissions
     =/  in-per  (~(any in pes) |=(p=perm:gall (~(has in ped) p)))
     ?:  &(=(%live liv.dom) in-per)
-      (mean leaf+"can't remove required permissions: desk is %live, suspend first" ~)
+      (mean leaf+"clay: can't remove required permissions: desk is %live, suspend first" ~)
     (send-ward(peg.dom (~(dif in peg.dom) pes)) syd)
   ::
   ++  set-zest                                          ::  [goad] <
@@ -3532,16 +3533,18 @@
       %-  ~(gas in *(set perm:gall))
       %+  skip  ~(tap in per)
       (cury have:guard:gall peg.dom)
-    ?:  !=(~ mis)
-      =?  pew.dom   |(?=(~ pew.dom) !?=(^ +.u.pew.dom))
-        `[mis ~]
-      %.  (send-ward(liv.dom %held) syd)
-      %-  slog
-      :~  leaf+"clay: can't set {<syd>} live, missing required permissions"
-          leaf+"clay: {<syd>} set to held, need: {<per>}, have: {<peg.dom>}"
-      ==
-    =?  pew.dom  &(?=(^ pew.dom) !?=(^ +.u.pew.dom))  ~
-    (send-ward(liv.dom liv) syd)
+    ::  whatever we do, take care not to forget commit-awaiting-permissions
+    ::
+    ?:  =(~ mis)
+      =?  pew.dom  |(?=(~ pew.dom) ?=(~ +.u.pew.dom))  ~
+      (send-ward(liv.dom liv) syd)
+    =?  pew.dom  |(?=(~ pew.dom) ?=(~ +.u.pew.dom))
+      `[mis ~]
+    %.  (send-ward(liv.dom %held) syd)
+    %-  slog
+    :~  leaf+"clay: can't set {<syd>} live, missing required permissions"
+        leaf+"clay: {<syd>} set to held, missing permissions: {<mis>}"
+    ==
   ::
   ++  rise                                              ::  [goad] <
     |=  [=dude:gall on=(unit ?)]
