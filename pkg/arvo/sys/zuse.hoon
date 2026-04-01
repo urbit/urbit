@@ -1659,8 +1659,128 @@
         ^-  @
         (jam (~(en sivc:aes (shaz key) ~) msg))
       --
+    --  ::cric
+  ::                                                    ::
+  ::::                    ++crub:crypto                 ::  (2b4) suite B, Ed
+    ::                                                  ::::
+  ++  crub  !:
+    ^-  acru
+    =|  [pub=[cry=@ sgn=@] sek=(unit [cry=@ sgn=@])]
+    |%
+    ::                                                  ::  ++as:crub:crypto
+    ++  as                                              ::
+      |%
+      ::                                                ::  ++sign:as:crub:
+      ++  sign                                          ::
+        |=  msg=@
+        ^-  @ux
+        (jam [(sigh msg) msg])
+      ::                                                ::  ++sigh:as:crub:
+      ++  sigh                                          ::
+        |=  msg=@
+        ^-  @ux
+        ?~  sek  ~|  %pubkey-only  !!
+        (sign:ed msg sgn.u.sek)
+      ::                                                ::  ++sure:as:crub:
+      ++  sure                                          ::
+        |=  txt=@
+        ^-  (unit @ux)
+        =+  ;;([sig=@ msg=@] (cue txt))
+        ?.  (safe sig msg)  ~
+        (some msg)
+      ::                                                ::  ++safe:as:crub:
+      ++  safe
+        |=  [sig=@ msg=@]
+        ^-  ?
+        (veri:ed sig msg sgn.pub)
+      ::                                                ::  ++seal:as:crub:
+      ++  seal                                          ::
+        |=  [bpk=pass msg=@]
+        ^-  @ux
+        ?~  sek  ~|  %pubkey-only  !!
+        ?>  =('b' (end 3 bpk))
+        =+  pk=(rsh 8 (rsh 3 bpk))
+        =+  shar=(shax (shar:ed pk cry.u.sek))
+        =+  smsg=(sign msg)
+        (jam (~(en siva:aes shar ~) smsg))
+      ::                                                ::  ++tear:as:crub:
+      ++  tear                                          ::
+        |=  [bpk=pass txt=@]
+        ^-  (unit @ux)
+        ?~  sek  ~|  %pubkey-only  !!
+        ?>  =('b' (end 3 bpk))
+        =+  pk=(rsh 8 (rsh 3 bpk))
+        =+  shar=(shax (shar:ed pk cry.u.sek))
+        =+  ;;([iv=@ len=@ cph=@] (cue txt))
+        =+  try=(~(de siva:aes shar ~) iv len cph)
+        ?~  try  ~
+        (sure:as:(com:nu:crub bpk) u.try)
+      --  ::as
+    ::                                                  ::  ++de:crub:crypto
+    ++  de                                              ::  decrypt
+      |=  [key=@J txt=@]
+      ^-  (unit @ux)
+      =+  ;;([iv=@ len=@ cph=@] (cue txt))
+      %^    ~(de sivc:aes (shaz key) ~)
+          iv
+        len
+      cph
+    ::                                                  ::  ++dy:crub:crypto
+    ++  dy                                              ::  need decrypt
+      |=  [key=@J cph=@]
+      (need (de key cph))
+    ::                                                  ::  ++en:crub:crypto
+    ++  en                                              ::  encrypt
+      |=  [key=@J msg=@]
+      ^-  @ux
+      (jam (~(en sivc:aes (shaz key) ~) msg))
+    ::                                                  ::  ++ex:crub:crypto
+    ++  ex                                              ::  extract
+      |%
+      ::                                                ::  ++fig:ex:crub:crypto
+      ++  fig                                           ::  fingerprint
+        ^-  @uvH
+        (shaf %bfig pub)
+      ::                                                ::  ++pac:ex:crub:crypto
+      ++  pac                                           ::  private fingerprint
+        ^-  @uvG
+        ?~  sek  ~|  %pubkey-only  !!
+        (end 6 (shaf %bcod sec))
+      ::                                                ::  ++pub:ex:crub:crypto
+      ++  pub                                           ::  public key
+        ^-  pass
+        (cat 3 'b' (cat 8 sgn.^pub cry.^pub))
+      ::                                                ::  ++sec:ex:crub:crypto
+      ++  sec                                           ::  private key
+        ^-  ring
+        ?~  sek  ~|  %pubkey-only  !!
+        (cat 3 'B' (cat 8 sgn.u.sek cry.u.sek))
+      --  ::ex
+    ::                                                  ::  ++nu:crub:crypto
+    ++  nu                                              ::
+      |%
+      ::                                                ::  ++pit:nu:crub:crypto
+      ++  pit                                           ::  create keypair
+        |=  [w=@ seed=@]
+        =+  wid=(add (div w 8) ?:(=((mod w 8) 0) 0 1))
+        =+  bits=(shal wid seed)
+        =+  [c=(rsh 8 bits) s=(end 8 bits)]
+        ..nu(pub [cry=(puck:ed c) sgn=(puck:ed s)], sek `[cry=c sgn=s])
+      ::                                                ::  ++nol:nu:crub:crypto
+      ++  nol                                           ::  activate secret
+        |=  a=ring
+        =+  [mag=(end 3 a) bod=(rsh 3 a)]
+        ~|  %not-crub-seckey  ?>  =('B' mag)
+        =+  [c=(rsh 8 bod) s=(end 8 bod)]
+        ..nu(pub [cry=(puck:ed c) sgn=(puck:ed s)], sek `[cry=c sgn=s])
+      ::                                                ::  ++com:nu:crub:crypto
+      ++  com                                           ::  activate public
+        |=  a=pass
+        =+  [mag=(end 3 a) bod=(rsh 3 a)]
+        ~|  %not-crub-pubkey  ?>  =('b' mag)
+        ..nu(pub [cry=(rsh 8 bod) sgn=(end 8 bod)], sek ~)
+      --  ::nu
     --  ::crub
-  ++  crub  !!
   ::                                                    ::
   ::::                    ++crua:crypto                 ::  (2b5) suite B, RSA
     ::                                                  ::::

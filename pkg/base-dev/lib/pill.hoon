@@ -572,6 +572,8 @@
           =^  ton  memo  $(formula next.formula)
           ?.  ?=(%0 -.ton)
             [ton memo]
+          ?:  ?=([%clay %ford *] product.clue)
+            [ton memo]
           [ton (~(put by memo) [subject next.formula] product.ton)]
         =^  next  memo
           =?    trace
