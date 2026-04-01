@@ -509,7 +509,7 @@
       ?~  desks  [ex-wick]~
       =,  i.desks
       ;:  welp
-        ?:(|(=(~ peg) perm-compat) ~ [(ex-ward-have desk ~ peg) ~])
+        ?:(|(ese |(=(~ peg) perm-compat)) ~ [(ex-ward-have desk ~ peg) ~])
         [ex-wick ~]
         ::
         ::  ex-text
@@ -899,12 +899,7 @@
   ;<  ~                 bind:m
     (do-wick (ex-kernel-build ~ [%foo & perm-none pers-1 perm-none] ~))
   =/  ex-com  (ex-commit `[2 408] [%foo 2 & | pers-1 pers-1] ~)
-  %+  do-sys-update  408
-  ;:  welp
-      ex-base:ex-com
-      `(list $-(move tang))`(tail (ex-desk:ex-com & | |))
-      [ex-load ~]
-  ==
+  (do-sys-update 408 resume:ex-com)
 ::
 ++  test-update-blocked-on-desks
 ::  kelvin update received on base desk,
@@ -936,12 +931,7 @@
     (ex-kernel-build [[%baz %held] ~] [%foo & perm-none pers-1 perm-none] ~)
   ;<  ~  bind:m  (do-zeal [%baz %held]~)
   =/  ex-com  (ex-commit `[2 408] [%foo 2 & | pers-1 pers-1] ~)
-  %+  do-sys-update  408
-  ;:  welp
-      ex-base:ex-com
-      `(list $-(move tang))`(tail (ex-desk:ex-com & | |))
-      [ex-load ~]
-  ==
+  (do-sys-update 408 resume:ex-com)
 ::
 ::
 ::  non-essential desk kelvin update behavior tests
@@ -1208,10 +1198,7 @@
   %+  do-sys-update  407
   ;:  welp
     ex-base:ex-com
-    ::  (ex-desk:(ex-commit `[3 407] [%foo 3 & | ~ ~]~) & & |)
-    [ex-wick]~
-    (ex-tire:ex-com %foo)
-    ex-tire-base:ex-com
+    (ex-desk:(ex-commit `[3 407] [%foo 3 & | ~ ~]~) & & &)
     (ex-desk:ex-com | | |)
     [ex-load]~
   ==
