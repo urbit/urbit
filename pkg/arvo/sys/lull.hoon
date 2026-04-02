@@ -3780,6 +3780,25 @@
         [%plot p=(unit plot) q=(map @ta farm)]
     ==
   ::
+  +$  arvo-resource
+    $:  =wire
+    $%  ::REVIEW  what if this in place of .ken? [%ames %keen =spar:ames]
+        [%behn %wait =time]
+        [%clay %warp id=*]
+        [%eyre %binding =binding:eyre wat=$@(term generator:eyre)]
+        [%eyre %cache url=@t]  ::TODO  if we had the data we could reinflate...
+        [%iris %request]
+        :: [%khan ?(%fard %fyrd %lard)]
+        [%lick %spin =name:lick]
+    ==  ==
+  ::
+  +$  resource-deet
+    $~  [%clay %warp ~zod %$ %sing %x *case *path]
+    $%  ::TODO  [%eyre %binding wat=$@(term generator:eyre)]
+        ::TODO  [%eyre %cache data=*]
+        [%clay %warp =ship =desk =rave:clay]
+    ==
+  ::
   +$  egg                                               ::  migratory agent
     $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)] ::  state; see /sys/gall
         $:  %live                                       ::  $yoke
@@ -3790,8 +3809,10 @@
             =bitt
             =boat
             =boar
+            resources=(set arvo-resource)
+            resource-deets=(map arvo-resource resource-deet)
             code=~
-            old-state=[%| vase]
+            old-state=[%| clean=? state=vase]
             =beak
             marks=(map duct mark)
             sky=farm
@@ -3799,7 +3820,7 @@
             pen=(jug spar:ames wire)
             gem=(jug coop [path page])
     ==  ==
-  +$  egg-any  $%([%15 egg-15] [%16 egg])
+  +$  egg-any  $%([%15 egg-15] [%16 egg-16] [%20 egg])
   +$  egg-15
     $%  [%nuke sky=(map spur @ud)]
     $:  %live
@@ -3816,6 +3837,25 @@
         marks=(map duct mark)
         sky=(map spur plot)
         ken=(jug spar:ames wire)
+    ==  ==
+  +$  egg-16
+    $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)]
+        $:  %live
+            control-duct=duct
+            run-nonce=@t
+            sub-nonce=@
+            =stats
+            =bitt
+            =boat
+            =boar
+            code=~
+            old-state=[%| vase]
+            =beak
+            marks=(map duct mark)
+            sky=farm
+            ken=(jug spar:ames wire)
+            pen=(jug spar:ames wire)
+            gem=(jug coop [path page])
     ==  ==
   ::
   +$  bowl                                              ::  standard app state
@@ -3892,6 +3932,81 @@
   +$  verb  ?(%odd)
   +$  coop  spur
   ::
+  ::  userspace api
+  ::
+  +$  task-user-v1
+    $%  $:  %ames
+        $%  [%prod ships=(list ship)]
+            [%sift ships=(list ship)]
+            [%snub form=?(%allow %deny) ships=(list ship)]
+            [%spew veb=(list verb)]
+            [%cong msg=@ud mem=@ud]
+            [%stir arg=@t]
+          ::
+            ::NOTE  not actually into %ames, just gall-side namespace management
+            [%keen secret=? =spar:ames]
+            [%yawn =spar:ames]
+            [%grow =spur =page]
+            [%tomb =case =spur]
+            [%cull =case =spur]
+            [%tend =coop =path =page]
+            [%germ =coop]
+            [%snip =coop]
+            [%trim p=@ud]
+        ==  ==
+      ::
+        [%behn %wait =time]
+        [%behn %rest =time]
+        [%behn %trim p=@ud]
+      ::
+        [%clay %read id=* =ship =desk =rave:clay]  ::  %warp
+        [%clay %drop id=*]
+        ::TODO  %write
+        :: [%clay %nuke ~]  ::TODO  support dropping all from wire?
+        [%clay %trim p=@ud]
+      ::
+        [%dill %trim p=@ud]
+      ::
+        [%eyre %rule =http-rule:eyre]
+        [%eyre %eauth-host host=(unit @t)]
+        [%eyre %connect =binding:eyre wat=$@(term generator:eyre)]
+        [%eyre %disconnect =binding:eyre wat=$@(term generator:eyre)]
+        [%eyre %approve-origin =origin:eyre]
+        [%eyre %reject-origin =origin:eyre]
+        [%eyre %spew veb=@]
+        [%eyre %set-response url=@t entry=(unit cache-entry:eyre)]
+        [%eyre %trim p=@ud]
+      ::
+        [%gall %trim p=@ud]
+      ::
+        [%iris %request =request:http =outbound-config:iris]
+        [%iris %cancel-request ~]
+        [%iris %trim p=@ud]
+      ::
+        [%jael %trim p=@ud]
+      ::
+        [%khan %trim p=@ud]
+      ::
+        [%lick %spin =name:lick]
+        [%lick %shut =name:lick]
+        [%lick %spit =name:lick =mark =noun]
+        [%lick %trim p=@ud]
+      ::
+        [%syscall note-arvo=*]  ::NOTE  secretly $note-arvo, DO NOT DOCUMENT (;
+    ==
+  ::
+  +$  gift-user-v1
+    $%  [%ames %sage =sage:mess:ames]
+        [%behn %wake =time]  ::REVIEW
+        [%clay %read id=* =riot:clay]
+        [%eyre %bound bound=? =binding:eyre wat=$@(term generator:eyre)]  ::NOTE  could become unbound _after_ binding!
+        [%iris %http-response =client-response:iris]
+        [%lick %soak =name:lick =mark =noun]
+      ::
+        [%syscall actual-kelvin=@ sign-arvo=*]  ::NOTE  secretly $sign-arvo, DO NOT DOCUMENT (;
+        [%unsupported ~]
+    ==
+  ::
   ::  +agent: app core
   ::
   ++  agent
@@ -3904,18 +4019,7 @@
     +$  note
       $+  gall-agent-note
       $%  [%agent [=ship name=term] =task]
-          [%arvo note-arvo]
-          [%pyre =tang]
-      ::
-          [%grow =spur =page]
-          [%tomb =case =spur]
-          [%cull =case =spur]
-      ::
-          [%tend =coop =path =page]
-          [%germ =coop]
-          [%snip =coop]
-      ::
-          [%keen secret=? spar:ames]
+          [%arvo task-user-v1]
       ==
     +$  task
       $+  gall-agent-task
@@ -3973,7 +4077,7 @@
         *(quip card _^|(..on-init))
       ::
       ++  on-arvo
-        |~  [wire sign-arvo]
+        |~  [wire gift-user-v1]
         *(quip card _^|(..on-init))
       ::
       ++  on-fail
@@ -4020,7 +4124,7 @@
           %slip  |
           %pass
         =/  =note:agent  q.card
-        ?+  -.note  |
+        ?-  -.note
             %agent
           ?-  -.task.note
             %watch             [%watch name.note path.task.note]
@@ -4029,19 +4133,25 @@
             ?(%poke %poke-as)  [%write name.note]
           ==
             %arvo
-          =/  =note-arvo  +.note
-          ?+  -.note-arvo  |
-            %b  [%behn ~]
-            %e  [%eyre ~]
-            %g  [%gall ~]
-            %i  [%iris ~]
-            %j  [%jael ~]
-            %k  [%khan ~]
-            %l  [%lick ~]
+          =/  task=task-user-v1  +.note
+          ?-  -.task
+            %ames  [%ames ~]
+            %behn  [%behn ~]
+          ::
+              %clay
+            !!  ::TODO
+          ::
+            %dill  [%dill ~]
+            %eyre  [%eyre ~]
+            %gall  [%gall ~]
+            %iris  [%iris ~]
+            %jael  [%jael ~]
+            %khan  [%khan ~]
+            %lick  [%lick ~]
+          ::
+            %syscall  [%super ~]
             ::  TODO
           ==
-            %pyre  &
-          ::  TODO
         ==
       ==
     --

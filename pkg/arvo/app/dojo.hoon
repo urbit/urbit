@@ -387,14 +387,14 @@
       ?>  ?=(~ pux)
       %-  he-card(poy `+>+<(pux `way))
       =/  [=ship =desk =case]  beak
-      [%pass way %arvo %c %warp ship desk ~ %sing care case path]
+      [%pass way %arvo %syscall %c %warp ship desk ~ %sing care case path]
     ::
     ++  dy-request
       |=  [way=wire =request:http]
       ^+  +>+>
       ?>  ?=(~ pux)
       %-  he-card(poy `+>+<(pux `way))
-      [%pass way %arvo %i %request request *outbound-config:iris]
+      [%pass way %arvo %syscall %i %request request *outbound-config:iris]
     ::
     ++  dy-stop                                         ::  stop work
       ^+  +>
@@ -404,7 +404,7 @@
       =<  he-diff
       ?.  ?=([%wool *] u.pux)
         =/  [=ship =desk =case]  he-beak
-        (he-card %pass u.pux %arvo %c %warp ship desk ~)
+        (he-card %pass u.pux %arvo %syscall %c %warp ship desk ~)
       =.  +>  (he-card %pass u.pux %agent [our.hid %spider] %leave ~)
       ?@  t.u.pux  +>
       =/  =cage  [%spider-stop !>([i.t.u.pux |])]
@@ -603,7 +603,7 @@
       ::
           %file
         %-  he-card(poy ~)
-        :*  %pass  /file  %arvo  %c
+        :*  %pass  /file  %arvo  %syscall  %c
             %info  (foal:space:userlib (en-beam p.p.mad) cay)
         ==
       ::
@@ -1850,8 +1850,10 @@
   [moves ..on-init]
 ::
 ++  on-arvo
-  |=  [=wire =sign-arvo]
+  |=  [=wire gift=gift-user-v1:gall]
   ^-  (quip card:agent:gall _..on-init)
+  ?>  ?=(%syscall -.gift)
+  =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
   ?>  ?=([@ @ *] wire)
   =/  =id  [(slav %p i.wire) i.t.wire]
   =/  =session  (~(got by hoc) id)

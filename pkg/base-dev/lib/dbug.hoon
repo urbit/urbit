@@ -141,9 +141,9 @@
     [cards this]
   ::
   ++  on-arvo
-    |=  [=wire =sign-arvo]
+    |=  [=wire gift=gift-user-v1:gall]
     ^-  (quip card:agent:gall agent:gall)
-    =^  cards  agent  (on-arvo:ag wire sign-arvo)
+    =^  cards  agent  (on-arvo:ag wire gift)
     [cards this]
   ::
   ++  on-fail

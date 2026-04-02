@@ -37,7 +37,7 @@
 +$  state      ^state      ::  proxy
 +$  any-state  ^any-state  ::  proxy
 ++  abet  [(flop moz) sat]
-++  flog  |=(=flog:dill (emit %pass /di %arvo %d %flog flog))
+++  flog  |=(=flog:dill (emit %pass /di %arvo %syscall %d %flog flog))
 ++  emit  |=(card this(moz [+< moz]))
 ::  +emil: emit multiple cards
 ::
@@ -74,7 +74,7 @@
     ?.  =(our.bowl who.fed)
       ~&  [%wrong-private-key-ship who.fed]
       this
-    (emit %pass / %arvo %j %rekey lyf.fed key.fed)
+    (emit %pass / %arvo %syscall %j %rekey lyf.fed key.fed)
   ?.  =(our.bowl who.fed)
     ~&  [%wrong-private-key-ship who.fed]
     this
@@ -87,7 +87,7 @@
   ?~  kyz  (flop caz)
   %=  $
     kyz  t.kyz
-    caz  [[%pass / %arvo %j %rekey i.kyz] caz]
+    caz  [[%pass / %arvo %syscall %j %rekey i.kyz] caz]
   ==
 ::
 ++  ames-secret
@@ -100,7 +100,7 @@
   ?>  ?=(%& -.hot)
   =.  p.hot  (scag 2 p.hot)      :: ignore subdomain
   =.  dat  (scot %uw (en:crub:crypto ames-secret dat))
-  =-  abet:(emit %pass /write %arvo %c %info -)
+  =-  abet:(emit %pass /write %arvo %syscall %c %info -)
   =/  byk=path  (en-beam byk.bowl(r da+now.bowl) ~)
   =+  .^(=tube:clay cc+(welp byk /mime/atom))
   =/  =cage  atom+(tube !>([/ (as-octs:mimes:html dat)]))
@@ -111,14 +111,14 @@
   =<  abet
   ?~  sed
     this
-  (emit %pass / %arvo %j %moon u.sed)
+  (emit %pass / %arvo %syscall %j %moon u.sed)
 ::
 ++  poke-moon-breach
   |=  =ship
   ?>  ?|  =(our src):bowl
           =(src.bowl ship)
       ==
-  abet:(emit %pass /helm/moon-breach/(scot %p ship) %arvo %b %wait now.bowl)
+  abet:(emit %pass /helm/moon-breach/(scot %p ship) %arvo %syscall %b %wait now.bowl)
 ::
 ++  take-wake-moon-breach
   |=  [way=wire error=(unit tang)]
@@ -131,46 +131,46 @@
   ?>  =(our.bowl (sein:title our.bowl now.bowl ship))
   =/  =rift
     +(.^(rift j+/(scot %p our.bowl)/rift/(scot %da now.bowl)/(scot %p ship)))
-  abet:(emit %pass / %arvo %j %moon ship *id:block:jael %rift rift %.n)
+  abet:(emit %pass / %arvo %syscall %j %moon ship *id:block:jael %rift rift %.n)
 ::
 ++  poke-code
   |=  act=?(~ %reset)
   =<  abet
   ?~  act
     this
-  (emit %pass / %arvo %j %step ~)
+  (emit %pass / %arvo %syscall %j %step ~)
 ::
 ++  poke-mass
   |=  ~  =<  abet
-  (emit %pass /heft %arvo %d %flog %heft ~)
+  (emit %pass /heft %arvo %syscall %d %flog %heft ~)
 ::
 ++  poke-automass
   |=  recur=@dr
   =.  mass-timer.sat
     [/helm/automass (add now.bowl recur) recur]
-  abet:(emit %pass way.mass-timer.sat %arvo %b %wait nex.mass-timer.sat)
+  abet:(emit %pass way.mass-timer.sat %arvo %syscall %b %wait nex.mass-timer.sat)
 ::
 ++  poke-cancel-automass
   |=  ~
-  abet:(emit %pass way.mass-timer.sat %arvo %b %rest nex.mass-timer.sat)
+  abet:(emit %pass way.mass-timer.sat %arvo %syscall %b %rest nex.mass-timer.sat)
 ::
 ++  poke-meld
   |=  ~  =<  abet
-  (emit %pass /pack %arvo %d %flog %meld ~)
+  (emit %pass /pack %arvo %syscall %d %flog %meld ~)
 ::
 ++  poke-pack
   |=  ~  =<  abet
-  (emit %pass /pack %arvo %d %flog %pack ~)
+  (emit %pass /pack %arvo %syscall %d %flog %pack ~)
 ::
 ++  poke-pans
   |=  pans=(list note-arvo)
   ?~  pans  abet
-  =.  this  (emit %pass /helm/pans %arvo i.pans)
+  =.  this  (emit %pass /helm/pans %arvo %syscall i.pans)
   $(pans t.pans)
 ::
 ++  poke-pass
   |=  =note-arvo  =<  abet
-  (emit %pass /helm/pass %arvo note-arvo)
+  (emit %pass /helm/pass %arvo %syscall note-arvo)
 ::
 ++  take-wake-automass
   |=  [way=wire error=(unit tang)]
@@ -181,8 +181,8 @@
   =.  nex.mass-timer.sat  (add now.bowl tim.mass-timer.sat)
   =<  abet
   %-  emil
-  :~  [%pass /heft %arvo %d %flog %crud %hax-heft ~]
-      [%pass way.mass-timer.sat %arvo %b %wait nex.mass-timer.sat]
+  :~  [%pass /heft %arvo %syscall %d %flog %crud %hax-heft ~]
+      [%pass way.mass-timer.sat %arvo %syscall %b %wait nex.mass-timer.sat]
   ==
 ::
 ++  poke-send-hi
@@ -193,66 +193,94 @@
       %helm-hi  !>(mes)
   ==
 ::
-++  poke-send-ahoy
-  |=  [her=ship test=? force=?]  =<  abet
+++  poke-start-ahoy
+  |=  [her=ship test=? force-test=?]  =<  abet
   =/  =wire
     :+  %helm  %ahoy
     ?.(test /(scot %p her) /test/(scot %p her))
   =/  =path  ?:(test /test/mesa-1 /mesa-1)
   ::  before migrating, test if we can migrate, regress, and check that there
-  ::  are not flows in a weird state. if we don't crash, send the %ahoy $plea
+  ::  are not flows in a weird state. if we get a [%done ~], send the %ahoy $plea
   ::
-  =^  mate-moves  sat  
-    ?.  force  `sat  
-    (poke-mass-mate `her test=%.y)
-  =^  ahoy-moves  sat  abet:(emit %pass wire %arvo %a %plea her %$ path %ahoy ~)
-  (emil (weld mate-moves ahoy-moves))
+  ?.  force-test
+    ::  skip test, ahoy right away; only for certain cases in ames.hoon
+    ::
+    (emit %pass wire %arvo %syscall %a %plea her %$ path %ahoy ~)
+  ::  wait for the %done of the local %mate
+  ::
+  =^  mate-moves  sat  %*($ poke-mass-mate dry test, +< `her)
+  (emil mate-moves)
 ::
 ++  poke-mass-mate
-  |=  [ship=(unit ship) dry=?]
+  =|  dry=?
+  |=  ship=(unit ship)
   =/  =wire
     :+  %helm  %mate
-    ?.(dry ~ /test)
-  abet:(emit %pass wire %arvo %a %mate ship dry)
+    ?~  ship  /test
+    ?:  dry   /test/(scot %p u.ship)
+    /(scot %p u.ship)
+  abet:(emit %pass wire %arvo %syscall %a %mate ship dry=%.y)
 ::
 ++  poke-mass-rege
   |=  [ship=(unit ship) dry=?]
   =/  =wire
     :+  %helm  %rege
     ?.(dry ~ /test)
-  abet:(emit %pass wire %arvo %a %rege ship dry)
+  abet:(emit %pass wire %arvo %syscall %a %rege ship dry)
+::
+++  take-test-mate
+  |=  [way=wire error=(unit error:ames)]
+  =/  =path
+    ?:(?=([%test her=@ ~] way) /test/mesa-1 /mesa-1)
+  =/  her=@p
+    ?:  ?=([%test her=@ ~] way)
+      (slav %p i.t.way)
+    ?>  ?=([her=@ ~] way)
+    (slav %p i.way)
+  ?^  error
+    ~&  >>>   %local-migration-failed
+    abet
+  ~&  >   %local-migration-worked
+  abet:(emit %pass [%helm %ahoy way] %arvo %syscall %a %plea her %$ path %ahoy ~)
+::
+++  take-migrate
+  |=  [way=wire error=(unit error:ames)]
+  ?^  error
+    ~&  >>>   %local-migration-failed
+    abet
+  ~&  >   %local-migration-worked
+  abet
 ::
 ++  take-ahoy
   |=  [way=wire error=(unit error:ames)]
   ?:  ?=([%test @ *] way)
     ?~  error
       ~&  >   %migration-test-worked
-      ~&  >>  %test-local-migration
-      abet:(emit %pass /helm/migrate %arvo %a %mate (slaw %p i.t.way) dry=%.y)
+      abet
     %-  (slog %take-ahoy-test-failed u.error)
     abet
   ?>  ?=([@ ~] way)
   ?~  error
       ~&  >   %remote-migration-worked
-      ~&  >>  %try-local-migration
-    abet:(emit %pass /helm/migrate %arvo %a %mate (slaw %p i.way) dry=%.n)
+      ~&  >>  %do-local-migration
+    abet:(emit %pass /helm/migrate %arvo %syscall %a %mate (slaw %p i.way) dry=%.n)
   ~&  >>>  %ahoy-crash
   ::  XX retry?
   ::
   %-  (slog %take-ahoy-failed u.error)
   abet
-  :: abet:(emit %pass `wire`[%helm %ahoy-crash way] %arvo %b %wait (add now.bowl ~s30)) :: XX exp backoff?
+  :: abet:(emit %pass `wire`[%helm %ahoy-crash way] %arvo %syscall %b %wait (add now.bowl ~s30)) :: XX exp backoff?
 ::
 ++  take-ahoy-crash
   |=  [way=wire error=(unit tang)]
   ?>  ?=([@ ~] way)
   ?~  error
-    (poke-send-ahoy (slav %p i.way) | force=&)
+    (poke-start-ahoy (slav %p i.way) | force=&)
   ~&  >>>  %ahoy-wake-crash
   ::  XX retry?
   ::
   %-  (slog %take-ahoy-wake-crash u.error)
-  abet:(emit %pass `wire`[%helm %ahoy-crash way] %arvo %b %wait (add now.bowl ~s30)) :: XX exp backoff?
+  abet:(emit %pass `wire`[%helm %ahoy-crash way] %arvo %syscall %b %wait (add now.bowl ~s30)) :: XX exp backoff?
 ::
 ++  poke-send-rege
   |=  [her=ship test=?]  =<  abet
@@ -264,7 +292,7 @@
   ::  are not flows in a weird state. if we don't crash, send the %back $plea
   ::
   =^  rege-moves  sat  (poke-mass-rege `her test=%.y)
-  =^  back-moves  sat  abet:(emit %pass wire %arvo %a %plea her %$ path %back ~)
+  =^  back-moves  sat  abet:(emit %pass wire %arvo %syscall %a %plea her %$ path %back ~)
   (emil (weld rege-moves back-moves))
 ::
 ++  take-rege
@@ -273,20 +301,20 @@
     ?~  error
       ~&  >   %rege-test-worked
       ~&  >>  %test-local-rege
-      abet:(emit %pass /helm/migrate %arvo %a %rege (slaw %p i.t.way) dry=%.y)
+      abet:(emit %pass /helm/migrate %arvo %syscall %a %rege (slaw %p i.t.way) dry=%.y)
     %-  (slog %take-rege-test-failed u.error)
     abet
   ?>  ?=([@ ~] way)
   ?~  error
       ~&  >   %remote-regress-worked
       ~&  >>  %try-local-rege
-    abet:(emit %pass /helm/migrate %arvo %a %rege (slaw %p i.way) dry=%.n)
+    abet:(emit %pass /helm/migrate %arvo %syscall %a %rege (slaw %p i.way) dry=%.n)
   ~&  >>>  %rege-crash
   ::  XX retry?
   ::
   %-  (slog %take-rege-failed u.error)
   abet
-  :: abet:(emit %pass `wire`[%helm %ahoy-crash way] %arvo %b %wait (add now.bowl ~s30)) :: XX exp backoff?
+  :: abet:(emit %pass `wire`[%helm %ahoy-crash way] %arvo %syscall %b %wait (add now.bowl ~s30)) :: XX exp backoff?
 ::
 ++  poke-hi
   |=  mes=@t  =<  abet
@@ -301,11 +329,11 @@
 ::
 ++  poke-ames-prod
   |=  ships=(list ship)
-  abet:(emit %pass /helm/prod %arvo %a %prod ships)
+  abet:(emit %pass /helm/prod %arvo %syscall %a %prod ships)
 ::
 ++  poke-ames-snub
   |=  snub=[form=?(%allow %deny) ships=(list ship)]
-  abet:(emit %pass /helm/snub %arvo %a %snub snub)
+  abet:(emit %pass /helm/snub %arvo %syscall %a %snub snub)
 ::
 ++  poke-atom
   |=  ato=@
@@ -321,7 +349,7 @@
 ::
 ++  poke-trim
   |=  pri=@ud  =<  abet
-  (emit %pass /pack %arvo %d %flog %crop pri)
+  (emit %pass /pack %arvo %syscall %d %flog %crop pri)
 ::
 ++  poke-verb                                         ::  toggle verbose
   |=  ~  =<  abet
@@ -329,67 +357,67 @@
 ::
 ++  poke-ames-sift
   |=  ships=(list ship)  =<  abet
-  (emit %pass /helm %arvo %a %sift ships)
+  (emit %pass /helm %arvo %syscall %a %sift ships)
 ::
 ++  poke-ames-verb
   |=  veb=(list verb:ames)  =<  abet
-  (emit %pass /helm %arvo %a %spew veb)
+  (emit %pass /helm %arvo %syscall %a %spew veb)
 ::
 ++  poke-gall-sift
   |=  dudes=(list dude:gall)  =<  abet
-  (emit %pass /helm %arvo %g %sift dudes)
+  (emit %pass /helm %arvo %syscall %g %sift dudes)
 ::
 ++  poke-gall-verb
   |=  veb=(list verb:gall)  =<  abet
-  (emit %pass /helm %arvo %g %spew veb)
+  (emit %pass /helm %arvo %syscall %g %spew veb)
 ::
 ++  poke-gall-lave
   |=  [dry=? subs=(list [?(%g %a) ship term duct])]  =<  abet
   ?:  dry  this
-  (emit %pass /helm %arvo %g %lave subs)
+  (emit %pass /helm %arvo %syscall %g %lave subs)
 ::
 ++  poke-eyre-lave
   |=  [dry=? subs=(list [%g ship term duct])]  =<  abet
   ?:  dry  this
-  (emit %pass /helm %arvo %g %lave subs)
+  (emit %pass /helm %arvo %syscall %g %lave subs)
 ::
 ++  poke-ames-wake
   |=  ~  =<  abet
-  (emit %pass /helm %arvo %a %stir '')
+  (emit %pass /helm %arvo %syscall %a %stir '')
 ::
 ++  poke-ames-kroc
   |=  [dry=? bones=(list [ship bone])]  =<  abet
   ?:  dry  this
-  (emit %pass /helm %arvo %a %kroc bones)
+  (emit %pass /helm %arvo %syscall %a %kroc bones)
 ::
 ++  poke-ames-cong
   |=  cong=[msg=@ud mem=@ud]  =<  abet
-  (emit %pass /helm %arvo %a %cong cong)
+  (emit %pass /helm %arvo %syscall %a %cong cong)
 ::
 ++  poke-serve
   |=  [=binding:eyre =generator:eyre]  =<  abet
-  (emit %pass /helm/serv %arvo %e %serve binding generator)
+  (emit %pass /helm/serv %arvo %syscall %e %serve binding generator)
 ::
 ++  poke-cors-approve
   |=  =origin:eyre
   =<  abet
-  (emit %pass /helm/cors/approve %arvo %e %approve-origin origin)
+  (emit %pass /helm/cors/approve %arvo %syscall %e %approve-origin origin)
 ::
 ++  poke-cors-reject
   |=  =origin:eyre
   =<  abet
-  (emit %pass /helm/cors/reject %arvo %e %reject-origin origin)
+  (emit %pass /helm/cors/reject %arvo %syscall %e %reject-origin origin)
 ::
 ++  poke-doff
   |=  [dude=(unit dude:gall) ship=(unit ship)]
   =<  abet
-  (emit %pass /helm/doff %arvo %g %doff dude ship)
+  (emit %pass /helm/doff %arvo %syscall %g %doff dude ship)
 ::
 ++  poke-dns-config
   |=  [addr=(each address:dns @t) collector=dock self-check=? reset=?]
   =<  abet
   =;  =shed:khan
-    (emit %pass /helm/dns-config %arvo %k %lard %base shed)
+    (emit %pass /helm/dns-config %arvo %syscall %k %lard %base shed)
   |^  ^-  shed:khan
   =/  m  (strand:rand ,vase)
   ;<  ip=@if        bind:m  get-ip
@@ -406,8 +434,8 @@
     =/  m  (strand:rand ,~)
     ^-  form:m
     ?.  reset
-      (send-raw-card:strandio %pass / %arvo %e %rule %turf %put turf)
-    (send-raw-card:strandio %pass / %arvo %e %rule %turf %new (silt turf ~))
+      (send-raw-card:strandio %pass / %arvo %syscall %e %rule %turf %put turf)
+    (send-raw-card:strandio %pass / %arvo %syscall %e %rule %turf %new (silt turf ~))
   ::
   ++  check-domain
     |=  =turf
@@ -683,7 +711,7 @@
     %helm-pass             =;(f (f !<(_+<.f vase)) poke-pass)
     %helm-rekey            =;(f (f !<(_+<.f vase)) poke-rekey)
     %helm-send-hi          =;(f (f !<(_+<.f vase)) poke-send-hi)
-    %helm-send-ahoy        =;(f (f !<(_+<.f vase)) poke-send-ahoy)
+    %helm-send-ahoy        =;(f (f !<(_+<.f vase)) poke-start-ahoy)
     %helm-mass-mate        =;(f (f !<(_+<.f vase)) poke-mass-mate)
     %helm-send-rege        =;(f (f !<(_+<.f vase)) poke-send-rege)
     %helm-mass-rege        =;(f (f !<(_+<.f vase)) poke-mass-rege)
@@ -718,6 +746,10 @@
     [%moon-breach *]  %+  take-wake-moon-breach  t.wire
                       ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
     [%ahoy *]         %+  take-ahoy  t.wire
+                      ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
+    [%mate *]         %+  take-test-mate  t.wire
+                      ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
+    [%migrate *]      %+  take-migrate  t.wire
                       ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
     [%rege *]         %+  take-rege  t.wire
                       ?>(?=(%done +<.sign-arvo) +>.sign-arvo)

@@ -354,11 +354,12 @@
   |-  ^+  ..on-init
   ?~  dez  ..on-init
   =.  ..on-init
-    (emit %pass /kiln/init-zest %arvo %c %zest i.dez %live)
+    (emit %pass /kiln/init-zest %arvo %syscall %c %zest i.dez %live)
   =.  ..on-init
     %-  emit
-    :^  %pass  /kiln/permission  %arvo
-    [%c %perm i.dez / %r `[%black ~]]
+    :*  %pass  /kiln/permission  %arvo  %syscall
+        [%c %perm i.dez / %r `[%black ~]]
+    ==
   =/  src  (get-publisher our i.dez now)
   =?  ..on-init  &(?=(^ src) !=(our u.src))
     abet:init:(sync i.dez u.src i.dez)
@@ -478,7 +479,7 @@
     ;:  weld
       %+  turn  zet
       |=  [=desk =zest]
-      [%pass /kiln/load-zest %arvo %c %zest desk zest]
+      [%pass /kiln/load-zest %arvo %syscall %c %zest desk zest]
     ::
       %+  turn  ~(tap in syn)
       |=  r=sync-record
@@ -620,13 +621,13 @@
 ++  poke-autocommit
   |=  [mon=kiln-commit auto=?]
   =<  abet
-  =.  +>.$  (emit %pass /commit %arvo %c [%dirk mon])
+  =.  +>.$  (emit %pass /commit %arvo %syscall %c [%dirk mon])
   ?.  auto
     +>.$
   =/  recur  ~s1
   =.  commit-timer
     [/kiln/autocommit (add now recur) recur mon]
-  (emit %pass way.commit-timer %arvo %b [%wait nex.commit-timer])
+  (emit %pass way.commit-timer %arvo %syscall %b [%wait nex.commit-timer])
 ::
 ++  poke-bump
   |=  ~
@@ -648,26 +649,26 @@
     ?:  |(=(%base desk) !?=(%live zest) (~(has in wic) kel))
       ~
     `u=[desk %held]
-  [%pass /kiln/bump/zeal %arvo %c %zeal desks]~
+  [%pass /kiln/bump/zeal %arvo %syscall %c %zeal desks]~
 ::
 ++  poke-cancel
   |=  a=@tas
-  abet:(emit %pass /cancel %arvo %c [%drop a])
+  abet:(emit %pass /cancel %arvo %syscall %c [%drop a])
 ::
 ++  poke-cancel-autocommit
   |=  ~
-  abet:(emit %pass way.commit-timer %arvo %b [%rest nex.commit-timer])
+  abet:(emit %pass way.commit-timer %arvo %syscall %b [%rest nex.commit-timer])
 ::
 ++  poke-commit
   |=  [mon=kiln-commit auto=?]
   =<  abet
-  =.  +>.$  (emit %pass /commit %arvo %c [%dirk mon])
+  =.  +>.$  (emit %pass /commit %arvo %syscall %c [%dirk mon])
   ?.  auto
     +>.$
   =/  recur  ~s1
   =.  commit-timer
     [/kiln/autocommit (add now recur) recur mon]
-  (emit %pass way.commit-timer %arvo %b [%wait nex.commit-timer])
+  (emit %pass way.commit-timer %arvo %syscall %b [%wait nex.commit-timer])
 ::
 ++  poke-fuse-list
   =>
@@ -735,7 +736,7 @@
 ::
 ++  poke-gall-sear
   |=  =ship
-  abet:(emit %pass /kiln %arvo %g %sear ship)
+  abet:(emit %pass /kiln %arvo %syscall %g %sear ship)
 ::
 ++  poke-global-automerge
   |=  auto=?
@@ -758,7 +759,7 @@
   |=  [mez=tape tor=(unit toro)]
   ?~  tor
     abet:(spam leaf+mez ~)
-  abet:(emit:(spam leaf+mez ~) %pass /kiln %arvo %c [%info u.tor])
+  abet:(emit:(spam leaf+mez ~) %pass /kiln %arvo %syscall %c [%info u.tor])
 ::
 ++  poke-install
   |=  [loc=desk her=ship rem=desk]
@@ -775,7 +776,7 @@
     =.  ..abet  abet:drop:(sync loc u.got)
     ..abet(zyn (~(del by zyn) loc u.got))
   =?  ..abet  ?=(%dead zest)
-    (emit %pass /kiln/install %arvo %c %zest loc ?:(=(our her) %live %held))
+    (emit %pass /kiln/install %arvo %syscall %c %zest loc ?:(=(our her) %live %held))
   ?:  (~(has by zyn) loc her rem)
     abet:(spam (render "already syncing" loc her rem ~) ~)
   ?:  =([our loc] [her rem])
@@ -807,7 +808,7 @@
   ?~  bem
     =+  "can't mount bad path: {<pax>}"
     abet:(spam leaf+- ~)
-  abet:(emit %pass /mount %arvo %c [%mont pot u.bem])
+  abet:(emit %pass /mount %arvo %syscall %c [%mont pot u.bem])
 ::
 ++  poke-jump-propose
   |=  [syd=desk her=ship sud=desk]
@@ -891,10 +892,10 @@
   |=  [=term desk=?]
   =<  abet
   ?.  desk
-    (emit %pass /nuke %arvo %g [%nuke term])
+    (emit %pass /nuke %arvo %syscall %g [%nuke term])
   %-  emil
   %+  turn  (get-apps-have our term now)
-  |=([=dude ?] [%pass /nuke %arvo %g [%nuke dude]])
+  |=([=dude ?] [%pass /nuke %arvo %syscall %g [%nuke dude]])
 ::
 ++  poke-pass
   |=  =card:agent:gall
@@ -911,15 +912,15 @@
   =<  abet
   %-  emit
   =/  =rite  [%r ~ ?:(pub %black %white) ~]
-  [%pass /kiln/permission %arvo %c [%perm syd pax rite]]
+  [%pass /kiln/permission %arvo %syscall %c [%perm syd pax rite]]
 ::
 ++  poke-rein
   |=  [=desk =rein]
-  abet:(emit %pass /kiln/rein %arvo %c %rein desk rein)
+  abet:(emit %pass /kiln/rein %arvo %syscall %c %rein desk rein)
 ::
 ++  poke-revive
   |=  =desk
-  abet:(emit %pass /kiln/revive %arvo %c %zest desk %live)
+  abet:(emit %pass /kiln/revive %arvo %syscall %c %zest desk %live)
 ::
 ++  poke-rm
   |=  a=path
@@ -958,7 +959,7 @@
     ?:  (~(has in .^((set desk) %cd /(scot %p our)//(scot %da now))) dek)
       &
     ~>  %slog.(fmt "desk does not yet exist: {<dek>}")  |
-  |=(=desk [%pass /kiln/suspend %arvo %c %zest desk %dead])
+  |=(=desk [%pass /kiln/suspend %arvo %syscall %c %zest desk %dead])
 ::
 ++  poke-sync
   |=  sync-record
@@ -1000,7 +1001,7 @@
     abet:(spam leaf+"desk does not exist: {<loc>}" ~)
   ~>  %slog.(fmt "uninstalling {<loc>}")
   =?  ..on-init  !=(+<:got %dead)
-    (emit %pass /kiln/uninstall %arvo %c %zest loc %dead)
+    (emit %pass /kiln/uninstall %arvo %syscall %c %zest loc %dead)
   ?~  sync=(~(get by sources) loc)
     abet
   (poke-unsync loc u.sync)
@@ -1012,8 +1013,8 @@
     ?~  bem
       =+  "can't unmount bad path: {<mon>}"
       abet:(spam leaf+- ~)
-    abet:(emit %pass /unmount-beam %arvo %c [%ogre [[p q r] s]:u.bem])
-  abet:(emit %pass /unmount-point %arvo %c [%ogre mon])
+    abet:(emit %pass /unmount-beam %arvo %syscall %c [%ogre [[p q r] s]:u.bem])
+  abet:(emit %pass /unmount-point %arvo %syscall %c [%ogre mon])
 ::
 ::  Don't need to cancel anything because new syncs will get a new nonce
 ::
@@ -1027,7 +1028,7 @@
 ::
 ++  poke-essential-desk
   |=  [=desk ese=?]
-  abet:(emit %pass /kiln/essential-desk %arvo %c %esse desk ese)
+  abet:(emit %pass /kiln/essential-desk %arvo %syscall %c %esse desk ese)
 ::  +peer: handle %watch
 ::
 ++  peer
@@ -1142,8 +1143,8 @@
   =.  nex.commit-timer  (add now tim.commit-timer)
   =<  abet
   %-  emil
-  :~  [%pass /commit %arvo %c [%dirk mon.commit-timer]]
-      [%pass way.commit-timer %arvo %b [%wait nex.commit-timer]]
+  :~  [%pass /commit %arvo %syscall %c [%dirk mon.commit-timer]]
+      [%pass way.commit-timer %arvo %syscall %b [%wait nex.commit-timer]]
   ==
 ::
 ::
@@ -1199,7 +1200,7 @@
           /kiln/fuse-request/[syd]/(scot %p p.bec)/[q.bec]/(scot %ud hax)
       =/  rav=rave  [%sing %w r.bec /]
       =/  rif=riff  [q.bec `rav]
-      `[%pass wir %arvo %c [%warp who.fs rif]]
+      `[%pass wir %arvo %syscall %c [%warp who.fs rif]]
     ::  No need to keep state if all the sources are static
     ?~  movs
       delete
@@ -1214,7 +1215,7 @@
       |=  [fs=fuse-source g=germ]
       [(realize-fuse-source fs |) g]
     %-  blab
-    [%pass /kiln/fuse/[syd] %arvo %c [%fuse syd bas con]]~
+    [%pass /kiln/fuse/[syd] %arvo %syscall %c [%fuse syd bas con]]~
   ::
   ++  fuse
     ^+  ..abet
@@ -1308,11 +1309,11 @@
     [%kiln %zinc syd (scot %p her) sud nun wire]
   ++  lard
     |=  [=wire =shed:khan]
-    (emit %pass (ware wire) %arvo %k %lard %base shed)
+    (emit %pass (ware wire) %arvo %syscall %k %lard %base shed)
   ++  merg
     |=  [=wire =desk]
     %:  emit
-      %pass  (ware wire)  %arvo  %c
+      %pass  (ware wire)  %arvo  %syscall  %c
       %merg  desk  her  sud
       ud+(dec let)  (get-germ desk)
     ==
@@ -1476,7 +1477,7 @@
     ^+  .
     ?<  ?=(%this gem)
     ?<  ?=(%that gem)
-    (blab [%pass /kiln/[syd] %arvo %c [%merg syd her sud cas gem]] ~)
+    (blab [%pass /kiln/[syd] %arvo %syscall %c [%merg syd her sud cas gem]] ~)
   ::
   ++  fancy-merge                                     ::  send to self
     |=  [syd=desk her=@p sud=desk gem=?(%auto germ)]
@@ -1559,7 +1560,7 @@
         =<  win
         %-  blab:(spam tan)
         :_  ~
-        :*  %pass  /kiln/[syd]  %arvo  %c
+        :*  %pass  /kiln/[syd]  %arvo  %syscall  %c
             %info
             tic  %&
             %+  murn  notations
@@ -1614,7 +1615,7 @@
       ?<  ?=(%this gem)
       ?<  ?=(%that gem)
       =/  note  [%merg (cat 3 syd '-scratch') her sud cas gem]
-      [%pass /kiln/[syd] %arvo %c note]
+      [%pass /kiln/[syd] %arvo %syscall %c note]
     ==
   ::
   ++  tape-to-tanks

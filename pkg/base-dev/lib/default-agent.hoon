@@ -58,8 +58,8 @@
   ==
 ::
 ++  on-arvo
-  |=  [=wire =sign-arvo]
-  ~|  "unexpected system response {<-.sign-arvo>} to {<dap.bowl>} on wire {<wire>}"
+  |=  [=wire gift=gift-user-v1:gall]
+  ~|  "unexpected system response {<-.gift>} to {<dap.bowl>} on wire {<wire>}"
   !!
 ::
 ++  on-fail
