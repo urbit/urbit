@@ -355,6 +355,54 @@
     ?:  =(2 num)  `%c
     ~
   --
+  ::  +feed-to-point:dawn: convert a $feed into a $point:jael
+  ::
+  ::    If feed has no rift, assumes zero. Assumes the
+  ::    highest life is the intended one. Sets sponsor to
+  ::    itself.
+  ::
+  ++  feed-to-point
+    |=  =feed:jael
+    ^-  (unit point:jael)
+    ?~  fud=(lift-feed feed)
+      ~
+    =.  feed  u.fud
+    ?>  ?=([%2 ~] -.feed)
+    =/  [lyf=life keys=(map life [crypto-suite=@ud =pass])]
+      ?>  ?=(^ kyz.feed)
+      :-  lyf.i.kyz.feed
+      %-  ~(put by *(map life [@ud pass]))
+      =+  cic=(nol:nu:cric:crypto key.i.kyz.feed)
+      [lyf.i.kyz.feed num:ex:cic pub:ex:cic]
+    %-  some
+    :*  ryf.feed
+        lyf
+        keys
+        `who.feed
+        ~
+    ==
+  ::  +lift-feed:dawn: update $feed to [%2 ~]
+  ::
+  ::    If feed has no rift, assumes zero. Assumes the
+  ::    highest life is the intended one.
+  ::
+  ++  lift-feed
+    |=  =feed:jael
+    ^-  (unit feed:jael)
+    =.  feed
+      ?@  -.feed
+        [[%2 ~] who 0 [lyf key]~]:feed
+      ?.  ?=([%1 ~] -.feed)
+        feed
+      [[%2 ~] who 0 kyz]:feed
+    ?>  ?=([%2 ~] -.feed)
+    =/  top=(unit [lyf=life key=ring])
+      =/  kyz
+        %+  sort  kyz.feed
+        |=([[a=@ *] [b=@ *]] (gth a b))
+      ?~(kyz ~ `i.kyz)
+    ?~  top  ~
+    `feed(kyz ~[u.top])
 --
 ::
 =/  pit  !>(.)
