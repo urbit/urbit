@@ -1052,12 +1052,13 @@
           (ex-text ": /~nul/foo/2/sys/kelvin")
           (ex-text "+ /~nul/foo/2/desk/seal")
           (ex-ward-have %foo pers-1 perm-none)
+          (ex-ward-need %foo pers-1)
           (ex-pass /park-held/foo [%b [%wait ~1111.1.1]])
       ==
     ;<  ~                 bind:m  (do-wick ~)
     ;<  mov2=(list move)  bind:m  (take /park-held/foo ~[/blah] [%behn %wake ~])
     ;<  ~                 bind:m
-      (expect-moves mov2 (ex-ward-need %foo pers-1) ex-load ~)
+      (expect-moves mov2 ex-load ~)
     (do-seal-held %foo pers-1 pers-1)
   ::
   ++  got-next-update
@@ -1256,6 +1257,7 @@
         (ex-text ": /~nul/baz/2/sys/kelvin")
         (ex-text "+ /~nul/baz/2/desk/seal")
         (ex-ward-have %baz pers-1 perm-none)
+        (ex-ward-need %baz pers-1)
         (ex-pass /park-held/baz [%b [%wait ~1111.1.1]])
         (ex-gift [%tire %| [%warp %baz [%zuse 407]]])
         ex-load
@@ -1264,7 +1266,7 @@
   ;<  mov3=(list move)  bind:m  (take /park-held/foo ~[/blah] [%behn %wake ~])
   ;<  ~  bind:m  (expect-moves mov3 (ex-gift [%tire %| [%zest %foo %live]]) ex-load ~)
   ;<  mov4=(list move)  bind:m  (take /park-held/baz ~[/blah] [%behn %wake ~])
-  (expect-moves mov4 (ex-ward-need %baz pers-1) ex-load ~)
+  (expect-moves mov4 ex-load ~)
 ::
 ++  test-apply-update-suspend-and-revive-non-esse-desks
 ::  non-essential desk, blocked on kelvin, suspended
@@ -1627,6 +1629,7 @@
         (ex-text ": /~nul/foo/2/sys/kelvin")
         (ex-text "+ /~nul/foo/2/desk/seal")
         (ex-ward-have %foo pers-1 perm-none)
+        (ex-ward-need %foo pers-1)
         (ex-gift [%tire %| [%warp %foo [%zuse 408]]])
         ex-load
     ==
@@ -1634,8 +1637,7 @@
   ;<  mov3=(list move)   bind:m  (call ~[/blah] [%zeal [%foo %live]~])
   ;<  ~  bind:m
     %+  expect-moves  mov3
-    :~  (ex-ward-need %foo pers-1)
-        ex-wick
+    :~  ex-wick
         (ex-gift [%tire %| [%zest %foo %held]])
         ex-load
     ==
@@ -1757,6 +1759,7 @@
     :~  ex-wick
         (ex-text "+ /~nul/foo/2/desk/seal")
         (ex-ward-have %foo pers-1 perm-none)
+        (ex-ward-need %foo pers-1)
     ==
   (do-wick ~)
 ::
