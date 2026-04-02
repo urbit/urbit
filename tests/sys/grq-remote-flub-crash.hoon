@@ -1,11 +1,20 @@
 ::  test: %leave enqueued before %kick, %pub suspended before %leave arrives
-::        %kick gets handled when %leave is outstanding on %gall, triggers %cork
-::        flow gets %deleted
+::        %kick gets handled when %leave is outstanding on %gall,
+::        triggers %cork; both %leave and %cork are in-flight, un-acked
+::        the %cork arrives first; receiver drops it since it has num > last-acked
+::                               ; %leave still pending
 ::
-::        the %leave that got sent before %corking arrives and the flow gets halted
-::        and the remote %flub is sent, but when it's handled the %flow is closed: crash!
+::          - agent is suspended
+::          - %leave arrives; get's flubbed, %cork handled -> produce %ack
 ::
-/+  *test, v=test-ames-gall
+::          - %ack for %cork arrives first, flows gets deleted
+::          - %boon %flub arrives:
+::             - the flow then gets halted and the remote %flub is sent,
+::               but when it's handled the %flow is closed:
+::          crash!
+::
+::
+/+  *test, v=test-ames-gall, test-pub, test-sub
 |%
 ++  find-blob
   |=  mvs=(list move:ames-bunt:v)
@@ -367,13 +376,14 @@
           ==
       [%cork ~bud]
       :~  :-  ~[//unix]
-          :*  %give  %send  [%& ~bud]
-              0xb.130c.ab37.ca24.49cd.aecb.23ba.70f1.6f1c.4d00.124e.c9a5.
-              3413.3843.d81c.47c4.7040.6e62.3700.0200.0132.e1ab.9000
+          :*  %give  %send  [%& ~bud]  ::  this is message num=3 (since the %leave is still outstanding)
+               0x51.201d.35c6.5c33.5fe4.af83.861f.bc5e.5c6c.7600.12f0.
+               d0b9.c6ef.9f14.169d.b17e.3b3c.64b7.4600.0200.0132.ab71.5800
           ==
-          :-  ~[/ames]  [%pass /pump/~bud/0 %b %wait ~1111.1.5..00.02.00]
+          :: :-  ~[/ames]  [%pass /pump/~bud/0 %b %wait ~1111.1.5..00.02.00]  :: XX why not?
       ==
     ==
+
   ::  publisher ames hears %kick ack
   ~?  >  dbug  'publisher ames hears %kick ack'
   :-  t20  |.  :-  %|
@@ -389,19 +399,159 @@
       ==
     ==
   ::  publisher ames hears %cork, passes to itself
-  ~?  >  dbug  'publisher ames hears %cork, passes to itself'
+  ~?  >  dbug  'publisher ames hears %cork, %leave pending; drop'
   :-  t21  |.  :-  %|
   =^  t27  ames.bud
     %:  ames-check-call:v  ames.bud
       [~1111.1.8 0xbeef.dead *roof]
       :-  ~[//unix]
       :*  %hear  [%& ~nec]
-          0xb.130c.ab37.ca24.49cd.aecb.23ba.70f1.6f1c.4d00.124e.c9a5.
-          3413.3843.d81c.47c4.7040.6e62.3700.0200.0132.e1ab.9004
+          0x51.201d.35c6.5c33.5fe4.af83.861f.bc5e.5c6c.7600.12f0.
+          d0b9.c6ef.9f14.169d.b17e.3b3c.64b7.4600.0200.0132.ab71.5800
       ==
-      :~  :-  ~[//unix]  [%pass /bone/~nec/0/1 %a %deep %cork ~nec 1]
-      ==
+      :: :~  :-  ~[//unix]  [%pass /bone/~nec/0/1 %a %deep %cork ~nec 1]
+      :: ==
+      ~
     ==
+  ::  the %leave arrives now, but the agent is not running
+  ::
+  ~?  >  dbug  'inject %leave %plea; trigger %boon %flub'
+  =^  t-remote-flub  ames.bud
+    %:  ames-call:v  ames.bud
+      ~[//unix]
+      :*  %hear  [%& ~nec]
+          (find-blob t-leave-out)
+      ==
+      *roof
+    ==
+  =^  t-flub-done  gall.bud
+    %+  gall-call:v  gall.bud
+    :*  ~[/bone/~nec/0/1 //unix]
+        [%plea ship=~nec plea=[vane=%g path=/ge/pub payload=[0 117 0]]]
+        *roof
+    ==
+  ~?  >  dbug  'give %flub to %ames'
+  =^  t-remote-flub  ames.bud
+    %:  ames-take:v  ames.bud
+      /bone/~nec/0/1  ~[//unix]
+      [%gall %flub [blocked=%.n dap=[~ %pub]]]
+      *roof
+    ==
+  ~&  >>>  t-remote-flub
+  ~?  >  dbug  'handle %deep %halt'
+  =^  t-deep-flub  ames.bud
+    %:  ames-call:v  ames.bud
+      ~[/flub //unix]
+      [%deep deep=[%halt ship=~nec agent=%pub bone=1]]
+      *roof
+    ==
+  ~?  >  dbug  'pass %halt to %gall'
+  =^  t-halt-flow  gall.bud
+    %+  gall-call:v  gall.bud
+    :*  ~[/flub //unix]
+        [%halt ship=~nec agent=%pub bone=0]
+        *roof
+    ==
+  ~?  >  dbug  'give remote %boon %flub to %ames'
+  =^  t-remote-flub  ames.bud
+    %:  ames-take:v  ames.bud
+      /bone/~nec/0/5  ~[//unix]
+      [%gall %boon payload=[0 1.651.862.630 6.452.592 8]]
+      *roof
+    ==
+  ~?  >  dbug  'get remote %flub'
+  =^  t-get-flub  ames.nec
+    %:  ames-call:v  ames.nec
+      ~[//unix]
+      :*  %hear  [%& ~nec]
+          (find-blob t-remote-flub)
+      ==
+      *roof
+    ==
+  ::  ingest %ack for remote flub
+  ::
+  ~?  >  dbug  'ingest %ack for remote flub'
+  =^  t-deep-flub  ames.bud
+    %:  ames-call:v  ames.bud
+      ~[//unix]
+      :*  %hear  [%& ~nec]
+          (find-blob t-get-flub)
+      ==
+      *roof
+    ==
+  =^  t-flub-received  gall.nec
+    %+  gall-take:v  gall.nec
+    :*  /sys/flu/~bud  [/init]~
+        [%ames %boon payload=[0 1.651.862.630 6.452.592 8]]
+        *roof
+    ==
+  =^  t-halt-flow  ames.nec
+    %:  ames-call:v  ames.nec
+      ~[/remote-flub //unix]
+      [%halt ship=~bud agent=%pub bone=0]
+      *roof
+    ==
+  ::  at this point the flow is halted on both ends; %leave and %cork are outstanding
+  ::  %cork is stored in .live-messages
+  ::
+  ::  now we unhalt the flow by reviving the agent
+  ::
+  ~?  >  dbug  '~bud revives %pub'
+  =^  t-revive  gall.bud
+    %+  gall-call:v  gall.bud
+    [~[/load] load/[[%pub [~bud %base da+~1111.1.1] test-pub]~] *roof]
+  ~&  t-revive
+  ::  ames gets a %spur to un-halt the backward flow, locally
+  ::  and a %boon %spur to un-halt the forward flow, over the wire
+  ::
+  ~?  >  dbug  'give remote %boon %spur to %ames'
+  =^  t-remote-spur  ames.bud
+    %:  ames-take:v  ames.bud
+      /bone/~nec/0/5  ~[//unix]  :: /gf flow
+      [%gall %boon payload=[0 1.920.299.123 6.452.592]]
+      *roof
+    ==
+  =^  *  ames.bud
+    %:  ames-take:v  ames.bud
+      /bone/~nec/0/1  ~[//unix]  ::  agent flow
+      [%gall %spur ~]
+      *roof
+    ==
+  ~?  >  dbug  'ingest remote %spur'
+  =^  t-handle-spur  ames.nec
+    %:  ames-call:v  ames.nec
+      ~[//unix]
+      :*  %hear  [%& ~bud]
+          (find-blob t-remote-spur)
+      ==
+      *roof
+    ==
+  =^  t-spur-received  gall.nec
+    %+  gall-take:v  gall.nec
+    :*  /sys/flu/~bud  [/init]~
+        [%ames %boon payload=[0 1.920.299.123 6.452.592]]
+        *roof
+    ==
+
+  =^  t-handle-goad  ames.nec
+    %:  ames-call:v  ames.nec
+      :~  /sys/way/~bud/pub
+          /use/sub/0w1.d6Isf/out/~bud/pub/1/sub-foo/~bud
+          /init
+      ==
+      [%goad ~bud]
+      *roof
+    ==
+  ~&  >>>  t-handle-goad
+  =^  t-get-packets  ames.bud
+    %:  ames-call:v  ames.bud
+      ~[//unix]
+      :*  %hear  [%& ~nec]
+          (find-blob t-handle-goad)
+      ==
+      *roof
+    ==
+  ~&  >>>  t-get-packets^ames-state.ames.bud
   :-  t27  |.  :-  %|
   ::  publisher ames hear cork plea from self, give %done to self
   ~?  >  dbug  'publisher ames hear cork plea from self, give %done to self'
@@ -456,66 +606,7 @@
       [%deep %kill ~bud 0]
       ~
     ==
-  ::  the %leave arrives now, but the agent is not running
   ::
-  ~?  >  dbug  'inject %leave %plea; trigger %boon %flub'
-  :: =^  t-remote-flub  ames.bud
-  ::   %:  ames-call:v  ames.bud
-  ::     ~[//unix]
-  ::     :*  %hear  [%& ~nec]
-  ::         (find-blob t-leave-out)
-  ::     ==
-  ::     *roof
-  ::   ==
-  :: =^  t-flub-done  gall.bud
-  ::   %+  gall-call:v  gall.bud
-  ::   :*  ~[/bone/~nec/0/1 //unix]
-  ::       [%plea ship=~nec plea=[vane=%g path=/ge/pub payload=[0 117 0]]]
-  ::       *roof
-  ::   ==
-  :: ~?  >  dbug  'give %flub to %ames'
-  :: =^  t-remote-flub  ames.bud
-  ::   %:  ames-take:v  ames.bud
-  ::     /bone/~nec/0/1  ~[//unix]
-  ::     [%gall %flub [blocked=%.n dap=[~ %pub]]]
-  ::     *roof
-  ::   ==
-  :: ~?  >  dbug  'handle %deep %halt'
-  :: =^  t-deep-flub  ames.bud
-  ::   %:  ames-call:v  ames.bud
-  ::     ~[/flub //unix]
-  ::     [%deep deep=[%halt ship=~nec agent=%pub bone=1]]
-  ::     *roof
-  ::   ==
-  :: ~?  >  dbug  'pass %halt to %gall'
-  :: =^  t-halt-flow  gall.bud
-  ::   %+  gall-call:v  gall.bud
-  ::   :*  ~[/flub //unix]
-  ::       [%halt ship=~nec agent=%pub bone=0]
-  ::       *roof
-  ::   ==
-  :: ~?  >  dbug  'give remote %boon %flub to %ames'
-  :: =^  t-remote-flub  ames.bud
-  ::   %:  ames-take:v  ames.bud
-  ::     /bone/~nec/0/5  ~[//unix]
-  ::     [%gall %boon payload=[0 1.651.862.630 6.452.592 8]]
-  ::     *roof
-  ::   ==
-  :: ~?  >  dbug  'get remote %flub'
-  :: =^  t-get-flub  ames.nec
-  ::   %:  ames-call:v  ames.nec
-  ::     ~[//unix]
-  ::     :*  %hear  [%& ~nec]
-  ::         (find-blob t-remote-flub)
-  ::     ==
-  ::     *roof
-  ::   ==
-  :: =^  t-flub-received  gall.nec
-  ::   %+  gall-take:v  gall.nec
-  ::   :*  /sys/flu/~bud  [/init]~
-  ::       [%ames %boon payload=[0 1.651.862.630 6.452.592 8]]
-  ::       *roof
-  ::   ==
   :-  t34  |.  :-  %&
   ;:  weld
     %+  expect-eq
