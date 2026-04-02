@@ -209,14 +209,11 @@
     ==
   (do-wick ~)
 ::
-::  granting permissions to a held desk
-++  do-seal-held
+::  granting permissions to a held desk, expect it to become live
+++  do-seal-held-revives
   |=  [=desk peg=(set perm:gall) ped=(set perm:gall)]
   =/  m  (mare ,~)
   ;<  mov=(list move)  bind:m  (call ~[/blah] [%seal desk & peg])
-  =/  mis  (~(dif in ped) peg)
-  ?.  =(~ mis)
-    (expect-moves mov (ex-ward-have desk ped peg) (ex-ward-need desk mis) ex-load ~)
   ::
   ;<  ~                bind:m
     %+  expect-moves  mov
@@ -413,7 +410,7 @@
   ^-  (list $-(move tang))
   ::
   =/  [ward=(list $-(move tang)) nese-ward=(list $-(move tang)) ready=? zeal=(list [desk zest:clay])]
-  %+  roll  perm
+    %+  roll  perm
     |=  $:  [=desk ese=? ped=(set perm:gall) peg=(set perm:gall) per=(set perm:gall)]
             ward=(list $-(move tang))
             nese-ward=(list $-(move tang))
@@ -1059,7 +1056,7 @@
     ;<  mov2=(list move)  bind:m  (take /park-held/foo ~[/blah] [%behn %wake ~])
     ;<  ~                 bind:m
       (expect-moves mov2 ex-load ~)
-    (do-seal-held %foo pers-1 pers-1)
+    (do-seal-held-revives %foo pers-1 pers-1)
   ::
   ++  got-next-update
   ::  non-essential desk receives update, update doesn't match to current version, stays %held
@@ -1216,7 +1213,7 @@
           ex-load
       ==
     ;<  ~  bind:m  (do-wick ~)
-    (do-seal-held %foo pers-1 pers-1)
+    (do-seal-held-revives %foo pers-1 pers-1)
   --
 ::
 ::  multiple desks tests
@@ -1392,7 +1389,7 @@
   ;<  mov6=(list move)  bind:m  (take /park-held/baz ~[/blah] [%behn %wake ~])
   (expect-moves mov6 (ex-gift [%tire %| [%zest %baz %live]]) ex-load ~)
 ::
-++  setup-non-esse-2wic  ::  TODO: change name
+++  setup-non-esse-two-kelvins-w-perms  ::  TODO: change name
 ::  non-essential desk, blocked on kelvin and kelvin-1 and perms
 ::
   =/  m  (mare ,~)
@@ -1414,7 +1411,7 @@
 ::
   %-  eval-mare
   =/  m  (mare ,~)
-  ;<  ~                 bind:m  setup-non-esse-2wic
+  ;<  ~                 bind:m  setup-non-esse-two-kelvins-w-perms
   ;<  mov=(list move)   bind:m  (do-park %base 407 ~)
   ;<  ~  bind:m
     %+  expect-moves  mov
@@ -1440,7 +1437,7 @@
   ;<  ~                 bind:m  (do-wick ~)
   ;<  mov3=(list move)  bind:m  (take /park-held/foo ~[/blah] [%behn %wake ~])
   ;<  ~                 bind:m  (expect-moves mov3 ex-load ~)
-  (do-seal-held %foo pers-2 pers-2)
+  (do-seal-held-revives %foo pers-2 pers-2)
 ::
 ++  test-apply-updates-revive-non-esse-desk
 ::  non-essential desk ready for kelvin, blocked on perms and ready on kelvin-1 update, blocked on perms
@@ -1451,7 +1448,7 @@
 ::
   %-  eval-mare
   =/  m  (mare ,~)
-  ;<  ~                 bind:m  setup-non-esse-2wic
+  ;<  ~                 bind:m  setup-non-esse-two-kelvins-w-perms
   ;<  mov=(list move)   bind:m  (do-park %base 408 ~)
   ;<  ~  bind:m
     %+  expect-moves  mov
@@ -1477,7 +1474,7 @@
   ;<  mov3=(list move)  bind:m  (take /park-held/foo ~[/blah] [%behn %wake ~])
   ;<  ~                 bind:m  (expect-moves mov3 ex-load ~)
   ::
-  ;<  ~                 bind:m  (do-seal-held %foo pers-1 pers-1)
+  ;<  ~                 bind:m  (do-seal-held-revives %foo pers-1 pers-1)
   ::
   ;<  mov4=(list move)  bind:m  (do-park %base 407 ~)
   ;<  ~                 bind:m
@@ -1506,7 +1503,7 @@
   ;<  mov6=(list move)  bind:m  (take /park-held/foo ~[/blah] [%behn %wake ~])
   ;<  ~                 bind:m  (expect-moves mov6 ex-load ~)
   ::
-  (do-seal-held %foo pers-2 pers-2)
+  (do-seal-held-revives %foo pers-2 pers-2)
 ::
 ::
 ::
@@ -1529,17 +1526,7 @@
   ::  send next kelvin update to a desk
   ;<  mov=(list move)   bind:m  (do-park %foo 410 ~)
   ;<  ~                 bind:m  (expect-moves mov ~)
-  =/  files
-    %-  ~(gas by *(map path (each page:clay lobe:clay)))
-    :~  [/mar/noun/hoon [%& hoon+mar-noun]]
-        [/mar/hoon/hoon [%& hoon+mar-hoon]]
-        [/mar/txt/hoon [%& hoon+mar-txt]]
-        [/mar/kelvin/hoon [%& hoon+mar-kel]]
-        [/sys/kelvin [%& kelvin+[[%1 ~] (silt :~(zuse+411 zuse+410))]]]
-    ==
-  ;<  mov2=(list move)  bind:m
-    %+  call  ~[/blah]
-    [%park %foo `yoki:clay`[%& [*(list tako:clay) files]] *rang:clay]
+  ;<  mov2=(list move)  bind:m  (do-park %foo ~[410 411] ~)
   (expect-moves mov2 ~)
 ::
 ::  desk liveness tests
@@ -1571,6 +1558,8 @@
   ;<  ~                  bind:m  (set-kelvin 408)
   ;<  *                  bind:m  do-pork
   ;<  ~                  bind:m  (do-wick ~)
+  ::  user should be able to set the held desk to dead
+  ::
   (do-zest %foo %dead)
 ::
 ++  test-revive-desk-awaiting-update
@@ -1642,7 +1631,7 @@
         ex-load
     ==
   ;<  ~  bind:m  (do-wick ~)
-  (do-seal-held %foo pers-1 pers-1)
+  (do-seal-held-revives %foo pers-1 pers-1)
 ::
 ::  commit behaviour tests
 ::
