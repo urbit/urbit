@@ -7179,10 +7179,12 @@
                   %-  %+  pe-trace  odd.veb
                       |.("%plea enqueued in %gall; skip %flub")
                   sink
-                %-  (pe-trace odd.veb |.("%flubbing: {<bone=bone>}"))
+                %-  %+  pe-trace  odd.veb
+                        |.("%flubbing: {<bone=bone>} last={<last-heard.state>}")
+                =+  left=q:~(get to pending-vane-ack.state)
                 %_  sink
-                  last-heard.state        (dec last-heard.state)
-                  pending-vane-ack.state  ~(nap to pending-vane-ack.state)
+                  pending-vane-ack.state  ~                :: drop all pending
+                        last-heard.state  last-acked.state :: rewind last heard
                 ==
               ::
                   %hear
