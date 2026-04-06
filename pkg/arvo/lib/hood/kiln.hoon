@@ -353,6 +353,11 @@
   =/  dez=(list desk)  ~(tap in desks)
   |-  ^+  ..on-init
   ?~  dez  ..on-init
+  =/  path  /(scot %p our)/[i.dez]/(scot %da now)/desk/seal
+  =?  ..on-init
+    .^(? %cu path)
+    =+  .^([@ per=(list perm:gall)] %cx path)
+    (emit %pass /kiln/init-seal %arvo %syscall %c %seal i.dez & (silt per))
   =.  ..on-init
     (emit %pass /kiln/init-zest %arvo %syscall %c %zest i.dez %live)
   =.  ..on-init
