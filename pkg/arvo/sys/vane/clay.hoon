@@ -6522,6 +6522,7 @@
         %domes  domes
         %tire   ``[%tire !>(tore:(lu now rof *duct ruf))]
         %tyre   ``[%tyre !>(tyr.ruf)]
+        %bond   (bond t.path)
     ==
   ::
   ++  domes
@@ -6568,6 +6569,21 @@
     =/  =desk
       i.path
     ``[%esse !>(ese:(~(got by dos.rom.ruf) desk))]
+  ::
+  ++  bond
+    |=   =path
+    ^-  (unit (unit cage))
+    ?~  path  [~ ~]
+    =/  =desk  i.path
+    =/  dom=dome  dom:(~(got by dos.rom.ruf) desk)
+    =/  den  ((de now rof [/scrybond ~] ruf) our desk)
+    =/  ped=(set perm:gall)  get-seal:den
+    =/  bon=bond:ward
+      :*  ped
+          peg.dom  peq.dom
+          ?~(pew.dom ~ -.u.pew.dom)
+      ==
+    ``[%bond !>(bon)]
   ::
   ::  True if file is accessible
   ::
