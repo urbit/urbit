@@ -14,7 +14,7 @@
   $:  starting=(map yarn [=trying =vase])
       running=(axal thread-form)
       tid=(map tid yarn)
-      serving=(map tid [(unit [rid=@ta take=?(%json %noun)]) =mark =desk])
+      serving=(map tid [(unit [rid=@ta take=?(%json %noun)]) =mark =desk from=(unit desk)])
       scrying=(jug tid [=wire =ship =path])
   ==
 ::
@@ -27,10 +27,19 @@
       clean-slate-4
       clean-slate-5
       clean-slate-6
+      clean-slate-7
       clean-slate
   ==
 ::
 +$  clean-slate
+  $:  %8
+      starting=(map yarn [=trying =vase])
+      running=(list yarn)
+      tid=(map tid yarn)
+      serving=(map tid [(unit [rid=@ta take=?(%json %noun)]) =mark =desk from=(unit desk)])
+      scrying=(jug tid [wire ship path])
+  ==
++$  clean-slate-7
   $:  %7
       starting=(map yarn [=trying =vase])
       running=(list yarn)
@@ -132,7 +141,8 @@
     =.  any  (old-to-5 any)
     =.  any  (old-to-6 any)
     =.  any  (old-to-7 any)
-    ?>  ?=(%7 -.any)
+    =.  any  (old-to-8 any)
+    ?>  ?=(%8 -.any)
     ::
     =.  tid.state  tid.any
     =/  yarns=(list yarn)
@@ -159,8 +169,8 @@
     ++  old-to-2
       |=  old=clean-slate-any
       ^-  (quip card clean-slate-any)
-      ?>  ?=(?(%1 %2 %3 %4 %5 %6 %7) -.old)
-      ?:  ?=(?(%2 %3 %4 %5 %6 %7) -.old)
+      ?>  ?=(?(%1 %2 %3 %4 %5 %6 %7 %8) -.old)
+      ?:  ?=(?(%2 %3 %4 %5 %6 %7 %8) -.old)
         `old
       :-  ~[bind-eyre:sc]
       :*  %2
@@ -173,8 +183,8 @@
     ++  old-to-3
       |=  old=clean-slate-any
       ^-  clean-slate-any
-      ?>  ?=(?(%2 %3 %4 %5 %6 %7) -.old)
-      ?:  ?=(?(%3 %4 %5 %6 %7) -.old)
+      ?>  ?=(?(%2 %3 %4 %5 %6 %7 %8) -.old)
+      ?:  ?=(?(%3 %4 %5 %6 %7 %8) -.old)
         old
       :*  %3
         starting.old
@@ -186,8 +196,8 @@
     ++  old-to-4
       |=  old=clean-slate-any
       ^-  clean-slate-any
-      ?>  ?=(?(%3 %4 %5 %6 %7) -.old)
-      ?:  ?=(?(%4 %5 %6 %7) -.old)
+      ?>  ?=(?(%3 %4 %5 %6 %7 %8) -.old)
+      ?:  ?=(?(%4 %5 %6 %7 %8) -.old)
         old
       :*  %4
         starting.old
@@ -199,15 +209,15 @@
     ++  old-to-5
       |=  old=clean-slate-any
       ^-  clean-slate-any
-      ?>  ?=(?(%4 %5 %6 %7) -.old)
-      ?:  ?=(?(%5 %6 %7) -.old)  old
+      ?>  ?=(?(%4 %5 %6 %7 %8) -.old)
+      ?:  ?=(?(%5 %6 %7 %8) -.old)  old
       [%5 +.old(serving [serving.old ~])]
     ::
     ++  old-to-6
       |=  old=clean-slate-any
       ^-  clean-slate-any
-      ?>  ?=(?(%5 %6 %7) -.old)
-      ?:  ?=(?(%6 %7) -.old)  old
+      ?>  ?=(?(%5 %6 %7 %8) -.old)
+      ?:  ?=(?(%6 %7 %8) -.old)  old
       :-  %6
       %=    +.old
           scrying
@@ -223,12 +233,22 @@
     ++  old-to-7
       |=  old=clean-slate-any
       ^-  clean-slate-any
-      ?>  ?=(?(%6 %7) -.old)
-      ?:  ?=(%7 -.old)  old
+      ?>  ?=(?(%6 %7 %8) -.old)
+      ?:  ?=(?(%7 %8) -.old)  old
       =-  old(- %7, serving -)
       %-  ~(run by serving.old)
       |=  [request=(unit @ta) =mark =desk]
       [(bind request (late %json)) mark desk]
+    ::
+    ++  old-to-8
+      |=  old=clean-slate-any
+      ^-  clean-slate-any
+      ?>  ?=(?(%7 %8) -.old)
+      ?:  ?=(%8 -.old)  old
+      =-  old(- %8, serving -)
+      %-  ~(run by serving.old)
+      |=  [request=(unit [rid=@ta take=?(%json %noun)]) =mark =desk]
+      [request mark desk ~]
     --
   ::
   ++  on-poke
@@ -346,8 +366,9 @@
   =/  take  (test 'accept')
   ::
   =/  =tid  (new-thread-id thread)
+  =/  from  ?:(=(1 (lent sap.bowl)) `%base `(rear sap.bowl))
   =.  serving.state
-    (~(put by serving.state) tid [`[eyre-id take] output-mark desk])
+    (~(put by serving.state) tid [`[eyre-id take] output-mark desk from])
   ::
   =/  input=vase
     %+  slop  !>(~)
@@ -434,8 +455,13 @@
     ~|  [%already-starting yarn]
     !!
   ::
+  =/  from
+    ?:  =(1 (lent sap.bowl))  `%base
+    =/  path  /(scot %p our.bowl)/[(rear sap.bowl)]/(scot %da now.bowl)/$
+    ?.  .^(? %gu path)  ~
+    `.^(desk %gd path)
   =?  serving.state  !(~(has by serving.state) new-tid)
-    (~(put by serving.state) new-tid [~ %noun q.beak])
+    (~(put by serving.state) new-tid [~ %noun q.beak from])
   ::
   =.  tid.state       (~(put by tid.state) new-tid yarn)
   ?-    -.source
@@ -481,6 +507,25 @@
   =.  starting.state  (~(del by starting.state) yarn)
   (begin-shed yarn p.res)
 ::
+::  thread effects inherit and restricted by caller desk permissions
+++  perm-check
+  |=  [=yarn cards=(list card)]
+  ^-  (each ~ [term tang])
+  =/  dat  (~(got by serving.state) (yarn-to-tid yarn))
+  ?:  =(`%base from.dat)  [%& ~]
+  =+  peg=(yarn-to-peg yarn bowl)
+  =/  has-per  (cres:guard:gall our.bowl peg cards)
+  ?:  has-per  [%& ~]
+  =/  msg=tang
+    %+  roll  cards
+    |=  [c=card:agent:gall =tang]
+    ?@  per=(must:guard:gall our.bowl c)
+      ?:  per  tang
+      [leaf+"spider: never allowed: {<-.c>}" tang]
+    ?:  (have:guard:gall peg per)  tang
+    [leaf+"spider: missing permission: {<per>}" tang]
+  [%| err=[%missing-permissions msg]]
+::
 ++  begin-shed
   |=  [=yarn =shed:khan]
   ?<  (~(has of running.state) yarn)
@@ -524,10 +569,11 @@
     =/  out
       %-  mule  |.
       (take:eval:m eval-form (convert-bowl yarn bowl) input)
-    ?-  -.out
-      %&  p.out
-      %|  [[~ [%fail %crash p.out]] eval-form]
-    ==
+    ?.  ?=(%& -.out)  [[~ [%fail %crash p.out]] eval-form]
+    =/  perm  (perm-check yarn -.-.p.out)
+    ?:  -.perm  p.out
+    [[~ [%fail %crash +.perm]] eval-form]
+  ::
   =.  running.state  (~(put of running.state) yarn eval-form)
   =/  =tid  (yarn-to-tid yarn)
   =^  new-cards  state
@@ -602,7 +648,7 @@
   =-  (fall - `state)
   %+  bind
     (~(get by serving.state) tid)
-  |=  [request=(unit [rid=@ta take=?(%json %noun)]) output=mark =desk]
+  |=  [request=(unit [rid=@ta take=?(%json %noun)]) output=mark =desk *]
   :_  state(serving (~(del by serving.state) tid))
   ?~  request
     ~
@@ -647,7 +693,7 @@
   =-  (fall - `state)
   %+  bind
     (~(get by serving.state) tid)
-  |=  [request=(unit [rid=@ta take=?(%json %noun)]) output=mark =desk]
+  |=  [request=(unit [rid=@ta take=?(%json %noun)]) output=mark =desk *]
   ?~  request
     `state
   ?-  take.u.request
@@ -713,15 +759,15 @@
   |=  [=yarn =bowl:gall]
   ^-  bowl:spider
   :*  our.bowl
-    src.bowl
+      src.bowl
       (yarn-to-tid yarn)
       (yarn-to-parent yarn)
-      wex.bowl
-      sup.bowl
-      eny.bowl
+      wex.bowl  ::  REVIEW: leaking?
+      sup.bowl  ::  REVIEW: leaking?
+      eny.bowl  ::  REVIEW: safety
       now.bowl
       (yarn-to-byk yarn bowl)
-      peg.bowl
+      (yarn-to-peg yarn bowl)
   ==
 ::
 ++  yarn-to-tid
@@ -742,15 +788,25 @@
 ::
 ++  yarn-to-byk
   |=  [=yarn =bowl:gall]
-  =/  [* * =desk]
+  =/  [* * =desk *]
     ~|  "no desk associated with {<tid>}"
-     %-  ~(got by serving.state)  (yarn-to-tid yarn)
+    %-  ~(got by serving.state)  (yarn-to-tid yarn)
   =/  boc  bec
   boc(q desk)
 ::
+++  yarn-to-peg
+  |=  [=yarn =bowl:gall]
+  ^-  (set perm:gall)
+  =/  [* * * from=(unit desk)]
+    ~|  "no desk associated with {<tid>}"
+    %-  ~(got by serving.state)  (yarn-to-tid yarn)
+  ?~  from  ~
+  =+  .^(=bond:ward:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/bond/[u.from])
+  peg.bond
+::
 ++  clean-state
   !>  ^-  clean-slate
-  7+state(running (turn ~(tap of running.state) head))
+  8+state(running (turn ~(tap of running.state) head))
 ::
 ++  convert-tube
   |=  [from=mark to=mark =desk =bowl:gall]
