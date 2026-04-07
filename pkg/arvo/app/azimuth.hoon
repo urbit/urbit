@@ -506,6 +506,7 @@
   ^-  (unit [=ship =udiff:point])
   ?.  ?=(%point +<.tag)  ~
   ?+    +>+<.tag  ~
+      %fief     ~
       %rift     `[ship.tag id.tag %rift rift.tag %.n]
       %sponsor  `[ship.tag id.tag %spon sponsor.tag]
       %keys
