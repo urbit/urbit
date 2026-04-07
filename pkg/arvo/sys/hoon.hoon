@@ -6510,6 +6510,7 @@
     [%cnls p=hoon q=hoon r=hoon]                        ::  %+
     [%cnsg p=wing q=hoon r=(list hoon)]                 ::  %~
     [%cnts p=wing q=(list (pair wing hoon))]            ::  %=
+    [%cnhx p=wing q=(list hoon)]                        ::  %#
   ::                                            ::::::  nock
     [%dtkt p=spec q=hoon]                               ::  .^  nock 11
     [%dtls p=hoon]                                      ::  .+  nock 4
@@ -9286,6 +9287,20 @@
       hag  [q.p.dix q.q.dix]
     ==
   ::
+  ++  over
+    |*  [hyp=wing rig=(list hoon) try=$-(hoon *)]
+    ?.  ?=([@ *] hyp)  (try %cncl wing+hyp rig)
+    =/  fin  (find %read hyp)
+    ?:  ?=(%| -.fin)  ~>(%mean.'cnhx-no-first' !!)
+    ?^  res=(mole try(+< [%cncl wing+hyp rig]))  u.res
+    =/  n=@  1
+    |-
+    =/  nex=wing  hyp(i [%| n `i.hyp])
+    =/  fin  (find %read nex)
+    ?:  ?=(%| -.fin)  ~_(leaf+"cnhx-no-next n={<n>}" !!)
+    ?^  res=(mole try(+< [%cncl wing+nex rig]))  u.res
+    $(n +(n))
+  ::
   ++  et
     |_  [hyp=wing rig=(list (pair wing hoon))]
     ::
@@ -9970,6 +9985,7 @@
     ^-  [p=type q=nock]
     ::~&  %pure-mint
     |^  ^-  [p=type q=nock]
+    =*  mint-buc  $
     ?:  ?&(=(%void sut) !?=([%dbug *] gen))
       ?.  |(!vet ?=([%lost *] gen) ?=([%zpzp *] gen))
         ~>(%mean.'mint-vain' !!)
@@ -9985,6 +10001,10 @@
         [%brpt *]  (grow %gold p.gen %wet [%$ 1] q.gen)
     ::
         [%cnts *]  (~(mint et p.gen q.gen) gol)
+    ::
+        [%cnhx *]
+      ~_  %mint-over
+      (over p.gen q.gen |=(gin=hoon mint-buc(gen gin)))
     ::
         [%dtkt *]
       =+  nef=$(gen [%kttr p.gen])
@@ -10157,6 +10177,7 @@
     ~/  %mull
     |=  [gol=type dox=type gen=hoon]
     |^  ^-  [p=type q=type]
+    =*  mull-buc  $
     ?:  =(%void sut)
       ~>(%mean.'mull-none' !!)
     ?-    gen
@@ -10169,6 +10190,11 @@
         [%brcn *]  (grow %gold p.gen %dry [%$ 1] q.gen)
         [%brpt *]  (grow %gold p.gen %wet [%$ 1] q.gen)
         [%cnts *]  (~(mull et p.gen q.gen) gol dox)
+    ::
+        [%cnhx *]
+      ~_  %mull-over
+      (over p.gen q.gen |=(gin=hoon mull-buc(gen gin)))
+    ::
         [%dtkt *]  =+($(gen q.gen, gol %noun) $(gen [%kttr p.gen]))
         [%dtls *]  =+($(gen p.gen, gol [%atom %$ ~]) (beth [%atom %$ ~]))
         [%sand *]  (beth (play gen))
@@ -10538,11 +10564,14 @@
     =>  .(vet |)
     |=  gen=hoon
     ^-  type
+    =*  play-buc  $
     ?-  gen
       [^ *]      (cell $(gen p.gen) $(gen q.gen))
       [%brcn *]  (core sut [p.gen %dry %gold] sut *seminoun q.gen)
       [%brpt *]  (core sut [p.gen %wet %gold] sut *seminoun q.gen)
       [%cnts *]  ~(play et p.gen q.gen)
+      [%cnhx *]  ~_  %play-over
+                 (over p.gen q.gen |=(gin=hoon play-buc(gen gin)))
       [%dtkt *]  $(gen [%kttr p.gen])
       [%dtls *]  [%atom %$ ~]
       [%rock *]  |-  ^-  type
@@ -12960,7 +12989,13 @@
       :-  '>'
         (ifix [gar gal] (stag %yell (most ace wide)))
       :-  '#'
-        ;~(pfix hax reed)
+        ;~  pfix
+          hax
+          ;~  pose
+            reed
+            (stag %cnhx (ifix [pal par] ;~((glue ace) rope (most ace wide))))
+          ==
+        ==
     ==
   ++  soil
     ;~  pose
@@ -13171,6 +13206,7 @@
                   ['~' (rune sig %cnsg expn)]
                   ['*' (rune tar %cntr expm)]
                   ['=' (rune tis %cnts exph)]
+                  ['#' (rune hax %cnhx expk)]
               ==
             ==
           :-  ':'
@@ -13483,7 +13519,7 @@
     ++  exph  |.((butt ;~(gunk rope rick)))             ::  wing, [wing hoon]s
     ++  expi  |.((butt ;~(gunk loaf hank)))             ::  one or more hoons
     ++  expj  |.(;~(gunk lore loaf))                    ::  skin and hoon
-   :: ++  expk  |.(;~(gunk loaf ;~(plug loaf (easy ~))))::  list of two hoons
+    ++  expk  |.(;~(gunk rope hank))                    ::  wing, list of hoons
    :: ++  expl  |.(;~(gunk sym loaf loaf))              ::  term, two hoons
     ++  expm  |.((butt ;~(gunk rope loaf rick)))        ::  several [spec hoon]s
     ++  expn  |.  ;~  gunk  rope  loaf                  ::  wing, hoon,
