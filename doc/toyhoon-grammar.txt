@@ -1,0 +1,100 @@
+Tall -> Wide
+Tall -> atom_t
+Wide -> atom_w
+
+Wide -> dttr( Wide ace Wide )
+Tall -> dttr_ Tall gap Tall
+
+Wide -> dtwt( Wide )
+Tall -> dtwt_ Tall
+
+Wide -> dtls( Wide )
+Tall -> dtls_ Tall
+
+Wide -> dtts( Wide ace Wide )
+Tall -> dtts_ Tall gap Tall
+
+Wide -> wtcl( Wide ace Wide ace Wide )
+Tall -> wtcl_ Tall gap Tall gap Tall
+
+Wide -> tsgr( Wide ace Wide )
+Tall -> tsgr_ Tall gap Tall
+
+Wide -> tsls( Wide ace Wide )
+Tall -> tsls_ Tall gap Tall
+
+Wing -> WingElement MoreWingElements
+MoreWingElements -> dot WingElement MoreWingElements
+MoreWingElements -> ε
+WingElement -> rawWingAxis
+WingElement -> skipSymbol
+WingElement -> lark
+
+MoreEditPairsW -> com EditPairW MoreEditPairsW
+MoreEditPairsW -> ε
+EditPairsW -> EditPairW MoreEditPairsW
+EditPairW -> Wing ace Wide
+
+MoreEditPairsT -> gap EditPairT MoreEditPairsT
+MoreEditPairsT -> ε
+EditPairsT -> EditPairT MoreEditPairsT
+EditPairT -> Wing gap Tall
+
+Wide -> cnts( Wing EditPairsW )
+Tall -> cnts_ Wing EditPairsT gap stet
+
+TagOrClue -> cenSym MaybeClue
+MaybeClue -> dot Wide
+MaybeClue -> ε
+Wide -> sggr( TagOrClue ace Wide )
+Tall -> sggr_ TagOrClue gap Tall
+
+Wide -> ktls( Wide ace Wide )
+Tall -> ktls_ Tall gap Tall
+
+Wide -> wtpt( Wing ace Wide ace Wide )
+Tall -> wtpt_ Wing gap Tall gap Tall
+
+Wide -> wtcn( Wing ace Wide ace Wide ace Wide )
+Tall -> wtcn_ Wing gap Tall gap Tall gap Tall
+
+Wide -> wtkt( Wing ace Wide ace Wide )
+Tall -> wtkt_ Wing gap Tall gap Tall
+
+MoreWides -> ace Wide MoreWides
+MoreWides -> ε
+Wide -> cltr( Wide ace Wide MoreWides )
+Wide -> [ Wide ace Wide MoreWides ]
+MoreTalls -> Tall gap MoreTalls
+MoreTalls -> ε
+Tall -> cltr_ Tall gap Tall gap MoreTalls
+
+LayoutElementW -> sym
+LayoutElementW -> WideLayout
+LayoutElementW -> tar
+MoreLayoutElementsW -> ace LayoutElementW MoreLayoutElementsW
+MoreLayoutElementsW -> ε
+WideLayout -> [ LayoutElementW ace LayoutElementW MoreLayoutElementsW ]
+WideLayout -> cltr( LayoutElementW ace LayoutElementW MoreLayoutElementsW )
+
+LayoutElementT -> TallLayout
+LayoutElementT -> LayoutElementW
+MoreLayoutElementsT -> gap LayoutElementT MoreLayoutElementsT
+MoreLayoutElementsT -> ε
+TallLayout -> cltr_ LayoutElementT gap LayoutElementT MoreLayoutElementsT gap stet
+
+Layout -> TallLayout gap
+Layout -> WideLayout gap
+Layout -> ε
+
+Arm ->  slus gap sym gap Tall
+MoreArms -> gap Arm MoreArms
+MoreArms -> ε
+Battery -> Arm MoreArms gap stop
+
+Variance -> bar gap
+Variance -> wut gap
+Variance -> ε
+
+Tall -> brpt_ Layout Battery
+Tall -> brcn_ Variance Layout Battery
