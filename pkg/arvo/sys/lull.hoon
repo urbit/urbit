@@ -3985,6 +3985,9 @@
       ::
         [%jael %trim p=@ud]
       ::
+        [%khan %fard p=(fyrd:khan cage)]
+        [%khan %fyrd p=(fyrd:khan cast:khan)]
+        [%khan %lard =bear:khan =shed:khan]
         [%khan %trim p=@ud]
       ::
         [%lick %spin =name:lick]
@@ -4505,9 +4508,9 @@
         [%done ~]                                       ::  socket closed
         ::  TODO  mark ignored                          ::
         ::                                              ::
-        [%fard p=(fyrd cage)]                           ::  in-arvo thread
-        [%fyrd p=(fyrd cast)]                           ::  external thread
-        [%lard =bear =shed]                             ::  inline thread
+        [%fard =dude:gall p=(fyrd cage)]                ::  in-arvo thread
+        [%fyrd =dude:gall p=(fyrd cast)]                ::  external thread
+        [%lard =dude:gall =bear =shed]                  ::  inline thread
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
     ==                                                  ::
