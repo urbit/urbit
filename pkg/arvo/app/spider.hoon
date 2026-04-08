@@ -14,7 +14,7 @@
   $:  starting=(map yarn [=trying =vase])
       running=(axal thread-form)
       tid=(map tid yarn)
-      serving=(map tid [(unit [rid=@ta take=?(%json %noun)]) =mark =desk from=(unit desk)])
+      serving=(map tid [(unit [rid=@ta take=?(%json %noun)]) =mark =desk from=desk])
       scrying=(jug tid [=wire =ship =path])
   ==
 ::
@@ -36,7 +36,7 @@
       starting=(map yarn [=trying =vase])
       running=(list yarn)
       tid=(map tid yarn)
-      serving=(map tid [(unit [rid=@ta take=?(%json %noun)]) =mark =desk from=(unit desk)])
+      serving=(map tid [(unit [rid=@ta take=?(%json %noun)]) =mark =desk from=desk])
       scrying=(jug tid [wire ship path])
   ==
 +$  clean-slate-7
@@ -248,7 +248,7 @@
       =-  old(- %8, serving -)
       %-  ~(run by serving.old)
       |=  [request=(unit [rid=@ta take=?(%json %noun)]) =mark =desk]
-      [request mark desk ~]
+      [request mark desk %base]
     --
   ::
   ++  on-poke
@@ -340,6 +340,32 @@
   |=  file=term
   :((cury cat 3) file '--' (scot %uv (sham eny.bowl)))
 ::
+++  ted-mock
+  |*  =mold
+  |=  [=yarn run=_^?(|.(*mold))]
+  ^-  (each mold tang)
+  =/  desk  from:(~(got by serving.state) (yarn-to-tid yarn))
+  =+  peg=(yarn-to-peg yarn bowl)
+  =/  out  (mock [run %9 2 %0 1] (ted-look desk peg))
+  ?-  -.out
+    %0  [%& !<(mold [-:!>(*mold) p.out])]
+    %1  [%| 'spider: scry blocked on permissions' ~]
+    %2  [%| p.out]
+  ==
+::
+++  ted-look
+  |=  [=desk peg=(set perm:gall)]
+  |=  ref=^
+  ^-  (unit (unit))
+  =+  ;;(=path +.ref)
+  ?~  omen=(de-omen path)  [~ ~]
+  ?.  ?|  =(%base desk)
+          (rite:guard:gall our.bowl peg u.omen)
+      ==
+    %-  (slog leaf+"spider: scry on {<path>} blocked" ~)
+    ~
+  ``.^(noun path)
+::
 ++  handle-http-request
   ~/  %handle-http-request
   |=  [eyre-id=@ta =inbound-request:eyre]
@@ -366,9 +392,10 @@
   =/  take  (test 'accept')
   ::
   =/  =tid  (new-thread-id thread)
-  =/  from  ?:(=(1 (lent sap.bowl)) `%base `(rear sap.bowl))
+  =/  from  (desk-from-sap bowl)
+  ?~  from  (thread-http-fail tid %missing-provenance '' ~)
   =.  serving.state
-    (~(put by serving.state) tid [`[eyre-id take] output-mark desk from])
+    (~(put by serving.state) tid [`[eyre-id take] output-mark desk u.from])
   ::
   =/  input=vase
     %+  slop  !>(~)
@@ -455,13 +482,10 @@
     ~|  [%already-starting yarn]
     !!
   ::
-  =/  from
-    ?:  =(1 (lent sap.bowl))  `%base
-    =/  path  /(scot %p our.bowl)/[(rear sap.bowl)]/(scot %da now.bowl)/$
-    ?.  .^(? %gu path)  ~
-    `.^(desk %gd path)
+  =/  from  (desk-from-sap bowl)
+  ?~  from  ~|([%missing-provenance yarn] !!)
   =?  serving.state  !(~(has by serving.state) new-tid)
-    (~(put by serving.state) new-tid [~ %noun q.beak from])
+    (~(put by serving.state) new-tid [~ %noun q.beak u.from])
   ::
   =.  tid.state       (~(put by tid.state) new-tid yarn)
   ?-    -.source
@@ -501,7 +525,7 @@
   |=  [=yarn =thread]
   ^-  (quip card ^state)
   =/  =vase  vase:(~(got by starting.state) yarn)
-  =/  res  (mule |.((thread vase)))
+  =/  res  ((ted-mock shed:khan) yarn |.((thread vase)))
   ?:  ?=(%| -.res)
     (thread-fail-not-running (yarn-to-tid yarn) %false-start p.res)
   =.  starting.state  (~(del by starting.state) yarn)
@@ -567,7 +591,11 @@
   |-  ^-  (quip card ^state)
   =^  r=[cards=(list card) =eval-result:eval:m]  eval-form
     =/  out
-      %-  mule  |.
+      %+  %-  ted-mock
+          $:  [cards=(list card) =eval-result:eval:m]
+              eval-form:eval:m
+          ==
+      yarn  |.
       (take:eval:m eval-form (convert-bowl yarn bowl) input)
     ?.  ?=(%& -.out)  [[~ [%fail %crash p.out]] eval-form]
     =/  perm  (perm-check yarn -.-.p.out)
@@ -797,12 +825,22 @@
 ++  yarn-to-peg
   |=  [=yarn =bowl:gall]
   ^-  (set perm:gall)
-  =/  [* * * from=(unit desk)]
+  =/  [* * * from=desk]
     ~|  "no desk associated with {<tid>}"
     %-  ~(got by serving.state)  (yarn-to-tid yarn)
-  ?~  from  ~
-  =+  .^(=bond:ward:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/bond/[u.from])
+  =+  .^(=bond:ward:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/bond/[from])
   peg.bond
+::
+++  desk-from-sap
+  |=  =bowl:gall
+  ^-  (unit desk)
+  ?+  sap.bowl  ~&('unknown provenance' ~)  ::REVIEW
+      [%eyre @ ~]  `i.t.sap.bowl
+      [?(%gall %khan) @ ~]
+    =/  path  /(scot %p our.bowl)/[i.t.sap.bowl]/(scot %da now.bowl)/$
+    ?.  .^(? %gu path)  ~
+    `.^(desk %gd path)
+  ==
 ::
 ++  clean-state
   !>  ^-  clean-slate
