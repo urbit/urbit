@@ -1983,6 +1983,10 @@
               [%gall *]        [%g +>.neet]
               [%iris *]        [%i +>.neet]
               [%jael *]        [%j +>.neet]
+            ::
+              [%khan %fard *]  [%k +>-.neet agent-name +>+.neet]
+              [%khan %fyrd *]  [%k +>-.neet agent-name +>+.neet]
+              [%khan %lard *]  [%k +>-.neet agent-name +>+.neet]
               [%khan *]        [%k +>.neet]
             ::
               [%lick %spin *]  [%l +>.neet(name [agent-name name.neet])]
