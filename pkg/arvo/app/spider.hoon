@@ -536,7 +536,7 @@
   |=  [=yarn cards=(list card)]
   ^-  (each ~ [term tang])
   =/  dat  (~(got by serving.state) (yarn-to-tid yarn))
-  ?:  =(`%base from.dat)  [%& ~]
+  ?:  =(%base from.dat)  [%& ~]
   =+  peg=(yarn-to-peg yarn bowl)
   =/  has-per  (cres:guard:gall our.bowl peg cards)
   ?:  has-per  [%& ~]
@@ -589,6 +589,7 @@
     (need fil:(~(dip of running.state) yarn))
   =|  cards=(list card)
   |-  ^-  (quip card ^state)
+  =/  ted-bowl  (convert-bowl yarn bowl)
   =^  r=[cards=(list card) =eval-result:eval:m]  eval-form
     =/  out
       %+  %-  ted-mock
@@ -596,7 +597,7 @@
               eval-form:eval:m
           ==
       yarn  |.
-      (take:eval:m eval-form (convert-bowl yarn bowl) input)
+      (take:eval:m eval-form ted-bowl input)
     ?.  ?=(%& -.out)  [[~ [%fail %crash p.out]] eval-form]
     =/  perm  (perm-check yarn -.-.p.out)
     ?:  -.perm  p.out
@@ -623,7 +624,13 @@
     :_  cards
     ^-  ^card
     ?+  card  card
-        [%pass * *]  [%pass [%thread tid p.card] q.card]
+        [%pass * *]
+      =/  dat  (~(got by serving.state) tid)
+      =/  ted-wir  [%thread tid p.card]
+      ?:  =(q.byk.bowl from.dat)
+        [%pass ted-wir q.card]
+      [%pass ted-wir %arvo %gall %dole from.dat q.card]
+      ::
         [%give ?(%fact %kick) *]
       =-  card(paths.p -)
       %+  turn  paths.p.card
@@ -834,13 +841,9 @@
 ++  desk-from-sap
   |=  =bowl:gall
   ^-  (unit desk)
-  ?+  sap.bowl  ~&('unknown provenance' ~)  ::REVIEW
-      [%eyre @ ~]  `i.t.sap.bowl
-      [?(%gall %khan) @ ~]
-    =/  path  /(scot %p our.bowl)/[i.t.sap.bowl]/(scot %da now.bowl)/$
-    ?.  .^(? %gu path)  ~
-    `.^(desk %gd path)
-  ==
+  ?:  ?=([?(%eyre %khan %gall) @ ~] sap.bowl)
+    `i.t.sap.bowl
+  ~&('unknown provenance' ~)
 ::
 ++  clean-state
   !>  ^-  clean-slate
