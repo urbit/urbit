@@ -1368,6 +1368,29 @@
       ==
     ==
   ::
+  ::  +he-eval: programmatic eval — like +he-done but without terminal echo
+  ::
+  ::    Parses src as a full Dojo command (supports =x bindings, generators,
+  ::    threads, etc.) and executes it against the session's subject.  Results
+  ::    are emitted as %sole-effect %tan facts on the /sole subscription; a
+  ::    trailing %sole-effect %pro signals completion.  Does not touch the
+  ::    sole-share cursor state, so terminal sessions are unaffected.
+  ::
+  ++  he-eval
+    |=  src=tape
+    ^+  +>
+    =+  doy=(he-duke src)
+    ?-    -.doy
+        %|  he-pine:(he-errd ~ p.doy)
+        %&
+      ?~  p.doy
+        he-pine:(he-errd ~ (lent src))
+      ?-  -.u.p.doy
+        %&  (he-plan(buf ~) p.u.p.doy)
+        %|  he-prom(buf p.u.p.doy)
+      ==
+    ==
+  ::
   ++  he-tab
     |=  pos=@ud
     ^+  +>
@@ -1779,6 +1802,11 @@
       =+  !<(=id vase)
       =/  ses=session  (~(got by hoc) id)
       he-abet:(~(he-done he hid id ~ ses) (tufa buf.say.ses))
+    ::
+        %eval-command
+      =+  !<([ses=@ta src=tape] vase)
+      =/  =id  [our.hid ses]
+      he-abet:(~(he-eval he hid id ~ (~(got by hoc) id)) src)
     ::
         %allow-remote-login
       =/  who  !<(@p vase)
