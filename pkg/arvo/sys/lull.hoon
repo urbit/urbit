@@ -3741,6 +3741,7 @@
     $~  [%vega ~]                                       ::
     $%  [%clog id=*]                                    ::  clog notification
         [%deal p=sack q=term r=deal]                    ::  full transmission
+        [%dole from=dude prov=desk =wire =note:agent]   ::  do as desk
         [%sear =ship]                                   ::  clear pending queues
         [%jolt =desk =dude]                             ::  (re)start agent
         [%idle =dude]                                   ::  suspend agent
@@ -3978,6 +3979,7 @@
         [%eyre %trim p=@ud]
       ::
         [%gall %trim p=@ud]
+        [%gall %dole from=desk =note:agent:gall]
       ::
         [%iris %request =request:http =outbound-config:iris]
         [%iris %cancel-request ~]
