@@ -4510,9 +4510,9 @@
         [%done ~]                                       ::  socket closed
         ::  TODO  mark ignored                          ::
         ::                                              ::
-        [%fard =dude:gall p=(fyrd cage)]                ::  in-arvo thread
-        [%fyrd =dude:gall p=(fyrd cast)]                ::  external thread
-        [%lard =dude:gall =bear =shed]                  ::  inline thread
+        [%fard =desk p=(fyrd cage)]                     ::  in-arvo thread
+        [%fyrd =desk p=(fyrd cast)]                     ::  external thread
+        [%lard =desk =bear =shed]                       ::  inline thread
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
     ==                                                  ::
