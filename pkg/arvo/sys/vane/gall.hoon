@@ -1926,6 +1926,7 @@
         ::     leaf/"wire: {<wire>}"
         ::     tang.neet
         ::   ==
+        =+  og-wire=wire
         =.  wire
           :^  %use  agent-name  run-nonce.yoke
           ?-  -.neet
@@ -1950,7 +1951,11 @@
           ==
         ::
         =/  =note-arvo
-          =/  prov=path  /gall/[agent-name]
+          =/  from=desk  q.beak:?>(?=(%live -.yoke) yoke)
+          =/  prov=path
+            ?:  ?=([%dole @ ~] path.attributing.agent-routes)
+              /gall/[i.t.path.attributing.agent-routes]
+            /gall/[from]
           ?-  -.neet
             %huck   note-arvo.neet
             %jump   note-arvo.neet
@@ -1980,13 +1985,15 @@
                 [%e %connect binding.neet wat.neet]
               ==
             ::
+              [%gall %dole *]  [%g +>-.neet agent-name -.+>+.neet og-wire +.+>+.neet]
               [%gall *]        [%g +>.neet]
+            ::
               [%iris *]        [%i +>.neet]
               [%jael *]        [%j +>.neet]
             ::
-              [%khan %fard *]  [%k +>-.neet agent-name +>+.neet]
-              [%khan %fyrd *]  [%k +>-.neet agent-name +>+.neet]
-              [%khan %lard *]  [%k +>-.neet agent-name +>+.neet]
+              [%khan %fard *]  [%k +>-.neet from +>+.neet]
+              [%khan %fyrd *]  [%k +>-.neet from +>+.neet]
+              [%khan %lard *]  [%k +>-.neet from +>+.neet]
               [%khan *]        [%k +>.neet]
             ::
               [%lick %spin *]  [%l +>.neet(name [agent-name name.neet])]
@@ -3057,6 +3064,7 @@
             i.i.duct
         ==
       *path
+    ?:  ?=(%dole -.task)  /dole/[prov.task]
     /[i.i.duct]
   ::
   =/  mo-core  (mo-abed:mo duct)
@@ -3071,6 +3079,17 @@
       ?>  =(p.sack our)
       mo-abet:(mo-send-foreign-request:mo-core q.sack term deal)
     mo-abet:(mo-handle-local:mo-core prov p.sack term deal)
+  ::
+      %dole
+    =/  [from=dude =desk wir=wire =note:agent]  [from prov wire note]:task
+    =/  ap-core  (ap-abed:ap:mo-core from [~ our prov])
+    =/  =card:agent:gall  [%pass wir note]
+    =+  yoke=yoke:ap-core
+    ?>  ?=(%live -.yoke)
+    ?>  ?=(%& -.agent.yoke)
+    =^  moz=(list move)  ap-core
+      (ap-handle-result:ap-core [%& ~[card] p.agent.yoke])
+    mo-abet:ap-abet:(ap-move:ap-core moz)
   ::
       %init  [~ gall-payload(system-duct.state duct)]
       %plea
