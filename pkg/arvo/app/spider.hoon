@@ -591,6 +591,15 @@
   |-  ^-  (quip card ^state)
   =/  ted-bowl  (convert-bowl yarn bowl)
   =^  r=[cards=(list card) =eval-result:eval:m]  eval-form
+    =.  input
+      ?~  input  ~
+      =+  in=u.input
+      ?.  ?=(%agent -.in)  `in
+      ?.  ?=(%fact -.sign.in)  `in
+      ?:  ?=(%thread-done p.cage.sign.in)  `in
+      :-  ~
+      :^  %agent  wire.in  %fact
+      (validate-mark:eval:m q.q.cage.sign.in p.cage.sign.in ted-bowl(byk byk.bowl))
     =/  out
       %+  %-  ted-mock
           $:  [cards=(list card) =eval-result:eval:m]
