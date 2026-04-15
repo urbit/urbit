@@ -235,6 +235,27 @@
   ++  on-poke
     |=  [=mark =vase]
     ^-  (quip card:agent:gall agent:gall)
+    ::  %eval-command: programmatic execution, bypasses keystroke buffer
+    ::
+    ::    The caller must already hold a subscription to /sole/[ship]/[ses]
+    ::    (which registers the session).  Results arrive as %sole-effect
+    ::    facts on that subscription; %sole-effect %pro signals completion.
+    ::
+    ?:  ?=(%eval-command mark)
+      =+  !<([ses=@ta src=tape] vase)
+      =/  =sole-id  [our.bowl ses]
+      ?>  (~(has by soles) sole-id)
+      =/  res=(unit [? cmd=command-type])
+        %+  rust  src
+        (command-parser:og sole-id)
+      ?~  res
+        :_  this
+        (deal ~[[%shoe [sole-id]~ %sole %bel ~]])
+      =^  cards  shoe  (on-command:og sole-id cmd.u.res)
+      =/  pro=card  [%shoe [sole-id]~ %sole %pro & dap.bowl "> "]
+      :_  this
+      (deal (snoc cards pro))
+    ::  pass non-%sole-action pokes to the inner app
     ?.  ?=(%sole-action mark)
       =^  cards  shoe  (on-poke:og mark vase)
       [(deal cards) this]
@@ -374,6 +395,12 @@
   ++  on-peek
     |=  =path
     ^-  (unit (unit cage))
+    ::  /x/sole/sessions: JSON array of active session names (@ta cords)
+    ?:  =(/x/sole/sessions path)
+      =/  names=(list json)
+        %+  turn  ~(tap in ~(key by soles))
+        |=([who=@p ses=@ta] s+ses)
+      ``json+!>([%a names])
     ?.  =(/x/dbug/state path)  (on-peek:og path)
     ``noun+(slop on-save:og !>(shoe=state))
   ::
