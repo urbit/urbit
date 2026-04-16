@@ -9382,13 +9382,11 @@
             =*  sage  sage.sign
             ?>  ?=(^ q.sage.sign)
             ?>  =(%azimuth-peer-state p.q.sage)
-            =+  ;;(mut=azimuth-state [0 q.q.sage])
+            =+  ;;(mut=[=ship =life =pass] q.q.sage)
             =/  per  (~(got by chums.ames-state) ship.p.sage)
             ?>  ?=(%known -.per)
-            ::?>  =(symmetric-key.mut symmetric-key.per)
+            ?>  =(our ship.mut)
             ?>  =(life.ames-state life.mut)
-            ?>  =(rift.ames-state rift.mut)
-            ?>  =(pub.saf.ames-state public-keys.mut)
             ?>  =(pass.ames-state pass.mut)
             :: maybe we could do something actually interesting here one day
             [~ ~]^ev-core
@@ -12513,7 +12511,7 @@
             `+<.u.peer
           ?~  muth  [~ ~]
           ?.  =(life.u.muth u.her-lyf)  [~ ~]
-          ``azimuth-peer-state/!>(+.u.muth)
+          ``azimuth-peer-state/!>([u.her life.u.muth pass.u.muth])
         ::  publisher-side, weight of a noun at .pat, as measured by .boq
         ::
         ++  peek-whey
