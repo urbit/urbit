@@ -1643,7 +1643,7 @@
         ?-  +.res
           [%behn %wait *]     [%behn %rest time.res]
           [%clay %warp *]     [%clay %drop id.res]
-          [%eyre %binding *]  [%eyre %disconnect binding wat]:res
+          [%eyre %binding *]  [%eyre %disconnect binding.res]
           [%eyre %cache *]    [%eyre %set-response url.res ~]
           [%iris %request]    [%iris %cancel-request ~]
           [%lick %spin *]     [%lick %shut name.res]
@@ -1678,7 +1678,7 @@
           ?-  +.res
             [%behn %wait *]     [%behn %rest time.res]
             [%clay %warp *]     [%clay %drop id.res]
-            [%eyre %binding *]  [%eyre %disconnect binding wat]:res
+            [%eyre %binding *]  [%eyre %disconnect binding.res]
             [%eyre %cache *]    [%eyre %set-response url.res ~]
             [%iris %request]    [%iris %cancel-request ~]
             [%lick %spin *]     [%lick %shut name.res]
@@ -1941,6 +1941,11 @@
                         [%clay %read *]     `id.neet
                         [%clay %drop *]     `id.neet
                         [%eyre %connect *]  `wat.neet
+                      ::
+                          [%eyre %disconnect *]
+                        =;  det  ?>(?=([%eyre %binding *] det) `wat.det)
+                        %-  ~(got by resource-deets.yoke)
+                        [wire %eyre %binding binding.neet]
                       ==
                     wire
           ==
@@ -2256,24 +2261,28 @@
       |=  [res=arvo-resource acc=_ap-core]
       =.  ap-core  acc
       ?-    +.res
-          ?([%behn %wait *] [%eyre %binding *])
+          [%behn %wait *]
         =.  inflating  (~(del in inflating) &+res)
         ?.  (~(has in resources.yoke) res)  ap-core
         %-  ap-move
         %-  ap-from-internal
         :^  %pass  wire.res  %arvo
-        ?-  +.res
-          [%behn %wait *]     [%behn %wait time.res]
-          [%eyre %binding *]  [%eyre %connect binding wat]:res
-        ==
+        [%behn %wait time.res]
       ::
-          [%clay %warp *]
+          ?([%clay %warp *] [%eyre %binding *])
         =.  inflating  (~(del in inflating) &+res)
         ?.  (~(has in resources.yoke) res)  ap-core
         %-  ap-move
         %-  ap-from-internal
-        =+  =+((~(got by resource-deets.yoke) res) ?>(?=([%clay %warp *] -) -))
-        [%pass wire.res %arvo %clay %read id.res ship desk rave]
+        :^  %pass  wire.res  %arvo
+        =+  det=(~(got by resource-deets.yoke) res)
+        ?-  +.res
+            [%clay %warp *]  ?>  ?=([%clay %warp *] det)
+          [%clay %read id.res [ship desk rave]:det]
+        ::
+            [%eyre %binding *]  ?>  ?=([%eyre %binding *] det)
+          [%eyre %connect binding.res wat.det]
+        ==
       ::
           [%eyre %cache *]
         ::TODO  consider
@@ -2778,7 +2787,7 @@
           :: [%ames %yawn *]                 &+[p.card %ames %keen spar.task]
           [%behn %rest *]                 &+[p.card %behn %wait time.task]
           [%clay %drop *]                 &+[p.card %clay %warp id.q.card]
-          [%eyre %disconnect *]           &+[p.card %eyre %binding [binding wat]:task]
+          [%eyre %disconnect *]           &+[p.card %eyre %binding binding.task]
           [%iris %cancel-request ~]       &+[p.card %iris %request]
           [%lick %shut *]                 &+[p.card %lick %spin name.task]
         ==
@@ -2819,8 +2828,9 @@
         [%clay %read *]                 :-  [%clay %warp ship desk rave]:task
                                         [%clay %warp id.task]
         [%clay %drop *]                 [| %clay %warp id.task]
-        [%eyre %connect *]              [& %eyre %binding binding wat]:task
-        [%eyre %disconnect *]           [| %eyre %binding binding wat]:task
+        [%eyre %connect *]              :-  [%eyre %binding wat.task]
+                                        [%eyre %binding binding.task]
+        [%eyre %disconnect *]           [| %eyre %binding binding.task]
         [%eyre %set-response *]         [& %eyre %cache url.task]
         [%iris %request *]              [& %iris %request]
         [%iris %cancel-request ~]       [| %iris %request]
@@ -2864,7 +2874,7 @@
         `&+[rid det(from.moat.rave ud+nex)]
       ::
         [%eyre *]  ?:  bound.gift  ~
-                   `|+[%eyre %binding binding wat]:gift
+                   `|+[%eyre %binding binding.gift]
         [%iris *]  `|+[%iris %request]
         [%lick *]  ~
       ==

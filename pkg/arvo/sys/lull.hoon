@@ -3733,7 +3733,7 @@
     $%  ::REVIEW  what if this in place of .ken? [%ames %keen =spar:ames]
         [%behn %wait =time]
         [%clay %warp id=*]
-        [%eyre %binding =binding:eyre wat=$@(term generator:eyre)]
+        [%eyre %binding =binding:eyre]
         [%eyre %cache url=@t]  ::TODO  if we had the data we could reinflate...
         [%iris %request]
         :: [%khan ?(%fard %fyrd %lard)]
@@ -3742,7 +3742,7 @@
   ::
   +$  resource-deet
     $~  [%clay %warp ~zod %$ %sing %x *case *path]
-    $%  ::TODO  [%eyre %binding wat=$@(term generator:eyre)]
+    $%  [%eyre %binding wat=$@(term generator:eyre)]
         ::TODO  [%eyre %cache data=*]
         [%clay %warp =ship =desk =rave:clay]
     ==
@@ -3882,7 +3882,7 @@
         [%eyre %rule =http-rule:eyre]
         [%eyre %eauth-host host=(unit @t)]
         [%eyre %connect =binding:eyre wat=$@(term generator:eyre)]
-        [%eyre %disconnect =binding:eyre wat=$@(term generator:eyre)]
+        [%eyre %disconnect =binding:eyre]
         [%eyre %approve-origin =origin:eyre]
         [%eyre %reject-origin =origin:eyre]
         [%eyre %spew veb=@]

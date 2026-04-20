@@ -480,6 +480,7 @@
   =/  =rave:clay  [%sing %x ud+1 /some/txt]
   ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %behn %wait ~2345.6.7)
   ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %clay %read 123 ~zod %desk rave)
+  ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %eyre %connect [~ /x] %dude)
   ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %iris %request *request:http *outbound-config:iris)
   ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %lick %spin /mysocket)
   ;<  *  bind:m  (mock-card %pass /agent/wire %agent [~fun %bar] %watch /blah)
@@ -488,6 +489,8 @@
   ::
   ;<  gall-wire=wire        bind:m
     (a2k-wire %mock /agent/wire ~)
+  ;<  gall-wire-e=wire        bind:m
+    (a2k-wire %mock /agent/wire `%dude)
   ;<  gall-wire-c=wire        bind:m
     (a2k-wire %mock /agent/wire `123)
   ;<  gall-wire-b=wire        bind:m
@@ -501,6 +504,7 @@
     %+  ex-moves  (sort moz aor)
     :~  (ex-move ~[/sysduct] %pass gall-wire [%i %cancel-request ~])
         (ex-move ~[/sysduct] %pass gall-wire [%l %shut [%mock /mysocket]])
+        (ex-move ~[/sysduct] %pass gall-wire-e [%e %disconnect ~ /x])
         (ex-move ~[/sysduct] %pass gall-wire-c [%c %warp ~zod %desk ~])
         (ex-move ~[/sysduct] %pass gall-wire-b [%b %rest ~2345.6.7])
         (ex-move ~[/sysduct] %pass gall-wire-a [%g %deal [~dev ~fun /gall/mock] %bar %leave ~])  ::TODO  deal constructor
@@ -518,6 +522,7 @@
     %+  ex-moves  (sort moz aor)
     :~  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
         (ex-move ~[/sysduct] %pass gall-wire [%l %spin [%mock /mysocket]])
+        (ex-move ~[/sysduct] %pass gall-wire-e [%e %connect [~ /x] %dude])
         (ex-move ~[/sysduct] %pass gall-wire-c [%c %warp ~zod %desk ~ rave])
         (ex-move ~[/sysduct] %pass gall-wire-b [%b %wait ~2345.6.7])
         (ex-on-agent /agent/wire %kick ~)
