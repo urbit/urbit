@@ -3043,10 +3043,7 @@
         $>(?(%boon %done) gift:ames)
         ::  set-config: configures the external http server
         ::
-        ::    TODO: We need to actually return a (map (unit @t) http-config)
-        ::    so we can apply configurations on a per-site basis
-        ::
-        [%set-config =http-config]
+        [%set-config =vere-config]
         ::  sessions: valid authentication cookie strings
         ::
         [%sessions ses=(set @t)]
@@ -3452,12 +3449,30 @@
         ::
         args=*
     ==
-  :: +http-config: full http-server configuration
+  :: +http-config: full http-server configuration in eyre state
   ::
   +$  http-config
-    $:  :: secure: PEM-encoded RSA private key and cert or cert chain
+    $:  :: secure: per-domain PEM-encoded RSA private key and cert (or chain)
         ::
-        secure=(unit [key=wain cert=wain])
+        secure=(map turf [key=wain cert=wain])
+        :: proxy: reverse TCP proxy HTTP(s)
+        ::
+        proxy=_|
+        :: log: keep HTTP(s) access logs
+        ::
+        log=?
+        :: redirect: send 301 redirects to upgrade HTTP to HTTPS
+        ::
+        ::   Note: requires certificate.
+        ::
+        redirect=?
+    ==
+  :: +vere-config: full http-server configuration for vere's consumption
+  ::
+  +$  vere-config
+    $:  :: secure: priority-ordered per-domain keys & certs
+        ::
+        secure=(list [=turf key=wain cert=wain])
         :: proxy: reverse TCP proxy HTTP(s)
         ::
         proxy=_|
@@ -3473,9 +3488,12 @@
   :: +http-rule: update configuration
   ::
   +$  http-rule
-    $%  :: %cert: set or clear certificate and keypair
+    $%  ::  %cert: set or clear certificate and keypair for specific turf
         ::
-        [%cert cert=(unit [key=wain cert=wain])]
+        ::   empty segment indicates * wildcard
+        ::
+        [%cert =turf cert=(unit [key=wain cert=wain])]
+        ::TODOxx  clear all certs task?
         :: %turf: add remove or reset established dns binding
         ::
         $:  %turf

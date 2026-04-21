@@ -171,6 +171,29 @@
       |=  [=octs sum=@ud]
       (add sum p.octs)
   (can 3 a)
+::  +http-to-vere-config: prepare for runtime consumption
+::
+++  http-to-vere-config
+  |=  config=http-config
+  ^-  vere-config
+  =-  config(secure -)
+  %+  sort  ~(tap by secure.config)
+  |=  [[a=turf *] [b=turf *]]
+  =.  a  (flop a)
+  =.  b  (flop b)
+  ::  shorter before longer,
+  ::  specifics before wildcards
+  ::
+  =+  [la lb]=[(lent a) (lent b)]
+  ?:  (gth la lb)  |
+  ?:  (gth lb la)  &
+  |-  ^-  ?
+  ?:  =(a b)  &
+  ?~  a  |
+  ?~  b  &
+  ?:  =(%$ i.a)  |
+  ?:  =(%$ i.b)  &
+  $(a t.a, b t.b)
 ::  +prune-events: removes all items from the front of the queue up to :id
 ::
 ::    also produces, per request-id, the amount of events that have got acked,
@@ -4186,7 +4209,8 @@
     :_  http-server-gate
     :*  ::  hand back default configuration for now
         ::
-        [duct %give %set-config http-config.server-state.ax]
+        :^  duct  %give  %set-config
+        (http-to-vere-config http-config.server-state.ax)
         ::  provide a list of valid auth tokens
         ::
         =<  give-session-tokens
@@ -4244,9 +4268,14 @@
         ::
         %cert
       =*  config  http-config.server-state.ax
-      ?:  =(secure.config cert.http-rule.task)
-        [~ http-server-gate]
-      =.  secure.config  cert.http-rule.task
+      =^  changed=?  secure.config
+        =*  turf  turf.http-rule.task
+        ?~  cert.http-rule.task
+          :-  (~(has by secure.config) turf)
+          (~(del by secure.config) turf)
+        :-  !=(cert.http-rule.task (~(get by secure.config) turf))
+        (~(put by secure.config) turf u.cert.http-rule.task)
+      ?.  changed  [~ http-server-gate]
       =.  redirect.config
         ?&  ?=(^ secure.ports.server-state.ax)
             ?=(^ cert.http-rule.task)
@@ -4254,7 +4283,8 @@
       :_  http-server-gate
       =*  out-duct  outgoing-duct.server-state.ax
       ?~  out-duct  ~
-      [out-duct %give %set-config config]~
+      [out-duct %give %set-config (http-to-vere-config config)]~
+    ::
         ::  %turf: add or remove domain name
         ::
         %turf
@@ -4993,6 +5023,7 @@
   ::
   ?.  ?=([~ ~] lyc)  ~
   ::
+  ::TODOxx  scry for getting certs?
   ?:  &(?=(%x ren) ?=(%$ syd))
     =,  server-state.ax
     ?+  tyl  ~
