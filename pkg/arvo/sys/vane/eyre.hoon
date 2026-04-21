@@ -4515,9 +4515,9 @@
         ['content-range' (cat 3 'bytes */' (crip (a-co:co p.q.mime)))]^~
       `(as-octs:mimes:html 'requested range not satisfiable')
     ::
+    =/  len  +((sub q.u.range p.u.range))
     =/  =octs
-      %-  as-octs:mimes:html
-      (cut 3 [p.u.range +((sub q.u.range p.u.range))] q.q.mime)
+      [len (cut 3 [p.u.range len] q.q.mime)]
     :^  ~  ~  %noun
     !>  ^-  cache-entry
     :-  ?=(^ lyc)

@@ -422,13 +422,10 @@
   =/  m  (strand ,~)
   ^-  form:m
   ?+    path.spar  !!
-      $%  [%ames bone=@ ?(%clos %cork %next %last %curr) ~]
-          [%flow bone=@ =dire:ames ~]
-          [%flow bone=@ =dire:ames ?(%clos %cork %line %lods %next %last) ~]
-          :: XX rewrite in terms of %whey namespace
-          ::
-          [%flow bone=@ =dire:ames %whey boq=@ ~]
-          [%flow bone=@ =dire:ames seq=@ %naxp ~]
+      $%  [%ames bone=@ %cork ~]
+          [%ames bone=@ %sent seq=@ ~]
+          [%flow bone=@ =dire:ames %cork ~]
+          [?(%ames %flow) bone=@ =dire:ames ?(%sent %loads %naxp %acked) seq=@ ~]
       ==
     ::  encrypted using %chum namespace
     ::

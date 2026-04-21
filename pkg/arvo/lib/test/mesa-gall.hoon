@@ -8,17 +8,16 @@
 ::
 |%
 ++  crypto-core
-  |%  ++  nec  (pit:nu:crub:crypto 512 (shaz 'nec'))
-      ++  bud  (pit:nu:crub:crypto 512 (shaz 'bud'))
-      ++  zod  (pit:nu:crub:crypto 512 (shaz 'zod'))
+  |%  ++  nec  (pit:nu:cric:crypto 512 (shaz 'nec') %b ~)
+      ++  bud  (pit:nu:cric:crypto 512 (shaz 'bud') %b ~)
+      ++  zod  (pit:nu:cric:crypto 512 (shaz 'zod') %b ~)
       ++  sign
         |=  [=ship data=@ux]
-        %.  data
         ?:  =(ship ~nec)
-          sigh:as:nec
+          (sign:ed:crypto data sgn:ven:ex:nec)
         ?:  =(ship ~zod)
-          sigh:as:zod
-        sigh:as:bud
+          (sign:ed:crypto data sgn:ven:ex:zod)
+        (sign:ed:crypto data sgn:ven:ex:bud)
   --
 ::
 ++  make-gall
@@ -38,8 +37,9 @@
   =.  life.ames-state.nec  nec.life
   =.  rift.ames-state.nec  nec.rift
   =.  rof.nec  |=(* ``[%noun !>(*(list turf))])
-  =/  nec-pub  pub:ex:nec:crypto-core
-  =.  priv.ames-state.nec  sec:ex:nec:crypto-core
+  =.  ring.ames-state.nec  sec:ex:nec:crypto-core
+  =.  pass.ames-state.nec  pub:ex:nec:crypto-core
+  =.  saf.ames-state.nec   saf:ex:nec:crypto-core
   ::  create ~bud
   ::
   =/  bud  (ames-raw ~bud)
@@ -48,11 +48,14 @@
   =.  life.ames-state.bud  bud.life
   =.  rift.ames-state.bud  bud.rift
   =.  rof.bud  |=(* ``[%noun !>(*(list turf))])
-  =/  bud-pub  pub:ex:bud:crypto-core
-  =.  priv.ames-state.bud  sec:ex:bud:crypto-core
+  =.  ring.ames-state.bud  sec:ex:bud:crypto-core
+  =.  pass.ames-state.bud  pub:ex:bud:crypto-core
+  =.  saf.ames-state.bud   saf:ex:bud:crypto-core
   ::
-  =/  nec-sym  (derive-symmetric-key:ames-raw bud-pub priv.ames-state.nec)
-  =/  bud-sym  (derive-symmetric-key:ames-raw nec-pub priv.ames-state.bud)
+  =/  nec-sym
+    (derive-symmetric-key:ames-raw pub.saf.ames-state.bud sek.saf.ames-state.nec)
+  =/  bud-sym
+    (derive-symmetric-key:ames-raw pub.saf.ames-state.nec sek.saf.ames-state.bud)
   ?>  =(nec-sym bud-sym)
   ::  tell ~nec about ~bud
   ::
@@ -63,7 +66,7 @@
       :*  symmetric-key=bud-sym
           life=bud.life
           rift=bud.rift
-          public-key=bud-pub
+          [public-keys=pub.saf pass=pass]:ames-state.bud
           sponsor=~bud
       ==
     =.  lane.fren-state  `[0 *lane:pact:ames]
@@ -77,7 +80,7 @@
       :*  symmetric-key=nec-sym
           life=nec.life
           rift=nec.rift
-          public-key=nec-pub
+          [public-keys=pub.saf pass=pass]:ames-state.nec
           sponsor=~nec
       ==
     =.  lane.fren-state  `[0 *lane:pact:ames]
