@@ -638,7 +638,7 @@
       =/  ted-wir  [%thread tid p.card]
       ?:  =(q.byk.bowl from.dat)
         [%pass ted-wir q.card]
-      [%pass ted-wir %arvo %gall %dole from.dat q.card]
+      [%pass ted-wir %arvo %dole from.dat q.card]
       ::
         [%give ?(%fact %kick) *]
       =-  card(paths.p -)

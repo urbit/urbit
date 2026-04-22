@@ -1473,6 +1473,14 @@
       ?:  =(0 nonce)  wire
       [(scot %ud nonce) wire]
     ::
+    ++  ap-unwrap-dole
+      |=  =card:agent
+      |-
+      ?.  ?=([%pass * %arvo %dole *] card)  card
+      ?:  ?=([%arvo %dole *] note.q.card)
+        $(note.q.card note.note.q.card)
+      card(q note.q.card)
+    ::
     ++  ap-core  .
     ::  +ap-abed: initialise state for an agent, with the supplied routes.
     ::
@@ -1919,14 +1927,21 @@
         ::      pipeline leading up to +ap-from-internal
         =/  =duct  system-duct.state
         =/  =wire  p.card
-        =/  =neet  q.card
+        =/  =neet
+          |-
+          ?.  ?=([%pass * %arvo %dole *] card)  q.card
+          ?:  ?=([%arvo %dole *] note.q.card)
+            $(note.q.card note.note.q.card)
+          ::  ensured by +ap-handle-sky
+          ~|  note.q.card
+          ?<  ?=([%arvo %ames ?(%grow %tomb %cull %tend %germ %snip %keen %yawn) *] note.q.card)
+          note.q.card
         :: ?:  ?=(%pyre -.neet)
         ::   %:  mean
         ::     leaf/"gall: %pyre from {<agent-name>}, killing event"
         ::     leaf/"wire: {<wire>}"
         ::     tang.neet
         ::   ==
-        =+  og-wire=wire
         =.  wire
           :^  %use  agent-name  run-nonce.yoke
           ?-  -.neet
@@ -1951,11 +1966,10 @@
           ==
         ::
         =/  =note-arvo
-          =/  from=desk  q.beak:?>(?=(%live -.yoke) yoke)
-          =/  prov=path
-            ?:  ?=([%dole @ ~] path.attributing.agent-routes)
-              /gall/[i.t.path.attributing.agent-routes]
-            /gall/[from]
+          =/  from=desk
+            ?:  ?=([%arvo %dole *] q.card)  from.q.card
+            q.beak:?>(?=(%live -.yoke) yoke)  ::  review: is it possible to call +ap-from-internal from non %live states
+          =/  prov=path  /gall/[from]
           ?-  -.neet
             %huck   note-arvo.neet
             %jump   note-arvo.neet
@@ -1985,7 +1999,6 @@
                 [%e %connect binding.neet wat.neet]
               ==
             ::
-              [%gall %dole *]  [%g +>-.neet agent-name -.+>+.neet og-wire +.+>+.neet]
               [%gall *]        [%g +>.neet]
             ::
               [%iris *]        [%i +>.neet]
@@ -2000,6 +2013,8 @@
               [%lick %shut *]  [%l +>.neet(name [agent-name name.neet])]
               [%lick %spit *]  [%l +>.neet(name [agent-name name.neet])]
               [%lick *]        [%l +>.neet]
+            ::
+              [%dole *]        !!  ::  REVIEW
             ::
                 [%syscall *]
               ::NOTE  fake vase because ;; too slow for these kinds of types
@@ -2827,16 +2842,18 @@
       =;  res=$@(~ (each arvo-resource [=wire =dock]))
         ?~  res  |
         (~(has in inflating) res)  ::  deletion already happened but inflation hasn't
+      |-
       ?+  card  ~
           [%pass * %arvo *]
         =*  task  +.q.card
-        ?+  +.q.card  ~
+        ?+  task  ~
           :: [%ames %yawn *]                 &+[p.card %ames %keen spar.task]
           [%behn %rest *]                 &+[p.card %behn %wait time.task]
           [%clay %drop *]                 &+[p.card %clay %warp id.q.card]
           [%eyre %disconnect *]           &+[p.card %eyre %binding [binding wat]:task]
           [%iris %cancel-request ~]       &+[p.card %iris %request]
           [%lick %shut *]                 &+[p.card %lick %spin name.task]
+          [%dole *]                       $(q.card note.q.card)
         ==
       ::
           [%pass * %agent *]
@@ -2850,6 +2867,7 @@
       |=  caz=(list card:agent)
       ^+  yoke  ::NOTE  just .resources and .resource-deets, should unify those
       ?~  caz  yoke
+      ?:  ?=([%pass * %arvo %dole *] i.caz)  $(q.i.caz note.q.i.caz)
       ?.  ?=([%pass * %arvo *] i.caz)  $(caz t.caz)
       =;  $@(~ [add=$@(? resource-deet) res=_+:*arvo-resource])
         ?@  -  $(caz t.caz)
@@ -2867,7 +2885,7 @@
           resource-deets.yoke  (~(del by resource-deets.yoke) p.i.caz res)
         ==
       =*  task  +.q.i.caz
-      ?+  +.q.i.caz  ~
+      ?+  task  ~
         :: [%ames %keen *]                 [& %ames %keen spar.task]
         :: [%ames %yawn *]                 [| %ames %keen spar.task]
         [%behn %wait *]                 [& %behn %wait time.task]
@@ -2944,6 +2962,16 @@
         [%pass * %arvo %ames %keen *]  $(caz t.caz, ap-core (ap-keen p.i.caz +>+.q.i.caz))
         [%pass * %arvo %ames %yawn *]  $(caz t.caz, ap-core (ap-yawn p.i.caz +>+.q.i.caz))
       ::
+        ::  unwrap %dole for namespace management
+          [%pass * %arvo %dole *]
+        =/  =card:agent
+          |-  ?.  ?=([%arvo %dole *] note.q.i.caz)  i.caz(q note.q.i.caz)
+          $(note.q.i.caz note.note.q.i.caz)
+        ^+  [fex ap-core]
+        ?:  ?=([%pass * %arvo %ames ?(%grow %tomb %cull %tend %germ %snip %keen %yawn) *] card)
+          $(caz [card t.caz])
+        $(caz t.caz, fex [`carp`i.caz fex])
+      ::
         :: [%pass * ?(%agent %arvo %pyre) *]  $(caz t.caz, fex [i.caz fex])
         [%pass * ?(%agent %arvo) *]  $(caz t.caz, fex [i.caz fex])
         [%give *]  $(caz t.caz, fex [i.caz fex])
@@ -2977,6 +3005,7 @@
       ^+  boat.yoke
       %+  roll  cards
       |=  [=card:agent boat=_boat.yoke]
+      =.  card  (ap-unwrap-dole card)
       ?+  card  boat
           [%pass * %agent * %leave *]
         =/  =wire  p.card
@@ -3005,7 +3034,7 @@
       |-  ^-  [(list card:agent) _ap-core]
       ?~  cards
         [(flop new-cards) ap-core]
-      =/  =card:agent  i.cards
+      =/  =card:agent  (ap-unwrap-dole i.cards)
       ?+  card  $(cards t.cards, new-cards [card new-cards])
           [%pass * %agent * %leave *]
         =/  =wire  p.card
@@ -3064,7 +3093,6 @@
             i.i.duct
         ==
       *path
-    ?:  ?=(%dole -.task)  /dole/[prov.task]
     /[i.i.duct]
   ::
   =/  mo-core  (mo-abed:mo duct)
@@ -3080,16 +3108,6 @@
       mo-abet:(mo-send-foreign-request:mo-core q.sack term deal)
     mo-abet:(mo-handle-local:mo-core prov p.sack term deal)
   ::
-      %dole
-    =/  [from=dude =desk wir=wire =note:agent]  [from prov wire note]:task
-    =/  ap-core  (ap-abed:ap:mo-core from [~ our prov])
-    =/  =card:agent:gall  [%pass wir note]
-    =+  yoke=yoke:ap-core
-    ?>  ?=(%live -.yoke)
-    ?>  ?=(%& -.agent.yoke)
-    =^  moz=(list move)  ap-core
-      (ap-handle-result:ap-core [%& ~[card] p.agent.yoke])
-    mo-abet:ap-abet:(ap-move:ap-core moz)
   ::
       %init  [~ gall-payload(system-duct.state duct)]
       %plea
