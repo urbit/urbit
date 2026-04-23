@@ -311,8 +311,10 @@
     ~/  %on-arvo
     |=  [=wire gift=gift-user-v1:gall]
     ^-  (quip card _this)
-    ?.  ?=(%syscall -.gift)  `this
-    =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
+    ?:  ?=(%unsupported -.gift)  (on-arvo:def wire gift)
+    =/  to-sign-arvo
+      ?:(?=(%syscall -.gift) sign-arvo.gift +.gift)
+    =+  !<(=sign-arvo [-:!>(*sign-arvo) to-sign-arvo])
     =^  cards  state
       ?+  wire  (on-arvo:def wire gift)
         [%thread @ *]  (handle-sign:sc i.t.wire t.t.wire sign-arvo)
