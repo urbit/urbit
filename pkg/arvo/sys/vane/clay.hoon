@@ -4488,9 +4488,8 @@
         |=  [=desk =bill]
         leaf+"goad: output: {<desk>}: {<bill>}"
     =/  agents  (build-agents sat)
-    ::  TODO: enable if we can reduce memory usage
     ::
-    ::  =+  (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
+    =+  (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
     ::
     =.  ..abet  tare                                    ::  [tare] >
     (emit hen %pass /lu/load %g %load agents)
