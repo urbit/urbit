@@ -3995,7 +3995,6 @@
         [%lick %spit =name:lick =mark =noun]
         [%lick %trim p=@ud]
       ::
-        [%dole from=desk =note:agent:gall]  ::  do as desk
         [%syscall note-arvo=*]  ::NOTE  secretly $note-arvo, DO NOT DOCUMENT (;
     ==
   ::
@@ -4020,10 +4019,14 @@
     +$  card
       $+  gall-agent-card
       (wind note gift)
-    +$  note
-      $+  gall-agent-note
+    +$  rote
       $%  [%agent [=ship name=term] =task]
           [%arvo task-user-v1]
+      ==
+    +$  note
+      $+  gall-agent-note
+      $%  rote
+          [%dole from=desk =rote]
       ==
     +$  task
       $+  gall-agent-task
@@ -4153,10 +4156,10 @@
             %khan  [%khan ~]
             %lick  [%lick ~]
           ::
-            %dole     [%super ~]
             %syscall  [%super ~]
             ::  TODO
           ==
+          %dole  [%super ~]
         ==
       ==
     --

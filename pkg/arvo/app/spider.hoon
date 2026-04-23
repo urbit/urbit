@@ -311,7 +311,7 @@
     ~/  %on-arvo
     |=  [=wire gift=gift-user-v1:gall]
     ^-  (quip card _this)
-    ?>  ?=(%syscall -.gift)
+    ?.  ?=(%syscall -.gift)  `this
     =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
     =^  cards  state
       ?+  wire  (on-arvo:def wire gift)
@@ -638,7 +638,8 @@
       =/  ted-wir  [%thread tid p.card]
       ?:  =(q.byk.bowl from.dat)
         [%pass ted-wir q.card]
-      [%pass ted-wir %arvo %dole from.dat q.card]
+      ?>  ?=([?(%agent %arvo) *] q.card)
+      [%pass ted-wir [%dole from.dat q.card]]
       ::
         [%give ?(%fact %kick) *]
       =-  card(paths.p -)
