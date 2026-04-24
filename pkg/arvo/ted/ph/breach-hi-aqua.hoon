@@ -5,13 +5,14 @@
 |=  vase
 =/  m  (strand ,vase)
 ;<  =bowl:spider  bind:m  get-bowl
-;<  ~  bind:m  start-azimuth
-;<  ~  bind:m  (spawn ~bud)
-;<  ~  bind:m  (spawn ~dev)
-;<  ~  bind:m  (init-ship ~bud |)
-;<  ~  bind:m  (init-ship ~dev |)
-;<  ~  bind:m  (send-hi ~bud ~dev)
-;<  ~  bind:m  (breach-and-hear ~dev ~bud)
-;<  ~  bind:m  (init-ship ~dev |)
-;<  ~  bind:m  (send-hi ~bud ~dev)
+;<  t=drivers  bind:m  start-azimuth
+;<  ~          bind:m  (spawn ~bud)
+;<  ~          bind:m  (spawn ~dev)
+;<  ~          bind:m  (init-ship ~bud |)
+;<  ~          bind:m  (init-ship ~dev |)
+;<  ~          bind:m  (send-hi ~bud ~dev)
+;<  ~          bind:m  (breach-and-hear ~dev ~bud)
+;<  ~          bind:m  (init-ship ~dev |)
+;<  ~          bind:m  (send-hi ~bud ~dev)
+;<  ~          bind:m  (end t)
 (pure:m *vase)

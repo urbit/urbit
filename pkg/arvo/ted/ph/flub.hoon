@@ -18,7 +18,9 @@
 =/  cores=(list ?(%mesa %ames))  ~[%mesa]
 |-  ^-  form:m
 ?~  cores  (pure:m *vase)
-;<  ~  bind:m  start-simple
+=|  tids=drivers
+;<  =_tids  bind:m  start-simple
+::
 ::
 =*  loop  $
 ;<  ~  bind:m  (init-ship ~bud fake=&)
@@ -166,5 +168,5 @@
 ;<  *  bind:m
   (wait-for-fact rcv=~bud %noun /aqua/watch/sub (gate ,(list [path @]) [/new 3]~))
 ::
-;<  ~  bind:m  end
+;<  ~  bind:m  (end tids)
 $(cores t.cores)

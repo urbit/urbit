@@ -5,7 +5,8 @@
 |=  vase
 =/  m  (strand ,vase)
 ;<  =bowl:spider  bind:m  get-bowl
-;<  ~  bind:m  start-simple
+=|  tids=drivers
+;<  =_tids  bind:m  start-simple
 ::  must be a better way to background threads
 |-
 =*  loop  $
