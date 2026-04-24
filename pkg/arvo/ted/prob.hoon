@@ -17,7 +17,7 @@
             timeout=@dr
             [case=@ud has=@uvi wen=@da]
             who=ship
-            wait-hash=@uvi
+            trigs=(set @uvi)
             veb=?
         ==
     arg
@@ -121,17 +121,17 @@
   ::
   $(case +(case))
 ::
-~?  >>  &(veb !=(wait-hash u.kids-hash))
+~?  >>  &(veb !(~(has in trigs) u.kids-hash))
   "ahoy-prob: {<who>} kids hash is {<u.kids-hash>}"
 =:  has  u.kids-hash
     wen  now.bowl
   ==
 ::
-?.  =(wait-hash has)
+?.  (~(has in trigs) has)
   ::  not last-hash; try next case
   ::
   $(case +(case))
-::  found wait-hash; done with .who
+::  found hash; done with .who
 ::
 ~?  >  veb  "ahoy-prob: done with {<who>}"
 ;<  =bowl:spider  bind:m  get-bowl:strandio
