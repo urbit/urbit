@@ -42,23 +42,23 @@
   ::
   ::  init: start all io threads and subscribe to /effect
   ::
-  ;<  ~  bind:m  init
-  ;<  ~  bind:m  test-mesa-ames-1
-  ;<  ~  bind:m  test-ames-mesa-1
-  ;<  ~  bind:m  test-mesa-ames-2  :: comet
-  ;<  ~  bind:m  test-ames-mesa-2  :: XX bail:evil comets
-  ;<  ~  bind:m  test-mesa-ames-3  :: comet
-  :: ;<  ~  bind:m  (init-comet comet)  :: XX init comet to nuke past interaction?
-  ;<  ~  bind:m  (boot-with-core-and-breach %mesa)  :: XX this waits for two ~m2 retries...
-  ;<  ~  bind:m  (boot-with-core-and-breach %ames)
+  ;<  t=drivers  bind:m  init
+  ;<  ~          bind:m  test-mesa-ames-1
+  ;<  ~          bind:m  test-ames-mesa-1
+  ;<  ~          bind:m  test-mesa-ames-2  :: comet
+  ;<  ~          bind:m  test-ames-mesa-2  :: XX bail:evil comets
+  ;<  ~          bind:m  test-mesa-ames-3  :: comet
+  :: ;<  ~          bind:m  (init-comet comet)  :: XX init comet to nuke past interaction?
+  ;<  ~          bind:m  (boot-with-core-and-breach %mesa)  :: XX this waits for two ~m2 retries...
+  ;<  ~          bind:m  (boot-with-core-and-breach %ames)
   ::  TODO
   ::
-  :: ;<  ~  bind:m  (boot-ames-mesa ~dev comet)
-  :: ;<  ~  bind:m  boot-moon
-  :: ;<  ~  bind:m  boot-planet
+  :: ;<  ~          bind:m  (boot-ames-mesa ~dev comet)
+  :: ;<  ~          bind:m  boot-moon
+  :: ;<  ~          bind:m  boot-planet
   ::  stop all io threads and leave subscriptions to /effect
   ::
-  ;<  ~  bind:m  end
+  ;<  ~          bind:m  (end t)
   (pure:m *vase)
 ::
 ++  test-mesa-ames-1
@@ -117,14 +117,14 @@
   (pure:m ~)
 ::
 ++  init
-  =/  m  (strand ,~)
-  ;<  ~  bind:m  start-azimuth
+  =/  m  (strand ,drivers)
+  ;<  t=drivers  bind:m  start-azimuth
   ::  only spawn once (i.e. set up keys once, and broadcast them as eth logs)
   ::
-  ;<  ~  bind:m  (spawn ~bud)
-  ;<  ~  bind:m  (spawn ~dev)
-  ;<  ~  bind:m  (spawn ~marbud)
-  (pure:m ~)
+  ;<  ~          bind:m  (spawn ~bud)
+  ;<  ~          bind:m  (spawn ~dev)
+  ;<  ~          bind:m  (spawn ~marbud)
+  (pure:m t)
 ::
 ++  setup
   |=  [who=@p proto=?(%mesa %ames)]

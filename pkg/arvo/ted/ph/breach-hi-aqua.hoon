@@ -1,5 +1,5 @@
 /-  spider
-/+  *ph-io, *ph-util, strandio
+/+  *ph-io, strandio
 =,  strand=strand:spider
 ^-  thread:spider
 |=  vase
