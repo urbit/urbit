@@ -454,19 +454,6 @@
     %mime  q.q:;;(mime q.page)
   ==
 ::
-++  make-bud
-  |=  zus=vase
-  ^+  bud
-  =/  zuse  !>(..zus)
-  =>  [zus=zus zuse=zuse ..slap]
-  :*  zuse=zus
-      nave=(slap zus !,(*hoon nave:clay))
-      cork=(slap zus !,(*hoon cork))
-      same=(slap zus !,(*hoon same))
-      mime=(slap zus !,(*hoon mime))
-      cass=(slap zus !,(*hoon cass:clay))
-  ==
-::
 ++  fell-to-page
   |=  =fell
   ^-  (unit page)
@@ -648,6 +635,7 @@
           $:  files=(map path (each page lobe))
               file-store=(map lobe page)
               verb=@
+              bud=_bud
           ==
         ::
         +$  bush
@@ -991,58 +979,6 @@
         =/  res=bush  bush-loop(nod hoon+pax)
         $(fiz t.fiz, rez (~(put by rez) nom res))
       ==
-    ::
-    ++  build-zuse
-      |=  [h=@ a=@ l=@ z=@]
-      ^-  vase
-      =/  hoon-core=vase
-        %-  (slog 'clay: compiling hoon' ~)
-        =-  (slot 7 -)
-        (road |.((slap *vase (ream h))))
-      =.  hoon-core
-        %+  slap  (slop !>(h=h) hoon-core)
-        !,  *hoon
-        =-  (slot 7 -)
-        (road |.((slap *vase (ream h))))
-      =/  arvo-core=vase
-        %-  (slog 'clay: compiling arvo' ~)
-        %+  slap  (slop !>(a=a) hoon-core)
-        !,  *hoon
-        =-  (slap - (ream '..part'))
-        (road |.((slap hoon-core (ream a))))
-      =/  lull-core=vase
-        %-  (slog 'clay: compiling lull' ~)
-        (road |.((slap arvo-core (rain /sys/lull/hoon l))))
-      %-  (slog 'clay: compiling zuse' ~)
-      (road |.((slap lull-core (rain /sys/zuse/hoon z))))
-    ::
-    ++  get-kernel-files
-      ^-  (unit [h=@ a=@ l=@ z=@])
-      ;:  both
-        (get-kernel-file /sys/hoon/hoon)
-        (get-kernel-file /sys/arvo/hoon)
-        (get-kernel-file /sys/lull/hoon)
-        (get-kernel-file /sys/zuse/hoon)
-      ==
-    ::
-    ++  get-kernel-file
-      |=  =path
-      ^-  (unit @)
-      =/  fil  (~(get by files) path)
-        :: ~&  >>  [files=~(key by files) path=path]
-      ?+  fil
-        ~&  >>  [files=~(key by files) path=path]  ~
-        [~ %& %hoon @]  `(page-to-cord p.u.fil)
-        [~ %| @]        `(lobe-to-cord p.u.fil)
-      ==
-    ::
-    ++  lobe-to-cord
-      |=  =lobe
-      ^-  @t
-      =/  peg=(unit page)  (~(get by file-store) lobe)
-      ?~  peg
-        ~|([%lobe-to-cord-tombstoned lobe] !!)
-      ;;(@t q.u.peg)
     ::
     +|  %external-interface
     ::
@@ -1492,23 +1428,82 @@
       ?:((~(has by hut.ran) p.lok) `p.lok ~)
     (bind (case-to-aeon-before lim lok) aeon-to-tako:ze)
   ::
+  ++  get-arvo
+    |=  tak=tako
+    ^-  (unit *)
+    =/  fiz=(map path lobe)  q:(tako-to-yaki:ze tak)
+    =/  arvo=(unit lobe)  (~(get by fiz) /arvo/jam)
+    ?~  arvo  ~
+    =/  foo=(unit page)  (~(get by lat.ran) u.arvo)
+    ?.  ?=([~ %jam @] foo)
+      ~
+    (mole |.((cue q.u.foo)))
+  ::
+  ++  make-bud
+    |=  arv=(unit *)
+    ^+  bud
+    ~>  %bout.[1 %make-bud]
+    ?~  arv  bud
+    =/  wish  (cury wisher u.arv)
+    =/  hov  ;;(@ud (wish 'hoon-version'))
+    :: =/  zus  (wish '!>(..zuse)')
+    :: =/  nav  (wish '(slap !>(..zuse) !,(*hoon nave:clay))')
+    :: =/  cor  (wish '(slap !>(..zuse) !,(*hoon cork))')
+    :: =/  sam  (wish '(slap !>(..zuse) !,(*hoon same))')
+    :: =/  mim  (wish '(slap !>(..zuse) !,(*hoon mime))')
+    :: =/  cas  (wish '(slap !>(..zuse) !,(*hoon cass:clay))')
+    =/  zus=vase  ;;(vase (wish '!>(..zuse)'))
+    =/  nav=vase  ;;(vase (wish '(slap !>(..zuse) !,(*hoon nave:clay))'))
+    =/  cor=vase  ;;(vase (wish '(slap !>(..zuse) !,(*hoon cork))'))
+    =/  sam=vase  ;;(vase (wish '(slap !>(..zuse) !,(*hoon same))'))
+    =/  mim=vase  ;;(vase (wish '(slap !>(..zuse) !,(*hoon mime))'))
+    =/  cas=vase  ;;(vase (wish '(slap !>(..zuse) !,(*hoon cass:clay))'))
+    ::  XX which conditions?
+    ::
+    :: ?:  ?&  =(hov ;;(@ud hoon-version))
+    ::         =(zus !>(..zuse))
+    ::     ==
+    ::   bud
+    :: ?>  =(136 hov)
+    :: =/  zus=vase  (next-vase:h136 ;;(vase:h136 zus))
+    :: =/  nav=vase  (next-vase:h136 ;;(vase:h136 nav))
+    :: =/  cor=vase  (next-vase:h136 ;;(vase:h136 cor))
+    :: =/  sam=vase  (next-vase:h136 ;;(vase:h136 sam))
+    :: =/  mim=vase  (next-vase:h136 ;;(vase:h136 mim))
+    :: =/  cas=vase  (next-vase:h136 ;;(vase:h136 cas))
+    ::  XX combine with above
+    ::
+    :*  zuse=zus
+        nave=nav
+        cork=cor
+        same=sam
+        mime=mim
+        cass=cas
+    ==
+  ::
+  ++  wisher
+    |=  [arv=* txt=@t]
+    :: ^-  (unit)
+    =/  res  (mock [arv +10.arv] ~)
+    ::  TODO safer?
+    =/  wish  ?>(?=(%0 -.res) p.res)
+    =/  res
+      %-  mule  |.
+      (slum wish txt)
+    :: ?:  ?=(%| -.res)
+    ::   ~
+    :: `p.res
+    ?>  ?=(%& -.res)
+    p.res
   ::  Create a ford appropriate for the aeon
   ::
   ++  tako-ford
     |=  tak=tako
-    =?  bud  !?=(%base syd)
-      ~&  >  %tako-ford^syd
-      =/  f
-        %-  ford:fusion
-        :_  [lat.ran veb.bug]
-        (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
-      =/  sys  get-kernel-files:f
-      ~&  >  [%tako-ford-sys ?=(~ sys)]
-      =/  zus  ?~(sys ~ (make-bud:f (build-zuse:f u.sys)))
-      ~&  >  [%tako-ford-zus ?=(~ zus)]
-      ?~(zus bud zus)
+    =?  bud  !=(%base syd)
+      =/  arvo=(unit *)  (get-arvo tak)
+      (make-bud arvo)
     %-  ford:fusion
-    :_  [lat.ran veb.bug]
+    :_  [lat.ran veb.bug bud]
     (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
   ::
   ++  request-wire
@@ -1923,7 +1918,7 @@
       %-  ~(dif by (~(uni by original) changes))
       %-  ~(gas by *(map path (each page lobe)))
       (turn ~(tap in deletes) |=(=path [path |+*lobe]))
-    =/  =args:ford:fusion  [files lat.ran veb.bug]
+    =/  =args:ford:fusion  [files lat.ran veb.bug bud]
     ::
     =^  change-cages  args  (checkout-changes args changes)
     =/  sane-continuation  (sane-changes changes change-cages)
@@ -2165,7 +2160,7 @@
         =/  original=(map path (each page lobe))
           (~(run by q.yaki) |=(=lobe |+lobe))
         (~(uni by original) changes)
-      =/  =args:ford:fusion  [all-changes lat.ran veb.bug]
+      =/  =args:ford:fusion  [all-changes lat.ran veb.bug bud]
       =^  all-change-cages  args  (checkout-changes args all-changes)
       =/  ccs=(list [=path =lobe =cage])  ~(tap by change-cages)
       |-  ^+  *sane-changes
@@ -3026,7 +3021,7 @@
       (~(put by mon) pot [her syd ud+for-yon] spur)
     =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) u.yon))
     =/  files  (~(run by q.yaki) |=(=lobe |+lobe))
-    =/  =args:ford:fusion  [files lat.ran veb.bug]
+    =/  =args:ford:fusion  [files lat.ran veb.bug bud]
     =^  mim  args
       (checkout-mime args ~ ~(key by files))
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
@@ -4519,7 +4514,6 @@
   ++  ford
     |=  [her=ship syd=desk yon=(unit aeon)]
     =/  den  ((de now rof hen ruf) her syd)
-    ~&  >  [%ford-wrapper syd]
     %-  tako-ford:den
     ::TODO  is this +got after +got semantically correct?
     (~(got by hit.dom:(~(got by dos.rom) syd)) ?~(yon let.dom:den u.yon))
