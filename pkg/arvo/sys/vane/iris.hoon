@@ -38,7 +38,7 @@
 +$  axle
   $:  ::  date: date at which iris state was updated to this data structure
       ::
-      date=%~2025.7.17
+      date=%~2026.4.26
       ::
       ::
       =state
@@ -89,6 +89,9 @@
       ::  request: the original request, needed for handling redirects
       ::
       request=request:http
+      ::  stream: whether to deliver chunks as %progress instead of buffering
+      ::
+      stream=?
   ==
 --
 ::
@@ -125,7 +128,7 @@
     =.  connection-by-id.state
       %+  ~(put by connection-by-id.state)  id
       =,  outbound-config
-      [duct [redirects retries ~ ~ 0 ~ request]]
+      [duct [redirects retries ~ ~ 0 ~ request stream]]
     ::  keep track of the duct for cancellation
     ::
     =.  connection-by-duct.state
@@ -145,7 +148,7 @@
     ::  email discussions make it sound like fixing that might be hard, so
     ::  maybe i should just live with the way it is now?
     ::
-    :-  [outbound-duct.state %give %request id request]~
+    :-  [outbound-duct.state %give %request id request stream.outbound-config]~
     state
   ::  +cancel: client cancels an outstanding request
   ::
@@ -203,7 +206,8 @@
                   id
                 http-event
               remaining-redirects.in-progress-http-request.u.connection
-            request.in-progress-http-request.u.connection
+              request.in-progress-http-request.u.connection
+            stream.in-progress-http-request.u.connection
           ==
       ?:  complete.http-event
         (send-finished id data.http-event)
@@ -232,7 +236,7 @@
   ::  +handle-redirect: transparently handle redirects if applicable
   ::
   ++  handle-redirect
-    |=  [id=@ud =http-event:http remaining-redirects=@ud =request:http]
+    |=  [id=@ud =http-event:http remaining-redirects=@ud =request:http stream=?]
     ?>  ?=(%start -.http-event)
     ?:  =(0 remaining-redirects)
       ?:  complete.http-event
@@ -251,7 +255,7 @@
         (dec remaining-redirects.in-progress-http-request)
       ==
     :_  state
-    [outbound-duct.state %give %request id request(url u.loc)]~
+    [outbound-duct.state %give %request id request(url u.loc) stream]~
   ::  +record-and-send-progress: save incoming data and send progress report
   ::
   ++  record-and-send-progress
@@ -419,7 +423,8 @@
   =>  |%
       +$  axle-any
         $%  [date=%~2019.2.8 state=state-0]
-            [date=%~2025.7.17 =state]
+            [date=%~2025.7.17 state=state-1]
+            [date=%~2026.4.26 =state]
         ==
       ::
       +$  state-0
@@ -436,6 +441,22 @@
             bytes-read=@ud
             expected-size=(unit @ud)
         ==
+      ::
+      +$  state-1
+        $:  next-id=@ud
+            connection-by-id=(map @ud [=duct in-progress-http-request=in-progress-http-request-1])
+            connection-by-duct=(map duct @ud)
+            outbound-duct=duct
+        ==
+      +$  in-progress-http-request-1
+        $:  remaining-redirects=@ud
+            remaining-retries=@ud
+            response-header=(unit response-header:http)
+            chunks=(list octs)
+            bytes-read=@ud
+            expected-size=(unit @ud)
+            request=request:http
+        ==
       --
   |=  old=axle-any
   ^+  iris-gate
@@ -448,7 +469,7 @@
       connection-by-id.state.old
     %-  ~(run by connection-by-id.state.old)
     |=  [d=duct r=in-progress-http-request-0]
-    ^-  [duct in-progress-http-request]
+    ^-  [duct in-progress-http-request-1]
     :-  d
     ::  set remaining redirects to 0 because we don't have the original request.
     ::  it's safe to bunt the .request because it only gets used if
@@ -458,6 +479,25 @@
     +.r(expected-size [expected-size.r *request:http])
     ==
       %~2025.7.17
+    %=  $
+      date.old  %~2026.4.26
+    ::
+      connection-by-id.state.old
+    %-  ~(run by connection-by-id.state.old)
+    |=  [d=duct r=in-progress-http-request-1]
+    ^-  [duct in-progress-http-request]
+    :-  d
+    :*  remaining-redirects.r
+        remaining-retries.r
+        response-header.r
+        chunks.r
+        bytes-read.r
+        expected-size.r
+        request.r
+        stream=%.n
+    ==
+    ==
+      %~2026.4.26
     iris-gate(ax old)
   ==
 ::  +stay: produce current state
