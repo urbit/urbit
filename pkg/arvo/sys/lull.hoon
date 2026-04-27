@@ -3733,7 +3733,10 @@
     $%  ::REVIEW  what if this in place of .ken? [%ames %keen =spar:ames]
         [%behn %wait =time]
         [%clay %warp id=*]
-        [%clay %tire ~]
+        [%clay %tire ~]  ::TODO  consistency
+        [%dill %logs]
+        [%dill %mass]
+        [%dill %view ses=@tas]
         [%eyre %binding =binding:eyre]
         [%eyre %cache url=@t]  ::TODO  if we had the data we could reinflate...
         [%iris %request]
@@ -3901,6 +3904,17 @@
         [%clay %tomb =clue:clay]
         [%clay %trim p=@ud]
       ::
+        [%dill %shot ses=@tas task=session-task:dill]
+        ::TODO  consider [%dill session-task:dill] for easier default session
+      ::
+        [%dill %logs p=(unit ~)]
+        [%dill %crud p=@tas q=tang]
+        [%dill %talk p=(list tank)]
+        [%dill %text p=tape]
+      ::
+        [%dill %mass ~]
+        [%dill %meld ~]
+        [%dill %pack ~]
         [%dill %trim p=@ud]
       ::
         [%eyre %rule =http-rule:eyre]
@@ -3936,6 +3950,9 @@
         [%behn %wake =time]  ::REVIEW
         [%clay %read id=* =riot:clay]
         [%clay %tire p=(each rock:tire:clay wave:tire:clay)]
+        [%dill %blit p=(list blit:dill)]
+        [%dill %logs =told:dill]
+        [%dill %meme p=(list quac:dill)]
         [%eyre %bound bound=? =binding:eyre wat=$@(term generator:eyre)]  ::NOTE  could become unbound _after_ binding!
         [%iris %http-response =client-response:iris]
         [%lick %soak =name:lick =mark =noun]

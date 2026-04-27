@@ -1635,15 +1635,17 @@
         %-  zing
         %+  turn  ~(tap in resources.yoke)
         |=  res=arvo-resource
-        %-  ap-from-internal
-        ^-  carp
-        =-  [%pass wire.res %arvo -]
+        =;  tac=$@(~ tick)
+          ?~(tac ~ (ap-from-internal %pass wire.res %arvo tac))
         ::  TODO ripped from ap-nuke -> helper
         ::
         ?-  +.res
           [%behn %wait *]     [%behn %rest time.res]
           [%clay %warp *]     [%clay %rest id.res]
           [%clay %tire *]     [%clay %tire ~]
+          [%dill %logs]       [%dill %logs ~]
+          [%dill %mass]       ~
+          [%dill %view *]     [%dill %shot ses.res %flee ~]
           [%eyre %binding *]  [%eyre %disconnect binding.res]
           [%eyre %cache *]    [%eyre %set-response url.res ~]
           [%iris %request]    [%iris %cancel-request ~]
@@ -1672,14 +1674,18 @@
         ::
           ap-yawn-all
         ::
-          %+  turn  ~(tap in resources.yoke)
+          %+  murn  ~(tap in resources.yoke)
           |=  res=arvo-resource
-          ^-  card:agent
-          =-  [%pass wire.res %arvo -]
+          ^-  (unit card:agent)
+          =;  tac=$@(~ task-user-v1)
+            ?~(tac ~ `[%pass wire.res %arvo tac])
           ?-  +.res
             [%behn %wait *]     [%behn %rest time.res]
             [%clay %warp *]     [%clay %rest id.res]
             [%clay %tire *]     [%clay %tire ~]
+            [%dill %logs]       [%dill %logs ~]
+            [%dill %mass]       ~
+            [%dill %view *]     [%dill %shot ses.res %flee ~]
             [%eyre %binding *]  [%eyre %disconnect binding.res]
             [%eyre %cache *]    [%eyre %set-response url.res ~]
             [%iris %request]    [%iris %cancel-request ~]
@@ -2268,7 +2274,7 @@
       ?-    +.res
         ::  re-establish trivially
         ::
-          ?([%behn %wait *] [%clay %tire *])
+          ?([%behn %wait *] [%clay %tire *] [%dill *])
         =.  inflating  (~(del in inflating) &+res)
         ?.  (~(has in resources.yoke) res)  ap-core
         %-  ap-move
@@ -2277,6 +2283,9 @@
         ?-  +.res
           [%behn %wait *]  [%behn %wait time.res]
           [%clay %tire *]  [%clay %tire `~]
+          [%dill %logs]    [%dill %logs `~]
+          [%dill %mass]    [%dill %mass ~]
+          [%dill %view *]  [%dill %shot ses.res %view ~]
         ==
       ::
         ::  re-establish from deets
@@ -2804,6 +2813,8 @@
           [%behn %rest *]                 &+[p.card %behn %wait time.task]
           [%clay %rest *]                 &+[p.card %clay %warp id.q.card]
           [%clay %tire ~]                 &+[p.card %clay %tire ~]
+          [%dill %logs ~ ~]               &+[p.card %dill %logs]
+          [%dill %shot @ %flee ~]         &+[p.card %dill %view ses.task]
           [%eyre %disconnect *]           &+[p.card %eyre %binding binding.task]
           [%iris %cancel-request ~]       &+[p.card %iris %request]
           [%lick %shut *]                 &+[p.card %lick %spin name.task]
@@ -2846,6 +2857,10 @@
                                         [%clay %warp id.task]
         [%clay %rest *]                 [| %clay %warp id.task]
         [%clay %tire *]                 [?~(p.task | &) %clay %tire ~]
+        [%dill %logs *]                 [?~(p.task | &) %dill %logs]
+        [%dill %mass *]                 [& %dill %mass]
+        [%dill %shot @ %view *]         [& %dill %view ses.task]
+        [%dill %shot @ %shut *]         [| %dill %view ses.task]
         [%eyre %connect *]              :-  [%eyre %binding wat.task]
                                         [%eyre %binding binding.task]
         [%eyre %disconnect *]           [| %eyre %binding binding.task]
@@ -2872,7 +2887,9 @@
                     ==
         ==
       ?+  gift  ~
-        [%behn *]  `|+[%behn %wait time.gift]
+        [%behn *]        `|+[%behn %wait time.gift]
+        [%dill %meme *]  `|+[%dill %mass]
+        ::TODO  handle %dill %blit %bye session deletion signal
       ::
           [%clay *]
         ?>  ?=(%read +<.gift)
