@@ -1841,7 +1841,7 @@
       $%  [%prod ships=(list ship)]
           [%sift ships=(list ship)]
           [%snub form=?(%allow %deny) ships=(list ship)]
-          [%spew veb=(list verb)]
+          [%spew veb=(list verb:ames)]
           [%cong msg=@ud mem=@ud]
           [%stir arg=@t]
           [%trim p=@ud]
