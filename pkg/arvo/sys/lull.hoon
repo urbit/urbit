@@ -2987,6 +2987,7 @@
     ==                                                  ::
   +$  blit                                              ::  client output
     $%  [%bel ~]                                        ::  make a noise
+        [%bye ~]                                        ::  session ended
         [%clr ~]                                        ::  clear the screen
         [%hop p=$@(@ud [x=@ud y=@ud])]                  ::  set cursor col/pos
         [%klr p=stub]                                   ::  put styled
