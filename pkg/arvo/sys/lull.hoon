@@ -2437,7 +2437,7 @@
     $~  [%vega ~]                                       ::
     $%  [%boat ~]                                       ::  pier rebooted
         [%cred nom=@ta cew=crew]                        ::  set permission group
-        [%crew ~]                                       ::  permission groups
+        [%crew ~]  ::TODO  remove, add scry endpoint    ::  permission groups
         [%crow nom=@ta]                                 ::  group usage
         [%drop des=desk]                                ::  cancel pending merge
         [%esse des=desk ese=?]                          ::  edit essential desk
@@ -3733,6 +3733,7 @@
     $%  ::REVIEW  what if this in place of .ken? [%ames %keen =spar:ames]
         [%behn %wait =time]
         [%clay %warp id=*]
+        [%clay %tire ~]
         [%eyre %binding =binding:eyre]
         [%eyre %cache url=@t]  ::TODO  if we had the data we could reinflate...
         [%iris %request]
@@ -3873,8 +3874,31 @@
         [%behn %trim p=@ud]
       ::
         [%clay %read id=* =ship =desk =rave:clay]  ::  %warp
-        [%clay %drop id=*]
+        [%clay %rest id=*]  ::  %warp cancel
         :: [%clay %nuke ~]  ::TODO  support dropping all from wire?
+      ::
+        [%clay %rite des=desk sob=soba:clay]  ::  %info %&
+        [%clay %name des=desk lab=@tas yon=(unit aeon:clay)]  ::  %info %|
+      ::
+        [%clay %cred nom=@ta cew=crew:clay]
+        [%clay %crow nom=@ta]
+        [%clay %perm des=desk pax=path rit=rite:clay]
+      ::
+        [%clay %esse des=desk ese=?]
+        [%clay %rein des=desk ren=rein:clay]
+        [%clay %zeal lit=(list [=desk =$~(%dead zest:clay)])]  ::TODO  unify?
+        [%clay %zest des=desk liv=zest:clay]         ::TODO  unify?
+        [%clay %tire p=(unit ~)]  ::NOTE  sub
+      ::
+        [%clay %merg des=desk her=@p dem=desk cas=case how=germ:clay]
+        [%clay %fuse des=desk bas=beak con=(list [beak $~(%init germ:clay)])]
+        [%clay %drop des=desk]
+      ::
+        [%clay %mont pot=term bem=beam]
+        [%clay %ogre pot=$@(term beam)]
+        [%clay %dirk pot=term]
+      ::
+        [%clay %tomb =clue:clay]
         [%clay %trim p=@ud]
       ::
         [%dill %trim p=@ud]
@@ -3911,6 +3935,7 @@
     $%  [%ames %sage =sage:mess:ames]
         [%behn %wake =time]  ::REVIEW
         [%clay %read id=* =riot:clay]
+        [%clay %tire p=(each rock:tire:clay wave:tire:clay)]
         [%eyre %bound bound=? =binding:eyre wat=$@(term generator:eyre)]  ::NOTE  could become unbound _after_ binding!
         [%iris %http-response =client-response:iris]
         [%lick %soak =name:lick =mark =noun]

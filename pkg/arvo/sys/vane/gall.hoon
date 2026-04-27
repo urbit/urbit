@@ -1642,7 +1642,8 @@
         ::
         ?-  +.res
           [%behn %wait *]     [%behn %rest time.res]
-          [%clay %warp *]     [%clay %drop id.res]
+          [%clay %warp *]     [%clay %rest id.res]
+          [%clay %tire *]     [%clay %tire ~]
           [%eyre %binding *]  [%eyre %disconnect binding.res]
           [%eyre %cache *]    [%eyre %set-response url.res ~]
           [%iris %request]    [%iris %cancel-request ~]
@@ -1677,7 +1678,8 @@
           =-  [%pass wire.res %arvo -]
           ?-  +.res
             [%behn %wait *]     [%behn %rest time.res]
-            [%clay %warp *]     [%clay %drop id.res]
+            [%clay %warp *]     [%clay %rest id.res]
+            [%clay %tire *]     [%clay %tire ~]
             [%eyre %binding *]  [%eyre %disconnect binding.res]
             [%eyre %cache *]    [%eyre %set-response url.res ~]
             [%iris %request]    [%iris %cancel-request ~]
@@ -1939,7 +1941,7 @@
                         [@ %trim *]         ~
                         [%behn *]           `time.neet
                         [%clay %read *]     `id.neet
-                        [%clay %drop *]     `id.neet
+                        [%clay %rest *]     `id.neet
                         [%eyre %connect *]  `wat.neet
                       ::
                           [%eyre %disconnect *]
@@ -1965,9 +1967,12 @@
                 [%clay *]
               ?+  +>-.neet     [%c +>.neet]
                 %read  [%c %warp ship desk `rave]:neet
-                %drop  =-  [%c %warp ship desk ~]
+                %rest  =-  [%c %warp ship desk ~]
                        =;  req  ?>(?=([%clay %warp *] req) +>.req)
                        (~(got by resource-deets.yoke) p.card %clay %warp id.neet)
+              ::
+                %rite  [%c %info des %& sob]:neet
+                %name  [%c %info des %| lab yon]:neet
               ==
             ::
               [%dill *]        [%d +>.neet]
@@ -2261,14 +2266,21 @@
       |=  [res=arvo-resource acc=_ap-core]
       =.  ap-core  acc
       ?-    +.res
-          [%behn %wait *]
+        ::  re-establish trivially
+        ::
+          ?([%behn %wait *] [%clay %tire *])
         =.  inflating  (~(del in inflating) &+res)
         ?.  (~(has in resources.yoke) res)  ap-core
         %-  ap-move
         %-  ap-from-internal
         :^  %pass  wire.res  %arvo
-        [%behn %wait time.res]
+        ?-  +.res
+          [%behn %wait *]  [%behn %wait time.res]
+          [%clay %tire *]  [%clay %tire `~]
+        ==
       ::
+        ::  re-establish from deets
+        ::
           ?([%clay %warp *] [%eyre %binding *])
         =.  inflating  (~(del in inflating) &+res)
         ?.  (~(has in resources.yoke) res)  ap-core
@@ -2288,6 +2300,8 @@
         ::TODO  consider
         ap-core
       ::
+        ::  signal only
+        ::
           [%iris %request]
         =.  inflating  (~(del in inflating) &+res)
         ?.  (~(has in resources.yoke) res)  ap-core
@@ -2295,6 +2309,8 @@
         ::
         (ap-generic-take | ~ wire.res [%iris %http-response %cancel ~])
       ::
+        ::  signal + re-establish
+        ::
           [%lick %spin *]
         ?.  (~(has in resources.yoke) res)
           ap-core(inflating (~(del in inflating) &+res))
@@ -2786,7 +2802,8 @@
         ?+  +.q.card  ~
           :: [%ames %yawn *]                 &+[p.card %ames %keen spar.task]
           [%behn %rest *]                 &+[p.card %behn %wait time.task]
-          [%clay %drop *]                 &+[p.card %clay %warp id.q.card]
+          [%clay %rest *]                 &+[p.card %clay %warp id.q.card]
+          [%clay %tire ~]                 &+[p.card %clay %tire ~]
           [%eyre %disconnect *]           &+[p.card %eyre %binding binding.task]
           [%iris %cancel-request ~]       &+[p.card %iris %request]
           [%lick %shut *]                 &+[p.card %lick %spin name.task]
@@ -2827,7 +2844,8 @@
         [%behn %rest *]                 [| %behn %wait time.task]
         [%clay %read *]                 :-  [%clay %warp ship desk rave]:task
                                         [%clay %warp id.task]
-        [%clay %drop *]                 [| %clay %warp id.task]
+        [%clay %rest *]                 [| %clay %warp id.task]
+        [%clay %tire *]                 [?~(p.task | &) %clay %tire ~]
         [%eyre %connect *]              :-  [%eyre %binding wat.task]
                                         [%eyre %binding binding.task]
         [%eyre %disconnect *]           [| %eyre %binding binding.task]
