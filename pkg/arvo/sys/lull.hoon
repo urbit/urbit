@@ -3733,7 +3733,7 @@
     $%  ::REVIEW  what if this in place of .ken? [%ames %keen =spar:ames]
         [%behn %wait =time]
         [%clay %warp id=*]
-        [%clay %tire ~]  ::TODO  consistency
+        [%clay %tire]
         [%dill %logs]
         [%dill %mass]
         [%dill %view ses=@tas]

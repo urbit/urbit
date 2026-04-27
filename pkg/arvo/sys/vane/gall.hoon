@@ -1642,7 +1642,7 @@
         ?-  +.res
           [%behn %wait *]     [%behn %rest time.res]
           [%clay %warp *]     [%clay %rest id.res]
-          [%clay %tire *]     [%clay %tire ~]
+          [%clay %tire]       [%clay %tire ~]
           [%dill %logs]       [%dill %logs ~]
           [%dill %mass]       ~
           [%dill %view *]     [%dill %shot ses.res %flee ~]
@@ -1682,7 +1682,7 @@
           ?-  +.res
             [%behn %wait *]     [%behn %rest time.res]
             [%clay %warp *]     [%clay %rest id.res]
-            [%clay %tire *]     [%clay %tire ~]
+            [%clay %tire]       [%clay %tire ~]
             [%dill %logs]       [%dill %logs ~]
             [%dill %mass]       ~
             [%dill %view *]     [%dill %shot ses.res %flee ~]
@@ -2274,7 +2274,7 @@
       ?-    +.res
         ::  re-establish trivially
         ::
-          ?([%behn %wait *] [%clay %tire *] [%dill *])
+          ?([%behn %wait *] [%clay %tire] [%dill *])
         =.  inflating  (~(del in inflating) &+res)
         ?.  (~(has in resources.yoke) res)  ap-core
         %-  ap-move
@@ -2282,7 +2282,7 @@
         :^  %pass  wire.res  %arvo
         ?-  +.res
           [%behn %wait *]  [%behn %wait time.res]
-          [%clay %tire *]  [%clay %tire `~]
+          [%clay %tire]    [%clay %tire `~]
           [%dill %logs]    [%dill %logs `~]
           [%dill %mass]    [%dill %mass ~]
           [%dill %view *]  [%dill %shot ses.res %view ~]
@@ -2811,8 +2811,8 @@
         ?+  +.q.card  ~
           :: [%ames %yawn *]                 &+[p.card %ames %keen spar.task]
           [%behn %rest *]                 &+[p.card %behn %wait time.task]
-          [%clay %rest *]                 &+[p.card %clay %warp id.q.card]
-          [%clay %tire ~]                 &+[p.card %clay %tire ~]
+          [%clay %rest *]                 &+[p.card %clay %warp id.task]
+          [%clay %tire ~ ~]               &+[p.card %clay %tire]
           [%dill %logs ~ ~]               &+[p.card %dill %logs]
           [%dill %shot @ %flee ~]         &+[p.card %dill %view ses.task]
           [%eyre %disconnect *]           &+[p.card %eyre %binding binding.task]
@@ -2856,7 +2856,7 @@
         [%clay %read *]                 :-  [%clay %warp ship desk rave]:task
                                         [%clay %warp id.task]
         [%clay %rest *]                 [| %clay %warp id.task]
-        [%clay %tire *]                 [?~(p.task | &) %clay %tire ~]
+        [%clay %tire *]                 [?~(p.task | &) %clay %tire]
         [%dill %logs *]                 [?~(p.task | &) %dill %logs]
         [%dill %mass *]                 [& %dill %mass]
         [%dill %shot @ %view *]         [& %dill %view ses.task]
