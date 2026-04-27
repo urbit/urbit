@@ -2392,6 +2392,10 @@
           [%ames %sage *]           sign-arvo
           [%behn %wake *]           [%behn %wake ;;(time deets)]
           [%clay %writ *]           [%clay %read deets p.sign-arvo]
+          [%clay %tire *]           sign-arvo
+          [%dill %blit *]           [%dill %blit p.sign-arvo]
+          [%dill %logs *]           sign-arvo
+          [%dill %meme *]           sign-arvo
           [%eyre %bound *]          :*  %eyre  %bound
                                         accepted.sign-arvo  binding.sign-arvo
                                         ;;($@(term generator:eyre) deets)
