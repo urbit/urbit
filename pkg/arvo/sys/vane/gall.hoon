@@ -1944,11 +1944,12 @@
                       =;  deet=(unit *)
                         ?~(deet '' (crip ~(rend co %blob u.deet)))
                       ?+  +.neet  ~
-                        [@ %trim *]         ~
-                        [%behn *]           `time.neet
-                        [%clay %read *]     `id.neet
-                        [%clay %rest *]     `id.neet
-                        [%eyre %connect *]  `wat.neet
+                        [@ %trim *]              ~
+                        [%behn *]                `time.neet
+                        [%clay %read *]          `id.neet
+                        [%clay %rest *]          `id.neet
+                        [%dill %shot @ %view *]  `ses.neet
+                        [%eyre %connect *]       `wat.neet
                       ::
                           [%eyre %disconnect *]
                         =;  det  ?>(?=([%eyre %binding *] det) `wat.det)
@@ -2393,7 +2394,7 @@
           [%behn %wake *]           [%behn %wake ;;(time deets)]
           [%clay %writ *]           [%clay %read deets p.sign-arvo]
           [%clay %tire *]           sign-arvo
-          [%dill %blit *]           [%dill %blit p.sign-arvo]
+          [%dill %blit *]           [%dill %blit ;;(@tas deets) p.sign-arvo]
           [%dill %logs *]           sign-arvo
           [%dill %meme *]           sign-arvo
           [%eyre %bound *]          :*  %eyre  %bound
@@ -2893,6 +2894,14 @@
       ?+  gift  ~
         [%behn *]        `|+[%behn %wait time.gift]
         [%dill %meme *]  `|+[%dill %mass]
+      ::
+          [%dill %blit *]
+        =;  bye=?  ?:(bye `|+[%dill %view ses.gift] ~)
+        |-
+        ?&  ?=(^ biz.gift)
+        ?|  ?+(-.i.biz.gift | %bye &, %mor $(biz.gift p.i.biz.gift))
+            $(biz.gift t.biz.gift)
+        ==  ==
         ::TODO  handle %dill %blit %bye session deletion signal
       ::
           [%clay *]

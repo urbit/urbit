@@ -3951,7 +3951,7 @@
         [%behn %wake =time]  ::REVIEW
         [%clay %read id=* =riot:clay]
         [%clay %tire p=(each rock:tire:clay wave:tire:clay)]
-        [%dill %blit p=(list blit:dill)]
+        [%dill %blit ses=@tas biz=(list blit:dill)]
         [%dill %logs =told:dill]
         [%dill %meme p=(list quac:dill)]
         [%eyre %bound bound=? =binding:eyre wat=$@(term generator:eyre)]  ::NOTE  could become unbound _after_ binding!
