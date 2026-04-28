@@ -12996,7 +12996,10 @@
       ?+  -.task  !!
       ::  common tasks
       ::
-        %load  `vane-gate(ames-state ames-state(core +.task))
+          %load
+        ~>  %slog.2^leaf/"mesa: turning on {<+.task>} for first contact"
+        `vane-gate(ames-state ames-state(core +.task))
+      ::
         %plea  (pe-plea +.task)
         %cork  (pe-cork +.task)
         %keen  (pe-keen +.task)

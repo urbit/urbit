@@ -1,12 +1,14 @@
 ::  ahoy: migrate peers to %mesa
 ::
-::  flow:
+::  flows:
 ::
 :: %comb poke
 ::   -> gather all peers in peers.ames-state
 ::   -> pass pending peers and last known cases to -comb
 ::
-::  -comb thread:
+:: %prob poke for .ship
+::
+::  -prob thread:
 ::
 :: on-arvo %keen response (handle-sage):
 ::   -> parse kelvin from response
@@ -163,7 +165,14 @@
     ::
     $(old old(- %1), this (emit %pass /ames %arvo %a %load %ames))
   ?:  ?=(%1 -.old)
+    ::  enable %mesa as the default first-contact network core
+    ::
+    =.  this  (emit %pass /ames %arvo %a %load %mesa)
     ::  add migration hashes from 409k-2 until XX 408k
+    ::
+    ::  XX this is needed for ships that are on the pre-release moon
+    ::  ~binnec, for anybody else we should just read the contents of
+    ::  sys.kelvin and check for 408k
     ::
     =|  sat-2=state-2
     =.  sat-2
