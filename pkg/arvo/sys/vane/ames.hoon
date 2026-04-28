@@ -13195,8 +13195,8 @@
           ::
           ?.  =(+>:*fren-state +>.fren)
             %-  %+  %*(ev-tace ev-core her sndr.shot)  odd.veb.bug.ames-state
-                |.("hear ames packet for migrated %known peer")
-            `vane-gate
+                |.("%ames packet with outstanding %mesa flows; spot regression")
+            (call:me-core ~[/spot-rege] dud %rege `sndr.shot dry=%.n)
           ::  if the peer sends us an %ames packets, but we have %known state in
           ::  .chums. this could be caused by:
           ::
