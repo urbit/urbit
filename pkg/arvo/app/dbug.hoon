@@ -13,9 +13,10 @@
 =|  state-0
 =*  state  -
 ::
+:-  %new-agent
 %+  verb  |
 %-  agent:dbug
-^-  agent:gall
+^-  form:agent:gall
 =<
   |_  =bowl:gall
   +*  this  .
@@ -25,7 +26,7 @@
   ++  on-init
     ^-  (quip card _this)
     :_  this
-    [%pass /connect %arvo %e %connect [~ /'~debug'] dap.bowl]~
+    [%pass /connect %arvo %syscall %e %connect [~ /'~debug'] dap.bowl]~
   ::
   ++  on-save  !>(state)
   ::
@@ -64,7 +65,7 @@
       =/  cmd
         ((of clear-eyre-cache+(ot url+so ~) ~) jon)
       ?>  ?=(%clear-eyre-cache -.cmd)
-      [[%pass /cmd %arvo %e %set-response +.cmd ~]~ this]
+      [[%pass /cmd %arvo %syscall %e %set-response +.cmd ~]~ this]
     ?.  ?=(%handle-http-request mark)
       (on-poke:def mark vase)
     =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
@@ -74,10 +75,12 @@
     handle-http-request:do
   ::
   ++  on-arvo
-    |=  [=wire =sign-arvo]
+    |=  [=wire gift=gift-user-v1:gall]
     ^-  (quip card _this)
+    ?>  ?=(%syscall -.gift)
+    =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
     ?.  ?=([%eyre %bound *] sign-arvo)
-      (on-arvo:def wire sign-arvo)
+      (on-arvo:def wire gift)
     ~?  !accepted.sign-arvo
       [dap.bowl "bind rejected!" binding.sign-arvo]
     [~ this]

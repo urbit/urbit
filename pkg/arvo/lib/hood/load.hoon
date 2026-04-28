@@ -30,7 +30,7 @@
   =/  channel
     .^(channel-state:eyre %e /(scot %p our)/channel-state/(scot %da now)/$)
   =;  subs=(list [%g ship term duct])
-    [%pass /helm %arvo %g %lave subs]~
+    [%pass /helm %arvo %syscall %g %lave subs]~
   ::
   %+  roll  ~(tap by yokes)
   |=  [[=dude:gall =yoke:m-gall] subs=(list [%g ship term duct])]

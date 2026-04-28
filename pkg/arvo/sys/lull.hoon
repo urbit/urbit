@@ -3728,6 +3728,18 @@
         [%plot p=(unit plot) q=(map @ta farm)]
     ==
   ::
+  +$  arvo-resource
+    $:  =wire
+    $%  ::REVIEW  what if this in place of .ken? [%ames %keen =spar:ames]
+        [%behn %wait =time]
+        :: [%clay %warp =ship =desk]
+        [%eyre %binding =binding:eyre wat=$@(term generator:eyre)]
+        [%eyre %cache url=@t]  ::TODO  if we had the data we could reinflate...
+        [%iris %request]
+        :: [%khan ?(%fard %fyrd %lard)]
+        [%lick %spin =name:lick]
+    ==  ==
+  ::
   +$  egg                                               ::  migratory agent
     $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)] ::  state; see /sys/gall
         $:  %live                                       ::  $yoke
@@ -3738,6 +3750,7 @@
             =bitt
             =boat
             =boar
+            resources=(set arvo-resource)
             code=~
             old-state=[%| vase]
             =beak
@@ -3747,7 +3760,7 @@
             pen=(jug spar:ames wire)
             gem=(jug coop [path page])
     ==  ==
-  +$  egg-any  $%([%15 egg-15] [%16 egg])
+  +$  egg-any  $%([%15 egg-15] [%16 egg-16] [%20 egg])
   +$  egg-15
     $%  [%nuke sky=(map spur @ud)]
     $:  %live
@@ -3764,6 +3777,25 @@
         marks=(map duct mark)
         sky=(map spur plot)
         ken=(jug spar:ames wire)
+    ==  ==
+  +$  egg-16
+    $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)]
+        $:  %live
+            control-duct=duct
+            run-nonce=@t
+            sub-nonce=@
+            =stats
+            =bitt
+            =boat
+            =boar
+            code=~
+            old-state=[%| vase]
+            =beak
+            marks=(map duct mark)
+            sky=farm
+            ken=(jug spar:ames wire)
+            pen=(jug spar:ames wire)
+            gem=(jug coop [path page])
     ==  ==
   ::
   +$  bowl                                              ::  standard app state
@@ -3784,7 +3816,7 @@
     ==  ==                                              ::                                                  ::
   +$  dude  term                                        ::  server identity
   +$  gill  (pair ship term)                            ::  general contact
-  +$  load  (list [=dude =beak =agent])                 ::  loadout
+  +$  load  (list [=dude =beak =agent-any])             ::  loadout
   +$  scar                                              ::  opaque duct
     $:  p=@ud                                           ::  bone sequence
         q=(map duct bone)                               ::  by duct
@@ -3805,10 +3837,64 @@
   +$  verb  ?(%odd)
   +$  coop  spur
   ::
+  ::  userspace api
+  ::
+  +$  task-user-v1
+    $%  [%ames %keen secret=? =spar:ames]
+        [%ames %yawn =spar:ames]
+      ::
+        ::NOTE  not actually into %ames, just gall-side namespace management
+        [%ames %grow =spur =page]
+        [%ames %tomb =case =spur]
+        [%ames %cull =case =spur]
+        [%ames %tend =coop =path =page]
+        [%ames %germ =coop]
+        [%ames %snip =coop]
+      ::
+        [%behn %wait =time]
+        [%behn %rest =time]
+      ::
+        :: [%clay %read id=@ =ship =desk read=(unit $<(%many rave:clay))]
+      ::
+        [%eyre %rule =http-rule:eyre]
+        [%eyre %eauth-host host=(unit @t)]
+        [%eyre %connect =binding:eyre wat=$@(term generator:eyre)]
+        [%eyre %disconnect =binding:eyre wat=$@(term generator:eyre)]
+        [%eyre %approve-origin =origin:eyre]
+        [%eyre %reject-origin =origin:eyre]
+        [%eyre %spew veb=@]
+        [%eyre %set-response url=@t entry=(unit cache-entry:eyre)]
+      ::
+        [%iris %request =request:http =outbound-config:iris]
+        [%iris %cancel-request ~]
+      ::
+        [%lick %spin =name:lick]
+        [%lick %shut =name:lick]
+        [%lick %spit =name:lick =mark =noun]
+      ::
+        [%syscall note-arvo=*]  ::NOTE  secretly $note-arvo, DO NOT DOCUMENT (;
+    ==
+  ::
+  +$  gift-user-v1
+    $%  [%ames %sage =sage:mess:ames]
+        [%behn %wake =time]  ::REVIEW
+        :: [%clay %read =riot:clay]
+        [%eyre %bound bound=? =binding:eyre wat=$@(term generator:eyre)]  ::NOTE  could become unbound _after_ binding!
+        [%iris %http-response =client-response:iris]
+        [%lick %soak =name:lick =mark =noun]
+      ::
+        [%syscall actual-kelvin=@ sign-arvo=*]  ::NOTE  secretly $sign-arvo, DO NOT DOCUMENT (;
+        [%unsupported ~]
+    ==
+  ::
+  +$  agent-any
+    $%  agent
+        agent-old
+    ==
   ::  +agent: app core
   ::
   ++  agent
-    =<  form
+    =<  ,[mod=%new-agent fom=form]
     |%
     +$  step  (quip card form)
     +$  card
@@ -3817,18 +3903,7 @@
     +$  note
       $+  gall-agent-note
       $%  [%agent [=ship name=term] =task]
-          [%arvo note-arvo]
-          [%pyre =tang]
-      ::
-          [%grow =spur =page]
-          [%tomb =case =spur]
-          [%cull =case =spur]
-      ::
-          [%tend =coop =path =page]
-          [%germ =coop]
-          [%snip =coop]
-      ::
-          [%keen secret=? spar:ames]
+          [%arvo task-user-v1]
       ==
     +$  task
       $+  gall-agent-task
@@ -3847,6 +3922,94 @@
       ==
     +$  sign
       $+  gall-agent-sign
+      $%  [%poke-ack p=(unit tang)]
+          [%watch-ack p=(unit tang)]
+          [%fact =cage]
+          [%kick ~]
+      ==
+    ++  form
+      $_  ^|
+      |_  bowl
+      ++  on-init
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-save
+        *vase
+      ::
+      ++  on-load
+        |~  old-state=vase
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-poke
+        |~  [mark vase]
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-watch
+        |~  path
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-leave
+        |~  path
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-peek
+        |~  path
+        *(unit (unit cage))
+      ::
+      ++  on-agent
+        |~  [wire sign]
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-arvo
+        |~  [wire gift-user-v1]
+        *(quip card _^|(..on-init))
+      ::
+      ++  on-fail
+        |~  [term tang]
+        *(quip card _^|(..on-init))
+      --
+    --
+  ::
+  ++  agent-old
+    =<  ,[mod=%old-agent fom=form]
+    |%
+    +$  step  (quip card form)
+    +$  card
+      $+  old-gall-agent-card
+      (wind note gift)
+    +$  note
+      $+  old-gall-agent-note
+      $%  [%agent [=ship name=term] =task]
+          [%arvo note-arvo]
+          [%pyre =tang]
+      ::
+          [%grow =spur =page]
+          [%tomb =case =spur]
+          [%cull =case =spur]
+      ::
+          [%tend =coop =path =page]
+          [%germ =coop]
+          [%snip =coop]
+      ::
+          [%keen secret=? spar:ames]
+      ==
+    +$  task
+      $+  old-gall-agent-task
+      $%  [%watch =path]
+          [%watch-as =mark =path]
+          [%leave ~]
+          [%poke =cage]
+          [%poke-as =mark =cage]
+      ==
+    +$  gift
+      $+  old-gall-agent-gift
+      $%  [%fact paths=(list path) =cage]
+          [%kick paths=(list path) ship=(unit ship)]
+          [%watch-ack p=(unit tang)]
+          [%poke-ack p=(unit tang)]
+      ==
+    +$  sign
+      $+  old-gall-agent-sign
       $%  [%poke-ack p=(unit tang)]
           [%watch-ack p=(unit tang)]
           [%fact =cage]

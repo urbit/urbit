@@ -367,7 +367,7 @@
 ++  mass
   =/  m  (strand ,(list quac:dill))
   ^-  form:m
-  =/  =card:agent:gall  [%pass /mass %arvo %d %mass ~]
+  =/  =card:agent:gall  [%pass /mass %arvo %syscall %d %mass ~]
   ;<  ~  bind:m  (send-raw-card card)
   ;<  quz=(list quac:dill)  bind:m  take-meme
   (pure:m quz)
@@ -386,25 +386,25 @@
   |=  [=wire =spar:ames sec=(unit [@ @])]
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass wire %arvo %a %keen sec spar)
+  (send-raw-card %pass wire %arvo %syscall %a %keen sec spar)
 ::
 ++  chum
   |=  [=wire =spar:ames]
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass wire %arvo %a %chum spar)
+  (send-raw-card %pass wire %arvo %syscall %a %chum spar)
 ::
 ++  keen-shut
   |=  [=wire =spar:ames]
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass wire %keen & spar)
+  (send-raw-card %pass wire %arvo %ames %keen & spar)
 ::
 ++  yawn
   |=  [=wire =spar:ames]
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass wire %arvo %a %yawn spar)
+  (send-raw-card %pass wire %arvo %syscall %a %yawn spar)
 ::
 ++  whey
   |=  [=wire boq=@ud =spar:ames]
@@ -434,7 +434,7 @@
     ::
     ;<  our=@p  bind:m  get-our
     %-  send-raw-card
-    :*  %pass  wire  %arvo  %a  %chum
+    :*  %pass  wire  %arvo  %syscall  %a  %chum
         spar(path [%a %x '1' %$ %meta (scot %p our) path.spar])
     ==
   ==
@@ -451,7 +451,7 @@
   =/  m  (strand ,~)
   ^-  form:m
   =/  =card:agent:gall
-    [%pass /wait/(scot %da until) %arvo %b %wait until]
+    [%pass /wait/(scot %da until) %arvo %syscall %b %wait until]
   (send-raw-card card)
 ::
 ++  map-err
@@ -476,7 +476,7 @@
   ;<  now=@da  bind:m  get-time
   =/  when  (add now time)
   =/  =card:agent:gall
-    [%pass /timeout/(scot %da when) %arvo %b %wait when]
+    [%pass /timeout/(scot %da when) %arvo %syscall %b %wait when]
   ;<  ~        bind:m  (send-raw-card card)
   |=  tin=strand-input:strand
   =*  loop  $
@@ -489,7 +489,7 @@
     c-res(self.next ..loop(computation self.next.c-res))
   ?:  ?=(%done -.next.c-res)
     =/  =card:agent:gall
-      [%pass /timeout/(scot %da when) %arvo %b %rest when]
+      [%pass /timeout/(scot %da when) %arvo %syscall %b %rest when]
     c-res(cards [card cards.c-res])
   c-res
 ::
@@ -497,12 +497,12 @@
   |=  =request:http
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass /request %arvo %i %request request *outbound-config:iris)
+  (send-raw-card %pass /request %arvo %syscall %i %request request *outbound-config:iris)
 ::
 ++  send-cancel-request
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass /request %arvo %i %cancel-request ~)
+  (send-raw-card %pass /request %arvo %syscall %i %cancel-request ~)
 ::
 ++  take-client-response
   =/  m  (strand ,client-response:iris)
@@ -668,7 +668,7 @@
 ++  warp
   |=  [=ship =riff:clay]
   =/  m  (strand ,riot:clay)
-  ;<  ~  bind:m  (send-raw-card %pass /warp %arvo %c %warp ship riff)
+  ;<  ~  bind:m  (send-raw-card %pass /warp %arvo %syscall %c %warp ship riff)
   (take-writ /warp)
 ::
 ++  read-file
@@ -745,7 +745,7 @@
   |=  [=bear:khan =shed:khan =wire]
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass wire %arvo %k %lard bear shed)
+  (send-raw-card %pass wire %arvo %syscall %k %lard bear shed)
 ::
 ::  Queue on skip, try next on fail %ignore
 ::
@@ -833,7 +833,7 @@
   |=  =flog:dill
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass / %arvo %d %flog flog)
+  (send-raw-card %pass / %arvo %syscall %d %flog flog)
 ::
 ++  flog-text
   |=  =tape
@@ -876,7 +876,7 @@
   |=  =turf
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass / %arvo %e %rule %turf %put turf)
+  (send-raw-card %pass / %arvo %syscall %e %rule %turf %put turf)
 ::
 ::    ----
 ::
