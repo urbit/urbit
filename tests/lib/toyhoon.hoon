@@ -1,6 +1,6 @@
 ::  toyhoon: tests
 ::
-/+  *test, th=toyhoon
+/+  *test, th=toyhoon, tp=toyhoon-parse
 ::
 =>  |%
     ++  test-slap
@@ -179,4 +179,35 @@
         [%noun [%cell [. .]:numb:pre] [4 5]]
     ==
   !>((scan "[[1 2] .+(3) 4 5]" apex:parse:th))
+::
+++  make-tokenizer-test
+  |=  [input=@t match=[tag=* i=@ud]]
+  =+  res=(gate:tp (init-cord-cursor:tp input))
+  ?~  res  `tang`~['failed to tokenize' input]
+  %+  weld
+    (expect-eq !>(tag.match) !>(tag.res))
+  (expect-eq !>(i.match) !>(i.cur.res))
+::
+++  test-tokenizer
+  ;:  weld
+    (make-tokenizer-test '.*(123)' %dttrw 3)
+    (make-tokenizer-test '123' %atomw 3)
+    (make-tokenizer-test '1.234' %atomw 5)
+  ==
+::
+++  make-parser-test
+  |=  [input=@t =naty:th]
+  =+  res=~(tall parser:tp & (init-cord-cursor:tp input) [1 1] ~)
+  ?~  res  ~['failed to parse' input]
+  %+  weld
+    (expect-eq !>(naty) !>(u.res))
+  (expect-eq !>(i.cur.s.res) !>(len.cur.s.res))  ::  fully parsed
+::
+++  test-parser
+  ;:  weld
+    (make-parser-test '123' [%noun [%atom %ud ~] 123])
+    (make-parser-test '.+(1)' [%dtls %noun [%atom %ud ~] 1])
+    (make-parser-test '.+  2' [%dtls %noun [%atom %ud ~] 2])
+    (make-parser-test '.+  .+(3)' [%dtls %dtls %noun [%atom %ud ~] 3])
+  ==
 --
