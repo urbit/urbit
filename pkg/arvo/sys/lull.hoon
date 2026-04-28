@@ -4558,7 +4558,7 @@
   +$  input
     $+  input
     $%  [%poke =cage]
-        [%sign =wire =sign-arvo]
+        [%gift =wire gift=gift-user-v1:gall]
         [%agent =wire =sign:agent:gall]
         [%watch =path]
     ==

@@ -311,14 +311,11 @@
     ~/  %on-arvo
     |=  [=wire gift=gift-user-v1:gall]
     ^-  (quip card _this)
-    ?:  ?=(%unsupported -.gift)  (on-arvo:def wire gift)
-    =/  to-sign-arvo
-      ?:(?=(%syscall -.gift) sign-arvo.gift +.gift)
-    =+  !<(=sign-arvo [-:!>(*sign-arvo) to-sign-arvo])
+    ?:  ?=(%unsupported -.gift)  (on-arvo:def wire gift) :: TODO: handle failed syscalls
     =^  cards  state
       ?+  wire  (on-arvo:def wire gift)
-        [%thread @ *]  (handle-sign:sc i.t.wire t.t.wire sign-arvo)
-        [%build @ ~]   (handle-build:sc i.t.wire sign-arvo)
+        [%thread @ *]  (handle-gift:sc i.t.wire t.t.wire gift)
+        [%build @ ~]   (handle-build:sc i.t.wire gift)
         [%bind ~]      `state
       ==
     [cards this]
@@ -430,14 +427,14 @@
   ^-  (quip card ^state)
   `state
 ::
-++  handle-sign
-  ~/  %handle-sign
-  |=  [=tid =wire =sign-arvo]
+++  handle-gift
+  ~/  %handle-gift
+  |=  [=tid =wire gift=gift-user-v1:gall]
   =/  yarn  (~(get by tid.state) tid)
   ?~  yarn
-    %-  (slog leaf+"spider got sign for non-existent {<tid>}" ~)
+    %-  (slog leaf+"spider got gift for non-existent {<tid>}" ~)
     `state
-  (take-input u.yarn ~ %sign wire sign-arvo)
+  (take-input u.yarn ~ %gift wire gift)
 ::
 ++  on-agent
   |=  [=tid =wire =sign:agent:gall]
@@ -505,14 +502,21 @@
 ::
 ++  handle-build
   ~/  %handle-build
-  |=  [=tid =sign-arvo]
+  |=  [=tid gift=gift-user-v1:gall]
   ^-  (quip card ^state)
   =/  =yarn  (~(got by tid.state) tid)
   =.  starting.state
     (~(jab by starting.state) yarn |=([=trying =vase] [%none vase]))
-  ~|  sign+[- +<]:sign-arvo
-  ?>  ?=([?(%behn %clay) %writ *] sign-arvo)
-  =/  =riot:clay  p.sign-arvo
+  ~|  gift+[- +<]:gift
+  =/  =riot:clay
+    ?+  gift  !!
+        [%clay %read *]  riot.gift
+    ::
+        [%syscall *]
+      =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
+      ?>  ?=([?(%behn %clay) %writ *] sign-arvo)
+      p.sign-arvo
+    ==
   ?~  riot
     (thread-fail-not-running tid %build-thread-error *tang)
   ?.  ?=(%vase p.r.u.riot)

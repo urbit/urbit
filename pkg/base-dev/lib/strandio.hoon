@@ -82,16 +82,16 @@
     `[%done q.cage.u.in.tin]
   ==
 ::
-++  take-sign-arvo
-  =/  m  (strand ,[wire sign-arvo])
+++  take-gift-user
+  =/  m  (strand ,[wire gift-user-v1:gall])
   ^-  form:m
   |=  tin=strand-input:strand
   ?+  in.tin  `[%skip ~]
       ~
     `[%wait ~]
   ::
-      [~ %sign *]
-    `[%done [wire sign-arvo]:u.in.tin]
+      [~ %gift *]
+    `[%done [wire gift]:u.in.tin]
   ==
 ::
 ::  Wait for a subscription update on a wire
@@ -175,12 +175,12 @@
   |=  tin=strand-input:strand
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
-      [~ %sign [%wait @ ~] %behn %wake *]
+      [~ %gift [%wait @ ~] %behn %wake *]
     ?.  |(?=(~ until) =(`u.until (slaw %da i.t.wire.u.in.tin)))
       `[%skip ~]
-    ?~  error.sign-arvo.u.in.tin
+    :: ?~  error.sign-arvo.u.in.tin
       `[%done ~]
-    `[%fail %timer-error u.error.sign-arvo.u.in.tin]
+    :: `[%fail %timer-error u.error.sign-arvo.u.in.tin]
   ==
 ++  take-whey
   |=  =wire
@@ -190,10 +190,10 @@
   ?+    in.tin  `[%skip ~]
       ~  `[%wait ~]
     ::
-      [~ %sign * %ames %sage sage=*]
+      [~ %gift * %ames %sage sage=*]
     ?.  =(wire wire.u.in.tin)
       `[%skip ~]
-    =/  =sage:mess:ames  sage.sign-arvo.u.in.tin
+    =/  =sage:mess:ames  sage.gift.u.in.tin
     :^  ~  %done  spar=p.sage
     ?~  q.sage
       [boq=13 tot=0]
@@ -209,26 +209,26 @@
   ?+    in.tin  `[%skip ~]
       ~  `[%wait ~]
     ::
-      [~ %sign * %ames %sage sage=*]
+      [~ %gift * %ames %sage sage=*]
     ?.  =(wire wire.u.in.tin)
       `[%skip ~]
-    `[%done sage.sign-arvo.u.in.tin]
+    `[%done sage.gift.u.in.tin]
   ==
 ::  XX deprecate in 409k
 ::
-++  take-near
-  |=  =wire
-  =/  m  (strand ,[spar:ames (unit (unit page))])
-  ^-  form:m
-  |=  tin=strand-input:strand
-  ?+    in.tin  `[%skip ~]
-      ~  `[%wait ~]
-    ::
-      [~ %sign * %ames %near ^ *]
-    ?.  =(wire wire.u.in.tin)
-      `[%skip ~]
-    `[%done +>.sign-arvo.u.in.tin]
-  ==
+:: ++  take-near
+::   |=  =wire
+::   =/  m  (strand ,[spar:ames (unit (unit page))])
+::   ^-  form:m
+::   |=  tin=strand-input:strand
+::   ?+    in.tin  `[%skip ~]
+::       ~  `[%wait ~]
+::     ::
+::       [~ %sign * %ames %near ^ *]
+::     ?.  =(wire wire.u.in.tin)
+::       `[%skip ~]
+::     `[%done +>.sign-arvo.u.in.tin]
+::   ==
 ::
 ++  take-poke-ack
   |=  =wire
@@ -378,8 +378,11 @@
   |=  tin=strand-input:strand
   ?+  in.tin  `[%skip ~]
     ~  `[%wait ~]
-      [~ %sign [%mass ~] %dill %meme *]
-    `[%done p.sign-arvo.u.in.tin]
+  ::
+      [~ %gift [%mass ~] %syscall *]
+    =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift.u.in.tin])
+    ?.  ?=([%dill %meme *] sign-arvo)  `[%skip ~]
+    `[%done p.sign-arvo]
   ==
 ::
 ++  keen
@@ -451,7 +454,7 @@
   =/  m  (strand ,~)
   ^-  form:m
   =/  =card:agent:gall
-    [%pass /wait/(scot %da until) %arvo %syscall %b %wait until]
+    [%pass /wait/(scot %da until) %arvo %behn %wait until]
   (send-raw-card card)
 ::
 ++  map-err
@@ -476,11 +479,11 @@
   ;<  now=@da  bind:m  get-time
   =/  when  (add now time)
   =/  =card:agent:gall
-    [%pass /timeout/(scot %da when) %arvo %syscall %b %wait when]
+    [%pass /timeout/(scot %da when) %arvo %behn %wait when]
   ;<  ~        bind:m  (send-raw-card card)
   |=  tin=strand-input:strand
   =*  loop  $
-  ?:  ?&  ?=([~ %sign [%timeout @ ~] %behn %wake *] in.tin)
+  ?:  ?&  ?=([~ %gift [%timeout @ ~] %behn %wake *] in.tin)
           =((scot %da when) i.t.wire.u.in.tin)
       ==
     `[%fail %timeout ~]
@@ -497,12 +500,12 @@
   |=  =request:http
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass /request %arvo %syscall %i %request request *outbound-config:iris)
+  (send-raw-card %pass /request %arvo %iris %request request *outbound-config:iris)
 ::
 ++  send-cancel-request
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass /request %arvo %syscall %i %cancel-request ~)
+  (send-raw-card %pass /request %arvo %iris %cancel-request ~)
 ::
 ++  take-client-response
   =/  m  (strand ,client-response:iris)
@@ -511,15 +514,15 @@
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
     ::
-      [~ %sign [%request ~] %iris %http-response %cancel *]
+      [~ %gift [%request ~] %iris %http-response %cancel *]
     ::NOTE  iris does not (yet?) retry after cancel, so it means failure
     :-  ~
     :+  %fail
       %http-request-cancelled
     ['http request was cancelled by the runtime']~
     ::
-      [~ %sign [%request ~] %iris %http-response %finished *]
-    `[%done client-response.sign-arvo.u.in.tin]
+      [~ %gift [%request ~] %iris %http-response %finished *]
+    `[%done client-response.gift.u.in.tin]
   ==
 ::
 ::  Wait until we get an HTTP response or cancelation and unset contract
@@ -543,10 +546,10 @@
   |=  tin=strand-input:strand
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
-      [~ %sign [%request ~] %iris %http-response %cancel *]
+      [~ %gift [%request ~] %iris %http-response %cancel *]
     `[%done ~]
-      [~ %sign [%request ~] %iris %http-response %finished *]
-    `[%done `client-response.sign-arvo.u.in.tin]
+      [~ %gift [%request ~] %iris %http-response %finished *]
+    `[%done `client-response.gift.u.in.tin]
   ==
 ::
 ++  extract-body
@@ -668,8 +671,10 @@
 ++  warp
   |=  [=ship =riff:clay]
   =/  m  (strand ,riot:clay)
-  ;<  ~  bind:m  (send-raw-card %pass /warp %arvo %syscall %c %warp ship riff)
-  (take-writ /warp)
+  =/  id  (jam riff)  ::  review
+  ?~  q.riff  !!      ::  review, could send %clay %drop
+  ;<  ~  bind:m  (send-raw-card %pass /warp %arvo %clay %read id ship p.riff u.q.riff)
+  (take-writ /warp id)
 ::
 ++  read-file
   |=  [[=ship =desk =case] =spur]
@@ -707,16 +712,19 @@
 ::  Take Clay read result
 ::
 ++  take-writ
-  |=  =wire
+  |=  [=wire id=@]
   =/  m  (strand ,riot:clay)
   ^-  form:m
   |=  tin=strand-input:strand
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
-      [~ %sign * ?(%behn %clay) %writ *]
-    ?.  =(wire wire.u.in.tin)
+  ::
+      [~ %gift * %clay %read *]
+    ?.  ?&  =(wire wire.u.in.tin)
+            =(id id.gift.u.in.tin)
+        ==
       `[%skip ~]
-    `[%done +>.sign-arvo.u.in.tin]
+    `[%done riot.gift.u.in.tin]
   ==
 ::  +check-online: require that peer respond before timeout
 ::
