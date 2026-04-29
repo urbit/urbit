@@ -699,7 +699,7 @@
   %-  branch
   :~  :-  'cancelled by agent'
       ;<  moz=(list move:gall)  bind:m
-        (mock-card %pass /agent/wire %arvo %clay %drop 123)
+        (mock-card %pass /agent/wire %arvo %clay %rest 123)
       ;<  ~  bind:m
         %+  ex-moves  moz
         :~  (ex-move default-duct %give %unto %poke-ack ~)
@@ -791,25 +791,73 @@
 ::TODO  same style for simple +test-simply-tracked-tasks
 ++  test-misc-untracked-tasks
   %-  zing
+  =/  easy  ::  simple no-transform task-to-note
+    |*  t=task-user-v1:gall
+    ?-  -.t
+      %ames  [t t(- %a)]
+      %behn  [t t(- %b)]
+      %clay  [t t(- %c)]
+      %dill  [t t(- %d)]
+      %eyre  [t t(- %e)]
+      %gall  [t t(- %g)]
+      %iris  [t t(- %i)]
+      %jael  [t t(- %j)]
+      %khan  [t t(- %k)]
+      %lick  [t t(- %l)]
+    ==
   %+  turn
     ^-  (list [task-user-v1:gall note-arvo])
-    :~  :-  [%ames %snub %deny ~fed ~]  [%a %snub %deny ~fed ~]
-        :-  [%ames %prod ~]             [%a %prod ~]
-        :-  [%ames %sift ~]             [%a %sift ~]
-        :-  [%ames %spew ~]             [%a %spew ~]
-        :-  [%ames %cong 1 2]           [%a %cong 1 2]
-        :-  [%ames %stir 'a']           [%a %stir 'a']
-        :-  [%ames %trim 1]             [%a %trim 1]
+    :~  (easy %ames %snub %deny ~fed ~)
+        (easy %ames %prod ~)
+        (easy %ames %sift ~)
+        (easy %ames %spew ~)
+        (easy %ames %cong 1 2)
+        (easy %ames %stir 'a')
+        (easy %ames %trim 1)
       ::
-        :-  [%behn %trim 1]             [%b %trim 1]
-        :-  [%clay %trim 1]             [%c %trim 1]
-        :-  [%dill %trim 1]             [%d %trim 1]
-        :-  [%eyre %trim 1]             [%e %trim 1]
-        :-  [%gall %trim 1]             [%g %trim 1]
-        :-  [%iris %trim 1]             [%i %trim 1]
-        :-  [%jael %trim 1]             [%j %trim 1]
-        :-  [%khan %trim 1]             [%k %trim 1]
-        :-  [%lick %trim 1]             [%l %trim 1]
+        (easy %behn %trim 1)
+      ::
+        :-  [%clay %rite %some-desk *soba:clay]
+        [%c %info %some-desk %& *soba:clay]
+        :-  [%clay %name %other-desk %my-label `123]
+        [%c %info %other-desk %| %my-label `123]
+        (easy %clay %cred *@ta *crew:clay)
+        (easy %clay %crow *@ta)
+        (easy %clay %perm *desk *path *rite:clay)
+        (easy %clay %esse *desk *?)
+        (easy %clay %rein *desk *rein:clay)
+        (easy %clay %zeal *(list [=desk =$~(%dead zest:clay)]))
+        (easy %clay %zest *desk *zest:clay)
+        (easy %clay %merg *desk *@p *desk *case *germ:clay)
+        (easy %clay %fuse *desk *beak *(list [beak $~(%init germ:clay)]))
+        (easy %clay %drop *desk)
+        (easy %clay %mont *term *beam)
+        (easy %clay %ogre *$@(term beam))
+        (easy %clay %dirk *term)
+        (easy %clay %tomb *clue:clay)
+        (easy %clay %trim 1)
+      ::
+        (easy %dill %shot %my-session %hail ~)
+        (easy %dill %shot %my-session %open %hood ~)
+        (easy %dill %crud %oops ~['error'])
+        (easy %dill %talk ~['blah'])
+        (easy %dill %text "blah")
+        (easy %dill %meld ~)
+        (easy %dill %pack ~)
+        (easy %dill %trim 1)
+      ::
+        (easy %eyre %rule %turf %put /com/my-urbit)
+        (easy %eyre %eauth-host `'https://my-urbit.com')
+        (easy %eyre %approve-origin 'some.origin')
+        (easy %eyre %reject-origin 'some.origin')
+        (easy %eyre %spew 1)
+        (easy %eyre %trim 1)
+      ::
+        (easy %gall %trim 1)
+        (easy %iris %trim 1)
+        (easy %jael %trim 1)
+        (easy %khan %trim 1)
+        (easy %lick %trim 1)
     ==
   ::
   |=  [task=task-user-v1:gall note=note-arvo]
