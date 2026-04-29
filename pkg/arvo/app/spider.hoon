@@ -502,7 +502,7 @@
 ::
 ++  handle-build
   ~/  %handle-build
-  |=  [=tid gift=gift-user-v1:gall]
+  |=  [=tid gift=$<([%unsupported ~] gift-user-v1:gall)]
   ^-  (quip card ^state)
   =/  =yarn  (~(got by tid.state) tid)
   =.  starting.state
