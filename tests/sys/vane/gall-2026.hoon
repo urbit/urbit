@@ -333,6 +333,156 @@
 ::
 ::  tests
 ::
++$  tracked-task
+  $:  task=task-user-v1:gall
+      note=note-arvo
+      [res=_+:*arvo-resource:gall det=(unit resource-deet:gall)]
+      wire-deets=(unit *)
+    ::
+      drop=task-user-v1:gall  ::  resource deleted by agent
+      kill=note-arvo     ::  resource deleted by gall
+      done=(unit [sign=sign-arvo guv1=gift-user-v1:gall])  ::  resource-ending kernel gift and corresponding to-agent sign
+    ::
+      signal=(unit gift-user-v1:gall)
+      revive=(unit note-arvo)
+  ==
+++  tracked-tasks
+  ^-  (list tracked-task)
+  :~  ^-  tracked-task
+      :*  [%behn %wait ~2026.1.2]
+          [%b %wait ~2026.1.2]
+          [%behn %wait ~2026.1.2]^~
+          `~2026.1.2
+        ::
+          [%behn %rest ~2026.1.2]
+          [%b %rest ~2026.1.2]
+          `[%behn %wake ~]^[%behn %wake ~2026.1.2]
+        ::
+          ~
+          `[%b %wait ~2026.1.2]
+      ==
+    ::
+      ^-  tracked-task
+      :*  [%clay %read 'someid' ~fun %desk %sing *mood:clay]
+          [%c %warp ~fun %desk ~ %sing *mood:clay]
+          [%clay %warp 'someid']^`[%clay %warp ~fun %desk %sing *mood:clay]
+          `'someid'
+        ::
+          [%clay %rest 'someid']
+          [%c %warp ~fun %desk ~]
+          `[%clay %writ ~]^[%clay %read 'someid' ~]
+        ::
+          ~
+          `[%c %warp ~fun %desk ~ %sing *mood:clay]
+      ==
+    ::
+      ^-  tracked-task
+      :*  [%lick %spin /mysocket]
+          [%l %spin [%mock /mysocket]]
+          [%lick %spin /mysocket]^~
+          ~
+        ::
+          [%lick %shut /mysocket]
+          [%l %shut [%mock /mysocket]]
+          ~
+        ::
+          `[%lick %soak /mysocket %disconnect ~]
+          `[%l %spin [%mock /mysocket]]
+      ==
+  ==
+++  test-normal-tracking-behavior
+  %-  zing
+  %+  turn  tracked-tasks
+  |=  tracked-task
+  %-  eval-mare
+  ::TODO  put >task< into trace if below results in failure
+  ;<  *  bind:m  (do-load %mock easy:mock)
+  ::  create the resource,
+  ::  see the task go out to the kernel,
+  ::  and check that gall remembers it.
+  ::
+  ;<  moz=(list move:gall)  bind:m
+    (mock-card %pass /agent/wire %arvo task)
+  ;<  gall-wire=wire        bind:m
+    (a2k-wire %mock /agent/wire wire-deets)
+  ;<  ~  bind:m
+    %+  ex-moves  moz
+    :~  (ex-move default-duct %give %unto %poke-ack ~)
+        (ex-move ~[/sysduct] %pass gall-wire note)
+    ==
+  ;<  ~  bind:m
+    %+  ex-resources  %mock
+    :~  [/agent/wire res]^det
+    ==
+  ::
+  %-  branch
+  :~  :-  'agent closes'
+      ::  gall should stop tracking when the agent closes the resource
+      ::
+      ;<  moz=(list move:gall)  bind:m
+        (mock-card %pass /agent/wire %arvo drop)
+      ;<  ~  bind:m
+        %+  ex-moves  moz
+        :~  (ex-move default-duct %give %unto %poke-ack ~)
+            (ex-move ~[/sysduct] %pass gall-wire kill)
+        ==
+      (ex-resources %mock ~)
+    ::
+      :-  'arvo closes'
+      ::  a specific arvo gift should close the resource
+      ::
+      ?~  done  (pure:m ~)
+      ;<  moz=(list move:gall)  bind:m
+        (do-take [gall-wire default-duct] sign.u.done)
+      ;<  ~  bind:m
+        %+  ex-moves  moz
+        :~  (ex-on-arvo /agent/wire guv1.u.done)
+        ==
+      (ex-resources %mock ~)
+    ::
+      :-  'gall nukes'
+      ::  nuking the agent should delete its resource
+      ::
+      ;<  moz=(list move:gall)  bind:m
+        (do-call ~ %nuke %mock)
+      ;<  ~  bind:m
+        %+  ex-moves  moz
+        :~  (ex-move ~[/sysduct] %pass gall-wire kill)
+        ==
+      ;<  y=yoke:gall  bind:m  (get-yoke %mock)
+      (ex-equal !>(-.y) !>(%nuke))
+    ::
+      :-  'gall suspends & revives'
+      ::  suspending the agent should delete its resource
+      ::
+      ;<  moz=(list move:gall)  bind:m
+        (do-call ~ %idle %mock)
+      ;<  ~  bind:m
+        %+  ex-moves  moz
+        :~  (ex-move ~[/sysduct] %pass gall-wire kill)
+        ==
+      ;<  ~  bind:m
+        %+  ex-resources  %mock
+        :~  [/agent/wire res]^det
+        ==
+      ;<  y=yoke:gall  bind:m  (get-yoke %mock)
+      ?.  &(?=(%live -.y) ?=(%| -.agent.y))
+        (fail:m 'agent not suspended' ~)
+      ::  reviving the agent should reinflate its resource
+      ::
+      ;<  moz=(list move:gall)  bind:m
+        (do-load %mock easy:mock)
+      ;<  ~  bind:m
+        %+  ex-moves  moz
+        :-  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
+        =;  mos=(list (unit $-(move:gall tang)))
+          (murn mos same)
+        :~  ?~(signal ~ `(ex-on-arvo /agent/wire u.signal))
+            ?~(revive ~ `(ex-move ~[/sysduct] %pass gall-wire u.revive))
+        ==
+      (ex-resources %mock [/agent/wire res]^det ~)
+  ==
+::
 ++  test-timer-tracking
   %-  eval-mare
   ;<  *  bind:m  (do-load %mock easy:mock)
