@@ -95,6 +95,18 @@
       mime=(slap zuse !,(*hoon mime))
       cass=(slap zuse !,(*hoon cass:clay))
   ==
+::  virtualization gates without access to namespace
+::
+=/  mule  ~(mule vi |)
+=/  mole  ~(mole vi |)
+=/  road
+  |*  =(trap *)
+  ^+  $:trap
+  =/  res  (mule trap)
+  ?-  -.res
+    %&  p.res
+    %|  (mean p.res)
+  ==
 ::
 |=  our=ship
 =,  clay
