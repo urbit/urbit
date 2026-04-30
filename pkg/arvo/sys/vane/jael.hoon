@@ -1269,12 +1269,12 @@
         [~ ~]
       =/  sec  (~(got by jaw.own.pki.lex) u.lyf)
       =/  cic  (nol:nu:cric:crypto sec)
-      =/  sig
-        %+  sign-raw:ed:crypto
-          (shaf %self (sham [u.who 1 pub:ex:cic]))
-        [sgn.pub sgn.sek]:saf:ex:cic
+      =/  ded
+        =/  msg  (shaf %self (sham [u.who 1 pub:ex:cic]))
+        =/  sig  (sign-raw:ed:crypto msg [sgn.pub sgn.sek]:saf:ex:cic)
+        (jam sig msg)
       :^  ~  ~  %noun
-      !>  [1 pub:ex:cic `sig]
+      !>  [1 pub:ex:cic `ded]
     ::
     =/  pub  (~(get by pos.zim.pki.lex) u.who)
     ?~  pub

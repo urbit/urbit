@@ -31,7 +31,7 @@
   |=  [life=[nec=@ud bud=@ud zod=@ud] rift=[nec=@ud bud=@ud zod=@ud]]
   ::  create ~nec
   ::
-  =/  nec  (ames-raw ~nec)
+  =/  nec  ^$:(%*($ ames-raw ahoy-on %.n, +< ~nec))
   =.  now.nec  ~1111.1.1
   =.  eny.nec  0v3f.arfnf
   =.  life.ames-state.nec  nec.life
@@ -42,7 +42,7 @@
   =.  pass.ames-state.nec  pub:ex:nec:crypto-core
   ::  create ~bud
   ::
-  =/  bud  (ames-raw ~bud)
+  =/  bud  ^$:(%*($ ames-raw ahoy-on %.n, +< ~bud))
   =.  now.bud  ~1111.1.1
   =.  eny.bud  0v3f.arfnf
   =.  life.ames-state.bud  bud.life
@@ -61,7 +61,7 @@
   ?>  =(nec-sym bud-sym)
   ::  create ~zod
   ::
-  =/  zod  (ames-raw ~zod)
+  =/  zod  ^$:(%*($ ames-raw ahoy-on %.n, +< ~zod))
   =.  now.zod  ~1111.1.1
   =.  eny.zod  0v3f.arfnf
   =.  life.ames-state.zod  zod.life

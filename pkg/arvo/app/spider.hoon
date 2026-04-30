@@ -315,7 +315,6 @@
     =^  cards  state
       ?+  wire  (on-arvo:def wire sign-arvo)
         [%thread @ *]  (handle-sign:sc i.t.wire t.t.wire sign-arvo)
-        [%mark ~]      `state
         [%build @ ~]   (handle-build:sc i.t.wire sign-arvo)
         [%bind ~]      `state
       ==
@@ -384,9 +383,7 @@
     ==
   =/  boc  bec
   =/  =start-args:spider  [~ `tid boc(q desk, r da+now.bowl) thread input]
-  =^  start-cards  state  (handle-start-thread start-args)
-  :_  state
-  [(build-mark give input-mark desk bowl) start-cards]
+  (handle-start-thread start-args)
 ::
 ++  on-poke-input
   |=  input
@@ -626,11 +623,6 @@
   :_  state(serving (~(del by serving.state) tid))
   ?~  request
     ~
-  ::
-  =;  cards=(list card)
-    ?.  ?=(%json take.u.request)
-      cards
-    [(build-mark %tang %json desk bowl) cards]
   %+  give-simple-payload:app:server  rid.u.request
   ^-  simple-payload:http
   ?.  ?=(http-error:spider term)
@@ -679,7 +671,6 @@
       %json
     =/  tube  (convert-tube output %json desk bowl)
     :_  state(serving (~(del by serving.state) tid))
-    :-  (build-mark output %json desk bowl)
     %+  give-simple-payload:app:server  rid.u.request
     (json-response:gen:server !<(json (tube vase)))
   ::
@@ -784,12 +775,4 @@
     %cc
     /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/[from]/[to]
   ==
-::
-++  build-mark
-  |=  [from=mark to=mark =desk =bowl:gall]
-  ^-  card
-  :*  %pass  /mark  %arvo
-      [%c %warp our.bowl desk ~ %sing %c da+now.bowl /[from]/[to]]
-  ==
-::
 --

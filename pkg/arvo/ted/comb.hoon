@@ -91,13 +91,15 @@
     ?.  =(wire-keen wire.u.in.tin)
       `[%skip ~]
     =/  =sage:mess:ames  sage.sign-arvo.u.in.tin
-    =/  cancel=(list card:agent:gall)
-      [%pass wire-timer %arvo %b %rest timeout-time]~
-    ?~  q.sage
-      [cancel %done [%.y !>(*(unit @uvi))]]
-    ?.  =(%uvi p.q.sage)
-      [cancel %done [%.y !>(*(unit @uvi))]]
-    [cancel %done [%.y !>([~ ;;(hash=@uvi q.q.sage)])]]
+    :^    [%pass wire-timer %arvo %b %rest timeout-time]~
+        %done
+      %.y
+    ::
+    ?:  ?|  ?=(~ q.sage)
+            !=(%uvi p.q.sage)
+        ==
+      !>(*(unit @uvi))
+    !>([~ ;;(hash=@uvi q.q.sage)])
   ::
   ::  timer: peer timed out
   ::
@@ -106,8 +108,8 @@
       `[%skip ~]
     ?^  error.sign-arvo.u.in.tin
       `[%fail %timer-error u.error.sign-arvo.u.in.tin]
-    =/  yawn=card:agent:gall  [%pass wire-keen %arvo %a %yawn spar]
-    [[yawn ~] %done [%.n !>(*(unit @uvi))]]
+    :-  [%pass wire-keen %arvo %a %yawn spar]~
+    [%done [%.n !>(*(unit @uvi))]]
   ==
 ::
 ::  process result
