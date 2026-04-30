@@ -5651,7 +5651,7 @@
           =/  =bone         bone.u.shut-packet
           =/  =message-num  message-num.u.shut-packet
           ?.  ?=(%& -.meat.u.shut-packet)
-            %-  (ev-trace odd.veb sndr.shot |.("ignoring ack"))
+            %-  (ev-trace odd.veb sndr.shot |.("ignoring ack on migrated %ahoy ack"))
             ::  ignore acks
             ::
             event-core
@@ -5707,6 +5707,52 @@
             ==
           ::
             ship-state=~  :: send-blob finds the migrated peer in chums
+          ==
+        ::
+        ++  on-spot-rege
+          |=  =shot
+          ^-  ?
+          ?.  sam.shot
+            %-  (ev-trace odd.veb sndr.shot |.("weird no ames"))
+            %.n
+          =/  =chum-state  (~(got by chums.ames-state) sndr.shot)
+          ?>  ?=([%known *] chum-state)
+          =/  =channel    [[our sndr.shot] now channel-state +<.chum-state]
+          =/  shut-packet=(unit shut-packet)
+            (sift-shut-packet shot [symmetric-key.hers life.hers our-life]:channel)
+          ?~  shut-packet
+            %-  (ev-trace odd.veb sndr.shot |.("weird shut-packet"))
+            %.n
+          =/  =bone         bone.u.shut-packet
+          =/  =message-num  message-num.u.shut-packet
+          ::  when doing a spot regression we assume the following:
+          ::
+          ::    - sndr.shot booted with an old pill or is not on 408k
+          ::    - both our and sndr.shot communicated at the same time
+          ::    - every flow needs to be outstanding
+          ::    - any new packet would create a new flow (ignore boons, and acks)
+          ::    - every outstanding flow needs to have migration line = 0
+          ::
+          ?.  ?=(%& -.meat.u.shut-packet)
+            %-  (ev-trace odd.veb sndr.shot |.("spot rege; ignoring ack"))
+            %.n
+          ?.  =(1 (end 0 bone))
+            %-  (ev-trace odd.veb sndr.shot |.("spot rege; ignore non-plea"))
+            %.n
+          =+  ev-core=(ev-abed:ev:mesa ~ sndr.shot +.chum-state)
+          ?^  fo-core=(~(get by flows.per.ev-core) side=[(mix 1 bone) %bak])
+            %-  (ev-trace odd.veb sndr.shot |.("spot rege; ignore existing flow"))
+            %.n
+          ::  this plea will create a new flow;
+          ::  check if: all %for flows are all outstanding
+          ::             no %bak flows exist
+          ::
+          %-  ~(rep by flows.per.ev-core)
+          |=  [[side state=flow-state] regress=_&]
+          ?&  regress
+              =(%for dire)
+              =(0 line.state)
+              ?=(^ loads.snd.state)
           ==
         ::
         +|  %implementation
@@ -13194,20 +13240,27 @@
           ::  skip route in comparison; galaxies have it hardcoded
           ::
           ?.  =(+>:*fren-state +>.fren)
+            ::  if we have outstanding %mesa flows and we hear %ames packets
+            ::  we need to make sure that we have not communicated previously.
+            ::  if that holds we will do a spot regression to %ames, handling
+            ::  the packet and enqueuing an %ahoy $plea
+            ::
             %-  %+  %*(ev-tace ev-core her sndr.shot)  odd.veb.bug.ames-state
                 |.("%ames packet with outstanding %mesa flows; spot regression")
+            ?.  (on-spot-rege:(ev:am-core now^eny^rof hen ames-state) shot)
+              `vane-gate
             (call:me-core ~[/spot-rege] dud %rege `sndr.shot dry=%.n)
           ::  if the peer sends us an %ames packets, but we have %known state in
-          ::  .chums. this could be caused by:
+          ::  .chums. with no flows, this could be caused by:
           ::
           ::    - the peer breached, we had communicated previously but our
-          ::    default core was %mesa, so it stayed in .chums
+          ::    default core was %mesa, so it stayed in .chums (pre 408k)
           ::
           ::    - the peer booted after breaching with an old pill that has
-          ::    %mesa as the default core, or doesn't support zuse 410k, or the
+          ::    %ames as the default core, or doesn't support zuse 410k, or the
           ::    default core was manually changed
           ::
-          ::  for all these causes we try to establish communication, moving
+          ::  for all these cases we try to establish communication, moving
           ::  back the peer into .peers, and enqueue an %ahoy $plea to migrate
           ::  the peer as soon as it can handle %mesa packets.
           ::
