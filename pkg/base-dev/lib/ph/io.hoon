@@ -521,8 +521,7 @@
       /i/(scot %p ship)
     pax
   %-  pure:m
-  ;;  mold
-  .^  noun
+  .^  mold
       (scot %p our.bowl)
       %aqua
       (scot %da now.bowl)
