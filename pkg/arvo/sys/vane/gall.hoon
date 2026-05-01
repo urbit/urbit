@@ -1949,6 +1949,7 @@
                         [%clay %read *]          `id.neet
                         [%clay %rest *]          `id.neet
                         [%dill %shot @ %view *]  `ses.neet
+                        [%dill %shot @ %flee *]  `ses.neet
                         [%eyre %connect *]       `wat.neet
                       ::
                           [%eyre %disconnect *]
@@ -2865,6 +2866,7 @@
         [%dill %logs *]                 [?~(p.task | &) %dill %logs]
         [%dill %mass *]                 [& %dill %mass]
         [%dill %shot @ %view *]         [& %dill %view ses.task]
+        [%dill %shot @ %flee *]         [| %dill %view ses.task]
         [%dill %shot @ %shut *]         [| %dill %view ses.task]
         [%eyre %connect *]              :-  [%eyre %binding wat.task]
                                         [%eyre %binding binding.task]
