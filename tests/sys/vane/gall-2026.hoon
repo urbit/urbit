@@ -377,6 +377,76 @@
       ==
     ::
       ^-  tracked-task
+      :*  [%clay %read 'someid' ~fun %desk %many | ud+1 ud+3 /foo/hoon]
+          [%c %warp ~fun %desk ~ %many | ud+1 ud+3 /foo/hoon]
+          [%clay %warp 'someid']^`[%clay %warp ~fun %desk %many | ud+1 ud+3 /foo/hoon]
+          `'someid'
+        ::
+          [%clay %rest 'someid']
+          [%c %warp ~fun %desk ~]
+          `[%clay %writ ~]^[%clay %read 'someid' ~]
+        ::
+          ~
+          `[%c %warp ~fun %desk ~ %many | ud+1 ud+3 /foo/hoon]
+      ==
+    ::
+      ^-  tracked-task
+      :*  [%clay %tire `~]
+          [%c %tire `~]
+          [%clay %tire]^~
+          ~
+        ::
+          [%clay %tire ~]
+          [%c %tire ~]
+          ~
+        ::
+          ~
+          `[%c %tire `~]
+      ==
+    ::
+      ^-  tracked-task
+      :*  [%dill %logs `~]
+          [%d %logs `~]
+          [%dill %logs]^~
+          ~
+        ::
+          [%dill %logs ~]
+          [%d %logs ~]
+          ~
+        ::
+          ~
+          `[%d %logs `~]
+        ==
+    ::
+      ^-  tracked-task
+      :*  [%dill %shot %sesh %view ~]
+          [%d %shot %sesh %view ~]
+          [%dill %view %sesh]^~
+          `%sesh
+        ::
+          [%dill %shot %sesh %flee ~]
+          [%d %shot %sesh %flee ~]
+          `[%dill %blit [%bye ~]~]^[%dill %blit %sesh [%bye ~]~]
+        ::
+          ~
+          `[%d %shot %sesh %view ~]
+      ==
+    ::
+    ^-  tracked-task
+      :*  [%eyre %connect [~ ['foo']~] %foo]
+          [%e %connect [~ ['foo']~] %foo]
+          [%eyre %binding ~ 'foo' ~]^`[%eyre %binding %foo]
+          `%foo
+        ::
+          [%eyre %disconnect ~ 'foo' ~]
+          [%e %disconnect ~ 'foo' ~]
+          ~
+        ::
+          ~
+          `[%e %connect [~ ['foo']~] %foo]
+      ==
+    ::
+      ^-  tracked-task
       :*  [%lick %spin /mysocket]
           [%l %spin [%mock /mysocket]]
           [%lick %spin /mysocket]^~
