@@ -4,8 +4,8 @@
     ahoy=hood-ahoy
 |%
 +$  state
-  $~  [%29 *state:drum *state:helm *state:kiln *state:ahoy]
-  $>(%29 any-state)
+  $~  [%30 *state:drum *state:helm *state:kiln *state:ahoy]
+  $>(%30 any-state)
 ::
 +$  any-state
   $%  [ver=?(%1 %2 %3 %4 %5 %6) lac=(map @tas fin-any-state)]
@@ -36,6 +36,12 @@
           helm=state-2:helm
           kiln=state-11:kiln
           ahoy=state-0:ahoy
+      ==
+      $:  %30
+          drum=state-6:drum
+          helm=state-2:helm
+          kiln=state-11:kiln
+          ahoy=state-1:ahoy
   ==  ==
 ::
 +$  any-state-tuple
@@ -90,7 +96,7 @@
   ?:  ?=(%27 -.old)
     $(old old(- %28), cards (eyre-clean:load [our now]:bowl))
   =/  tup=any-state-tuple
-    ?:  ?=(%29 -.old)
+    ?:  ?=(?(%29 %30) -.old)
       +.old
     ?+    -.old  +.old(kiln [kiln.old *any-state:ahoy])
         ?(%1 %2 %3 %4 %5 %6)
