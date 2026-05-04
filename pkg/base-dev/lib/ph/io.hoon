@@ -285,8 +285,9 @@
     ::  XX  search deeper in the .unix-effect?
     ::
     loop
-  ;<  halts=(unit (jug app=term ship =duct))  bind:m
-    (scry-aqua (unit ,(jug app=term ship =duct)) our /gh/(scot %p our)//(scot %da now)//noun)
+  ;<  halts=(unit (jug app=term [ship =duct]))  bind:m
+    %+  scry-aqua  (unit ,(jug app=term [ship =duct]))
+    [our /gh/(scot %p our)//(scot %da now)//noun]
   ?~  halts  loop
   ?.  (~(has by u.halts) dap)  ::  XX check .her as well
     loop
@@ -522,6 +523,7 @@
     pax
   %-  pure:m
   .^  mold
+      %gx
       (scot %p our.bowl)
       %aqua
       (scot %da now.bowl)
