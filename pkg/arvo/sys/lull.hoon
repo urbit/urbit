@@ -3741,6 +3741,7 @@
         [%eyre %binding =binding:eyre]
         [%eyre %cache url=@t]  ::TODO  if we had the data we could reinflate...
         [%iris %request]
+        [%jael %keys]
         :: [%khan ?(%fard %fyrd %lard)]
         [%lick %spin =name:lick]
     ==  ==
@@ -3750,6 +3751,7 @@
     $%  [%eyre %binding wat=$@(term generator:eyre)]
         [%eyre %cache entry=cache-entry:eyre]
         [%clay %warp =ship =desk =rave:clay]
+        [%jael %keys wat=?(%private %public (set ship))]
     ==
   ::
   +$  egg                                               ::  migratory agent
@@ -3852,6 +3854,7 @@
   ::
   ::  userspace api
   ::
+  ::REVIEW  dangerous to rely on vane cores for type definitions here!
   +$  task-user-v1
     $%  $:  %ames  ::REVIEW
         $%  [%prod ships=(list ship)]
@@ -3941,6 +3944,17 @@
         [%iris %cancel-request ~]
         [%iris %trim p=@ud]
       ::
+        [%jael %private-keys sub=(unit ~)]
+        [%jael %public-keys sub=(unit (set ship))]
+      ::
+        [%jael %listen whos=(set ship) =source:jael]
+        [%jael %turf ~]
+      ::
+        [%jael %moon =ship =udiff:point:jael]
+        [%jael %rekey =life =ring]
+        [%jael %step ~]
+        [%jael %ruin ships=(set ship)]
+      ::
         [%jael %trim p=@ud]
       ::
         [%khan %trim p=@ud]
@@ -3963,6 +3977,9 @@
         [%dill %meme p=(list quac:dill)]
         [%eyre %bound bound=? =binding:eyre wat=$@(term generator:eyre)]  ::NOTE  could become unbound _after_ binding!
         [%iris %http-response =client-response:iris]
+        [%jael %private-keys =life vein=(map life ring)]
+        [%jael %public-keys =public-keys-result:jael]
+        [%jael %turf turf=(list turf)]
         [%lick %soak =name:lick =mark =noun]
       ::
         [%syscall actual-kelvin=@ sign-arvo=*]  ::NOTE  secretly $sign-arvo, DO NOT DOCUMENT (;

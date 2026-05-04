@@ -1649,6 +1649,11 @@
           [%eyre %binding *]  [%eyre %disconnect binding.res]
           [%eyre %cache *]    [%eyre %set-response url.res ~]
           [%iris %request]    [%iris %cancel-request ~]
+          [%jael %keys]       =+  d=(~(got by resource-deets.yoke) res)
+                              ?>  ?=([%jael %keys *] d)
+                              ?:  ?=(%private wat.d)
+                                [%jael %private-keys ~]
+                              [%jael %public-keys ~]
           [%lick %spin *]     [%lick %shut name.res]
         ==
       ==
@@ -1689,6 +1694,11 @@
             [%eyre %binding *]  [%eyre %disconnect binding.res]
             [%eyre %cache *]    [%eyre %set-response url.res ~]
             [%iris %request]    [%iris %cancel-request ~]
+            [%jael %keys]       =+  d=(~(got by resource-deets.yoke) res)
+                                ?>  ?=([%jael %keys *] d)
+                                ?:  ?=(%private wat.d)
+                                  [%jael %private-keys ~]
+                                [%jael %public-keys ~]
             [%lick %spin *]     [%lick %shut name.res]
           ==
         ==
@@ -1991,7 +2001,25 @@
             ::
               [%gall *]        [%g +>.neet]
               [%iris *]        [%i +>.neet]
-              [%jael *]        [%j +>.neet]
+            ::
+                [%jael *]
+              ?+  +>-.neet  [%j +>.neet]
+                  %public-keys
+                ?^  sub.neet  [%j %public-keys u.sub.neet]
+                =+  sub=(~(got by resource-deets.yoke) p.card %jael %keys)
+                ?>  ?=([%jael %keys *] sub)
+                ?-  wat.sub
+                  %private  ~|(%bad-gall-bookkeeping !!)
+                  %public   [%j %nuke ~]
+                  *         [%j %nuke wat.sub]
+                ==
+              ::
+                  %private-keys
+                ?~  sub.neet  [%j %nuke ~]
+                [%j %private-keys u.sub.neet]
+              ==
+            ::
+            ::
               [%khan *]        [%k +>.neet]
             ::
               [%lick %spin *]  [%l +>.neet(name [agent-name name.neet])]
@@ -2287,7 +2315,7 @@
       ::
         ::  re-establish from deets
         ::
-          ?([%clay %warp *] [%eyre ?(%binding %cache) *])
+          ?([%clay %warp *] [%eyre ?(%binding %cache) *] [%jael %keys])
         =.  inflating  (~(del in inflating) &+res)
         ?.  (~(has in resources.yoke) res)  ap-core
         %-  ap-move
@@ -2303,6 +2331,13 @@
         ::
             [%eyre %cache *]  ?>  ?=([%eyre %cache *] det)
           [%eyre %set-response url.res `entry.det]
+        ::
+            [%jael %keys]  ?>  ?=([%jael %keys *] det)
+          ?-  wat.det
+            %private  [%jael %private-keys `~]
+            %public   [%jael %public-keys `~]
+            *         [%jael %public-keys `wat.det]
+          ==
         ==
       ::
       ::
@@ -2397,6 +2432,9 @@
                                         accepted.sign-arvo  binding.sign-arvo
                                         ;;($@(term generator:eyre) deets)
                                     ==
+          [%jael %private-keys *]   sign-arvo
+          [%jael %public-keys *]    sign-arvo
+          [%jael %turf *]           sign-arvo
           [%iris %http-response *]  sign-arvo
           [%lick %soak *]           ~|  [%gall-lick-bad-name name.sign-arvo]
                                     ?>  &(?=(^ name.sign-arvo) =(agent-name i.name.sign-arvo))
@@ -2818,6 +2856,8 @@
           [%dill %shot @ %flee ~]         &+[p.card %dill %view ses.task]
           [%eyre %disconnect *]           &+[p.card %eyre %binding binding.task]
           [%iris %cancel-request ~]       &+[p.card %iris %request]
+          [%jael %public-keys ~]          &+[p.card %jael %keys]
+          [%jael %private-keys ~]         &+[p.card %jael %keys]
           [%lick %shut *]                 &+[p.card %lick %spin name.task]
         ==
       ::
@@ -2870,6 +2910,14 @@
         [%eyre %set-response * ~]       [| %eyre %cache url.task]
         [%iris %request *]              [& %iris %request]
         [%iris %cancel-request ~]       [| %iris %request]
+        [%jael %public-keys ^]          :_  [%jael %keys]
+                                        ?:  =(~ u.sub.task)
+                                          [%jael %keys %public]
+                                        [%jael %keys u.sub.task]
+        [%jael %public-keys ~]          [| %jael %keys]
+        [%jael %private-keys ^]         :_  [%jael %keys]
+                                        [%jael %keys %private]
+        [%jael %private-keys ~]         [| %jael %keys]
         :: [%k ?(%fard %fyrd %lard) *]  [& %khan +<]:task
         [%lick %spin *]                 [& %lick %spin name.task]
         [%lick %shut *]                 [| %lick %spin name.task]
@@ -2900,7 +2948,6 @@
         ?|  ?+(-.i.biz.gift | %bye &, %mor $(biz.gift p.i.biz.gift))
             $(biz.gift t.biz.gift)
         ==  ==
-        ::TODO  handle %dill %blit %bye session deletion signal
       ::
           [%clay *]
         ?>  ?=(%read +<.gift)

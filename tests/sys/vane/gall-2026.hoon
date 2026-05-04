@@ -416,7 +416,7 @@
         ::
           ~
           `[%d %logs `~]
-        ==
+      ==
     ::
       ^-  tracked-task
       :*  [%dill %shot %sesh %view ~]
@@ -460,6 +460,49 @@
         ::
           ~
           `[%e %set-response '/some/url' `entry]
+      ==
+    ::
+      ^-  tracked-task
+      :*  [%jael %private-keys `~]
+          [%j %private-keys ~]
+          [%jael %keys]^`[%jael %keys %private]
+          ~
+        ::
+          [%jael %private-keys ~]
+          [%j %nuke ~]
+          ~
+        ::
+          ~
+          `[%j %private-keys ~]
+      ==
+    ::
+      ^-  tracked-task
+      :*  [%jael %public-keys `~]
+          [%j %public-keys ~]
+          [%jael %keys]^`[%jael %keys %public]
+          ~
+        ::
+          [%jael %public-keys ~]
+          [%j %nuke ~]
+          ~
+        ::
+          ~
+          `[%j %public-keys ~]
+      ==
+    ::
+      ^-  tracked-task
+      =/  sis=(set ship)  [~met ~ ~]
+      :*  [%jael %public-keys `sis]
+          [%j %public-keys sis]
+          [%jael %keys]^`[%jael %keys sis]
+          ~
+        ::
+          [%jael %public-keys ~]
+          [%j %nuke sis]
+          ~
+        ::
+          ~
+          `[%j %public-keys sis]
       ==
     ::
       ^-  tracked-task
@@ -1090,8 +1133,17 @@
         (easy %eyre %trim 1)
       ::
         (easy %gall %trim 1)
+      ::
         (easy %iris %trim 1)
+      ::
+        (easy %jael %listen [~met ~ ~] &+~met)
+        (easy %jael %turf ~)
+        (easy %jael %moon ~monnet [0x1 1] %keys [1 1 1] |)
+        (easy %jael %rekey 1 1)
+        (easy %jael %step ~)
+        (easy %jael %ruin ~met ~ ~)
         (easy %jael %trim 1)
+      ::
         (easy %khan %trim 1)
         (easy %lick %trim 1)
     ==
