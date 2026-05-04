@@ -1132,6 +1132,12 @@
         (easy %eyre %spew 1)
         (easy %eyre %trim 1)
       ::
+        (easy %gall %jolt %base %dbug)
+        (easy %gall %idle %dbug)
+        (easy %gall %nuke %dbug)
+        (easy %gall %spew %odd ~)
+        (easy %gall %sift %dbug ~)
+        (easy %gall %sear ~fyr)
         (easy %gall %trim 1)
       ::
         (easy %iris %trim 1)

@@ -3935,7 +3935,7 @@
         [%gall %idle =dude]
         [%gall %nuke =dude]
       ::
-        [%gall %spew veb=(list verb)]
+        [%gall %spew veb=(list verb:gall)]
         [%gall %sift dudes=(list dude)]
         [%gall %sear =ship]
         [%gall %trim p=@ud]
