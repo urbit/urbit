@@ -42,15 +42,20 @@
     ^-  (quip card _this)
     ?.  ?=(%noun mark)
       (on-poke:def mark vase)
+    ~|  on-poke-crashed/mark^+<.vase
+    ?:  =(%null +<.vase)
+      ::  don't devase since this comes untyped over the wire
+      ::
+      :_  this
+      ~&(%sending-to-aqua [%give %fact [/aqua]~ noun/!>(~)]~)
     =+  !<(=action vase)
     ~&  >  %out
     :_  this
-    ?-  -.action
+    ?+  -.action  !!
       %send  ~&(%sending [%give %fact [/subs]~ noun+!>(data.action)]~)
       %bye   ~&(%kicking [%give %kick [/subs]~ `who.action]~)
       %flus  ~&(%flushing [%give %fact [/flus]~ atom+!>(data.action)]~)
       %flas  ~&(%flashing [%give %kick [/flus]~ `who.action]~)
-      %null  ~&(%sending-to-aqua [%give %fact [/aqua]~ noun/!>(~)]~)
       %germ  [%pass /my-wire %germ coop.action]~
       %tend  [%pass /my-wire %tend coop.action path.action page.action]~
       ::
