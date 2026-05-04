@@ -48,6 +48,7 @@
           fleet-snaps=(map term fleet)
           piers=fleet
           ames-retry=_~s1
+          ahoy-on=_|
       ==
     ::
     +$  pill-0
@@ -266,7 +267,6 @@
     =/  pek  (slum peek [[~ ~] & pax])
     =+  ;;(res=(unit (cask)) pek)
     (bind res tail)
-      ::
   ::  Wish
   ::
   ++  wish
@@ -559,6 +559,9 @@
       [%ames-retry wen=@dr]
     this(ames-retry wen.val)
   ::
+      [%ahoy-on ~]
+    this(ahoy-on !ahoy-on)
+  ::
   ==
 ::
 ::  Make changes to azimuth state for the current fleet
@@ -670,7 +673,9 @@
       =/  =vane  (~(got by van.mod.arvo-core) %ames)
       =+  !<(=ames-gate [-:!>(ames-adult) q.vase.vane])
       =.  van.mod.arvo-core
-        =.  retry-timer.ames-gate  ames-retry
+        =:  retry-timer.ames-gate  ames-retry
+                ahoy-on.ames-gate  ahoy-on
+          ==
         (~(put by van.mod.arvo-core) %ames vane(vase !>(ames-gate)))
       abet-pe:p(snap arvo-core)
     (pe who.ae)
@@ -811,6 +816,7 @@
 ++  peek
   |=  =path
   ^-  (unit (unit cage))
+  ~&  >  peek/path
   ?+  path  ~
       [%x %fleet-snap @ ~]  ``noun+!>((~(has by fleet-snaps) i.t.t.path))
       [%x %fleets ~]        ``noun+!>((turn ~(tap by fleet-snaps) head))
