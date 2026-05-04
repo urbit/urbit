@@ -2292,7 +2292,7 @@
       ::
         ::  re-establish from deets
         ::
-          ?([%clay %warp *] [%eyre %binding *])
+          ?([%clay %warp *] [%eyre ?(%binding %cache) *])
         =.  inflating  (~(del in inflating) &+res)
         ?.  (~(has in resources.yoke) res)  ap-core
         %-  ap-move
@@ -2305,11 +2305,11 @@
         ::
             [%eyre %binding *]  ?>  ?=([%eyre %binding *] det)
           [%eyre %connect binding.res wat.det]
+        ::
+            [%eyre %cache *]  ?>  ?=([%eyre %cache *] det)
+          [%eyre %set-response url.res `entry.det]
         ==
       ::
-          [%eyre %cache *]
-        ::TODO  consider
-        ap-core
       ::
         ::  signal only
         ::
@@ -2870,7 +2870,9 @@
         [%eyre %connect *]              :-  [%eyre %binding wat.task]
                                         [%eyre %binding binding.task]
         [%eyre %disconnect *]           [| %eyre %binding binding.task]
-        [%eyre %set-response *]         [& %eyre %cache url.task]
+        [%eyre %set-response * ^]       :-  [%eyre %cache u.entry.task]
+                                        [%eyre %cache url.task]
+        [%eyre %set-response * ~]       [| %eyre %cache url.task]
         [%iris %request *]              [& %iris %request]
         [%iris %cancel-request ~]       [| %iris %request]
         :: [%k ?(%fard %fyrd %lard) *]  [& %khan +<]:task

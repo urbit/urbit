@@ -3748,7 +3748,7 @@
   +$  resource-deet
     $~  [%clay %warp ~zod %$ %sing %x *case *path]
     $%  [%eyre %binding wat=$@(term generator:eyre)]
-        ::TODO  [%eyre %cache data=*]
+        [%eyre %cache entry=cache-entry:eyre]
         [%clay %warp =ship =desk =rave:clay]
     ==
   ::

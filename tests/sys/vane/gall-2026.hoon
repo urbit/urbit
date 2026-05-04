@@ -432,7 +432,7 @@
           `[%d %shot %sesh %view ~]
       ==
     ::
-    ^-  tracked-task
+      ^-  tracked-task
       :*  [%eyre %connect [~ ['foo']~] %foo]
           [%e %connect [~ ['foo']~] %foo]
           [%eyre %binding ~ 'foo' ~]^`[%eyre %binding %foo]
@@ -444,6 +444,22 @@
         ::
           ~
           `[%e %connect [~ ['foo']~] %foo]
+      ==
+    ::
+      ^-  tracked-task
+      =/  entry=cache-entry:eyre
+        [auth=& %payload [200 ~] `[4 'body']]
+      :*  [%eyre %set-response '/some/url' `entry]
+          [%e %set-response '/some/url' `entry]
+          [%eyre %cache '/some/url']^`[%eyre %cache entry]
+          ~
+        ::
+          [%eyre %set-response '/some/url' ~]
+          [%e %set-response '/some/url' ~]
+          ~
+        ::
+          ~
+          `[%e %set-response '/some/url' `entry]
       ==
     ::
       ^-  tracked-task
