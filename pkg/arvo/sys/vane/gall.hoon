@@ -2867,7 +2867,6 @@
         [%dill %mass *]                 [& %dill %mass]
         [%dill %shot @ %view *]         [& %dill %view ses.task]
         [%dill %shot @ %flee *]         [| %dill %view ses.task]
-        [%dill %shot @ %shut *]         [| %dill %view ses.task]
         [%eyre %connect *]              :-  [%eyre %binding wat.task]
                                         [%eyre %binding binding.task]
         [%eyre %disconnect *]           [| %eyre %binding binding.task]
