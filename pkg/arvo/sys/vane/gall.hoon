@@ -1840,18 +1840,13 @@
     ::    "after the remote scry handling, but before other card transforms"
     ::
     +$  carp  $+  carp  (wind neet gift:agent)
-    +$  tick  ::TODO  ugly!
+    +$  tick
       ::  remote scry already processed, exclude those cards
       $%  $<(%ames task-user-v1)
       $:  %ames
-      $%  [%prod ships=(list ship)]
-          [%sift ships=(list ship)]
-          [%snub form=?(%allow %deny) ships=(list ship)]
-          [%spew veb=(list verb:ames)]
-          [%cong msg=@ud mem=@ud]
-          [%stir arg=@t]
-          [%trim p=@ud]
-      ==  ==  ==
+          $<  ?(%keen %yawn %grow %tomb %cull %tend %germ %snip)
+          _+:*$>(%ames task-user-v1)
+      ==  ==
     +$  neet  $+  neet
       $%  [%agent [=ship name=term] task=$%(task:agent [%raw-poke =mark =noun])]
           [%arvo tick]
