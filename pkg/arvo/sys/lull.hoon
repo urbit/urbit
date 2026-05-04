@@ -3928,6 +3928,13 @@
         [%eyre %set-response url=@t entry=(unit cache-entry:eyre)]
         [%eyre %trim p=@ud]
       ::
+        [%gall %jolt =desk =dude]
+        [%gall %idle =dude]
+        [%gall %nuke =dude]
+      ::
+        [%gall %spew veb=(list verb)]
+        [%gall %sift dudes=(list dude)]
+        [%gall %sear =ship]
         [%gall %trim p=@ud]
       ::
         [%iris %request =request:http =outbound-config:iris]
