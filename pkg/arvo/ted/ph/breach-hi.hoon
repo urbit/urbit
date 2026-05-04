@@ -11,7 +11,6 @@
 ;<  ~          bind:m  (init-ship ~dev |)
 ;<  ~          bind:m  (send-hi ~bud ~dev)
 ;<  ~          bind:m  (breach-and-hear ~dev ~bud)
-;<  ~          bind:m  (send-hi-not-responding ~bud ~dev)
 ;<  ~          bind:m  (init-ship ~dev |)
 ;<  ~          bind:m  (send-hi ~bud ~dev)
 ;<  ~          bind:m  (end t)
