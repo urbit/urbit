@@ -188,12 +188,20 @@
     (expect-eq !>(tag.match) !>(tag.res))
   (expect-eq !>(i.match) !>(i.cur.res))
 ::
-++  test-tokenizer
+++  test-primitive-lexer
   ;:  weld
     (make-tokenizer-test '.*(123)' %dttrw 3)
     (make-tokenizer-test '123' %atomw 3)
     (make-tokenizer-test '1.234' %atomw 5)
+  ::
+    (make-tokenizer-test '+2' %axis 2)
+    (make-tokenizer-test '+>' %lark 2)
+    (make-tokenizer-test '$' %skip 1)
+    (make-tokenizer-test '^$' %skip 2)
+    (make-tokenizer-test 'a.b' %skip 1)
   ==
+::
+::TODO  test +proc
 ::
 ++  make-parser-test
   |=  [input=@t =naty:th]
@@ -204,10 +212,29 @@
   (expect-eq !>(i.cur.s.res) !>(len.cur.s.res))  ::  fully parsed
 ::
 ++  test-parser
+  =+  z=[%noun [%atom %ud ~] 0]
   ;:  weld
     (make-parser-test '123' [%noun [%atom %ud ~] 123])
     (make-parser-test '.+(1)' [%dtls %noun [%atom %ud ~] 1])
     (make-parser-test '.+  2' [%dtls %noun [%atom %ud ~] 2])
     (make-parser-test '.+  .+(3)' [%dtls %dtls %noun [%atom %ud ~] 3])
+  ::
+    (make-parser-test '$' [%cnts [%| 0 `%$]~ ~])
+    (make-parser-test '^$' [%cnts [%| 1 `%$]~ ~])
+    (make-parser-test 'a.b' [%cnts ~[[%| 0 `%a] [%| 0 `%b]] ~])
+  ::
+    (make-parser-test '.*(0 0)' [%dttr z z])
+    (make-parser-test '.*  0  0' [%dttr z z])
+    (make-parser-test '.=(0 0)' [%dtts z z])
+    (make-parser-test '.=  0  0' [%dtts z z])
+    (make-parser-test '?:(0 0 0)' [%wtcl z z z])
+    (make-parser-test '?:  0  0  0' [%wtcl z z z])
+    (make-parser-test '=>(0 0)' [%tsgr z z])
+    (make-parser-test '=>  0  0' [%tsgr z z])
+    (make-parser-test '=+(0 0)' [%tsls z z])
+    (make-parser-test '=+  0  0' [%tsls z z])
+  ::
+    (make-parser-test '^+(0 0)' [%ktls z z])
+    (make-parser-test '^+  0  0' [%ktls z z])
   ==
 --

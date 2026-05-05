@@ -2,6 +2,7 @@
 ::
 |%
 +$  axis  $~(1 @)
+::TODO  custom $limb (and $wing) type that doesn't have a silly (unit term) case
 ::  naty: natural runes
 ::
 ::    each of these represents a digraph followed by its "sub runes".

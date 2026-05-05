@@ -21,6 +21,8 @@ MoreWingElements -> ε
 WingElement -> axis
 WingElement -> skip
 WingElement -> lark
+WingElement -> dot
+WingElement -> com
 MoreEditPairsW -> com ace EditPairW MoreEditPairsW
 MoreEditPairsW -> ε
 EditPairsW -> EditPairW MoreEditPairsW

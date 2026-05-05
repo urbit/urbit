@@ -16,7 +16,19 @@
   ::TODO  dtwt(,dtwt_,dtls(,dtls_,dtts(,dtts_,wtcl(,wtcl_,tsgr(,tsgr_,tsls(,tsls_,dot,ε,axis,skip,lark,com,cnts(,cnts_,gap_stat,cen_sym,sggr(,sggr_,ktls(,ktls_,wtpt(,wtpt_,wtcn(,wtcn_,wtkt(,wtkt_,cltr(,[,],cltr_,sym,tar,gap_stet,slus,gap_stop,bar,wut,brpt_,brcn_,$
   ::NOTE  important that %atomw is before %atomt,
   ::      if ambiguous we prefer the former
-  %.  ~[%ace %gap %per %atomw %atomt %dtlsw %dtlst %dttrw %dttrt]
+  %.  :~  %ace  %gap  %per  %dot  %com
+          %axis  %lark  %skip
+          ::  %sym
+          %atomw  %atomt
+          %dttrw  %dttrt    %dtwtw  %dtwtt    %dtlsw  %dtlst    %dttsw  %dttst
+          %wtclw  %wtclt
+          %tsgrw  %tsgrt    %tslsw  %tslst
+          %cntsw  %cntst
+          %sggrw  %sggrt
+          %brcnw  %brcnt    %brptw  %brptt
+          %ktlsw  %ktlst
+          %wtptw  %wtptt    %wtcnw  %wtcnt    %wtktw  %wtktt
+      ==
   %~  select-rules  rul
   %-  ~(def-cords rul ~)  :~
     :-  %ace
@@ -39,6 +51,19 @@
     '''
     ')'
     '''
+    :-  %dot
+    '''
+    '.'
+    '''
+    :-  %com
+    '''
+    ','
+    '''
+  ::
+    :-  %sym
+    '''
+    ( '$' | [a-z][a-z0-9-]* )
+    '''
   ::
     :-  %atomw  ::TODO  moar auras
     '''
@@ -48,25 +73,154 @@
     :-  %atomt
     'atomw'
   ::
+    :-  %axis
+    '''
+    '+' ( '0' | ( [1-9] [0-9]* ) )
+    '''
+    :-  %lark
+    '''
+    [+-] ([<>] [+-])* [<>]?
+    '''
+    :-  %skip
+    '''
+    '^'* sym
+    '''
+  ::
     :-  %dttrw
     '''
     '.*('
     '''
-  ::
     :-  %dttrt
     '''
     '.*' gap
+    '''
+  ::
+    :-  %dtwtw
+    '''
+    '.?('
+    '''
+    :-  %dtwtt
+    '''
+    '.?' gap
     '''
   ::
     :-  %dtlsw
     '''
     '.+('
     '''
-  ::
     :-  %dtlst
     '''
     '.+' gap
     '''
+  ::
+    :-  %dttsw
+    '''
+    '.=('
+    '''
+    :-  %dttst
+    '''
+    '.=' gap
+    '''
+  ::
+    :-  %wtclw
+    '''
+    '?:('
+    '''
+    :-  %wtclt
+    '''
+    '?:' gap
+    '''
+  ::
+    :-  %tsgrw
+    '''
+    '=>('
+    '''
+    :-  %tsgrt
+    '''
+    '=>' gap
+    '''
+  ::
+    :-  %tslsw
+    '''
+    '=+('
+    '''
+    :-  %tslst
+    '''
+    '=+' gap
+    '''
+  ::
+    :-  %cntsw
+    '''
+    '%=('
+    '''
+    :-  %cntst
+    '''
+    '%=' gap
+    '''
+  ::
+    :-  %sggrw
+    '''
+    '~>('
+    '''
+    :-  %sggrt
+    '''
+    '~>' gap
+    '''
+  ::
+    :-  %brcnw
+    '''
+    '|%('
+    '''
+    :-  %brcnt
+    '''
+    '|%' gap
+    '''
+  ::
+    :-  %brptw
+    '''
+    '|@('
+    '''
+    :-  %brptt
+    '''
+    '|@' gap
+    '''
+  ::
+    :-  %ktlsw
+    '''
+    '^+('
+    '''
+    :-  %ktlst
+    '''
+    '^+' gap
+    '''
+  ::
+    :-  %wtptw
+    '''
+    '?@('
+    '''
+    :-  %wtptt
+    '''
+    '?@' gap
+    '''
+  ::
+    :-  %wtcnw
+    '''
+    '?%('
+    '''
+    :-  %wtcnt
+    '''
+    '?%' gap
+    '''
+  ::
+    :-  %wtktw
+    '''
+    '?^('
+    '''
+    :-  %wtktt
+    '''
+    '?^' gap
+    '''
+  ::
   ==
 ::
 ++  parser  :: modeled after te, but different (hard to abstract)
@@ -76,9 +230,26 @@
   ::~>  %slog.[2 (machine:mump (vector-dfa -:def))]
   =>  |%
       +$  toke
-        $@  %per
-        $%  [%atom tol=? a=@]  ::  %atomw + %atomt
+        $@  ?(%ace %gap %dot %per)
+        $%  [%limb =limb]
+          ::
+            [%atom tol=? a=@]  ::  %atomw + %atomt
+          ::
+            [%dttr tol=?]
+            [%dtwt tol=?]
             [%dtls tol=?]
+            [%dtts tol=?]
+            [%wtcl tol=?]
+            [%tsgr tol=?]
+            [%tsls tol=?]
+            [%cnts tol=?]
+            [%sggr tol=?]
+            [%brcn tol=?]
+            [%brpt tol=?]
+            [%ktls tol=?]
+            [%wtpt tol=?]
+            [%wtcn tol=?]
+            [%wtkt tol=?]
         ==
       +$  post  [row=@ col=@]
       --
@@ -146,8 +317,8 @@
     =/  len  (sub end beg)
     :_  rap.st(col (add len col.rap.st))
     ^-  toke
-    ?+  tag  !!
-      %per  tag
+    ?+  tag  ~|(unhandled-tag=tag !!)
+      ?(%ace %gap %dot %per)  tag
     ::
         ?(%atomw %atomt)
       :+  %atom  ?=(%atomt tag)
@@ -155,8 +326,63 @@
       %-  decimal:digits
       (skip (trip (chunk i.cur.st len)) |=(c=@ =('.' c)))
     ::
+      %com    [%limb %| 0 ~]
+      %axis   :+  %limb  %&
+              -:(fold-bytes [txt.cur.st +(beg) end] (fold:digits 10))
+    ::
+        %lark
+      :+  %limb  %&
+      %+  fold-bytes  [txt.cur.st beg end]
+      |=  [c=@ acc=_1]
+      %+  peg  acc
+      ?+  c  !!
+        %'-'  %2
+        %'+'  %3
+        %'<'  %2
+        %'>'  %3
+      ==
+    ::
+        %skip
+      :+  %limb  %|
+      =/  ket=@ud  beg
+      |-  ^-  [@ud (unit term)]
+      ?:  =('^' (cut 3 [ket 1] txt.cur.st))
+        $(ket +(ket))
+      =+  s=(sub ket beg)
+      =+  n=(cut 3 [ket (sub len s)] txt.cur.st)
+      [s ~ ?:(=('$' n) %$ n)]
+    ::
+      %dttrw  [%dttr |]
+      %dttrt  [%dttr &]
+      %dtwtw  [%dtwt |]
+      %dtwtt  [%dtwt &]
       %dtlsw  [%dtls |]
       %dtlst  [%dtls &]
+      %dttsw  [%dtts |]
+      %dttst  [%dtts &]
+      %wtclw  [%wtcl |]
+      %wtclt  [%wtcl &]
+      %tsgrw  [%tsgr |]
+      %tsgrt  [%tsgr &]
+      %tslsw  [%tsls |]
+      %tslst  [%tsls &]
+      %cntsw  [%cnts |]
+      %cntst  [%cnts &]
+      %sggrw  [%sggr |]
+      %sggrt  [%sggr &]
+      %brcnw  [%brcn |]
+      %brcnt  [%brcn &]
+      %brptw  [%brpt |]
+      %brptt  [%brpt &]
+      %ktlsw  [%ktls |]
+      %ktlst  [%ktls &]
+      %wtptw  [%wtpt |]
+      %wtptt  [%wtpt &]
+      %wtcnw  [%wtcn |]
+      %wtcnt  [%wtcn &]
+      %wtktw  [%wtkt |]
+      %wtktt  [%wtkt &]
+    ::
       :: %lark  :+  %atom  |
       ::         %+  fold-bytes  [txt.cur.st beg end]
       ::         |=  [c=@ acc=_1]
@@ -208,17 +434,63 @@
     =+  peek  ?@  -  ~  =>  [t=u +(st s)]
     ?+  t  wide(tol |)
       [%atom %& *]  [%noun [%atom %ud ~] a.t]^move
-      [%dtls %&]    =+  tall(st move)  ?@  -  ~  [[%dtls u] s]
+      [%dttr %&]    =+  tall-2(st move)  ?@  -  ~  [[%dttr u] s]
+      [%dtwt %&]    =+  tall(st move)    ?@  -  ~  [[%dtwt u] s]
+      [%dtls %&]    =+  tall(st move)    ?@  -  ~  [[%dtls u] s]
+      [%dtts %&]    =+  tall-2(st move)  ?@  -  ~  [[%dtts u] s]
+      [%wtcl %&]    =+  tall(st move)    ?@  -  ~  =>  [t=u +(st s)]
+                    =+  (expect %gap)    ?@  -  ~  =>  +(st s)
+                    =+  tall-2           ?@  -  ~  [[%wtcl t u] s]
+      [%tsgr %&]    =+  tall-2(st move)  ?@  -  ~  [[%tsgr u] s]
+      [%tsls %&]    =+  tall-2(st move)  ?@  -  ~  [[%tsls u] s]
+      [%cnts %&]    !!  ::TODO
+      [%sggr %&]    !!  ::TODO
+      [%brcn %&]    !!  ::TODO
+      [%brpt %&]    !!  ::TODO
+      [%ktls %&]    =+  tall-2(st move)  ?@  -  ~  [[%ktls u] s]
+      [%wtpt %&]    !!  ::TODO
+      [%wtcn %&]    !!  ::TODO
+      [%wtkt %&]    !!  ::TODO
     ==
   ::
   ++  wide
     ^-  (mandatory naty _st)
     =+  gulp  ?@  -  ~  =>  [t=u +(st s)]
     ?+  t  ~
+      [%limb *]     =+  (parse-wing limb.t)  ?@  -  ~  [[%cnts u ~] s]
+      ::TODO  handle %dot
       [%atom %| *]  [%noun [%atom %ud ~] a.t]^st
-      [%dtls %|]    =+  wide-1   ?@  -  ~  [[%dtls u] s]
+      [%dttr %|]    =+  wide-2         ?@  -  ~  [[%dttr u] s]
+      [%dtwt %|]    =+  wide-1         ?@  -  ~  [[%dtwt u] s]
+      [%dtls %|]    =+  wide-1         ?@  -  ~  [[%dtls u] s]
+      [%dtts %|]    =+  wide-2         ?@  -  ~  [[%dtts u] s]
+      [%wtcl %|]    =+  wide           ?@  -  ~  =>  [t=u +(st s)]
+                    =+  (expect %ace)  ?@  -  ~  =>  +(st s)
+                    =+  wide-2         ?@  -  ~  [[%wtcl t u] s]
+      [%tsgr %|]    =+  wide-2         ?@  -  ~  [[%tsgr u] s]
+      [%tsls %|]    =+  wide-2         ?@  -  ~  [[%tsls u] s]
+      [%cnts %|]    !!  ::TODO
+      [%sggr %|]    !!  ::TODO
+      [%brcn %|]    !!  ::TODO
+      [%brpt %|]    !!  ::TODO
+      [%ktls %|]    =+  wide-2         ?@  -  ~  [[%ktls u] s]
+      [%wtpt %|]    !!  ::TODO
+      [%wtcn %|]    !!  ::TODO
+      [%wtkt %|]    !!  ::TODO
     ==
   ::
+  ++  parse-wing
+    |=  l=limb
+    ^-  (mandatory wing _st)
+    ::TODO  handle %dot as wing element
+    =/  rev=(list limb)  [l]~
+    |^
+    =+  peek      ?@  -  done          =>  [t=u bak=s +(st s)]
+    ?.  ?=(%dot t)       done          =.  st  move
+    =+  peek      ?@  -  ~             =>  [l=u +(st s)]
+    ?.  ?=([%limb *] l)  done(st bak)  $(rev [limb.l rev], st move)
+    ++  done  [(flop rev) st]
+    --
   :: ++  expr2p
   ::   |=  [sep=toke exp=$-(_st (mandatory expr _st))]
   ::   ^-  (mandatory [p=expr q=expr mor=(list expr)] _st)
@@ -237,16 +509,16 @@
     ^-  (mandatory naty _st)
     =+  wide        ?@  -  ~  =>  [one=u +(st s)]
     =+  wide-close  ?@  -  ~  [one s]
-  :: ++  wide-2
-  ::   ^-  (mandatory [expr expr] _st)
-  ::   =+  wide           ?@  -  ~  =>  [one=u +(st s)]
-  ::   =+  (expect %ace)  ?@  -  ~  =>  +(st s)
-  ::   =+  wide-1         ?@  -  ~  [[one u] s]
-  :: ++  tall-2
-  ::   ^-  (mandatory [expr expr] _st)
-  ::   =+  tall           ?@  -  ~  =>  [one=u +(st s)]
-  ::   =+  (expect %gap)  ?@  -  ~  =>  +(st s)
-  ::   =+  tall           ?@  -  ~  [[one u] s]
+  ++  wide-2
+    ^-  (mandatory [naty naty] _st)
+    =+  wide           ?@  -  ~  =>  [one=u +(st s)]
+    =+  (expect %ace)  ?@  -  ~  =>  +(st s)
+    =+  wide-1         ?@  -  ~  [[one u] s]
+  ++  tall-2
+    ^-  (mandatory [naty naty] _st)
+    =+  tall           ?@  -  ~  =>  [one=u +(st s)]
+    =+  (expect %gap)  ?@  -  ~  =>  +(st s)
+    =+  tall           ?@  -  ~  [[one u] s]
   :: ++  dtls-w
   ::   ^-  (mandatory expr _st)
   ::   =+  wide-1  ?@  -  ~  [[%dtls u] s]
