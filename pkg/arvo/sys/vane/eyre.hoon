@@ -2691,13 +2691,12 @@
         =/  return  (get-header:http 'return' args.request-line)
         =/  client  (fall (get-header:http 'client' args.request-line) 'unknown')
         ::
-        ?~  return  (error-page 'no return provided')
         ?~  scope   (error-page 'no scope specified')
         ::
-        (dialog-page u.scope client u.return)
+        (dialog-page u.scope client return)
       ::
       ++  dialog-page
-        |=  [scope=desk client=@t return=@t]
+        |=  [scope=desk client=@t return=(unit @t)]
         %-  handle-response
         :+  %start  200^['content-type' 'text/html']~
         :_  &
@@ -2718,7 +2717,8 @@
               ;p:"Let {(trip client)} log in to {(trip scope)} on {(scow %p our)}?"
               ;form(action "/~/auth", method "post")
                 ;input(type "hidden", name "scope", value (trip scope));
-                ;input(type "hidden", name "return", value (trip return));
+                ;*  ?~  return  ~  :_  ~
+                    ;input(type "hidden", name "return", value (trip u.return));
                 ;button(type "submit", name "deny"):"Deny"
                 ;button(type "submit", name "approve"):"Approve"
               ==
@@ -2732,19 +2732,22 @@
         ?~  body.request  (error-page 'no body')
         =/  parsed=(unit (list [key=@t value=@t]))
           (rush q.u.body.request yquy:de-purl:html)
-        ?~  parsed  (error-page 'bad body')
-        ?~  return=(get-header:http 'return' u.parsed)
-          (error-page 'no return')
+        ?~  parsed   (error-page 'bad body')
+        ::
         =/  scope    (get-header:http 'scope' u.parsed)
         =/  approve  (get-header:http 'approve' u.parsed)
-        ?~  approve
-          (serve-return u.return '?error=rejected')
-        ?~  scope
-          (serve-return u.return '?error=noscope')
+        =/  return   (get-header:http 'return' u.parsed)
+        ::
+        ?~  approve  (serve-return return |+'rejected')
+        ?~  scope    (serve-return return |+'noscope')
+        ::
         =^  [session=@uv ^identity moz1=(list move)]  state
           (start-session identity(scope `u.scope) `suv)
+        ::  if no return address was provided, burden the user with
+        ::  manually copy-pasting the session token
+        ::
         =^  moz2=(list move)  state
-          (serve-return u.return (cat 3 '?token=' (scot %uv session)))
+          (serve-return return &+session)
         [(weld moz1 moz2) state]
       ::
       ++  error-page
@@ -2752,8 +2755,49 @@
         (handle-response %start 400^~ `(as-octs:mimes:html msg) &)
       ::
       ++  serve-return
-        |=  [return=@t args=@t]
-        (handle-response %start 303^['location' (cat 3 return args)]~ ~ &)
+        |=  [return=(unit @t) arg=(each @uv @t)]
+        ?~  return  (serve-copy-page arg)
+        =/  append=@t
+          ?-  -.arg
+            %&  (cat 3 '?token=' (scot %uv p.arg))
+            %|  (cat 3 '?error=' p.arg)
+          ==
+        %-  handle-response
+        [%start 303^['location' (cat 3 u.return append)]~ ~ &]
+      ::
+      ++  serve-copy-page
+        |=  arg=(each @uv @t)
+        %-  handle-response
+        :+  %start  200^['content-type' 'text/html']~
+        :_  &
+        %-  some
+        %-  as-octs:mimes:html
+        %-  crip
+        %-  en-xml:html
+        ;html
+          ;head
+            ;meta(charset "utf-8");
+            ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
+            :: ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
+            ;title:"Urbit: External Authentication"
+            ;style:"{(trip auth-styling)}"
+          ==
+          ;body
+            ;+  ?-  -.arg
+                  %&
+                =/  ses=tape  (scow %uv p.arg)
+                ;div
+                  ;input(type "text", readonly "", value ses);
+                  ;button(onclick "navigator.clipboard.writeText('{ses}');"):"copy"
+                ==
+              ::
+                  %|
+                ;div
+                  ;p:"No auth happened: {(trip p.arg)}"
+                ==
+              ==
+          ==
+        ==
       --
     --
   ::  +channel: per-event handling of requests to the channel system
