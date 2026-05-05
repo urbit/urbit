@@ -8,6 +8,6 @@
   ::
 :-  %say
 |=  $:  [now=@da eny=@uvJ bec=beak]
-        [arg=~ ~]
+        [arg=~ memo=_| ford=_| ~]
     ==
-[%helm-meld ~]
+[%helm-meld memo ford]

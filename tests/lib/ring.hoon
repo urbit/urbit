@@ -9,11 +9,11 @@
 =/  test-scope=(unit @)    `(shaz (jam [%scope 5]))
 =/  test-scope-2=(unit @)  `(shaz (jam [%scope 6]))
 ::
-=/  our-privkey=@udscalar  3
-=/  our-pubkey=@udpoint    (scalarmult-base:ed:crypto our-privkey)
+=/  our-privkey=@uxscalar  `@ux`3
+=/  our-pubkey=@uxpoint    (scalarmult-base:ed:crypto our-privkey)
 ::
-=/  two-privkey=@udscalar  2
-=/  two-pubkey=@udpoint    (scalarmult-base:ed:crypto two-privkey)
+=/  two-privkey=@uxscalar  `@ux`2
+=/  two-pubkey=@uxpoint    (scalarmult-base:ed:crypto two-privkey)
 ::
 =/  public-key-set         (sy (turn (gulf 1 5) scalarmult-base:ed:crypto))
 |%

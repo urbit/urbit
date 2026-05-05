@@ -17,7 +17,8 @@
   ^-  signature
   =+  (jael-scry ,=life our %life now /(scot %p our))
   =+  (jael-scry ,=ring our %vein now /(scot %ud life))
-  :+  `@ux`(sign:as:(nol:nu:crub:crypto ring) hash)
+  =/  cic  (nol:nu:cric:crypto ring)
+  :+  `@ux`(jam [(sign:ed:crypto hash sgn:ven:ex:cic) hash])
     our
   life
 ::
@@ -38,9 +39,10 @@
   ?.  =(a.deed r.signature)  %.y
   ::  verify signature from ship at life
   ::
-  =/  them
-    (com:nu:crub:crypto b.deed)
-  =(`hash (sure:as.them p.signature))
+  =/  them  (com:nu:cric:crypto b.deed)
+  =+  ;;([sig=@ msg=@] (cue p.signature))
+  ?.  =(hash msg)  |
+  (veri:ed:crypto sig msg sgn:ded:ex:them)
 ::
 ++  are-signatures-valid
   |=  [our=ship =signatures =hash now=time]

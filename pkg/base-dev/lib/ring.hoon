@@ -18,10 +18,10 @@
   ::
   ++  generate-public-linkage
     |=  link-scope=@
-    ^-  [data=@ h=@udpoint]
+    ^-  [data=@ h=@uxpoint]
     ::
     =/  data=@   (mod link-scope l:ed:crypto)
-    =/  h=@udpoint  (scalarmult-base:ed:crypto data)
+    =/  h=@uxpoint  (scalarmult-base:ed:crypto data)
     [data h]
   ::  +generate-linkage: linkage information from scope and private key
   ::
@@ -30,13 +30,13 @@
   ::    y:    y = [x] * h
   ++  generate-linkage
     |=  [link-scope=(unit @) my-private-key=@]
-    ^-  (unit [data=@ h=@udpoint y=@udpoint])
+    ^-  (unit [data=@ h=@uxpoint y=@uxpoint])
     ::
     ?~  link-scope
       ~
     ::
-    =+  [data=@ h=@udpoint]=(generate-public-linkage u.link-scope)
-    =/  y=@udpoint  (scalarmult:ed:crypto my-private-key h)
+    =+  [data=@ h=@uxpoint]=(generate-public-linkage u.link-scope)
+    =/  y=@uxpoint  (scalarmult:ed:crypto my-private-key h)
     [~ data h y]
   ::  +generate-challenge: generate challenge from a given message
   ::
@@ -47,13 +47,13 @@
   ++  generate-challenge
     |=  $:  ::  common to both linked and unlinked
             message=@
-            g=@udpoint
+            g=@uxpoint
             ::  high level universal state
             ::
-            link-state=(unit [data=@ h=@udpoint y=@udpoint])
+            link-state=(unit [data=@ h=@uxpoint y=@uxpoint])
             ::  point to include in challenge when link-state isn't ~
             ::
-            h=(unit @udpoint)
+            h=(unit @uxpoint)
         ==
     ^-  @
     ::  concatenate and reduce our message down to a 512-bit hash
@@ -74,9 +74,9 @@
   ::  +generate-challenges: generates the full list of challenges
   ::
   ++  generate-challenges
-    |=  $:  link-state=(unit [data=@ h=@udpoint y=@udpoint])
+    |=  $:  link-state=(unit [data=@ h=@uxpoint y=@uxpoint])
             message=@
-            public-keys=(list @udpoint)
+            public-keys=(list @uxpoint)
             ss=(list @)
         ::
             prev-k=@u
@@ -86,14 +86,14 @@
         ==
     ^-  (list @)
     ::
-    =/  gs=@udpoint
+    =/  gs=@uxpoint
       %-  add-scalarmult-scalarmult-base:ed:crypto  :*
         prev-ch
         (snag prev-k public-keys)
         prev-s
       ==
     ::
-    =/  hs=(unit @udpoint)
+    =/  hs=(unit @uxpoint)
       ?~  link-state
         ~
       ::
@@ -125,8 +125,8 @@
   ::    used to generate the (unit point) consumed by +generate-challenge.
   ::
   ++  scalarmult-h
-    |=  [u=@ linkage=(unit [data=@ h=@udpoint y=@udpoint])]
-    ^-  (unit @udpoint)
+    |=  [u=@ linkage=(unit [data=@ h=@uxpoint y=@uxpoint])]
+    ^-  (unit @uxpoint)
     ?~  linkage
       ~
     [~ (scalarmult:ed:crypto u h.u.linkage)]
@@ -143,9 +143,9 @@
     |=  $:  message=@
             link-scope=(unit @)
         ::
-            anonymity-set=(set @udpoint)
-            my-public-key=@udpoint
-            my-private-key=@udscalar
+            anonymity-set=(set @uxpoint)
+            my-public-key=@uxpoint
+            my-private-key=@uxscalar
         ::
             eny=@uvJ
         ==
@@ -157,7 +157,7 @@
           (need (find [my-public-key ~] anonymity-list))
         ::  Generate linkage information if given
         ::
-        =/  linkage=(unit [data=@ h=@udpoint y=@udpoint])
+        =/  linkage=(unit [data=@ h=@uxpoint y=@uxpoint])
           (generate-linkage link-scope my-private-key)
         ::  initialize our random number generator from entropy
         ::
@@ -237,7 +237,7 @@
     |=  $:  message=@
             link-scope=(unit @)
         ::
-            anonymity-set=(set @udpoint)
+            anonymity-set=(set @uxpoint)
             signature=raw-ring-signature
         ==
     ^-  ?
@@ -259,14 +259,14 @@
     =/  s2-to-end=(list @)  t.t.s.signature
     ::  anonymity-list: set of public keys listified in ring order
     ::
-    =/  anonymity-list=(list @udpoint)
+    =/  anonymity-list=(list @uxpoint)
       ~(tap in anonymity-set)
     ::  participants: length of :anonymity-list
     ::
     =/  participants=@u
       (lent anonymity-list)
     ::
-    =/  z0p=@udpoint
+    =/  z0p=@uxpoint
       %-  add-scalarmult-scalarmult-base:ed:crypto  :*
          ch0.signature
          (head anonymity-list)
@@ -275,14 +275,14 @@
     ::  generate the linkage using public data, and the y point from the
     ::  signature
     ::
-    =/  linkage=(unit [data=@ h=@udpoint y=@udpoint])
+    =/  linkage=(unit [data=@ h=@uxpoint y=@uxpoint])
       ?~  link-scope
         ~
-      =+  [data=@ h=@udpoint]=(generate-public-linkage u.link-scope)
+      =+  [data=@ h=@uxpoint]=(generate-public-linkage u.link-scope)
       :-  ~
       [data h (need y.signature)]
     ::
-    =/  z0pp=(unit @udpoint)
+    =/  z0pp=(unit @uxpoint)
       ?~  linkage
         ~
       :-  ~
@@ -319,7 +319,7 @@
   ::  +seed-to-private-key-scalar: keyfile form to scalar we can multiply with
   ::
   ++  seed-to-private-key-scalar
-    |=  sk=@I  ^-  @udscalar
+    |=  sk=@I  ^-  @uxscalar
     ?:  (gth (met 3 sk) 32)  !!
     =+  h=(shal (rsh [0 3] b:ed:crypto) sk)
     %+  add
@@ -347,7 +347,7 @@
   ::
   ++  ship-life-to-pubid
     |=  [our=@p now=@da ship=@p =life]
-    ^-  @udpoint
+    ^-  @uxpoint
     ::
     =/  d=[=^life =pass *]
       =/  scry-path=path
@@ -364,14 +364,14 @@
     ::
     =/  x=[crypt=@ auth=@]  (get-public-key-from-pass pass.d)
     ::
-    `@udpoint`auth.x
+    `@uxpoint`auth.x
   ::
   ++  build-signing-participants
     |=  [our=@p now=@da invited=(list @p)]
-    ^-  [(set [@p life]) (set @udpoint)]
+    ^-  [(set [@p life]) (set @uxpoint)]
     ::
     =|  participants=(set [@p life])
-    =|  keys=(set @udpoint)
+    =|  keys=(set @uxpoint)
     ::
     |-
     ?~  invited
@@ -383,7 +383,7 @@
     ?~  lyfe
       $(invited t.invited)
     ::
-    =/  pubkey=@udpoint  (ship-life-to-pubid our now i.invited u.lyfe)
+    =/  pubkey=@uxpoint  (ship-life-to-pubid our now i.invited u.lyfe)
     ::
     =.  participants  (~(put in participants) [i.invited u.lyfe])
     =.  keys          (~(put in keys) pubkey)
@@ -393,15 +393,15 @@
   ::
   ++  build-verifying-participants
     |=  [our=@p now=@da invited=(list [ship=@p =life])]
-    ^-  (set @udpoint)
+    ^-  (set @uxpoint)
     ::
-    =|  keys=(set @udpoint)
+    =|  keys=(set @uxpoint)
     ::
     |-
     ?~  invited
       keys
     ::
-    =/  pubkey=@udpoint
+    =/  pubkey=@uxpoint
       (ship-life-to-pubid our now ship.i.invited life.i.invited)
     =.  keys
       (~(put in keys) pubkey)
@@ -432,7 +432,7 @@
   =/  link-hash=(unit @)  (bind link-scope |=(a=* (shaz (jam a))))
   ::  get everyone's public keys
   ::
-  =/  p=[participants=(set [ship=@p =life]) keys=(set @udpoint)]
+  =/  p=[participants=(set [ship=@p =life]) keys=(set @uxpoint)]
     (build-signing-participants:detail our now ~(tap in anonymity-set))
   ::  get our ships' current life
   ::
@@ -448,7 +448,7 @@
     +:(get-private-key-from-ring:detail secret-ring)
   ::  get our ships' public key
   ::
-  =/  public-key=@udpoint
+  =/  public-key=@uxpoint
     (ship-life-to-pubid:detail our now our our-life)
   ::
   :-  participants.p
@@ -467,7 +467,7 @@
   |=  [our=@p now=@da message=* =ring-signature]
   ^-  ?
   ::
-  =/  keys=(set @udpoint)
+  =/  keys=(set @uxpoint)
     %^  build-verifying-participants:detail  our  now
     ~(tap in participants.ring-signature)
   ::

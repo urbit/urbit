@@ -4,7 +4,7 @@
 =>  ..part
 ~%  %lull  ..part  ~
 |%
-++  lull  %321
+++  lull  %320
 ::                                                      ::  ::
 ::::                                                    ::  ::  (1) models
   ::                                                    ::  ::
@@ -971,7 +971,7 @@
           ++  nol  |~(a=ring ^?(..nu))                  ::  from ring
           ++  com  |~(a=pass ^?(..nu))                  ::  from pass
       --  ::nu                                          ::
-    --  ::acru                                          ::
+    --  ::acru                                          :::::                                                  ::  (1a2)
   ::  +protocol-version: current version of the ames wire protocol
   ::
   ++  protocol-version  `?(%0 %1 %2 %3 %4 %5 %6 %7)`%0
@@ -1064,8 +1064,10 @@
   +$  fragment-num   @udfragmentnum
   +$  message-blob   @udmessageblob
   +$  message-num    @udmessagenum
-  +$  public-key     @uwpublickey
-  +$  private-key    @uwprivatekey
+  +$  public-keys    [cry=@uxpoint sgn=@uxpoint]
+  +$  private-keys   [cry=@uxscalar sgn=@uxscalar]
+  +$  keypairs       [pub=public-keys sek=private-keys]
+  +$  keypair        [pub=@uxpoint sek=@uxscalar]
   +$  symmetric-key  @uwsymmetrickey
   ::
   ::  $hoot: request packet payload
@@ -1118,7 +1120,7 @@
   ::    %known: we know their life and public keys, so we have a channel
   ::
   +$  ship-state
-    $+  ship-state
+    $+  ship-state-31
     $%  [%alien alien-agenda]
         [%known peer-state]
     ==
@@ -1128,7 +1130,7 @@
   ::    packets: packets we've tried to send
   ::
   +$  alien-agenda
-    $+  alien-agenda
+    $+  alien-agenda-31
     $:  messages=(list [=duct =plea])
         packets=(set =blob)
         keens=(jug [path ints] duct)
@@ -1156,13 +1158,8 @@
   ::    corked:  bones closed on both sender and receiver
   ::
   +$  peer-state
-    $+  peer-state
-    $:  $:  =symmetric-key
-            =life
-            =rift
-            =public-key
-            sponsor=ship
-        ==
+    $+  peer-state-31
+    $:  azimuth-state
         route=(unit [direct=? =lane])  ::  XX (list)
         =qos
         =ossuary
@@ -1602,7 +1599,8 @@
   ::    dead:        dead flow consolidation timer and recork timer, if set
   ::
   +$  axle
-    $:  peers=(map ship ship-state)
+    $+  axle-31
+    $:  peers=(map ship ship-state)         ::  %ames protocol peers
         =unix=duct  ::  [//ames/0v0 ~]
         =life
         =rift
@@ -1617,9 +1615,11 @@
         ==
         ::
         =server=chain                       ::  for serving %shut requests
-        priv=private-key
-        chums=(map ship chum-state)         ::  XX migrated peers
-        core=_`?(%ames %mesa)`%ames         ::  XX use |mesa core by default
+        [saf=keypairs =ring =pass]
+        chums=(map ship chum-state)         ::  migrated peers
+        core=_`?(%ames %mesa)`%ames         ::  default network core protocol
+                                            ::  (always %ames so we can guarantee
+                                            ::   communication with past peers)
         ::  TODOs
         :: XX tmp=(map @ux page)            :: temporary hash-addressed bindings
     ==
@@ -1643,21 +1643,30 @@
   ::
   +$  dire           ?(%bak %for)
   +$  side           [=bone =dire]
-  +$  azimuth-state  [=symmetric-key =life =rift =public-key sponsor=ship]
+  +$  azimuth-state
+    $+  azimuth-state-31
+    $:  =symmetric-key
+        =life
+        =rift
+        [=public-keys =pass]
+        sponsor=ship
+    ==
+  ::
   +$  chum-state
-    $+  chum-state
+    $+  chum-state-31
     $%  [%known fren-state]
         [%alien ovni-state]
     ==
   ::
   +$  ovni-state
-    $+  ovni-state
+    $+  ovni-state-31
     $:  pokes=(list [=duct message=mesa-message])
         peeks=(jug [path ints] duct)
         chums=(jug [path ints] duct)
     ==
   ::
   +$  fren-state
+    $+  fren-state-31
     $:  azimuth-state
         lane=(unit [hop=@ =lane:pact])  :: XX (list)
         =qos
@@ -1668,9 +1677,6 @@
         pit=(map path request-state)           :: active +peek namespace paths
         =client=chain                          :: stores keys for %shut requests
         tip=(jug =user=path [duct =ames=path]) :: reverse .pit lookup map
-        ::  a migrated flow in a weird state is tagged with a $term, and data
-        ::
-        weir=(jug side [tag=term data=*])
     ==
   ::
   ::  interest gifts per path in the pith
@@ -1808,7 +1814,7 @@
     =|  s=(list)
     |-  ^-  *
     ?:  =(i n)
-      =^  d  s  s
+      =^  d  s  ?>  ?=(^ s)  s
       |-(?~(s d $(d [i.s d], s t.s)))
     ::
     =/  d=*  i
@@ -1817,7 +1823,7 @@
     |-  ^-  *
     ?:  =(0 j)
       ^$(s [d s])
-    =^  e  s  s
+    =^  e  s  ?>  ?=(^ s)  s
     $(d [e d], j (dec j))
   ::
   ++  unroll
@@ -2522,7 +2528,6 @@
         tom=(map tako norm)                             ::  tomb policies
         nor=norm                                        ::  default policy
         mim=(map path mime)                             ::  mime cache
-        fod=flue                                        ::  ford cache
         wic=(map weft yoki)                             ::  commit-in-waiting
         liv=zest                                        ::  running agents
         ren=rein                                        ::  force agents on/off
@@ -2576,17 +2581,6 @@
   +$  norm  (axal ?)                                    ::  tombstone policy
   +$  open  $-(path vase)                               ::  get prelude
   +$  page  ^page                                       ::  export for compat
-  +$  pour                                              ::  ford build w/content
-    $%  [%file =path]
-        [%nave =mark]
-        [%dais =mark]
-        [%cast =mars]
-        [%tube =mars]
-        ::  leafs
-        ::
-        [%vale =path =lobe]
-        [%arch =path =(map path lobe)]
-    ==
   +$  rang                                              ::  repository
     $+  rang
     $:  hut=(map tako yaki)                             ::  changes
@@ -2622,13 +2616,6 @@
   +$  rule  [mod=?(%black %white) who=(set whom)]       ::  node permission
   +$  rump  [p=care q=case r=@tas s=path]               ::  relative path
   +$  saba  [p=ship q=@tas r=moar s=dome]               ::  patch+merge
-  +$  soak                                              ::  ford result
-    $%  [%cage =cage]
-        [%vase =vase]
-        [%arch dir=(map @ta vase)]
-        [%dais =dais]
-        [%tube =tube]
-    ==
   +$  soba  (list [p=path q=miso])                      ::  delta
   +$  suba  (list [p=path q=misu])                      ::  delta
   +$  tako  @uvI                                        ::  yaki ref
@@ -2769,54 +2756,6 @@
         (sham [%tako (roll p add) q t])
     [p q has t]
   ::
-  ::  $leak: ford cache key
-  ::
-  ::    This includes all build inputs, including transitive dependencies,
-  ::    recursively.
-  ::
-  +$  leak
-    $~  [*pour ~]
-    $:  =pour
-        deps=(set leak)
-    ==
-  ::
-  ::  $flow: global ford cache
-  ::
-  ::    Refcount includes references from other items in the cache, and
-  ::    from spills in each desk
-  ::
-  ::    This is optimized for minimizing the number of rebuilds, and given
-  ::    that, minimizing the amount of memory used.  It is relatively slow
-  ::    to lookup, because generating a cache key can be fairly slow (for
-  ::    files, it requires parsing; for tubes, it even requires building
-  ::    the marks).
-  ::
-  +$  flow  (map leak [refs=@ud =soak])
-  ::
-  ::  Per-desk ford cache
-  ::
-  ::    Spill is the set of "roots" we have into the global ford cache.
-  ::    We add a root for everything referenced directly or indirectly on
-  ::    a desk, then invalidate them on commit only if their dependencies
-  ::    change.
-  ::
-  ::    Sprig is a fast-lookup index over the global ford cache.  The only
-  ::    goal is to make cache hits fast.
-  ::
-  +$  flue  [spill=(set leak) sprig=(map mist [=leak =soak])]
-  ::
-  ::  Ford build without content.
-  ::
-  +$  mist
-    $%  [%file =path]
-        [%nave =mark]
-        [%dais =mark]
-        [%cast =mars]
-        [%tube =mars]
-        [%vale =path]
-        [%arch =path]
-    ==
-  ::
   ::  $pile: preprocessed hoon source file
   ::
   ::    /-  sur-file            ::  surface imports from /sur
@@ -2922,7 +2861,7 @@
   +$  gift                                              ::  out result <-$
     $%  [%blit p=(list blit)]                           ::  terminal output
         [%logo ~]                                       ::  logout
-        [%meld ~]                                       ::  unify memory
+        [%meld $@(~ [memo=? ford=?])]                   ::  unify memory
         [%pack ~]                                       ::  compact memory
         [%trim p=@ud]                                   ::  trim kernel state
         [%logs =told]                                   ::  system output
@@ -2940,7 +2879,7 @@
         [%logs p=(unit ~)]                              ::  watch system output
         [%mass ~]                                       ::  run memory report
         [%quac p=(list quac)]                           ::  memory runtime
-        [%meld ~]                                       ::  unify memory
+        [%meld $@(~ [memo=? ford=?])]                   ::  unify memory
         [%pack ~]                                       ::  compact memory
         [%seat =desk]                                   ::  install desk
         [%shot ses=@tas task=session-task]              ::  task for session
@@ -3013,7 +2952,7 @@
     $%  [%crop p=@ud]                                   ::  trim kernel state
         $>(%crud told)                                  ::
         [%heft ~]                                       ::
-        [%meld ~]                                       ::  unify memory
+        [%meld $@(~ [memo=? ford=?])]                   ::  unify memory
         [%pack ~]                                       ::  compact memory
         $>(%text told)                                  ::
         [%verb ~]                                       ::  verbose mode
@@ -3783,7 +3722,7 @@
             pen=(jug spar:ames wire)
             gem=(jug coop [path page])
     ==  ==
-  +$  egg-any  $%([%15 egg-15] [%16 egg])
+  +$  egg-any  $%([%15 egg-15] [%16 egg-16] [%20 egg])
   +$  egg-15
     $%  [%nuke sky=(map spur @ud)]
     $:  %live
@@ -3795,11 +3734,30 @@
         =boat
         =boar
         code=~
-        old-state=[%| vase]
+        old-state=[%| vase:h136]
         =beak
         marks=(map duct mark)
         sky=(map spur plot)
         ken=(jug spar:ames wire)
+    ==  ==
+  +$  egg-16
+    $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)]
+        $:  %live
+            control-duct=duct
+            run-nonce=@t
+            sub-nonce=@
+            =stats
+            =bitt
+            =boat
+            =boar
+            code=~
+            old-state=[%| vase:h136]
+            =beak
+            marks=(map duct mark)
+            sky=farm
+            ken=(jug spar:ames wire)
+            pen=(jug spar:ames wire)
+            gem=(jug coop [path page])
     ==  ==
   ::
   +$  bowl                                              ::  standard app state
@@ -3929,6 +3887,274 @@
         |~  [term tang]
         *(quip card _^|(..on-init))
       --
+    --
+  ::
+  ++  egg-aid
+    |%
+    ++  latest
+      |=  e=egg-any
+      ^-  egg
+      ?-  -.e
+        %20  +.e
+        %16  $(e [%20 (egg-16-to-20 +.e)])
+        %15  $(e [%16 (egg-15-to-16 +.e)])
+      ==
+    ::
+    ++  egg-16-to-20
+      |=  e=egg-16
+      ^-  egg
+      ?.  ?=(%live -.e)  e
+      e(+.old-state (next-vase:h136 +.old-state.e))
+    ::
+    ++  egg-15-to-16
+      |=  e=egg-15
+      ^-  egg-16
+      ?:  ?=(%nuke -.e)  [%nuke ~ ~]
+      %=    e
+          ken  [ken.e ~ ~]
+      ::
+          sky
+        =|  =farm
+        =/  ski  ~(tap by sky.e)
+        |-  ^+  farm
+        ?~  ski
+          farm
+        =/  [=spur p=plot]  i.ski
+        =;  new
+          ?~  nex=(~(put-grow of-farm farm) spur new)
+            ~&  %weird
+            !!  :: shouldn't continue else loss of ref integrity
+            :: $(ski t.ski)
+          $(farm u.nex, ski t.ski)
+        :-  ~
+        =/  m  ~(val by fan.p)
+        %+  gas:on-path  *_fan.p
+        %+  turn
+          ^-  (list @)
+          =/  wit  ~(wyt by fan.p)
+          ?:  =(0 wit)  ~
+          (gulf 1 wit)
+        |=  a=@ud
+        [a (snag (dec a) m)]
+      ==
+    --
+  ::
+  ++  on-path  ((on @ud (pair @da (each page @uvI))) lte)
+  ++  of-farm
+    |_  =farm
+    ++  key-coops
+      |=  pos=path
+      ^-  (list coop)
+      =/  frm  (get-farm pos)
+      ?~  frm  ~
+      =.  farm  u.frm
+      |-
+      ?:  ?=(%coop -.farm)
+        ~[pos]
+      %-  zing
+      %+  turn  ~(tap by q.farm)
+      |=  [seg=@ta f=^farm]
+      ^-  (list coop)
+      ^$(pos (snoc pos seg), farm f)
+    ::
+    ++  match-coop
+      =|  wer=path
+      |=  =path
+      ^-  (unit coop)
+      ?:  ?=(%coop -.farm)
+        `(flop wer)
+      ?~  path
+        ~
+      ?~  nex=(~(get by q.farm) i.path)
+        ~
+      $(wer [i.path wer], path t.path, farm u.nex)
+    ::
+    ++  put
+      |=  [=path =plot]
+      ^-  _farm
+      ?:  ?=(%coop -.farm)
+        farm(q (~(put by q.farm) path plot))
+      ?~  path
+        farm(p `plot)
+      =/  nex  (~(get by q.farm) i.path)
+      =/  res  $(path t.path, farm ?~(nex *^farm u.nex))
+      farm(q (~(put by q.farm) i.path res))
+    ::
+    ++  put-grow
+      |=  [=path =plot]
+      ^-  (unit _farm)
+      ?:  ?=(%coop -.farm)
+        ~
+      ?~  path
+        `farm(p `plot)
+      =/  nex  (~(get by q.farm) i.path)
+      =/  res
+        $(path t.path, farm ?~(nex *^farm u.nex))
+      ?~  res  ~
+      `farm(q (~(put by q.farm) i.path u.res))
+    ::
+    ++  put-tend
+      |=  [=path =plot]
+      ^-  (unit _farm)
+      ?:  ?=(%coop -.farm)
+        `farm(q (~(put by q.farm) path plot))
+      ?~  path
+        `farm(p `plot)
+      ?~  nex=(~(get by q.farm) i.path)
+        ~
+      =/  res
+        $(path t.path, farm u.nex)
+      ?~  res  ~
+      `farm(q (~(put by q.farm) i.path u.res))
+    ::
+    ++  grow
+      |=  [=spur now=@da =page]
+      =/  ski  (gut spur)
+      %+  put  spur
+      =-  ski(fan (put:on-path fan.ski -< -> &/page))
+      ?~  las=(ram:on-path fan.ski)
+        [?~(bob.ski 1 +(u.bob.ski)) now]
+      :_  (max now +(p.val.u.las))
+      ?~(bob.ski +(key.u.las) +((max key.u.las u.bob.ski)))
+    ::
+    ++  germ
+      |=  [=coop =hutch]
+      ^-  (unit _farm)
+      ?~  coop
+        ?.  |(=(%coop -.farm) =([%page ~ ~] farm))
+          ~
+        `[%coop hutch ~]
+      ?:  ?=(%coop -.farm)
+        ~
+      ?~  nex=(~(get by q.farm) i.coop)
+        ~
+      $(coop t.coop, farm u.nex)
+    ::
+    ++  tend
+      |=  [=coop =path =plot]
+      ^-  (unit _farm)
+      ?~  coop
+        ?.  ?=(%coop -.farm)
+          ~
+        `farm(q (~(put by q.farm) path plot))
+      ?.  ?=(%plot -.farm)
+        ~
+      ?~  nex=(~(get by q.farm) i.coop)
+        ~
+      $(coop t.coop, farm u.nex)
+    ::
+    ++  del
+      |=  =path
+      ^+  farm
+      ?:  ?=(%coop -.farm)
+        farm(q (~(del by q.farm) path))
+      ?~  path
+        farm(p ~)
+      ?~  nex=(~(get by q.farm) i.path)
+        farm
+      $(path t.path, farm u.nex)
+    ::
+    ++  gut
+      |=  =path
+      ^-  plot
+      (fall (get path) *plot)
+    ::
+    ++  put-hutch
+      |=  [=path =hutch]
+      ^-  (unit _farm)
+      ?~  path
+        ?:  ?=(%coop -.farm)
+          `farm(p hutch)
+        ?.  =([%plot ~ ~] farm)
+          ~
+        `[%coop hutch ~]
+      ?:  ?=(%coop -.farm)
+        ~
+      =/  nex  (~(gut by q.farm) i.path *^farm)
+      =/  res  $(path t.path, farm nex)
+      ?~  res  ~
+      `farm(q (~(put by q.farm) i.path u.res))
+    ::
+    ++  get-hutch
+      |=  =path
+      ^-  (unit hutch)
+      ?~  path
+        ?.  ?=(%coop -.farm)
+          ~
+        `p.farm
+      ?:  ?=(%coop -.farm)
+        ~
+      ?~  nex=(~(get by q.farm) i.path)
+        ~
+      $(path t.path, farm u.nex)
+    ::
+    ++  get-farm
+      |=  =path
+      ^-  (unit ^farm)
+      ?:  ?=(%coop -.farm)
+        ?~  (~(get by q.farm) path)
+          ~
+        `farm
+      ?~  path  ~
+      ?~  nex=(~(get by q.farm) i.path)
+        ~
+      $(path t.path, farm u.nex)
+    ::
+    ++  get
+      |=  =path
+      ^-  (unit plot)
+      ?:  ?=(%coop -.farm)
+        (~(get by q.farm) path)
+      ?~  path
+        p.farm
+      ?~  nex=(~(get by q.farm) i.path)
+        ~
+      $(path t.path, farm u.nex)
+    ::
+    ++  tap-plot
+      =|  wer=path
+      |-  ^-  (list [path plot])
+      =*  tap-plot  $
+      ?:  ?=(%coop -.farm)
+        %+  turn  ~(tap by q.farm)
+        |=  [=path =plot]
+        [(welp wer path) plot]
+      %+  welp  ?~(p.farm ~ [wer u.p.farm]~)
+      %-  zing
+      %+  turn  ~(tap by q.farm)
+      |=  [seg=@ta f=^farm]
+      ^-  (list [path plot])
+      tap-plot(wer (snoc wer seg), farm f)
+    ::
+    ++  run-plot
+      |*  fun=gate
+      %-  ~(gas by *(map path _(fun)))
+      %+  turn  tap-plot
+      |=  [=path =plot]
+      [path (fun plot)]
+    ::
+    ++  gas-hutch
+      |=  =(list [=coop =hutch])
+      ^-  (unit _farm)
+      ?~  list
+        `farm
+      =/  nex
+        (put-hutch i.list)
+      ?~  nex  ~
+      $(farm u.nex, list t.list)
+    ::
+    ++  tap-hutch
+      =|  wer=path
+      %-  ~(gas in *(set [=coop =hutch]))
+      |-  ^-  (list [=coop =hutch])
+      =*  loop  $
+      ?:  ?=(%coop -.farm)
+        [wer p.farm]~
+      %-  zing
+      %+  turn  ~(tap by q.farm)
+      |=  [seg=@ta f=^farm]
+      ^-  (list [=coop =hutch])
+      loop(wer (snoc wer seg), farm f)
     --
   --  ::gall
 ::  %iris http-client interface

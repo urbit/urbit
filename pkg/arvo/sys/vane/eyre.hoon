@@ -1594,7 +1594,7 @@
         (rsh 3 (spat p.mime))  q.mime
     ::  attempt to find conversion gate to mime
     ::
-    =/  tub=(unit [tub=tube:clay mov=move])
+    =/  tub=(unit tub=tube:clay)
       (find-tube i.site.req mark %mime)
     ?~  tub  (error-response 500 "no tube from {(trip mark)} to mime")
     ::  attempt conversion, then send results
@@ -1607,11 +1607,11 @@
         %&  %+  return-static-data-on-duct  200
             [(rsh 3 (spat p.p.mym)) q.p.mym]
       ==
-    [[mov.u.tub cards] state]
+    [cards state]
     ::
     ++  find-tube
       |=  [dap=term from=mark to=mark]
-      ^-  (unit [tube:clay move])
+      ^-  (unit tube:clay)
       =/  des=(unit (unit cage))
         (do-scry %gd dap /$)
       ?.  ?=([~ ~ *] des)  ~
@@ -1620,9 +1620,7 @@
         (do-scry %cc desk /[from]/[to])
       ?.  ?=([~ ~ %tube *] tub)  ~
       :-  ~
-      :-  !<(tube:clay q.u.u.tub)
-      :^  duct  %pass  /conversion-cache/[from]
-      [%c %warp our desk `[%sing %c da+now /[from]/[to]]]
+      !<(tube:clay q.u.u.tub)
     ::
     ++  do-scry
       |=  [care=term =desk =path]
@@ -1828,28 +1826,31 @@
         |=  o=outstanding-connection
         ::NOTE  updating identity.o doesn't actually matter, but it's good form
         o(session-id session.fex, identity identity.fex)
-      ::  store the hostname used for this login, later reuse it for eauth
+      ::  store the hostname used for this login, later reuse it for eauth.
+      ::  avoid overwriting public domains with localhost or local domains.
+      ::  (only use "top level" domains for this, no desk-subdomains, but this
+      ::  is already checked above.)
       ::
       =?  endpoint.auth.state
-          ::  avoid overwriting public domains with localhost
-          ::
-          ::TODO REVIEW  but not if it's an eauth login??
-          ::TODO REVIEW  allow naked ip addresses to become eauth endpoint?
-          ?&  ?=(%& -.target)
-          ?|  ?=(~ auth.endpoint.auth.state)
-              !=(~['localhost'] domain.p.target)
-          ==  ==
-        =/  host=@t  (host-string -.p.target)
-        %-  (trace 2 |.("eauth: storing endpoint at {(trip host)}"))
-        =/  new-auth=(unit @t)
-          `(cat 3 ?:(secure 'https://' 'http://') host)
+          ?&  |(?=(%& -.target) ?=(~ auth.endpoint.auth.state))
+              !?=([%& [[%localhost ~] *] *] target)
+              !?=([%& [[%local *] *] *] target)
+              !?=([%| %.127.0.0.1 *] target)
+          ==
+        =/  new-auth=@t
+          %^  cat  3  ?:(secure 'https://' 'http://')
+          ?-  -.target
+            %&  (en-turf:html domain.p.target)
+            %|  (rsh 3^1 (scot %if ip.p.target))
+          ==
+        %-  (trace 2 |.("eauth: storing endpoint at {(trip new-auth)}"))
         =,  endpoint.auth.state
-        :+  user  new-auth
+        :+  user  `new-auth
         ::  only update the timestamp if the derived endpoint visibly changed.
         ::  that is, it's not hidden behind a user-provided hardcoded url,
         ::  and the new value is different from the old.)
         ::
-        ?:(|(?=(^ user) =(new-auth auth)) time now)
+        ?:(|(?=(^ user) =(`new-auth auth)) time now)
       ::
       =;  out=[moves=(list move) server-state]
         out(moves [give-session-tokens :(weld moz moves.fex moves.out)])
@@ -1947,10 +1948,13 @@
     ++  session-id-from-request
       |=  =request:http
       ^-  (unit @uv)
-      ::  is there an authorization header?
+      ::  is there an authorization header with a legible session token?
       ::
-      ?^  auth=(get-header:http 'authorization' header-list.request)
+      =/  from-header=(unit @uv)
+        ?~  auth=(get-header:http 'authorization' header-list.request)
+          ~
         (rush u.auth ;~(pfix (jest 'Bearer 0v') viz:ag))
+      ?^  from-header  from-header
       ::  are there cookies passed with this request?
       ::
       =/  cookie-header=@t
@@ -2996,7 +3000,7 @@
         =/  said
           (channel-event-to-cord channel request-id channel-event)
         ?~  said  $
-        $(events [(event-cord-to-event-stream id +.u.said) events])
+        $(events [(event-cord-to-event-stream id u.said) events])
       ?:  exit  [moves state]
       ::  send the start event to the client
       ::
@@ -3321,10 +3325,8 @@
         (sign-to-channel-event sign u.channel request-id)
       ?~  maybe-channel-event  [~ state]
       =/  =channel-event  u.maybe-channel-event
-      =/  said=(unit (quip move cord))
+      =/  said=(unit cord)
         (channel-event-to-cord u.channel request-id channel-event)
-      =?  moves  ?=(^ said)
-        (weld moves -.u.said)
       =*  sending  &(?=([%| *] state.u.channel) ?=(^ said))
       ::
       =/  next-id  next-id.u.channel
@@ -3347,7 +3349,7 @@
             ^=  data
             :-  ~
             %-  as-octs:mimes:html
-            (event-cord-to-event-stream next-id +:(need said))
+            (event-cord-to-event-stream next-id (need said))
         ::
             complete=%.n
         ==
@@ -3411,7 +3413,7 @@
             :-  ~
             %-  as-octs:mimes:html
             %+  event-cord-to-event-stream  next-id
-            +:(need (channel-event-to-cord u.channel request-id %kick ~))
+            (need (channel-event-to-cord u.channel request-id %kick ~))
         ::
             complete=%.n
         ==
@@ -3449,11 +3451,11 @@
     ::
     ++  channel-event-to-cord
       |=  [=channel request-id=@ud =channel-event]
-      ^-  (unit (quip move cord))
+      ^-  (unit cord)
       ?-  mode.channel
         %json  %+  bind  (channel-event-to-json channel request-id channel-event)
-               |=((quip move json) [+<- (en:json:html +<+)])
-        %jam   =-  `[~ (scot %uw (jam -))]
+               |=(j=json (en:json:html j))
+        %jam   =-  `(scot %uw (jam -))
                [request-id channel-event]
       ==
     ::  +channel-event-to-json: render channel event as json channel event
@@ -3461,7 +3463,7 @@
     ++  channel-event-to-json
       ~%  %eyre-channel-event-to-json  ..part  ~
       |=  [=channel request-id=@ud event=channel-event]
-      ^-  (unit (quip move json))
+      ^-  (unit json)
       ::  for facts, we try to convert the result to json
       ::
       =/  [from=(unit [=desk =mark]) jsyn=(unit sign:agent:gall)]
@@ -3486,10 +3488,6 @@
         [`[desk.event have] `[%fact %json (slym u.convert noun.event)]]
       ?~  jsyn  ~
       %-  some
-      :-  ?~  from  ~
-          :_  ~
-          :^  duct  %pass  /conversion-cache/[mark.u.from]
-          [%c %warp our desk.u.from `[%sing %f da+now /[mark.u.from]/json]]
       =*  sign  u.jsyn
       =,  enjs:format
       %-  pairs
@@ -4535,7 +4533,7 @@
     =*  sessions  sessions.auth.server-state.ax
     =.  sessions.auth.server-state.ax
       %-  ~(gas by *(map @uv session))
-      %+  skip  ~(tap in sessions)
+      %+  skip  ~(tap by sessions)
       |=  [cookie=@uv session]
       (lth expiry-time now)
     ::  if there's any cookies left, set a timer for the next expected expiry
@@ -4980,9 +4978,9 @@
         ['content-range' (cat 3 'bytes */' (crip (a-co:co p.q.mime)))]^~
       `(as-octs:mimes:html 'requested range not satisfiable')
     ::
+    =/  len  +((sub q.u.range p.u.range))
     =/  =octs
-      %-  as-octs:mimes:html
-      (cut 3 [p.u.range +((sub q.u.range p.u.range))] q.q.mime)
+      [len (cut 3 [p.u.range len] q.q.mime)]
     :^  ~  ~  %noun
     !>  ^-  cache-entry
     :-  ?=(^ lyc)

@@ -422,13 +422,10 @@
   =/  m  (strand ,~)
   ^-  form:m
   ?+    path.spar  !!
-      $%  [%ames bone=@ ?(%clos %cork %next %last %curr) ~]
-          [%flow bone=@ =dire:ames ~]
-          [%flow bone=@ =dire:ames ?(%clos %cork %line %lods %next %last) ~]
-          :: XX rewrite in terms of %whey namespace
-          ::
-          [%flow bone=@ =dire:ames %whey boq=@ ~]
-          [%flow bone=@ =dire:ames seq=@ %naxp ~]
+      $%  [%ames bone=@ %cork ~]
+          [%ames bone=@ %sent seq=@ ~]
+          [%flow bone=@ =dire:ames %cork ~]
+          [?(%ames %flow) bone=@ =dire:ames ?(%sent %loads %naxp %acked) seq=@ ~]
       ==
     ::  encrypted using %chum namespace
     ::
@@ -912,7 +909,6 @@
   =/  poke-vase  !>(`start-args:spider`[`tid.bowl `tid byk.bowl file args])
   ;<  ~      bind:m  (watch-our /awaiting/[tid] %spider /thread-result/[tid])
   ;<  ~      bind:m  (poke-our %spider %spider-start poke-vase)
-  ;<  ~      bind:m  (sleep ~s0)  ::  wait for thread to start
   ;<  =cage  bind:m  (take-fact /awaiting/[tid])
   ;<  ~      bind:m  (take-kick /awaiting/[tid])
   ?+  p.cage  ~|([%strange-thread-result p.cage file tid] !!)
