@@ -734,7 +734,10 @@
     ~|  %install-effect-fail
     ?>  ?=(^ liv)
     =/  key=wain  (ring:en:pem:pkcs8 key.u.liv)
-    (emit %pass /install %arvo %e %rule %cert `[key `wain`cer.u.liv])
+    %-  emil
+    %+  turn  ~(tap in dom.u.liv)
+    |=  =turf
+    [%pass /install %arvo %e %rule %cert turf `[key `wain`cer.u.liv]]
   ::  +get-authz: get next ACME service domain authorization object
   ::
   ++  get-authz
@@ -1207,11 +1210,11 @@
     ::  install privkey and cert .pem from /=base=/acme, ignores app state
     ::TODO  refactor this out of %acme, see also arvo#1151
     ::
-      %install-from-clay
+      [%install-from-clay turf=*]
     =/  bas=path  /(scot %p our.bow)/base/(scot %da now.bow)/acme
     =/  key=wain  .^(wain %cx (weld bas /privkey/pem))
     =/  cer=wain  .^(wain %cx (weld bas /cert/pem))
-    (emit %pass /install %arvo %e %rule %cert `[key cer])
+    (emit %pass /install %arvo %e %rule %cert ;;(turf turf.a) `[key cer])
   ::
       %init
     init
