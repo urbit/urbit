@@ -3856,7 +3856,7 @@
   ::
   ::REVIEW  dangerous to rely on vane cores for type definitions here!
   +$  task-user-v1
-    $%  $:  %ames  ::REVIEW
+    $%  $:  %ames
         $%  [%prod ships=(list ship)]
             [%sift ships=(list ship)]
             [%snub form=?(%allow %deny) ships=(list ship)]
@@ -3876,93 +3876,109 @@
             [%trim p=@ud]
         ==  ==
       ::
-        [%behn %wait =time]
-        [%behn %rest =time]
-        [%behn %trim p=@ud]
+        $:  %behn
+        $%  [%wait =time]
+            [%rest =time]
+            [%trim p=@ud]
+        ==  ==
       ::
-        [%clay %read id=* =ship =desk =rave:clay]  ::  %warp
-        [%clay %rest id=*]  ::  %warp cancel
-        :: [%clay %nuke ~]  ::TODO  support dropping all from wire?
+        $:  %clay
+        $%  [%read id=* =ship =desk =rave:clay]  ::  %warp
+            [%rest id=*]  ::  %warp cancel
+            :: [%nuke ~]  ::TODO  support dropping all from wire?
+          ::
+            [%rite des=desk sob=soba:clay]  ::  %info %&
+            [%name des=desk lab=@tas yon=(unit aeon:clay)]  ::  %info %|
+          ::
+            [%cred nom=@ta cew=crew:clay]
+            [%crow nom=@ta]
+            [%perm des=desk pax=path rit=rite:clay]
+          ::
+            [%esse des=desk ese=?]
+            [%rein des=desk ren=rein:clay]
+            [%zeal lit=(list [=desk =$~(%dead zest:clay)])]  ::TODO  unify?
+            [%zest des=desk liv=zest:clay]         ::TODO  unify?
+            [%tire p=(unit ~)]  ::NOTE  sub
+          ::
+            [%merg des=desk her=@p dem=desk cas=case how=germ:clay]
+            [%fuse des=desk bas=beak con=(list [beak $~(%init germ:clay)])]
+            [%drop des=desk]
+          ::
+            [%mont pot=term bem=beam]
+            [%ogre pot=$@(term beam)]
+            [%dirk pot=term]
+          ::
+            [%tomb =clue:clay]
+            [%trim p=@ud]
+        ==  ==
       ::
-        [%clay %rite des=desk sob=soba:clay]  ::  %info %&
-        [%clay %name des=desk lab=@tas yon=(unit aeon:clay)]  ::  %info %|
+        $:  %dill
+        $%  [%shot ses=@tas task=session-task:dill]
+            ::TODO  consider [session-task:dill] for easier default session
+          ::
+            [%logs p=(unit ~)]
+            [%crud p=@tas q=tang]
+            [%talk p=(list tank)]
+            [%text p=tape]
+          ::
+            [%mass ~]
+            [%meld ~]
+            [%pack ~]
+            [%trim p=@ud]
+        ==  ==
       ::
-        [%clay %cred nom=@ta cew=crew:clay]
-        [%clay %crow nom=@ta]
-        [%clay %perm des=desk pax=path rit=rite:clay]
+        $:  %eyre
+        $%  [%rule =http-rule:eyre]
+            [%eauth-host host=(unit @t)]
+            [%connect =binding:eyre wat=$@(term generator:eyre)]
+            [%disconnect =binding:eyre]
+            [%approve-origin =origin:eyre]
+            [%reject-origin =origin:eyre]
+            [%spew veb=@]
+            [%set-response url=@t entry=(unit cache-entry:eyre)]
+            [%trim p=@ud]
+        ==  ==
       ::
-        [%clay %esse des=desk ese=?]
-        [%clay %rein des=desk ren=rein:clay]
-        [%clay %zeal lit=(list [=desk =$~(%dead zest:clay)])]  ::TODO  unify?
-        [%clay %zest des=desk liv=zest:clay]         ::TODO  unify?
-        [%clay %tire p=(unit ~)]  ::NOTE  sub
+        $:  %gall
+        $%  [%jolt =desk =dude]
+            [%idle =dude]
+            [%nuke =dude]
+          ::
+            [%spew veb=(list verb:gall)]
+            [%sift dudes=(list dude)]
+            [%sear =ship]
+            [%trim p=@ud]
+        ==  ==
       ::
-        [%clay %merg des=desk her=@p dem=desk cas=case how=germ:clay]
-        [%clay %fuse des=desk bas=beak con=(list [beak $~(%init germ:clay)])]
-        [%clay %drop des=desk]
+        $:  %iris
+        $%  [%request =request:http =outbound-config:iris]
+            [%cancel-request ~]
+            [%trim p=@ud]
+        ==  ==
       ::
-        [%clay %mont pot=term bem=beam]
-        [%clay %ogre pot=$@(term beam)]
-        [%clay %dirk pot=term]
-      ::
-        [%clay %tomb =clue:clay]
-        [%clay %trim p=@ud]
-      ::
-        [%dill %shot ses=@tas task=session-task:dill]
-        ::TODO  consider [%dill session-task:dill] for easier default session
-      ::
-        [%dill %logs p=(unit ~)]
-        [%dill %crud p=@tas q=tang]
-        [%dill %talk p=(list tank)]
-        [%dill %text p=tape]
-      ::
-        [%dill %mass ~]
-        [%dill %meld ~]
-        [%dill %pack ~]
-        [%dill %trim p=@ud]
-      ::
-        [%eyre %rule =http-rule:eyre]
-        [%eyre %eauth-host host=(unit @t)]
-        [%eyre %connect =binding:eyre wat=$@(term generator:eyre)]
-        [%eyre %disconnect =binding:eyre]
-        [%eyre %approve-origin =origin:eyre]
-        [%eyre %reject-origin =origin:eyre]
-        [%eyre %spew veb=@]
-        [%eyre %set-response url=@t entry=(unit cache-entry:eyre)]
-        [%eyre %trim p=@ud]
-      ::
-        [%gall %jolt =desk =dude]
-        [%gall %idle =dude]
-        [%gall %nuke =dude]
-      ::
-        [%gall %spew veb=(list verb:gall)]
-        [%gall %sift dudes=(list dude)]
-        [%gall %sear =ship]
-        [%gall %trim p=@ud]
-      ::
-        [%iris %request =request:http =outbound-config:iris]
-        [%iris %cancel-request ~]
-        [%iris %trim p=@ud]
-      ::
-        [%jael %private-keys sub=(unit ~)]
-        [%jael %public-keys sub=(unit (set ship))]
-      ::
-        [%jael %listen whos=(set ship) =source:jael]
-        [%jael %turf ~]
-      ::
-        [%jael %moon =ship =udiff:point:jael]
-        [%jael %rekey =life =ring]
-        [%jael %step ~]
-        [%jael %ruin ships=(set ship)]
-      ::
-        [%jael %trim p=@ud]
+        $:  %jael
+        $%  [%private-keys sub=(unit ~)]
+            [%public-keys sub=(unit (set ship))]
+          ::
+            [%listen whos=(set ship) =source:jael]
+            [%turf ~]
+          ::
+            [%moon =ship =udiff:point:jael]
+            [%rekey =life =ring]
+            [%step ~]
+            [%ruin ships=(set ship)]
+          ::
+            [%trim p=@ud]
+        ==  ==
       ::
         [%khan %trim p=@ud]
       ::
-        [%lick %spin =name:lick]
-        [%lick %shut =name:lick]
-        [%lick %spit =name:lick =mark =noun]
-        [%lick %trim p=@ud]
+        $:  %lick
+        $%  [%spin =name:lick]
+            [%shut =name:lick]
+            [%spit =name:lick =mark =noun]
+            [%trim p=@ud]
+        ==  ==
       ::
         [%syscall note-arvo=*]  ::NOTE  secretly $note-arvo, DO NOT DOCUMENT (;
     ==
