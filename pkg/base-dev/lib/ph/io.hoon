@@ -447,8 +447,7 @@
     ==
   ;<  file=(unit @t)  bind:m  (scry-aqua (unit @t) her aqua-pax)
   =/  warped
-    %^  cat  3  '=>  .  '
-    %^  cat  3  extra
+    %^  cat  3  (crip "=>  [. {<extra>}]  ")
     (need file)
   ;<  ~  bind:m  (send-events (insert-files:util her desk [pax warped] ~))
   (pure:m warped)

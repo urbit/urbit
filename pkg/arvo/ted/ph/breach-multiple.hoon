@@ -11,7 +11,7 @@
 ;<  ~          bind:m  (spawn ~marbud)
 ;<  ~          bind:m  (init-ship ~bud |)
 ;<  ~          bind:m  (init-ship ~marbud |)
-;<  file=@t    bind:m  (touch-file ~bud %kids %foo)
+;<  file=@t    bind:m  (touch-file ~bud %kids '%foo')
 ;<  ~          bind:m  (check-file-touched ~marbud %base file)
 ;<  ~          bind:m  (breach-and-hear ~bud ~marbud)
 ;<  ~          bind:m  (init-ship ~bud |)
