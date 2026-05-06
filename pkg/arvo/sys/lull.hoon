@@ -2438,7 +2438,7 @@
     $~  [%vega ~]                                       ::
     $%  [%boat ~]                                       ::  pier rebooted
         [%cred nom=@ta cew=crew]                        ::  set permission group
-        [%crew ~]                                       ::  permission groups
+        [%crew ~]  ::TODO  remove, add scry endpoint    ::  permission groups
         [%crow nom=@ta]                                 ::  group usage
         [%drop des=desk]                                ::  cancel pending merge
         [%esse des=desk ese=?]                          ::  edit essential desk
@@ -3039,6 +3039,7 @@
     ==                                                  ::
   +$  blit                                              ::  client output
     $%  [%bel ~]                                        ::  make a noise
+        [%bye ~]                                        ::  session ended
         [%clr ~]                                        ::  clear the screen
         [%hop p=$@(@ud [x=@ud y=@ud])]                  ::  set cursor col/pos
         [%klr p=stub]                                   ::  put styled
@@ -3785,18 +3786,24 @@
     $%  ::REVIEW  what if this in place of .ken? [%ames %keen =spar:ames]
         [%behn %wait =time]
         [%clay %warp id=*]
-        [%eyre %binding =binding:eyre wat=$@(term generator:eyre)]
+        [%clay %tire]
+        [%dill %logs]
+        [%dill %mass]
+        [%dill %view ses=@tas]
+        [%eyre %binding =binding:eyre]
         [%eyre %cache url=@t]  ::TODO  if we had the data we could reinflate...
         [%iris %request]
+        [%jael %keys]
         :: [%khan ?(%fard %fyrd %lard)]
         [%lick %spin =name:lick]
     ==  ==
   ::
   +$  resource-deet
     $~  [%clay %warp ~zod %$ %sing %x *case *path]
-    $%  ::TODO  [%eyre %binding wat=$@(term generator:eyre)]
-        ::TODO  [%eyre %cache data=*]
+    $%  [%eyre %binding wat=$@(term generator:eyre)]
+        [%eyre %cache entry=cache-entry:eyre]
         [%clay %warp =ship =desk =rave:clay]
+        [%jael %keys wat=?(%private %public (set ship))]
     ==
   ::
   +$  egg                                               ::  migratory agent
@@ -3934,12 +3941,13 @@
   ::
   ::  userspace api
   ::
+  ::REVIEW  dangerous to rely on vane cores for type definitions here!
   +$  task-user-v1
     $%  $:  %ames
         $%  [%prod ships=(list ship)]
             [%sift ships=(list ship)]
             [%snub form=?(%allow %deny) ships=(list ship)]
-            [%spew veb=(list verb)]
+            [%spew veb=(list verb:ames)]
             [%cong msg=@ud mem=@ud]
             [%stir arg=@t]
           ::
@@ -3955,45 +3963,114 @@
             [%trim p=@ud]
         ==  ==
       ::
-        [%behn %wait =time]
-        [%behn %rest =time]
-        [%behn %trim p=@ud]
+        $:  %behn
+        $%  [%wait =time]
+            [%rest =time]
+            [%trim p=@ud]
+        ==  ==
       ::
-        [%clay %read id=* =ship =desk =rave:clay]  ::  %warp
-        [%clay %drop id=*]
-        ::TODO  %write
-        :: [%clay %nuke ~]  ::TODO  support dropping all from wire?
-        [%clay %trim p=@ud]
+        $:  %clay
+        $%  [%read id=* =ship =desk =rave:clay]  ::  %warp
+            [%rest id=*]  ::  %warp cancel
+            :: [%nuke ~]  ::TODO  support dropping all from wire?
+          ::
+            [%rite des=desk sob=soba:clay]  ::  %info %&
+            [%name des=desk lab=@tas yon=(unit aeon:clay)]  ::  %info %|
+          ::
+            [%cred nom=@ta cew=crew:clay]
+            [%crow nom=@ta]
+            [%perm des=desk pax=path rit=rite:clay]
+          ::
+            [%esse des=desk ese=?]
+            [%rein des=desk ren=rein:clay]
+            [%zeal lit=(list [=desk =$~(%dead zest:clay)])]  ::TODO  unify?
+            [%zest des=desk liv=zest:clay]         ::TODO  unify?
+            [%tire p=(unit ~)]  ::NOTE  sub
+          ::
+            [%merg des=desk her=@p dem=desk cas=case how=germ:clay]
+            [%fuse des=desk bas=beak con=(list [beak $~(%init germ:clay)])]
+            [%drop des=desk]
+          ::
+            [%mont pot=term bem=beam]
+            [%ogre pot=$@(term beam)]
+            [%dirk pot=term]
+          ::
+            [%tomb =clue:clay]
+            [%trim p=@ud]
+        ==  ==
       ::
-        [%dill %trim p=@ud]
+        $:  %dill
+        $%  [%shot ses=@tas task=session-task:dill]
+            ::TODO  consider [session-task:dill] for easier default session
+          ::
+            [%logs p=(unit ~)]
+            [%crud p=@tas q=tang]
+            [%talk p=(list tank)]
+            [%text p=tape]
+          ::
+            [%mass ~]
+            [%meld ~]
+            [%pack ~]
+            [%trim p=@ud]
+        ==  ==
       ::
-        [%eyre %rule =http-rule:eyre]
-        [%eyre %eauth-host host=(unit @t)]
-        [%eyre %connect =binding:eyre wat=$@(term generator:eyre)]
-        [%eyre %disconnect =binding:eyre wat=$@(term generator:eyre)]
-        [%eyre %approve-origin =origin:eyre]
-        [%eyre %reject-origin =origin:eyre]
-        [%eyre %spew veb=@]
-        [%eyre %set-response url=@t entry=(unit cache-entry:eyre)]
-        [%eyre %trim p=@ud]
+        $:  %eyre
+        $%  [%rule =http-rule:eyre]
+            [%eauth-host host=(unit @t)]
+            [%connect =binding:eyre wat=$@(term generator:eyre)]
+            [%disconnect =binding:eyre]
+            [%approve-origin =origin:eyre]
+            [%reject-origin =origin:eyre]
+            [%spew veb=@]
+            [%set-response url=@t entry=(unit cache-entry:eyre)]
+            [%trim p=@ud]
+        ==  ==
       ::
-        [%gall %trim p=@ud]
+        $:  %gall
+        $%  [%jolt =desk =dude]
+            [%idle =dude]
+            [%nuke =dude]
+          ::
+            [%spew veb=(list verb:gall)]
+            [%sift dudes=(list dude)]
+            [%sear =ship]
+            [%trim p=@ud]
+        ==  ==
       ::
-        [%iris %request =request:http =outbound-config:iris]
-        [%iris %cancel-request ~]
-        [%iris %trim p=@ud]
+        $:  %iris
+        $%  [%request =request:http =outbound-config:iris]
+            [%cancel-request ~]
+            [%trim p=@ud]
+        ==  ==
       ::
-        [%jael %trim p=@ud]
+        $:  %jael
+        $%  [%private-keys sub=(unit ~)]
+            [%public-keys sub=(unit (set ship))]
+          ::
+            [%listen whos=(set ship) =source:jael]
+            [%turf ~]
+          ::
+            [%moon =ship =udiff:point:jael]
+            [%rekey =life =ring]
+            [%step ~]
+            [%ruin ships=(set ship)]
+          ::
+            [%trim p=@ud]
+        ==  ==
       ::
-        [%khan %fard p=(fyrd:khan cage)]
-        [%khan %fyrd p=(fyrd:khan cast:khan)]
-        [%khan %lard =bear:khan =shed:khan]
-        [%khan %trim p=@ud]
+        $:  %khan
+        $%  [%fard p=(fyrd:khan cage)]
+            [%fyrd p=(fyrd:khan cast:khan)]
+            [%lard =bear:khan =shed:khan]
+            [%trim p=@ud]
+        ==  ==
       ::
-        [%lick %spin =name:lick]
-        [%lick %shut =name:lick]
-        [%lick %spit =name:lick =mark =noun]
-        [%lick %trim p=@ud]
+        $:  %lick
+        $%  [%spin =name:lick]
+            [%shut =name:lick]
+            [%spit =name:lick =mark =noun]
+            [%trim p=@ud]
+        ==  ==
       ::
         [%syscall note-arvo=*]  ::NOTE  secretly $note-arvo, DO NOT DOCUMENT (;
     ==
@@ -4002,8 +4079,15 @@
     $%  [%ames %sage =sage:mess:ames]
         [%behn %wake =time]  ::REVIEW
         [%clay %read id=* =riot:clay]
+        [%clay %tire p=(each rock:tire:clay wave:tire:clay)]
+        [%dill %blit ses=@tas biz=(list blit:dill)]
+        [%dill %logs =told:dill]
+        [%dill %meme p=(list quac:dill)]
         [%eyre %bound bound=? =binding:eyre wat=$@(term generator:eyre)]  ::NOTE  could become unbound _after_ binding!
         [%iris %http-response =client-response:iris]
+        [%jael %private-keys =life vein=(map life ring)]
+        [%jael %public-keys =public-keys-result:jael]
+        [%jael %turf turf=(list turf)]
         [%lick %soak =name:lick =mark =noun]
       ::
         [%syscall actual-kelvin=@ sign-arvo=*]  ::NOTE  secretly $sign-arvo, DO NOT DOCUMENT (;

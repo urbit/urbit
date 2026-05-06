@@ -333,6 +333,285 @@
 ::
 ::  tests
 ::
++$  tracked-task
+  $:  task=task-user-v1:gall
+      note=note-arvo
+      [res=_+:*arvo-resource:gall det=(unit resource-deet:gall)]
+      wire-deets=(unit *)
+    ::
+      drop=task-user-v1:gall  ::  resource deleted by agent
+      kill=note-arvo     ::  resource deleted by gall
+      done=(unit [sign=sign-arvo guv1=gift-user-v1:gall])  ::  resource-ending kernel gift and corresponding to-agent sign
+    ::
+      signal=(unit gift-user-v1:gall)
+      revive=(unit note-arvo)
+  ==
+++  tracked-tasks
+  ^-  (list tracked-task)
+  :~  ^-  tracked-task
+      :*  [%behn %wait ~2026.1.2]
+          [%b %wait ~2026.1.2]
+          [%behn %wait ~2026.1.2]^~
+          `~2026.1.2
+        ::
+          [%behn %rest ~2026.1.2]
+          [%b %rest ~2026.1.2]
+          `[%behn %wake ~]^[%behn %wake ~2026.1.2]
+        ::
+          ~
+          `[%b %wait ~2026.1.2]
+      ==
+    ::
+      ^-  tracked-task
+      :*  [%clay %read 'someid' ~fun %desk %sing *mood:clay]
+          [%c %warp ~fun %desk ~ %sing *mood:clay]
+          [%clay %warp 'someid']^`[%clay %warp ~fun %desk %sing *mood:clay]
+          `'someid'
+        ::
+          [%clay %rest 'someid']
+          [%c %warp ~fun %desk ~]
+          `[%clay %writ ~]^[%clay %read 'someid' ~]
+        ::
+          ~
+          `[%c %warp ~fun %desk ~ %sing *mood:clay]
+      ==
+    ::
+      ^-  tracked-task
+      :*  [%clay %read 'someid' ~fun %desk %many | ud+1 ud+3 /foo/hoon]
+          [%c %warp ~fun %desk ~ %many | ud+1 ud+3 /foo/hoon]
+          [%clay %warp 'someid']^`[%clay %warp ~fun %desk %many | ud+1 ud+3 /foo/hoon]
+          `'someid'
+        ::
+          [%clay %rest 'someid']
+          [%c %warp ~fun %desk ~]
+          `[%clay %writ ~]^[%clay %read 'someid' ~]
+        ::
+          ~
+          `[%c %warp ~fun %desk ~ %many | ud+1 ud+3 /foo/hoon]
+      ==
+    ::
+      ^-  tracked-task
+      :*  [%clay %tire `~]
+          [%c %tire `~]
+          [%clay %tire]^~
+          ~
+        ::
+          [%clay %tire ~]
+          [%c %tire ~]
+          ~
+        ::
+          ~
+          `[%c %tire `~]
+      ==
+    ::
+      ^-  tracked-task
+      :*  [%dill %logs `~]
+          [%d %logs `~]
+          [%dill %logs]^~
+          ~
+        ::
+          [%dill %logs ~]
+          [%d %logs ~]
+          ~
+        ::
+          ~
+          `[%d %logs `~]
+      ==
+    ::
+      ^-  tracked-task
+      :*  [%dill %shot %sesh %view ~]
+          [%d %shot %sesh %view ~]
+          [%dill %view %sesh]^~
+          `%sesh
+        ::
+          [%dill %shot %sesh %flee ~]
+          [%d %shot %sesh %flee ~]
+          `[%dill %blit [%bye ~]~]^[%dill %blit %sesh [%bye ~]~]
+        ::
+          ~
+          `[%d %shot %sesh %view ~]
+      ==
+    ::
+      ^-  tracked-task
+      :*  [%eyre %connect [~ ['foo']~] %foo]
+          [%e %connect [~ ['foo']~] %foo]
+          [%eyre %binding ~ 'foo' ~]^`[%eyre %binding %foo]
+          `%foo
+        ::
+          [%eyre %disconnect ~ 'foo' ~]
+          [%e %disconnect ~ 'foo' ~]
+          ~
+        ::
+          ~
+          `[%e %connect [~ ['foo']~] %foo]
+      ==
+    ::
+      ^-  tracked-task
+      =/  entry=cache-entry:eyre
+        [auth=& %payload [200 ~] `[4 'body']]
+      :*  [%eyre %set-response '/some/url' `entry]
+          [%e %set-response '/some/url' `entry]
+          [%eyre %cache '/some/url']^`[%eyre %cache entry]
+          ~
+        ::
+          [%eyre %set-response '/some/url' ~]
+          [%e %set-response '/some/url' ~]
+          ~
+        ::
+          ~
+          `[%e %set-response '/some/url' `entry]
+      ==
+    ::
+      ^-  tracked-task
+      :*  [%jael %private-keys `~]
+          [%j %private-keys ~]
+          [%jael %keys]^`[%jael %keys %private]
+          ~
+        ::
+          [%jael %private-keys ~]
+          [%j %nuke ~]
+          ~
+        ::
+          ~
+          `[%j %private-keys ~]
+      ==
+    ::
+      ^-  tracked-task
+      :*  [%jael %public-keys `~]
+          [%j %public-keys ~]
+          [%jael %keys]^`[%jael %keys %public]
+          ~
+        ::
+          [%jael %public-keys ~]
+          [%j %nuke ~]
+          ~
+        ::
+          ~
+          `[%j %public-keys ~]
+      ==
+    ::
+      ^-  tracked-task
+      =/  sis=(set ship)  [~met ~ ~]
+      :*  [%jael %public-keys `sis]
+          [%j %public-keys sis]
+          [%jael %keys]^`[%jael %keys sis]
+          ~
+        ::
+          [%jael %public-keys ~]
+          [%j %nuke sis]
+          ~
+        ::
+          ~
+          `[%j %public-keys sis]
+      ==
+    ::
+      ^-  tracked-task
+      :*  [%lick %spin /mysocket]
+          [%l %spin [%mock /mysocket]]
+          [%lick %spin /mysocket]^~
+          ~
+        ::
+          [%lick %shut /mysocket]
+          [%l %shut [%mock /mysocket]]
+          ~
+        ::
+          `[%lick %soak /mysocket %disconnect ~]
+          `[%l %spin [%mock /mysocket]]
+      ==
+  ==
+++  test-normal-tracking-behavior
+  %-  zing
+  %+  turn  tracked-tasks
+  |=  tracked-task
+  %-  eval-mare
+  ::TODO  put >task< into trace if below results in failure
+  ;<  *  bind:m  (do-load %mock easy:mock)
+  ::  create the resource,
+  ::  see the task go out to the kernel,
+  ::  and check that gall remembers it.
+  ::
+  ;<  moz=(list move:gall)  bind:m
+    (mock-card %pass /agent/wire %arvo task)
+  ;<  gall-wire=wire        bind:m
+    (a2k-wire %mock /agent/wire wire-deets)
+  ;<  ~  bind:m
+    %+  ex-moves  moz
+    :~  (ex-move default-duct %give %unto %poke-ack ~)
+        (ex-move ~[/sysduct] %pass gall-wire note)
+    ==
+  ;<  ~  bind:m
+    %+  ex-resources  %mock
+    :~  [/agent/wire res]^det
+    ==
+  ::
+  %-  branch
+  :~  :-  'agent closes'
+      ::  gall should stop tracking when the agent closes the resource
+      ::
+      ;<  moz=(list move:gall)  bind:m
+        (mock-card %pass /agent/wire %arvo drop)
+      ;<  ~  bind:m
+        %+  ex-moves  moz
+        :~  (ex-move default-duct %give %unto %poke-ack ~)
+            (ex-move ~[/sysduct] %pass gall-wire kill)
+        ==
+      (ex-resources %mock ~)
+    ::
+      :-  'arvo closes'
+      ::  a specific arvo gift should close the resource
+      ::
+      ?~  done  (pure:m ~)
+      ;<  moz=(list move:gall)  bind:m
+        (do-take [gall-wire default-duct] sign.u.done)
+      ;<  ~  bind:m
+        %+  ex-moves  moz
+        :~  (ex-on-arvo /agent/wire guv1.u.done)
+        ==
+      (ex-resources %mock ~)
+    ::
+      :-  'gall nukes'
+      ::  nuking the agent should delete its resource
+      ::
+      ;<  moz=(list move:gall)  bind:m
+        (do-call ~ %nuke %mock)
+      ;<  ~  bind:m
+        %+  ex-moves  moz
+        :~  (ex-move ~[/sysduct] %pass gall-wire kill)
+        ==
+      ;<  y=yoke:gall  bind:m  (get-yoke %mock)
+      (ex-equal !>(-.y) !>(%nuke))
+    ::
+      :-  'gall suspends & revives'
+      ::  suspending the agent should delete its resource
+      ::
+      ;<  moz=(list move:gall)  bind:m
+        (do-call ~ %idle %mock)
+      ;<  ~  bind:m
+        %+  ex-moves  moz
+        :~  (ex-move ~[/sysduct] %pass gall-wire kill)
+        ==
+      ;<  ~  bind:m
+        %+  ex-resources  %mock
+        :~  [/agent/wire res]^det
+        ==
+      ;<  y=yoke:gall  bind:m  (get-yoke %mock)
+      ?.  &(?=(%live -.y) ?=(%| -.agent.y))
+        (fail:m 'agent not suspended' ~)
+      ::  reviving the agent should reinflate its resource
+      ::
+      ;<  moz=(list move:gall)  bind:m
+        (do-load %mock easy:mock)
+      ;<  ~  bind:m
+        %+  ex-moves  moz
+        :-  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
+        =;  mos=(list (unit $-(move:gall tang)))
+          (murn mos same)
+        :~  ?~(signal ~ `(ex-on-arvo /agent/wire u.signal))
+            ?~(revive ~ `(ex-move ~[/sysduct] %pass gall-wire u.revive))
+        ==
+      (ex-resources %mock [/agent/wire res]^det ~)
+  ==
+::
 ++  test-timer-tracking
   %-  eval-mare
   ;<  *  bind:m  (do-load %mock easy:mock)
@@ -480,6 +759,7 @@
   =/  =rave:clay  [%sing %x ud+1 /some/txt]
   ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %behn %wait ~2345.6.7)
   ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %clay %read 123 ~zod %desk rave)
+  ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %eyre %connect [~ /x] %dude)
   ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %iris %request *request:http *outbound-config:iris)
   ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %lick %spin /mysocket)
   ;<  *  bind:m  (mock-card %pass /agent/wire %agent [~fun %bar] %watch /blah)
@@ -488,6 +768,8 @@
   ::
   ;<  gall-wire=wire        bind:m
     (a2k-wire %mock /agent/wire ~)
+  ;<  gall-wire-e=wire        bind:m
+    (a2k-wire %mock /agent/wire `%dude)
   ;<  gall-wire-c=wire        bind:m
     (a2k-wire %mock /agent/wire `123)
   ;<  gall-wire-b=wire        bind:m
@@ -501,6 +783,7 @@
     %+  ex-moves  (sort moz aor)
     :~  (ex-move ~[/sysduct] %pass gall-wire [%i %cancel-request ~])
         (ex-move ~[/sysduct] %pass gall-wire [%l %shut [%mock /mysocket]])
+        (ex-move ~[/sysduct] %pass gall-wire-e [%e %disconnect ~ /x])
         (ex-move ~[/sysduct] %pass gall-wire-c [%c %warp ~zod %desk ~])
         (ex-move ~[/sysduct] %pass gall-wire-b [%b %rest ~2345.6.7])
         (ex-move ~[/sysduct] %pass gall-wire-a [%g %deal [~dev ~fun /gall/mock] %bar %leave ~])  ::TODO  deal constructor
@@ -518,6 +801,7 @@
     %+  ex-moves  (sort moz aor)
     :~  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
         (ex-move ~[/sysduct] %pass gall-wire [%l %spin [%mock /mysocket]])
+        (ex-move ~[/sysduct] %pass gall-wire-e [%e %connect [~ /x] %dude])
         (ex-move ~[/sysduct] %pass gall-wire-c [%c %warp ~zod %desk ~ rave])
         (ex-move ~[/sysduct] %pass gall-wire-b [%b %wait ~2345.6.7])
         (ex-on-agent /agent/wire %kick ~)
@@ -694,7 +978,7 @@
   %-  branch
   :~  :-  'cancelled by agent'
       ;<  moz=(list move:gall)  bind:m
-        (mock-card %pass /agent/wire %arvo %clay %drop 123)
+        (mock-card %pass /agent/wire %arvo %clay %rest 123)
       ;<  ~  bind:m
         %+  ex-moves  moz
         :~  (ex-move default-duct %give %unto %poke-ack ~)
@@ -786,25 +1070,88 @@
 ::TODO  same style for simple +test-simply-tracked-tasks
 ++  test-misc-untracked-tasks
   %-  zing
+  =/  easy  ::  simple no-transform task-to-note
+    |*  t=task-user-v1:gall
+    ?-  -.t
+      %ames  [t t(- %a)]
+      %behn  [t t(- %b)]
+      %clay  [t t(- %c)]
+      %dill  [t t(- %d)]
+      %eyre  [t t(- %e)]
+      %gall  [t t(- %g)]
+      %iris  [t t(- %i)]
+      %jael  [t t(- %j)]
+      %khan  [t t(- %k)]
+      %lick  [t t(- %l)]
+    ==
   %+  turn
     ^-  (list [task-user-v1:gall note-arvo])
-    :~  :-  [%ames %snub %deny ~fed ~]  [%a %snub %deny ~fed ~]
-        :-  [%ames %prod ~]             [%a %prod ~]
-        :-  [%ames %sift ~]             [%a %sift ~]
-        :-  [%ames %spew ~]             [%a %spew ~]
-        :-  [%ames %cong 1 2]           [%a %cong 1 2]
-        :-  [%ames %stir 'a']           [%a %stir 'a']
-        :-  [%ames %trim 1]             [%a %trim 1]
+    :~  (easy %ames %snub %deny ~fed ~)
+        (easy %ames %prod ~)
+        (easy %ames %sift ~)
+        (easy %ames %spew ~)
+        (easy %ames %cong 1 2)
+        (easy %ames %stir 'a')
+        (easy %ames %trim 1)
       ::
-        :-  [%behn %trim 1]             [%b %trim 1]
-        :-  [%clay %trim 1]             [%c %trim 1]
-        :-  [%dill %trim 1]             [%d %trim 1]
-        :-  [%eyre %trim 1]             [%e %trim 1]
-        :-  [%gall %trim 1]             [%g %trim 1]
-        :-  [%iris %trim 1]             [%i %trim 1]
-        :-  [%jael %trim 1]             [%j %trim 1]
-        :-  [%khan %trim 1]             [%k %trim 1]
-        :-  [%lick %trim 1]             [%l %trim 1]
+        (easy %behn %trim 1)
+      ::
+        :-  [%clay %rite %some-desk *soba:clay]
+        [%c %info %some-desk %& *soba:clay]
+        :-  [%clay %name %other-desk %my-label `123]
+        [%c %info %other-desk %| %my-label `123]
+        (easy %clay %cred *@ta *crew:clay)
+        (easy %clay %crow *@ta)
+        (easy %clay %perm *desk *path *rite:clay)
+        (easy %clay %esse *desk *?)
+        (easy %clay %rein *desk *rein:clay)
+        (easy %clay %zeal *(list [=desk =$~(%dead zest:clay)]))
+        (easy %clay %zest *desk *zest:clay)
+        (easy %clay %merg *desk *@p *desk *case *germ:clay)
+        (easy %clay %fuse *desk *beak *(list [beak $~(%init germ:clay)]))
+        (easy %clay %drop *desk)
+        (easy %clay %mont *term *beam)
+        (easy %clay %ogre *$@(term beam))
+        (easy %clay %dirk *term)
+        (easy %clay %tomb *clue:clay)
+        (easy %clay %trim 1)
+      ::
+        (easy %dill %shot %my-session %hail ~)
+        (easy %dill %shot %my-session %open %hood ~)
+        (easy %dill %crud %oops ~['error'])
+        (easy %dill %talk ~['blah'])
+        (easy %dill %text "blah")
+        (easy %dill %meld ~)
+        (easy %dill %pack ~)
+        (easy %dill %trim 1)
+      ::
+        (easy %eyre %rule %turf %put /com/my-urbit)
+        (easy %eyre %eauth-host `'https://my-urbit.com')
+        (easy %eyre %approve-origin 'some.origin')
+        (easy %eyre %reject-origin 'some.origin')
+        (easy %eyre %spew 1)
+        (easy %eyre %trim 1)
+      ::
+        (easy %gall %jolt %base %dbug)
+        (easy %gall %idle %dbug)
+        (easy %gall %nuke %dbug)
+        (easy %gall %spew %odd ~)
+        (easy %gall %sift %dbug ~)
+        (easy %gall %sear ~fyr)
+        (easy %gall %trim 1)
+      ::
+        (easy %iris %trim 1)
+      ::
+        (easy %jael %listen [~met ~ ~] &+~met)
+        (easy %jael %turf ~)
+        (easy %jael %moon ~monnet [0x1 1] %keys [1 1 1] |)
+        (easy %jael %rekey 1 1)
+        (easy %jael %step ~)
+        (easy %jael %ruin ~met ~ ~)
+        (easy %jael %trim 1)
+      ::
+        (easy %khan %trim 1)
+        (easy %lick %trim 1)
     ==
   ::
   |=  [task=task-user-v1:gall note=note-arvo]

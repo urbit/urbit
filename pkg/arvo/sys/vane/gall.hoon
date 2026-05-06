@@ -1639,17 +1639,25 @@
         %-  zing
         %+  turn  ~(tap in resources.yoke)
         |=  res=arvo-resource
-        %-  ap-from-internal
-        ^-  carp
-        =-  [%pass wire.res %arvo -]
+        =;  tac=$@(~ tick)
+          ?~(tac ~ (ap-from-internal %pass wire.res %arvo tac))
         ::  TODO ripped from ap-nuke -> helper
         ::
         ?-  +.res
           [%behn %wait *]     [%behn %rest time.res]
-          [%clay %warp *]     [%clay %drop id.res]
-          [%eyre %binding *]  [%eyre %disconnect binding wat]:res
+          [%clay %warp *]     [%clay %rest id.res]
+          [%clay %tire]       [%clay %tire ~]
+          [%dill %logs]       [%dill %logs ~]
+          [%dill %mass]       ~
+          [%dill %view *]     [%dill %shot ses.res %flee ~]
+          [%eyre %binding *]  [%eyre %disconnect binding.res]
           [%eyre %cache *]    [%eyre %set-response url.res ~]
           [%iris %request]    [%iris %cancel-request ~]
+          [%jael %keys]       =+  d=(~(got by resource-deets.yoke) res)
+                              ?>  ?=([%jael %keys *] d)
+                              ?:  ?=(%private wat.d)
+                                [%jael %private-keys ~]
+                              [%jael %public-keys ~]
           [%lick %spin *]     [%lick %shut name.res]
         ==
       ==
@@ -1675,16 +1683,26 @@
         ::
           ap-yawn-all
         ::
-          %+  turn  ~(tap in resources.yoke)
+          %+  murn  ~(tap in resources.yoke)
           |=  res=arvo-resource
-          ^-  card:agent
-          =-  [%pass wire.res %arvo -]
+          ^-  (unit card:agent)
+          =;  tac=$@(~ task-user-v1)
+            ?~(tac ~ `[%pass wire.res %arvo tac])
           ?-  +.res
             [%behn %wait *]     [%behn %rest time.res]
-            [%clay %warp *]     [%clay %drop id.res]
-            [%eyre %binding *]  [%eyre %disconnect binding wat]:res
+            [%clay %warp *]     [%clay %rest id.res]
+            [%clay %tire]       [%clay %tire ~]
+            [%dill %logs]       [%dill %logs ~]
+            [%dill %mass]       ~
+            [%dill %view *]     [%dill %shot ses.res %flee ~]
+            [%eyre %binding *]  [%eyre %disconnect binding.res]
             [%eyre %cache *]    [%eyre %set-response url.res ~]
             [%iris %request]    [%iris %cancel-request ~]
+            [%jael %keys]       =+  d=(~(got by resource-deets.yoke) res)
+                                ?>  ?=([%jael %keys *] d)
+                                ?:  ?=(%private wat.d)
+                                  [%jael %private-keys ~]
+                                [%jael %public-keys ~]
             [%lick %spin *]     [%lick %shut name.res]
           ==
         ==
@@ -1836,19 +1854,14 @@
     ::    "after the remote scry handling, but before other card transforms"
     ::
     +$  carp  $+  carp  (wind neet gift:agent)
-    +$  tick  ::TODO  ugly!
+    +$  tick
       ::  remote scry already processed, exclude those cards
       $%  $<(%ames task-user-v1)
       $:  %ames
-      $%  [%prod ships=(list ship)]
-          [%sift ships=(list ship)]
-          [%snub form=?(%allow %deny) ships=(list ship)]
-          [%spew veb=(list verb)]
-          [%cong msg=@ud mem=@ud]
-          [%stir arg=@t]
-          [%trim p=@ud]
-      ==  ==  ==
-    +$  real-neet
+          $<  ?(%keen %yawn %grow %tomb %cull %tend %germ %snip)
+          _+:*$>(%ames task-user-v1)
+      ==  ==
+    +$  real-neet  $+  real-neet
       $%  [%agent [=ship name=term] task=$%(task:agent [%raw-poke =mark =noun])]
           [%arvo tick]
           [%huck [=ship name=term] note-arvo=[%b %huck sign-arvo=[%gall %unto %kick ~]]]
@@ -1946,11 +1959,18 @@
                       =;  deet=(unit *)
                         ?~(deet '' (crip ~(rend co %blob u.deet)))
                       ?+  +.neet  ~
-                        [@ %trim *]         ~
-                        [%behn *]           `time.neet
-                        [%clay %read *]     `id.neet
-                        [%clay %drop *]     `id.neet
-                        [%eyre %connect *]  `wat.neet
+                        [@ %trim *]              ~
+                        [%behn *]                `time.neet
+                        [%clay %read *]          `id.neet
+                        [%clay %rest *]          `id.neet
+                        [%dill %shot @ %view *]  `ses.neet
+                        [%dill %shot @ %flee *]  `ses.neet
+                        [%eyre %connect *]       `wat.neet
+                      ::
+                          [%eyre %disconnect *]
+                        =;  det  ?>(?=([%eyre %binding *] det) `wat.det)
+                        %-  ~(got by resource-deets.yoke)
+                        [wire %eyre %binding binding.neet]
                       ==
                     wire
           ==
@@ -1973,9 +1993,12 @@
                 [%clay *]
               ?+  +>-.neet     [%c +>.neet]
                 %read  [%c %warp ship desk `rave]:neet
-                %drop  =-  [%c %warp ship desk ~]
+                %rest  =-  [%c %warp ship desk ~]
                        =;  req  ?>(?=([%clay %warp *] req) +>.req)
                        (~(got by resource-deets.yoke) p.card %clay %warp id.neet)
+              ::
+                %rite  [%c %info des %& sob]:neet
+                %name  [%c %info des %| lab yon]:neet
               ==
             ::
               [%dill *]        [%d +>.neet]
@@ -1992,7 +2015,23 @@
               [%gall *]        [%g +>.neet]
             ::
               [%iris *]        [%i +>.neet]
-              [%jael *]        [%j +>.neet]
+            ::
+                [%jael *]
+              ?+  +>-.neet  [%j +>.neet]
+                  %public-keys
+                ?^  sub.neet  [%j %public-keys u.sub.neet]
+                =+  sub=(~(got by resource-deets.yoke) p.card %jael %keys)
+                ?>  ?=([%jael %keys *] sub)
+                ?-  wat.sub
+                  %private  ~|(%bad-gall-bookkeeping !!)
+                  %public   [%j %nuke ~]
+                  *         [%j %nuke wat.sub]
+                ==
+              ::
+                  %private-keys
+                ?~  sub.neet  [%j %nuke ~]
+                [%j %private-keys u.sub.neet]
+              ==
             ::
               [%khan %fard *]  [%k +>-.neet from +>+.neet]
               [%khan %fyrd *]  [%k +>-.neet from +>+.neet]
@@ -2280,29 +2319,52 @@
       |=  [res=arvo-resource acc=_ap-core]
       =.  ap-core  acc
       ?-    +.res
-          ?([%behn %wait *] [%eyre %binding *])
+        ::  re-establish trivially
+        ::
+          ?([%behn %wait *] [%clay %tire] [%dill *])
         =.  inflating  (~(del in inflating) &+res)
         ?.  (~(has in resources.yoke) res)  ap-core
         %-  ap-move
         %-  ap-from-internal
         :^  %pass  wire.res  %arvo
         ?-  +.res
-          [%behn %wait *]     [%behn %wait time.res]
-          [%eyre %binding *]  [%eyre %connect binding wat]:res
+          [%behn %wait *]  [%behn %wait time.res]
+          [%clay %tire]    [%clay %tire `~]
+          [%dill %logs]    [%dill %logs `~]
+          [%dill %mass]    [%dill %mass ~]
+          [%dill %view *]  [%dill %shot ses.res %view ~]
         ==
       ::
-          [%clay %warp *]
+        ::  re-establish from deets
+        ::
+          ?([%clay %warp *] [%eyre ?(%binding %cache) *] [%jael %keys])
         =.  inflating  (~(del in inflating) &+res)
         ?.  (~(has in resources.yoke) res)  ap-core
         %-  ap-move
         %-  ap-from-internal
-        =+  =+((~(got by resource-deets.yoke) res) ?>(?=([%clay %warp *] -) -))
-        [%pass wire.res %arvo %clay %read id.res ship desk rave]
+        :^  %pass  wire.res  %arvo
+        =+  det=(~(got by resource-deets.yoke) res)
+        ?-  +.res
+            [%clay %warp *]  ?>  ?=([%clay %warp *] det)
+          [%clay %read id.res [ship desk rave]:det]
+        ::
+            [%eyre %binding *]  ?>  ?=([%eyre %binding *] det)
+          [%eyre %connect binding.res wat.det]
+        ::
+            [%eyre %cache *]  ?>  ?=([%eyre %cache *] det)
+          [%eyre %set-response url.res `entry.det]
+        ::
+            [%jael %keys]  ?>  ?=([%jael %keys *] det)
+          ?-  wat.det
+            %private  [%jael %private-keys `~]
+            %public   [%jael %public-keys `~]
+            *         [%jael %public-keys `wat.det]
+          ==
+        ==
       ::
-          [%eyre %cache *]
-        ::TODO  consider
-        ap-core
       ::
+        ::  signal only
+        ::
           [%iris %request]
         =.  inflating  (~(del in inflating) &+res)
         ?.  (~(has in resources.yoke) res)  ap-core
@@ -2310,6 +2372,8 @@
         ::
         (ap-generic-take | ~ wire.res [%iris %http-response %cancel ~])
       ::
+        ::  signal + re-establish
+        ::
           [%lick %spin *]
         ?.  (~(has in resources.yoke) res)
           ap-core(inflating (~(del in inflating) &+res))
@@ -2382,10 +2446,17 @@
           [%ames %sage *]           sign-arvo
           [%behn %wake *]           [%behn %wake ;;(time deets)]
           [%clay %writ *]           [%clay %read deets p.sign-arvo]
+          [%clay %tire *]           sign-arvo
+          [%dill %blit *]           [%dill %blit ;;(@tas deets) p.sign-arvo]
+          [%dill %logs *]           sign-arvo
+          [%dill %meme *]           sign-arvo
           [%eyre %bound *]          :*  %eyre  %bound
                                         accepted.sign-arvo  binding.sign-arvo
                                         ;;($@(term generator:eyre) deets)
                                     ==
+          [%jael %private-keys *]   sign-arvo
+          [%jael %public-keys *]    sign-arvo
+          [%jael %turf *]           sign-arvo
           [%iris %http-response *]  sign-arvo
           [%lick %soak *]           ~|  [%gall-lick-bad-name name.sign-arvo]
                                     ?>  &(?=(^ name.sign-arvo) =(agent-name i.name.sign-arvo))
@@ -2837,9 +2908,14 @@
         ?+  task  ~
           :: [%ames %yawn *]                 &+[p.card %ames %keen spar.task]
           [%behn %rest *]                 &+[p.card %behn %wait time.task]
-          [%clay %drop *]                 &+[p.card %clay %warp id.q.card]
-          [%eyre %disconnect *]           &+[p.card %eyre %binding [binding wat]:task]
+          [%clay %rest *]                 &+[p.card %clay %warp id.task]
+          [%clay %tire ~ ~]               &+[p.card %clay %tire]
+          [%dill %logs ~ ~]               &+[p.card %dill %logs]
+          [%dill %shot @ %flee ~]         &+[p.card %dill %view ses.task]
+          [%eyre %disconnect *]           &+[p.card %eyre %binding binding.task]
           [%iris %cancel-request ~]       &+[p.card %iris %request]
+          [%jael %public-keys ~]          &+[p.card %jael %keys]
+          [%jael %private-keys ~]         &+[p.card %jael %keys]
           [%lick %shut *]                 &+[p.card %lick %spin name.task]
         ==
       ::
@@ -2881,12 +2957,28 @@
         [%behn %rest *]                 [| %behn %wait time.task]
         [%clay %read *]                 :-  [%clay %warp ship desk rave]:task
                                         [%clay %warp id.task]
-        [%clay %drop *]                 [| %clay %warp id.task]
-        [%eyre %connect *]              [& %eyre %binding binding wat]:task
-        [%eyre %disconnect *]           [| %eyre %binding binding wat]:task
-        [%eyre %set-response *]         [& %eyre %cache url.task]
+        [%clay %rest *]                 [| %clay %warp id.task]
+        [%clay %tire *]                 [?~(p.task | &) %clay %tire]
+        [%dill %logs *]                 [?~(p.task | &) %dill %logs]
+        [%dill %mass *]                 [& %dill %mass]
+        [%dill %shot @ %view *]         [& %dill %view ses.task]
+        [%dill %shot @ %flee *]         [| %dill %view ses.task]
+        [%eyre %connect *]              :-  [%eyre %binding wat.task]
+                                        [%eyre %binding binding.task]
+        [%eyre %disconnect *]           [| %eyre %binding binding.task]
+        [%eyre %set-response * ^]       :-  [%eyre %cache u.entry.task]
+                                        [%eyre %cache url.task]
+        [%eyre %set-response * ~]       [| %eyre %cache url.task]
         [%iris %request *]              [& %iris %request]
         [%iris %cancel-request ~]       [| %iris %request]
+        [%jael %public-keys ^]          :_  [%jael %keys]
+                                        ?:  =(~ u.sub.task)
+                                          [%jael %keys %public]
+                                        [%jael %keys u.sub.task]
+        [%jael %public-keys ~]          [| %jael %keys]
+        [%jael %private-keys ^]         :_  [%jael %keys]
+                                        [%jael %keys %private]
+        [%jael %private-keys ~]         [| %jael %keys]
         :: [%k ?(%fard %fyrd %lard) *]  [& %khan +<]:task
         [%lick %spin *]                 [& %lick %spin name.task]
         [%lick %shut *]                 [| %lick %spin name.task]
@@ -2907,7 +2999,16 @@
                     ==
         ==
       ?+  gift  ~
-        [%behn *]  `|+[%behn %wait time.gift]
+        [%behn *]        `|+[%behn %wait time.gift]
+        [%dill %meme *]  `|+[%dill %mass]
+      ::
+          [%dill %blit *]
+        =;  bye=?  ?:(bye `|+[%dill %view ses.gift] ~)
+        |-
+        ?&  ?=(^ biz.gift)
+        ?|  ?+(-.i.biz.gift | %bye &, %mor $(biz.gift p.i.biz.gift))
+            $(biz.gift t.biz.gift)
+        ==  ==
       ::
           [%clay *]
         ?>  ?=(%read +<.gift)
@@ -2927,7 +3028,7 @@
         `&+[rid det(from.moat.rave ud+nex)]
       ::
         [%eyre *]  ?:  bound.gift  ~
-                   `|+[%eyre %binding binding wat]:gift
+                   `|+[%eyre %binding binding.gift]
         [%iris *]  `|+[%iris %request]
         [%lick *]  ~
       ==
