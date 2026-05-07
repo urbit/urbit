@@ -43,22 +43,15 @@
   ::  enable ahoy-probbing for all ships
   ::
   ;<  ~          bind:m  (aqua-setup ahoy-on/~)
-  :: ~&  >>  "test-mesa-ames-1"
-  :: ;<  ~          bind:m  test-mesa-ames-1
-  ~&  >>  "test-ames-mesa-1"
+  ;<  ~          bind:m  test-mesa-ames-1
   ;<  ~          bind:m  test-ames-mesa-1
-  ~&  >>  "test-mesa-ames-2"
   ;<  ~          bind:m  test-mesa-ames-2  :: comet
-  ~&  >>  "test-ames-mesa-2"
   ;<  ~          bind:m  test-ames-mesa-2  :: XX bail:evil comets
-  :: ~&  >>  "test-mesa-ames-3"
-  :: ;<  ~          bind:m  test-mesa-ames-3  :: comet
-  ~&  >>  "(boot-with-core-and-breach %mesa)"
+  ;<  ~          bind:m  test-mesa-ames-3  :: comet
   ;<  ~          bind:m  (boot-with-core-and-breach %mesa)
-  ~&  >>  "(boot-with-core-and-breach %ames)"
   :: XX after hearing the breach, %mesa waits for the ~m2 retry timer...
   ::
-  ;<  ~          bind:m  (boot-with-core-and-breach %ames)
+  :: ;<  ~          bind:m  (boot-with-core-and-breach %ames)
   ::  TODO
   ::
   :: ;<  ~          bind:m  (boot-ames-mesa ~dev comet)
@@ -72,8 +65,6 @@
   ::  default network core, it will handle it and move ~bud to .chums
   ::
   ;<  ~  bind:m  (boot-core ~bud ~dev %mesa %ames)
-  ::  ;<  ~  bind:m  (breach ~bud)
-  ::  ;<  ~  bind:m  (breach ~dev)
   (pure:m ~)
 ::
 ++  test-ames-mesa-1
@@ -83,8 +74,6 @@
   ::  $plea, and when acked, move ~bud to .chums
   ::
   ;<  ~  bind:m  (boot-core ~bud ~dev %ames %mesa)
-  ::  ;<  ~  bind:m  (breach ~bud)
-  ::  ;<  ~  bind:m  (breach ~dev)
   (pure:m ~)
 ::
 ++  test-mesa-ames-2
@@ -97,7 +86,6 @@
   ::  the comet will always contact first its sponsor
   ::
   ;<  ~  bind:m  (boot-core comet ~bud %ames %mesa)
-  ::  ;<  ~  bind:m  (breach ~bud)
   (pure:m ~)
 ::
 ++  test-ames-mesa-2
@@ -109,7 +97,6 @@
   :: =/  comet=@p
   ::   ~londeg-tirlys-somlyd-poltus--pintyn-tarbyl-bicnux-marbud
   :: ;<  ~  bind:m  (boot-core ~dev comet %ames %mesa)  :: XX bail:evil
-  ::  ;<  ~  bind:m  (breach ~bud)
   (pure:m ~)
 ::
 ++  test-mesa-ames-3
@@ -119,7 +106,6 @@
   ::  it should handle the %mesa packet and make an entry in .chums
   ::
   ;<  ~  bind:m  (boot-core ~dev comet %mesa %ames)
-  ::  ;<  ~  bind:m  (breach ~dev)
   (pure:m ~)
 ::  init: start all io threads and subscribe to /effect
 ::
@@ -145,7 +131,7 @@
       (init-ship who fake=|)
     (init-comet who)
   ;<  ~  bind:m  (dojo who "|pass [%a %load {<proto>}]")
-  :: ;<  ~  bind:m  (dojo who "|ames/verb %fin %for %ges %kay %msg %odd %rcv %rot %snd %sun")
+  ;<  ~  bind:m  (dojo who "|ames/verb %fin %for %ges %kay %msg %odd %rcv %rot %snd %sun")
   ;<  ~  bind:m  (dojo who "|mount %base")
   ;<  ~  bind:m  (copy-file who /app/sub/hoon sub-agent)
   ;<  ~  bind:m  (copy-file who /app/pub/hoon pub-agent)
@@ -243,6 +229,9 @@
       ^-  form:m
       (pure:m ~)
     (wait-for-output rcvr "ahoy: %mesa migration completed for {<sndr>}")
+  ::  wait for the subscription to happen
+  ::
+  ;<  ~  bind:m  (sleep ~s2)
   ;<  ~  bind:m  (dojo rcvr ":pub send+`(list [path @])`[/hola 1]~")
   ::  check that sndr receives the gift after migration
   ::
