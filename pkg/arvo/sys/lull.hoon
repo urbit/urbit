@@ -2784,6 +2784,32 @@
     ++  pact  |~(diff=vase sam)
     ++  vale  |~(noun sam)
     --
+  ::  $ford-api: typed ford build interface
+  ::
+  ::    wraps a ford core compiled against a foreign zuse,
+  ::    providing typed access to build arms. vase/cage outputs
+  ::    are in the foreign type universe; callers next-vase as needed.
+  ::
+  +$  ford-api
+    $_  ^|
+    |_  $:  files=(map path (each page lobe))
+            file-store=(map lobe page)
+            verb=@
+        ==
+    ++  read-file     |~(pax=path *cage)
+    ++  build-file    |~(pax=path *vase)
+    ++  build-nave    |~(mak=mark *vase)
+    ++  build-dais    |~(mak=mark *dais)
+    ++  build-cast    |~([a=mark b=mark] *vase)
+    ++  build-tube    |~([a=mark b=mark] *tube)
+    ++  validate-page
+      |~([pax=path pag=^page] *cage)
+    ++  page-to-cage
+      |~(pag=^page *cage)
+    ++  cast-path     |~([pax=path mak=mark] *cage)
+    ++  prelude       |~(pax=path *vase)
+    ++  build-fit     |~([pre=@tas pax=@tas] *vase)
+    --
   ::
   ++  get-fit
     |=  [bek=beak pre=@tas pax=@tas]

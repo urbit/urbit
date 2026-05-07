@@ -1,6 +1,9 @@
 !:
 =/  ford-cord
   '''
+  =>  ..zuse
+  !:
+  ~!  .
   =~
     =/  bud
       ^~
@@ -1460,7 +1463,7 @@
                   %mime
                 :: %-  (trace 4 |.("make: tube: hoon -> mime"))
                 :: =>(..zuse !>(|=(m=mime q.q.m)))
-                (slap zuse.bud !,(*hoon |=(m=mime q.q.m)))
+                (slub zuse.bud !,(*hoon |=(m=mime q.q.m)))
               ==
             =/  a  a.p.bush
             =/  b  b.p.bush
@@ -1850,6 +1853,106 @@
     ++  trace
       |=  [pri=@ print=(trap tape)]
       (^trace verb pri print)
+    --
+  ::
+  ::  +build-ford-api: wrap a compiled ford vase in a typed interface
+  ::
+  ::    takes the result of (slap zuse.bud (ream ford-cord)) and
+  ::    produces a +ford-api core with the given args baked in.
+  ::    outputs are in the foreign type universe.
+  ::
+  ++  build-ford-api
+    |=  raw=vase
+    ^-  ford-api
+    =/  fuz  (slub raw [%limb %fusion])
+    =/  ford-gate  (slub fuz [%limb %ford])
+    |_  [files=(map path (each page lobe)) file-store=(map lobe page) verb=@]
+    +*  cor  (slym ford-gate [files file-store verb])
+    ++  read-file
+      |=  =path
+      ^-  cage
+      !<(cage (slam (slub cor [%limb %read-file]) !>(path)))
+    ::
+    ++  build-file
+      |=  =path
+      ^-  vase
+      !<(vase (slam (slub cor [%limb %build-file]) !>(path)))
+    ::
+    ++  build-nave
+      |=  mak=mark
+      ^-  vase
+      !<(vase (slam (slub cor [%limb %build-nave]) !>(mak)))
+    ::
+    ++  build-dais
+      |=  mak=mark
+      ^-  dais
+      =/  nav=vase  (build-nave mak)
+      ^-  dais
+      =>  [nav=nav ..zuse]
+      |_  sam=vase
+      ++  diff
+        |=  new=vase
+        (slam (slub nav limb/%diff) (slop sam new))
+      ++  form  !<(mark (slub nav limb/%form))
+      ++  join
+        |=  [a=vase b=vase]
+        ^-  (unit (unit vase))
+        =/  res=vase  (slam (slub nav limb/%join) (slop a b))
+        ?~  q.res    ~
+        ?~  +.q.res  [~ ~]
+        ``(slub res !,(*hoon ?>(?=([~ ~ *] .) u.u)))
+      ++  mash
+        |=  [a=[=ship =desk diff=vase] b=[=ship =desk diff=vase]]
+        ^-  (unit vase)
+        =/  res=vase
+          %+  slam  (slub nav limb/%mash)
+          %+  slop
+            :(slop [[%atom %p ~] ship.a] [[%atom %tas ~] desk.a] diff.a)
+          :(slop [[%atom %p ~] ship.b] [[%atom %tas ~] desk.b] diff.b)
+        ?~  q.res  ~
+        `(slub res !,(*hoon ?>((^ .) u)))
+      ++  pact
+        |=  diff=vase
+        (slam (slub nav limb/%pact) (slop sam diff))
+      ++  vale
+        |:  noun=q:(slub nav !,(*hoon *vale))
+        (slam (slub nav limb/%vale) noun/noun)
+      --
+    ::
+    ++  build-cast
+      |=  [a=mark b=mark]
+      ^-  vase
+      !<(vase (slam (slub cor [%limb %build-cast]) (slop !>(a) !>(b))))
+    ::
+    ++  build-tube
+      |=  [a=mark b=mark]
+      ^-  tube
+      !<(tube (slam (slub cor [%limb %build-tube]) (slop !>(a) !>(b))))
+    ::
+    ++  validate-page
+      |=  [=path =page]
+      ^-  cage
+      !<(cage (slam (slub cor [%limb %validate-page]) (slop !>(path) !>(page))))
+    ::
+    ++  page-to-cage
+      |=  =page
+      ^-  cage
+      !<(cage (slam (slub cor [%limb %page-to-cage]) !>(page)))
+    ::
+    ++  cast-path
+      |=  [=path mak=mark]
+      ^-  cage
+      !<(cage (slam (slub cor [%limb %cast-path]) (slop !>(path) !>(mak))))
+    ::
+    ++  prelude
+      |=  =path
+      ^-  vase
+      !<(vase (slam (slub cor [%limb %prelude]) !>(path)))
+    ::
+    ++  build-fit
+      |=  [pre=@tas pax=@tas]
+      ^-  vase
+      !<(vase (slam (slub cor [%limb %build-fit]) (slop !>(pre) !>(pax))))
     --
   ::
   ++  trace
@@ -2251,37 +2354,44 @@
     =/  wish  (cury wisher u.arv)
     =/  hov  ;;(@ud (wish 'hoon-version'))
     ~&  >>>  [%make-bud hoon-version=hov]
+    ::  TODO this was prod
+    ::
+    ?:  =(135 hov)
+      =/  zus=vase  ;;(vase (wish '!>(..zuse)'))
+      =/  nav=vase  ;;(vase (wish '(slap !>(..zuse) !,(*hoon nave:clay))'))
+      =/  cor=vase  ;;(vase (wish '(slap !>(..zuse) !,(*hoon cork))'))
+      =/  sam=vase  ;;(vase (wish '(slap !>(..zuse) !,(*hoon same))'))
+      =/  mim=vase  ;;(vase (wish '(slap !>(..zuse) !,(*hoon mime))'))
+      =/  cas=vase  ;;(vase (wish '(slap !>(..zuse) !,(*hoon cass:clay))'))
+      ~&  >  [%zuse-mug (mug zus)]
+      :*  zuse=zus
+          nave=nav
+          cork=cor
+          same=sam
+          mime=mim
+          cass=cas
+      ==
+    ?>  =(136 hov)
+    ::  XX which conditions?
+    ::
     ::  untyped
     ::
     =/  zus  (wish '!>(..zuse)')
-    =/  nav  (wish '(slap !>(..zuse) !,(*hoon nave:clay))')
-    =/  cor  (wish '(slap !>(..zuse) !,(*hoon cork))')
-    =/  sam  (wish '(slap !>(..zuse) !,(*hoon same))')
-    =/  mim  (wish '(slap !>(..zuse) !,(*hoon mime))')
-    =/  cas  (wish '(slap !>(..zuse) !,(*hoon cass:clay))')
-    ::  TODO this was prod
+    =/  nav  (wish '(slub !>(..zuse) !,(*hoon nave:clay))')
+    =/  cor  (wish '(slub !>(..zuse) !,(*hoon cork))')
+    =/  sam  (wish '(slub !>(..zuse) !,(*hoon same))')
+    =/  mim  (wish '(slub !>(..zuse) !,(*hoon mime))')
+    =/  cas  (wish '(slub !>(..zuse) !,(*hoon cass:clay))')
     ::
-    :: =/  zus=vase  ;;(vase (wish '!>(..zuse)'))
-    :: =/  nav=vase  ;;(vase (wish '(slap !>(..zuse) !,(*hoon nave:clay))'))
-    :: =/  cor=vase  ;;(vase (wish '(slap !>(..zuse) !,(*hoon cork))'))
-    :: =/  sam=vase  ;;(vase (wish '(slap !>(..zuse) !,(*hoon same))'))
-    :: =/  mim=vase  ;;(vase (wish '(slap !>(..zuse) !,(*hoon mime))'))
-    :: =/  cas=vase  ;;(vase (wish '(slap !>(..zuse) !,(*hoon cass:clay))'))
-    ::  XX which conditions?
-    ::
-    :: ?:  ?&  =(hov ;;(@ud hoon-version))
-    ::         =(zus !>(..zuse))
-    ::     ==
-    ::   bud
-    ?>  =(136 hov)
     =/  zus=vase  (next-vase:h136 ;;(vase:h136 zus))
     =/  nav=vase  (next-vase:h136 ;;(vase:h136 nav))
     =/  cor=vase  (next-vase:h136 ;;(vase:h136 cor))
     =/  sam=vase  (next-vase:h136 ;;(vase:h136 sam))
     =/  mim=vase  (next-vase:h136 ;;(vase:h136 mim))
     =/  cas=vase  (next-vase:h136 ;;(vase:h136 cas))
-    ::  XX combine with above
+     :: XX combine with above
     ::
+    ~&  >  [%zuse-mug (mug zus)]
     :*  zuse=zus
         nave=nav
         cork=cor
@@ -2314,16 +2424,14 @@
       ~&  >  [%pil ?=(^ pil)]
       =/  prepped=(unit *)  (prep-pill pil)
       ~&  >  [%prepped ?=(^ prepped)]
+      =>  [make-bud=make-bud prepped=prepped]
+      ~>  %memo./clay/ford
       (make-bud prepped)
-    :: =/  fus  (ride p.zuse.bud ford-cord)
-    =/  fus  (slap zuse.bud (ream ford-cord))
-    ~&  >>>  [%fus (sloe -:!>(fus))]
-    :: =/  f  get-ford
-    :: ~&  >>>  [%have-ford ?=(^ f)]
-    :: =/  f  ?~(f ~ (ride p.zuse.bud u.f))
-    %-  ford:fusion
-    :_  [lat.ran veb.bug bud]
-    (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
+    ~&  >  [syd (text zuse.bud)]
+    =/  baz  (slub zuse.bud (ream '~&  >  .  ~'))
+    =/  fus  (slub zuse.bud (ream ford-cord))
+    =/  files  (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
+    ~(. (build-ford-api:fusion fus) files lat.ran veb.bug)
   ::
   ++  request-wire
     |=  [kind=@ta =ship =desk index=@ud]
@@ -5439,6 +5547,7 @@
   ++  build-agents
     |=  sat=(list [=desk =bill])
     ^-  load:gall
+    ~&  >>  [%build-agents sat]
     =|  lad=load:gall
     |-  ^-  load:gall
     ?~  sat
