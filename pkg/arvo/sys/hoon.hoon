@@ -8313,7 +8313,7 @@
   ++  feck
     |-  ^-  (unit term)
     ?-  gen
-      [%sand %tas @]  [~ q.gen]
+      [%rock %tas @]  [~ q.gen]
       [%dbug *]       $(gen q.gen)
       *               ~
     ==

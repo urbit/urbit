@@ -2861,7 +2861,7 @@
   +$  gift                                              ::  out result <-$
     $%  [%blit p=(list blit)]                           ::  terminal output
         [%logo ~]                                       ::  logout
-        [%meld ~]                                       ::  unify memory
+        [%meld $@(~ [memo=? ford=?])]                   ::  unify memory
         [%pack ~]                                       ::  compact memory
         [%trim p=@ud]                                   ::  trim kernel state
         [%logs =told]                                   ::  system output
@@ -2879,7 +2879,7 @@
         [%logs p=(unit ~)]                              ::  watch system output
         [%mass ~]                                       ::  run memory report
         [%quac p=(list quac)]                           ::  memory runtime
-        [%meld ~]                                       ::  unify memory
+        [%meld $@(~ [memo=? ford=?])]                   ::  unify memory
         [%pack ~]                                       ::  compact memory
         [%seat =desk]                                   ::  install desk
         [%shot ses=@tas task=session-task]              ::  task for session
@@ -2952,7 +2952,7 @@
     $%  [%crop p=@ud]                                   ::  trim kernel state
         $>(%crud told)                                  ::
         [%heft ~]                                       ::
-        [%meld ~]                                       ::  unify memory
+        [%meld $@(~ [memo=? ford=?])]                   ::  unify memory
         [%pack ~]                                       ::  compact memory
         $>(%text told)                                  ::
         [%verb ~]                                       ::  verbose mode
