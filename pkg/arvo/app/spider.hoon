@@ -3,19 +3,24 @@
 =,  strand=strand:libstrand
 ~%  %spider-top  ..part  ~
 |%
-+$  card         card:agent:gall
-+$  thread       thread:spider
-+$  tid          tid:spider
-+$  input        input:spider
-+$  yarn         (list tid)
-+$  thread-form  _*eval-form:eval:(strand ,vase)
-+$  trying       ?(%build %none)
++$  card           card:agent:gall
++$  arvo-resource  arvo-resource:gall
++$  resource-deet  resource-deet:gall
++$  card-rand      card:libstrand
++$  thread         thread:spider
++$  tid            tid:spider
++$  input          input:spider
++$  yarn           (list tid)
++$  thread-form    _*eval-form:eval:(strand ,vase)
++$  trying         ?(%build %none)
 +$  state
   $:  starting=(map yarn [=trying =vase])
       running=(axal thread-form)
       tid=(map tid yarn)
       serving=(map tid [(unit [rid=@ta take=?(%json %noun)]) =mark =desk from=desk])
       scrying=(jug tid [=wire =ship =path])
+      resources=(jug tid arvo-resource)
+      resource-deets=(map tid (map arvo-resource resource-deet))
   ==
 ::
 +$  clean-slate-any
@@ -38,6 +43,8 @@
       tid=(map tid yarn)
       serving=(map tid [(unit [rid=@ta take=?(%json %noun)]) =mark =desk from=desk])
       scrying=(jug tid [wire ship path])
+      resources=(jug tid arvo-resource)
+      resource-deets=(map tid (map arvo-resource resource-deet))
   ==
 +$  clean-slate-7
   $:  %7
@@ -245,7 +252,7 @@
       ^-  clean-slate-any
       ?>  ?=(?(%7 %8) -.old)
       ?:  ?=(%8 -.old)  old
-      =-  old(- %8, serving -)
+      =-  old(- %8, serving -, scrying [scrying.old ~ ~])
       %-  ~(run by serving.old)
       |=  [request=(unit [rid=@ta take=?(%json %noun)]) =mark =desk]
       [request mark desk %base]
@@ -434,6 +441,14 @@
   ?~  yarn
     %-  (slog leaf+"spider got gift for non-existent {<tid>}" ~)
     `state
+  =/  res=(set arvo-resource)  (~(gut by resources.state) tid ~)
+  =/  deets=(map arvo-resource resource-deet)
+    (~(gut by resource-deets.state) tid ~)
+  =/  new-res  (gift-to-res:track:gall [%thread tid wire] gift res deets)
+  =.  resources.state
+    (~(put by resources.state) tid res.new-res)
+  =.  resource-deets.state
+    (~(put by resource-deets.state) tid dets.new-res)
   (take-input u.yarn ~ %gift wire gift)
 ::
 ++  on-agent
@@ -596,19 +611,18 @@
   =|  cards=(list card)
   |-  ^-  (quip card ^state)
   =/  ted-bowl  (convert-bowl yarn bowl)
-  =^  r=[cards=(list card) =eval-result:eval:m]  eval-form
+  =^  r=[cards=(list card-rand) =eval-result:eval:m]  eval-form
     =.  input
       ?~  input  ~
       =+  in=u.input
-      ?.  ?=(%agent -.in)  `in
-      ?.  ?=(%fact -.sign.in)  `in
+      ?.  ?=([%agent * %fact *] in)        `in
       ?:  ?=(%thread-done p.cage.sign.in)  `in
       :-  ~
       :^  %agent  wire.in  %fact
       (validate-mark:eval:m q.q.cage.sign.in p.cage.sign.in ted-bowl(byk byk.bowl))
     =/  out
       %+  %-  ted-mock
-          $:  [cards=(list card) =eval-result:eval:m]
+          $:  [cards=(list card-rand) =eval-result:eval:m]
               eval-form:eval:m
           ==
       yarn  |.
@@ -623,7 +637,16 @@
   =^  new-cards  state
     ^-  [(list card) _state]
     %+  roll  cards.r
-    |=  [=card cards=(list card) s=_state]
+    |=  [card=card-rand cards=(list card) s=_state]
+    =.  card
+      ?+  card  card
+        [%pass * *]  [%pass [%thread tid p.card] q.card]
+      ::
+          [%give ?(%fact %kick) *]
+        =-  card(paths.p -)
+        %+  turn  paths.p.card
+        |=(=path [%thread tid path])
+      ==
     ::REVIEW  ok to check on syscalls y/n?
     ::TODO  avoid having to do ;; at least
     :_  =?  scrying.s  ?|  ?=([%pass ^ %arvo %syscall %a %keen ?(~ ^) @ *] card)
@@ -635,25 +658,26 @@
           ?>  ?=([%pass ^ %arvo %syscall %a %keen ?(~ ^) @ *] card)
           ::  &2=wire &7=ship 7|=path
           (~(put ju scrying.s) tid ;;([wire ship path] [&2 &7 |7]:card))
-        s
-    :_  cards
-    ^-  ^card
-    ?+  card  card
-        [%pass * *]
-      =/  dat  (~(got by serving.state) tid)
-      =/  ted-wir  [%thread tid p.card]
-      ?:  =(q.byk.bowl from.dat)
-        [%pass ted-wir q.card]
-      ?>  ?=([?(%agent %arvo) *] q.card)
-      [%pass ted-wir [%dole from.dat q.card]]
       ::
-        [%give ?(%fact %kick) *]
-      =-  card(paths.p -)
-      %+  turn  paths.p.card
-      |=  =path
-      ^-  ^path
-      [%thread tid path]
-    ==
+        ?.  ?=([%pass *] card)  s
+        ?~  res=(card-to-res:track:gall card)  s
+        =+  ted-res=[tid [p.card res.res]]
+        =.  resources.s
+          ?:  |(?=(^ add.res) add.res)
+            (~(put ju resources.s) ted-res)
+          (~(del ju resources.s) ted-res)
+      ::
+        =?  resource-deets.s  |(?=(^ add.res) !add.res)
+          =/  res-deet  (~(gut by resource-deets.s) tid ~)
+          %+  ~(put by resource-deets.s)  tid
+          ?.  ?=(^ add.res)
+            (~(del by res-deet) [p.card res.res])
+          (~(put by res-deet) [p.card res.res] add.res)
+        s
+    ::
+    :_  cards
+    (card-to-dole card tid)
+  ::
   =.  cards  (weld cards (flop new-cards))
   =^  final-cards=(list card)  state
     ?-  -.eval-result.r
@@ -787,13 +811,28 @@
   |-  ^-  (quip card ^state)
   ?~  children
     `state
+  =+  tid=(yarn-to-tid i.children)
   =^  cards-children  state  $(children t.children)
+  =^  cards-resource  state
+    =/  child-res=(list arvo-resource)
+      ~(tap in (~(get ju resources.state) tid))
+    =|  cards=(list card)
+    |-
+    ?~  child-res  [cards state(resources (~(del by resources.state) tid))]
+    =/  dets  (~(gut by resource-deets.state) tid ~)
+    =/  c=(unit card)  (drop-res:track:gall i.child-res dets)
+    %=  $
+      cards      ?~(c cards [(card-to-dole u.c tid) cards])
+      resource-deets.state
+        %+  ~(put by resource-deets.state)  tid
+        (~(del by dets) i.child-res)
+      child-res  t.child-res
+    ==
   =^  cards-our  state
     =/  =^yarn  i.children
-    =/  =tid  (yarn-to-tid yarn)
     =:  running.state  (~(lop of running.state) yarn)
         tid.state      (~(del by tid.state) tid)
-        serving.state  (~(del by serving.state) (yarn-to-tid yarn))
+        serving.state  (~(del by serving.state) tid)
       ==
     :_  state
     %+  murn  ~(tap by wex.bowl)
@@ -804,7 +843,7 @@
         ==
       ~
     `[%pass wire %agent [ship term] %leave ~]
-  [(welp cards-children cards-our) state]
+  [:(welp cards-children cards-resource cards-our) state]
 ::
 ++  convert-bowl
   |=  [=yarn =bowl:gall]
@@ -872,4 +911,14 @@
     %cc
     /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/[from]/[to]
   ==
+::
+++  card-to-dole
+  |=  [=card =tid]
+  =/  dat  (~(got by serving.state) tid)
+  ?.  ?&  ?=([%pass * *] card)
+          !=(q.byk.bowl from.dat)
+      ==
+    card
+  ?>  ?=(?(%agent %arvo) -.q.card)
+  [%pass p.card %dole from.dat q.card]
 --

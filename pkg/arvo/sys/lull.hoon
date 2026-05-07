@@ -3806,6 +3806,118 @@
         [%jael %keys wat=?(%private %public (set ship))]
     ==
   ::
+  ++  track  !:  ::  resource tracking utils
+    |%
+    +$  resource-deets  (map arvo-resource resource-deet)
+    ++  card-to-res
+      |=  =card:agent
+      ^-  $@(~ [add=$@(? resource-deet) res=_+:*arvo-resource])
+      ?.  ?=([%pass * %arvo *] card)  ~
+      =*  task  +.q.card
+      ?+  +.q.card  ~
+        :: [%ames %keen *]                 [& %ames %keen spar.task]
+        :: [%ames %yawn *]                 [| %ames %keen spar.task]
+        [%behn %wait *]                 [& %behn %wait time.task]
+        [%behn %rest *]                 [| %behn %wait time.task]
+        [%clay %read *]                 :-  [%clay %warp ship desk rave]:task
+                                        [%clay %warp id.task]
+        [%clay %rest *]                 [| %clay %warp id.task]
+        [%clay %tire *]                 [?~(p.task | &) %clay %tire]
+        [%dill %logs *]                 [?~(p.task | &) %dill %logs]
+        [%dill %mass *]                 [& %dill %mass]
+        [%dill %shot @ %view *]         [& %dill %view ses.task]
+        [%dill %shot @ %flee *]         [| %dill %view ses.task]
+        [%eyre %connect *]              :-  [%eyre %binding wat.task]
+                                        [%eyre %binding binding.task]
+        [%eyre %disconnect *]           [| %eyre %binding binding.task]
+        [%eyre %set-response * ^]       :-  [%eyre %cache u.entry.task]
+                                        [%eyre %cache url.task]
+        [%eyre %set-response * ~]       [| %eyre %cache url.task]
+        [%iris %request *]              [& %iris %request]
+        [%iris %cancel-request ~]       [| %iris %request]
+        [%jael %public-keys ^]          :_  [%jael %keys]
+                                        ?:  =(~ u.sub.task)
+                                          [%jael %keys %public]
+                                        [%jael %keys u.sub.task]
+        [%jael %public-keys ~]          [| %jael %keys]
+        [%jael %private-keys ^]         :_  [%jael %keys]
+                                        [%jael %keys %private]
+        [%jael %private-keys ~]         [| %jael %keys]
+        :: [%k ?(%fard %fyrd %lard) *]  [& %khan +<]:task
+        [%lick %spin *]                 [& %lick %spin name.task]
+        [%lick %shut *]                 [| %lick %spin name.task]
+      ==
+    ::
+    ++  gift-to-res
+      |=  [=wire gift=gift-user-v1 res=(set arvo-resource) dets=resource-deets]
+      ^-  [res=(set arvo-resource) dets=resource-deets]
+      =;  upd=(unit (each [_+:*arvo-resource resource-deet] _+:*arvo-resource))
+        ?-  upd
+          ~         [res dets]
+          [~ %& *]  :-  res
+                        (~(put by dets) [wire -.p.u.upd] +.p.u.upd)
+          [~ %| *]  :-  (~(del in res) wire p.u.upd)
+                        (~(del by dets) wire p.u.upd)
+        ==
+      ?+  gift  ~
+        [%behn *]        `|+[%behn %wait time.gift]
+        [%dill %meme *]  `|+[%dill %mass]
+      ::
+          [%dill %blit *]
+        =;  bye=?  ?:(bye `|+[%dill %view ses.gift] ~)
+        |-
+        ?&  ?=(^ biz.gift)
+        ?|  ?+(-.i.biz.gift | %bye &, %mor $(biz.gift p.i.biz.gift))
+            $(biz.gift t.biz.gift)
+        ==  ==
+      ::
+          [%clay *]
+        ?>  ?=(%read +<.gift)
+        =*  rid  [%clay %warp id.gift]
+        =+  det=(~(got by dets) wire rid)
+        ?>  ?=([%clay %warp *] det)
+        ::  %sing and %mult are always single-shot,
+        ::  %many gives a range of responses and has explicit "end" signal
+        ::
+        ?.  ?=(%many -.rave.det)  `|+[%clay %warp id.gift]
+        ?~  riot.gift             `|+[%clay %warp id.gift]
+        ::NOTE  %many requests always get %ud case in the response
+        ::NOTE  we don't care about resolving the original case, just increment
+        ::      past what we've received
+        ?>  ?=(%ud -.q.p.u.riot.gift)
+        =/  nex=@ud  +(p.q.p.u.riot.gift)
+        `&+[rid det(from.moat.rave ud+nex)]
+      ::
+        [%eyre *]  ?:  bound.gift  ~
+                   `|+[%eyre %binding binding.gift]
+        [%iris *]  `|+[%iris %request]
+        [%lick *]  ~
+      ==
+    ::
+    ++  drop-res
+      |=  [res=arvo-resource dets=resource-deets]
+      ^-  (unit card:agent)
+      =;  tac=$@(~ task-user-v1)
+        ?~(tac ~ `[%pass wire.res %arvo tac])
+      ?-  +.res
+        [%behn %wait *]     [%behn %rest time.res]
+        [%clay %warp *]     [%clay %rest id.res]
+        [%clay %tire]       [%clay %tire ~]
+        [%dill %logs]       [%dill %logs ~]
+        [%dill %mass]       ~
+        [%dill %view *]     [%dill %shot ses.res %flee ~]
+        [%eyre %binding *]  [%eyre %disconnect binding.res]
+        [%eyre %cache *]    [%eyre %set-response url.res ~]
+        [%iris %request]    [%iris %cancel-request ~]
+        [%jael %keys]       =+  d=(~(got by dets) res)
+                            ?>  ?=([%jael %keys *] d)
+                            ?:  ?=(%private wat.d)
+                              [%jael %private-keys ~]
+                            [%jael %public-keys ~]
+        [%lick %spin *]     [%lick %shut name.res]
+      ==
+    --
+  ::
   +$  egg                                               ::  migratory agent
     $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)] ::  state; see /sys/gall
         $:  %live                                       ::  $yoke
@@ -4638,7 +4750,26 @@
 ::
 ++  rand                                                ::  computation
   |%
-  +$  card  card:agent:gall
+  +$  card
+    $+  rand-gall-agent-card
+    (wind note gift:agent:gall)
+  +$  task-user-v1
+    $~  [%syscall 0]
+    $%  $<(?(%eyre %lick) task-user-v1:gall)
+        $:  %eyre
+            $<  $?(%connect %disconnect %set-response)
+            _+:*$>(%eyre task-user-v1:gall)
+        ==
+      ::
+        $:  %lick
+            $<  $?(%spin %shut)
+            _+:*$>(%lick task-user-v1:gall)
+    ==  ==
+  +$  note
+    $+  rand-gall-agent-note
+    $%  [%agent [=ship name=term] =task:agent:gall]
+        [%arvo task-user-v1]
+    ==
   +$  input
     $+  input
     $%  [%poke =cage]
