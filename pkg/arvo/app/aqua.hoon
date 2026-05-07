@@ -816,7 +816,6 @@
 ++  peek
   |=  =path
   ^-  (unit (unit cage))
-  ~&  >  peek/path
   ?+  path  ~
       [%x %fleet-snap @ ~]  ``noun+!>((~(has by fleet-snaps) i.t.t.path))
       [%x %fleets ~]        ``noun+!>((turn ~(tap by fleet-snaps) head))
