@@ -188,6 +188,12 @@
   ;<  ~  bind:m  (send-events [%event who [/a/aqua/load %load ore]]~)
   (pure:m ~)
 ::
+++  aqua-setup
+  |=  aqua-action=?([%ahoy-on ~] [%ames-retry wen=@dr])  :: XX to sur/aquarium
+  =/  m  (strand ,~)
+  ^-  form:m
+  (poke-our %aqua %noun !>(aqua-action))
+::
 ++  check-ship-booted
   |=  =ship
   =/  m  (strand ,~)
