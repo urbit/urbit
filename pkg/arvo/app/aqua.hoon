@@ -651,7 +651,7 @@
             [/i/http-client/0v1n.2m9vh %born ~]
             [/e/http-server/0v1n.2m9vh %born ~]
             [/e/http-server/0v1n.2m9vh %live 8.080 `8.445]
-            [/a/newt/0v1n.2m9vh %born ~]
+            :: [/a/newt/0v1n.2m9vh %born ~] :: XX defer %ames %born
             [/d/term/1 %hail ~]
             :: [/d/term/1 %verb ~]  :: XX uncomment for verbose mode
           ::
@@ -678,6 +678,12 @@
           ==
         (~(put by van.mod.arvo-core) %ames vane(vase !>(ames-gate)))
       abet-pe:p(snap arvo-core)
+    ::  call %born in %ames now to update ames-retry
+    ::
+    =.  this
+      =<  abet-pe
+      =<  plow
+      (push-events:(pe who.ae) [/a/unix %born ~]~)
     (pe who.ae)
   ::
       %pause-events
