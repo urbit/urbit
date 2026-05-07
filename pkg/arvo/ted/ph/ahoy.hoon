@@ -40,25 +40,30 @@
   ::  XX looks like it's working now most of the times
   ::  the ones that don't, comets seem to be involved somehow
   ::
-  ::  init: start all io threads and subscribe to /effect
+  ::  enable ahoy-probbing for all ships
   ::
-  ;<  t=drivers  bind:m  init
-  ;<  ~          bind:m  test-mesa-ames-1
+  ;<  ~          bind:m  (aqua-setup ahoy-on/~)
+  :: ~&  >>  "test-mesa-ames-1"
+  :: ;<  ~          bind:m  test-mesa-ames-1
+  ~&  >>  "test-ames-mesa-1"
   ;<  ~          bind:m  test-ames-mesa-1
+  ~&  >>  "test-mesa-ames-2"
   ;<  ~          bind:m  test-mesa-ames-2  :: comet
+  ~&  >>  "test-ames-mesa-2"
   ;<  ~          bind:m  test-ames-mesa-2  :: XX bail:evil comets
-  ;<  ~          bind:m  test-mesa-ames-3  :: comet
-  :: ;<  ~          bind:m  (init-comet comet)  :: XX init comet to nuke past interaction?
-  ;<  ~          bind:m  (boot-with-core-and-breach %mesa)  :: XX this waits for two ~m2 retries...
+  :: ~&  >>  "test-mesa-ames-3"
+  :: ;<  ~          bind:m  test-mesa-ames-3  :: comet
+  ~&  >>  "(boot-with-core-and-breach %mesa)"
+  ;<  ~          bind:m  (boot-with-core-and-breach %mesa)
+  ~&  >>  "(boot-with-core-and-breach %ames)"
+  :: XX after hearing the breach, %mesa waits for the ~m2 retry timer...
+  ::
   ;<  ~          bind:m  (boot-with-core-and-breach %ames)
   ::  TODO
   ::
   :: ;<  ~          bind:m  (boot-ames-mesa ~dev comet)
   :: ;<  ~          bind:m  boot-moon
   :: ;<  ~          bind:m  boot-planet
-  ::  stop all io threads and leave subscriptions to /effect
-  ::
-  ;<  ~          bind:m  (end t)
   (pure:m *vase)
 ::
 ++  test-mesa-ames-1
@@ -89,7 +94,9 @@
   ::
   =/  comet=@p
     ~londeg-tirlys-somlyd-poltus--pintyn-tarbyl-bicnux-marbud
-  ;<  ~  bind:m  (boot-core ~bud comet %mesa %ames)
+  ::  the comet will always contact first its sponsor
+  ::
+  ;<  ~  bind:m  (boot-core comet ~bud %ames %mesa)
   ::  ;<  ~  bind:m  (breach ~bud)
   (pure:m ~)
 ::
@@ -111,10 +118,10 @@
   ::  attestation proof. .comet has %ames as its network core so
   ::  it should handle the %mesa packet and make an entry in .chums
   ::
-
   ;<  ~  bind:m  (boot-core ~dev comet %mesa %ames)
   ::  ;<  ~  bind:m  (breach ~dev)
   (pure:m ~)
+::  init: start all io threads and subscribe to /effect
 ::
 ++  init
   =/  m  (strand ,drivers)
@@ -138,7 +145,7 @@
       (init-ship who fake=|)
     (init-comet who)
   ;<  ~  bind:m  (dojo who "|pass [%a %load {<proto>}]")
-  ;<  ~  bind:m  (dojo who "|ames/verb %fin %for %ges %kay %msg %odd %rcv %rot %snd %sun")
+  :: ;<  ~  bind:m  (dojo who "|ames/verb %fin %for %ges %kay %msg %odd %rcv %rot %snd %sun")
   ;<  ~  bind:m  (dojo who "|mount %base")
   ;<  ~  bind:m  (copy-file who /app/sub/hoon sub-agent)
   ;<  ~  bind:m  (copy-file who /app/pub/hoon pub-agent)
@@ -158,6 +165,7 @@
   :: ;<  ~  bind:m  init
   ::  first both ships start communication using %ames
   ::
+  ;<  t=drivers  bind:m  init
   ;<  ~  bind:m  (setup ~bud core)
   ;<  ~  bind:m  (setup ~dev core)
   ;<  ~  bind:m  (send-hi ~bud ~dev)
@@ -171,11 +179,11 @@
   ;<  ~  bind:m  (dojo ~bud ":sub [%sub ~dev %pub]")
   ;<  ~  bind:m  (sleep ~s2)
   ::
-  ::  now we breach ~bud. since ~dev has %ames as the default core
-  ::  it will remain as %known, with no flow state.
+  ::  now we breach ~bud. if ~dev will remain as %known either In
+  ::  .chums or .peers.ames state (based on the default protocol)
   ::
    ;<  ~  bind:m  (breach ~bud)
-  ::  ~bud will start again using %mesa as the default core
+  ::  ~bud will start again using the other protocol as default core
   ::
   ;<  ~  bind:m  (setup ~bud ?:(?=(%mesa core) %ames %mesa))
   ;<  ~  bind:m  (send-hi ~bud ~dev)
@@ -188,6 +196,7 @@
   ::
   ;<  =noun  bind:m
     (wait-for-fact ~bud %noun /aqua/watch/sub (gate ,(list [path @]) [/hola 1]~))
+  ;<  ~          bind:m  (end t)
   (pure:m ~)
 ::
 ++  boot-core
@@ -204,32 +213,42 @@
   ::    - drop the packet
   ::    - ask jael for the keys
   ::
-  ;<  ~  bind:m  (setup sndr core-s)
-  ;<  ~  bind:m  (setup rcvr core-r)
+  ;<  t=drivers  bind:m  init
+  ~&  >>  drivers/t
+  ;<  ~  bind:m
+    ::  setup galaxies first
+    ::
+    ?:  ?=(%pawn (clan:title sndr))
+      ;<  ~  bind:m  (setup rcvr core-r)
+      (setup sndr core-s)
+    ;<  ~  bind:m  (setup sndr core-s)
+    (setup rcvr core-r)
   ;<  ~  bind:m
     ?.  ?=(%ames core-s)
       ^-  form:m
       (pure:m ~)
     (load-migration-hash sndr rcvr)
+  ::  first plea would be the /gf system flow plea
+  ::
   ;<  ~  bind:m  (send-hi sndr rcvr)
   ::
   ;<  ~  bind:m  (dojo sndr ":sub [%sub {<rcvr>} %pub]")
-  ;<  ~  bind:m  (sleep ~s2)
-  ;<  ~  bind:m  (dojo rcvr ":pub send+`(list [path @])`[/hola 1]~")
-  ::  check that sndr receives the gift
-  ::
-  ;<  =noun  bind:m
-    (wait-for-fact sndr %noun /aqua/watch/sub (gate ,(list [path @]) [/hola 1]~))
   ::  XX wait for migration confirmation
   ::    this could be a spurious print coming from a "migrated" %ahoy $plea. these
   ::    %mesa $pleas are always acked, and the actual migration no-ops since the peer
   ::    is no longer in .peers.ames-state.
   ::
   ;<  ~  bind:m
-    ?.  ?=(%ames core-s)
+    ?:  ?=(%mesa core-s)
       ^-  form:m
       (pure:m ~)
     (wait-for-output rcvr "ahoy: %mesa migration completed for {<sndr>}")
+  ;<  ~  bind:m  (dojo rcvr ":pub send+`(list [path @])`[/hola 1]~")
+  ::  check that sndr receives the gift after migration
+  ::
+  ;<  =noun  bind:m
+    (wait-for-fact sndr %noun /aqua/watch/sub (gate ,(list [path @]) [/hola 1]~))
+  ;<  ~      bind:m  (end t)
   (pure:m ~)
 ::
 --
