@@ -49,6 +49,7 @@
           piers=fleet
           ames-retry=_~s1
           ahoy-on=_|
+          network-core=?(%ames %mesa)
       ==
     ::
     +$  pill-0
@@ -562,6 +563,9 @@
       [%ahoy-on ~]
     this(ahoy-on !ahoy-on)
   ::
+      [%network-core core=?(%ames %mesa)]
+    this(network-core core.val)
+  ::
   ==
 ::
 ::  Make changes to azimuth state for the current fleet
@@ -675,6 +679,7 @@
       =.  van.mod.arvo-core
         =:  retry-timer.ames-gate  ames-retry
                 ahoy-on.ames-gate  ahoy-on
+           network-core.ames-gate  `network-core
           ==
         (~(put by van.mod.arvo-core) %ames vane(vase !>(ames-gate)))
       abet-pe:p(snap arvo-core)

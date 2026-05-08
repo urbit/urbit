@@ -194,6 +194,12 @@
   ^-  form:m
   (poke-our %aqua %noun !>(aqua-action))
 ::
+++  switch-network-core
+  |=  core=?(%mesa %ames)
+  =/  m  (strand ,~)
+  ^-  form:m
+  (poke-our %aqua %noun !>(network-core/core))
+::
 ++  check-ship-booted
   |=  =ship
   =/  m  (strand ,~)

@@ -85,6 +85,7 @@
 =/  packet-size  13
 =/  retry-timer  ~m2    ::  only used in /mesa/retry and /dead-flow timers
 =/  ahoy-on=?    %.y
+=|  network-core=(unit ?(%mesa %ames))  ::  used in %aqua tests
 ::
 =>  ::  common helpers
     ~%  %ames  ..part  ~
@@ -4045,6 +4046,10 @@
         mesa/chum-state
       ?^  ship-state=(~(get by peers.ames-state) ship)
         ames/ship-state
+      ::  modified by %aqua tests
+      ::
+      =?  core.ames-state  ?=(^ network-core)
+        u.network-core
       ?-(core.ames-state %mesa [%mesa ~], %ames [%ames ~])
     ::
     ++  got-per
