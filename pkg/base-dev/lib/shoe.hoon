@@ -106,7 +106,7 @@
     *(quip card _^|(..on-init))
   ::
   ++  on-arvo
-    |~  [wire sign-arvo]
+    |~  [wire gift-user-v1:gall]
     *(quip card _^|(..on-init))
   ::
   ++  on-fail
@@ -384,9 +384,9 @@
     [(deal cards) this]
   ::
   ++  on-arvo
-    |=  [=wire =sign-arvo]
+    |=  [=wire gift=gift-user-v1:gall]
     ^-  (quip card:agent:gall agent:gall)
-    =^  cards  shoe  (on-arvo:og wire sign-arvo)
+    =^  cards  shoe  (on-arvo:og wire gift)
     [(deal cards) this]
   ::
   ++  on-fail

@@ -18,7 +18,7 @@
   ?>  (team:title [our src]:bowl)
   ?+    mark  !!
       %noun  :_  this
-             [%pass /(scot %da now.bowl) %arvo %b %wait `@da`+(now.bowl)]~
+             [%pass /(scot %da now.bowl) %arvo %behn %wait `@da`+(now.bowl)]~
   ==
 ::
 ++  on-watch  on-watch:def
@@ -26,11 +26,11 @@
 ++  on-peek   on-peek:def
 ++  on-agent  on-agent:def
 ++  on-arvo
-  |=  [=wire sign=sign-arvo]
+  |=  [=wire gift=gift-user-v1:gall]
   ^-  (quip card _this)
   ?+    wire  !!
       [@ ~]
-    ?>  ?=(%wake +<.sign)
+    ?>  ?=([%behn %wake *] gift)
     ~&  [%took `@dr`(sub now.bowl (slav %da i.wire))]
     [~ this]
   ==

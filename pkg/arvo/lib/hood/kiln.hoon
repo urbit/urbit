@@ -354,11 +354,11 @@
   |-  ^+  ..on-init
   ?~  dez  ..on-init
   =.  ..on-init
-    (emit %pass /kiln/init-zest %arvo %syscall %c %zest i.dez %live)
+    (emit %pass /kiln/init-zest %arvo %clay %zest i.dez %live)
   =.  ..on-init
     %-  emit
-    :*  %pass  /kiln/permission  %arvo  %syscall
-        [%c %perm i.dez / %r `[%black ~]]
+    :*  %pass  /kiln/permission  %arvo  %clay  %perm
+        i.dez  /  %r  `[%black ~]
     ==
   =/  src  (get-publisher our i.dez now)
   =?  ..on-init  &(?=(^ src) !=(our u.src))
@@ -479,7 +479,7 @@
     ;:  weld
       %+  turn  zet
       |=  [=desk =zest]
-      [%pass /kiln/load-zest %arvo %syscall %c %zest desk zest]
+      [%pass /kiln/load-zest %arvo %clay %zest desk zest]
     ::
       %+  turn  ~(tap in syn)
       |=  r=sync-record
@@ -620,13 +620,13 @@
 ++  poke-autocommit
   |=  [mon=kiln-commit auto=?]
   =<  abet
-  =.  +>.$  (emit %pass /commit %arvo %syscall %c [%dirk mon])
+  =.  +>.$  (emit %pass /commit %arvo %clay %dirk mon)
   ?.  auto
     +>.$
   =/  recur  ~s1
   =.  commit-timer
     [/kiln/autocommit (add now recur) recur mon]
-  (emit %pass way.commit-timer %arvo %syscall %b [%wait nex.commit-timer])
+  (emit %pass way.commit-timer %arvo %behn %wait nex.commit-timer)
 ::
 ++  poke-bump
   |=  ~
@@ -648,26 +648,26 @@
     ?:  |(=(%base desk) !?=(%live zest) (~(has in wic) kel))
       ~
     `u=[desk %held]
-  [%pass /kiln/bump/zeal %arvo %syscall %c %zeal desks]~
+  [%pass /kiln/bump/zeal %arvo %clay %zeal desks]~
 ::
 ++  poke-cancel
   |=  a=@tas
-  abet:(emit %pass /cancel %arvo %syscall %c [%drop a])
+  abet:(emit %pass /cancel %arvo %clay %drop a)
 ::
 ++  poke-cancel-autocommit
   |=  ~
-  abet:(emit %pass way.commit-timer %arvo %syscall %b [%rest nex.commit-timer])
+  abet:(emit %pass way.commit-timer %arvo %behn %rest nex.commit-timer)
 ::
 ++  poke-commit
   |=  [mon=kiln-commit auto=?]
   =<  abet
-  =.  +>.$  (emit %pass /commit %arvo %syscall %c [%dirk mon])
+  =.  +>.$  (emit %pass /commit %arvo %clay %dirk mon)
   ?.  auto
     +>.$
   =/  recur  ~s1
   =.  commit-timer
     [/kiln/autocommit (add now recur) recur mon]
-  (emit %pass way.commit-timer %arvo %syscall %b [%wait nex.commit-timer])
+  (emit %pass way.commit-timer %arvo %behn %wait nex.commit-timer)
 ::
 ++  poke-fuse-list
   =>
@@ -735,7 +735,7 @@
 ::
 ++  poke-gall-sear
   |=  =ship
-  abet:(emit %pass /kiln %arvo %syscall %g %sear ship)
+  abet:(emit %pass /kiln %arvo %gall %sear ship)
 ::
 ++  poke-global-automerge
   |=  auto=?
@@ -758,7 +758,14 @@
   |=  [mez=tape tor=(unit toro)]
   ?~  tor
     abet:(spam leaf+mez ~)
-  abet:(emit:(spam leaf+mez ~) %pass /kiln %arvo %syscall %c [%info u.tor])
+  =/  [des=desk =nori]  u.tor
+  =<  abet
+  %-  emit:(spam leaf+mez ~)
+  :*  %pass  /kiln  %arvo
+      ?:  ?=(%& -.nori)
+        [%clay %rite des p.nori]
+      [%clay %name des p.nori q.nori]
+  ==
 ::
 ++  poke-install
   |=  [loc=desk her=ship rem=desk]
@@ -775,7 +782,7 @@
     =.  ..abet  abet:drop:(sync loc u.got)
     ..abet(zyn (~(del by zyn) loc u.got))
   =?  ..abet  ?=(%dead zest)
-    (emit %pass /kiln/install %arvo %syscall %c %zest loc ?:(=(our her) %live %held))
+    (emit %pass /kiln/install %arvo %clay %zest loc ?:(=(our her) %live %held))
   ?:  (~(has by zyn) loc her rem)
     abet:(spam (render "already syncing" loc her rem ~) ~)
   ?:  =([our loc] [her rem])
@@ -807,7 +814,7 @@
   ?~  bem
     =+  "can't mount bad path: {<pax>}"
     abet:(spam leaf+- ~)
-  abet:(emit %pass /mount %arvo %syscall %c [%mont pot u.bem])
+  abet:(emit %pass /mount %arvo %clay %mont pot u.bem)
 ::
 ++  poke-jump-propose
   |=  [syd=desk her=ship sud=desk]
@@ -891,10 +898,10 @@
   |=  [=term desk=?]
   =<  abet
   ?.  desk
-    (emit %pass /nuke %arvo %syscall %g [%nuke term])
+    (emit %pass /nuke %arvo %gall %nuke term)
   %-  emil
   %+  turn  (get-apps-have our term now)
-  |=([=dude ?] [%pass /nuke %arvo %syscall %g [%nuke dude]])
+  |=([=dude ?] [%pass /nuke %arvo %gall %nuke dude])
 ::
 ++  poke-pause
   |=  =desk
@@ -907,15 +914,15 @@
   =<  abet
   %-  emit
   =/  =rite  [%r ~ ?:(pub %black %white) ~]
-  [%pass /kiln/permission %arvo %syscall %c [%perm syd pax rite]]
+  [%pass /kiln/permission %arvo %clay %perm syd pax rite]
 ::
 ++  poke-rein
   |=  [=desk =rein]
-  abet:(emit %pass /kiln/rein %arvo %syscall %c %rein desk rein)
+  abet:(emit %pass /kiln/rein %arvo %clay %rein desk rein)
 ::
 ++  poke-revive
   |=  =desk
-  abet:(emit %pass /kiln/revive %arvo %syscall %c %zest desk %live)
+  abet:(emit %pass /kiln/revive %arvo %clay %zest desk %live)
 ::
 ++  poke-rm
   |=  a=path
@@ -954,7 +961,7 @@
     ?:  (~(has in .^((set desk) %cd /(scot %p our)//(scot %da now))) dek)
       &
     ~>  %slog.(fmt "desk does not yet exist: {<dek>}")  |
-  |=(=desk [%pass /kiln/suspend %arvo %syscall %c %zest desk %dead])
+  |=(=desk [%pass /kiln/suspend %arvo %clay %zest desk %dead])
 ::
 ++  poke-sync
   |=  sync-record
@@ -996,7 +1003,7 @@
     abet:(spam leaf+"desk does not exist: {<loc>}" ~)
   ~>  %slog.(fmt "uninstalling {<loc>}")
   =?  ..on-init  !=(+<:got %dead)
-    (emit %pass /kiln/uninstall %arvo %syscall %c %zest loc %dead)
+    (emit %pass /kiln/uninstall %arvo %clay %zest loc %dead)
   ?~  sync=(~(get by sources) loc)
     abet
   (poke-unsync loc u.sync)
@@ -1008,8 +1015,8 @@
     ?~  bem
       =+  "can't unmount bad path: {<mon>}"
       abet:(spam leaf+- ~)
-    abet:(emit %pass /unmount-beam %arvo %syscall %c [%ogre [[p q r] s]:u.bem])
-  abet:(emit %pass /unmount-point %arvo %syscall %c [%ogre mon])
+    abet:(emit %pass /unmount-beam %arvo %clay %ogre [[p q r] s]:u.bem)
+  abet:(emit %pass /unmount-point %arvo %clay %ogre mon)
 ::
 ::  Don't need to cancel anything because new syncs will get a new nonce
 ::
@@ -1023,7 +1030,7 @@
 ::
 ++  poke-essential-desk
   |=  [=desk ese=?]
-  abet:(emit %pass /kiln/essential-desk %arvo %syscall %c %esse desk ese)
+  abet:(emit %pass /kiln/essential-desk %arvo %clay %esse desk ese)
 ::  +peer: handle %watch
 ::
 ++  peer
@@ -1076,22 +1083,26 @@
   ==
 ::
 ++  take-arvo
-  |=  [=wire =sign-arvo]
+  |=  [=wire gift=gift-user-v1:gall]
   ^+  abet
   ?-    wire
       [%sync %merg *]   abet
       [%find-ship *]    abet
       [%sync *]         abet
-      [%zinc *]         (take-sync t.wire sign-arvo)
+      [%zinc *]         ?>  ?=(%syscall -.gift)
+                        =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
+                        (take-sync t.wire sign-arvo)
       [%autocommit *]   %+  take-wake-autocommit  t.wire
-                        ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
+                        ?>(?=([%behn %wake *] gift) time.gift)
       [%vats *]         abet
       [%fuse-request @tas *]
                       =/  f  (fuzz i.t.wire now)
                       ?~  f
                         abet
-                      abet:abet:(take:u.f t.t.wire sign-arvo)
-      [%fuse @tas *]  ?>  ?=(%mere +<.sign-arvo)
+                      abet:abet:(take:u.f t.t.wire gift)
+      [%fuse @tas *]  ?>  ?=(%syscall -.gift)
+                      =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
+                      ?>  ?=(%mere +<.sign-arvo)
                       =/  syd=desk  i.t.wire
                       ?.  ?=([%| *] +>.sign-arvo)
                         ?~  p.p.sign-arvo
@@ -1102,6 +1113,8 @@
                       %-  (slog leaf+"failed fuse for {<syd>}" p.p.sign-arvo)
                       abet
       *
+    ?>  ?=(%syscall -.gift)
+    =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
     ?+    +<.sign-arvo
         ((slog leaf+"kiln: strange card {<+<.sign-arvo wire>}" ~) abet)
       %done  (done wire +>.sign-arvo)
@@ -1130,16 +1143,12 @@
   abet
 ::
 ++  take-wake-autocommit
-  |=  [way=wire error=(unit tang)]
-  ?^  error
-    %-  (slog u.error)
-    ~&  %kiln-wake-autocommit-fail
-    abet
+  |=  [way=wire =time]
   =.  nex.commit-timer  (add now tim.commit-timer)
   =<  abet
   %-  emil
-  :~  [%pass /commit %arvo %syscall %c [%dirk mon.commit-timer]]
-      [%pass way.commit-timer %arvo %syscall %b [%wait nex.commit-timer]]
+  :~  [%pass /commit %arvo %clay %dirk mon.commit-timer]
+      [%pass way.commit-timer %arvo %behn %wait nex.commit-timer]
   ==
 ::
 ::
@@ -1194,8 +1203,7 @@
       =/  wir=wire
           /kiln/fuse-request/[syd]/(scot %p p.bec)/[q.bec]/(scot %ud hax)
       =/  rav=rave  [%sing %w r.bec /]
-      =/  rif=riff  [q.bec `rav]
-      `[%pass wir %arvo %syscall %c [%warp who.fs rif]]
+      `[%pass wir %arvo %clay %read ~ who.fs q.bec rav]
     ::  No need to keep state if all the sources are static
     ?~  movs
       delete
@@ -1210,31 +1218,30 @@
       |=  [fs=fuse-source g=germ]
       [(realize-fuse-source fs |) g]
     %-  blab
-    [%pass /kiln/fuse/[syd] %arvo %syscall %c [%fuse syd bas con]]~
+    [%pass /kiln/fuse/[syd] %arvo %syscall %c %fuse syd bas con]~
   ::
   ++  fuse
     ^+  ..abet
     send-fuse:make-requests
   ::
   ++  take
-    |=  [wir=wire =sign-arvo]
-    ^+  ..fuse
-    ?>  =((lent wir) 3)
-    =/  who=ship  (slav %p (snag 0 wir))
-    =/  src=desk  (snag 1 wir)
-    =/  hax=@ud  (slav %ud (snag 2 wir))
-    ?.  =(hax (mug [kf (~(got by hxs) syd)]))
-      ::  If the hash in the wire doesn't match the current request
-      ::  this is a response for a previous fuse that we can ignore.
-      ..take
-    ?>  ?=([?(%clay %behn) %writ *] sign-arvo)
-    =/  gif  +.sign-arvo
-    ?~  p.gif
-      %-  (slog leaf+"|fuse request failed for {<src>} on <who> - cancelling")
-      delete
-    =/  cas=cass:clay  !<(cass:clay +.r.u.p.gif)
-    =.  mox  (~(put by mox) [who src] ud.cas)
-    fuse
+  |=  [wir=wire gift=gift-user-v1:gall]
+  ^+  ..fuse
+  ?>  =((lent wir) 3)
+  =/  who=ship  (slav %p (snag 0 wir))
+  =/  src=desk  (snag 1 wir)
+  =/  hax=@ud  (slav %ud (snag 2 wir))
+  ?.  =(hax (mug [kf (~(got by hxs) syd)]))
+    ::  If the hash in the wire doesn't match the current request
+    ::  this is a response for a previous fuse that we can ignore.
+    ..take
+  ?>  ?=([%clay %read *] gift)
+  ?~  riot.gift
+    %-  (slog leaf+"|fuse request failed for {<src>} on <who> - cancelling")
+    delete
+  =/  cas=cass:clay  !<(cass:clay +.r.u.riot.gift)
+  =.  mox  (~(put by mox) [who src] ud.cas)
+  fuse
   ::
   ::  utility functions below
   ::
@@ -1555,9 +1562,8 @@
         =<  win
         %-  blab:(spam tan)
         :_  ~
-        :*  %pass  /kiln/[syd]  %arvo  %syscall  %c
-            %info
-            tic  %&
+        :*  %pass  /kiln/[syd]  %arvo
+            %clay  %rite  tic
             %+  murn  notations
             |=  [=path dif=(unit [=mark =vase])]
             ^-  (unit [^path miso])

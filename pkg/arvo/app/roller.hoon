@@ -123,7 +123,7 @@
         ++  wait
           |=  [=wire =time]
           ^-  card
-          [%pass wire %arvo %b %wait time]
+          [%pass wire %arvo %behn %wait time]
         --
       --
     ::  TODO  /lib/spider.hoon?
@@ -587,43 +587,32 @@
     ==
   ::
   ++  on-arvo
-    |=  [=wire =sign-arvo]
+    |=  [=wire gift=gift-user-v1:gall]
     ^-  (quip card _this)
-    ?+    wire  (on-arvo:def wire sign-arvo)
-        [%timer ~]
-      ?+  +<.sign-arvo  (on-arvo:def wire sign-arvo)
-        %wake  =^(cards state (on-timer:do &) [cards this])
-      ==
-        [%quota-timer ~]
-      ?+  +<.sign-arvo  (on-arvo:def wire sign-arvo)
-        %wake  =^(cards state on-quota-timer:do [cards this])
-      ==
+    ?.  ?=([%behn %wake *] gift)  (on-arvo:def wire gift)
+    ?+    wire  (on-arvo:def wire gift)
+      [%timer ~]        =^(cards state (on-timer:do &) [cards this])
+      [%quota-timer ~]  =^(cards state on-quota-timer:do [cards this])
     ::
         [%predict ~]
-      ?+    +<.sign-arvo  (on-arvo:def wire sign-arvo)
-          %wake
-        =^  effects  state
-          (predicted-state canonical):do
-        [(emit effects) this(derive &)]
-      ==
+      =^  effects  state
+        (predicted-state canonical):do
+      [(emit effects) this(derive &)]
     ::
         [%resend @ @ ~]
       =/  [address=@ux nonce=@ud]
         [(slav %ux i.t.wire) (slav %ud i.t.t.wire)]
-      ?+    +<.sign-arvo  (on-arvo:def wire sign-arvo)
-          %wake
-        =/  cards=(list card)  (send-roll:do address nonce)
-        =?  sending
-          ?&  ?=(~ cards)
-              (has:ors:dice sending [address nonce])
-              =(0 (lent txs:(got:ors:dice sending [address nonce])))
-          ==
-          ~&  >  "empty sending, removing {<[nonce address]>}"
-          =^  *  sending
-            (del:ors:dice sending [address nonce])
-          sending
-        [cards this]
-      ==
+      =/  cards=(list card)  (send-roll:do address nonce)
+      =?  sending
+        ?&  ?=(~ cards)
+            (has:ors:dice sending [address nonce])
+            =(0 (lent txs:(got:ors:dice sending [address nonce])))
+        ==
+        ~&  >  "empty sending, removing {<[nonce address]>}"
+        =^  *  sending
+          (del:ors:dice sending [address nonce])
+        sending
+      [cards this]
     ==
   ::
   ++  on-fail

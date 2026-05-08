@@ -63,7 +63,7 @@
     ++  listen-to-azimuth
       |=  [ships=(set ship) =source:jael]
       ^-  card
-      [%pass /lo %arvo %j %listen ships source]
+      [%pass /lo %arvo %jael %listen ships source]
     ::
     ++  nuke-azimuth-tracker
       |=  =bowl:gall
@@ -75,7 +75,7 @@
     ++  init-timer
       |=  at=@da
       ^-  card
-      [%pass /init %arvo %b %wait at]
+      [%pass /init %arvo %behn %wait at]
     ::
     ++  start-log-retrieval
       |=  [=ship args=vase]
@@ -84,7 +84,7 @@
     ::
     ++  start-azimuth-load
       ^-  card
-      [%pass /al %arvo %k %fard %base %azimuth-load %noun !>(~)]
+      [%pass /al %arvo %syscall %k %fard %base %azimuth-load %noun !>(~)]
     --
 ::
 =<
@@ -146,7 +146,7 @@
       ?.  ?=(%3 -.old-state)  [cards-2 old-state]
       :_  old-state(- %4)
       ~&  >  '%azimuth: updating to state 4'
-      [%pass /resend-pk %arvo %j %resend ~]^cards-2
+      [%pass /resend-pk %arvo %syscall %j %resend ~]^cards-2
     =^  cards-4  old-state
       ?.  ?=(%4 -.old-state)  [cards-3 old-state]
       =^  cards  this
@@ -394,19 +394,18 @@
     (jael-update:do (to-udiffs:do effects))
   ::
   ++  on-arvo
-    |=  [=wire =sign-arvo]
-    ?:  &(=(/al wire) ?=(%arow +<.sign-arvo))
+    |=  [=wire gift=gift-user-v1:gall]
+    ?:  &(=(/al wire) ?=(%syscall -.gift))
+      =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
+      ?>  ?=(%arow +<.sign-arvo)
       ?-    -.p.sign-arvo
           %&  `this
           %|
         %-  (slog 'loading azimuth snapshot failed! still trying' p.p.sign-arvo)
         [~[(init-timer (add ~s10 now.bowl))] this]
       ==
-    ?.  &(=(/init wire) ?=(%wake +<.sign-arvo))
-      (on-arvo:def wire sign-arvo)
-    ?^  error.sign-arvo
-      %-  (slog 'azimuth: failed to initialize!' ~)
-      `this
+    ?.  &(=(/init wire) ?=([%behn %wake *] gift))
+      (on-arvo:def wire gift)
     :_  this
     ~[start-azimuth-load]
   ::

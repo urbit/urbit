@@ -74,7 +74,7 @@
     ?.  =(our.bowl who.fed)
       ~&  [%wrong-private-key-ship who.fed]
       this
-    (emit %pass / %arvo %syscall %j %rekey lyf.fed key.fed)
+    (emit %pass / %arvo %jael %rekey lyf.fed key.fed)
   ?.  =(our.bowl who.fed)
     ~&  [%wrong-private-key-ship who.fed]
     this
@@ -87,7 +87,7 @@
   ?~  kyz  (flop caz)
   %=  $
     kyz  t.kyz
-    caz  [[%pass / %arvo %syscall %j %rekey i.kyz] caz]
+    caz  [[%pass / %arvo %jael %rekey i.kyz] caz]
   ==
 ::
 ++  ames-secret
@@ -100,45 +100,45 @@
   ?>  ?=(%& -.hot)
   =.  p.hot  (scag 2 p.hot)      :: ignore subdomain
   =.  dat  (scot %uw (en:crub:crypto ames-secret dat))
-  =-  abet:(emit %pass /write %arvo %syscall %c %info -)
+  =-  abet:(emit %pass /write %arvo %clay %rite -)
   =/  byk=path  (en-beam byk.bowl(r da+now.bowl) ~)
   =+  .^(=tube:clay cc+(welp byk /mime/atom))
   =/  =cage  atom+(tube !>([/ (as-octs:mimes:html dat)]))
-  (foal:space:userlib :(welp byk sec+p.hot /atom) cage)
+  :-  q.byk.bowl
+  :~  :-  (welp sec+p.hot /atom)
+          (feel:space:userlib :(welp byk sec+p.hot /atom) cage)
+  ==
 ::
 ++  poke-moon                                        ::  rotate moon keys
   |=  sed=(unit [=ship =udiff:point:jael])
   =<  abet
   ?~  sed
     this
-  (emit %pass / %arvo %syscall %j %moon u.sed)
+  (emit %pass / %arvo %jael %moon u.sed)
 ::
 ++  poke-moon-breach
   |=  =ship
   ?>  ?|  =(our src):bowl
           =(src.bowl ship)
       ==
-  abet:(emit %pass /helm/moon-breach/(scot %p ship) %arvo %syscall %b %wait now.bowl)
+  abet:(emit %pass /helm/moon-breach/(scot %p ship) %arvo %behn %wait now.bowl)
 ::
 ++  take-wake-moon-breach
-  |=  [way=wire error=(unit tang)]
-  ?^  error
-    %-  (slog %take-wake-moon-breach-fail u.error)
-    abet
+  |=  [way=wire =time]
   ?>  ?=([@ ~] way)
   =/  =ship  (slav %p i.way)
   ?>  =(%earl (clan:title ship))
   ?>  =(our.bowl (sein:title our.bowl now.bowl ship))
   =/  =rift
     +(.^(rift j+/(scot %p our.bowl)/rift/(scot %da now.bowl)/(scot %p ship)))
-  abet:(emit %pass / %arvo %syscall %j %moon ship *id:block:jael %rift rift %.n)
+  abet:(emit %pass / %arvo %jael %moon ship *id:block:jael %rift rift %.n)
 ::
 ++  poke-code
   |=  act=?(~ %reset)
   =<  abet
   ?~  act
     this
-  (emit %pass / %arvo %syscall %j %step ~)
+  (emit %pass / %arvo %jael %step ~)
 ::
 ++  poke-mass
   |=  ~  =<  abet
@@ -148,11 +148,11 @@
   |=  recur=@dr
   =.  mass-timer.sat
     [/helm/automass (add now.bowl recur) recur]
-  abet:(emit %pass way.mass-timer.sat %arvo %syscall %b %wait nex.mass-timer.sat)
+  abet:(emit %pass way.mass-timer.sat %arvo %behn %wait nex.mass-timer.sat)
 ::
 ++  poke-cancel-automass
   |=  ~
-  abet:(emit %pass way.mass-timer.sat %arvo %syscall %b %rest nex.mass-timer.sat)
+  abet:(emit %pass way.mass-timer.sat %arvo %behn %rest nex.mass-timer.sat)
 ::
 ++  poke-meld
   |=  ~  =<  abet
@@ -173,16 +173,12 @@
   (emit %pass /helm/pass %arvo %syscall note-arvo)
 ::
 ++  take-wake-automass
-  |=  [way=wire error=(unit tang)]
-  ?^  error
-    %-  (slog u.error)
-    ~&  %helm-wake-automass-fail
-    abet
+  |=  [way=wire =time]
   =.  nex.mass-timer.sat  (add now.bowl tim.mass-timer.sat)
   =<  abet
   %-  emil
   :~  [%pass /heft %arvo %syscall %d %flog %crud %hax-heft ~]
-      [%pass way.mass-timer.sat %arvo %syscall %b %wait nex.mass-timer.sat]
+      [%pass way.mass-timer.sat %arvo %behn %wait nex.mass-timer.sat]
   ==
 ::
 ++  poke-send-hi
@@ -272,15 +268,9 @@
   :: abet:(emit %pass `wire`[%helm %ahoy-crash way] %arvo %syscall %b %wait (add now.bowl ~s30)) :: XX exp backoff?
 ::
 ++  take-ahoy-crash
-  |=  [way=wire error=(unit tang)]
+  |=  [way=wire =time]
   ?>  ?=([@ ~] way)
-  ?~  error
-    (poke-start-ahoy (slav %p i.way) | force=&)
-  ~&  >>>  %ahoy-wake-crash
-  ::  XX retry?
-  ::
-  %-  (slog %take-ahoy-wake-crash u.error)
-  abet:(emit %pass `wire`[%helm %ahoy-crash way] %arvo %syscall %b %wait (add now.bowl ~s30)) :: XX exp backoff?
+  (poke-start-ahoy (slav %p i.way) | force=&)
 ::
 ++  poke-send-rege
   |=  [her=ship test=?]  =<  abet
@@ -329,11 +319,11 @@
 ::
 ++  poke-ames-prod
   |=  ships=(list ship)
-  abet:(emit %pass /helm/prod %arvo %syscall %a %prod ships)
+  abet:(emit %pass /helm/prod %arvo %ames %prod ships)
 ::
 ++  poke-ames-snub
   |=  snub=[form=?(%allow %deny) ships=(list ship)]
-  abet:(emit %pass /helm/snub %arvo %syscall %a %snub snub)
+  abet:(emit %pass /helm/snub %arvo %ames %snub snub)
 ::
 ++  poke-atom
   |=  ato=@
@@ -357,19 +347,19 @@
 ::
 ++  poke-ames-sift
   |=  ships=(list ship)  =<  abet
-  (emit %pass /helm %arvo %syscall %a %sift ships)
+  (emit %pass /helm %arvo %ames %sift ships)
 ::
 ++  poke-ames-verb
   |=  veb=(list verb:ames)  =<  abet
-  (emit %pass /helm %arvo %syscall %a %spew veb)
+  (emit %pass /helm %arvo %ames %spew veb)
 ::
 ++  poke-gall-sift
   |=  dudes=(list dude:gall)  =<  abet
-  (emit %pass /helm %arvo %syscall %g %sift dudes)
+  (emit %pass /helm %arvo %gall %sift dudes)
 ::
 ++  poke-gall-verb
   |=  veb=(list verb:gall)  =<  abet
-  (emit %pass /helm %arvo %syscall %g %spew veb)
+  (emit %pass /helm %arvo %gall %spew veb)
 ::
 ++  poke-gall-lave
   |=  [dry=? subs=(list [?(%g %a) ship term duct])]  =<  abet
@@ -383,7 +373,7 @@
 ::
 ++  poke-ames-wake
   |=  ~  =<  abet
-  (emit %pass /helm %arvo %syscall %a %stir '')
+  (emit %pass /helm %arvo %ames %stir '')
 ::
 ++  poke-ames-kroc
   |=  [dry=? bones=(list [ship bone])]  =<  abet
@@ -392,21 +382,21 @@
 ::
 ++  poke-ames-cong
   |=  cong=[msg=@ud mem=@ud]  =<  abet
-  (emit %pass /helm %arvo %syscall %a %cong cong)
+  (emit %pass /helm %arvo %ames %cong cong)
 ::
 ++  poke-serve
   |=  [=binding:eyre =generator:eyre]  =<  abet
-  (emit %pass /helm/serv %arvo %syscall %e %serve binding generator)
+  (emit %pass /helm/serv %arvo %eyre %connect binding generator)
 ::
 ++  poke-cors-approve
   |=  =origin:eyre
   =<  abet
-  (emit %pass /helm/cors/approve %arvo %syscall %e %approve-origin origin)
+  (emit %pass /helm/cors/approve %arvo %eyre %approve-origin origin)
 ::
 ++  poke-cors-reject
   |=  =origin:eyre
   =<  abet
-  (emit %pass /helm/cors/reject %arvo %syscall %e %reject-origin origin)
+  (emit %pass /helm/cors/reject %arvo %eyre %reject-origin origin)
 ::
 ++  poke-doff
   |=  [dude=(unit dude:gall) ship=(unit ship)]
@@ -434,8 +424,8 @@
     =/  m  (strand:rand ,~)
     ^-  form:m
     ?.  reset
-      (send-raw-card:strandio %pass / %arvo %syscall %e %rule %turf %put turf)
-    (send-raw-card:strandio %pass / %arvo %syscall %e %rule %turf %new (silt turf ~))
+      (send-raw-card:strandio %pass / %arvo %eyre %rule %turf %put turf)
+    (send-raw-card:strandio %pass / %arvo %eyre %rule %turf %new (silt turf ~))
   ::
   ++  check-domain
     |=  =turf
@@ -735,26 +725,33 @@
   (flog %text "bound: {<success>}")
 ::
 ++  take-arvo
-  |=  [=wire =sign-arvo]
-  ?+  wire  ~|([%helm-bad-take-wire wire +<.sign-arvo] !!)
-    [%dns-config ~]   %-  take-arow-dns-config
-                      ?>(?=(%arow +<.sign-arvo) +>.sign-arvo)
-    [%automass *]     %+  take-wake-automass  t.wire
-                      ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
-    [%serv *]         %+  take-bound  t.wire
-                      ?>(?=(%bound +<.sign-arvo) +>.sign-arvo)
-    [%moon-breach *]  %+  take-wake-moon-breach  t.wire
-                      ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
-    [%ahoy *]         %+  take-ahoy  t.wire
-                      ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
-    [%mate *]         %+  take-test-mate  t.wire
-                      ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
-    [%migrate *]      %+  take-migrate  t.wire
-                      ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
-    [%rege *]         %+  take-rege  t.wire
-                      ?>(?=(%done +<.sign-arvo) +>.sign-arvo)
-    [%ahoy-crash *]   %+  take-ahoy-crash  t.wire
-                      ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
-    [%pass *]         abet
+  |=  [=wire gift=gift-user-v1:gall]
+  ?:  ?=([%pass *] wire)  abet
+  ?+  gift  ~|([%helm-bad-take-gift wire -.gift +<.gift] !!)
+      [%unsupported ~]  ~|([%unsupported-gift wire] !!)
+      [%syscall *]
+    =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
+    ?+  +<.sign-arvo  !!
+        %done
+      ?+  wire        ~|([%helm-bad-take-wire wire +<.sign-arvo] !!)
+        [%ahoy *]     (take-ahoy t.wire +>.sign-arvo)
+        [%mate *]     (take-test-mate t.wire +>.sign-arvo)
+        [%migrate *]  (take-migrate t.wire +>.sign-arvo)
+        [%rege *]     (take-rege t.wire +>.sign-arvo)
+      ==
+        %arow
+      ?.  ?=([%dns-config *] wire)  ~|([%helm-bad-take-wire wire +<.sign-arvo] !!)
+      (take-arow-dns-config +>.sign-arvo)
+    ==
+    ::
+      [%behn %wake *]
+    ?+  wire  ~|([%helm-bad-take-wire wire -.gift +<.gift] !!)
+      [%automass *]     (take-wake-automass t.wire time.gift)
+      [%moon-breach *]  (take-wake-moon-breach t.wire time.gift)
+      [%ahoy-crash *]   (take-ahoy-crash t.wire time.gift)
+    ==
+      [%eyre %bound *]
+    ?.  ?=([%serv *] wire)  ~|([%helm-bad-take-wire wire -.gift +<.gift] !!)
+    (take-bound t.wire bound.gift binding.gift)
   ==
 --

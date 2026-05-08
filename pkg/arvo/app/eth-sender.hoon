@@ -161,9 +161,9 @@
   |=  [=path tox=(list cord)]
   ^-  card
   ?>  ?=([@ desk @ *] path)
-  =-  [%pass [%write path] %arvo %c %info -]
+  =-  [%pass [%write path] %arvo %clay %rite -]
   :-  i.t.path
-  =-  &+[t.t.t.path -]~
+  =-  [t.t.t.path -]~
   =/  y  .^(arch %cy path)
   ?~  fil.y
     ins+txt+!>(tox)
@@ -173,9 +173,9 @@
   |=  [=path tox=(list transaction:rpc:ethereum)]
   ^-  card
   ?>  ?=([@ desk @ *] path)
-  =-  [%pass [%write path] %arvo %c %info -]
+  =-  [%pass [%write path] %arvo %clay %rite -]
   :-  i.t.path
-  =-  &+[t.t.t.path -]~
+  =-  [t.t.t.path -]~
   =/  y  .^(arch %cy path)
   ?~  fil.y
     ins+eth-txs+!>(tox)

@@ -46,7 +46,7 @@
   ++  wait-card
     |=  [=wire now=@da]
     ^-  card
-    [%pass wire %arvo %b %wait (add nat-timeout now)]
+    [%pass wire %arvo %behn %wait (add nat-timeout now)]
   ::
   ++  ping
     |=  [=ship force=?]
@@ -181,7 +181,7 @@
 ::  +on-arvo: handle timer firing
 ::
 ++  on-arvo
-  |=  [=wire =sign-arvo]
+  |=  [=wire gift=gift-user-v1:gall]
   ^-  [(list card) _this]
   =^  cards  state
     ?+    wire  `state
@@ -189,10 +189,7 @@
       ?:  ?=(%czar (clan:title our.bowl))
         `state
       ?.  ?=(%formal mode.state)  `state
-      ?>  ?=(%wake +<.sign-arvo)
-      ?^  error.sign-arvo
-        %-  (slog 'ping: strange wake fail!' u.error.sign-arvo)
-        `state
+      ?>  ?=([%behn %wake *] gift)
       =.  timer.state  ~
       (ping (galaxy-for our.bowl bowl) %.n)
     ::

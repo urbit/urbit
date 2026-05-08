@@ -57,7 +57,7 @@
       |=(c=@tD `@tD`?:(=('/' c) '-' c))
     =/  sing=card
       :+  %pass  /build/mar/[mak]
-      [%arvo %c %warp our.bowl desk.cmd ~ %sing %b da+now.bowl /[mak]]
+      [%arvo %clay %read ~ our.bowl desk.cmd %sing %b da+now.bowl /[mak]]
     %_  $
       paz        t.paz
       fex        [sing fex]
@@ -79,7 +79,7 @@
       $(daz t.daz)
     =/  sing=card
       :+  %pass  /build/app/[i.daz]
-      [%arvo %c %warp our.bowl desk.cmd ~ %sing %a da+now.bowl dap-pax]
+      [%arvo %clay %read ~ our.bowl desk.cmd %sing %a da+now.bowl dap-pax]
     %_  $
       daz        t.daz
       fex        [sing fex]
@@ -99,7 +99,7 @@
       $(paz t.paz)
     =/  sing=card
       :+  %pass  build+i.paz
-      [%arvo %c %warp our.bowl desk.cmd ~ %sing %a da+now.bowl i.paz]
+      [%arvo %clay %read ~ our.bowl desk.cmd %sing %a da+now.bowl i.paz]
     %_  $
       paz        t.paz
       fex        [sing fex]
@@ -119,7 +119,7 @@
       $(paz t.paz)
     =/  sing=card
       :+  %pass  build+i.paz
-      [%arvo %c %warp our.bowl desk.cmd ~ %sing %a da+now.bowl i.paz]
+      [%arvo %clay %read ~ our.bowl desk.cmd %sing %a da+now.bowl i.paz]
     %_  $
       paz        t.paz
       fex        [sing fex]
@@ -139,18 +139,18 @@
         ~>(%slog.[0 tank] same)
       --
   ::
-  |=  [=wire =sign-arvo]
+  |=  [=wire gift=gift-user-v1:gall]
   ^-  [(list card) _this]
   ?.  ?&  ?=([%build *] wire)
-          ?=([%clay %writ *] sign-arvo)
+          ?=([%clay %read *] gift)
       ==
-    (on-arvo:def wire sign-arvo)
+    (on-arvo:def wire gift)
   =/  =path  t.wire
   ?+    path  ~|(path+path !!)
       [%app *]
     =/  ok
-      ?~  p.sign-arvo  |
-      (~(nest ut -:!>(*agent:gall)) | -:!<(vase q.r.u.p.sign-arvo))
+      ?~  riot.gift  |
+      (~(nest ut -:!>(*agent:gall)) | -:!<(vase q.r.u.riot.gift))
     %-  (report path ok)
     =?  app-ok.state  !ok  %.n
     =.  app.state  (~(del in app.state) path)
@@ -159,7 +159,7 @@
     [~ this]
   ::
       [%mar *]
-    =/  ok  ?=(^ p.sign-arvo)
+    =/  ok  ?=(^ riot.gift)
     %-  (report path ok)
     =?  mar-ok.state  !ok  %.n
     =.  mar.state  (~(del in mar.state) path)
@@ -168,7 +168,7 @@
     [~ this]
   ::
       [%gen *]
-    =/  ok  ?=(^ p.sign-arvo)
+    =/  ok  ?=(^ riot.gift)
     %-  (report path ok)
     =?  gen-ok.state  !ok  %.n
     =.  gen.state  (~(del in gen.state) path)
@@ -177,7 +177,7 @@
     [~ this]
   ::
       [%ted *]
-    =/  ok  ?=(^ p.sign-arvo)
+    =/  ok  ?=(^ riot.gift)
     %-  (report path ok)
     =?  ted-ok.state  !ok  %.n
     =.  ted.state  (~(del in ted.state) path)
