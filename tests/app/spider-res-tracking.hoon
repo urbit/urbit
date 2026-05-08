@@ -53,6 +53,7 @@
   |=  $:  task=task-user-v1
           gift=(unit gift-user-v1:gall)
           ex-res=(set arvo-resource)
+          ex-scry=(set [wire ship path])
           ex=(list $-(card:agent:gall tang))
       ==
   %-  eval-mare
@@ -68,13 +69,16 @@
     !>([~ `tid byk.bowl %thread !>([~ ~])])
   ::
   =/  rant               *rant:clay
-  =/  =sign-arvo         [%clay %writ `rant(r [%vase (thread task)])]
-  ;<  caz2=(list card:agent:gall)  bind:m  (do-arvo /build/[tid] [%syscall 123 sign-arvo])
+  ;<  caz2=(list card:agent:gall)  bind:m  (do-arvo /build/[tid] [%clay %read ~ `rant(r [%vase (thread task)])])
   ;<  vas=vase          bind:m  get-save
   =+  !<(state2=clean-state vas)
-  =/  res=(unit (set arvo-resource))
-    (~(get by resources.state2) tid)
-  ;<  ~                 bind:m  (ex-equal !>(res) !>(`ex-res))
+  =/  res=(set arvo-resource)
+    (~(gut by resources.state2) tid ~)
+  ;<  ~                 bind:m  (ex-equal !>(res) !>(ex-res))
+  ::
+  =/  scry=(set [wire ship path])  (~(gut by scrying.state2) tid ~)
+  ;<  ~                 bind:m  (ex-equal !>(scry) !>(ex-scry))
+  ::
   ;<  ~                 bind:m
     (ex-cards caz2 [(ex-user-task tid task) ~])
   ::
@@ -89,8 +93,8 @@
     ==
   ;<  vas2=vase         bind:m  get-save
   =+  !<(state3=clean-state vas2)
-  =/  res2=(unit (set arvo-resource))
-    (~(get by resources.state3) tid)
+  =/  res2=(set arvo-resource)
+    (~(gut by resources.state3) tid ~)
   (ex-equal !>(res2) !>(~))
 ::
 ::
@@ -117,6 +121,7 @@
       `[%clay %read 123 ~]
       (sy :~([wir [%clay %warp 123]]))
       ~
+      ~
   ==
 ::
 ++  test-rt-clay-read-many
@@ -126,6 +131,7 @@
       [%clay %read 123 our %foo [%many & ud+1 ud+3 /foo/hoon]]
       `[%clay %read 123 `rant]
       (sy :~([wir [%clay %warp 123]]))
+      ~
       [(ex-user-task tid [%clay %rest 123]) ~]
   ==
 ::
@@ -134,6 +140,7 @@
       [%iris %request *request:http *outbound-config:iris]
       ~
       (sy :~([wir [%iris %request]]))
+      ~
       [(ex-user-task tid [%iris %cancel-request ~]) ~]
   ==
 ::
@@ -143,6 +150,35 @@
       `[%iris %http-response *client-response:iris]
       (sy :~([wir [%iris %request]]))
       ~
+      ~
   ==
 ::
+::
+++  test-remote-scry-task-user-keen
+  =/  =spar:ames  [~rus /foo/bar]
+  %:  run-thread
+      [%ames %keen & spar]
+      `[%syscall 123 [%tune *roar:ames]]
+      ~
+      (sy :~([wir -.spar +.spar]))
+      ~
+  ==
+++  test-remote-scry-syscall-keen
+  =/  =spar:ames  [~rus /foo/bar]
+  %:  run-thread
+      [%syscall %a %keen `[1 2] spar]
+      `[%syscall 123 [%tune *roar:ames]]
+      ~
+      (sy :~([wir -.spar +.spar]))
+      ~
+  ==
+++  test-remote-scry-syscall-chum
+  =/  =spar:ames  [~rus /foo/bar]
+  %:  run-thread
+      [%syscall %a %chum spar]
+      `[%syscall 123 [%tune *roar:ames]]
+      ~
+      (sy :~([wir -.spar +.spar]))
+      ~
+  ==
 --

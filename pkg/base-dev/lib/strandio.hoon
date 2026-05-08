@@ -380,17 +380,14 @@
   ?+  in.tin  `[%skip ~]
     ~  `[%wait ~]
   ::
-      [~ [%gift * %syscall *]]
-    =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift.u.in.tin])
-    ?.  ?=([%dill %meme *] sign-arvo)  `[%skip ~]
-    `[%done p.sign-arvo]
+    [~ %gift [%mass ~] %dill %meme *]  `[%done p.gift.u.in.tin]
   ==
 ::
 ++  keen
   |=  [=wire =spar:ames sec=(unit [@ @])]
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass wire %arvo %syscall %a %keen sec spar)
+  (send-raw-card %pass wire %arvo %ames %keen ?=(^ sec) spar)  ::  review
 ::
 ++  chum
   |=  [=wire =spar:ames]
@@ -408,7 +405,7 @@
   |=  [=wire =spar:ames]
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass wire %arvo %syscall %a %yawn spar)
+  (send-raw-card %pass wire %arvo %ames %yawn spar)
 ::
 ++  whey
   |=  [=wire boq=@ud =spar:ames]
@@ -848,7 +845,7 @@
   |=  =tape
   =/  m  (strand ,~)
   ^-  form:m
-  (flog %text tape)
+  (send-raw-card %pass / %arvo %syscall %dill %text tape)
 ::
 ++  flog-tang
   |=  =tang
@@ -885,7 +882,7 @@
   |=  =turf
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass / %arvo %syscall %e %rule %turf %put turf)
+  (send-raw-card %pass / %arvo %eyre %rule %turf %put turf)
 ::
 ::    ----
 ::

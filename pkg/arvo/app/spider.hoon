@@ -340,7 +340,7 @@
 ++  bec  `beak`byk.bowl(r da+now.bowl)
 ++  bind-eyre
   ^-  card
-  [%pass /bind %arvo %syscall %e %connect [~ /spider] %spider]
+  [%pass /bind %arvo %eyre %connect [~ /spider] %spider]
 ::
 ++  new-thread-id
   |=  file=term
@@ -512,7 +512,7 @@
     :_  state
     :_  ~
     :+  %pass  /build/[new-tid]
-    [%arvo %syscall %c %warp p.beak q.beak ~ %sing %a r.beak pax]
+    [%arvo %clay %read ~ p.beak q.beak %sing %a r.beak pax]
   ==
 ::
 ++  handle-build
@@ -524,14 +524,7 @@
     (~(jab by starting.state) yarn |=([=trying =vase] [%none vase]))
   ~|  gift+[- +<]:gift
   =/  =riot:clay
-    ?+  gift  !!
-        [%clay %read *]  riot.gift
-    ::
-        [%syscall *]
-      =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
-      ?>  ?=([?(%behn %clay) %writ *] sign-arvo)
-      p.sign-arvo
-    ==
+    ?>(?=([%clay %read *] gift) riot.gift)
   ?~  riot
     (thread-fail-not-running tid %build-thread-error *tang)
   ?.  ?=(%vase p.r.u.riot)
@@ -650,14 +643,17 @@
     ::REVIEW  ok to check on syscalls y/n?
     ::TODO  avoid having to do ;; at least
     :_  =?  scrying.s  ?|  ?=([%pass ^ %arvo %syscall %a %keen ?(~ ^) @ *] card)
-                           ?=([%pass ^ %arvo %syscall %a %chum @ *] card)
+                           ?=([%pass ^ %arvo %ames %keen @ *] card)
+                           ?=([%pass ^ %arvo %syscall %a %chum *] card)
                        ==
-          ?:  ?=([%pass ^ %arvo %syscall %a %chum @ *] card)
-            ::  &2=wire &6=ship 6|=path
-            (~(put ju scrying.s) tid ;;([wire ship path] [&2 &6 |6]:card))
+          ?:  ?|  ?=([%pass ^ %arvo %syscall %a %chum *] card)
+                  ?=([%pass ^ %arvo %ames %keen @ *] card)
+              ==
+            ::  &2=wire &7=ship 7|=path
+            (~(put ju scrying.s) tid ;;([wire ship path] [&2 &7 |7]:card))
           ?>  ?=([%pass ^ %arvo %syscall %a %keen ?(~ ^) @ *] card)
-          ::  &2=wire &7=ship 7|=path
-          (~(put ju scrying.s) tid ;;([wire ship path] [&2 &7 |7]:card))
+          ::  &2=wire &8=ship 8|=path
+          (~(put ju scrying.s) tid ;;([wire ship path] [&2 &8 |8]:card))
       ::
         ?.  ?=([%pass *] card)  s
         ?~  res=(card-to-res:track:gall card)  s
@@ -695,7 +691,7 @@
   =/  moz  (thread-say-fail tid term tang)
   ?.  ?=([~ %build *] (~(get by starting.state) yarn))
     moz
-  :_(moz [%pass /build/[tid] %arvo %syscall %c %warp our.bowl %base ~])
+  :_(moz [%pass /build/[tid] %arvo %clay %rest ~])
 ::
 ++  thread-say-fail
   |=  [=tid =term =tang]
@@ -715,7 +711,7 @@
   |=  [[=wire =ship =path] cards=(list card)]
   %-  (slog leaf+"cancelling {<tid>}: [{<[wire ship path]>}]" ~)
   :_  cards
-  [%pass (welp /thread/[tid] wire) %arvo %syscall %a %yawn ship path]
+  [%pass (welp /thread/[tid] wire) %arvo %ames %yawn ship path]
 ::
 ++  thread-http-fail
   |=  [=tid =term =tang]
