@@ -1089,9 +1089,7 @@
       [%sync %merg *]   abet
       [%find-ship *]    abet
       [%sync *]         abet
-      [%zinc *]         ?>  ?=(%syscall -.gift)
-                        =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
-                        (take-sync t.wire sign-arvo)
+      [%zinc *]         (take-sync t.wire gift)
       [%autocommit *]   %+  take-wake-autocommit  t.wire
                         ?>(?=([%behn %wake *] gift) time.gift)
       [%vats *]         abet
@@ -1100,25 +1098,25 @@
                       ?~  f
                         abet
                       abet:abet:(take:u.f t.t.wire gift)
-      [%fuse @tas *]  ?>  ?=(%syscall -.gift)
-                      =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
-                      ?>  ?=(%mere +<.sign-arvo)
+      [%fuse @tas *]  ?>  ?=([%clay %mere *] gift)
                       =/  syd=desk  i.t.wire
-                      ?.  ?=([%| *] +>.sign-arvo)
-                        ?~  p.p.sign-arvo
+                      ?.  ?=([%| *] p.gift)
+                        ?~  p.p.gift
                           abet
                         =/  msg=tape  "fuse merge conflict for {<syd>}"
-                        %-  (slog [leaf+msg >p.p.sign-arvo< ~])
+                        %-  (slog [leaf+msg >p.p.gift< ~])
                         abet
-                      %-  (slog leaf+"failed fuse for {<syd>}" p.p.sign-arvo)
+                      %-  (slog leaf+"failed fuse for {<syd>}" p.p.gift)
                       abet
       *
-    ?>  ?=(%syscall -.gift)
-    =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
-    ?+    +<.sign-arvo
-        ((slog leaf+"kiln: strange card {<+<.sign-arvo wire>}" ~) abet)
-      %done  (done wire +>.sign-arvo)
-      %mere  (take-mere wire +>.sign-arvo)
+    ?+  gift  !!
+        [%syscall *]
+      =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
+      ?.  ?=(%done +<.sign-arvo)
+          ((slog leaf+"kiln: strange card {<+<.sign-arvo wire>}" ~) abet)
+      (done wire +>.sign-arvo)
+    ::
+      [%clay %mere *]  (take-mere wire p.gift)
     ==
   ==
 ++  take  |=(way=wire ?>(?=([@ ~] way) (work i.way))) ::  general handler
@@ -1218,7 +1216,7 @@
       |=  [fs=fuse-source g=germ]
       [(realize-fuse-source fs |) g]
     %-  blab
-    [%pass /kiln/fuse/[syd] %arvo %syscall %c %fuse syd bas con]~
+    [%pass /kiln/fuse/[syd] %arvo %clay %fuse syd bas con]~
   ::
   ++  fuse
     ^+  ..abet
@@ -1271,14 +1269,14 @@
   --
 ::
 ++  take-sync
-  |=  [=wire =sign-arvo]
+  |=  [=wire gift=gift-user-v1:gall]
   ?>  ?=([@ @ @ *] wire)
   =*  syd  i.wire
   =/  her  (slav %p i.t.wire)
   =*  sud  i.t.t.wire
   ?.  (~(has by zyn) syd her sud)
     abet
-  abet:abet:(take:(sync syd her sud) t.t.t.wire sign-arvo)
+  abet:abet:(take:(sync syd her sud) t.t.t.wire gift)
 ::
 ++  sync
   |=  sync-record
@@ -1315,7 +1313,7 @@
   ++  merg
     |=  [=wire =desk]
     %:  emit
-      %pass  (ware wire)  %arvo  %syscall  %c
+      %pass  (ware wire)  %arvo  %clay
       %merg  desk  her  sud
       ud+(dec let)  (get-germ desk)
     ==
@@ -1365,92 +1363,96 @@
   ::  Instead, we do the merges to syd and kid explicitly.
   ::
   ++  take
-    |=  [=wire =sign-arvo]
+    |=  [=wire gift=gift-user-v1:gall]
     ^+  ..abet
     ?>  ?=([@ @ *] wire)
     ?.  =(nun i.wire)
       ..abet
-    ?+      i.t.wire
-          ~>  %slog.(fmt "sync-bad-take {<wire>}")
-          ..abet
-        %init
-      ?.  =(0 let)
-        ~>  %slog.(fmt "sync-bad-stage {<let>} {<wire>}")
-        ..abet
+    ?+  gift  !!
+        [%syscall *]
+      =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
       ?>  ?=(%arow +<.sign-arvo)
-      ?:  ?=(%| -.p.sign-arvo)
-        ~>  %slog.(fmt "activation failed into {here}; retrying sync")
-        %-  (slog p.p.sign-arvo)
-        init
-      ::  Now that we know the revision, start main download loop
-      ::
-      =.  let  !<(@ud q.p.p.sign-arvo)
-      next
-    ::
-        %next
-      ?>  ?=(%arow +<.sign-arvo)
-      ?:  ?=(%| -.p.sign-arvo)
-        ::  ~>  %slog.(fmt "download failed into {here}; retrying sync")
-        ::  %-  (slog p.p.sign-arvo)
-        =.  ..abet  drop
-        init
-      ::
-      ~>  %slog.(fmt "finished downloading update for {here}")
-      =.  let  +(let)
-      ::  If nothing changed, just ensure %kids is up-to-date and advance
-      ::
-      ?.  (get-remote-diff our syd now [her sud (dec let)])
-        =<  next:drop
-        ?~  kid
-          ~>  %slog.(fmt "remote is identical to {here}, skipping")
+      ?+      i.t.wire
+            ~>  %slog.(fmt "sync-bad-take {<wire>}")
+            ..abet
+          %init
+        ?.  =(0 let)
+          ~>  %slog.(fmt "sync-bad-stage {<let>} {<wire>}")
           ..abet
-        ?.  (get-remote-diff our u.kid now [her sud (dec let)])
-          ~>  %slog.(fmt "remote is identical to {here}, skipping")
-          ..abet
-        ~>  %slog.(fmt "remote is identical to {here}, merging into {<u.kid>}")
-        (merg /kids u.kid)
-      ::  wait for approval if can't automerge & signal available update
-      ::
-      ?.  |(=(our her) yea =([~ &] nit) &(=(~ nit) mer))
-        =.  ..abet  gain
+        ?:  ?=(%| -.p.sign-arvo)
+          ~>  %slog.(fmt "activation failed into {here}; retrying sync")
+          %-  (slog p.p.sign-arvo)
+          init
+        ::  Now that we know the revision, start main download loop
+        =.  let  !<(@ud q.p.p.sign-arvo)
         next
-      ::  Else start merging, but also immediately start listening to
-      ::  the next revision.  Now, all errors should no-op -- we're
-      ::  already waiting for the next revision.
       ::
-      =.  yea  |
-      =.  ..abet  (merg /main syd)
-      next
-    ::
-        %main
-      ?>  ?=(%mere +<.sign-arvo)
-      =<  tada
-      ?:  ?=(%| -.p.sign-arvo)
-        =+  "kiln: merge into {here} failed, waiting for next revision"
-        %-  (slog leaf/- p.p.sign-arvo)
-        ..abet
-      ~>  %slog.(fmt "merge into {<syd>} succeeded")
-      ::  If we have a kids desk parameter, merge into that
-      ::
-      ?~  kid
-        ..abet
-      ~>  %slog.(fmt "kids merge into {<u.kid>}")
-      (merg /kids u.kid)
-    ::
-        %kids
-      ?>  ?=(%mere +<.sign-arvo)
-      ?~  kid
-        ..abet
-      ::  Just notify; we've already started listening for the next
-      ::  version
-      ::
-      ?-  -.p.sign-arvo
-        %&  ~>  %slog.(fmt "kids merge to {<u.kid>} succeeded")
+          %next
+        ?:  ?=(%| -.p.sign-arvo)
+          ::  ~>  %slog.(fmt "download failed into {here}; retrying sync")
+          ::  %-  (slog p.p.sign-arvo)
+          =.  ..abet  drop
+          init
+        ::
+        ~>  %slog.(fmt "finished downloading update for {here}")
+        =.  let  +(let)
+        ::  If nothing changed, just ensure %kids is up-to-date and advance
+        ::
+        ?.  (get-remote-diff our syd now [her sud (dec let)])
+          =<  next:drop
+          ?~  kid
+            ~>  %slog.(fmt "remote is identical to {here}, skipping")
             ..abet
-        %|  ~>  %slog.(fmt "kids merge to {<u.kid>} failed")
-            %-  (slog p.p.sign-arvo)
+          ?.  (get-remote-diff our u.kid now [her sud (dec let)])
+            ~>  %slog.(fmt "remote is identical to {here}, skipping")
             ..abet
+          ~>  %slog.(fmt "remote is identical to {here}, merging into {<u.kid>}")
+          (merg /kids u.kid)
+        ::  wait for approval if can't automerge & signal available update
+        ::
+        ?.  |(=(our her) yea =([~ &] nit) &(=(~ nit) mer))
+          =.  ..abet  gain
+          next
+        ::  Else start merging, but also immediately start listening to
+        ::  the next revision.  Now, all errors should no-op -- we're
+        ::  already waiting for the next revision.
+        ::
+        =.  yea  |
+        =.  ..abet  (merg /main syd)
+        next
       ==
+        [%clay %mere *]
+      ?+      i.t.wire
+            ~>  %slog.(fmt "sync-bad-take {<wire>}")
+            ..abet
+          %main
+        =<  tada
+        ?:  ?=(%| -.p.gift)
+          =+  "kiln: merge into {here} failed, waiting for next revision"
+          %-  (slog leaf/- p.p.gift)
+          ..abet
+        ~>  %slog.(fmt "merge into {<syd>} succeeded")
+        ::  If we have a kids desk parameter, merge into that
+        ::
+        ?~  kid
+          ..abet
+        ~>  %slog.(fmt "kids merge into {<u.kid>}")
+        (merg /kids u.kid)
+      ::
+          %kids
+        ?>  ?=(%mere +<.gift)
+        ?~  kid
+          ..abet
+        ::  Just notify; we've already started listening for the next
+        ::  version
+        ::
+        ?-  -.p.gift
+          %&  ~>  %slog.(fmt "kids merge to {<u.kid>} succeeded")
+              ..abet
+          %|  ~>  %slog.(fmt "kids merge to {<u.kid>} failed")
+              %-  (slog p.p.gift)
+              ..abet
+      ==  ==
     ==
   --
 ::
@@ -1479,7 +1481,7 @@
     ^+  .
     ?<  ?=(%this gem)
     ?<  ?=(%that gem)
-    (blab [%pass /kiln/[syd] %arvo %syscall %c [%merg syd her sud cas gem]] ~)
+    (blab [%pass /kiln/[syd] %arvo %clay %merg syd her sud cas gem] ~)
   ::
   ++  fancy-merge                                     ::  send to self
     |=  [syd=desk her=@p sud=desk gem=?(%auto germ)]
