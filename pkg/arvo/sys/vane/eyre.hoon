@@ -1306,7 +1306,7 @@
         (rsh 3 (spat p.mime))  q.mime
     ::  attempt to find conversion gate to mime
     ::
-    =/  tub=(unit [tub=tube:clay mov=move])
+    =/  tub=(unit tub=tube:clay)
       (find-tube i.site.req mark %mime)
     ?~  tub  (error-response 500 "no tube from {(trip mark)} to mime")
     ::  attempt conversion, then send results
@@ -1319,11 +1319,11 @@
         %&  %+  return-static-data-on-duct  200
             [(rsh 3 (spat p.p.mym)) q.p.mym]
       ==
-    [[mov.u.tub cards] state]
+    [cards state]
     ::
     ++  find-tube
       |=  [dap=term from=mark to=mark]
-      ^-  (unit [tube:clay move])
+      ^-  (unit tube:clay)
       =/  des=(unit (unit cage))
         (do-scry %gd dap /$)
       ?.  ?=([~ ~ *] des)  ~
@@ -1332,9 +1332,7 @@
         (do-scry %cc desk /[from]/[to])
       ?.  ?=([~ ~ %tube *] tub)  ~
       :-  ~
-      :-  !<(tube:clay q.u.u.tub)
-      :^  duct  %pass  /conversion-cache/[from]
-      [%c %warp our desk `[%sing %c da+now /[from]/[to]]]
+      !<(tube:clay q.u.u.tub)
     ::
     ++  do-scry
       |=  [care=term =desk =path]
@@ -2545,7 +2543,7 @@
         =/  said
           (channel-event-to-cord channel request-id channel-event)
         ?~  said  $
-        $(events [(event-cord-to-event-stream id +.u.said) events])
+        $(events [(event-cord-to-event-stream id u.said) events])
       ?:  exit  [moves state]
       ::  send the start event to the client
       ::
@@ -2870,10 +2868,8 @@
         (sign-to-channel-event sign u.channel request-id)
       ?~  maybe-channel-event  [~ state]
       =/  =channel-event  u.maybe-channel-event
-      =/  said=(unit (quip move cord))
+      =/  said=(unit cord)
         (channel-event-to-cord u.channel request-id channel-event)
-      =?  moves  ?=(^ said)
-        (weld moves -.u.said)
       =*  sending  &(?=([%| *] state.u.channel) ?=(^ said))
       ::
       =/  next-id  next-id.u.channel
@@ -2896,7 +2892,7 @@
             ^=  data
             :-  ~
             %-  as-octs:mimes:html
-            (event-cord-to-event-stream next-id +:(need said))
+            (event-cord-to-event-stream next-id (need said))
         ::
             complete=%.n
         ==
@@ -2960,7 +2956,7 @@
             :-  ~
             %-  as-octs:mimes:html
             %+  event-cord-to-event-stream  next-id
-            +:(need (channel-event-to-cord u.channel request-id %kick ~))
+            (need (channel-event-to-cord u.channel request-id %kick ~))
         ::
             complete=%.n
         ==
@@ -2998,11 +2994,11 @@
     ::
     ++  channel-event-to-cord
       |=  [=channel request-id=@ud =channel-event]
-      ^-  (unit (quip move cord))
+      ^-  (unit cord)
       ?-  mode.channel
         %json  %+  bind  (channel-event-to-json channel request-id channel-event)
-               |=((quip move json) [+<- (en:json:html +<+)])
-        %jam   =-  `[~ (scot %uw (jam -))]
+               |=(j=json (en:json:html j))
+        %jam   =-  `(scot %uw (jam -))
                [request-id channel-event]
       ==
     ::  +channel-event-to-json: render channel event as json channel event
@@ -3010,7 +3006,7 @@
     ++  channel-event-to-json
       ~%  %eyre-channel-event-to-json  ..part  ~
       |=  [=channel request-id=@ud event=channel-event]
-      ^-  (unit (quip move json))
+      ^-  (unit json)
       ::  for facts, we try to convert the result to json
       ::
       =/  [from=(unit [=desk =mark]) jsyn=(unit sign:agent:gall)]
@@ -3035,10 +3031,6 @@
         [`[desk.event have] `[%fact %json (slym u.convert noun.event)]]
       ?~  jsyn  ~
       %-  some
-      :-  ?~  from  ~
-          :_  ~
-          :^  duct  %pass  /conversion-cache/[mark.u.from]
-          [%c %warp our desk.u.from `[%sing %f da+now /[mark.u.from]/json]]
       =*  sign  u.jsyn
       =,  enjs:format
       %-  pairs

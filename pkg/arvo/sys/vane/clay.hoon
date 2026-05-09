@@ -95,6 +95,18 @@
       mime=(slap zuse !,(*hoon mime))
       cass=(slap zuse !,(*hoon cass:clay))
   ==
+::  virtualization gates without access to namespace
+::
+=/  mule  ~(mule vi |)
+=/  mole  ~(mole vi |)
+=/  road
+  |*  =(trap *)
+  ^+  $:trap
+  =/  res  (mule trap)
+  ?-  -.res
+    %&  p.res
+    %|  (mean p.res)
+  ==
 ::
 |=  our=ship
 =,  clay
@@ -4488,9 +4500,8 @@
         |=  [=desk =bill]
         leaf+"goad: output: {<desk>}: {<bill>}"
     =/  agents  (build-agents sat)
-    ::  TODO: enable if we can reduce memory usage
     ::
-    ::  =+  (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
+    =+  (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
     ::
     =.  ..abet  tare                                    ::  [tare] >
     (emit hen %pass /lu/load %g %load agents)
