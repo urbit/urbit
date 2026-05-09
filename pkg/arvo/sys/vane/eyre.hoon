@@ -264,7 +264,7 @@
   ~
 ::  +html-octs: manx to octs with <!DOCTYPE html>
 ::
-++  html-octs  :: NOTE: should this be in zuse's +html core?
+++  html-octs
   |=  =manx
   ^-  octs
   %-  as-octt:mimes:html
@@ -471,10 +471,6 @@
                 name = document.getElementById('name');
                 pass = document.getElementById('pass');
                 if (isEauth) goEauth(); else goLocal();
-                setSecretMode(
-                  document.getElementById('secret-toggle'),
-                  localStorage.getItem('urbitLoginSecretMode') == 'true'
-                );
               }
               function goLocal() {
                 document.body.className = 'local';
@@ -499,7 +495,6 @@
                 } else {
                   btn.classList.add('secret');
                 }
-                localStorage.setItem('urbitLoginSecretMode', val)
               }
               '''
     ==
