@@ -19,6 +19,7 @@
     ++  ha-blit
       |=  [b=blit:dill line=tape]
       ?-    -.b
+          %bye  ""
           %put  (tape p.b)
           %klr  (tape (zing (turn p.b tail)))
           %mor  `tape`(roll p.b ha-blit)

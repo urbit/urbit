@@ -13,8 +13,7 @@
   ^-  card:agent:gall
   =/  url  (cat 3 (crip "https://api.github.com/repos{<repo>}/commits/") branch)
   =/  =request:http  ~[%'GET' url ~[['User-Agent' 'vere-v1.20'] ['Accept' 'application/vnd.github.v3+json']]]
-  =/  =task:iris  [%request request *outbound-config:iris]
-  [%pass /http-req %arvo %i task]
+  [%pass /http-req %arvo %iris %request request *outbound-config:iris]
 --
 =,  strand=strand:spider
 ^-  thread:spider

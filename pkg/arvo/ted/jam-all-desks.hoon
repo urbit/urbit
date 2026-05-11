@@ -20,7 +20,7 @@
 ::
 ;<  ~  bind:m
   %-  send-raw-card:strandio
-  =-  [%pass /tmp-desks %arvo %c %info %base %& -]
+  =-  [%pass /tmp-desks %arvo %clay %rite %base -]
   ^-  soba:clay
   %+  turn  desks
   |=  =desk

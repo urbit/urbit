@@ -28,16 +28,14 @@
   ^-  card:agent:gall
   =/  url  (cat 3 (cat 3 (crip "https://api.github.com/repos{<repo>}/git/trees/") commit) '?recursive=true')
   =/  =request:http  ~[%'GET' url ~[['User-Agent' 'vere-v1.20'] ['Accept' 'application/vnd.github.v3+json']]]
-  =/  =task:iris  [%request request *outbound-config:iris]
-  [%pass /http-req %arvo %i task]
+  [%pass /http-req %arvo %iris %request request *outbound-config:iris]
 ::
 ++  build-file-request
   |=  [repo=path commit=cord path=cord]
   ^-  card:agent:gall
   =/  url  (cat 3 (cat 3 (crip "https://raw.githubusercontent.com{<repo>}/") commit) (cat 3 '/' path))
   =/  =request:http  ~[%'GET' url ~[['User-Agent' 'vere-v1.20']]]
-  =/  =task:iris  [%request request *outbound-config:iris]
-  [%pass /http-req %arvo %i task]
+  [%pass /http-req %arvo %iris %request request *outbound-config:iris]
 --
 =,  strand=strand:spider
 ^-  thread:spider
