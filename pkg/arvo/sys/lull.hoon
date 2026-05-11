@@ -4192,6 +4192,7 @@
         [%behn %wake =time]  ::REVIEW
         [%clay %read id=* =riot:clay]
         [%clay %tire p=(each rock:tire:clay wave:tire:clay)]
+        [%clay %mere p=(each (set path) (pair term tang))]
         [%dill %blit ses=@tas biz=(list blit:dill)]
         [%dill %logs =told:dill]
         [%dill %meme p=(list quac:dill)]

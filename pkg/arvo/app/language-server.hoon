@@ -61,7 +61,7 @@
     ~&  >  %lsp-init
     :_  this  :_  ~
     :*  %pass  /connect
-        %arvo  %e
+        %arvo  %eyre
         %connect  [~ /'~language-server-protocol']  %language-server
     ==
   ::
@@ -99,12 +99,12 @@
   ++  on-agent  on-agent:def
   ++  on-arvo
     ^+  on-arvo:*agent:gall
-    |=  [=wire =sign-arvo]
+    |=  [=wire gift=gift-user-v1:gall]
     ^-  (quip card _this)
     =^  cards  state
-      ?+  sign-arvo  (on-arvo:def wire sign-arvo)
+      ?+  gift  (on-arvo:def wire gift)
         [%eyre %bound *]  `state
-        [%clay *]  (handle-build:lsp wire +.sign-arvo)
+        [%clay %read *]   (handle-build:lsp wire riot.gift)
       ==
     [cards this]
   ::
@@ -198,7 +198,7 @@
   %+  turn
     ~(tap in ~(key by builds))
   |=  uri=@t
-  [%pass /ford/[uri] %arvo %c %warp our.bow %base ~]
+  [%pass /ford/[uri] %arvo %clay %rest ~]
 ::
 ++  handle-did-close
   |=  [uri=@t version=(unit @)]
@@ -210,7 +210,7 @@
   =.  builds
     (~(del by builds) uri)
   :_  state
-  [%pass /ford/[uri] %arvo %c %warp our.bow %base ~]~
+  [%pass /ford/[uri] %arvo %clay %rest ~]~
 ::
 ++  handle-did-save
   |=  [uri=@t version=(unit @)]
@@ -237,18 +237,17 @@
   `state
 ::
 ++  handle-build
-  |=  [=path =gift:clay]
+  |=  [=path =riot:clay]
   ^-  (quip card _state)
-  ?>  ?=([%writ *] gift)
   =/  uri=@t
     (snag 1 path)
   =/  loc=^path  (uri-to-path:build uri)
   =;  [res=(quip card _state) dek=desk]
     [(snoc -.res (build-file | uri loc `dek)) +.res]
-  ?~  p.gift
+  ?~  riot
     [[~ state] %base]
   =.  builds
-    (~(put by builds) uri q.r.u.p.gift)
+    (~(put by builds) uri q.r.u.riot)
   =.  ford-diagnostics
     (~(del by ford-diagnostics) uri)
   =/  bek  byk.bow(r da+now.bow)
@@ -285,7 +284,7 @@
       [%sing %a da+now.bow path]
     [%next %a da+now.bow path]
   =/  des=^desk  ?^  desk  u.desk  %base
-  [%pass /ford/[uri] %arvo %c %warp our.bow des `rave]
+  [%pass /ford/[uri] %arvo %clay %read ~ our.bow des rave]
 ::
 ++  handle-did-open
   |=  item=text-document-item:lsp-sur
@@ -298,7 +297,7 @@
   |-
   ?~  desks  [~ state]
   =.  dek  ?:  =(%kids i.desks)  %base  i.desks
-  =/  exists=?  .^(? %cu (en-beam bek(q dek) path)) 
+  =/  exists=?  .^(? %cu (en-beam bek(q dek) path))
   ?.  exists  $(desks t.desks)
   ?:  ?=(%sys -.path)
     `state

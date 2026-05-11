@@ -129,11 +129,9 @@
 ++  on-arvo
   |=  [=wire gift=gift-user-v1:gall]
   ^-  step:agent:gall
-  ?>  ?=(%syscall -.gift)
-  =+  !<(syn=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
   ?+  wire  ~|([%hood-bad-wire wire] !!)
-    [%drum *]  =^(c drum.state (take-arvo:drum-core t.wire syn) [c this])
-    [%helm *]  =^(c helm.state (take-arvo:helm-core t.wire syn) [c this])
-    [%kiln *]  =^(c kiln.state (take-arvo:kiln-core t.wire syn) [c this])
+    [%drum *]  =^(c drum.state (take-arvo:drum-core t.wire gift) [c this])
+    [%helm *]  =^(c helm.state (take-arvo:helm-core t.wire gift) [c this])
+    [%kiln *]  =^(c kiln.state (take-arvo:kiln-core t.wire gift) [c this])
   ==
 --

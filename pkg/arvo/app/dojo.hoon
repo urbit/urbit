@@ -387,14 +387,14 @@
       ?>  ?=(~ pux)
       %-  he-card(poy `+>+<(pux `way))
       =/  [=ship =desk =case]  beak
-      [%pass way %arvo %syscall %c %warp ship desk ~ %sing care case path]
+      [%pass way %arvo %clay %read ~ ship desk %sing care case path]
     ::
     ++  dy-request
       |=  [way=wire =request:http]
       ^+  +>+>
       ?>  ?=(~ pux)
       %-  he-card(poy `+>+<(pux `way))
-      [%pass way %arvo %syscall %i %request request *outbound-config:iris]
+      [%pass way %arvo %iris %request request *outbound-config:iris]
     ::
     ++  dy-stop                                         ::  stop work
       ^+  +>
@@ -404,7 +404,7 @@
       =<  he-diff
       ?.  ?=([%wool *] u.pux)
         =/  [=ship =desk =case]  he-beak
-        (he-card %pass u.pux %arvo %syscall %c %warp ship desk ~)
+        (he-card %pass u.pux %arvo %clay %rest ~)
       =.  +>  (he-card %pass u.pux %agent [our.hid %spider] %leave ~)
       ?@  t.u.pux  +>
       =/  =cage  [%spider-stop !>([i.t.u.pux |])]
@@ -602,9 +602,12 @@
         ==
       ::
           %file
+        =/  pax=path  (en-beam p.p.mad)
+        ?>  ?=([* * * *] pax)
+        =/  =soba:clay  [t.t.t.pax (feel:space:userlib pax cay)]~
         %-  he-card(poy ~)
-        :*  %pass  /file  %arvo  %syscall  %c
-            %info  (foal:space:userlib (en-beam p.p.mad) cay)
+        :*  %pass  /file  %arvo  %clay  %rite
+            `desk`i.t.pax  soba
         ==
       ::
           %flat
@@ -1852,17 +1855,17 @@
 ++  on-arvo
   |=  [=wire gift=gift-user-v1:gall]
   ^-  (quip card:agent:gall _..on-init)
-  ?>  ?=(%syscall -.gift)
-  =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
   ?>  ?=([@ @ *] wire)
   =/  =id  [(slav %p i.wire) i.t.wire]
   =/  =session  (~(got by hoc) id)
   =/  he-full  ~(. he hid id ~ session)
   =^  moves  state
     =<  he-abet
-    ?+    +<.sign-arvo  ~|([%dojo-bad-take +<.sign-arvo] !!)
-        %writ           (he-writ:he-full t.t.wire +>.sign-arvo)
-        %http-response  (he-http-response:he-full t.t.wire +>.sign-arvo)
+    ?+    gift  ~|([%dojo-bad-take +<.gift] !!)
+        [%clay %read *]  (he-writ:he-full t.t.wire riot.gift)
+        [%iris %http-response *]
+      (he-http-response:he-full t.t.wire +>.gift)
+        [%unsupported ~]  ~|([%dojo-unsupported-take wire] !!)
     ==
   [moves ..on-init]
 ::  if dojo fails unexpectedly, kill whatever each session is working on

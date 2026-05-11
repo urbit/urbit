@@ -339,7 +339,7 @@
     =/  =generator:eyre
       [q.byk.bowl /gen/acme/domain-validation/hoon ~]
     =/  =card
-      [%pass /acme %arvo %e %serve binding generator]
+      [%pass /acme %arvo %eyre %connect binding generator]
     [[card ~] this]
   ::
   ++  on-save   !>(state)
@@ -406,15 +406,15 @@
   ::
   ++  on-agent  on-agent:def
   ++  on-arvo
-    |=  [=wire =sign-arvo]
+    |=  [=wire gift=gift-user-v1:gall]
     ^-  (quip card _this)
     =^  cards  state
-      ?+    wire  (on-arvo:def wire sign-arvo)
+      ?+    wire  (on-arvo:def wire gift)
           [%acme *]
-        ?+  +<.sign-arvo  (on-arvo:def wire sign-arvo)
-          %http-response  (http-response:ac wire +>.sign-arvo)
-          %wake           (wake:ac wire +>.sign-arvo)
-          %bound          (bound:ac wire +>.sign-arvo)
+        ?+  gift  (on-arvo:def wire gift)
+          [%iris %http-response *]  (http-response:ac wire +>.gift)
+          [%behn %wake *]           (wake:ac wire)
+          [%eyre %bound *]          (bound:ac wire bound.gift binding.gift)
         ==
       ==
     [cards this]
@@ -476,16 +476,16 @@
 ++  notify
   |=  [=cord =tang]
   ^-  (list card)
-  :-  [%pass / %arvo %d %flog %text :(weld (trip dap.bow) ": " (trip cord))]
+  :-  [%pass / %arvo %dill %text :(weld (trip dap.bow) ": " (trip cord))]
   %+  turn
     `wall`(zing (turn (flop tang) (cury wash [0 80])))
-  |=(=tape [%pass / %arvo %d %flog %text tape])
+  |=(=tape [%pass / %arvo %dill %text tape])
 ::  +request: unauthenticated http request
 ::
 ++  request
   |=  [wir=wire req=hiss]
   ^-  card
-  [%pass wir %arvo %i %request (hiss-to-request:html req) *outbound-config:iris]
+  [%pass wir %arvo %iris %request (hiss-to-request:html req) *outbound-config:iris]
 ::  +signed-request: JWS JSON POST
 ::
 ++  signed-request
@@ -734,7 +734,7 @@
     ~|  %install-effect-fail
     ?>  ?=(^ liv)
     =/  key=wain  (ring:en:pem:pkcs8 key.u.liv)
-    (emit %pass /install %arvo %e %rule %cert `[key `wain`cer.u.liv])
+    (emit %pass /install %arvo %eyre %rule %cert `[key `wain`cer.u.liv])
   ::  +get-authz: get next ACME service domain authorization object
   ::
   ++  get-authz
@@ -774,7 +774,7 @@
     |=  [try=@ud act=@tas =wire lull=@dr]
     ::  XX validate wire
     ::
-    (emit %pass (acme-wire +(try) act wire) %arvo %b %wait (add now.bow lull))
+    (emit %pass (acme-wire +(try) act wire) %arvo %behn %wait (add now.bow lull))
   --
 ::  |event: accept event, emit next effect(s)
 ::
@@ -1161,11 +1161,8 @@
 ::  +wake: timer wakeup event
 ::
 ++  wake
-  |=  [wir=wire error=(unit tang)]
+  |=  wir=wire
   ^-  (quip card _state)
-  ?^  error
-    %-  (slog u.error)
-    abet
   ?>  ?=([%acme *] wir)
   abet:(retry:event t.wir)
 ::  +poke-acme-order: create new order for a set of domains
@@ -1211,7 +1208,7 @@
     =/  bas=path  /(scot %p our.bow)/base/(scot %da now.bow)/acme
     =/  key=wain  .^(wain %cx (weld bas /privkey/pem))
     =/  cer=wain  .^(wain %cx (weld bas /cert/pem))
-    (emit %pass /install %arvo %e %rule %cert `[key cer])
+    (emit %pass /install %arvo %eyre %rule %cert `[key cer])
   ::
       %init
     init

@@ -20,7 +20,7 @@
 =>  |%
     ++  pass-session
       |=  [ses=@tas tas=session-task:dill]
-      [%pass /dill/[ses] %arvo %d %shot ses tas]
+      [%pass /dill/[ses] %arvo %dill %shot ses tas]
     --
 |_  =bowl:gall
 +*  this  .
@@ -51,21 +51,21 @@
   [(pass-session ses %view ~)]~
 ::
 ++  on-arvo
-  |=  [=wire =sign-arvo]
+  |=  [=wire gift=gift-user-v1:gall]
   ^-  (quip card:agent:gall _this)
   ~|  wire
-  ?+  wire  (on-arvo:def wire sign-arvo)
+  ?+  wire  (on-arvo:def wire gift)
     [%tube *]  [~ this]  ::  we no longer care about these
   ::
     ::  pass on dill blits for the session
     ::
       [%dill @ ~]
     =*  ses  i.t.wire
-    ?.  ?=([%dill %blit *] sign-arvo)
-      ~|  [%unexpected-sign [- +<]:sign-arvo]
-      !!
+    ?.  ?=([%dill %blit *] gift)
+      ?:  ?=(%unsupported -.gift)  ~|  [%unsupported-gift wire]  !!
+      ~|  [%unexpected-gift [- +<]:gift]  !!
     :_  this
-    %+  turn  p.sign-arvo
+    %+  turn  biz.gift
     |=  =blit:dill
     [%give %fact [%session ses %view ~]~ %blit !>(blit)]
   ::
@@ -74,7 +74,7 @@
       [%view @ ~]
     =*  ses  i.t.wire
     :_  this
-    [%pass wire %arvo %d %shot ses %flee ~]~
+    [%pass wire %arvo %dill %shot ses %flee ~]~
   ==
 ::
 ++  on-poke

@@ -118,11 +118,11 @@
   ++  on-agent  on-agent:def
   ::
   ++  on-arvo
-    |=  [=wire sign=sign-arvo]
+    |=  [=wire gift=gift-user-v1:gall]
     ^-  step:agent:gall
-    ?+  wire  (on-arvo:def wire sign)
+    ?+  wire  (on-arvo:def wire gift)
         [%wait @ ~]
-      ?>  ?=(%wake +<.sign)
+      ?>  ?=([%behn %wake *] gift)
       =/  wen=@da  (slav %da i.t.wire)
       =^  cards  state
         (handle-wake:ac wen)
@@ -819,7 +819,7 @@
   =/  until=@da  (add now.hid ~s40)
   =.  tym.azi.piers  until
   %-  emit-cards
-  [%pass /wait/(scot %da until) %arvo %b %wait until]~
+  [%pass /wait/(scot %da until) %arvo %behn %wait until]~
 ::
 ++  stop-azimuth-timer
   ^+  this
@@ -827,7 +827,7 @@
   ?:  =(tym *@da)
     this
   %-  emit-cards
-  [%pass /wait/(scot %da tym) %arvo %b %rest tym]~
+  [%pass /wait/(scot %da tym) %arvo %behn %rest tym]~
 ::  +spam-logs: fill out the logs with as many events as needed using a dummy ship
 ::  (needed to advance the blocknumber in eth-wathcher)
 ::

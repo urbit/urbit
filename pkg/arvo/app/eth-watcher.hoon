@@ -32,12 +32,12 @@
     ++  wait
       |=  [=path now=@da time=@dr]
       ^-  card
-      [%pass [%timer path] %arvo %b %wait (add now time)]
+      [%pass [%timer path] %arvo %behn %wait (add now time)]
     ::
     ++  wait-shortcut
       |=  [=path now=@da]
       ^-  card
-      [%pass [%timer path] %arvo %b %wait now]
+      [%pass [%timer path] %arvo %behn %wait now]
     ::
     ++  poke-spider
       |=  [=path our=@p =cage]
@@ -581,22 +581,16 @@
   --
 ::
 ++  on-arvo
-  |=  [=wire =sign-arvo]
+  |=  [=wire gift=gift-user-v1:gall]
   ^-  (quip card agent:gall)
-  ?+    +<.sign-arvo  ~|([%strange-sign-arvo -.sign-arvo] !!)
-      %wake
+  ?+    gift  ~|([%strange-gift -.gift +<.gift] !!)
+      [%behn %wake *]
     ?.  ?=([%timer *] wire)  ~&  weird-wire=wire  [~ this]
     =*  path  t.wire
     ?.  (~(has by dogs.state) path)
       [~ this]
     =/  dog=watchdog
       (~(got by dogs.state) path)
-    ?^  error.sign-arvo
-      ::  failed, try again.  maybe should tell user if fails more than
-      ::  5 times.
-      ::
-      %-  (slog leaf+"eth-watcher failed; will retry" ~)
-      [[(wait path now.bowl refresh-rate.dog)]~ this]
     ::  maybe kill a timed-out update thread, maybe start a new one
     ::
     =^  stop-cards=(list card)  dog
@@ -641,6 +635,8 @@
     ::
     :-  [(wait path now.bowl refresh-rate.dog) (weld stop-cards start-cards)]
     this(dogs.state (~(put by dogs.state) path dog))
+  ::
+    [%unsupported ~]  ~|([%got-unsupported-gift wire] !!)
   ==
 ::
 ++  on-fail   on-fail:def

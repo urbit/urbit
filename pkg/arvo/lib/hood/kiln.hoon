@@ -359,11 +359,11 @@
     =+  .^([@ per=(list perm:gall)] %cx path)
     (emit %pass /kiln/init-seal %arvo %syscall %c %seal i.dez & (silt per))
   =.  ..on-init
-    (emit %pass /kiln/init-zest %arvo %syscall %c %zest i.dez %live)
+    (emit %pass /kiln/init-zest %arvo %clay %zest i.dez %live)
   =.  ..on-init
     %-  emit
-    :*  %pass  /kiln/permission  %arvo  %syscall
-        [%c %perm i.dez / %r `[%black ~]]
+    :*  %pass  /kiln/permission  %arvo  %clay  %perm
+        i.dez  /  %r  `[%black ~]
     ==
   =/  src  (get-publisher our i.dez now)
   =?  ..on-init  &(?=(^ src) !=(our u.src))
@@ -484,7 +484,7 @@
     ;:  weld
       %+  turn  zet
       |=  [=desk =zest]
-      [%pass /kiln/load-zest %arvo %syscall %c %zest desk zest]
+      [%pass /kiln/load-zest %arvo %clay %zest desk zest]
     ::
       %+  turn  ~(tap in syn)
       |=  r=sync-record
@@ -626,13 +626,13 @@
 ++  poke-autocommit
   |=  [mon=kiln-commit auto=?]
   =<  abet
-  =.  +>.$  (emit %pass /commit %arvo %syscall %c [%dirk mon])
+  =.  +>.$  (emit %pass /commit %arvo %clay %dirk mon)
   ?.  auto
     +>.$
   =/  recur  ~s1
   =.  commit-timer
     [/kiln/autocommit (add now recur) recur mon]
-  (emit %pass way.commit-timer %arvo %syscall %b [%wait nex.commit-timer])
+  (emit %pass way.commit-timer %arvo %behn %wait nex.commit-timer)
 ::
 ++  poke-bump
   |=  ~
@@ -654,26 +654,26 @@
     ?:  |(=(%base desk) !?=(%live zest) (~(has in wic) kel))
       ~
     `u=[desk %held]
-  [%pass /kiln/bump/zeal %arvo %syscall %c %zeal desks]~
+  [%pass /kiln/bump/zeal %arvo %clay %zeal desks]~
 ::
 ++  poke-cancel
   |=  a=@tas
-  abet:(emit %pass /cancel %arvo %syscall %c [%drop a])
+  abet:(emit %pass /cancel %arvo %clay %drop a)
 ::
 ++  poke-cancel-autocommit
   |=  ~
-  abet:(emit %pass way.commit-timer %arvo %syscall %b [%rest nex.commit-timer])
+  abet:(emit %pass way.commit-timer %arvo %behn %rest nex.commit-timer)
 ::
 ++  poke-commit
   |=  [mon=kiln-commit auto=?]
   =<  abet
-  =.  +>.$  (emit %pass /commit %arvo %syscall %c [%dirk mon])
+  =.  +>.$  (emit %pass /commit %arvo %clay %dirk mon)
   ?.  auto
     +>.$
   =/  recur  ~s1
   =.  commit-timer
     [/kiln/autocommit (add now recur) recur mon]
-  (emit %pass way.commit-timer %arvo %syscall %b [%wait nex.commit-timer])
+  (emit %pass way.commit-timer %arvo %behn %wait nex.commit-timer)
 ::
 ++  poke-fuse-list
   =>
@@ -741,7 +741,7 @@
 ::
 ++  poke-gall-sear
   |=  =ship
-  abet:(emit %pass /kiln %arvo %syscall %g %sear ship)
+  abet:(emit %pass /kiln %arvo %gall %sear ship)
 ::
 ++  poke-global-automerge
   |=  auto=?
@@ -764,7 +764,14 @@
   |=  [mez=tape tor=(unit toro)]
   ?~  tor
     abet:(spam leaf+mez ~)
-  abet:(emit:(spam leaf+mez ~) %pass /kiln %arvo %syscall %c [%info u.tor])
+  =/  [des=desk =nori]  u.tor
+  =<  abet
+  %-  emit:(spam leaf+mez ~)
+  :*  %pass  /kiln  %arvo
+      ?:  ?=(%& -.nori)
+        [%clay %rite des p.nori]
+      [%clay %name des p.nori q.nori]
+  ==
 ::
 ++  poke-install
   |=  [loc=desk her=ship rem=desk]
@@ -781,7 +788,7 @@
     =.  ..abet  abet:drop:(sync loc u.got)
     ..abet(zyn (~(del by zyn) loc u.got))
   =?  ..abet  ?=(%dead zest)
-    (emit %pass /kiln/install %arvo %syscall %c %zest loc ?:(=(our her) %live %held))
+    (emit %pass /kiln/install %arvo %clay %zest loc ?:(=(our her) %live %held))
   ?:  (~(has by zyn) loc her rem)
     abet:(spam (render "already syncing" loc her rem ~) ~)
   ?:  =([our loc] [her rem])
@@ -813,7 +820,7 @@
   ?~  bem
     =+  "can't mount bad path: {<pax>}"
     abet:(spam leaf+- ~)
-  abet:(emit %pass /mount %arvo %syscall %c [%mont pot u.bem])
+  abet:(emit %pass /mount %arvo %clay %mont pot u.bem)
 ::
 ++  poke-jump-propose
   |=  [syd=desk her=ship sud=desk]
@@ -897,10 +904,10 @@
   |=  [=term desk=?]
   =<  abet
   ?.  desk
-    (emit %pass /nuke %arvo %syscall %g [%nuke term])
+    (emit %pass /nuke %arvo %gall %nuke term)
   %-  emil
   %+  turn  (get-apps-have our term now)
-  |=([=dude ?] [%pass /nuke %arvo %syscall %g [%nuke dude]])
+  |=([=dude ?] [%pass /nuke %arvo %gall %nuke dude])
 ::
 ++  poke-pass
   |=  =card:agent:gall
@@ -917,15 +924,15 @@
   =<  abet
   %-  emit
   =/  =rite  [%r ~ ?:(pub %black %white) ~]
-  [%pass /kiln/permission %arvo %syscall %c [%perm syd pax rite]]
+  [%pass /kiln/permission %arvo %clay %perm syd pax rite]
 ::
 ++  poke-rein
   |=  [=desk =rein]
-  abet:(emit %pass /kiln/rein %arvo %syscall %c %rein desk rein)
+  abet:(emit %pass /kiln/rein %arvo %clay %rein desk rein)
 ::
 ++  poke-revive
   |=  =desk
-  abet:(emit %pass /kiln/revive %arvo %syscall %c %zest desk %live)
+  abet:(emit %pass /kiln/revive %arvo %clay %zest desk %live)
 ::
 ++  poke-rm
   |=  a=path
@@ -964,7 +971,7 @@
     ?:  (~(has in .^((set desk) %cd /(scot %p our)//(scot %da now))) dek)
       &
     ~>  %slog.(fmt "desk does not yet exist: {<dek>}")  |
-  |=(=desk [%pass /kiln/suspend %arvo %syscall %c %zest desk %dead])
+  |=(=desk [%pass /kiln/suspend %arvo %clay %zest desk %dead])
 ::
 ++  poke-sync
   |=  sync-record
@@ -1006,7 +1013,7 @@
     abet:(spam leaf+"desk does not exist: {<loc>}" ~)
   ~>  %slog.(fmt "uninstalling {<loc>}")
   =?  ..on-init  !=(+<:got %dead)
-    (emit %pass /kiln/uninstall %arvo %syscall %c %zest loc %dead)
+    (emit %pass /kiln/uninstall %arvo %clay %zest loc %dead)
   ?~  sync=(~(get by sources) loc)
     abet
   (poke-unsync loc u.sync)
@@ -1018,8 +1025,8 @@
     ?~  bem
       =+  "can't unmount bad path: {<mon>}"
       abet:(spam leaf+- ~)
-    abet:(emit %pass /unmount-beam %arvo %syscall %c [%ogre [[p q r] s]:u.bem])
-  abet:(emit %pass /unmount-point %arvo %syscall %c [%ogre mon])
+    abet:(emit %pass /unmount-beam %arvo %clay %ogre [[p q r] s]:u.bem)
+  abet:(emit %pass /unmount-point %arvo %clay %ogre mon)
 ::
 ::  Don't need to cancel anything because new syncs will get a new nonce
 ::
@@ -1033,7 +1040,7 @@
 ::
 ++  poke-essential-desk
   |=  [=desk ese=?]
-  abet:(emit %pass /kiln/essential-desk %arvo %syscall %c %esse desk ese)
+  abet:(emit %pass /kiln/essential-desk %arvo %clay %esse desk ese)
 ::  +peer: handle %watch
 ::
 ++  peer
@@ -1086,36 +1093,40 @@
   ==
 ::
 ++  take-arvo
-  |=  [=wire =sign-arvo]
+  |=  [=wire gift=gift-user-v1:gall]
   ^+  abet
   ?-    wire
       [%sync %merg *]   abet
       [%find-ship *]    abet
       [%sync *]         abet
-      [%zinc *]         (take-sync t.wire sign-arvo)
+      [%zinc *]         (take-sync t.wire gift)
       [%autocommit *]   %+  take-wake-autocommit  t.wire
-                        ?>(?=(%wake +<.sign-arvo) +>.sign-arvo)
+                        ?>(?=([%behn %wake *] gift) time.gift)
       [%vats *]         abet
       [%fuse-request @tas *]
                       =/  f  (fuzz i.t.wire now)
                       ?~  f
                         abet
-                      abet:abet:(take:u.f t.t.wire sign-arvo)
-      [%fuse @tas *]  ?>  ?=(%mere +<.sign-arvo)
+                      abet:abet:(take:u.f t.t.wire gift)
+      [%fuse @tas *]  ?>  ?=([%clay %mere *] gift)
                       =/  syd=desk  i.t.wire
-                      ?.  ?=([%| *] +>.sign-arvo)
-                        ?~  p.p.sign-arvo
+                      ?.  ?=([%| *] p.gift)
+                        ?~  p.p.gift
                           abet
                         =/  msg=tape  "fuse merge conflict for {<syd>}"
-                        %-  (slog [leaf+msg >p.p.sign-arvo< ~])
+                        %-  (slog [leaf+msg >p.p.gift< ~])
                         abet
-                      %-  (slog leaf+"failed fuse for {<syd>}" p.p.sign-arvo)
+                      %-  (slog leaf+"failed fuse for {<syd>}" p.p.gift)
                       abet
       *
-    ?+    +<.sign-arvo
-        ((slog leaf+"kiln: strange card {<+<.sign-arvo wire>}" ~) abet)
-      %done  (done wire +>.sign-arvo)
-      %mere  (take-mere wire +>.sign-arvo)
+    ?+  gift  !!
+        [%syscall *]
+      =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
+      ?.  ?=(%done +<.sign-arvo)
+          ((slog leaf+"kiln: strange card {<+<.sign-arvo wire>}" ~) abet)
+      (done wire +>.sign-arvo)
+    ::
+      [%clay %mere *]  (take-mere wire p.gift)
     ==
   ==
 ++  take  |=(way=wire ?>(?=([@ ~] way) (work i.way))) ::  general handler
@@ -1140,16 +1151,12 @@
   abet
 ::
 ++  take-wake-autocommit
-  |=  [way=wire error=(unit tang)]
-  ?^  error
-    %-  (slog u.error)
-    ~&  %kiln-wake-autocommit-fail
-    abet
+  |=  [way=wire =time]
   =.  nex.commit-timer  (add now tim.commit-timer)
   =<  abet
   %-  emil
-  :~  [%pass /commit %arvo %syscall %c [%dirk mon.commit-timer]]
-      [%pass way.commit-timer %arvo %syscall %b [%wait nex.commit-timer]]
+  :~  [%pass /commit %arvo %clay %dirk mon.commit-timer]
+      [%pass way.commit-timer %arvo %behn %wait nex.commit-timer]
   ==
 ::
 ::
@@ -1204,8 +1211,7 @@
       =/  wir=wire
           /kiln/fuse-request/[syd]/(scot %p p.bec)/[q.bec]/(scot %ud hax)
       =/  rav=rave  [%sing %w r.bec /]
-      =/  rif=riff  [q.bec `rav]
-      `[%pass wir %arvo %syscall %c [%warp who.fs rif]]
+      `[%pass wir %arvo %clay %read ~ who.fs q.bec rav]
     ::  No need to keep state if all the sources are static
     ?~  movs
       delete
@@ -1220,31 +1226,30 @@
       |=  [fs=fuse-source g=germ]
       [(realize-fuse-source fs |) g]
     %-  blab
-    [%pass /kiln/fuse/[syd] %arvo %syscall %c [%fuse syd bas con]]~
+    [%pass /kiln/fuse/[syd] %arvo %clay %fuse syd bas con]~
   ::
   ++  fuse
     ^+  ..abet
     send-fuse:make-requests
   ::
   ++  take
-    |=  [wir=wire =sign-arvo]
-    ^+  ..fuse
-    ?>  =((lent wir) 3)
-    =/  who=ship  (slav %p (snag 0 wir))
-    =/  src=desk  (snag 1 wir)
-    =/  hax=@ud  (slav %ud (snag 2 wir))
-    ?.  =(hax (mug [kf (~(got by hxs) syd)]))
-      ::  If the hash in the wire doesn't match the current request
-      ::  this is a response for a previous fuse that we can ignore.
-      ..take
-    ?>  ?=([?(%clay %behn) %writ *] sign-arvo)
-    =/  gif  +.sign-arvo
-    ?~  p.gif
-      %-  (slog leaf+"|fuse request failed for {<src>} on <who> - cancelling")
-      delete
-    =/  cas=cass:clay  !<(cass:clay +.r.u.p.gif)
-    =.  mox  (~(put by mox) [who src] ud.cas)
-    fuse
+  |=  [wir=wire gift=gift-user-v1:gall]
+  ^+  ..fuse
+  ?>  =((lent wir) 3)
+  =/  who=ship  (slav %p (snag 0 wir))
+  =/  src=desk  (snag 1 wir)
+  =/  hax=@ud  (slav %ud (snag 2 wir))
+  ?.  =(hax (mug [kf (~(got by hxs) syd)]))
+    ::  If the hash in the wire doesn't match the current request
+    ::  this is a response for a previous fuse that we can ignore.
+    ..take
+  ?>  ?=([%clay %read *] gift)
+  ?~  riot.gift
+    %-  (slog leaf+"|fuse request failed for {<src>} on <who> - cancelling")
+    delete
+  =/  cas=cass:clay  !<(cass:clay +.r.u.riot.gift)
+  =.  mox  (~(put by mox) [who src] ud.cas)
+  fuse
   ::
   ::  utility functions below
   ::
@@ -1274,14 +1279,14 @@
   --
 ::
 ++  take-sync
-  |=  [=wire =sign-arvo]
+  |=  [=wire gift=gift-user-v1:gall]
   ?>  ?=([@ @ @ *] wire)
   =*  syd  i.wire
   =/  her  (slav %p i.t.wire)
   =*  sud  i.t.t.wire
   ?.  (~(has by zyn) syd her sud)
     abet
-  abet:abet:(take:(sync syd her sud) t.t.t.wire sign-arvo)
+  abet:abet:(take:(sync syd her sud) t.t.t.wire gift)
 ::
 ++  sync
   |=  sync-record
@@ -1318,7 +1323,7 @@
   ++  merg
     |=  [=wire =desk]
     %:  emit
-      %pass  (ware wire)  %arvo  %syscall  %c
+      %pass  (ware wire)  %arvo  %clay
       %merg  desk  her  sud
       ud+(dec let)  (get-germ desk)
     ==
@@ -1368,92 +1373,96 @@
   ::  Instead, we do the merges to syd and kid explicitly.
   ::
   ++  take
-    |=  [=wire =sign-arvo]
+    |=  [=wire gift=gift-user-v1:gall]
     ^+  ..abet
     ?>  ?=([@ @ *] wire)
     ?.  =(nun i.wire)
       ..abet
-    ?+      i.t.wire
-          ~>  %slog.(fmt "sync-bad-take {<wire>}")
-          ..abet
-        %init
-      ?.  =(0 let)
-        ~>  %slog.(fmt "sync-bad-stage {<let>} {<wire>}")
-        ..abet
+    ?+  gift  !!
+        [%syscall *]
+      =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
       ?>  ?=(%arow +<.sign-arvo)
-      ?:  ?=(%| -.p.sign-arvo)
-        ~>  %slog.(fmt "activation failed into {here}; retrying sync")
-        %-  (slog p.p.sign-arvo)
-        init
-      ::  Now that we know the revision, start main download loop
-      ::
-      =.  let  !<(@ud q.p.p.sign-arvo)
-      next
-    ::
-        %next
-      ?>  ?=(%arow +<.sign-arvo)
-      ?:  ?=(%| -.p.sign-arvo)
-        ::  ~>  %slog.(fmt "download failed into {here}; retrying sync")
-        ::  %-  (slog p.p.sign-arvo)
-        =.  ..abet  drop
-        init
-      ::
-      ~>  %slog.(fmt "finished downloading update for {here}")
-      =.  let  +(let)
-      ::  If nothing changed, just ensure %kids is up-to-date and advance
-      ::
-      ?.  (get-remote-diff our syd now [her sud (dec let)])
-        =<  next:drop
-        ?~  kid
-          ~>  %slog.(fmt "remote is identical to {here}, skipping")
+      ?+      i.t.wire
+            ~>  %slog.(fmt "sync-bad-take {<wire>}")
+            ..abet
+          %init
+        ?.  =(0 let)
+          ~>  %slog.(fmt "sync-bad-stage {<let>} {<wire>}")
           ..abet
-        ?.  (get-remote-diff our u.kid now [her sud (dec let)])
-          ~>  %slog.(fmt "remote is identical to {here}, skipping")
-          ..abet
-        ~>  %slog.(fmt "remote is identical to {here}, merging into {<u.kid>}")
-        (merg /kids u.kid)
-      ::  wait for approval if can't automerge & signal available update
-      ::
-      ?.  |(=(our her) yea =([~ &] nit) &(=(~ nit) mer))
-        =.  ..abet  gain
+        ?:  ?=(%| -.p.sign-arvo)
+          ~>  %slog.(fmt "activation failed into {here}; retrying sync")
+          %-  (slog p.p.sign-arvo)
+          init
+        ::  Now that we know the revision, start main download loop
+        =.  let  !<(@ud q.p.p.sign-arvo)
         next
-      ::  Else start merging, but also immediately start listening to
-      ::  the next revision.  Now, all errors should no-op -- we're
-      ::  already waiting for the next revision.
       ::
-      =.  yea  |
-      =.  ..abet  (merg /main syd)
-      next
-    ::
-        %main
-      ?>  ?=(%mere +<.sign-arvo)
-      =<  tada
-      ?:  ?=(%| -.p.sign-arvo)
-        =+  "kiln: merge into {here} failed, waiting for next revision"
-        %-  (slog leaf/- p.p.sign-arvo)
-        ..abet
-      ~>  %slog.(fmt "merge into {<syd>} succeeded")
-      ::  If we have a kids desk parameter, merge into that
-      ::
-      ?~  kid
-        ..abet
-      ~>  %slog.(fmt "kids merge into {<u.kid>}")
-      (merg /kids u.kid)
-    ::
-        %kids
-      ?>  ?=(%mere +<.sign-arvo)
-      ?~  kid
-        ..abet
-      ::  Just notify; we've already started listening for the next
-      ::  version
-      ::
-      ?-  -.p.sign-arvo
-        %&  ~>  %slog.(fmt "kids merge to {<u.kid>} succeeded")
+          %next
+        ?:  ?=(%| -.p.sign-arvo)
+          ::  ~>  %slog.(fmt "download failed into {here}; retrying sync")
+          ::  %-  (slog p.p.sign-arvo)
+          =.  ..abet  drop
+          init
+        ::
+        ~>  %slog.(fmt "finished downloading update for {here}")
+        =.  let  +(let)
+        ::  If nothing changed, just ensure %kids is up-to-date and advance
+        ::
+        ?.  (get-remote-diff our syd now [her sud (dec let)])
+          =<  next:drop
+          ?~  kid
+            ~>  %slog.(fmt "remote is identical to {here}, skipping")
             ..abet
-        %|  ~>  %slog.(fmt "kids merge to {<u.kid>} failed")
-            %-  (slog p.p.sign-arvo)
+          ?.  (get-remote-diff our u.kid now [her sud (dec let)])
+            ~>  %slog.(fmt "remote is identical to {here}, skipping")
             ..abet
+          ~>  %slog.(fmt "remote is identical to {here}, merging into {<u.kid>}")
+          (merg /kids u.kid)
+        ::  wait for approval if can't automerge & signal available update
+        ::
+        ?.  |(=(our her) yea =([~ &] nit) &(=(~ nit) mer))
+          =.  ..abet  gain
+          next
+        ::  Else start merging, but also immediately start listening to
+        ::  the next revision.  Now, all errors should no-op -- we're
+        ::  already waiting for the next revision.
+        ::
+        =.  yea  |
+        =.  ..abet  (merg /main syd)
+        next
       ==
+        [%clay %mere *]
+      ?+      i.t.wire
+            ~>  %slog.(fmt "sync-bad-take {<wire>}")
+            ..abet
+          %main
+        =<  tada
+        ?:  ?=(%| -.p.gift)
+          =+  "kiln: merge into {here} failed, waiting for next revision"
+          %-  (slog leaf/- p.p.gift)
+          ..abet
+        ~>  %slog.(fmt "merge into {<syd>} succeeded")
+        ::  If we have a kids desk parameter, merge into that
+        ::
+        ?~  kid
+          ..abet
+        ~>  %slog.(fmt "kids merge into {<u.kid>}")
+        (merg /kids u.kid)
+      ::
+          %kids
+        ?>  ?=(%mere +<.gift)
+        ?~  kid
+          ..abet
+        ::  Just notify; we've already started listening for the next
+        ::  version
+        ::
+        ?-  -.p.gift
+          %&  ~>  %slog.(fmt "kids merge to {<u.kid>} succeeded")
+              ..abet
+          %|  ~>  %slog.(fmt "kids merge to {<u.kid>} failed")
+              %-  (slog p.p.gift)
+              ..abet
+      ==  ==
     ==
   --
 ::
@@ -1482,7 +1491,7 @@
     ^+  .
     ?<  ?=(%this gem)
     ?<  ?=(%that gem)
-    (blab [%pass /kiln/[syd] %arvo %syscall %c [%merg syd her sud cas gem]] ~)
+    (blab [%pass /kiln/[syd] %arvo %clay %merg syd her sud cas gem] ~)
   ::
   ++  fancy-merge                                     ::  send to self
     |=  [syd=desk her=@p sud=desk gem=?(%auto germ)]
@@ -1565,9 +1574,8 @@
         =<  win
         %-  blab:(spam tan)
         :_  ~
-        :*  %pass  /kiln/[syd]  %arvo  %syscall  %c
-            %info
-            tic  %&
+        :*  %pass  /kiln/[syd]  %arvo
+            %clay  %rite  tic
             %+  murn  notations
             |=  [=path dif=(unit [=mark =vase])]
             ^-  (unit [^path miso])

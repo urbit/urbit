@@ -2447,6 +2447,7 @@
           [%behn %wake *]           [%behn %wake ;;(time deets)]
           [%clay %writ *]           [%clay %read deets p.sign-arvo]
           [%clay %tire *]           sign-arvo
+          [%clay %mere *]           sign-arvo
           [%dill %blit *]           [%dill %blit ;;(@tas deets) p.sign-arvo]
           [%dill %logs *]           sign-arvo
           [%dill %meme *]           sign-arvo
@@ -3010,8 +3011,7 @@
             $(biz.gift t.biz.gift)
         ==  ==
       ::
-          [%clay *]
-        ?>  ?=(%read +<.gift)
+          [%clay %read *]
         =*  rid  [%clay %warp id.gift]
         =+  det=(~(got by resource-deets.yoke) wire rid)
         ?>  ?=([%clay %warp *] det)
