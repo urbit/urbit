@@ -45,13 +45,11 @@
   ;<  ~          bind:m  (aqua-setup ahoy-on/~)
   ;<  ~          bind:m  test-mesa-ames-1
   ;<  ~          bind:m  test-ames-mesa-1
-  ;<  ~          bind:m  test-mesa-ames-2  :: comet
-  ;<  ~          bind:m  test-ames-mesa-2  :: XX bail:evil comets
-  ;<  ~          bind:m  test-mesa-ames-3  :: comet
+  ;<  ~          bind:m  test-mesa-ames-2  :: comet -> ~bud
+  :: ;<  ~          bind:m  test-ames-mesa-2  :: ~bud -> comet XX hangs
+  :: ;<  ~          bind:m  test-mesa-ames-3  :: ~dev -> comet XX crash sift-open-packet
   ;<  ~          bind:m  (boot-with-core-and-breach %mesa)
-  :: XX after hearing the breach, %mesa waits for the ~m2 retry timer...
-  ::
-  :: ;<  ~          bind:m  (boot-with-core-and-breach %ames)
+  ;<  ~          bind:m  (boot-with-core-and-breach %ames)
   ::  TODO
   ::
   :: ;<  ~          bind:m  (boot-ames-mesa ~dev comet)
@@ -81,22 +79,18 @@
   ::  comet will send a %mesa packet to ~bud, that has %ames as
   ::  default network core
   ::
-  =/  comet=@p
-    ~londeg-tirlys-somlyd-poltus--pintyn-tarbyl-bicnux-marbud
   ::  the comet will always contact first its sponsor
   ::
-  ;<  ~  bind:m  (boot-core comet ~bud %ames %mesa)
+  ;<  ~  bind:m  (boot-core comet ~bud %mesa %ames)
   (pure:m ~)
 ::
 ++  test-ames-mesa-2
   =/  m  (strand ,~)
-  ::  ~dev will have todos in it alien agenda when hearing the
+  ::  ~bud will have todos in it alien agenda when hearing the
   ::  attestation proof. .comet has %mesa as its network core so
   ::  it should handle the packet and enqueue the $ahoy %plea
   ::
-  :: =/  comet=@p
-  ::   ~londeg-tirlys-somlyd-poltus--pintyn-tarbyl-bicnux-marbud
-  :: ;<  ~  bind:m  (boot-core ~dev comet %ames %mesa)  :: XX bail:evil
+  ;<  ~  bind:m  (boot-core ~bud comet %ames %mesa)  :: XX bail:evil
   (pure:m ~)
 ::
 ++  test-mesa-ames-3
@@ -137,7 +131,7 @@
   ;<  ~  bind:m  (copy-file who /app/pub/hoon pub-agent)
   ;<  ~  bind:m  (dojo who "|start %sub")
   ;<  ~  bind:m  (dojo who "|start %pub")
-  ::  subscribe to the %sub test agent to capture %facts from %pub
+  ::  subscribe to the %sub test agent to capture received %facts from %pub
   ::
   =/  =aqua-event:aquarium
     :+  %event  who
@@ -195,30 +189,43 @@
   ::    - packet is processed using %ames
   ::
   ::  if receiver has %mesa as .core, the receiver will:
+  ::    (if nothing outstanding and %peer as %alien)
   ::    - move the peer into chums
   ::    - drop the packet
   ::    - ask jael for the keys
   ::
   ;<  t=drivers  bind:m  init
-  ~&  >>  drivers/t
   ;<  ~  bind:m
-    ::  setup galaxies first
+    ::  setup sender (and galaxies) first so %aqua doesn't crash when scrying
+    ::  setup network core for the sender and receivers
     ::
-    ?:  ?=(%pawn (clan:title sndr))
-      ;<  ~  bind:m  (setup rcvr core-r)
-      (setup sndr core-s)
-    ;<  ~  bind:m  (setup sndr core-s)
-    (setup rcvr core-r)
-  ;<  ~  bind:m
-    ?.  ?=(%ames core-s)
-      ^-  form:m
-      (pure:m ~)
-    (load-migration-hash sndr rcvr)
-  ::  first plea would be the /gf system flow plea
+    ?.  ?=(%pawn (clan:title sndr))
+      ::  XX do this per-ship
+      ::
+      ;<  ~  bind:m  (switch-network-core core-s)
+      ;<  ~  bind:m  (setup sndr core-s)
+      ;<  ~  bind:m  (switch-network-core core-r)
+      (setup rcvr core-r)
+    ;<  ~  bind:m
+      ?:  =(~bud rcvr)
+        (pure:m ~)
+      ::  we need to setup ~bud as well if the comet tries to talk to other galaxies
+      ::
+      (setup ~bud core-s)
+    ;<  ~  bind:m  (switch-network-core core-r)
+    ;<  ~  bind:m  (setup rcvr core-r)
+    ;<  ~  bind:m  (switch-network-core core-s)
+    (setup sndr core-s)
+  ::  load migration hashes
   ::
-  ;<  ~  bind:m  (send-hi sndr rcvr)
+  ;<  ~  bind:m  (load-migration-hash sndr rcvr)
+  ;<  ~  bind:m  (load-migration-hash rcvr sndr)
+  ::  first plea would be the /gf system flow plea       :: (bone = 0)
   ::
-  ;<  ~  bind:m  (dojo sndr ":sub [%sub {<rcvr>} %pub]")
+  ;<  ~  bind:m  (send-hi sndr rcvr)                     :: (bone = 4)
+  ::
+  ;<  ~  bind:m  (dojo sndr ":sub [%sub {<rcvr>} %pub]") :: (bone = 8)
+  ::
   ::  XX wait for migration confirmation
   ::    this could be a spurious print coming from a "migrated" %ahoy $plea. these
   ::    %mesa $pleas are always acked, and the actual migration no-ops since the peer
@@ -233,7 +240,7 @@
   ::
   ;<  ~  bind:m  (sleep ~s2)
   ;<  ~  bind:m  (dojo rcvr ":pub send+`(list [path @])`[/hola 1]~")
-  ::  check that sndr receives the gift after migration
+  ::  check that sndr receives the gift aft er migration
   ::
   ;<  =noun  bind:m
     (wait-for-fact sndr %noun /aqua/watch/sub (gate ,(list [path @]) [/hola 1]~))
