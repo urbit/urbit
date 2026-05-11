@@ -55,6 +55,7 @@
           ex-res=(set arvo-resource)
           ex-scry=(set [wire ship path])
           ex=(list $-(card:agent:gall tang))
+          exit-nice=?
       ==
   %-  eval-mare
   =/  m  (mare ,~)
@@ -84,11 +85,11 @@
   ::
   ;<  caz3=(list card:agent:gall)  bind:m
     ?:  ?=(^ gift)  (do-arvo wir u.gift)
-    (do-poke [%spider-stop !>([tid &])])
+    (do-poke [%spider-stop !>([tid exit-nice])])
   ;<  ~  bind:m
     %+  ex-cards  caz3
     %-  welp  :_  ex
-    :~  ex-thread-done
+    :~  ?:(exit-nice ex-thread-done ex-thread-fail)
         ex-kick
     ==
   ;<  vas2=vase         bind:m  get-save
@@ -97,6 +98,22 @@
     (~(gut by resources.state3) tid ~)
   (ex-equal !>(res2) !>(~))
 ::
+++  run-thread-fail
+  |=  $:  task=task-user-v1
+          ex-res=(set arvo-resource)
+          ex-scry=(set [wire ship path])
+          ex=(list $-(card:agent:gall tang))
+      ==
+  (run-thread task gift=~ ex-res ex-scry ex |)
+::
+++  run-thread-done
+  |=  $:  task=task-user-v1
+          gift=(unit gift-user-v1:gall)
+          ex-res=(set arvo-resource)
+          ex-scry=(set [wire ship path])
+          ex=(list $-(card:agent:gall tang))
+      ==
+  (run-thread task gift ex-res ex-scry ex &)
 ::
 ++  ex-user-task
   |=  [tid=@ta task=task-user-v1:gall]
@@ -108,6 +125,12 @@
   :~  'expected %thread-done'
   ==
 ::
+++  ex-thread-fail
+  |=  =card:agent:gall
+  ?:  ?=([%give %fact * %thread-fail *] card)  ~
+  :~  'expected %thread-fail'
+  ==
+::
 ++  ex-kick
   |=  =card:agent:gall
   ?:  ?=([%give %kick *] card)  ~
@@ -116,7 +139,7 @@
 ::
 ::
 ++  test-rt-clay-read-sing
-  %:  run-thread
+  %:  run-thread-done
       [%clay %read 123 our %foo [%sing %x da+now /foo/hoon]]
       `[%clay %read 123 ~]
       (sy :~([wir [%clay %warp 123]]))
@@ -127,7 +150,7 @@
 ++  test-rt-clay-read-many
 ::  TODO: check resource-deets.state as well as resources
   =/  =rant:clay  [[%x ud+1 %foo] /foo/hoon [%$ !>(0)]]
-  %:  run-thread
+  %:  run-thread-done
       [%clay %read 123 our %foo [%many & ud+1 ud+3 /foo/hoon]]
       `[%clay %read 123 `rant]
       (sy :~([wir [%clay %warp 123]]))
@@ -136,7 +159,7 @@
   ==
 ::
 ++  test-rt-iris-request-cancel-ted
-  %:  run-thread
+  %:  run-thread-done
       [%iris %request *request:http *outbound-config:iris]
       ~
       (sy :~([wir [%iris %request]]))
@@ -145,7 +168,7 @@
   ==
 ::
 ++  test-rt-iris-request-got-gift
-  %:  run-thread
+  %:  run-thread-done
       [%iris %request *request:http *outbound-config:iris]
       `[%iris %http-response *client-response:iris]
       (sy :~([wir [%iris %request]]))
@@ -156,7 +179,7 @@
 ::
 ++  test-remote-scry-task-user-keen
   =/  =spar:ames  [~rus /foo/bar]
-  %:  run-thread
+  %:  run-thread-done
       [%ames %keen & spar]
       `[%syscall 123 [%tune *roar:ames]]
       ~
@@ -165,7 +188,7 @@
   ==
 ++  test-remote-scry-syscall-keen
   =/  =spar:ames  [~rus /foo/bar]
-  %:  run-thread
+  %:  run-thread-done
       [%syscall %a %keen `[1 2] spar]
       `[%syscall 123 [%tune *roar:ames]]
       ~
@@ -174,11 +197,38 @@
   ==
 ++  test-remote-scry-syscall-chum
   =/  =spar:ames  [~rus /foo/bar]
-  %:  run-thread
+  %:  run-thread-done
       [%syscall %a %chum spar]
       `[%syscall 123 [%tune *roar:ames]]
       ~
       (sy :~([wir -.spar +.spar]))
       ~
+  ==
+::
+++  test-thread-fail-syscall-chum
+  =/  =spar:ames  [~rus /foo/bar]
+  %:  run-thread-fail
+      [%syscall %a %chum spar]
+      ~
+      (sy :~([wir -.spar +.spar]))
+      [(ex-user-task tid [%ames %yawn spar]) ~]
+  ==
+::
+++  test-thread-fail-task-user-keen
+  =/  =spar:ames  [~rus /foo/bar]
+  %:  run-thread-fail
+      [%ames %keen & spar]
+      ~
+      (sy :~([wir -.spar +.spar]))
+      [(ex-user-task tid [%ames %yawn spar]) ~]
+  ==
+::
+++  test-thread-fail-syscall-keen
+  =/  =spar:ames  [~rus /foo/bar]
+  %:  run-thread-fail
+      [%syscall %a %keen `[1 2] spar]
+      ~
+      (sy :~([wir -.spar +.spar]))
+      [(ex-user-task tid [%ames %yawn spar]) ~]
   ==
 --

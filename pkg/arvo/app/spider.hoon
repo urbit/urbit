@@ -711,7 +711,7 @@
   |=  [[=wire =ship =path] cards=(list card)]
   %-  (slog leaf+"cancelling {<tid>}: [{<[wire ship path]>}]" ~)
   :_  cards
-  [%pass (welp /thread/[tid] wire) %arvo %ames %yawn ship path]
+  [%pass wire %arvo %ames %yawn ship path]
 ::
 ++  thread-http-fail
   |=  [=tid =term =tang]
