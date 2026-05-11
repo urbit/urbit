@@ -10,6 +10,7 @@
   ?-    group
       ~
     :~  %ph-add
+        %ph-ahoy
         %ph-boot-az
         %ph-boot-planet
         %ph-breach-hi
