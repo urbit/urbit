@@ -560,8 +560,8 @@
       [%ames-retry wen=@dr]
     this(ames-retry wen.val)
   ::
-      [%ahoy-on ~]
-    this(ahoy-on !ahoy-on)
+      [%ahoy-on on=?]
+    this(ahoy-on on.val)
   ::
       [%network-core core=?(%ames %mesa)]
     this(network-core core.val)
@@ -739,7 +739,11 @@
       ?:  (gth num.ae (lent u.cash))
         (pe ship.from.ae)
       ::TODO  depends on /ted/aqua/ames behavior in a weird indirect way
-      =/  for=@p  `@`(tail lane.for.ae)  ::NOTE  moons & comets not supported
+      =/  for=@p
+        ?:  =([%.n p=0xdead.beef.cafe] lane.for.ae)
+          ~londeg-tirlys-somlyd-poltus--pintyn-tarbyl-bicnux-marbud
+        `@`(tail lane.for.ae)  ::  XX only custom comet supported
+                               ::     moons not supported
       %-  push-events:(pe for)
       %-  flop  =<  events
       %+  roll  u.cash
