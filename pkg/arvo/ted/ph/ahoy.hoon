@@ -43,10 +43,10 @@
   ::  enable ahoy-probbing for all ships
   ::
   ;<  ~          bind:m  (aqua-setup ahoy-on/&)
-  :: ;<  ~          bind:m  test-mesa-ames-1
-  :: ;<  ~          bind:m  test-ames-mesa-1
-  :: ;<  ~          bind:m  (boot-with-core-and-breach %mesa)
-  :: ;<  ~          bind:m  (boot-with-core-and-breach %ames)
+  ;<  ~          bind:m  test-mesa-ames-1
+  ;<  ~          bind:m  test-ames-mesa-1
+  ;<  ~          bind:m  (boot-with-core-and-breach %mesa)
+  ;<  ~          bind:m  (boot-with-core-and-breach %ames)
   ::  comet tests
   ::
   ::  comet -> sponsor
