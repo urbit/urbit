@@ -434,30 +434,30 @@
     =+  peek  ?@  -  ~  =>  [t=u +(st s)]
     ?+  t  wide(tol |)
       [%atom %& *]  [%noun [%atom %ud ~] a.t]^move
-      [%dttr %&]    =+  tall-2(st move)  ?@  -  ~  [[%dttr u] s]
-      [%dtwt %&]    =+  tall(st move)    ?@  -  ~  [[%dtwt u] s]
-      [%dtls %&]    =+  tall(st move)    ?@  -  ~  [[%dtls u] s]
-      [%dtts %&]    =+  tall-2(st move)  ?@  -  ~  [[%dtts u] s]
-      [%wtcl %&]    =+  tall(st move)    ?@  -  ~  =>  [t=u +(st s)]
-                    =+  (expect %gap)    ?@  -  ~  =>  +(st s)
-                    =+  tall-2           ?@  -  ~  [[%wtcl t u] s]
-      [%tsgr %&]    =+  tall-2(st move)  ?@  -  ~  [[%tsgr u] s]
-      [%tsls %&]    =+  tall-2(st move)  ?@  -  ~  [[%tsls u] s]
+      [%dttr %&]    =+  tall-2(st move)       ?@  -  ~  [[%dttr u] s]
+      [%dtwt %&]    =+  tall(st move)         ?@  -  ~  [[%dtwt u] s]
+      [%dtls %&]    =+  tall(st move)         ?@  -  ~  [[%dtls u] s]
+      [%dtts %&]    =+  tall-2(st move)       ?@  -  ~  [[%dtts u] s]
+      [%wtcl %&]    =+  tall(st move)         ?@  -  ~  =>  [t=u +(st s)]
+                    =+  (expect %gap)         ?@  -  ~  =>  +(st s)
+                    =+  tall-2                ?@  -  ~  [[%wtcl t u] s]
+      [%tsgr %&]    =+  tall-2(st move)       ?@  -  ~  [[%tsgr u] s]
+      [%tsls %&]    =+  tall-2(st move)       ?@  -  ~  [[%tsls u] s]
       [%cnts %&]    !!  ::TODO
       [%sggr %&]    !!  ::TODO
       [%brcn %&]    !!  ::TODO
       [%brpt %&]    !!  ::TODO
-      [%ktls %&]    =+  tall-2(st move)  ?@  -  ~  [[%ktls u] s]
-      [%wtpt %&]    !!  ::TODO
+      [%ktls %&]    =+  tall-2(st move)       ?@  -  ~  [[%ktls u] s]
+      [%wtpt %&]    =+  tall-wing-2(st move)  ?@  -  ~  [[%wtpt u] s]
       [%wtcn %&]    !!  ::TODO
-      [%wtkt %&]    !!  ::TODO
+      [%wtkt %&]    =+  tall-wing-2(st move)  ?@  -  ~  [[%wtkt u] s]
     ==
   ::
   ++  wide
     ^-  (mandatory naty _st)
     =+  gulp  ?@  -  ~  =>  [t=u +(st s)]
     ?+  t  ~
-      [%limb *]     =+  (parse-wing limb.t)  ?@  -  ~  [[%cnts u ~] s]
+      [%limb *]     =+  (wing-tail limb.t)  ?@  -  ~  [[%cnts u ~] s]
       ::TODO  handle %dot
       [%atom %| *]  [%noun [%atom %ud ~] a.t]^st
       [%dttr %|]    =+  wide-2         ?@  -  ~  [[%dttr u] s]
@@ -474,12 +474,18 @@
       [%brcn %|]    !!  ::TODO
       [%brpt %|]    !!  ::TODO
       [%ktls %|]    =+  wide-2         ?@  -  ~  [[%ktls u] s]
-      [%wtpt %|]    !!  ::TODO
+      [%wtpt %|]    =+  wide-wing-2    ?@  -  ~  [[%wtpt u] s]
       [%wtcn %|]    !!  ::TODO
-      [%wtkt %|]    !!  ::TODO
+      [%wtkt %|]    =+  wide-wing-2    ?@  -  ~  [[%wtkt u] s]
     ==
   ::
-  ++  parse-wing
+  ++  wing-full
+    ^-  (mandatory wing _st)
+    =+  gulp  ?@  -  ~  =>  [t=u +(st s)]
+    ?.  ?=([%limb *] t)  ~
+    (wing-tail limb.t)
+  ::
+  ++  wing-tail
     |=  l=limb
     ^-  (mandatory wing _st)
     ::TODO  handle %dot as wing element
@@ -514,11 +520,21 @@
     =+  wide           ?@  -  ~  =>  [one=u +(st s)]
     =+  (expect %ace)  ?@  -  ~  =>  +(st s)
     =+  wide-1         ?@  -  ~  [[one u] s]
+  ++  wide-wing-2
+    ^-  (mandatory [wing naty naty] _st)
+    =+  wing-full      ?@  -  ~  =>  [w=u +(st s)]
+    =+  (expect %ace)  ?@  -  ~  =>  +(st s)
+    =+  wide-2         ?@  -  ~  [[w u] s]
   ++  tall-2
     ^-  (mandatory [naty naty] _st)
     =+  tall           ?@  -  ~  =>  [one=u +(st s)]
     =+  (expect %gap)  ?@  -  ~  =>  +(st s)
     =+  tall           ?@  -  ~  [[one u] s]
+  ++  tall-wing-2
+    ^-  (mandatory [wing naty naty] _st)
+    =+  wing-full      ?@  -  ~  =>  [w=u +(st s)]
+    =+  (expect %gap)  ?@  -  ~  =>  +(st s)
+    =+  tall-2         ?@  -  ~  [[w u] s]
   :: ++  dtls-w
   ::   ^-  (mandatory expr _st)
   ::   =+  wide-1  ?@  -  ~  [[%dtls u] s]

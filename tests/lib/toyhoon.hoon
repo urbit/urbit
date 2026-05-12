@@ -212,7 +212,8 @@
   (expect-eq !>(i.cur.s.res) !>(len.cur.s.res))  ::  fully parsed
 ::
 ++  test-parser
-  =+  z=[%noun [%atom %ud ~] 0]
+  =/  z=naty:th  [%noun [%atom %ud ~] 0]
+  =/  w=wing:th  [%| 0 `%$]~
   ;:  weld
     (make-parser-test '123' [%noun [%atom %ud ~] 123])
     (make-parser-test '.+(1)' [%dtls %noun [%atom %ud ~] 1])
@@ -236,5 +237,10 @@
   ::
     (make-parser-test '^+(0 0)' [%ktls z z])
     (make-parser-test '^+  0  0' [%ktls z z])
+  ::
+    (make-parser-test '?@($ 0 0)' [%wtpt w z z])
+    (make-parser-test '?@  $  0  0' [%wtpt w z z])
+    (make-parser-test '?^($ 0 0)' [%wtkt w z z])
+    (make-parser-test '?^  $  0  0' [%wtkt w z z])
   ==
 --
