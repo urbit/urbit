@@ -42,17 +42,38 @@
   ::
   ::  enable ahoy-probbing for all ships
   ::
-  ;<  ~          bind:m  (aqua-setup ahoy-on/~)
-  ;<  ~          bind:m  test-mesa-ames-1
-  ;<  ~          bind:m  test-ames-mesa-1
-  ;<  ~          bind:m  test-mesa-ames-2  :: comet -> ~bud
-  :: ;<  ~          bind:m  test-ames-mesa-2  :: ~bud -> comet XX hangs
-  :: ;<  ~          bind:m  test-mesa-ames-3  :: ~dev -> comet XX crash sift-open-packet
-  ;<  ~          bind:m  (boot-with-core-and-breach %mesa)
-  ;<  ~          bind:m  (boot-with-core-and-breach %ames)
+  ;<  ~          bind:m  (aqua-setup ahoy-on/&)
+  :: ;<  ~          bind:m  test-mesa-ames-1
+  :: ;<  ~          bind:m  test-ames-mesa-1
+  :: ;<  ~          bind:m  (boot-with-core-and-breach %mesa)
+  :: ;<  ~          bind:m  (boot-with-core-and-breach %ames)
+  ::  comet tests
+  ::
+  ::  comet -> sponsor
+  ::
+  ;<  ~          bind:m  test-simple-comet-1  :: "comet -> ~bud"  > :ping
+  ;<  ~          bind:m  test-simple-comet-2  :: "comet -> ~bud"  > :ping
+                                              ::    (kids hash loaded later)
+  ;<  ~          bind:m  test-simple-comet-3  :: "comet -> ~bud"  > |hi after migration
+  ;<  ~          bind:m  test-simple-comet-4  :: "comet -> ~bud"  > :sub pre-migration
+                                              ::                  > :pub post-migration
+  ::  galaxy -> comet
+  ;<  ~          bind:m  test-simple-comet-5  :: "comet -> ~bud"  > :ping
+                                              :: "~bud -> comet"  > |hi
+                                              :: comet %ahoy-probs galaxy
+  ;<  ~          bind:m  test-simple-comet-6  :: all in %mesa
+                                              :: "comet -> ~bud"  > :ping
+                                              :: "~bud -> comet"  > |hi
+  ;<  ~          bind:m  test-simple-comet-7  :: comet in %mesa, galaxy in %ames
+                                              ::  galaxy has %ames TODOS
+                                              :: "comet -> ~bud"  > :ping
+                                              :: "~bud -> comet"  > |hi
+  ;<  ~          bind:m  test-simple-comet-8  :: ~dev -> comet
+                                              ::  galaxy has %ames TODOS
+                                              :: "comet -> ~dev"  > :ping
+                                              :: "~dev -> comet"  > |hi
   ::  TODO
   ::
-  :: ;<  ~          bind:m  (boot-ames-mesa ~dev comet)
   :: ;<  ~          bind:m  boot-moon
   :: ;<  ~          bind:m  boot-planet
   (pure:m *vase)
@@ -73,24 +94,189 @@
   ::
   ;<  ~  bind:m  (boot-core ~bud ~dev %ames %mesa)
   (pure:m ~)
+::  botn comet and sponsor in %ames
 ::
-++  test-mesa-ames-2
+++  test-simple-comet-1
   =/  m  (strand ,~)
-  ::  comet will send a %mesa packet to ~bud, that has %ames as
-  ::  default network core
+  ::  comet boots with %ames and talks to its sponsor
+  ::  (will inmediately start %pinging)
+  ::  galaxy will start %ahoy probing after hearing the %plea
   ::
-  ::  the comet will always contact first its sponsor
+  ;<  t=drivers  bind:m  init
+  ;<  ~  bind:m  (switch-network-core %ames)
+  ;<  ~  bind:m  (setup ~bud %ames)
+  ;<  ~  bind:m  (load-migration-hash comet ~bud)
+  ;<  ~  bind:m  (dojo ~bud ":hood &ahoy-verb ~")
   ::
-  ;<  ~  bind:m  (boot-core comet ~bud %mesa %ames)
+  ;<  ~  bind:m  (setup comet %ames)
+  ::
+  ;<  ~  bind:m  (wait-for-output ~bud "ahoy: %mesa migration completed for {<comet>}")
+  ;<  ~          bind:m  (end t)
   (pure:m ~)
 ::
-++  test-ames-mesa-2
+++  test-simple-comet-2
   =/  m  (strand ,~)
-  ::  ~bud will have todos in it alien agenda when hearing the
-  ::  attestation proof. .comet has %mesa as its network core so
-  ::  it should handle the packet and enqueue the $ahoy %plea
+  ::  comet boots with %ames and talks to its sponsor
+  ::  (will inmediately start %pinging)
+  ::  galaxy will start %ahoy probing after hearing the %plea
+  ::  here we load the migration hash a bit later
   ::
-  ;<  ~  bind:m  (boot-core ~bud comet %ames %mesa)  :: XX bail:evil
+  ;<  t=drivers  bind:m  init
+  ;<  ~  bind:m  (switch-network-core %ames)
+  ;<  ~  bind:m  (setup ~bud %ames)
+  ;<  ~  bind:m  (dojo ~bud ":hood &ahoy-verb ~")
+  ::
+  ;<  ~  bind:m  (setup comet %ames)
+  ::
+  ;<  ~  bind:m  (load-migration-hash comet ~bud)
+  ;<  ~  bind:m  (wait-for-output ~bud "ahoy: %mesa migration completed for {<comet>}")
+  ;<  ~          bind:m  (end t)
+  (pure:m ~)
+::
+++  test-simple-comet-3
+  =/  m  (strand ,~)
+  ::  comet boots with %ames and talks to its sponsor
+  ::  (will inmediately start %pinging)
+  ::  galaxy will start %ahoy probing after hearing the %plea
+  ::  here we communicate using %mesa after migration
+  ::
+  ;<  t=drivers  bind:m  init
+  ;<  ~  bind:m  (switch-network-core %ames)
+  ;<  ~  bind:m  (setup ~bud %ames)
+  ;<  ~  bind:m  (load-migration-hash comet ~bud)
+  ;<  ~  bind:m  (dojo ~bud ":hood &ahoy-verb ~")
+  ::
+  ;<  ~  bind:m  (setup comet %ames)
+  ::
+  ;<  ~  bind:m  (wait-for-output ~bud "ahoy: %mesa migration completed for {<comet>}")
+  ;<  ~  bind:m  (send-hi comet ~bud)
+  ;<  ~  bind:m  (end t)
+  (pure:m ~)
+::
+++  test-simple-comet-4
+  =/  m  (strand ,~)
+  ::  comet boots with %ames and talks to its sponsor
+  ::  (will inmediately start %pinging)
+  ::  galaxy will start %ahoy probing after hearing the %plea
+  ::  here we start a subscription flow _before_ migration and
+  ::  receive a fact _after_ migration
+  ::
+  ;<  t=drivers  bind:m  init
+  ;<  ~  bind:m  (switch-network-core %ames)
+  ;<  ~  bind:m  (setup ~bud %ames)
+  ;<  ~  bind:m  (dojo ~bud ":hood &ahoy-verb ~")
+  ::
+  ;<  ~  bind:m  (setup comet %ames)
+  ;<  ~  bind:m  (dojo comet ":sub [%sub {<~bud>} %pub]")
+  ::
+  ;<  ~  bind:m  (load-migration-hash comet ~bud)
+  ;<  ~  bind:m  (wait-for-output ~bud "ahoy: %mesa migration completed for {<comet>}")
+  ;<  ~  bind:m  (send-hi comet ~bud)
+  ;<  ~  bind:m  (dojo ~bud ":pub send+`(list [path @])`[/hola 1]~")
+  ;<  =noun  bind:m
+    (wait-for-fact comet %noun /aqua/watch/sub (gate ,(list [path @]) [/hola 1]~))
+  ;<  ~  bind:m  (end t)
+  (pure:m ~)
+::
+++  test-simple-comet-5
+  =/  m  (strand ,~)
+  ::  comet boots with %ames and talks to its sponsor
+  ::  (will inmediately start %pinging)
+  ::  comet will start %ahoy probing after hearing the /gf %plea
+  ::
+  ;<  t=drivers  bind:m  init
+  ;<  ~  bind:m  (switch-network-core %ames)
+  ::  the galaxy won't migrate the comet
+  ::
+  ;<  ~  bind:m  (aqua-setup ahoy-on/|)
+  ;<  ~  bind:m  (setup ~bud %ames)
+  ::
+  ;<  ~  bind:m  (aqua-setup ahoy-on/&)
+  ;<  ~  bind:m  (setup comet %ames)
+  ;<  ~  bind:m  (load-migration-hash from=~bud to=comet)
+  ;<  ~  bind:m  (dojo comet ":hood &ahoy-verb ~")
+  ::
+  ;<  ~  bind:m  (wait-for-output comet "ahoy: %mesa migration completed for ~bud")
+  ;<  ~  bind:m  (end t)
+  (pure:m ~)
+::
+++  test-simple-comet-6
+  =/  m  (strand ,~)
+  ::  comet boots with %mesa and talks to its sponsor
+  ::  (will inmediately start %pinging)
+  ::  the galaxy will save the comet in .chums
+  ::
+  ;<  t=drivers  bind:m  init
+  ;<  ~  bind:m  (switch-network-core %ames)
+  ::  the galaxy won't migrate the comet
+  ::
+  ;<  ~  bind:m  (aqua-setup ahoy-on/|)
+  ;<  ~  bind:m  (setup ~bud %ames)
+  ::  the comet will send %mesa packets first
+  ::
+  ;<  ~  bind:m  (switch-network-core %mesa)
+  ;<  ~  bind:m  (aqua-setup ahoy-on/&)
+  ;<  ~  bind:m  (setup comet %mesa)
+  ::  both galxy and comet should handle mesa packets now
+  ::
+  ;<  ~  bind:m  (send-hi comet ~bud)
+  ::
+  ;<  ~  bind:m  (end t)
+  (pure:m ~)
+::
+++  test-simple-comet-7
+  =/  m  (strand ,~)
+  ::  comet boots with %mesa and talks to its sponsor
+  ::  (will inmediately start %pinging)
+  ::  the galaxy will have %ames TODOS, will on-the-spot migrate
+  ::  %alien TODOS (/gf & /hi) to .chums and start peeking for attestation
+  ::
+  ;<  t=drivers  bind:m  init
+  ;<  ~  bind:m  (switch-network-core %ames)
+  ::  the galaxy won't migrate the comet
+  ::
+  ;<  ~  bind:m  (aqua-setup ahoy-on/|)
+  ;<  ~  bind:m  (setup ~bud %ames)
+  ;<  ~  bind:m  (dojo ~bud "|hi {(scow %p comet)}")
+  ::  the comet will send %mesa packets first
+  ::
+  ;<  ~  bind:m  (switch-network-core %mesa)
+  ;<  ~  bind:m  (aqua-setup ahoy-on/&)
+  ;<  ~  bind:m  (setup comet %mesa)
+  ::  both galxy and comet should handle mesa packets now
+  ::
+  ;<  ~  bind:m  (send-hi comet ~bud)
+  ::
+  ;<  ~  bind:m  (end t)
+  (pure:m ~)
+::
+++  test-simple-comet-8
+  =/  m  (strand ,~)
+  ::  comet boots with %mesa and talks to its sponsor
+  ::  (will inmediately start %pinging)
+  ::  the galaxy will have %ames TODOS, will on-the-spot migrate
+  ::  %alien TODOS (/gf & /hi) to .chums and start peeking for attestation
+  ::
+  ;<  t=drivers  bind:m  init
+  ;<  ~  bind:m  (switch-network-core %ames)
+  ::  the galaxy won't migrate the comet
+  ::
+  ;<  ~  bind:m  (aqua-setup ahoy-on/|)
+  ::  also setup ~bud so aqua doesn't crash when scrying
+  ::
+  ;<  ~  bind:m  (setup ~bud %ames)
+  ;<  ~  bind:m  (setup ~dev %ames)
+  ;<  ~  bind:m  (dojo ~dev "|hi {(scow %p comet)}")
+  ::  the comet will send %mesa packets first
+  ::
+  ;<  ~  bind:m  (switch-network-core %mesa)
+  ;<  ~  bind:m  (aqua-setup ahoy-on/&)
+  ;<  ~  bind:m  (setup comet %mesa)
+  ::  both galxy and comet should handle mesa packets now
+  ::
+  ;<  ~  bind:m  (send-hi comet ~dev)
+  ::
+  ;<  ~  bind:m  (end t)
   (pure:m ~)
 ::
 ++  test-mesa-ames-3
@@ -240,7 +426,7 @@
   ::
   ;<  ~  bind:m  (sleep ~s2)
   ;<  ~  bind:m  (dojo rcvr ":pub send+`(list [path @])`[/hola 1]~")
-  ::  check that sndr receives the gift aft er migration
+  ::  check that sndr receives the gift after migration
   ::
   ;<  =noun  bind:m
     (wait-for-fact sndr %noun /aqua/watch/sub (gate ,(list [path @]) [/hola 1]~))
