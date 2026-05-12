@@ -449,7 +449,11 @@
       [%brpt %&]    !!  ::TODO
       [%ktls %&]    =+  tall-2(st move)       ?@  -  ~  [[%ktls u] s]
       [%wtpt %&]    =+  tall-wing-2(st move)  ?@  -  ~  [[%wtpt u] s]
-      [%wtcn %&]    !!  ::TODO
+      [%wtcn %&]    =+  wing-full(st move)    ?@  -  ~  =>  [w=u +(st s)]
+                    =+  (expect %gap)         ?@  -  ~  =>  +(st s)
+                    =+  tall-atom             ?@  -  ~  =>  [a=u +(st s)]
+                    =+  (expect %gap)         ?@  -  ~  =>  +(st s)
+                    =+  tall-2                ?@  -  ~  [[%wtcn w a u] s]
       [%wtkt %&]    =+  tall-wing-2(st move)  ?@  -  ~  [[%wtkt u] s]
     ==
   ::
@@ -475,9 +479,25 @@
       [%brpt %|]    !!  ::TODO
       [%ktls %|]    =+  wide-2         ?@  -  ~  [[%ktls u] s]
       [%wtpt %|]    =+  wide-wing-2    ?@  -  ~  [[%wtpt u] s]
-      [%wtcn %|]    !!  ::TODO
+      [%wtcn %|]    =+  wing-full      ?@  -  ~  =>  [w=u +(st s)]
+                    =+  (expect %ace)  ?@  -  ~  =>  +(st s)
+                    =+  wide-atom      ?@  -  ~  =>  [a=u +(st s)]
+                    =+  (expect %ace)  ?@  -  ~  =>  +(st s)
+                    =+  wide-2         ?@  -  ~  [[%wtcn w a u] s]
       [%wtkt %|]    =+  wide-wing-2    ?@  -  ~  [[%wtkt u] s]
     ==
+  ::
+  ++  tall-atom
+    ^-  (mandatory @ _st)
+    =+  peek  ?@  -  ~  =>  [t=u +(st s)]
+    ?.  ?=([%atom %& *] t)  wide-atom
+    [a.t move]
+  ::
+  ++  wide-atom
+    ^-  (mandatory @ _st)
+    =+  gulp  ?@  -  ~  =>  [t=u +(st s)]
+    ?.  ?=([%atom %| *] t)  ~
+    [a.t st]
   ::
   ++  wing-full
     ^-  (mandatory wing _st)

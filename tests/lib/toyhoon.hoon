@@ -240,6 +240,8 @@
   ::
     (make-parser-test '?@($ 0 0)' [%wtpt w z z])
     (make-parser-test '?@  $  0  0' [%wtpt w z z])
+    (make-parser-test '?%($ 97 0 0)' [%wtcn w 97 z z])
+    (make-parser-test '?%  $  97  0  0' [%wtcn w 97 z z])
     (make-parser-test '?^($ 0 0)' [%wtkt w z z])
     (make-parser-test '?^  $  0  0' [%wtkt w z z])
   ==

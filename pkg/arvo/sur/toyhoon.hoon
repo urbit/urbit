@@ -36,7 +36,7 @@
       [%ktls p=naty q=naty]
       ::[%bccb =naty]
       [%wtpt =wing y=naty n=naty]
-      [%wtcn =wing tom=naty y=naty n=naty]
+      [%wtcn =wing tom=@ y=naty n=naty]
       [%wtkt =wing y=naty n=naty]
   ==
 ::
