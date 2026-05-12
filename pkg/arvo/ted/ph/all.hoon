@@ -34,9 +34,9 @@
         %ph-peek
         %ph-second-cousin-hi
         %ph-tend
-      ::  XX  slower tests
+      ::  XX  slow tests
       ::
-      ::  %ph-flub
+        %ph-flub
         %ph-big-flub
         %ph-ahoy
     ==
