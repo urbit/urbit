@@ -400,12 +400,14 @@
     ::
     loop
   =/  aqua-pax
-    %+  weld  /ax/(scot %p our)//(scot %da now)
+    %+  weld
+        /cx/(scot %p her)//(scot %da now)
     ?:  ?=(%& -.flow)
       /corked/(scot %p her)/(scot %ud +.flow)/noun
     =/  [=bone:ames =dire:ames]  +.flow
     /corked/(scot %p her)/[dire]/(scot %ud bone)/noun
-  =+  ;;  corked=(unit ?)  (scry-aqua:util noun our.bowl now aqua-pax)
+  ::
+  ;<  corked=(unit ?)  bind:m  (scry-aqua (unit ?) our aqua-pax)
   ?~  corked  loop
   ?.  u.corked  ::  XX check .her as well
     loop

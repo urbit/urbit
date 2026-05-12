@@ -15,7 +15,7 @@
 ^-  thread:spider
 |=  vase
 =/  m  (strand ,vase)
-=/  cores=(list ?(%mesa %ames))  ~[%mesa]
+=/  cores=(list ?(%mesa %ames))  ~[%ames]
 |-  ^-  form:m
 ?~  cores  (pure:m *vase)
 =|  tids=drivers
@@ -23,6 +23,8 @@
 ::
 ::
 =*  loop  $
+;<  ~  bind:m  (aqua-setup ahoy-on/|)
+;<  ~  bind:m  (switch-network-core i.cores)
 ;<  ~  bind:m  (init-ship ~bud fake=&)
 ;<  ~  bind:m  (dojo ~bud "|pass [%a %load {<i.cores>}]")
 ;<  ~  bind:m  (init-ship ~dev fake=&)
