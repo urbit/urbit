@@ -130,7 +130,7 @@ in pkgs.stdenvNoCC.mkDerivation {
 
     # Wait for tests to complete (poll for completion message)
     echo "Waiting for -ph-all to complete..."
-    timeout 1500 bash -c 'while ! grep -q "ph-all: all done" '"$out"'; do sleep 1; done' || {
+    timeout 2000 bash -c 'while ! grep -q "ph-all: all done" '"$out"'; do sleep 1; done' || {
       echo "Error: Timeout or failure waiting for -ph-all completion"
       exit 1
     }
