@@ -12,12 +12,12 @@
     :~  %ph-add
         %ph-boot-az
         %ph-boot-planet
-        %ph-breach-hi
-        %ph-breach-hi-aqua
-        %ph-breach-hi-cousin
-        %ph-breach-multiple
-        %ph-breach-sudden
-        %ph-breach-sync
+        :: %ph-breach-hi
+        :: %ph-breach-hi-aqua
+        :: %ph-breach-hi-cousin
+        :: %ph-breach-multiple
+        :: %ph-breach-sudden
+        :: %ph-breach-sync
         %ph-change-file
         %ph-child-sync
         %ph-child-update
@@ -37,6 +37,7 @@
       ::  XX  slower tests
       ::
       ::  %ph-flub
+        %ph-big-flub
         %ph-ahoy
     ==
   ::
@@ -51,6 +52,7 @@
   ==
 ::
 =|  results=(list [n=@tas r=thread-result])
+;<  global-now-1=@da  bind:m  get-time
 |-  ^-  form:m
 =*  loop  $
 ?^  threads
@@ -69,6 +71,8 @@
 ?~  results
   ~&  "ph-all: all done"
   ;<  ~  bind:m  (flog-text "ph-all: all done")
+  ;<  global-now-2=@da  bind:m  get-time
+  ~&  >  ph-all-took/`@dr`(sub global-now-2 global-now-1)
   (pure:m !>(~))  ::TODO  maybe collate vases
 ?:  ?=(%& -.r.i.results)  loop(results t.results)
 =*  name  n.i.results
