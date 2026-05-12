@@ -125,7 +125,7 @@
       (init-ship who fake=|)
     (init-comet who)
   ;<  ~  bind:m  (dojo who "|pass [%a %load {<proto>}]")
-  ;<  ~  bind:m  (dojo who "|ames/verb %fin %for %ges %kay %msg %odd %rcv %rot %snd %sun")
+  :: ;<  ~  bind:m  (dojo who "|ames/verb %fin %for %ges %kay %msg %odd %rcv %rot %snd %sun")
   ;<  ~  bind:m  (dojo who "|mount %base")
   ;<  ~  bind:m  (copy-file who /app/sub/hoon sub-agent)
   ;<  ~  bind:m  (copy-file who /app/pub/hoon pub-agent)

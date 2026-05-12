@@ -10,7 +10,6 @@
   ?-    group
       ~
     :~  %ph-add
-        %ph-ahoy
         %ph-boot-az
         %ph-boot-planet
         %ph-breach-hi
@@ -22,7 +21,6 @@
         %ph-change-file
         %ph-child-sync
         %ph-child-update
-        ::  %ph-flub
         %ph-hi
         %ph-hi-az
         %ph-hi-comet-az
@@ -36,6 +34,10 @@
         %ph-peek
         %ph-second-cousin-hi
         %ph-tend
+      ::  XX  slower tests
+      ::
+      ::  %ph-flub
+        %ph-ahoy
     ==
   ::
       [%all ~]
