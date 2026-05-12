@@ -85,6 +85,9 @@
 ::  defined in lull.
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::  Rebuilding Clay for any reason discards build caches
+::
+~>  %drop
 =/  bud
   ^~
   =/  zuse  !>(..zuse)
