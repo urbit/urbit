@@ -399,7 +399,11 @@
   ::
   =/  =tid  (new-thread-id thread)
   =/  from  (desk-from-sap bowl)
-  ?~  from  (thread-http-fail tid %missing-provenance '' ~)
+  ?~  from
+    %:  thread-http-fail-response
+        %bad-request  ['missing-provenance' ~]
+        `[eyre-id take]  output-mark  desk  ~
+    ==
   =.  serving.state
     (~(put by serving.state) tid [`[eyre-id take] output-mark desk u.from])
   ::
@@ -556,7 +560,7 @@
   ?:  has-per  [%& ~]
   =/  msg=tang
     %+  roll  cards
-    |=  [c=card:agent:gall =tang]
+    |=  [c=card =tang]
     ?@  per=(must:guard:gall our.bowl c)
       ?:  per  tang
       [leaf+"spider: never allowed: {<-.c>}" tang]
@@ -706,7 +710,7 @@
   ?~  scrying=(~(get ju scrying.state) tid)
     `state
   :_  state(scrying (~(del by scrying.state) tid))
-  ?:  silent  ~
+  ?:  silent  ~  ::  REVIEW: dropping scrying state without %yawn
   %-  ~(rep in `(set [wire ship path])`scrying)
   |=  [[=wire =ship =path] cards=(list card)]
   %-  (slog leaf+"cancelling {<tid>}: [{<[wire ship path]>}]" ~)
@@ -716,11 +720,14 @@
 ++  thread-http-fail
   |=  [=tid =term =tang]
   ^-  (quip card ^state)
-  =-  (fall - `state)
-  %+  bind
-    (~(get by serving.state) tid)
-  |=  [request=(unit [rid=@ta take=?(%json %noun)]) output=mark =desk *]
-  :_  state(serving (~(del by serving.state) tid))
+  ?~  dat=(~(get by serving.state) tid)
+    `state
+  (thread-http-fail-response term tang u.dat)
+::
+++  thread-http-fail-response
+  |=  [=term =tang request=(unit [rid=@ta take=?(%json %noun)]) output=mark =desk *]
+  ^-  (quip card ^state)
+  :_  state
   ?~  request
     ~
   %+  give-simple-payload:app:server  rid.u.request
@@ -760,22 +767,19 @@
 ::
 ++  thread-http-response
   |=  [=tid =vase]
-  ^-  (quip card ^state)
-  =-  (fall - `state)
+  ^-  (list card)
+  =-  (fall - ~)
   %+  bind
     (~(get by serving.state) tid)
   |=  [request=(unit [rid=@ta take=?(%json %noun)]) output=mark =desk *]
-  ?~  request
-    `state
+  ?~  request  ~
   ?-  take.u.request
       %json
     =/  tube  (convert-tube output %json desk bowl)
-    :_  state(serving (~(del by serving.state) tid))
     %+  give-simple-payload:app:server  rid.u.request
     (json-response:gen:server !<(json (tube vase)))
   ::
       %noun
-    :_  state(serving (~(del by serving.state) tid))
     %+  give-simple-payload:app:server  rid.u.request
     :-  [200 ['content-type' 'application/x-urb-jam']~]
     `(as-octs:mimes:html (jam q.vase))
@@ -790,8 +794,7 @@
     :~  [%give %fact ~[/thread-result/[tid]] %thread-done vase]
         [%give %kick ~[/thread-result/[tid]] ~]
     ==
-  =^  http-cards  state
-    (thread-http-response tid vase)
+  =/  http-cards        (thread-http-response tid vase)
   =^  scry-card  state  (cancel-scry tid silent)
   =^  cards      state  (thread-clean yarn)
   [:(weld done-cards cards http-cards scry-card) state]
