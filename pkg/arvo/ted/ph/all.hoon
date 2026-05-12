@@ -12,12 +12,12 @@
     :~  %ph-add
         %ph-boot-az
         %ph-boot-planet
-        :: %ph-breach-hi
-        :: %ph-breach-hi-aqua
-        :: %ph-breach-hi-cousin
-        :: %ph-breach-multiple
-        :: %ph-breach-sudden
-        :: %ph-breach-sync
+        %ph-breach-hi
+        %ph-breach-hi-aqua
+        %ph-breach-hi-cousin
+        %ph-breach-multiple
+        %ph-breach-sudden
+        %ph-breach-sync
         %ph-change-file
         %ph-child-sync
         %ph-child-update
