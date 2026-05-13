@@ -110,6 +110,11 @@
           %pill            (poke-pill:ac !<(pill:pill vase))
           %noun            (poke-noun:ac !<(* vase))
           %azimuth-action  (poke-azimuth-action:ac !<(azimuth-action vase))
+          %aqua-net-rules
+        =+  !<(rule-actions vase)
+        ::  route poke from test thread to %ames driver
+        ::
+        [%give %fact ~[/net-control] mark vase]~^state
       ==
     [cards this]
   ::
@@ -119,6 +124,10 @@
     ?:  ?=([?(%effects %effect) ~] path)
       `this
     ?:  ?=([%effect @ ~] path)
+      `this
+    ?:  ?=([%net-control ~] path)
+      ::  %ames-driver subscribes here for network rules
+      ::
       `this
     ?.  ?=([?(%effects %effect %evens %boths) @ ~] path)
       ~|  [%aqua-bad-subscribe-path path]

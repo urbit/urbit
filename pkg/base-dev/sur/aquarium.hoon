@@ -22,6 +22,22 @@
       aqua-event
   ==
 ::
++$  net-rule
+  $?  %drop-link       ::  drop all packets on this link
+      [%drop-next n=@] ::  drop next n packets, then remove rule
+      %hold-link       ::  queue packets (deliver on %flush)
+      %flush-link      ::  deliver all held packets on link
+      %clear-rules     ::  remove all rules (does not flush)
+  ==
+::
++$  rule-actions
+  $%  [?(%drop-link %hold-link %flush-link) from=@p to=@p]
+      [%drop-next from=@p to=@p n=@ud]
+      [%clear-rules ~]
+  ==
+::
++$  net-rules  (set net-rule)
+::
 +$  unix-event  ::NOTE  like unix-event:pill-lib but for all tasks
   %+  pair  wire
   $%  [%wack p=@]

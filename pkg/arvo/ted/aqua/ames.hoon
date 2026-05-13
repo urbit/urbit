@@ -10,6 +10,13 @@
 /=  ames-raw  /sys/vane/ames
 =,  aquarium
 |%
++$  held-pacs  (list [who=@p unix-effect])  ::  ames/mesa packets
++$  driver-state
+  $:  rules=(map [from=@p to=@p] net-rule)  ::  XX more than one rule per link
+      ames=held-pacs  :: XX  make a FIFO queue
+      mesa=held-pacs  ::
+  ==
+::
 ++  emit-aqua-events
   |=  [our=ship aes=(list aqua-event)]
   ^-  (list card:agent:gall)
@@ -128,19 +135,44 @@
 ::
 --
 ::
+=|  state=driver-state
 %+  aqua-vane-thread  ~[%restore %send %push]
 |_  =bowl:spider
 +*  this  .
 ++  handle-unix-effect
   |=  [who=@p ue=unix-effect]
   ^-  (quip card:agent:gall _this)
-  =/  cards
-    ?+  -.q.ue  ~
-      %restore  (handle-restore our.bowl who)
-      %send     (handle-send our.bowl now.bowl who ue)
-      %push     (handle-push our.bowl now.bowl who ue)
+  =^  cards  this
+    ?+  -.q.ue  `this
+      %restore  (handle-restore our.bowl who)^this
+    ::
+        %send
+      =/  rcvr=@p  (lane-to-ship p.q.ue)
+      =+  rule=(~(get by rules.state) who rcvr=(lane-to-ship p.q.ue))
+      ?.  ?&  ?=(^ rule)
+              ?=(?(%drop-link [%drop-next ~] %hold-link) u.rule)
+          ==
+        (handle-send our.bowl now.bowl who ue)^this
+      ~!  u.rule
+      ?-    u.rule
+          %drop-link  `this  :: drop all packets [sndr -> rcvr]
+      ::
+          [%drop-next n=@]   :: drop this packet [sndr -> rcvr], and update count
+        =.  rules.state
+          ?:  =(0 n.u.rule)
+            (~(del by rules.state) who^rcvr)
+          (~(put by rules.state) who^rcvr u.rule(n (dec n.u.rule)))
+        `this
+      ::
+          %hold-link     :: hold onto this packet
+        `this(ames.state [who^ue ames.state])
+      ==
+    ::
+        %push
+      ::  XX handle network rules
+      (handle-push our.bowl now.bowl who ue)^this
     ==
   [cards this]
 ::
-++  handle-arvo-response  |=(* !!)
+++  handle-arvo-response  |=(* !!)  ::  XX TODO network rules
 --
