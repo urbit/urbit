@@ -6087,6 +6087,13 @@
       ^-  toro
       ?>  ?=([* * * *] pax)
       [i.t.pax [%& [[[t.t.t.pax (feel pax val)] ~]]]]
+    ::
+    ::  ++flux:space:userlib
+    ++  flux
+      |=  [pax=path val=cage]
+      ^-  soba
+      ?>  ?=([* * * *] pax)
+      [t.t.t.pax (feel pax val)]~
     ::                                                  ::  ++fray:space:userlib
     ++  fray                                            ::  high-level delete
       |=  pax=path
