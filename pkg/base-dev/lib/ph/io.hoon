@@ -379,6 +379,29 @@
     loop
   (pure:m noun.unto.q.unix-effect)
 ::
+++  peek-for-cork
+  |=  [our=ship her=ship flow=(each bone:ames side:ames)]
+  =/  m  (strand ,?)
+  ^-  form:m
+  ;<  =bowl:spider  bind:m  get-bowl
+  ;<  now=@da  bind:m  get-time
+  =*  loop  $
+  =/  aqua-pax
+    %+  weld
+        /ax/(scot %p our)//(scot %da now)
+    ?:  ?=(%& -.flow)
+      /corked/(scot %p her)/(scot %ud +.flow)/noun
+    =/  [=bone:ames =dire:ames]  +.flow
+    /corked/(scot %p her)/[dire]/(scot %ud bone)/noun
+  ::
+  ;<  corked=(unit ?)  bind:m  (scry-aqua (unit ?) our aqua-pax)
+  ?~  corked
+    (pure:m %.n)
+  ?.  u.corked  ::  XX check .her as well
+    (pure:m %.n)
+  ~&  >>  flow-is-corked/flow
+  (pure:m %.y)
+::
 ++  wait-for-cork
   |=  [our=ship her=ship flow=(each bone:ames side:ames)]
   =/  m  (strand ,~)
@@ -401,7 +424,7 @@
     loop
   =/  aqua-pax
     %+  weld
-        /cx/(scot %p her)//(scot %da now)
+        /ax/(scot %p our)//(scot %da now)
     ?:  ?=(%& -.flow)
       /corked/(scot %p her)/(scot %ud +.flow)/noun
     =/  [=bone:ames =dire:ames]  +.flow
