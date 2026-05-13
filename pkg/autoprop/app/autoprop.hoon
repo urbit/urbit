@@ -133,11 +133,13 @@
     =/  news  (~(dif in targ) hear)
     =.  hear  (~(uni in hear) targ)
     =.  make  (~(put by make) name.command `now.bowl task.command)
+    ::  TODO:  make compile ????
     :_  this
     %+  turn  ~(tap in news)
     |=  =desk
+    ^-  card:agent:gall
     :+  %pass  /desk/[desk]
-    [%arvo %clay %read ~ our.bowl desk `[%next %z da+now.bowl /]]
+    [%arvo %clay %read ~ our.bowl desk %next %z da+now.bowl /]
   ::
       %del
     ::NOTE  deletion from hear, if necessary, handled in +on-arvo
@@ -232,77 +234,79 @@
 ++  on-arvo
   |=  [=wire gift=gift-user-v1:gall]
   ^-  (quip card _this)
-  =/  unexpected-gift
-    :*  dap.bowl  %unexpected-gift
-        ?:(?=(%unsupported -.gift) gift +<.gift)
+  =?  gift  ?=([%syscall *] gift)
+    =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
+    ?+  sign-arvo  gift
+      [%behn %wake *]  [%behn %wake now.bowl]
+      [%clay %writ *]  [- %read ~ +>]:sign-arvo
     ==
-  ?+  gift  ~&  unexpected-gift  [~ this]
-  ::
-      [%behn %wake *]
-    ?+  wire  !!
-        [%build ~]
-      ::  on-wake, build all tasks whose time has come
-      ::
-      =/  tasks=(list @ta)
-        %+  murn  ~(tap by make)
-        |=  [name=@ta next=(unit @da) task]
-        ?~  next  ~
-        ?:((lte u.next now.bowl) (some name) ~)
-      =|  cards=(list card)
-      |-
-      ?~  tasks  [cards this]
-      =^  caz  this  (on-command sole %run i.tasks)
-      $(tasks t.tasks, cards (weld cards caz))
+  ?:  ?=([%build ~] wire)
+    ::  on-wake, build all tasks whose time has come
     ::
-        [%vers ~]
-      ::  on-wake, republish props if we're on a new runtime
-      ::
-      =/  next=card
-        [%pass /vers %arvo %behn %wait (add now.bowl ~m5)]
-      ?:  =(rev vers)  [[next]~ this]
-      =.  vers  rev
-      =/  tasks=(list @ta)  ~(tap in ~(key by make))
-      =|  cards=(list card)
-      |-
-      ?~  tasks  [[next cards] this]
-      =^  caz  this  (on-command sole %run i.tasks)
-      $(tasks t.tasks, cards (weld cards caz))
-    ==
-  ::
-      [%clay %read *]
-    ?>  ?=([%desk @ ~] wire)
-    =*  desk  i.t.wire
-    ::  on-writ, bump build timers for all affected tasks
-    ::
+    ?>  ?=(%wake +<.gift)
     =/  tasks=(list @ta)
       %+  murn  ~(tap by make)
-      |=  [name=@ta (unit @da) =task]
-      =-  ?:(- (some name) ~)
-      ?-  -.task
-        %ivory            =(desk base.task)
-        ?(%solid %brass)  |(=(desk base.task) (~(has in etc.task) desk))
-        %desk             =(desk desk.task)
-      ==
-    ?:  =(~ tasks)
-      [~ this(hear (~(del in hear) desk))]
+      |=  [name=@ta next=(unit @da) task]
+      ?~  next  ~
+      ?:((lte u.next now.bowl) (some name) ~)
     ::
-    =/  next=@da  (add now.bowl delay)
-    :_  ::  delay next build for affected tasks
-        ::
-        |-  ?~  tasks  this
-        =.  make
-          %+  ~(jab by make)  i.tasks
-          |=([(unit @da) =task] [`next task])
-        $(tasks t.tasks)
-    :~  ::  watch for the next change on this desk
-        ::
-        :+  %pass  /desk/[desk]
-        [%arvo %clay %read ~ our.bowl desk `[%next %z da+now.bowl /]]
-      ::
-        ::  set a timer for building affected tasks
-        ::
-        [%pass /build %arvo %behn %wait next]
+    =|  cards=(list card)
+    |-
+    ?~  tasks  [cards this]
+    =^  caz  this  (on-command sole %run i.tasks)
+    $(tasks t.tasks, cards (weld cards caz))
+  ::
+  ?:  ?=([%vers ~] wire)
+    ::  on-wake, republish props if we're on a new runtime
+    ::
+    ?>  ?=(%wake +<.gift)
+    =/  next=card
+      [%pass /vers %arvo %behn %wait (add now.bowl ~m5)]
+    ?:  =(rev vers)  [[next]~ this]
+    =.  vers  rev
+    =/  tasks=(list @ta)  ~(tap in ~(key by make))
+    =|  cards=(list card)
+    |-
+    ?~  tasks  [[next cards] this]
+    =^  caz  this  (on-command sole %run i.tasks)
+    $(tasks t.tasks, cards (weld cards caz))
+  ::
+  ?>  ?=([%desk @ ~] wire)
+  =*  desk  i.t.wire
+  ?.  ?=(%read +<.gift)
+    ~&  :+  dap.bowl  %unexpected-gift
+        ?:(?=(%unsupported -.gift) gift +<.gift)
+    [~ this]
+  ::  on-writ, bump build timers for all affected tasks
+  ::
+  =/  tasks=(list @ta)
+    %+  murn  ~(tap by make)
+    |=  [name=@ta (unit @da) =task]
+    =-  ?:(- (some name) ~)
+    ?-  -.task
+      %ivory            =(desk base.task)
+      ?(%solid %brass)  |(=(desk base.task) (~(has in etc.task) desk))
+      %desk             =(desk desk.task)
     ==
+  ?:  =(~ tasks)
+    [~ this(hear (~(del in hear) desk))]
+  ::
+  =/  next=@da  (add now.bowl delay)
+  :_  ::  delay next build for affected tasks
+      ::
+      |-  ?~  tasks  this
+      =.  make
+        %+  ~(jab by make)  i.tasks
+        |=([(unit @da) =task] [`next task])
+      $(tasks t.tasks)
+  :~  ::  watch for the next change on this desk
+      ::
+      :+  %pass  /desk/[desk]
+      [%arvo %clay %read ~ our.bowl desk %next %z da+now.bowl /]
+    ::
+      ::  set a timer for building affected tasks
+      ::
+      [%pass /build %arvo %behn %wait next]
   ==
 ::
 ++  on-connect

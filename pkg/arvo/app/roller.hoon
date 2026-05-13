@@ -589,30 +589,45 @@
   ++  on-arvo
     |=  [=wire gift=gift-user-v1:gall]
     ^-  (quip card _this)
-    ?.  ?=([%behn %wake *] gift)  (on-arvo:def wire gift)
+    =?  gift  ?=(%syscall -.gift)
+      =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
+      ?.  ?=([%behn %wake *] sign-arvo)  gift
+      [%behn %wake now.bowl]
     ?+    wire  (on-arvo:def wire gift)
-      [%timer ~]        =^(cards state (on-timer:do &) [cards this])
-      [%quota-timer ~]  =^(cards state on-quota-timer:do [cards this])
+        [%timer ~]
+      ?+  gift  (on-arvo:def wire gift)
+        [%behn %wake *]  =^(cards state (on-timer:do &) [cards this])
+      ==
+        [%quota-timer ~]
+      ?+  gift  (on-arvo:def wire gift)
+        [%behn %wake *]  =^(cards state on-quota-timer:do [cards this])
+      ==
     ::
         [%predict ~]
-      =^  effects  state
-        (predicted-state canonical):do
-      [(emit effects) this(derive &)]
+      ?+  gift  (on-arvo:def wire gift)
+          [%behn %wake *]
+        =^  effects  state
+          (predicted-state canonical):do
+        [(emit effects) this(derive &)]
+      ==
     ::
         [%resend @ @ ~]
       =/  [address=@ux nonce=@ud]
         [(slav %ux i.t.wire) (slav %ud i.t.t.wire)]
-      =/  cards=(list card)  (send-roll:do address nonce)
-      =?  sending
-        ?&  ?=(~ cards)
-            (has:ors:dice sending [address nonce])
-            =(0 (lent txs:(got:ors:dice sending [address nonce])))
-        ==
-        ~&  >  "empty sending, removing {<[nonce address]>}"
-        =^  *  sending
-          (del:ors:dice sending [address nonce])
-        sending
-      [cards this]
+      ?+  gift  (on-arvo:def wire gift)
+          [%behn %wake *]
+        =/  cards=(list card)  (send-roll:do address nonce)
+        =?  sending
+          ?&  ?=(~ cards)
+              (has:ors:dice sending [address nonce])
+              =(0 (lent txs:(got:ors:dice sending [address nonce])))
+          ==
+          ~&  >  "empty sending, removing {<[nonce address]>}"
+          =^  *  sending
+            (del:ors:dice sending [address nonce])
+          sending
+        [cards this]
+      ==
     ==
   ::
   ++  on-fail

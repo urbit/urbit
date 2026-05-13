@@ -53,6 +53,15 @@
 ++  on-arvo
   |=  [=wire gift=gift-user-v1:gall]
   ^-  (quip card:agent:gall _this)
+  =^  caz=(list card:agent:gall)  gift
+    ?.  &(?=([%syscall *] gift) ?=([%dill @ ~] wire))  `gift
+    =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
+    ?.  ?=([%dill %blit *] sign-arvo)  `gift
+    =/  ses  i.t.wire
+    :_  [%dill %blit ses p.sign-arvo]
+    :~  [%pass wire %arvo %syscall %d %shot ses %flee ~]
+        (pass-session ses %view ~)
+    ==
   ~|  wire
   ?+  wire  (on-arvo:def wire gift)
     [%tube *]  [~ this]  ::  we no longer care about these
@@ -65,6 +74,7 @@
       ?:  ?=(%unsupported -.gift)  ~|  [%unsupported-gift wire]  !!
       ~|  [%unexpected-gift [- +<]:gift]  !!
     :_  this
+    %+  welp  caz
     %+  turn  biz.gift
     |=  =blit:dill
     [%give %fact [%session ses %view ~]~ %blit !>(blit)]
@@ -74,7 +84,7 @@
       [%view @ ~]
     =*  ses  i.t.wire
     :_  this
-    [%pass wire %arvo %dill %shot ses %flee ~]~
+    [%pass wire %arvo %syscall %d %shot ses %flee ~]~
   ==
 ::
 ++  on-poke

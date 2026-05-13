@@ -183,6 +183,10 @@
 ++  on-arvo
   |=  [=wire gift=gift-user-v1:gall]
   ^-  [(list card) _this]
+  =?  gift  ?=(%syscall -.gift)
+    =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
+    ?.  ?=([%behn %wake *] sign-arvo)  gift
+    [%behn %wake now.bowl]
   =^  cards  state
     ?+    wire  `state
         [%wait *]

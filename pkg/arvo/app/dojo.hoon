@@ -604,10 +604,9 @@
           %file
         =/  pax=path  (en-beam p.p.mad)
         ?>  ?=([* * * *] pax)
-        =/  =soba:clay  [t.t.t.pax (feel:space:userlib pax cay)]~
         %-  he-card(poy ~)
         :*  %pass  /file  %arvo  %clay  %rite
-            `desk`i.t.pax  soba
+            `desk`i.t.pax  (flux:space:userlib pax cay)
         ==
       ::
           %flat
@@ -1859,6 +1858,12 @@
   =/  =id  [(slav %p i.wire) i.t.wire]
   =/  =session  (~(got by hoc) id)
   =/  he-full  ~(. he hid id ~ session)
+  =?  gift  ?=(%syscall -.gift)
+    =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
+    ?+  sign-arvo  gift
+        [%clay %writ *]           [- %read ~ p]:sign-arvo
+        [%iris %http-response *]  sign-arvo
+    ==
   =^  moves  state
     =<  he-abet
     ?+    gift  ~|([%dojo-bad-take +<.gift] !!)

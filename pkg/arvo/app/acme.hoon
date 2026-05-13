@@ -408,6 +408,13 @@
   ++  on-arvo
     |=  [=wire gift=gift-user-v1:gall]
     ^-  (quip card _this)
+    =?  gift  ?=(%syscall -.gift)
+      =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
+      ?+  sign-arvo  gift
+        [%behn %wake *]           [%behn %wake now.bowl]
+        [%iris %http-response *]  sign-arvo
+      ==
+    ::
     =^  cards  state
       ?+    wire  (on-arvo:def wire gift)
           [%acme *]

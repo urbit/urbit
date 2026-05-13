@@ -583,6 +583,10 @@
 ++  on-arvo
   |=  [=wire gift=gift-user-v1:gall]
   ^-  (quip card agent:gall)
+  =?  gift  ?=(%syscall -.gift)
+    =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
+    ?.  ?=([%behn %wake *] sign-arvo)  gift
+    [%behn %wake now.bowl]
   ?+    gift  ~|([%strange-gift -.gift +<.gift] !!)
       [%behn %wake *]
     ?.  ?=([%timer *] wire)  ~&  weird-wire=wire  [~ this]

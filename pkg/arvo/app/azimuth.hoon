@@ -404,6 +404,10 @@
         %-  (slog 'loading azimuth snapshot failed! still trying' p.p.sign-arvo)
         [~[(init-timer (add ~s10 now.bowl))] this]
       ==
+    =?  gift  ?=(%syscall -.gift)
+      =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
+      ?.  ?=([%behn %wake *] sign-arvo)  gift
+      [%behn %wake now.bowl]
     ?.  &(=(/init wire) ?=([%behn %wake *] gift))
       (on-arvo:def wire gift)
     :_  this

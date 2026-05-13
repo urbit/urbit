@@ -120,6 +120,10 @@
   ++  on-arvo
     |=  [=wire gift=gift-user-v1:gall]
     ^-  step:agent:gall
+    =?  gift  ?=([%syscall *] gift)
+      =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
+      ?.  ?=([%behn %wake *] sign-arvo)  gift
+      [%behn %wake now.bowl]
     ?+  wire  (on-arvo:def wire gift)
         [%wait @ ~]
       ?>  ?=([%behn %wake *] gift)

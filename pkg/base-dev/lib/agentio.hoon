@@ -69,13 +69,13 @@
     (arvo %behn %rest p)
   ::
   ++  warp
-    |=  [id=* wer=ship =riff:clay]
+    |=  [id=* wer=ship =desk =rave:clay]
     ?~  q.riff  !!
-    (arvo %clay %read id wer p.riff u.q.riff)  ::  review
+    (arvo %clay %read id wer desk rave)  ::  review
   ::
   ++  warp-our
-    |=  [id=* =riff:clay]
-    (warp id our.bowl riff)
+    |=  [id=* =desk =rave:clay]
+    (warp id our.bowl desk rave)
   ::
   ::  right here, right now
   ++  warp-slim
@@ -84,7 +84,7 @@
       [care r.byk.bowl path]
     =/  =rave:clay
       ?:(?=(%sing genre) [genre mood] [genre mood])
-    (warp-our id q.byk.bowl `rave)
+    (warp-our id q.byk.bowl rave)
   ::
   ++  tire
     (arvo %clay %tire `~)

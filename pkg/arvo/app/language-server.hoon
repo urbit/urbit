@@ -101,6 +101,10 @@
     ^+  on-arvo:*agent:gall
     |=  [=wire gift=gift-user-v1:gall]
     ^-  (quip card _this)
+    =?  gift  ?=([%syscall *] gift)
+      =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
+      ?.  ?=([%clay %writ *] sign-arvo)  gift
+      [- %read ~ +>]:sign-arvo
     =^  cards  state
       ?+  gift  (on-arvo:def wire gift)
         [%eyre %bound *]  `state
