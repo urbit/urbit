@@ -3,19 +3,24 @@
 =,  strand=strand:libstrand
 ~%  %spider-top  ..part  ~
 |%
-+$  card         card:agent:gall
-+$  thread       thread:spider
-+$  tid          tid:spider
-+$  input        input:spider
-+$  yarn         (list tid)
-+$  thread-form  _*eval-form:eval:(strand ,vase)
-+$  trying       ?(%build %none)
++$  card           card:agent:gall
++$  arvo-resource  arvo-resource:gall
++$  resource-deet  resource-deet:gall
++$  card-rand      card:libstrand
++$  thread         thread:spider
++$  tid            tid:spider
++$  input          input:spider
++$  yarn           (list tid)
++$  thread-form    _*eval-form:eval:(strand ,vase)
++$  trying         ?(%build %none)
 +$  state
   $:  starting=(map yarn [=trying =vase])
       running=(axal thread-form)
       tid=(map tid yarn)
-      serving=(map tid [(unit [rid=@ta take=?(%json %noun)]) =mark =desk])
+      serving=(map tid [(unit [rid=@ta take=?(%json %noun)]) =mark =desk from=desk])
       scrying=(jug tid [=wire =ship =path])
+      resources=(jug tid arvo-resource)
+      resource-deets=(map tid (map arvo-resource resource-deet))
   ==
 ::
 +$  clean-slate-any
@@ -27,10 +32,21 @@
       clean-slate-4
       clean-slate-5
       clean-slate-6
+      clean-slate-7
       clean-slate
   ==
 ::
 +$  clean-slate
+  $:  %8
+      starting=(map yarn [=trying =vase])
+      running=(list yarn)
+      tid=(map tid yarn)
+      serving=(map tid [(unit [rid=@ta take=?(%json %noun)]) =mark =desk from=desk])
+      scrying=(jug tid [wire ship path])
+      resources=(jug tid arvo-resource)
+      resource-deets=(map tid (map arvo-resource resource-deet))
+  ==
++$  clean-slate-7
   $:  %7
       starting=(map yarn [=trying =vase])
       running=(list yarn)
@@ -132,7 +148,8 @@
     =.  any  (old-to-5 any)
     =.  any  (old-to-6 any)
     =.  any  (old-to-7 any)
-    ?>  ?=(%7 -.any)
+    =.  any  (old-to-8 any)
+    ?>  ?=(%8 -.any)
     ::
     =.  tid.state  tid.any
     =/  yarns=(list yarn)
@@ -159,8 +176,8 @@
     ++  old-to-2
       |=  old=clean-slate-any
       ^-  (quip card clean-slate-any)
-      ?>  ?=(?(%1 %2 %3 %4 %5 %6 %7) -.old)
-      ?:  ?=(?(%2 %3 %4 %5 %6 %7) -.old)
+      ?>  ?=(?(%1 %2 %3 %4 %5 %6 %7 %8) -.old)
+      ?:  ?=(?(%2 %3 %4 %5 %6 %7 %8) -.old)
         `old
       :-  ~[bind-eyre:sc]
       :*  %2
@@ -173,8 +190,8 @@
     ++  old-to-3
       |=  old=clean-slate-any
       ^-  clean-slate-any
-      ?>  ?=(?(%2 %3 %4 %5 %6 %7) -.old)
-      ?:  ?=(?(%3 %4 %5 %6 %7) -.old)
+      ?>  ?=(?(%2 %3 %4 %5 %6 %7 %8) -.old)
+      ?:  ?=(?(%3 %4 %5 %6 %7 %8) -.old)
         old
       :*  %3
         starting.old
@@ -186,8 +203,8 @@
     ++  old-to-4
       |=  old=clean-slate-any
       ^-  clean-slate-any
-      ?>  ?=(?(%3 %4 %5 %6 %7) -.old)
-      ?:  ?=(?(%4 %5 %6 %7) -.old)
+      ?>  ?=(?(%3 %4 %5 %6 %7 %8) -.old)
+      ?:  ?=(?(%4 %5 %6 %7 %8) -.old)
         old
       :*  %4
         starting.old
@@ -199,15 +216,15 @@
     ++  old-to-5
       |=  old=clean-slate-any
       ^-  clean-slate-any
-      ?>  ?=(?(%4 %5 %6 %7) -.old)
-      ?:  ?=(?(%5 %6 %7) -.old)  old
+      ?>  ?=(?(%4 %5 %6 %7 %8) -.old)
+      ?:  ?=(?(%5 %6 %7 %8) -.old)  old
       [%5 +.old(serving [serving.old ~])]
     ::
     ++  old-to-6
       |=  old=clean-slate-any
       ^-  clean-slate-any
-      ?>  ?=(?(%5 %6 %7) -.old)
-      ?:  ?=(?(%6 %7) -.old)  old
+      ?>  ?=(?(%5 %6 %7 %8) -.old)
+      ?:  ?=(?(%6 %7 %8) -.old)  old
       :-  %6
       %=    +.old
           scrying
@@ -223,12 +240,22 @@
     ++  old-to-7
       |=  old=clean-slate-any
       ^-  clean-slate-any
-      ?>  ?=(?(%6 %7) -.old)
-      ?:  ?=(%7 -.old)  old
+      ?>  ?=(?(%6 %7 %8) -.old)
+      ?:  ?=(?(%7 %8) -.old)  old
       =-  old(- %7, serving -)
       %-  ~(run by serving.old)
       |=  [request=(unit @ta) =mark =desk]
       [(bind request (late %json)) mark desk]
+    ::
+    ++  old-to-8
+      |=  old=clean-slate-any
+      ^-  clean-slate-any
+      ?>  ?=(?(%7 %8) -.old)
+      ?:  ?=(%8 -.old)  old
+      =-  old(- %8, serving -, scrying [scrying.old ~ ~])
+      %-  ~(run by serving.old)
+      |=  [request=(unit [rid=@ta take=?(%json %noun)]) =mark =desk]
+      [request mark desk %base]
     --
   ::
   ++  on-poke
@@ -291,12 +318,11 @@
     ~/  %on-arvo
     |=  [=wire gift=gift-user-v1:gall]
     ^-  (quip card _this)
-    ?>  ?=(%syscall -.gift)
-    =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
+    ?:  ?=(%unsupported -.gift)  (on-arvo:def wire gift) :: TODO: handle failed syscalls
     =^  cards  state
       ?+  wire  (on-arvo:def wire gift)
-        [%thread @ *]  (handle-sign:sc i.t.wire t.t.wire sign-arvo)
-        [%build @ ~]   (handle-build:sc i.t.wire sign-arvo)
+        [%thread @ *]  (handle-gift:sc i.t.wire t.t.wire gift)
+        [%build @ ~]   (handle-build:sc i.t.wire gift)
         [%bind ~]      `state
       ==
     [cards this]
@@ -314,11 +340,37 @@
 ++  bec  `beak`byk.bowl(r da+now.bowl)
 ++  bind-eyre
   ^-  card
-  [%pass /bind %arvo %syscall %e %connect [~ /spider] %spider]
+  [%pass /bind %arvo %eyre %connect [~ /spider] %spider]
 ::
 ++  new-thread-id
   |=  file=term
   :((cury cat 3) file '--' (scot %uv (sham eny.bowl)))
+::
+++  ted-mock
+  |*  =mold
+  |=  [=yarn run=_^?(|.(*mold))]
+  ^-  (each mold tang)
+  =/  desk  from:(~(got by serving.state) (yarn-to-tid yarn))
+  =+  peg=(yarn-to-peg yarn bowl)
+  =/  out  (mock [run %9 2 %0 1] (ted-look desk peg))
+  ?-  -.out
+    %0  [%& !<(mold [-:!>(*mold) p.out])]
+    %1  [%| 'spider: scry blocked on permissions' ~]
+    %2  [%| p.out]
+  ==
+::
+++  ted-look
+  |=  [=desk peg=(set perm:gall)]
+  |=  ref=^
+  ^-  (unit (unit))
+  =+  ;;(=path +.ref)
+  ?~  omen=(de-omen path)  [~ ~]
+  ?.  ?|  =(%base desk)
+          (rite:guard:gall our.bowl peg u.omen)
+      ==
+    %-  (slog leaf+"spider: scry on {<path>} blocked" ~)
+    ~
+  ``.^(noun path)
 ::
 ++  handle-http-request
   ~/  %handle-http-request
@@ -346,8 +398,14 @@
   =/  take  (test 'accept')
   ::
   =/  =tid  (new-thread-id thread)
+  =/  from  (desk-from-sap bowl)
+  ?~  from
+    %:  thread-http-fail-response
+        %bad-request  ['missing-provenance' ~]
+        `[eyre-id take]  output-mark  desk  ~
+    ==
   =.  serving.state
-    (~(put by serving.state) tid [`[eyre-id take] output-mark desk])
+    (~(put by serving.state) tid [`[eyre-id take] output-mark desk u.from])
   ::
   =/  input=vase
     %+  slop  !>(~)
@@ -380,14 +438,22 @@
   ^-  (quip card ^state)
   `state
 ::
-++  handle-sign
-  ~/  %handle-sign
-  |=  [=tid =wire =sign-arvo]
+++  handle-gift
+  ~/  %handle-gift
+  |=  [=tid =wire gift=gift-user-v1:gall]
   =/  yarn  (~(get by tid.state) tid)
   ?~  yarn
-    %-  (slog leaf+"spider got sign for non-existent {<tid>}" ~)
+    %-  (slog leaf+"spider got gift for non-existent {<tid>}" ~)
     `state
-  (take-input u.yarn ~ %sign wire sign-arvo)
+  =/  res=(set arvo-resource)  (~(gut by resources.state) tid ~)
+  =/  deets=(map arvo-resource resource-deet)
+    (~(gut by resource-deets.state) tid ~)
+  =/  new-res  (gift-to-res:track:gall [%thread tid wire] gift res deets)
+  =.  resources.state
+    (~(put by resources.state) tid res.new-res)
+  =.  resource-deets.state
+    (~(put by resource-deets.state) tid dets.new-res)
+  (take-input u.yarn ~ %gift wire gift)
 ::
 ++  on-agent
   |=  [=tid =wire =sign:agent:gall]
@@ -434,8 +500,10 @@
     ~|  [%already-starting yarn]
     !!
   ::
+  =/  from  (desk-from-sap bowl)
+  ?~  from  ~|([%missing-provenance yarn] !!)
   =?  serving.state  !(~(has by serving.state) new-tid)
-    (~(put by serving.state) new-tid [~ %noun q.beak])
+    (~(put by serving.state) new-tid [~ %noun q.beak u.from])
   ::
   =.  tid.state       (~(put by tid.state) new-tid yarn)
   ?-    -.source
@@ -448,19 +516,19 @@
     :_  state
     :_  ~
     :+  %pass  /build/[new-tid]
-    [%arvo %syscall %c %warp p.beak q.beak ~ %sing %a r.beak pax]
+    [%arvo %clay %read ~ p.beak q.beak %sing %a r.beak pax]
   ==
 ::
 ++  handle-build
   ~/  %handle-build
-  |=  [=tid =sign-arvo]
+  |=  [=tid gift=$<([%unsupported ~] gift-user-v1:gall)]
   ^-  (quip card ^state)
   =/  =yarn  (~(got by tid.state) tid)
   =.  starting.state
     (~(jab by starting.state) yarn |=([=trying =vase] [%none vase]))
-  ~|  sign+[- +<]:sign-arvo
-  ?>  ?=([?(%behn %clay) %writ *] sign-arvo)
-  =/  =riot:clay  p.sign-arvo
+  ~|  gift+[- +<]:gift
+  =/  =riot:clay
+    ?>(?=([%clay %read *] gift) riot.gift)
   ?~  riot
     (thread-fail-not-running tid %build-thread-error *tang)
   ?.  ?=(%vase p.r.u.riot)
@@ -475,11 +543,30 @@
   |=  [=yarn =thread]
   ^-  (quip card ^state)
   =/  =vase  vase:(~(got by starting.state) yarn)
-  =/  res  (mule |.((thread vase)))
+  =/  res  ((ted-mock shed:khan) yarn |.((thread vase)))
   ?:  ?=(%| -.res)
     (thread-fail-not-running (yarn-to-tid yarn) %false-start p.res)
   =.  starting.state  (~(del by starting.state) yarn)
   (begin-shed yarn p.res)
+::
+::  thread effects inherit and restricted by caller desk permissions
+++  perm-check
+  |=  [=yarn cards=(list card)]
+  ^-  (each ~ [term tang])
+  =/  dat  (~(got by serving.state) (yarn-to-tid yarn))
+  ?:  =(%base from.dat)  [%& ~]
+  =+  peg=(yarn-to-peg yarn bowl)
+  =/  has-per  (cres:guard:gall our.bowl peg cards)
+  ?:  has-per  [%& ~]
+  =/  msg=tang
+    %+  roll  cards
+    |=  [c=card =tang]
+    ?@  per=(must:guard:gall our.bowl c)
+      ?:  per  tang
+      [leaf+"spider: never allowed: {<-.c>}" tang]
+    ?:  (have:guard:gall peg per)  tang
+    [leaf+"spider: missing permission: {<per>}" tang]
+  [%| err=[%missing-permissions msg]]
 ::
 ++  begin-shed
   |=  [=yarn =shed:khan]
@@ -520,43 +607,77 @@
     (need fil:(~(dip of running.state) yarn))
   =|  cards=(list card)
   |-  ^-  (quip card ^state)
-  =^  r=[cards=(list card) =eval-result:eval:m]  eval-form
+  =/  ted-bowl  (convert-bowl yarn bowl)
+  =^  r=[cards=(list card-rand) =eval-result:eval:m]  eval-form
+    =.  input
+      ?~  input  ~
+      =+  in=u.input
+      ?.  ?=([%agent * %fact *] in)        `in
+      ?:  ?=(%thread-done p.cage.sign.in)  `in
+      :-  ~
+      :^  %agent  wire.in  %fact
+      (validate-mark:eval:m q.q.cage.sign.in p.cage.sign.in ted-bowl(byk byk.bowl))
     =/  out
-      %-  mule  |.
-      (take:eval:m eval-form (convert-bowl yarn bowl) input)
-    ?-  -.out
-      %&  p.out
-      %|  [[~ [%fail %crash p.out]] eval-form]
-    ==
+      %+  %-  ted-mock
+          $:  [cards=(list card-rand) =eval-result:eval:m]
+              eval-form:eval:m
+          ==
+      yarn  |.
+      (take:eval:m eval-form ted-bowl input)
+    ?.  ?=(%& -.out)  [[~ [%fail %crash p.out]] eval-form]
+    =/  perm  (perm-check yarn -.-.p.out)
+    ?:  -.perm  p.out
+    [[~ [%fail %crash +.perm]] eval-form]
+  ::
   =.  running.state  (~(put of running.state) yarn eval-form)
   =/  =tid  (yarn-to-tid yarn)
   =^  new-cards  state
     ^-  [(list card) _state]
     %+  roll  cards.r
-    |=  [=card cards=(list card) s=_state]
+    |=  [card=card-rand cards=(list card) s=_state]
+    =.  card
+      ?+  card  card
+        [%pass * *]  [%pass [%thread tid p.card] q.card]
+      ::
+          [%give ?(%fact %kick) *]
+        =-  card(paths.p -)
+        %+  turn  paths.p.card
+        |=(=path [%thread tid path])
+      ==
     ::REVIEW  ok to check on syscalls y/n?
     ::TODO  avoid having to do ;; at least
     :_  =?  scrying.s  ?|  ?=([%pass ^ %arvo %syscall %a %keen ?(~ ^) @ *] card)
-                           ?=([%pass ^ %arvo %syscall %a %chum @ *] card)
+                           ?=([%pass ^ %arvo %ames %keen @ *] card)
+                           ?=([%pass ^ %arvo %syscall %a %chum *] card)
                        ==
-          ?:  ?=([%pass ^ %arvo %syscall %a %chum @ *] card)
-            ::  &2=wire &6=ship 6|=path
-            (~(put ju scrying.s) tid ;;([wire ship path] [&2 &6 |6]:card))
+          ?:  ?|  ?=([%pass ^ %arvo %syscall %a %chum *] card)
+                  ?=([%pass ^ %arvo %ames %keen @ *] card)
+              ==
+            ::  &2=wire &7=ship 7|=path
+            (~(put ju scrying.s) tid ;;([wire ship path] [&2 &7 |7]:card))
           ?>  ?=([%pass ^ %arvo %syscall %a %keen ?(~ ^) @ *] card)
-          ::  &2=wire &7=ship 7|=path
-          (~(put ju scrying.s) tid ;;([wire ship path] [&2 &7 |7]:card))
+          ::  &2=wire &8=ship 8|=path
+          (~(put ju scrying.s) tid ;;([wire ship path] [&2 &8 |8]:card))
+      ::
+        ?.  ?=([%pass *] card)  s
+        ?~  res=(card-to-res:track:gall card)  s
+        =+  ted-res=[tid [p.card res.res]]
+        =.  resources.s
+          ?:  |(?=(^ add.res) add.res)
+            (~(put ju resources.s) ted-res)
+          (~(del ju resources.s) ted-res)
+      ::
+        =?  resource-deets.s  |(?=(^ add.res) !add.res)
+          =/  res-deet  (~(gut by resource-deets.s) tid ~)
+          %+  ~(put by resource-deets.s)  tid
+          ?.  ?=(^ add.res)
+            (~(del by res-deet) [p.card res.res])
+          (~(put by res-deet) [p.card res.res] add.res)
         s
+    ::
     :_  cards
-    ^-  ^card
-    ?+  card  card
-        [%pass * *]  [%pass [%thread tid p.card] q.card]
-        [%give ?(%fact %kick) *]
-      =-  card(paths.p -)
-      %+  turn  paths.p.card
-      |=  =path
-      ^-  ^path
-      [%thread tid path]
-    ==
+    (card-to-dole card tid)
+  ::
   =.  cards  (weld cards (flop new-cards))
   =^  final-cards=(list card)  state
     ?-  -.eval-result.r
@@ -574,7 +695,7 @@
   =/  moz  (thread-say-fail tid term tang)
   ?.  ?=([~ %build *] (~(get by starting.state) yarn))
     moz
-  :_(moz [%pass /build/[tid] %arvo %syscall %c %warp our.bowl %base ~])
+  :_(moz [%pass /build/[tid] %arvo %clay %rest ~])
 ::
 ++  thread-say-fail
   |=  [=tid =term =tang]
@@ -589,21 +710,24 @@
   ?~  scrying=(~(get ju scrying.state) tid)
     `state
   :_  state(scrying (~(del by scrying.state) tid))
-  ?:  silent  ~
+  ?:  silent  ~  ::  REVIEW: dropping scrying state without %yawn
   %-  ~(rep in `(set [wire ship path])`scrying)
   |=  [[=wire =ship =path] cards=(list card)]
   %-  (slog leaf+"cancelling {<tid>}: [{<[wire ship path]>}]" ~)
   :_  cards
-  [%pass (welp /thread/[tid] wire) %arvo %syscall %a %yawn ship path]
+  [%pass wire %arvo %ames %yawn ship path]
 ::
 ++  thread-http-fail
   |=  [=tid =term =tang]
   ^-  (quip card ^state)
-  =-  (fall - `state)
-  %+  bind
-    (~(get by serving.state) tid)
-  |=  [request=(unit [rid=@ta take=?(%json %noun)]) output=mark =desk]
-  :_  state(serving (~(del by serving.state) tid))
+  ?~  dat=(~(get by serving.state) tid)
+    `state
+  (thread-http-fail-response term tang u.dat)
+::
+++  thread-http-fail-response
+  |=  [=term =tang request=(unit [rid=@ta take=?(%json %noun)]) output=mark =desk *]
+  ^-  (quip card ^state)
+  :_  state
   ?~  request
     ~
   %+  give-simple-payload:app:server  rid.u.request
@@ -643,22 +767,19 @@
 ::
 ++  thread-http-response
   |=  [=tid =vase]
-  ^-  (quip card ^state)
-  =-  (fall - `state)
+  ^-  (list card)
+  =-  (fall - ~)
   %+  bind
     (~(get by serving.state) tid)
-  |=  [request=(unit [rid=@ta take=?(%json %noun)]) output=mark =desk]
-  ?~  request
-    `state
+  |=  [request=(unit [rid=@ta take=?(%json %noun)]) output=mark =desk *]
+  ?~  request  ~
   ?-  take.u.request
       %json
     =/  tube  (convert-tube output %json desk bowl)
-    :_  state(serving (~(del by serving.state) tid))
     %+  give-simple-payload:app:server  rid.u.request
     (json-response:gen:server !<(json (tube vase)))
   ::
       %noun
-    :_  state(serving (~(del by serving.state) tid))
     %+  give-simple-payload:app:server  rid.u.request
     :-  [200 ['content-type' 'application/x-urb-jam']~]
     `(as-octs:mimes:html (jam q.vase))
@@ -673,8 +794,7 @@
     :~  [%give %fact ~[/thread-result/[tid]] %thread-done vase]
         [%give %kick ~[/thread-result/[tid]] ~]
     ==
-  =^  http-cards  state
-    (thread-http-response tid vase)
+  =/  http-cards        (thread-http-response tid vase)
   =^  scry-card  state  (cancel-scry tid silent)
   =^  cards      state  (thread-clean yarn)
   [:(weld done-cards cards http-cards scry-card) state]
@@ -690,13 +810,28 @@
   |-  ^-  (quip card ^state)
   ?~  children
     `state
+  =+  tid=(yarn-to-tid i.children)
   =^  cards-children  state  $(children t.children)
+  =^  cards-resource  state
+    =/  child-res=(list arvo-resource)
+      ~(tap in (~(get ju resources.state) tid))
+    =|  cards=(list card)
+    |-
+    ?~  child-res  [cards state(resources (~(del by resources.state) tid))]
+    =/  dets  (~(gut by resource-deets.state) tid ~)
+    =/  c=(unit card)  (drop-res:track:gall i.child-res dets)
+    %=  $
+      cards      ?~(c cards [(card-to-dole u.c tid) cards])
+      resource-deets.state
+        %+  ~(put by resource-deets.state)  tid
+        (~(del by dets) i.child-res)
+      child-res  t.child-res
+    ==
   =^  cards-our  state
     =/  =^yarn  i.children
-    =/  =tid  (yarn-to-tid yarn)
     =:  running.state  (~(lop of running.state) yarn)
         tid.state      (~(del by tid.state) tid)
-        serving.state  (~(del by serving.state) (yarn-to-tid yarn))
+        serving.state  (~(del by serving.state) tid)
       ==
     :_  state
     %+  murn  ~(tap by wex.bowl)
@@ -707,20 +842,21 @@
         ==
       ~
     `[%pass wire %agent [ship term] %leave ~]
-  [(welp cards-children cards-our) state]
+  [:(welp cards-children cards-resource cards-our) state]
 ::
 ++  convert-bowl
   |=  [=yarn =bowl:gall]
   ^-  bowl:spider
   :*  our.bowl
-    src.bowl
+      src.bowl
       (yarn-to-tid yarn)
       (yarn-to-parent yarn)
-      wex.bowl
-      sup.bowl
-      eny.bowl
+      wex.bowl  ::  REVIEW: leaking?
+      sup.bowl  ::  REVIEW: leaking?
+      eny.bowl  ::  REVIEW: safety
       now.bowl
       (yarn-to-byk yarn bowl)
+      (yarn-to-peg yarn bowl)
   ==
 ::
 ++  yarn-to-tid
@@ -741,15 +877,31 @@
 ::
 ++  yarn-to-byk
   |=  [=yarn =bowl:gall]
-  =/  [* * =desk]
+  =/  [* * =desk *]
     ~|  "no desk associated with {<tid>}"
-     %-  ~(got by serving.state)  (yarn-to-tid yarn)
+    %-  ~(got by serving.state)  (yarn-to-tid yarn)
   =/  boc  bec
   boc(q desk)
 ::
+++  yarn-to-peg
+  |=  [=yarn =bowl:gall]
+  ^-  (set perm:gall)
+  =/  [* * * from=desk]
+    ~|  "no desk associated with {<tid>}"
+    %-  ~(got by serving.state)  (yarn-to-tid yarn)
+  =+  .^(=bond:ward:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/bond/[from])
+  peg.bond
+::
+++  desk-from-sap
+  |=  =bowl:gall
+  ^-  (unit desk)
+  ?:  ?=([?(%eyre %khan %gall) @ ~] sap.bowl)
+    `i.t.sap.bowl
+  ~&('unknown provenance' ~)
+::
 ++  clean-state
   !>  ^-  clean-slate
-  7+state(running (turn ~(tap of running.state) head))
+  8+state(running (turn ~(tap of running.state) head))
 ::
 ++  convert-tube
   |=  [from=mark to=mark =desk =bowl:gall]
@@ -758,4 +910,14 @@
     %cc
     /(scot %p our.bowl)/[desk]/(scot %da now.bowl)/[from]/[to]
   ==
+::
+++  card-to-dole
+  |=  [=card =tid]
+  =/  dat  (~(got by serving.state) tid)
+  ?.  ?&  ?=([%pass * *] card)
+          !=(q.byk.bowl from.dat)
+      ==
+    card
+  ?>  ?=(?(%agent %arvo) -.q.card)
+  [%pass p.card %dole from.dat q.card]
 --

@@ -87,6 +87,7 @@
       flub-ducts=(map ship duct)
       flubs=(jug ship app=term)
       halts=(jug app=term [ship =duct])
+      perms=(map desk [peg=(set perm) peq=(set perm)])
   ==
 ::  $routes: new cuff; TODO: document
 ::
@@ -435,6 +436,7 @@
       flub-ducts=(map ship duct)
       flubs=(jug ship app=term)
       halts=(jug app=term [ship duct])
+      perms=(map desk [peg=(set perm) peq=(set perm)])
   ==
 +$  spore-20  [%20 spore]
 --
@@ -558,7 +560,7 @@
   ::
   ++  mo-receive-core
     ~/  %mo-receive-core
-    |=  [prov=path dap=term bek=beak =agent]
+    |=  [prov=path dap=term bek=beak per=[peg=(set perm) peq=(set perm)] =agent]
     ^+  mo-core
     ::
     =/  yak  (~(get by yokes.state) dap)
@@ -574,6 +576,8 @@
       ==
     =+  ?~  tex  ~
         ~>  %slog.[0 leaf+"gall: {u.tex} {<dap>}"]  ~
+    ::
+    =.  perms.state  (~(gas by perms.state) [q.bek per]~)
     ::
     ?:  ?=([~ %live *] yak)
       ?:  &(=(q.beak.u.yak q.bek) =(code.u.yak agent) =(-.agent.u.yak &))
@@ -1187,7 +1191,7 @@
   ::  +mo-load: install agents
   ::
   ++  mo-load
-    |=  [prov=path agents=(list [=dude =beak =agent])]
+    |=  [prov=path agents=(list [=dude =beak per=[peg=(set perm) peq=(set perm)] =agent])]
     =.  mo-core
       |-  ^+  mo-core
       ?~  agents  mo-core
@@ -1857,11 +1861,15 @@
           $<  ?(%keen %yawn %grow %tomb %cull %tend %germ %snip)
           _+:*$>(%ames task-user-v1)
       ==  ==
-    +$  neet  $+  neet
+    +$  real-neet  $+  real-neet
       $%  [%agent [=ship name=term] task=$%(task:agent [%raw-poke =mark =noun])]
           [%arvo tick]
           [%huck [=ship name=term] note-arvo=[%b %huck sign-arvo=[%gall %unto %kick ~]]]
           [%jump =note-arvo]  ::  "out" for doing sys stuff post-post-processing on agent behalf
+      ==
+    +$  neet  $+  neet
+      $%  real-neet
+          [%dole from=desk neet=real-neet]
       ==
     ::
     ++  ap-from-internal
@@ -1928,7 +1936,9 @@
         ::      pipeline leading up to +ap-from-internal
         =/  =duct  system-duct.state
         =/  =wire  p.card
-        =/  =neet  q.card
+        =/  neet=real-neet
+          ?.  ?=([%pass * %dole *] card)  q.card
+          neet.q.card
         :: ?:  ?=(%pyre -.neet)
         ::   %:  mean
         ::     leaf/"gall: %pyre from {<agent-name>}, killing event"
@@ -1966,7 +1976,10 @@
           ==
         ::
         =/  =note-arvo
-          =/  prov=path  /gall/[agent-name]
+          =/  from=desk
+            ?:  ?=([%dole *] q.card)  from.q.card
+            q.beak:?>(?=(%live -.yoke) yoke)  ::  REVIEW: is it possible to call +ap-from-internal from non %live states
+          =/  prov=path  /gall/[from]
           ?-  -.neet
             %huck   note-arvo.neet
             %jump   note-arvo.neet
@@ -2000,6 +2013,7 @@
               ==
             ::
               [%gall *]        [%g +>.neet]
+            ::
               [%iris *]        [%i +>.neet]
             ::
                 [%jael *]
@@ -2019,7 +2033,9 @@
                 [%j %private-keys u.sub.neet]
               ==
             ::
-            ::
+              [%khan %fard *]  [%k +>-.neet from +>+.neet]
+              [%khan %fyrd *]  [%k +>-.neet from +>+.neet]
+              [%khan %lard *]  [%k +>-.neet from +>+.neet]
               [%khan *]        [%k +>.neet]
             ::
               [%lick %spin *]  [%l +>.neet(name [agent-name name.neet])]
@@ -2214,6 +2230,10 @@
               eny=eny.stats.yoke                      ::  nonce
               now=time.stats.yoke                     ::  time
               byk=beak.yoke                           ::  source
+              ^=  peg                                 ::  granted permissions
+              ?~  perms=(~(get by perms.state) q.beak.yoke)
+                *(set perm)
+              peg.u.perms
       ==  ==
     ::  +ap-reinstall: reinstall.
     ::
@@ -2247,6 +2267,8 @@
       ::  agent was suspended, we need to inflate its resources.
       ::  mark all the resources as to-be-inflated.
       ::TODO  consider the %keen inflation (and its ordering) in this light
+      ::TODO  don't want this to be subject to permission checks!
+      ::      we're doing this on the agent's behalf, it should always succeed
       ::
       =.  inflating
         %-  %~  uni  in
@@ -2761,7 +2783,7 @@
     ++  ap-mule
       |=  run=_^?(|.(*step:agent))
       ^-  (each step:agent tang)
-      =/  res  (mock [run %9 2 %0 1] (look rof [~ ~] /gall/[agent-name]))
+      =/  res  (mock [run %9 2 %0 1] (ap-look rof [~ ~] /gall/[agent-name]))
       ?-  -.res
         %0  [%& !<(step:agent [-:!>(*step:agent) p.res])]
         %1  [%| (smyt ;;(path p.res)) ~]
@@ -2772,12 +2794,28 @@
     ++  ap-mule-peek
       |=  run=_^?(|.(*(unit (unit cage))))
       ^-  (each (unit (unit cage)) tang)
-      =/  res  (mock [run %9 2 %0 1] (look rof [~ ~] /gall/[agent-name]))
+      =/  res  (mock [run %9 2 %0 1] (ap-look rof [~ ~] /gall/[agent-name]))
       ?-  -.res
         %0  [%& !<((unit (unit cage)) [-:!>(*(unit (unit cage))) p.res])]
         %1  [%| (smyt ;;(path p.res)) ~]
         %2  [%| p.res]
       ==
+    ::  +ap-look: namespase permission check
+    ::
+    ++  ap-look
+      |=  [rof=roof lyc=gang pov=path]
+      =;  ruf=roof  (look ruf lyc pov)
+      |=  [lyc=gang pov=path =omen]
+      ^-  (unit (unit (cask vase)))
+      ?.  ?|  =(%base q.beak.yoke)
+          (rite:guard our peg:(~(gut by perms.state) q.beak.yoke [peg=~ peq=~]) [vis.omen bem.omen])
+          ==
+        =/  sef=tape  "%{(trip q.beak.yoke)}/{(trip agent-name)}"
+        =/  tar=tape  "{<vis.omen>} {(spud (en-beam bem.omen))}"
+        %.  ~
+        %+  trace  odd.veb.bug.state
+        |+[leaf+"insufficient permission: {sef} scrying for {tar}" ~]
+      (rof lyc pov omen)
     ::  +ap-ingest: call agent arm
     ::
     ::    Handle acks here because they need to be emitted before the
@@ -2787,6 +2825,25 @@
       |=  [ack=?(%poke-ack %watch-ack ~) run=_^?(|.(*step:agent))]
       ^-  [(unit tang) _ap-core]
       =/  result  (ap-mule run)
+      =/  allowed=?
+        ?-  -.result
+          %&  ?:  =(%base q.beak.yoke)  &
+              %^  cres:guard  our
+                peg:(~(gut by perms.state) q.beak.yoke [peg=~ peq=~])
+              -.p.result
+          %|  &
+        ==
+      ::  if agent tried doing something without permission,
+      ::  we must never persist the .run result. instead:
+      ::  if we don't need to n/ack, return the failure right away.
+      ::  otherwise set the result to failure, and proceed as normal,
+      ::  optionally sending nacks.
+      ::
+      ?:  &(!allowed ?=(~ ack))
+        [`~['not permitted' 'maybe details'] ap-core]
+      =?  result  !allowed
+        [%| 'not-permitted' 'maybe details' ~]
+      ::
       =^  new-moves  ap-core  (ap-handle-result result)
       =/  maybe-tang=(unit tang)
         ?:  ?=(%& -.result)
@@ -2845,10 +2902,11 @@
       =;  res=$@(~ (each arvo-resource [=wire =dock]))
         ?~  res  |
         (~(has in inflating) res)  ::  deletion already happened but inflation hasn't
+      |-
       ?+  card  ~
           [%pass * %arvo *]
         =*  task  +.q.card
-        ?+  +.q.card  ~
+        ?+  task  ~
           :: [%ames %yawn *]                 &+[p.card %ames %keen spar.task]
           [%behn %rest *]                 &+[p.card %behn %wait time.task]
           [%clay %rest *]                 &+[p.card %clay %warp id.task]
@@ -2866,6 +2924,8 @@
         ?+  -.task.q.card  ~
           %leave  |+[p.card [ship name]:q.card]
         ==
+      ::
+        [%pass * %dole *]   $(q.card rote.q.card)
       ==
     ::  +ap-handle-resources: track resources created/used by the agent
     ::
@@ -2873,6 +2933,7 @@
       |=  caz=(list card:agent)
       ^+  yoke  ::NOTE  just .resources and .resource-deets, should unify those
       ?~  caz  yoke
+      ?:  ?=([%pass * %dole *] i.caz)  $(q.i.caz rote.q.i.caz)
       ?.  ?=([%pass * %arvo *] i.caz)  $(caz t.caz)
       =;  $@(~ [add=$@(? resource-deet) res=_+:*arvo-resource])
         ?@  -  $(caz t.caz)
@@ -2890,7 +2951,7 @@
           resource-deets.yoke  (~(del by resource-deets.yoke) p.i.caz res)
         ==
       =*  task  +.q.i.caz
-      ?+  +.q.i.caz  ~
+      ?+  task  ~
         :: [%ames %keen *]                 [& %ames %keen spar.task]
         :: [%ames %yawn *]                 [| %ames %keen spar.task]
         [%behn %wait *]                 [& %behn %wait time.task]
@@ -2990,9 +3051,16 @@
         ::  state changes _and_ +ap-pass of the corresponding %jump
         [%pass * %arvo %ames %keen *]  $(caz t.caz, ap-core (ap-keen p.i.caz +>+.q.i.caz))
         [%pass * %arvo %ames %yawn *]  $(caz t.caz, ap-core (ap-yawn p.i.caz +>+.q.i.caz))
-      ::
         :: [%pass * ?(%agent %arvo %pyre) *]  $(caz t.caz, fex [i.caz fex])
         [%pass * ?(%agent %arvo) *]  $(caz t.caz, fex [i.caz fex])
+      ::
+        ::  unwrap %dole for namespace management
+          [%pass * %dole *]
+        ^+  [fex ap-core]
+        ?:  ?=([%arvo %ames ?(%grow %tomb %cull %tend %germ %snip %keen %yawn) *] rote.q.i.caz)
+          $(caz [i.caz(q rote.q.i.caz) t.caz])
+        $(caz t.caz, fex [i.caz fex])
+      ::
         [%give *]  $(caz t.caz, fex [i.caz fex])
         [%slip *]  !!
       ==
@@ -3024,6 +3092,8 @@
       ^+  boat.yoke
       %+  roll  cards
       |=  [=card:agent boat=_boat.yoke]
+      =?  card  ?=([%pass * %dole *] card)
+        card(q rote.q.card)
       ?+  card  boat
           [%pass * %agent * %leave *]
         =/  =wire  p.card
@@ -3052,7 +3122,9 @@
       |-  ^-  [(list card:agent) _ap-core]
       ?~  cards
         [(flop new-cards) ap-core]
-      =/  =card:agent  i.cards
+      =/  =card:agent
+        ?.  ?=([%pass * %dole *] i.cards)  i.cards
+        i.cards(q rote.q.i.cards)
       ?+  card  $(cards t.cards, new-cards [card new-cards])
           [%pass * %agent * %leave *]
         =/  =wire  p.card
@@ -3125,6 +3197,7 @@
       ?>  =(p.sack our)
       mo-abet:(mo-send-foreign-request:mo-core q.sack term deal)
     mo-abet:(mo-handle-local:mo-core prov p.sack term deal)
+  ::
   ::
       %init  [~ gall-payload(system-duct.state duct)]
       %plea

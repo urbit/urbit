@@ -353,6 +353,11 @@
   =/  dez=(list desk)  ~(tap in desks)
   |-  ^+  ..on-init
   ?~  dez  ..on-init
+  =/  path  /(scot %p our)/[i.dez]/(scot %da now)/desk/seal
+  =?  ..on-init
+    .^(? %cu path)
+    =+  .^([@ per=(list perm:gall)] %cx path)
+    (emit %pass /kiln/init-seal %arvo %syscall %c %seal i.dez & (silt per))
   =.  ..on-init
     (emit %pass /kiln/init-zest %arvo %clay %zest i.dez %live)
   =.  ..on-init
@@ -587,6 +592,7 @@
     %kiln-jump-opt           =;(f (f !<(_+<.f vase)) poke-jump-opt)
     %kiln-jump-propose       =;(f (f !<(_+<.f vase)) poke-jump-propose)
     %kiln-nuke               =;(f (f !<(_+<.f vase)) poke-nuke)
+    %kiln-pass               =;(f (f !<(_+<.f vase)) poke-pass)
     %kiln-pause              =;(f (f !<(_+<.f vase)) poke-pause)
     %kiln-permission         =;(f (f !<(_+<.f vase)) poke-permission)
     %kiln-revive             =;(f (f !<(_+<.f vase)) poke-revive)
@@ -902,6 +908,10 @@
   %-  emil
   %+  turn  (get-apps-have our term now)
   |=([=dude ?] [%pass /nuke %arvo %gall %nuke dude])
+::
+++  poke-pass
+  |=  =card:agent:gall
+  abet:(emit card)
 ::
 ++  poke-pause
   |=  =desk

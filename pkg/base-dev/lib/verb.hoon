@@ -184,5 +184,8 @@
   ::
       [%slip *]
     $(card [%pass //slip p.card])
+  ::
+      [%pass * %dole *]
+    $(q.card rote.q.card)
   ==
 --

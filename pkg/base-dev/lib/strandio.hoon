@@ -3,15 +3,16 @@
 =,  strand=strand:libstrand
 =,  strand-fail=strand-fail:libstrand
 |%
++$  card    card:libstrand
 ++  send-raw-cards
-  |=  cards=(list =card:agent:gall)
+  |=  cards=(list card)
   =/  m  (strand ,~)
   ^-  form:m
   |=  strand-input:strand
   [cards %done ~]
 ::
 ++  send-raw-card
-  |=  =card:agent:gall
+  |=  =card
   =/  m  (strand ,~)
   ^-  form:m
   (send-raw-cards card ~)
@@ -82,16 +83,16 @@
     `[%done q.cage.u.in.tin]
   ==
 ::
-++  take-sign-arvo
-  =/  m  (strand ,[wire sign-arvo])
+++  take-gift-user
+  =/  m  (strand ,[wire gift-user-v1:gall])
   ^-  form:m
   |=  tin=strand-input:strand
   ?+  in.tin  `[%skip ~]
       ~
     `[%wait ~]
   ::
-      [~ %sign *]
-    `[%done [wire sign-arvo]:u.in.tin]
+      [~ %gift *]
+    `[%done [wire gift]:u.in.tin]
   ==
 ::
 ::  Wait for a subscription update on a wire
@@ -175,12 +176,12 @@
   |=  tin=strand-input:strand
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
-      [~ %sign [%wait @ ~] %behn %wake *]
+      [~ %gift [%wait @ ~] %behn %wake *]
     ?.  |(?=(~ until) =(`u.until (slaw %da i.t.wire.u.in.tin)))
       `[%skip ~]
-    ?~  error.sign-arvo.u.in.tin
+    :: ?~  error.sign-arvo.u.in.tin
       `[%done ~]
-    `[%fail %timer-error u.error.sign-arvo.u.in.tin]
+    :: `[%fail %timer-error u.error.sign-arvo.u.in.tin]
   ==
 ++  take-whey
   |=  =wire
@@ -190,10 +191,10 @@
   ?+    in.tin  `[%skip ~]
       ~  `[%wait ~]
     ::
-      [~ %sign * %ames %sage sage=*]
+      [~ %gift * %ames %sage sage=*]
     ?.  =(wire wire.u.in.tin)
       `[%skip ~]
-    =/  =sage:mess:ames  sage.sign-arvo.u.in.tin
+    =/  =sage:mess:ames  sage.gift.u.in.tin
     :^  ~  %done  spar=p.sage
     ?~  q.sage
       [boq=13 tot=0]
@@ -209,26 +210,26 @@
   ?+    in.tin  `[%skip ~]
       ~  `[%wait ~]
     ::
-      [~ %sign * %ames %sage sage=*]
+      [~ %gift * %ames %sage sage=*]
     ?.  =(wire wire.u.in.tin)
       `[%skip ~]
-    `[%done sage.sign-arvo.u.in.tin]
+    `[%done sage.gift.u.in.tin]
   ==
 ::  XX deprecate in 409k
 ::
-++  take-near
-  |=  =wire
-  =/  m  (strand ,[spar:ames (unit (unit page))])
-  ^-  form:m
-  |=  tin=strand-input:strand
-  ?+    in.tin  `[%skip ~]
-      ~  `[%wait ~]
-    ::
-      [~ %sign * %ames %near ^ *]
-    ?.  =(wire wire.u.in.tin)
-      `[%skip ~]
-    `[%done +>.sign-arvo.u.in.tin]
-  ==
+:: ++  take-near
+::   |=  =wire
+::   =/  m  (strand ,[spar:ames (unit (unit page))])
+::   ^-  form:m
+::   |=  tin=strand-input:strand
+::   ?+    in.tin  `[%skip ~]
+::       ~  `[%wait ~]
+::     ::
+::       [~ %sign * %ames %near ^ *]
+::     ?.  =(wire wire.u.in.tin)
+::       `[%skip ~]
+::     `[%done +>.sign-arvo.u.in.tin]
+::   ==
 ::
 ++  take-poke-ack
   |=  =wire
@@ -264,7 +265,7 @@
   |=  [=dock =cage]
   =/  m  (strand ,~)
   ^-  form:m
-  =/  =card:agent:gall  [%pass /poke %agent dock %poke cage]
+  =/  =card  [%pass /poke %agent dock %poke cage]
   ;<  ~  bind:m  (send-raw-card card)
   (take-poke-ack /poke)
 ::
@@ -272,7 +273,7 @@
   |=  [=dock =cage]
   =/  m  (strand ,~)
   ^-  form:m
-  =/  =card:agent:gall  [%pass /poke %agent dock %poke cage]
+  =/  =card  [%pass /poke %agent dock %poke cage]
   ;<  ~  bind:m  (send-raw-card card)
   =/  m  (strand ,~)
   ^-  form:m
@@ -305,7 +306,7 @@
   |=  [=wire =dock =path]
   =/  m  (strand ,~)
   ^-  form:m
-  =/  =card:agent:gall  [%pass watch+wire %agent dock %watch path]
+  =/  =card  [%pass watch+wire %agent dock %watch path]
   ;<  ~  bind:m  (send-raw-card card)
   (take-watch-ack wire)
 ::
@@ -339,7 +340,7 @@
   |=  [=wire =dock]
   =/  m  (strand ,~)
   ^-  form:m
-  =/  =card:agent:gall  [%pass watch+wire %agent dock %leave ~]
+  =/  =card  [%pass watch+wire %agent dock %leave ~]
   (send-raw-card card)
 ::
 ++  leave-our
@@ -367,7 +368,7 @@
 ++  mass
   =/  m  (strand ,(list quac:dill))
   ^-  form:m
-  =/  =card:agent:gall  [%pass /mass %arvo %syscall %d %mass ~]
+  =/  =card  [%pass /mass %arvo %dill %mass ~]
   ;<  ~  bind:m  (send-raw-card card)
   ;<  quz=(list quac:dill)  bind:m  take-meme
   (pure:m quz)
@@ -378,15 +379,15 @@
   |=  tin=strand-input:strand
   ?+  in.tin  `[%skip ~]
     ~  `[%wait ~]
-      [~ %sign [%mass ~] %dill %meme *]
-    `[%done p.sign-arvo.u.in.tin]
+  ::
+    [~ %gift [%mass ~] %dill %meme *]  `[%done p.gift.u.in.tin]
   ==
 ::
 ++  keen
   |=  [=wire =spar:ames sec=(unit [@ @])]
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass wire %arvo %syscall %a %keen sec spar)
+  (send-raw-card %pass wire %arvo %ames %keen ?=(^ sec) spar)  ::  review
 ::
 ++  chum
   |=  [=wire =spar:ames]
@@ -404,7 +405,7 @@
   |=  [=wire =spar:ames]
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass wire %arvo %syscall %a %yawn spar)
+  (send-raw-card %pass wire %arvo %ames %yawn spar)
 ::
 ++  whey
   |=  [=wire boq=@ud =spar:ames]
@@ -450,8 +451,8 @@
   |=  until=@da
   =/  m  (strand ,~)
   ^-  form:m
-  =/  =card:agent:gall
-    [%pass /wait/(scot %da until) %arvo %syscall %b %wait until]
+  =/  =card
+    [%pass /wait/(scot %da until) %arvo %behn %wait until]
   (send-raw-card card)
 ::
 ++  map-err
@@ -475,12 +476,12 @@
   ^-  form:m
   ;<  now=@da  bind:m  get-time
   =/  when  (add now time)
-  =/  =card:agent:gall
-    [%pass /timeout/(scot %da when) %arvo %syscall %b %wait when]
-  ;<  ~        bind:m  (send-raw-card card)
+  =/  c=card
+    [%pass /timeout/(scot %da when) %arvo %behn %wait when]
+  ;<  ~        bind:m  (send-raw-card c)
   |=  tin=strand-input:strand
   =*  loop  $
-  ?:  ?&  ?=([~ %sign [%timeout @ ~] %behn %wake *] in.tin)
+  ?:  ?&  ?=([~ %gift [%timeout @ ~] %behn %wake *] in.tin)
           =((scot %da when) i.t.wire.u.in.tin)
       ==
     `[%fail %timeout ~]
@@ -488,8 +489,8 @@
   ?:  ?=(%cont -.next.c-res)
     c-res(self.next ..loop(computation self.next.c-res))
   ?:  ?=(%done -.next.c-res)
-    =/  =card:agent:gall
-      [%pass /timeout/(scot %da when) %arvo %syscall %b %rest when]
+    =/  =card
+      [%pass /timeout/(scot %da when) %arvo %behn [%rest when]]
     c-res(cards [card cards.c-res])
   c-res
 ::
@@ -497,12 +498,12 @@
   |=  =request:http
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass /request %arvo %syscall %i %request request *outbound-config:iris)
+  (send-raw-card %pass /request %arvo %iris %request request *outbound-config:iris)
 ::
 ++  send-cancel-request
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass /request %arvo %syscall %i %cancel-request ~)
+  (send-raw-card %pass /request %arvo %iris %cancel-request ~)
 ::
 ++  take-client-response
   =/  m  (strand ,client-response:iris)
@@ -511,15 +512,15 @@
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
     ::
-      [~ %sign [%request ~] %iris %http-response %cancel *]
+      [~ %gift [%request ~] %iris %http-response %cancel *]
     ::NOTE  iris does not (yet?) retry after cancel, so it means failure
     :-  ~
     :+  %fail
       %http-request-cancelled
     ['http request was cancelled by the runtime']~
     ::
-      [~ %sign [%request ~] %iris %http-response %finished *]
-    `[%done client-response.sign-arvo.u.in.tin]
+      [~ %gift [%request ~] %iris %http-response %finished *]
+    `[%done client-response.gift.u.in.tin]
   ==
 ::
 ::  Wait until we get an HTTP response or cancelation and unset contract
@@ -543,10 +544,10 @@
   |=  tin=strand-input:strand
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
-      [~ %sign [%request ~] %iris %http-response %cancel *]
+      [~ %gift [%request ~] %iris %http-response %cancel *]
     `[%done ~]
-      [~ %sign [%request ~] %iris %http-response %finished *]
-    `[%done `client-response.sign-arvo.u.in.tin]
+      [~ %gift [%request ~] %iris %http-response %finished *]
+    `[%done `client-response.gift.u.in.tin]
   ==
 ::
 ++  extract-body
@@ -668,8 +669,10 @@
 ++  warp
   |=  [=ship =riff:clay]
   =/  m  (strand ,riot:clay)
-  ;<  ~  bind:m  (send-raw-card %pass /warp %arvo %syscall %c %warp ship riff)
-  (take-writ /warp)
+  =/  id  (jam riff)  ::  review
+  ?~  q.riff  !!      ::  review, could send %clay %drop
+  ;<  ~  bind:m  (send-raw-card %pass /warp %arvo %clay %read id ship p.riff u.q.riff)
+  (take-writ /warp id)
 ::
 ++  read-file
   |=  [[=ship =desk =case] =spur]
@@ -707,16 +710,19 @@
 ::  Take Clay read result
 ::
 ++  take-writ
-  |=  =wire
+  |=  [=wire id=@]
   =/  m  (strand ,riot:clay)
   ^-  form:m
   |=  tin=strand-input:strand
   ?+  in.tin  `[%skip ~]
       ~  `[%wait ~]
-      [~ %sign * ?(%behn %clay) %writ *]
-    ?.  =(wire wire.u.in.tin)
+  ::
+      [~ %gift * %clay %read *]
+    ?.  ?&  =(wire wire.u.in.tin)
+            =(id id.gift.u.in.tin)
+        ==
       `[%skip ~]
-    `[%done +>.sign-arvo.u.in.tin]
+    `[%done riot.gift.u.in.tin]
   ==
 ::  +check-online: require that peer respond before timeout
 ::
@@ -839,7 +845,7 @@
   |=  =tape
   =/  m  (strand ,~)
   ^-  form:m
-  (flog %text tape)
+  (send-raw-card %pass / %arvo %syscall %dill %text tape)
 ::
 ++  flog-tang
   |=  =tang
@@ -876,7 +882,7 @@
   |=  =turf
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass / %arvo %syscall %e %rule %turf %put turf)
+  (send-raw-card %pass / %arvo %eyre %rule %turf %put turf)
 ::
 ::    ----
 ::

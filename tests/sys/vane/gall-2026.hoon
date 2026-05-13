@@ -1,3 +1,5 @@
+::  gall 2026 resource tracking tests
+::
 /+  test
 /=  gall-raw   /sys/vane/gall
 =/  gall       (gall-raw ~dev)  ::  intentionally shadow for new types
@@ -179,7 +181,11 @@
   |=  [=dude:gall =agent:gall]
   %-  do
   |=  g=_(g:*state)
-  (call:g default-duct ~ %load [dude [our.g %desk da+now.g] agent]~)
+  ::NOTE  grant super permissions so that perm checks always pass,
+  ::      those should get tested elsewhere.
+  ::NOTE  %desk is a desk name, shows up provenance path of a2a %deals
+  ::      originating from our agent.
+  (call:g default-duct ~ %load [dude [our.g %desk da+now.g] [[[%super ~] ~ ~] ~] agent]~)
 ::
 ++  do-deal
   |=  [=dude:gall =deal:gall]
@@ -786,7 +792,7 @@
         (ex-move ~[/sysduct] %pass gall-wire-e [%e %disconnect ~ /x])
         (ex-move ~[/sysduct] %pass gall-wire-c [%c %warp ~zod %desk ~])
         (ex-move ~[/sysduct] %pass gall-wire-b [%b %rest ~2345.6.7])
-        (ex-move ~[/sysduct] %pass gall-wire-a [%g %deal [~dev ~fun /gall/mock] %bar %leave ~])  ::TODO  deal constructor
+        (ex-move ~[/sysduct] %pass gall-wire-a [%g %deal [~dev ~fun /gall/desk] %bar %leave ~])  ::TODO  deal constructor
     ==
   ::TODO  test that resources still tracked
   ;<  y=yoke:gall  bind:m  (get-yoke %mock)

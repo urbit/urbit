@@ -2430,6 +2430,7 @@
         [%ogre p=@tas]                                  ::  delete mount point
         [%rule red=dict wit=dict]                       ::  node r+w permissions
         [%tire p=(each rock:tire wave:tire)]            ::  app state
+        [%ward =cast:ward]                              ::  permission state
         [%writ p=riot]                                  ::  response
         [%wris p=[%da p=@da] q=(set (pair care path))]  ::  many changes
     ==                                                  ::
@@ -2459,17 +2460,21 @@
         [%ogre pot=$@(term beam)]                       ::  delete mount point
         [%park des=desk yok=yoki ran=rang]              ::  synchronous commit
         [%perm des=desk pax=path rit=rite]              ::  change permissions
+        [%pine des=desk add=? pes=(set perm:gall)]      ::  requesting permissions
         [%pork ~]                                       ::  resume commit
         [%prep lat=(map lobe page)]                     ::  prime clay store
         [%rein des=desk ren=rein]                       ::  extra apps
+        [%seal des=desk add=? pes=(set perm:gall)]      ::  granting or revoking permissions
         [%stir arg=*]                                   ::  debug
         [%tire p=(unit ~)]                              ::  app state subscribe
         [%tomb =clue]                                   ::  tombstone specific
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
+        [%ward ~]                                       ::  permission update
         [%warp wer=ship rif=riff]                       ::  internal file req
         [%werp who=ship wer=ship rif=riff-any]          ::  external file req
         [%wick ~]                                       ::  try upgrade
+        [%wink ~]                                       ::  close subscription to permissions
         [%zeal lit=(list [=desk =zest])]                ::  batch zest
         [%zest des=desk liv=zest]                       ::  live
         $>(%plea vane-task)                             ::  ames request
@@ -2515,7 +2520,7 @@
   ::  having changed; this lets us short-circuit that in some cases.
   ::  Whenever you give an `%ergo`, you must update this.
   ::
-  +$  dome
+  +$  dome  $+  dome
     $:  let=aeon                                        ::  top id
         hit=(map aeon tako)                             ::  versions by id
         lab=(map @tas aeon)                             ::  labels
@@ -2526,6 +2531,9 @@
         wic=(map weft yoki)                             ::  commit-in-waiting
         liv=zest                                        ::  running agents
         ren=rein                                        ::  force agents on/off
+        peg=(set perm:gall)                             ::  granted perms
+        peq=(set perm:gall)                             ::  requested opt perms
+        pew=(unit [(set perm:gall) (unit yoki)])        ::  awaiting req perms
     ==                                                  ::
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission
@@ -2655,7 +2663,51 @@
         t=@da                                           ::  date
     ==                                                  ::
   +$  zest  $~(%dead ?(%dead %live %held))              ::  how live
-  ::                                                    ::
+  ::
+  ++  ward                                              ::  permission state
+    |%
+    +$  bond
+      $:  ped=(set perm:gall)  ::  required perms (desk.seal)
+          peg=(set perm:gall)  ::  granted perms
+          peq=(set perm:gall)  ::  requested opt perms
+          pew=(set perm:gall)  ::  awaiting req perms
+      ==
+    ::
+    +$  writ  (map desk bond)
+    ::
+    +$  cast
+      $%  ::  %have: got permissions for a desk  ::TODO  mb split?
+          ::  %need: permissions missing on commit
+          ::
+          [%have =desk ped=(set perm:gall) peg=(set perm:gall) peq=(set perm:gall)]
+          [%need =desk pew=(set perm:gall)]
+      ==
+    ::
+    ++  tell
+    |=  [new=writ old=writ]
+    ^-  (list cast)
+    %-  ~(rep by new)
+    |=  [[=desk bond] acc=(list cast)]
+    ^-  (list cast)
+    =/  has-perms  |(!=(~ ped) !=(~ peg) !=(~ peq))
+    %+  welp  acc
+    ?~  bond=(~(get by old) desk)
+      %+  welp
+        ?:(has-perms [%have desk ped peg peq]~ ~)
+      ?~(pew ~ [%need desk pew]~)
+    ::  if any permissions changed and all of them not null send have
+    %+  welp
+      ?.  ?&  ?|  !=(ped ped.u.bond)
+                  !=(peg peg.u.bond)
+                  !=(peq peq.u.bond)
+              ==
+              has-perms
+          ==
+        ~
+      [%have desk ped peg peq]~
+    ?:(=(pew pew.u.bond) ~ [[%need desk pew] ~])
+  --
+  ::                                             ::
   ++  tire                                              ::  app state
     |%                                                  ::
     +$  rock  (map desk [=zest wic=(set weft)])         ::
@@ -3754,6 +3806,118 @@
         [%jael %keys wat=?(%private %public (set ship))]
     ==
   ::
+  ++  track  !:  ::  resource tracking utils
+    |%
+    +$  resource-deets  (map arvo-resource resource-deet)
+    ++  card-to-res
+      |=  =card:agent
+      ^-  $@(~ [add=$@(? resource-deet) res=_+:*arvo-resource])
+      ?.  ?=([%pass * %arvo *] card)  ~
+      =*  task  +.q.card
+      ?+  +.q.card  ~
+        :: [%ames %keen *]                 [& %ames %keen spar.task]
+        :: [%ames %yawn *]                 [| %ames %keen spar.task]
+        [%behn %wait *]                 [& %behn %wait time.task]
+        [%behn %rest *]                 [| %behn %wait time.task]
+        [%clay %read *]                 :-  [%clay %warp ship desk rave]:task
+                                        [%clay %warp id.task]
+        [%clay %rest *]                 [| %clay %warp id.task]
+        [%clay %tire *]                 [?~(p.task | &) %clay %tire]
+        [%dill %logs *]                 [?~(p.task | &) %dill %logs]
+        [%dill %mass *]                 [& %dill %mass]
+        [%dill %shot @ %view *]         [& %dill %view ses.task]
+        [%dill %shot @ %flee *]         [| %dill %view ses.task]
+        [%eyre %connect *]              :-  [%eyre %binding wat.task]
+                                        [%eyre %binding binding.task]
+        [%eyre %disconnect *]           [| %eyre %binding binding.task]
+        [%eyre %set-response * ^]       :-  [%eyre %cache u.entry.task]
+                                        [%eyre %cache url.task]
+        [%eyre %set-response * ~]       [| %eyre %cache url.task]
+        [%iris %request *]              [& %iris %request]
+        [%iris %cancel-request ~]       [| %iris %request]
+        [%jael %public-keys ^]          :_  [%jael %keys]
+                                        ?:  =(~ u.sub.task)
+                                          [%jael %keys %public]
+                                        [%jael %keys u.sub.task]
+        [%jael %public-keys ~]          [| %jael %keys]
+        [%jael %private-keys ^]         :_  [%jael %keys]
+                                        [%jael %keys %private]
+        [%jael %private-keys ~]         [| %jael %keys]
+        :: [%k ?(%fard %fyrd %lard) *]  [& %khan +<]:task
+        [%lick %spin *]                 [& %lick %spin name.task]
+        [%lick %shut *]                 [| %lick %spin name.task]
+      ==
+    ::
+    ++  gift-to-res
+      |=  [=wire gift=gift-user-v1 res=(set arvo-resource) dets=resource-deets]
+      ^-  [res=(set arvo-resource) dets=resource-deets]
+      =;  upd=(unit (each [_+:*arvo-resource resource-deet] _+:*arvo-resource))
+        ?-  upd
+          ~         [res dets]
+          [~ %& *]  :-  res
+                        (~(put by dets) [wire -.p.u.upd] +.p.u.upd)
+          [~ %| *]  :-  (~(del in res) wire p.u.upd)
+                        (~(del by dets) wire p.u.upd)
+        ==
+      ?+  gift  ~
+        [%behn *]        `|+[%behn %wait time.gift]
+        [%dill %meme *]  `|+[%dill %mass]
+      ::
+          [%dill %blit *]
+        =;  bye=?  ?:(bye `|+[%dill %view ses.gift] ~)
+        |-
+        ?&  ?=(^ biz.gift)
+        ?|  ?+(-.i.biz.gift | %bye &, %mor $(biz.gift p.i.biz.gift))
+            $(biz.gift t.biz.gift)
+        ==  ==
+      ::
+          [%clay *]
+        ?>  ?=(%read +<.gift)
+        =*  rid  [%clay %warp id.gift]
+        =+  det=(~(got by dets) wire rid)
+        ?>  ?=([%clay %warp *] det)
+        ::  %sing and %mult are always single-shot,
+        ::  %many gives a range of responses and has explicit "end" signal
+        ::
+        ?.  ?=(%many -.rave.det)  `|+[%clay %warp id.gift]
+        ?~  riot.gift             `|+[%clay %warp id.gift]
+        ::NOTE  %many requests always get %ud case in the response
+        ::NOTE  we don't care about resolving the original case, just increment
+        ::      past what we've received
+        ?>  ?=(%ud -.q.p.u.riot.gift)
+        =/  nex=@ud  +(p.q.p.u.riot.gift)
+        `&+[rid det(from.moat.rave ud+nex)]
+      ::
+        [%eyre *]  ?:  bound.gift  ~
+                   `|+[%eyre %binding binding.gift]
+        [%iris *]  `|+[%iris %request]
+        [%lick *]  ~
+      ==
+    ::
+    ++  drop-res
+      |=  [res=arvo-resource dets=resource-deets]
+      ^-  (unit card:agent)
+      =;  tac=$@(~ task-user-v1)
+        ?~(tac ~ `[%pass wire.res %arvo tac])
+      ?-  +.res
+        [%behn %wait *]     [%behn %rest time.res]
+        [%clay %warp *]     [%clay %rest id.res]
+        [%clay %tire]       [%clay %tire ~]
+        [%dill %logs]       [%dill %logs ~]
+        [%dill %mass]       ~
+        [%dill %view *]     [%dill %shot ses.res %flee ~]
+        [%eyre %binding *]  [%eyre %disconnect binding.res]
+        [%eyre %cache *]    [%eyre %set-response url.res ~]
+        [%iris %request]    [%iris %cancel-request ~]
+        [%jael %keys]       =+  d=(~(got by dets) res)
+                            ?>  ?=([%jael %keys *] d)
+                            ?:  ?=(%private wat.d)
+                              [%jael %private-keys ~]
+                            [%jael %public-keys ~]
+        [%lick %spin *]     [%lick %shut name.res]
+      ==
+    --
+  ::
   +$  egg                                               ::  migratory agent
     $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)] ::  state; see /sys/gall
         $:  %live                                       ::  $yoke
@@ -3828,10 +3992,45 @@
             eny=@uvJ                                    ::  entropy
             now=@da                                     ::  current time
             byk=beak                                    ::  load source
+            peg=(set perm)                              ::  granted permissions
     ==  ==                                              ::                                                  ::
   +$  dude  term                                        ::  server identity
   +$  gill  (pair ship term)                            ::  general contact
-  +$  load  (list [=dude =beak =agent])                 ::  loadout
+  ::
+  +$  dash  [desk=(unit desk) =spur]
+  +$  cash  [care=(unit) dash]
+  ::
+  +$  perm
+    $%  perm-arvo
+        perm-gall
+        [%super ~]  ::  anything, required for syscalls
+    ==
+  +$  perm-gall
+    $%  [%write dude=?(~ dude)]        ::  local pokes
+        [%watch dude=?(~ dude) =path]  ::  local watches
+        [%reads vane=term cash]        ::  local scries
+        [%fling ~]                     ::  anything over the network
+    ==
+  +$  perm-arvo  ::TODO  expand
+    $%  [%ames ~]
+        [%behn ~]
+      ::
+        $:  %clay
+        $%  [%write dash]  ::  %info %merg %fuse
+            [%local cash]  ::  %warp for local
+            [%peers cash]  ::  %warp for remote
+        ==  ==
+      ::
+        [%dill ~]
+        [%eyre ~]
+        [%gall ~]
+        [%iris ~]
+        [%jael ~]
+        [%khan ~]
+        [%lick ~]
+    ==
+  ::
+  +$  load  (list [=dude =beak per=[peg=(set perm) peq=(set perm)] =agent])  ::  loadout
   +$  scar                                              ::  opaque duct
     $:  p=@ud                                           ::  bone sequence
         q=(map duct bone)                               ::  by duct
@@ -3971,7 +4170,12 @@
             [%trim p=@ud]
         ==  ==
       ::
-        [%khan %trim p=@ud]
+        $:  %khan
+        $%  [%fard p=(fyrd:khan cage)]
+            [%fyrd p=(fyrd:khan cast:khan)]
+            [%lard =bear:khan =shed:khan]
+            [%trim p=@ud]
+        ==  ==
       ::
         $:  %lick
         $%  [%spin =name:lick]
@@ -3997,6 +4201,7 @@
         [%jael %private-keys =life vein=(map life ring)]
         [%jael %public-keys =public-keys-result:jael]
         [%jael %turf turf=(list turf)]
+        ::TODO  khan gift(s)
         [%lick %soak =name:lick =mark =noun]
       ::
         [%syscall actual-kelvin=@ sign-arvo=*]  ::NOTE  secretly $sign-arvo, DO NOT DOCUMENT (;
@@ -4012,10 +4217,14 @@
     +$  card
       $+  gall-agent-card
       (wind note gift)
-    +$  note
-      $+  gall-agent-note
+    +$  rote
       $%  [%agent [=ship name=term] =task]
           [%arvo task-user-v1]
+      ==
+    +$  note
+      $+  gall-agent-note
+      $%  rote
+          [%dole from=desk =rote]
       ==
     +$  task
       $+  gall-agent-task
@@ -4080,6 +4289,77 @@
         |~  [term tang]
         *(quip card _^|(..on-init))
       --
+    --
+  ::
+  ++  guard  !:  ::  perm check utils
+    |%
+    ++  rite  ::  namespace permission check
+      |=  [our=ship pes=(set perm) [=view =beam]]
+      ^-  ?
+      ?:  (~(has in pes) %super ~)  &
+      |  ::TODO
+    ::
+    ++  cres
+      |=  [our=ship pes=(set perm) caz=(list card:agent)]
+      ^-  ?
+      (levy caz (cury (cury cred our) pes))
+    ::
+    ++  cred  ::  userspace permission check
+      |=  [our=ship pes=(set perm) =card:agent]
+      ^-  ?
+      ?@  per=(must our card)  per
+      (have pes ;;(perm per))
+    ::
+    ++  have  ::  .pes has .mus or broader
+      |=  [pes=(set perm) mus=perm]
+      ^-  ?
+      ?:  (~(has in pes) %super ~)  &
+      ?+  mus  (~(has in pes) mus)
+        [%write *]  |  ::TODO
+        [%watch *]  |  ::TODO
+        [%reads *]  |  ::TODO
+        [%clay *]   |  ::TODO
+      ==
+    ::
+    ++  must  ::  perm required for card
+      |=  [our=ship =card:agent]
+      ^-  $@(? perm)  ::  always/never allowed, or perm
+      ?-  -.card
+          %give  &
+          %slip  |
+          %pass
+        =/  =note:agent  q.card
+        ?-  -.note
+            %agent
+          ?-  -.task.note
+            %watch             [%watch name.note path.task.note]
+            %watch-as          [%watch name.note path.task.note]
+            %leave             [%watch name.note ~]
+            ?(%poke %poke-as)  [%write name.note]
+          ==
+            %arvo
+          =/  task=task-user-v1  +.note
+          ?-  -.task
+            %ames  [%ames ~]
+            %behn  [%behn ~]
+          ::
+              %clay
+            [%super ~]  ::TODO
+          ::
+            %dill  [%dill ~]
+            %eyre  [%eyre ~]
+            %gall  [%gall ~]
+            %iris  [%iris ~]
+            %jael  [%jael ~]
+            %khan  [%khan ~]
+            %lick  [%lick ~]
+          ::
+            %syscall  [%super ~]
+            ::  TODO
+          ==
+          %dole  [%super ~]
+        ==
+      ==
     --
   --  ::gall
 ::  %iris http-client interface
@@ -4431,9 +4711,9 @@
         [%done ~]                                       ::  socket closed
         ::  TODO  mark ignored                          ::
         ::                                              ::
-        [%fard p=(fyrd cage)]                           ::  in-arvo thread
-        [%fyrd p=(fyrd cast)]                           ::  external thread
-        [%lard =bear =shed]                             ::  inline thread
+        [%fard =desk p=(fyrd cage)]                     ::  in-arvo thread
+        [%fyrd =desk p=(fyrd cast)]                     ::  external thread
+        [%lard =desk =bear =shed]                       ::  inline thread
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
     ==                                                  ::
@@ -4472,11 +4752,30 @@
 ::
 ++  rand                                                ::  computation
   |%
-  +$  card  card:agent:gall
+  +$  card
+    $+  rand-gall-agent-card
+    (wind note gift:agent:gall)
+  +$  task-user-v1
+    $~  [%syscall 0]
+    $%  $<(?(%eyre %lick) task-user-v1:gall)
+        $:  %eyre
+            $<  $?(%connect %disconnect %set-response)
+            _+:*$>(%eyre task-user-v1:gall)
+        ==
+      ::
+        $:  %lick
+            $<  $?(%spin %shut)
+            _+:*$>(%lick task-user-v1:gall)
+    ==  ==
+  +$  note
+    $+  rand-gall-agent-note
+    $%  [%agent [=ship name=term] =task:agent:gall]
+        [%arvo task-user-v1]
+    ==
   +$  input
     $+  input
     $%  [%poke =cage]
-        [%sign =wire =sign-arvo]
+        [%gift =wire gift=gift-user-v1:gall]
         [%agent =wire =sign:agent:gall]
         [%watch =path]
     ==
@@ -4496,6 +4795,7 @@
         eny=@uvJ
         now=@da
         byk=beak
+        peg=(set perm:gall)
     ==
   ::
   ::  cards:  cards to send immediately.  These will go out even if a
@@ -4629,16 +4929,6 @@
         |=  [=eval-form =strand-input]
         ^-  [[(list card) =eval-result] _eval-form]
         =*  take-loop  $
-        =.  in.strand-input
-          ?~  in.strand-input  ~
-          =/  in  u.in.strand-input
-          ?.  ?=(%agent -.in)                  `in
-          ?.  ?=(%fact -.sign.in)              `in
-          ?:  ?=(%thread-done p.cage.sign.in)  `in
-          ::
-          :-  ~
-          :^  %agent  wire.in  %fact
-          (validate-mark q.q.cage.sign.in p.cage.sign.in bowl.strand-input)
         ::  run the strand callback
         ::
         =/  =output  (form.eval-form strand-input)
