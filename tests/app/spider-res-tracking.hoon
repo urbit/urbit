@@ -147,6 +147,14 @@
       ~
   ==
 ::
+++  test-thread-fail-clay-read-sing
+  %:  run-thread-fail
+      [%clay %read 123 our %foo [%sing %x da+now /foo/hoon]]
+      (sy :~([wir [%clay %warp 123]]))
+      ~
+      [(ex-user-task tid [%clay %rest 123]) ~]
+  ==
+::
 ++  test-rt-clay-read-many
 ::  TODO: check resource-deets.state as well as resources
   =/  =rant:clay  [[%x ud+1 %foo] /foo/hoon [%$ !>(0)]]
