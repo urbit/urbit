@@ -14,7 +14,12 @@
   ++  mime
     |=  (pair mite octs)
     =+  o=(pair ,* ,*) :: ,*)
-    =+  (,[%pill nam=term boot-ova=(list) kernel-ova=(list o) userspace-ova=(list o)] (cue q.q))
+    =+  pill=(cue q.q)
+    =+  %-  ,[nam=term boot-ova=(list) kernel-ova=(list o) userspace-ova=(list o)]
+        ?+  -.pill  !!
+          %cash   +<:pill :: discard cache
+          %pill   +:pill
+        ==
     =/  convert
       |=  ova=(list o)
       ^-  (list unix-event)

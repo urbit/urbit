@@ -64,7 +64,8 @@
   =/  m  (mare ,~)
   |=  computation=form:m
   ::NOTE  use +vi so that we can leverage persistent memoization,
-  ::      which is important because we build lull, zuse and clay all the time
+  ::      which is important because we build lull, zuse and clay all the time.
+  ::      comment this out if you need more detailed crash traces.
   =;  comp  (need (~(mole vi |) comp))
   |.  ^-  tang
   =/  res  (computation clay-gate ~1111.1.1 `@uvJ`0xdead.beef)
@@ -263,7 +264,7 @@
 ::
 ++  do-new-desk
   |=  =desk
-  (do-park desk 409 ~)
+  (do-park desk 408 ~)
 ::
 ++  do-setup-desks
   |=  desks=(list [=desk esse=?])
@@ -435,7 +436,7 @@
     ::  essential desks not ready, blocked on perms
     ::
     %+  snoc  ward
-    (ex-gift [%tire %| [%wait %base [%zuse 408]]])
+    (ex-gift [%tire %| [%wait %base [%zuse 407]]])
   ::  esential desks ready to apply base update,
   ::  suspending desks without wic and with awaiting req permissions
   ::
@@ -578,15 +579,15 @@
   =/  m  (mare ,~)
   ;<  *                  bind:m  (do-setup-desks [%foo |] ~)
   ::  send next kelvin update to a desk
-  ;<  mov=(list move)    bind:m  (do-park %foo 408 ~)
-  ;<  ~                  bind:m  (expect-moves mov (ex-wait %foo 408))
+  ;<  mov=(list move)    bind:m  (do-park %foo 407 ~)
+  ;<  ~                  bind:m  (expect-moves mov (ex-wait %foo 407))
   ::
   ;<  ~                  bind:m  (do-wick ~)
   ::  send next kelvin update to %base
-  ;<  mov2=(list move)   bind:m  (do-park %base 408 ~)
+  ;<  mov2=(list move)   bind:m  (do-park %base 407 ~)
   ;<  ~  bind:m
     (expect-moves mov2 (ex-kernel-build ~ [[%foo | ~ ~ ~] ~]))
-  ;<  ~                 bind:m  (set-kelvin 408)
+  ;<  ~                 bind:m  (set-kelvin 407)
   ;<  mov3=(list move)  bind:m  do-pork
   ;<  ~  bind:m
     %+  expect-moves  mov3
@@ -596,7 +597,7 @@
         ::
         ex-wick
         (ex-text ": /~nul/foo/2/sys/kelvin")
-        (ex-gift [%tire %| [%warp %foo [%zuse 408]]])
+        (ex-gift [%tire %| [%warp %foo [%zuse 407]]])
         ex-load
     ==
   (do-wick ~)
@@ -607,10 +608,10 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks ~)
-  ;<  mov=(list move)   bind:m  (do-park %base 408 ~)
+  ;<  mov=(list move)   bind:m  (do-park %base 407 ~)
   ;<  ~                 bind:m
     (expect-moves mov (ex-kernel-build ~ ~))
-  ;<  ~                 bind:m  (set-kelvin 408)
+  ;<  ~                 bind:m  (set-kelvin 407)
   ;<  mov2=(list move)  bind:m  do-pork
   ;<  ~                 bind:m
     %+  expect-moves  mov2
@@ -621,10 +622,10 @@
     ==
   ;<  ~                 bind:m  (do-wick ~)
   ::
-  ;<  mov3=(list move)  bind:m  (do-park %base 407 ~)
+  ;<  mov3=(list move)  bind:m  (do-park %base 406 ~)
   ;<  ~                 bind:m
     (expect-moves mov3 (ex-kernel-build ~ ~))
-  ;<  ~                 bind:m  (set-kelvin 407)
+  ;<  ~                 bind:m  (set-kelvin 406)
   ;<  mov4=(list move)  bind:m  do-pork
   ;<  ~                 bind:m
     %+  expect-moves  mov4
@@ -644,14 +645,14 @@
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
   ::  send kelvin-1 update to a desk
-  ;<  mov=(list move)   bind:m  (do-park %foo 407 ~)
-  ;<  ~                 bind:m  (expect-moves mov (ex-wait %foo 407))
+  ;<  mov=(list move)   bind:m  (do-park %foo 406 ~)
+  ;<  ~                 bind:m  (expect-moves mov (ex-wait %foo 406))
   ;<  ~                 bind:m  (do-wick ~)
   ::
-  ;<  mov2=(list move)  bind:m  (do-park %base 407 ~)
+  ;<  mov2=(list move)  bind:m  (do-park %base 406 ~)
   ;<  ~  bind:m
     (expect-moves mov2 (ex-kernel-build ~ [[%foo | ~ ~ ~] ~]))
-  ;<  ~                 bind:m  (set-kelvin 407)
+  ;<  ~                 bind:m  (set-kelvin 406)
   ;<  mov3=(list move)  bind:m  do-pork
   ;<  ~                 bind:m
     %+  expect-moves  mov3
@@ -661,7 +662,7 @@
         ::
         ex-wick
         (ex-text ": /~nul/foo/2/sys/kelvin")
-        (ex-gift [%tire %| [%warp %foo [%zuse 407]]])
+        (ex-gift [%tire %| [%warp %foo [%zuse 406]]])
         ex-load
     ==
   (do-wick ~)
@@ -676,14 +677,14 @@
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
   ::  send kelvin update to a desk
-  ;<  mov=(list move)   bind:m  (do-park %foo 408 ~)
+  ;<  mov=(list move)   bind:m  (do-park %foo 407 ~)
   ;<  ~                 bind:m  (do-wick ~)
   ::  send kelvin-1 update to a desk
-  ;<  mov2=(list move)  bind:m  (do-park %foo 407 ~)
+  ;<  mov2=(list move)  bind:m  (do-park %foo 406 ~)
   ;<  ~                 bind:m  (do-wick ~)
   ::  apply kelvin-1 update to base
-  ;<  mov3=(list move)  bind:m  (do-park %base 407 ~)
-  ;<  ~                 bind:m  (set-kelvin 407)
+  ;<  mov3=(list move)  bind:m  (do-park %base 406 ~)
+  ;<  ~                 bind:m  (set-kelvin 406)
   ;<  mov4=(list move)  bind:m  do-pork
   ;<  ~                 bind:m
     %+  expect-moves  mov4
@@ -694,7 +695,7 @@
         ex-wick
         (ex-text ": /~nul/foo/2/sys/kelvin")
         (ex-gift [%tire %| [%warp %foo [%zuse 407]]])
-        (ex-gift [%tire %| [%warp %foo [%zuse 408]]])
+        (ex-gift [%tire %| [%warp %foo [%zuse 406]]])
         ex-load
     ==
   (do-wick ~)
@@ -707,16 +708,16 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo &] ~)
-  ;<  mov=(list move)   bind:m  (do-park %base 408 ~)
-  ;<  ~                 bind:m  (expect-moves mov (ex-gift [%tire %| [%wait %base [%zuse 408]]]) ~)
-  ;<  mov2=(list move)  bind:m  (do-park %base 407 ~)
-  ;<  ~                 bind:m  (expect-moves mov2 (ex-gift [%tire %| [%wait %base [%zuse 407]]]) ~)
-  ;<  mov3=(list move)  bind:m  (do-park %foo 407 ~)
-  ;<  ~                 bind:m  (expect-moves mov3 (ex-wait %foo 407))
+  ;<  mov=(list move)   bind:m  (do-park %base 407 ~)
+  ;<  ~                 bind:m  (expect-moves mov (ex-gift [%tire %| [%wait %base [%zuse 407]]]) ~)
+  ;<  mov2=(list move)  bind:m  (do-park %base 406 ~)
+  ;<  ~                 bind:m  (expect-moves mov2 (ex-gift [%tire %| [%wait %base [%zuse 406]]]) ~)
+  ;<  mov3=(list move)  bind:m  (do-park %foo 406 ~)
+  ;<  ~                 bind:m  (expect-moves mov3 (ex-wait %foo 406))
   ;<  ~                 bind:m
     (do-wick (ex-kernel-build ~ [%foo & ~ ~ ~] ~))
   ::
-  ;<  ~                 bind:m  (set-kelvin 407)
+  ;<  ~                 bind:m  (set-kelvin 406)
   ;<  mov4=(list move)  bind:m  do-pork
   ;<  ~                 bind:m
     %+  expect-moves  mov4
@@ -726,9 +727,9 @@
         ::
         ex-wick
         (ex-text ": /~nul/foo/2/sys/kelvin")
-        (ex-gift [%tire %| [%warp %foo [%zuse 407]]])
+        (ex-gift [%tire %| [%warp %foo [%zuse 406]]])
         (ex-gift [%tire %| [%warp %base [%zuse 407]]])
-        (ex-gift [%tire %| [%warp %base [%zuse 408]]])
+        (ex-gift [%tire %| [%warp %base [%zuse 406]]])
         ex-load
     ==
   (do-wick ~)
@@ -742,19 +743,19 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                bind:m  (do-setup-desks [%foo &] ~)
-  ;<  mov=(list move)  bind:m  (do-park %foo ~[409 408] ~)
+  ;<  mov=(list move)  bind:m  (do-park %foo ~[408 407] ~)
   ;<  ~                bind:m
     %+  expect-moves  mov
     :~  ex-wick
         (ex-text ": /~nul/foo/2/sys/kelvin")
-        (ex-gift [%tire %| [%wait %foo [%zuse 408]]])
+        (ex-gift [%tire %| [%wait %foo [%zuse 407]]])
         ex-load
     ==
   ::  update base to next kelvin
-  ;<  mov2=(list move)  bind:m  (do-park %base 408 ~)
+  ;<  mov2=(list move)  bind:m  (do-park %base 407 ~)
   ;<  ~                 bind:m
     (expect-moves mov2 (ex-kernel-build ~ [%foo & ~ ~ ~] ~))
-  ;<  ~                 bind:m  (set-kelvin 408)
+  ;<  ~                 bind:m  (set-kelvin 407)
   ;<  mov3=(list move)  bind:m  do-pork
   ;<  ~                 bind:m
     %+  expect-moves  mov3
@@ -763,7 +764,7 @@
         (ex-text ": /~nul/base/2/sys/kelvin")
         ::
         ex-wick
-        (ex-gift [%tire %| [%warp %foo [%zuse 408]]])
+        (ex-gift [%tire %| [%warp %foo [%zuse 407]]])
         ex-load
     ==
   (do-wick ~)
@@ -775,13 +776,13 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo &] ~)
-  ;<  mov=(list move)   bind:m  (do-park %foo 408 ~)
-  ;<  ~                 bind:m  (expect-moves mov (ex-wait %foo 408))
+  ;<  mov=(list move)   bind:m  (do-park %foo 407 ~)
+  ;<  ~                 bind:m  (expect-moves mov (ex-wait %foo 407))
   ;<  ~                 bind:m  (do-wick ~)
-  ;<  mov2=(list move)  bind:m  (do-park %base 408 ~)
+  ;<  mov2=(list move)  bind:m  (do-park %base 407 ~)
   ;<  ~                 bind:m
     (expect-moves mov2 (ex-kernel-build ~ [%foo & ~ ~ ~] ~))
-  ;<  ~                 bind:m  (set-kelvin 408)
+  ;<  ~                 bind:m  (set-kelvin 407)
   ;<  mov3=(list move)  bind:m  do-pork
   ;<  ~                 bind:m
     %+  expect-moves  mov3
@@ -791,7 +792,7 @@
         ::
         ex-wick
         (ex-text ": /~nul/foo/2/sys/kelvin")
-        (ex-gift [%tire %| [%warp %foo [%zuse 408]]])
+        (ex-gift [%tire %| [%warp %foo [%zuse 407]]])
         ex-load
     ==
   (do-wick ~)
@@ -804,9 +805,9 @@
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo &] ~)
   ::  update base to next kelvin
-  ;<  mov=(list move)  bind:m  (do-park %base 408 ~)
+  ;<  mov=(list move)  bind:m  (do-park %base 407 ~)
   ::
-  (expect-moves mov (ex-gift [%tire %| [%wait %base [%zuse 408]]]) ~)
+  (expect-moves mov (ex-gift [%tire %| [%wait %base [%zuse 407]]]) ~)
 ::
 ++  test-update-blocked-on-essential-desk-wrong-wic
 ::  essential desk received kelvin-2 update, waiting for kernel
@@ -817,12 +818,12 @@
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo &] ~)
   ::  update base to next kelvin
-  ;<  mov=(list move)   bind:m  (do-park %foo 407 ~)
+  ;<  mov=(list move)   bind:m  (do-park %foo 406 ~)
   ;<  ~  bind:m
-    (expect-moves mov ex-wick (ex-gift [%tire %| [%wait %foo [%zuse 407]]]) ~)
-  ;<  mov2=(list move)  bind:m  (do-park %base 408 ~)
+    (expect-moves mov ex-wick (ex-gift [%tire %| [%wait %foo [%zuse 406]]]) ~)
+  ;<  mov2=(list move)  bind:m  (do-park %base 407 ~)
   ::
-  (expect-moves mov2 (ex-gift [%tire %| [%wait %base [%zuse 408]]]) ~)
+  (expect-moves mov2 (ex-gift [%tire %| [%wait %base [%zuse 407]]]) ~)
 ::
 ++  test-update-blocked-on-multiple-essential-desks
 ::  kelvin update received on base desk, multiple essential desks not ready
@@ -834,18 +835,18 @@
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo &] [%baz &] ~)
   ::
-  ;<  mov=(list move)   bind:m  (do-park %base 408 ~)
+  ;<  mov=(list move)   bind:m  (do-park %base 407 ~)
   ;<  ~                 bind:m
     %+  expect-moves  mov
-    [(ex-gift [%tire %| [%wait %base [%zuse 408]]])]~
+    [(ex-gift [%tire %| [%wait %base [%zuse 407]]])]~
   ::
-  ;<  mov2=(list move)  bind:m  (do-park %foo 408 ~)
-  ;<  ~                 bind:m  (expect-moves mov2 (ex-wait %foo 408))
+  ;<  mov2=(list move)  bind:m  (do-park %foo 407 ~)
+  ;<  ~                 bind:m  (expect-moves mov2 (ex-wait %foo 407))
   ;<  ~                 bind:m  (do-wick ~)
-  ;<  mov3=(list move)  bind:m  (do-park %baz 408 ~)
-  ;<  ~                 bind:m  (expect-moves mov3 (ex-wait %baz 408))
+  ;<  mov3=(list move)  bind:m  (do-park %baz 407 ~)
+  ;<  ~                 bind:m  (expect-moves mov3 (ex-wait %baz 407))
   ;<  ~                 bind:m  (do-wick (ex-kernel-build ~ ~))
-  ;<  ~                 bind:m  (set-kelvin 408)
+  ;<  ~                 bind:m  (set-kelvin 407)
   ;<  mov4=(list move)  bind:m  do-pork
   ;<  ~  bind:m
     %+  expect-moves  mov4
@@ -855,12 +856,12 @@
         ::
         ex-wick
         (ex-text ": /~nul/foo/2/sys/kelvin")
-        (ex-gift [%tire %| [%warp %foo [%zuse 408]]])
-        (ex-gift [%tire %| [%warp %base [%zuse 408]]])
+        (ex-gift [%tire %| [%warp %foo [%zuse 407]]])
+        (ex-gift [%tire %| [%warp %base [%zuse 407]]])
         ::
         ex-wick
         (ex-text ": /~nul/baz/2/sys/kelvin")
-        (ex-gift [%tire %| [%warp %baz [%zuse 408]]])
+        (ex-gift [%tire %| [%warp %baz [%zuse 407]]])
         ex-load
     ==
   (do-wick ~)
@@ -877,9 +878,9 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo &] ~)
-  ;<  mov=(list move)   bind:m  (do-park %foo 408 (desk-seal 1))
-  ;<  ~                 bind:m  (expect-moves mov (ex-wait %foo 408))
-  ;<  mov2=(list move)  bind:m  (do-park %base 408 ~)
+  ;<  mov=(list move)   bind:m  (do-park %foo 407 (desk-seal 1))
+  ;<  ~                 bind:m  (expect-moves mov (ex-wait %foo 407))
+  ;<  mov2=(list move)  bind:m  (do-park %base 407 ~)
   ;<  ~  bind:m
     %+  expect-moves  mov2
     (ex-kernel-build ~ [[%foo & perm-none perm-none pers-1] ~])
@@ -892,7 +893,7 @@
     ==
   ;<  ~                 bind:m
     (do-wick (ex-kernel-build ~ [%foo & perm-none pers-1 perm-none] ~))
-  ;<  ~                 bind:m  (set-kelvin 408)
+  ;<  ~                 bind:m  (set-kelvin 407)
   ;<  mov4=(list move)  bind:m  do-pork
   ;<  ~  bind:m
     %+  expect-moves  mov4
@@ -905,8 +906,8 @@
         (ex-text "+ /~nul/foo/2/desk/seal")
         (ex-ward-have %foo pers-1 pers-1)
         (ex-ward-need %foo perm-none)
-        (ex-gift [%tire %| [%warp %foo [%zuse 408]]])
-        (ex-gift [%tire %| [%warp %base [%zuse 408]]])
+        (ex-gift [%tire %| [%warp %foo [%zuse 407]]])
+        (ex-gift [%tire %| [%warp %base [%zuse 407]]])
         ex-load
     ==
   (do-wick ~)
@@ -922,10 +923,10 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                bind:m  (do-setup-desks [%foo &] [%baz |] ~)
-  ;<  mov=(list move)  bind:m  (do-park %foo 408 (desk-seal 1))
-  ;<  ~  bind:m  (expect-moves mov (ex-wait %foo 408))
+  ;<  mov=(list move)  bind:m  (do-park %foo 407 (desk-seal 1))
+  ;<  ~  bind:m  (expect-moves mov (ex-wait %foo 407))
   ::
-  ;<  mov2=(list move)  bind:m  (do-park %base 408 ~)
+  ;<  mov2=(list move)  bind:m  (do-park %base 407 ~)
   ;<  ~  bind:m
     %+  expect-moves  mov2
     (ex-kernel-build ~ [%foo & perm-none perm-none pers-1] ~)
@@ -940,7 +941,7 @@
     %-  do-wick
     (ex-kernel-build [[%baz %held] ~] [%foo & perm-none pers-1 perm-none] ~)
   ;<  ~  bind:m  (do-zeal [%baz %held]~)
-  ;<  ~                 bind:m  (set-kelvin 408)
+  ;<  ~                 bind:m  (set-kelvin 407)
   ;<  mov4=(list move)  bind:m  do-pork
   ;<  ~  bind:m
     %+  expect-moves  mov4
@@ -953,8 +954,8 @@
         (ex-text "+ /~nul/foo/2/desk/seal")
         (ex-ward-have %foo pers-1 pers-1)
         (ex-ward-need %foo perm-none)
-        (ex-gift [%tire %| [%warp %foo [%zuse 408]]])
-        (ex-gift [%tire %| [%warp %base [%zuse 408]]])
+        (ex-gift [%tire %| [%warp %foo [%zuse 407]]])
+        (ex-gift [%tire %| [%warp %base [%zuse 407]]])
         ex-load
     ==
   (do-wick ~)
@@ -970,19 +971,19 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
-  ;<  mov=(list move)   bind:m  (do-park %foo ~[409 408] ~)
+  ;<  mov=(list move)   bind:m  (do-park %foo ~[408 407] ~)
   ;<  ~                 bind:m
     %+  expect-moves  mov
     :~  ex-wick
         (ex-text ": /~nul/foo/2/sys/kelvin")
-        (ex-gift [%tire %| [%wait %foo [%zuse 408]]])
+        (ex-gift [%tire %| [%wait %foo [%zuse 407]]])
         ex-load
     ==
-  ;<  mov2=(list move)  bind:m  (do-park %base 408 ~)
+  ;<  mov2=(list move)  bind:m  (do-park %base 407 ~)
   ;<  ~                 bind:m
     (expect-moves mov2 (ex-kernel-build ~ [%foo | ~ ~ ~] ~))
   ::
-  ;<  ~                 bind:m  (set-kelvin 408)
+  ;<  ~                 bind:m  (set-kelvin 407)
   ;<  mov3=(list move)  bind:m  do-pork
   ;<  ~  bind:m
     %+  expect-moves  mov3
@@ -991,7 +992,7 @@
         (ex-text ": /~nul/base/2/sys/kelvin")
         ::
         ex-wick
-        (ex-gift [%tire %| [%warp %foo [%zuse 408]]])
+        (ex-gift [%tire %| [%warp %foo [%zuse 407]]])
         ex-load
     ==
   (do-wick ~)
@@ -1003,11 +1004,11 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
-  ;<  mov=(list move)   bind:m  (do-park %base 408 ~)
+  ;<  mov=(list move)   bind:m  (do-park %base 407 ~)
   ;<  ~                 bind:m
     (expect-moves mov (ex-kernel-build [[%foo %held] ~] ~))
   ;<  ~                 bind:m  (do-zeal [%foo %held]~)
-  ;<  ~                 bind:m  (set-kelvin 408)
+  ;<  ~                 bind:m  (set-kelvin 407)
   ;<  mov2=(list move)  bind:m  do-pork
   ;<  ~                 bind:m
     %+  expect-moves  mov2
@@ -1026,7 +1027,7 @@
   ++  got-update
   ::  non-essential desk received update, update applied
   ::
-    ;<  mov=(list move)  bind:m  (do-park %foo 408 ~)
+    ;<  mov=(list move)  bind:m  (do-park %foo 407 ~)
     ;<  now=@da          bind:m  get-now
     ;<  ~  bind:m
       %+  expect-moves  mov
@@ -1042,7 +1043,7 @@
   ::  non-essential desk received update, update applied, stays %held awaiting perms
   ::  perms granted to non-essential desk, update applied and revived
   ::
-    ;<  mov=(list move)   bind:m  (do-park %foo 408 (desk-seal 1))
+    ;<  mov=(list move)   bind:m  (do-park %foo 407 (desk-seal 1))
     ;<  ~                 bind:m
       %+  expect-moves  mov
       :~  ex-wick
@@ -1061,16 +1062,16 @@
   ++  got-next-update
   ::  non-essential desk receives update, update doesn't match to current version, stays %held
   ::  re-evaluates on next update
-    ;<  mov=(list move)   bind:m  (do-park %foo 407 ~)
-    ;<  ~                 bind:m  (expect-moves mov ex-wick (ex-gift [%tire %| [%wait %foo [%zuse 407]]]) ~)
+    ;<  mov=(list move)   bind:m  (do-park %foo 406 ~)
+    ;<  ~                 bind:m  (expect-moves mov ex-wick (ex-gift [%tire %| [%wait %foo [%zuse 406]]]) ~)
     ;<  ~                 bind:m  (do-wick ~)
     ::
-    ;<  mov2=(list move)  bind:m  (do-park %base 407 ~)
+    ;<  mov2=(list move)  bind:m  (do-park %base 406 ~)
     ;<  ~                 bind:m
       %+  expect-moves  mov2
       (ex-kernel-build ~ [[%foo | perm-none perm-none perm-none] ~])
     ::
-    ;<  ~                 bind:m  (set-kelvin 407)
+    ;<  ~                 bind:m  (set-kelvin 406)
     ;<  mov3=(list move)  bind:m  do-pork
     ;<  ~  bind:m
       %+  expect-moves  mov3
@@ -1081,7 +1082,7 @@
           ex-wick
           (ex-text ": /~nul/foo/2/sys/kelvin")
           (ex-pass /park-held/foo [%b [%wait ~1111.1.1]])
-          (ex-gift [%tire %| [%warp %foo [%zuse 407]]])
+          (ex-gift [%tire %| [%warp %foo [%zuse 406]]])
           ex-load
       ==
     ;<  ~                 bind:m  (do-wick ~)
@@ -1097,12 +1098,12 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                bind:m  (do-setup-desks [%foo |] ~)
-  ;<  *                bind:m  (do-park %foo ~[409 408] ~)
-  ;<  *                bind:m  (do-park %foo ~[409 408] (desk-seal 1))
+  ;<  *                bind:m  (do-park %foo ~[408 407] ~)
+  ;<  *                bind:m  (do-park %foo ~[408 407] (desk-seal 1))
   ;<  ~                bind:m  (ex-pew %foo `pers-1)
-  ;<  mov=(list move)  bind:m  (do-park %base 408 ~)
+  ;<  mov=(list move)  bind:m  (do-park %base 407 ~)
   ;<  ~                bind:m  (expect-moves mov (ex-kernel-build ~ [%foo | ~ ~ ~] ~))
-  ;<  ~                 bind:m  (set-kelvin 408)
+  ;<  ~                 bind:m  (set-kelvin 407)
   ;<  mov2=(list move)  bind:m  do-pork
   ;<  ~                 bind:m
     %+  expect-moves  mov2
@@ -1111,7 +1112,7 @@
         (ex-text ": /~nul/base/2/sys/kelvin")
         ::
         ex-wick
-        (ex-gift [%tire %| [%warp %foo [%zuse 408]]])
+        (ex-gift [%tire %| [%warp %foo [%zuse 407]]])
         ex-load
     ==
   ;<  ~  bind:m  (do-wick ~)
@@ -1126,9 +1127,9 @@
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
   ;<  ~                 bind:m  (do-zeal [%foo %dead]~)
-  ;<  mov=(list move)   bind:m  (do-park %base 408 ~)
+  ;<  mov=(list move)   bind:m  (do-park %base 407 ~)
   ;<  ~                 bind:m  (expect-moves mov (ex-kernel-build ~ ~))
-  ;<  ~                 bind:m  (set-kelvin 408)
+  ;<  ~                 bind:m  (set-kelvin 407)
   ;<  mov2=(list move)  bind:m  do-pork
   ;<  ~                 bind:m
     %+  expect-moves  mov2
@@ -1153,8 +1154,8 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
-  ;<  mov=(list move)   bind:m  (do-park %foo 408 (desk-seal 1))
-  ;<  ~                 bind:m  (expect-moves mov (ex-wait %foo 408))
+  ;<  mov=(list move)   bind:m  (do-park %foo 407 (desk-seal 1))
+  ;<  ~                 bind:m  (expect-moves mov (ex-wait %foo 407))
   %-  branch
   |^  :~  'got-update-perms-granted'^perms-granted
           'got-update-insufficient-perms'^insufficient-perms
@@ -1167,9 +1168,9 @@
   ::
     ;<  mov=(list move)   bind:m  (call ~[/blah] [%seal %foo & pers-1])
     ;<  ~  bind:m  (expect-moves mov (ex-ward-have %foo perm-none pers-1) ex-load ~)
-    ;<  mov2=(list move)  bind:m  (do-park %base 408 ~)
+    ;<  mov2=(list move)  bind:m  (do-park %base 407 ~)
     ;<  ~                 bind:m  (expect-moves mov2 (ex-kernel-build ~ ~))
-    ;<  ~                 bind:m  (set-kelvin 408)
+    ;<  ~                 bind:m  (set-kelvin 407)
     ;<  mov3=(list move)  bind:m  do-pork
     ;<  ~                 bind:m
       %+  expect-moves  mov3
@@ -1181,7 +1182,7 @@
           (ex-text ": /~nul/foo/2/sys/kelvin")
           (ex-text "+ /~nul/foo/2/desk/seal")
           (ex-ward-have %foo pers-1 pers-1)
-          (ex-gift [%tire %| [%warp %foo [%zuse 408]]])
+          (ex-gift [%tire %| [%warp %foo [%zuse 407]]])
           ex-load
       ==
     (do-wick ~)
@@ -1191,12 +1192,12 @@
   ::  non-essential desk held, kelvin update applied on desks
   ::  non-essential desk receives required perms, revived
   ::
-    ;<  mov=(list move)  bind:m  (do-park %base 408 ~)
+    ;<  mov=(list move)  bind:m  (do-park %base 407 ~)
     ;<  ~  bind:m
       %+  expect-moves  mov
       (ex-kernel-build ~ [[%foo | perm-none perm-none pers-1] ~])
     ;<  ~  bind:m  (do-zeal [%foo %held]~)
-    ;<  ~                 bind:m  (set-kelvin 408)
+    ;<  ~                 bind:m  (set-kelvin 407)
     ;<  mov2=(list move)  bind:m  do-pork
     ;<  ~                 bind:m
       %+  expect-moves  mov2
@@ -1209,7 +1210,7 @@
           (ex-text "+ /~nul/foo/2/desk/seal")
           (ex-ward-have %foo pers-1 perm-none)
           (ex-pass /park-held/foo [%b [%wait ~1111.1.1]])
-          (ex-gift [%tire %| [%warp %foo [%zuse 408]]])
+          (ex-gift [%tire %| [%warp %foo [%zuse 407]]])
           ex-load
       ==
     ;<  ~  bind:m  (do-wick ~)
@@ -1229,15 +1230,15 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] [%baz |] ~)
-  ;<  *                 bind:m  (do-park %foo 407 ~)
-  ;<  *                 bind:m  (do-park %baz 407 (desk-seal 1))
-  ;<  *                 bind:m  (do-park %base 408 ~)
+  ;<  *                 bind:m  (do-park %foo 406 ~)
+  ;<  *                 bind:m  (do-park %baz 406 (desk-seal 1))
+  ;<  *                 bind:m  (do-park %base 407 ~)
   ;<  ~                 bind:m  (do-zeal [[%foo %held] [%baz %held] ~])
-  ;<  ~                 bind:m  (set-kelvin 408)
-  ;<  *                 bind:m  do-pork
-  ;<  mov=(list move)   bind:m  (do-park %base 407 ~)
-  ;<  ~                 bind:m  (expect-moves mov (ex-kernel-build ~ ~))
   ;<  ~                 bind:m  (set-kelvin 407)
+  ;<  *                 bind:m  do-pork
+  ;<  mov=(list move)   bind:m  (do-park %base 406 ~)
+  ;<  ~                 bind:m  (expect-moves mov (ex-kernel-build ~ ~))
+  ;<  ~                 bind:m  (set-kelvin 406)
   ;<  mov2=(list move)  bind:m  do-pork
   ;<  ~                 bind:m
     %+  expect-moves  mov2
@@ -1248,7 +1249,7 @@
         ex-wick
         (ex-text ": /~nul/foo/2/sys/kelvin")
         (ex-pass /park-held/foo [%b [%wait ~1111.1.1]])
-        (ex-gift [%tire %| [%warp %foo [%zuse 407]]])
+        (ex-gift [%tire %| [%warp %foo [%zuse 406]]])
         ::
         ex-wick
         (ex-text ": /~nul/baz/2/sys/kelvin")
@@ -1256,7 +1257,7 @@
         (ex-ward-have %baz pers-1 perm-none)
         (ex-ward-need %baz pers-1)
         (ex-pass /park-held/baz [%b [%wait ~1111.1.1]])
-        (ex-gift [%tire %| [%warp %baz [%zuse 407]]])
+        (ex-gift [%tire %| [%warp %baz [%zuse 406]]])
         ex-load
     ==
   ;<  ~                 bind:m  (do-wick ~)
@@ -1274,14 +1275,14 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] [%baz |] ~)
-  ;<  *                 bind:m  (do-park %foo 407 ~)
-  ;<  *                 bind:m  (do-park %baz 407 ~)
-  ;<  mov=(list move)   bind:m  (do-park %base 408 ~)
+  ;<  *                 bind:m  (do-park %foo 406 ~)
+  ;<  *                 bind:m  (do-park %baz 406 ~)
+  ;<  mov=(list move)   bind:m  (do-park %base 407 ~)
   ;<  ~                 bind:m
     %+  expect-moves  mov
     (ex-kernel-build [[%foo %held] [%baz %held] ~] ~)
   ;<  ~                 bind:m  (do-zeal [[%foo %held] [%baz %held] ~])
-  ;<  ~                 bind:m  (set-kelvin 408)
+  ;<  ~                 bind:m  (set-kelvin 407)
   ;<  mov2=(list move)  bind:m  do-pork
   ;<  ~                 bind:m
     %+  expect-moves  mov2
@@ -1292,9 +1293,9 @@
     ==
   ;<  ~                 bind:m  (do-wick ~)
   ::
-  ;<  mov3=(list move)  bind:m  (do-park %base 407 ~)
+  ;<  mov3=(list move)  bind:m  (do-park %base 406 ~)
   ;<  ~                 bind:m  (expect-moves mov3 (ex-kernel-build ~ ~))
-  ;<  ~                 bind:m  (set-kelvin 407)
+  ;<  ~                 bind:m  (set-kelvin 406)
   ;<  mov4=(list move)  bind:m  do-pork
   ;<  ~                 bind:m
     %+  expect-moves  mov4
@@ -1305,12 +1306,12 @@
         ex-wick
         (ex-text ": /~nul/foo/2/sys/kelvin")
         (ex-pass /park-held/foo [%b [%wait ~1111.1.1]])
-        (ex-gift [%tire %| [%warp %foo [%zuse 407]]])
+        (ex-gift [%tire %| [%warp %foo [%zuse 406]]])
         ::
         ex-wick
         (ex-text ": /~nul/baz/2/sys/kelvin")
         (ex-pass /park-held/baz [%b [%wait ~1111.1.1]])
-        (ex-gift [%tire %| [%warp %baz [%zuse 407]]])
+        (ex-gift [%tire %| [%warp %baz [%zuse 406]]])
         ex-load
     ==
   ;<  ~                 bind:m  (do-wick ~)
@@ -1332,13 +1333,13 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo &] [%baz |] ~)
-  ;<  *                 bind:m  (do-park %foo 408 ~)
-  ;<  *                 bind:m  (do-park %baz 407 ~)
-  ;<  mov=(list move)   bind:m  (do-park %base 408 ~)
+  ;<  *                 bind:m  (do-park %foo 407 ~)
+  ;<  *                 bind:m  (do-park %baz 406 ~)
+  ;<  mov=(list move)   bind:m  (do-park %base 407 ~)
   ;<  ~                 bind:m
     (expect-moves mov (ex-kernel-build [[%baz %held] ~] [%foo & ~ ~ ~] ~))
   ;<  ~                 bind:m  (do-zeal [[%baz %held] ~])
-  ;<  ~                 bind:m  (set-kelvin 408)
+  ;<  ~                 bind:m  (set-kelvin 407)
   ;<  mov2=(list move)  bind:m  do-pork
   ;<  ~                 bind:m
     %+  expect-moves  mov2
@@ -1348,26 +1349,26 @@
         ::
         ex-wick
         (ex-text ": /~nul/foo/2/sys/kelvin")
-        (ex-gift [%tire %| [%warp %foo [%zuse 408]]])
+        (ex-gift [%tire %| [%warp %foo [%zuse 407]]])
         ex-load
     ==
   ;<  ~  bind:m  (do-wick ~)
   ::
-  ;<  mov3=(list move)  bind:m  (do-park %base 407 ~)
+  ;<  mov3=(list move)  bind:m  (do-park %base 406 ~)
   ;<  ~                 bind:m
-    (expect-moves mov3 (ex-gift [%tire %| [%wait %base [%zuse 407]]]) ~)
+    (expect-moves mov3 (ex-gift [%tire %| [%wait %base [%zuse 406]]]) ~)
   ::
-  ;<  mov4=(list move)  bind:m  (do-park %foo ~[408 407] ~)
+  ;<  mov4=(list move)  bind:m  (do-park %foo ~[407 406] ~)
   ;<  ~                 bind:m
     %+  expect-moves  mov4
     :~  ex-wick
         (ex-text ": /~nul/foo/3/sys/kelvin")
-        (ex-gift [%tire %| [%wait %foo [%zuse 407]]])
+        (ex-gift [%tire %| [%wait %foo [%zuse 406]]])
         ex-load
     ==
   ;<  ~                 bind:m
     (do-wick (ex-kernel-build ~ [%foo & ~ ~ ~] [%baz | ~ ~ ~]~))
-  ;<  ~                 bind:m  (set-kelvin 407)
+  ;<  ~                 bind:m  (set-kelvin 406)
   ;<  mov5=(list move)  bind:m  do-pork
   ;<  ~                 bind:m
     %+  expect-moves  mov5
@@ -1376,13 +1377,13 @@
         (ex-text ": /~nul/base/3/sys/kelvin")
         ::
         ex-wick
-        (ex-gift [%tire %| [%warp %foo [%zuse 407]]])
-        (ex-gift [%tire %| [%warp %base [%zuse 407]]])
+        (ex-gift [%tire %| [%warp %foo [%zuse 406]]])
+        (ex-gift [%tire %| [%warp %base [%zuse 406]]])
         ::
         ex-wick
         (ex-text ": /~nul/baz/2/sys/kelvin")
         (ex-pass /park-held/baz [%b [%wait ~1111.1.1]])
-        (ex-gift [%tire %| [%warp %baz [%zuse 407]]])
+        (ex-gift [%tire %| [%warp %baz [%zuse 406]]])
         ex-load
     ==
   ;<  ~  bind:m  (do-wick ~)
@@ -1394,12 +1395,12 @@
 ::
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
-  ;<  mov=(list move)   bind:m  (do-park %foo 408 (desk-seal 1))
-  ;<  ~                 bind:m  (expect-moves mov (ex-wait %foo 408))
-  ;<  mov2=(list move)  bind:m  (do-park %foo 407 (desk-seal 2))
+  ;<  mov=(list move)   bind:m  (do-park %foo 407 (desk-seal 1))
+  ;<  ~                 bind:m  (expect-moves mov (ex-wait %foo 407))
+  ;<  mov2=(list move)  bind:m  (do-park %foo 406 (desk-seal 2))
   %+  expect-moves  mov2
   :~  ex-wick
-      (ex-gift [%tire %| [%wait %foo [%zuse 407]]])
+      (ex-gift [%tire %| [%wait %foo [%zuse 406]]])
   ==
 ::
 ++  test-skip-kelvin-and-revive-non-esse
@@ -1412,12 +1413,12 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  ~                 bind:m  setup-non-esse-two-kelvins-w-perms
-  ;<  mov=(list move)   bind:m  (do-park %base 407 ~)
+  ;<  mov=(list move)   bind:m  (do-park %base 406 ~)
   ;<  ~  bind:m
     %+  expect-moves  mov
     (ex-kernel-build ~ [[%foo | perm-none perm-none pers-2] ~])
   ;<  ~  bind:m  (do-zeal [%foo %held]~)
-  ;<  ~                 bind:m  (set-kelvin 407)
+  ;<  ~                 bind:m  (set-kelvin 406)
   ;<  mov2=(list move)  bind:m  do-pork
   ;<  ~                 bind:m
     %+  expect-moves  mov2
@@ -1431,7 +1432,7 @@
         (ex-ward-have %foo pers-2 perm-none)
         (ex-pass /park-held/foo [%b [%wait ~1111.1.1]])
         (ex-gift [%tire %| [%warp %foo [%zuse 407]]])
-        (ex-gift [%tire %| [%warp %foo [%zuse 408]]])
+        (ex-gift [%tire %| [%warp %foo [%zuse 406]]])
         ex-load
     ==
   ;<  ~                 bind:m  (do-wick ~)
@@ -1449,12 +1450,12 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  ~                 bind:m  setup-non-esse-two-kelvins-w-perms
-  ;<  mov=(list move)   bind:m  (do-park %base 408 ~)
+  ;<  mov=(list move)   bind:m  (do-park %base 407 ~)
   ;<  ~  bind:m
     %+  expect-moves  mov
     (ex-kernel-build ~ [[%foo | perm-none perm-none pers-1] ~])
   ;<  ~  bind:m  (do-zeal [%foo %held]~)
-  ;<  ~                 bind:m  (set-kelvin 408)
+  ;<  ~                 bind:m  (set-kelvin 407)
   ;<  mov2=(list move)  bind:m  do-pork
   ;<  ~                 bind:m
     %+  expect-moves  mov2
@@ -1467,7 +1468,7 @@
         (ex-text "+ /~nul/foo/2/desk/seal")
         (ex-ward-have %foo pers-1 perm-none)
         (ex-pass /park-held/foo [%b [%wait ~1111.1.1]])
-        (ex-gift [%tire %| [%warp %foo [%zuse 408]]])
+        (ex-gift [%tire %| [%warp %foo [%zuse 407]]])
         ex-load
     ==
   ;<  ~                 bind:m  (do-wick ~)
@@ -1476,13 +1477,13 @@
   ::
   ;<  ~                 bind:m  (do-seal-held-revives %foo pers-1 pers-1)
   ::
-  ;<  mov4=(list move)  bind:m  (do-park %base 407 ~)
+  ;<  mov4=(list move)  bind:m  (do-park %base 406 ~)
   ;<  ~                 bind:m
     %+  expect-moves  mov4
     ::  not passing perms here, already got %ward on %seal
     (ex-kernel-build ~ [[%foo | ~ ~ (silt :~([%eyre ~]))] ~])
   ;<  ~        bind:m  (do-zeal [%foo %held]~)
-  ;<  ~                 bind:m  (set-kelvin 407)
+  ;<  ~                 bind:m  (set-kelvin 406)
   ;<  mov5=(list move)  bind:m  do-pork
   ;<  ~                 bind:m
     %+  expect-moves  mov5
@@ -1495,7 +1496,7 @@
         (ex-text ": /~nul/foo/3/sys/kelvin")
         (ex-ward-have %foo pers-2 pers-1)
         (ex-pass /park-held/foo [%b [%wait ~1111.1.1]])
-        (ex-gift [%tire %| [%warp %foo [%zuse 407]]])
+        (ex-gift [%tire %| [%warp %foo [%zuse 406]]])
         ex-load
     ==
   ;<  ~                 bind:m  (do-wick ~)
@@ -1544,18 +1545,18 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                bind:m  (do-setup-desks [%foo |] ~)
-  ;<  mov=(list move)  bind:m  (do-park %foo ~[409 407] ~)
+  ;<  mov=(list move)  bind:m  (do-park %foo ~[408 406] ~)
   ;<  ~                bind:m
     %+  expect-moves  mov
     :~  ex-wick
         (ex-text ": /~nul/foo/2/sys/kelvin")
-        (ex-gift [%tire %| [%wait %foo [%zuse 407]]])
+        (ex-gift [%tire %| [%wait %foo [%zuse 406]]])
         ex-load
     ==
-  ;<   mov2=(list move)  bind:m  (do-park %base 408 ~)
+  ;<   mov2=(list move)  bind:m  (do-park %base 407 ~)
   ;<  ~                  bind:m  (expect-moves mov2 (ex-kernel-build [%foo %held]~ ~))
   ;<  ~                  bind:m  (do-zeal [%foo %held]~)
-  ;<  ~                  bind:m  (set-kelvin 408)
+  ;<  ~                  bind:m  (set-kelvin 407)
   ;<  *                  bind:m  do-pork
   ;<  ~                  bind:m  (do-wick ~)
   ::  user should be able to set the held desk to dead
@@ -1571,8 +1572,8 @@
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
   ;<  ~                 bind:m  (do-zest %foo %dead)
-  ;<  *                 bind:m  (do-park %base 408 ~)
-  ;<  ~                 bind:m  (set-kelvin 408)
+  ;<  *                 bind:m  (do-park %base 407 ~)
+  ;<  ~                 bind:m  (set-kelvin 407)
   ;<  *                 bind:m  do-pork
   ;<  mov=(list move)   bind:m  (call ~[/blah] [%zeal [%foo %live]~])
   ;<  *                 bind:m
@@ -1581,7 +1582,7 @@
         (ex-gift [%tire %| [%zest %foo %held]])
         ex-load
     ==
-  ;<  mov2=(list move)  bind:m  (do-park %foo 408 ~)
+  ;<  mov2=(list move)  bind:m  (do-park %foo 407 ~)
   ;<  now=@da           bind:m  get-now
   ;<  ~  bind:m
     %+  expect-moves  mov2
@@ -1602,11 +1603,11 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *  bind:m  (do-setup-desks [%foo |] ~)
-  ;<  *  bind:m  (do-park %foo 408 (desk-seal 1))
+  ;<  *  bind:m  (do-park %foo 407 (desk-seal 1))
   ;<  *  bind:m  (do-zeal [%foo %dead]~)
-  ;<  mov=(list move)   bind:m  (do-park %base 408 ~)
+  ;<  mov=(list move)   bind:m  (do-park %base 407 ~)
   ;<  ~  bind:m  (expect-moves mov (ex-kernel-build ~ ~))
-  ;<  ~                 bind:m  (set-kelvin 408)
+  ;<  ~                 bind:m  (set-kelvin 407)
   ;<  mov2=(list move)  bind:m  do-pork
   ;<  ~                 bind:m
     %+  expect-moves  mov2
@@ -1619,7 +1620,7 @@
         (ex-text "+ /~nul/foo/2/desk/seal")
         (ex-ward-have %foo pers-1 perm-none)
         (ex-ward-need %foo pers-1)
-        (ex-gift [%tire %| [%warp %foo [%zuse 408]]])
+        (ex-gift [%tire %| [%warp %foo [%zuse 407]]])
         ex-load
     ==
   ::
@@ -1642,7 +1643,7 @@
   =/  m  (mare ,~)
   ;<  *                bind:m  (do-setup-desks [%baz |] ~)
   ;<  mov=(list move)  bind:m
-    (do-park %baz 409 [/lib/skeleton/hoon [%& ;;(page:clay hoon+lib-skel)]]~)
+    (do-park %baz 408 [/lib/skeleton/hoon [%& ;;(page:clay hoon+lib-skel)]]~)
   %+  expect-moves  mov
   :~  ex-wick
       (ex-text "+ /~nul/baz/2/lib/skeleton/hoon")
@@ -1656,9 +1657,9 @@
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks ~)
   ;<  mov=(list move)   bind:m
-    (do-park %base 409 [/ted/new/hoon [%& ;;(page:clay hoon+'~')]]~)
+    (do-park %base 408 [/ted/new/hoon [%& ;;(page:clay hoon+'~')]]~)
   ;<  ~  bind:m  (expect-moves mov (ex-kernel-build ~ ~))
-  ;<  ~                 bind:m  (set-kelvin 409)
+  ;<  ~                 bind:m  (set-kelvin 408)
   ;<  mov2=(list move)  bind:m  do-pork
   ;<  ~                 bind:m
   %+  expect-moves  mov2
@@ -1675,18 +1676,18 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
-  ;<  mov=(list move)   bind:m  (do-park %foo ~[409 410] ~)
+  ;<  mov=(list move)   bind:m  (do-park %foo ~[408 410] ~)
   ;<  ~                 bind:m
     %+  expect-moves  mov
     :~  ex-wick
         (ex-text ": /~nul/foo/2/sys/kelvin")
         ex-load
     ==
-  ;<  mov2=(list move)  bind:m  (do-park %foo ~[409 408] ~)
+  ;<  mov2=(list move)  bind:m  (do-park %foo ~[408 407] ~)
   %+  expect-moves  mov2
     :~  ex-wick
         (ex-text ": /~nul/foo/3/sys/kelvin")
-        (ex-gift [%tire %| [%wait %foo [%zuse 408]]])
+        (ex-gift [%tire %| [%wait %foo [%zuse 407]]])
         ex-load
     ==
 ::
@@ -1697,7 +1698,7 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  *                 bind:m  (do-setup-desks [%foo |] ~)
-  ;<  mov=(list move)   bind:m  (do-park %foo 409 (desk-seal 1))
+  ;<  mov=(list move)   bind:m  (do-park %foo 408 (desk-seal 1))
   ;<  ~                 bind:m  (ex-pew %foo `pers-1)
   ;<  mov2=(list move)  bind:m  (call ~[/blah] [%seal %foo & pers-1])
   ::
@@ -1724,7 +1725,7 @@
         ex-load
     ==
   ;<  ~                 bind:m  (do-wick ~)
-  ;<  mov2=(list move)  bind:m  (do-park %foo 409 (desk-seal 1))
+  ;<  mov2=(list move)  bind:m  (do-park %foo 408 (desk-seal 1))
   ;<  ~  bind:m
     %+  expect-moves  mov2
     :~  ex-wick
@@ -1742,7 +1743,7 @@
   =/  m  (mare ,~)
   ;<  *                bind:m  (do-setup-desks [%foo |] ~)
   ;<  *                bind:m  (do-zest %foo %dead)
-  ;<  mov=(list move)  bind:m  (do-park %foo 409 (desk-seal 1))
+  ;<  mov=(list move)  bind:m  (do-park %foo 408 (desk-seal 1))
   ;<  ~  bind:m
     %+  expect-moves  mov
     :~  ex-wick

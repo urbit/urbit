@@ -1470,6 +1470,26 @@
   ::
   ;<  tt=@t  bind:m  get-token
   (try (expect-eq !>(t) !>(tt)))
+::  +test-header-auth-fallback-to-cookie: invalid auth header should not
+::  prevent cookie-based authentication
+::
+++  test-header-auth-fallback-to-cookie
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ^-  form:m
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  perform-born
+  ;<  ~  bind:m  perform-authentication-2
+  ::  request our name while passing an invalid authorization header.
+  ::  the valid session cookie should still be used for authentication.
+  ::
+  ;<  name=@p  bind:m
+    =/  m  (mare ,@p)
+    ^-  form:m
+    ;<  mos=(list move)  bind:m  (get '/~/name' ['authorization' 'Basic foo']~)
+    ?>  ?=([[* %give %response %start * * %.y] ~] mos)
+    (pure:m (slav %p q:(need data.http-event.p.card.i.mos)))
+  (try (expect-eq !>(~nul) !>(name)))
 ::  +perform-authentication: goes through the authentication flow
 ::
 ++  perform-authentication-2

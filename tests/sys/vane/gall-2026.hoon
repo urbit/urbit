@@ -225,7 +225,7 @@
   =/  m  (mare egg:gall)
   ^-  form:m
   ;<  e=egg-any:gall  bind:m  (get-scry egg-any:gall %v dude /$)
-  (pure:m ?>(?=(%20 -.e) +.e))
+  (pure:m ?>(?=(%21 -.e) +.e))
 ::
 ++  get-live-egg
   |=  =dude:gall
@@ -804,15 +804,16 @@
     (do-load %mock easy:mock)
   ;<  ~  bind:m
     ::NOTE  moves sorted because otherwise dependent on set order
+    ::TODO  that doesn't always help! do something better here...
     %+  ex-moves  (sort moz aor)
     :~  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
         (ex-move ~[/sysduct] %pass gall-wire [%l %spin [%mock /mysocket]])
         (ex-move ~[/sysduct] %pass gall-wire-e [%e %connect [~ /x] %dude])
         (ex-move ~[/sysduct] %pass gall-wire-c [%c %warp ~zod %desk ~ rave])
         (ex-move ~[/sysduct] %pass gall-wire-b [%b %wait ~2345.6.7])
-        (ex-on-agent /agent/wire %kick ~)
         (ex-on-arvo /agent/wire [%iris %http-response %cancel ~])
         (ex-on-arvo /agent/wire [%lick %soak /mysocket %disconnect ~])
+        (ex-on-agent /agent/wire %kick ~)
     ==
   (pure:m ~)
 ::

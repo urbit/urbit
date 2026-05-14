@@ -209,7 +209,7 @@
             |=(d=desk [d (bek d)])
           ?-  -.task
             %solid  (solid:libpill (sys base) dez | now.bowl & ~)
-            %brass  (brass:libpill (sys base) dez & ~)
+            %brass  (brass:libpill (sys base) dez & & | ~)
           ==
         ::
             %desk
