@@ -8,6 +8,7 @@
     =/  bud
       ^~
       =/  zuse  !>(..zuse)
+      ~&  >  [%virt-mug `@ux`(mug zuse)]
       :*  zuse=zuse
           nave=(slap zuse !,(*hoon nave:clay))
           cork=(slap zuse !,(*hoon cork))
@@ -779,6 +780,7 @@
 ::  defined in lull.
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+~>  %drop
 =/  bud
   ^~
   =/  zuse  !>(..zuse)
@@ -788,6 +790,18 @@
       same=(slap zuse !,(*hoon same))
       mime=(slap zuse !,(*hoon mime))
       cass=(slap zuse !,(*hoon cass:clay))
+  ==
+::  virtualization gates without access to namespace
+::
+=/  mule  ~(mule vi |)
+=/  mole  ~(mole vi |)
+=/  road
+  |*  =(trap *)
+  ^+  $:trap
+  =/  res  (mule trap)
+  ?-  -.res
+    %&  p.res
+    %|  (mean p.res)
   ==
 ::
 |=  our=ship
@@ -2344,7 +2358,6 @@
         [%verb p=(unit ?)]
         unix-task
     ==
-  ::  TODO build build system against this zuse
   ::
   ++  make-bud
     |=  arv=(unit *)
@@ -2363,7 +2376,7 @@
       =/  sam=vase  ;;(vase (wish '(slap !>(..zuse) !,(*hoon same))'))
       =/  mim=vase  ;;(vase (wish '(slap !>(..zuse) !,(*hoon mime))'))
       =/  cas=vase  ;;(vase (wish '(slap !>(..zuse) !,(*hoon cass:clay))'))
-      ~&  >  [%zuse-mug (mug zus)]
+      ~&  >  [%zuse-mug-135 `@ux`(mug zus)]
       :*  zuse=zus
           nave=nav
           cork=cor
@@ -2382,6 +2395,8 @@
     =/  sam  (wish '(slub !>(..zuse) !,(*hoon same))')
     =/  mim  (wish '(slub !>(..zuse) !,(*hoon mime))')
     =/  cas  (wish '(slub !>(..zuse) !,(*hoon cass:clay))')
+    ~&  >  [%zuse-mug-136 `@ux`(mug zus)]
+    ::  TODO try met 3 jam zus hed tel
     ::
     =/  zus=vase  (next-vase:h136 ;;(vase:h136 zus))
     =/  nav=vase  (next-vase:h136 ;;(vase:h136 nav))
@@ -2391,7 +2406,7 @@
     =/  cas=vase  (next-vase:h136 ;;(vase:h136 cas))
      :: XX combine with above
     ::
-    ~&  >  [%zuse-mug (mug zus)]
+    ~&  >  [%zuse-mug-136-post-migration `@ux`(mug zus)]
     :*  zuse=zus
         nave=nav
         cork=cor
@@ -2399,6 +2414,30 @@
         mime=mim
         cass=cas
     ==
+  ::
+  ++  make-zuse
+    |=  arv=(unit *)
+    ^-  vase
+    ~>  %bout.[1 %make-zuse]
+    ?~  arv   zuse.bud
+    =/  wish  (cury wisher u.arv)
+    =/  hov  ;;(@ud (wish 'hoon-version'))
+    ~&  >>>  [%mz-make-zuse hoon-version=hov]
+    ::
+    ?:  =(135 hov)
+      =/  zus=vase  ;;(vase (wish '!>(..zuse)'))
+      ~&  >  [%mz-zuse-mug `@ux`(mug zus)]
+      zus
+    ?>  =(136 hov)
+    ::  untyped
+    ::
+    =/  zus  (wish '!>(..zuse)')
+    ~&  >  [%mz-zuse-mug-old `@ux`(mug zus)]
+    ::  TODO try met 3 jam zus hed tel
+    ::
+    =/  zus=vase  (next-vase:h136 ;;(vase:h136 zus))
+    ~&  >  [%mz-zuse-mug `@ux`(mug zus)]
+    zus
   ::
   ++  wisher
     |=  [arv=* txt=@t]
@@ -2419,17 +2458,48 @@
   ::
   ++  tako-ford
     |=  tak=tako
-    =?  bud  !=(%base syd)
+    ::  pre-compute current ford type before bud gets updated
+    ::
+    =/  current-ford=vase
+      ~>  %memo./clay/ford-type
+      (slub zuse.bud (ream ford-cord))
+    =/  prepped=(unit *)
+      ?.  !=(%base syd)  ~
       =/  pil=(unit pill)  (get-pill tak)
       ~&  >  [%pil ?=(^ pil)]
-      =/  prepped=(unit *)  (prep-pill pil)
+      =>  [prep-pill=prep-pill pil=pil]
+      ~>  %memo./clay/ford
+      (prep-pill pil)
+    =?  bud  !=(%base syd)
+      =/  foo  (make-zuse prepped)
       ~&  >  [%prepped ?=(^ prepped)]
       =>  [make-bud=make-bud prepped=prepped]
       ~>  %memo./clay/ford
       (make-bud prepped)
+    ~&  >  [%tf-bud-zus-mug `@ux`(mug zuse.bud)]
     ~&  >  [syd (text zuse.bud)]
-    =/  baz  (slub zuse.bud (ream '~&  >  .  ~'))
-    =/  fus  (slub zuse.bud (ream ford-cord))
+    =/  fus=vase
+      ?~  prepped
+        ::  current era: compile ford-cord directly
+        ::
+        (slub zuse.bud (ream ford-cord))
+      ::  old era: compile ford-cord on the old system where
+      ::  ut and types are consistent, then migrate the result.
+      ::  use the current-system ford type (same arm layout)
+      ::  paired with the old-system noun.
+      ::
+      =/  wish  (cury wisher u.prepped)
+      =/  hov  ;;(@ud (wish 'hoon-version'))
+      ?>  |(=(135 hov) =(136 hov))
+      ?:  =(135 hov)
+        (slub zuse.bud (ream ford-cord))
+      ~>  %bout.[1 %old-ford]
+      =/  builder  (wish '|=(fc=@t q:(slub !>(..zuse) (ream fc)))')
+      =/  fus-noun  (slum builder ford-cord)
+      ~&  >  [%old-ford-noun-mug (mug fus-noun)]
+      ~&  >  [%current-ford-type-mug (mug p.current-ford)]
+      [p.current-ford fus-noun]
+    ~&  >  [%tako-ford-fus (mug fus)]
     =/  files  (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
     ~(. (build-ford-api:fusion fus) files lat.ran veb.bug)
   ::
@@ -5440,6 +5510,7 @@
   ::
   ++  ford
     |=  [her=ship syd=desk yon=(unit aeon)]
+    ~&  >  [%ford-lu syd]
     =/  den  ((de now rof hen ruf) her syd)
     %-  tako-ford:den
     ::TODO  is this +got after +got semantically correct?
@@ -5552,7 +5623,9 @@
     |-  ^-  load:gall
     ?~  sat
       lad
+    ~&  >  [%build-agents-1 desk.i.sat]
     =/  f  (ford our desk.i.sat ~)
+    ~&  >  [%build-agents-2 desk.i.sat]
     =/  new=load:gall
       |-  ^-  load:gall
       ?~  bill.i.sat
