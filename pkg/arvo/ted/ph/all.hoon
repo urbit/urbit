@@ -41,7 +41,7 @@
       ::
         %ph-flub
         %ph-big-flub
-        %ph-ahoy
+        :: %ph-ahoy
     ==
   ::
       [%all ~]
