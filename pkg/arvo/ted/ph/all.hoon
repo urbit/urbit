@@ -24,6 +24,7 @@
         %ph-child-sync
         %ph-child-update
         %ph-hi
+        %ph-hi-out-of-order
         %ph-hi-az
         %ph-hi-comet-az
         %ph-hi-cousin-az

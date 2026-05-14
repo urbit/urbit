@@ -110,7 +110,7 @@
           %pill            (poke-pill:ac !<(pill:pill vase))
           %noun            (poke-noun:ac !<(* vase))
           %azimuth-action  (poke-azimuth-action:ac !<(azimuth-action vase))
-          %aqua-net-rules
+          %aqua-rule
         =+  !<(rule-actions vase)
         ::  route poke from test thread to %ames driver
         ::

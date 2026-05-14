@@ -23,6 +23,15 @@
   ?>  ?=(%aqua-effect p.cage)
   (pure:m !<([aqua-effect] q.cage))
 ::
+++  take-aqua-rule
+  =/  m  (strand ,rule-actions)
+  ^-  form:m
+  ;<  =cage  bind:m  (take-fact /net-control)
+  ~?  >  ?=(%aqua-rule p.cage)
+    p.cage
+  ?>  ?=(%aqua-rule p.cage)
+  (pure:m !<(rule-actions q.cage))
+::
 ++  start-simple
   (start-test %aqua-ames %aqua-behn %aqua-dill %aqua-eyre ~)
 ::
