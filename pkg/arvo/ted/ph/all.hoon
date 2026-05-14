@@ -80,7 +80,7 @@
 ?:  ?=(%& -.r.i.results)  loop(results t.results)
 =*  name  n.i.results
 =*  mess  p.r.i.results
-;<  ~  bind:m  (flog-text "ph-all: {(trip name)} failed: {(trip -.mess)}")
+;<  ~  bind:m  (flog-text "ph-all: {(trip name)} FAILED: {(trip -.mess)}")
 ;<  ~  bind:m  (flog-tang +.mess)
 ;<  ~  bind:m  (flog-text "")
 loop(results t.results)

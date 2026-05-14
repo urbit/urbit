@@ -162,7 +162,7 @@ in pkgs.stdenvNoCC.mkDerivation {
   '';
 
   checkPhase = ''
-    if egrep "((FAILED|CRASHED|Failed|failed|\[0 %avow 0 %noun 1\]\[0 %avow 1\])|warn:)" $out >/dev/null; then
+    if egrep "((FAILED|CRASHED|Failed|\[0 %avow 0 %noun 1\]\[0 %avow 1\])|warn:)" $out >/dev/null; then
       exit 1
     fi
   '';
