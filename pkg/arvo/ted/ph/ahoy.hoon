@@ -53,26 +53,26 @@
   ::
   ;<  ~          bind:m  test-simple-comet-1  :: "comet -> ~bud"  > :ping
   ;<  ~          bind:m  test-simple-comet-2  :: "comet -> ~bud"  > :ping
-                                              ::    (kids hash loaded later)
+  ::                                             ::    (kids hash loaded later)
   ;<  ~          bind:m  test-simple-comet-3  :: "comet -> ~bud"  > |hi after migration
   ;<  ~          bind:m  test-simple-comet-4  :: "comet -> ~bud"  > :sub pre-migration
-                                              ::                  > :pub post-migration
+  ::                                             ::                  > :pub post-migration
   ::  galaxy -> comet
   ::
   ;<  ~          bind:m  test-simple-comet-5  :: "comet -> ~bud"  > :ping
-                                              :: "~bud -> comet"  > |hi
-                                              :: comet %ahoy-probs galaxy
+  ::                                             :: "~bud -> comet"  > |hi
+  ::                                             :: comet %ahoy-probs galaxy
   ;<  ~          bind:m  test-simple-comet-6  :: all in %mesa
-                                              :: "comet -> ~bud"  > :ping
-                                              :: "~bud -> comet"  > |hi
+  ::                                             :: "comet -> ~bud"  > :ping
+  ::                                             :: "~bud -> comet"  > |hi
   ;<  ~          bind:m  test-simple-comet-7  :: comet in %mesa, galaxy in %ames
-                                              ::  galaxy has %ames TODOS
-                                              :: "comet -> ~bud"  > :ping
-                                              :: "~bud -> comet"  > |hi
+  ::                                             ::  galaxy has %ames TODOS
+  ::                                             :: "comet -> ~bud"  > :ping
+  ::                                             :: "~bud -> comet"  > |hi
   ;<  ~          bind:m  test-simple-comet-8  :: ~dev -> comet
-                                              ::  galaxy has %ames TODOS
-                                              :: "comet -> ~dev"  > :ping
-                                              :: "~dev -> comet"  > |hi
+  ::                                             ::  galaxy has %ames TODOS
+  ::                                             :: "comet -> ~dev"  > :ping
+  ::                                             :: "~dev -> comet"  > |hi
   ::  TODO
   ::
   :: ;<  ~          bind:m  boot-moon
