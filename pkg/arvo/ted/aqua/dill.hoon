@@ -49,4 +49,5 @@
   [cards this]
 ::
 ++  handle-arvo-response  |=(* !!)
+++  handle-aqua-rule  |=(* !!)
 --

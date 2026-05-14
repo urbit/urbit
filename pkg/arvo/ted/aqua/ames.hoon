@@ -136,7 +136,7 @@
 --
 ::
 =|  state=driver-state
-%+  aqua-vane-thread  ~[%restore %send %push]
+%+  aqua-vane-thread  ~[%restore %send %push %filter]
 |_  =bowl:spider
 +*  this  .
 ++  handle-unix-effect
@@ -153,7 +153,6 @@
               ?=(?(%drop-link [%drop-next ~] %hold-link) u.rule)
           ==
         (handle-send our.bowl now.bowl who ue)^this
-      ~!  u.rule
       ?-    u.rule
           %drop-link  `this  :: drop all packets [sndr -> rcvr]
       ::
@@ -174,5 +173,29 @@
     ==
   [cards this]
 ::
-++  handle-arvo-response  |=(* !!)  ::  XX TODO network rules
+::
+++  handle-aqua-rule
+  |=  aq=rule-actions
+  ^-  (quip card:agent:gall _this)
+  ?-    -.aq
+      %drop-link    `this
+      %drop-next    `this
+      %flush-link
+    :_  this(ames.state ~, rules.state (~(del by rules.state) [from to]:aq))
+    ^-  (list card:agent:gall)
+    %-  zing
+    %+  turn  ames.state
+    |=  [who=@p ue=unix-effect]
+    ?>  ?=(%send -.q.ue)
+    (handle-send our.bowl now.bowl who ue)
+    ::
+      %clear-rules  `this
+    ::
+      %hold-link
+    =.  state
+      state(rules (~(put by rules.state) [from to]:aq %hold-link))
+    `this
+  ==
+::
+++  handle-arvo-response  |=(* !!)
 --

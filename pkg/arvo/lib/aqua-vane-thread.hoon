@@ -9,6 +9,10 @@
     |~  [ship unix-effect]
     *(quip card:agent:gall _^|(..handle-unix-effect))
   ::
+  ++  handle-aqua-rule
+    |~  rule-actions
+    *(quip card:agent:gall _^|(..handle-aqua-rule))
+  ::
   ++  handle-arvo-response
     |~  [wire sign-arvo]
     *(quip card:agent:gall _^|(..handle-unix-effect))
@@ -23,18 +27,42 @@
   ^-  form:m
   =*  loop  $
   ?^  effect-filter
-    =/  =path  /effect/[i.effect-filter]
-    ;<  ~  bind:m  (watch-our:strandio path %aqua path)
+    ::  each thread subscribes to specific effects
+    ::
+    ;<  ~  bind:m
+      ?:  =(%filter i.effect-filter)
+        (watch-our:strandio /net-control %aqua /net-control)
+      =/  =path  /effect/[i.effect-filter]
+      (watch-our:strandio path %aqua path)
     loop(effect-filter t.effect-filter)
   ;<  ~  bind:m
     %-  (main-loop:strandio ,_handler)
-    :~  handle-unix-effect:core
+    :~  handle-aqua-rule:core
+        handle-unix-effect:core
         handle-arvo-response:core
         pure:(strand ,vane-handler)
     ==
   (pure:m *vase)
 ::
 |%
+++  handle-aqua-rule
+  |=  handler=vane-handler
+  =/  m  (strand ,vane-handler)
+  ^-  form:m
+  ;<  rule=rule-actions  bind:m
+    ((handle:strandio ,rule-actions) take-aqua-rule:ph-io)
+  ;<  =bowl:spider             bind:m  get-bowl:strandio
+  =^  cards  handler
+    (~(handle-aqua-rule handler bowl) rule)
+  ?~  cards
+    (pure:m handler)
+  ::  send in next event to avoid inverting subscription flow.  real
+  ::  solution is probably for gall to drip subscription updates.
+  ::
+  ;<  ~                        bind:m  (sleep:strandio ~s0)
+  ;<  ~                        bind:m  (send-raw-cards:strandio cards)
+  (pure:m handler)
+::
 ++  handle-unix-effect
   |=  handler=vane-handler
   =/  m  (strand ,vane-handler)
