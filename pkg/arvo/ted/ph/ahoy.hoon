@@ -49,7 +49,7 @@
   ;<  ~          bind:m  (boot-with-core-and-breach %ames)
   ::  comet tests
   ::
-  ::  comet -> sponsor
+  ::  comet -> galaxy
   ::
   ;<  ~          bind:m  test-simple-comet-1  :: "comet -> ~bud"  > :ping
   ;<  ~          bind:m  test-simple-comet-2  :: "comet -> ~bud"  > :ping
@@ -58,6 +58,7 @@
   ;<  ~          bind:m  test-simple-comet-4  :: "comet -> ~bud"  > :sub pre-migration
                                               ::                  > :pub post-migration
   ::  galaxy -> comet
+  ::
   ;<  ~          bind:m  test-simple-comet-5  :: "comet -> ~bud"  > :ping
                                               :: "~bud -> comet"  > |hi
                                               :: comet %ahoy-probs galaxy
