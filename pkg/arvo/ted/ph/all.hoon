@@ -26,7 +26,7 @@
         %ph-hi
         %ph-hi-out-of-order
         %ph-hi-az
-        %ph-hi-comet-az
+        :: %ph-hi-comet-az
         %ph-hi-cousin-az
         %ph-hi-linnup-az
         %ph-hi-linnup-az-backward
