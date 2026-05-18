@@ -70,8 +70,7 @@
   ::
   ++  warp
     |=  [id=* wer=ship =desk =rave:clay]
-    ?~  q.riff  !!
-    (arvo %clay %read id wer desk rave)  ::  review
+    (arvo %clay %read id wer desk rave)
   ::
   ++  warp-our
     |=  [id=* =desk =rave:clay]
