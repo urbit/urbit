@@ -469,7 +469,7 @@
   =/  res=(set arvo-resource)  (~(gut by resources.state) tid ~)
   =/  deets=(map arvo-resource resource-deet)
     (~(gut by resource-deets.state) tid ~)
-  =/  new-res  (gift-to-res:track:gall [%thread tid wire] gift res deets)
+  =/  new-res  (apply-gift:track:gall [%thread tid wire] gift res deets)
   =.  resources.state
     (~(put by resources.state) tid res.new-res)
   =.  resource-deets.state
@@ -681,7 +681,7 @@
           (~(put ju scrying.s) tid ;;([wire ship path] [&2 &8 |8]:card))
       ::
         ?.  ?=([%pass *] card)  s
-        ?~  res=(card-to-res:track:gall card)  s
+        ?~  res=(card-resource:track:gall card)  s
         =+  ted-res=[tid [p.card res.res]]
         =.  resources.s
           ?:  |(?=(^ add.res) add.res)
@@ -841,7 +841,7 @@
     ?~  child-res  [cards state(resources (~(del by resources.state) tid))]
     =/  dets  (~(gut by resource-deets.state) tid ~)
     =/  c=(unit card)
-      ?~  tac=(drop-res:track:gall i.child-res dets)  ~
+      ?~  tac=(drop-resource:track:gall i.child-res dets)  ~
       `[%pass wire.i.child-res %arvo u.tac]
     %=  $
       cards      ?~(c cards [(card-to-dole u.c tid) cards])

@@ -3744,10 +3744,10 @@
         [%jael %keys wat=?(%private %public (set ship))]
     ==
   ::
-  ++  track  !:  ::  resource tracking utils
+  ++  track  ::  resource tracking utils
     |%
     +$  resource-deets  (map arvo-resource resource-deet)
-    ++  card-to-res
+    ++  card-resource
       |=  =card:agent
       ^-  $@(~ [add=$@(? resource-deet) res=_+:*arvo-resource])
       ?.  ?=([%pass * %arvo *] card)  ~
@@ -3785,16 +3785,16 @@
         [%lick %shut *]                 [| %lick %spin name.task]
       ==
     ::
-    ++  gift-to-res
+    ++  apply-gift
       |=  [=wire gift=gift-user-v1 res=(set arvo-resource) dets=resource-deets]
       ^-  [res=(set arvo-resource) dets=resource-deets]
       =;  upd=(unit (each [_+:*arvo-resource resource-deet] _+:*arvo-resource))
         ?-  upd
           ~         [res dets]
           [~ %& *]  :-  res
-                        (~(put by dets) [wire -.p.u.upd] +.p.u.upd)
+                    (~(put by dets) [wire -.p.u.upd] +.p.u.upd)
           [~ %| *]  :-  (~(del in res) wire p.u.upd)
-                        (~(del by dets) wire p.u.upd)
+                    (~(del by dets) wire p.u.upd)
         ==
       ?+  gift  ~
         [%behn *]        `|+[%behn %wait time.gift]
@@ -3830,11 +3830,9 @@
         [%lick *]  ~
       ==
     ::
-    ++  drop-res
+    ++  drop-resource
       |=  [res=arvo-resource dets=resource-deets]
       ^-  (unit task-user-v1)
-      ::  TODO ripped from ap-nuke -> helper
-      ::
       ?-  +.res
         [%behn %wait *]     `[%behn %rest time.res]
         [%clay %warp *]     `[%clay %rest id.res]
@@ -4155,9 +4153,8 @@
         [%jael %private-keys =life vein=(map life ring)]
         [%jael %public-keys =public-keys-result:jael]
         [%jael %turf turf=(list turf)]
-        ::TODO  khan gift(s)
-        [%lick %soak =name:lick =mark =noun]
         [%khan %arow res=(avow:khan cage)]
+        [%lick %soak =name:lick =mark =noun]
       ::
         [%syscall actual-kelvin=@ sign-arvo=*]  ::NOTE  secretly $sign-arvo, DO NOT DOCUMENT (;
         [%unsupported ~]

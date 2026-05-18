@@ -1421,8 +1421,8 @@
         %-  zing
         %+  turn  ~(tap in resources.yoke)
         |=  res=arvo-resource
-        ?~  tac=(drop-res:track res resource-deets.yoke)  ~
-        ?<  ?=(%ames -.u.tac)  ::  see +drop-res
+        ?~  tac=(drop-resource:track res resource-deets.yoke)  ~
+        ?<  ?=(%ames -.u.tac)  ::  see +drop-resource
         (ap-from-internal %pass wire.res %arvo u.tac)
       ==
     ::
@@ -1450,7 +1450,7 @@
           %+  murn  ~(tap in resources.yoke)
           |=  res=arvo-resource
           ^-  (unit card:agent)
-          ?~  tac=(drop-res:track res resource-deets.yoke)  ~
+          ?~  tac=(drop-resource:track res resource-deets.yoke)  ~
           `[%pass wire.res %arvo u.tac]
         ==
       =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent]))
@@ -2683,7 +2683,7 @@
       ?:  ?=([%pass * %dole *] i.caz)  $(q.i.caz rote.q.i.caz)
       ?.  ?=([%pass * %arvo *] i.caz)  $(caz t.caz)
       =/  $@(~ [add=$@(? resource-deet) res=_+:*arvo-resource])
-        (card-to-res:track i.caz)
+        (card-resource:track i.caz)
       ?@  -  $(caz t.caz)
       ?:  |(?=(^ add) add)
         ::TODO  prevent agent from creating the same resources twice
@@ -2705,7 +2705,7 @@
       |=  [=wire gift=gift-user-v1]
       ^+  yoke
       =/  [res=(set arvo-resource) dets=(map arvo-resource resource-deet)]
-        (gift-to-res:track wire gift resources.yoke resource-deets.yoke)
+        (apply-gift:track wire gift resources.yoke resource-deets.yoke)
       %_  yoke
         resources       res
         resource-deets  dets
