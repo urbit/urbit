@@ -840,7 +840,9 @@
     |-
     ?~  child-res  [cards state(resources (~(del by resources.state) tid))]
     =/  dets  (~(gut by resource-deets.state) tid ~)
-    =/  c=(unit card)  (drop-res:track:gall i.child-res dets)
+    =/  c=(unit card)
+      ?~  tac=(drop-res:track:gall i.child-res dets)  ~
+      `[%pass wire.i.child-res %arvo u.tac]
     %=  $
       cards      ?~(c cards [(card-to-dole u.c tid) cards])
       resource-deets.state

@@ -1421,27 +1421,9 @@
         %-  zing
         %+  turn  ~(tap in resources.yoke)
         |=  res=arvo-resource
-        =;  tac=$@(~ tick)
-          ?~(tac ~ (ap-from-internal %pass wire.res %arvo tac))
-        ::  TODO ripped from ap-nuke -> helper
-        ::
-        ?-  +.res
-          [%behn %wait *]     [%behn %rest time.res]
-          [%clay %warp *]     [%clay %rest id.res]
-          [%clay %tire]       [%clay %tire ~]
-          [%dill %logs]       [%dill %logs ~]
-          [%dill %mass]       ~
-          [%dill %view *]     [%dill %shot ses.res %flee ~]
-          [%eyre %binding *]  [%eyre %disconnect binding.res]
-          [%eyre %cache *]    [%eyre %set-response url.res ~]
-          [%iris %request]    [%iris %cancel-request ~]
-          [%jael %keys]       =+  d=(~(got by resource-deets.yoke) res)
-                              ?>  ?=([%jael %keys *] d)
-                              ?:  ?=(%private wat.d)
-                                [%jael %private-keys ~]
-                              [%jael %public-keys ~]
-          [%lick %spin *]     [%lick %shut name.res]
-        ==
+        ?~  tac=(drop-res:track res resource-deets.yoke)  ~
+        ?<  ?=(%ames -.u.tac)  ::  see +drop-res
+        (ap-from-internal %pass wire.res %arvo u.tac)
       ==
     ::
     ++  ap-nuke
@@ -1468,25 +1450,8 @@
           %+  murn  ~(tap in resources.yoke)
           |=  res=arvo-resource
           ^-  (unit card:agent)
-          =;  tac=$@(~ task-user-v1)
-            ?~(tac ~ `[%pass wire.res %arvo tac])
-          ?-  +.res
-            [%behn %wait *]     [%behn %rest time.res]
-            [%clay %warp *]     [%clay %rest id.res]
-            [%clay %tire]       [%clay %tire ~]
-            [%dill %logs]       [%dill %logs ~]
-            [%dill %mass]       ~
-            [%dill %view *]     [%dill %shot ses.res %flee ~]
-            [%eyre %binding *]  [%eyre %disconnect binding.res]
-            [%eyre %cache *]    [%eyre %set-response url.res ~]
-            [%iris %request]    [%iris %cancel-request ~]
-            [%jael %keys]       =+  d=(~(got by resource-deets.yoke) res)
-                                ?>  ?=([%jael %keys *] d)
-                                ?:  ?=(%private wat.d)
-                                  [%jael %private-keys ~]
-                                [%jael %public-keys ~]
-            [%lick %spin *]     [%lick %shut name.res]
-          ==
+          ?~  tac=(drop-res:track res resource-deets.yoke)  ~
+          `[%pass wire.res %arvo u.tac]
         ==
       =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent]))
       ap-core
@@ -2717,53 +2682,21 @@
       ?~  caz  yoke
       ?:  ?=([%pass * %dole *] i.caz)  $(q.i.caz rote.q.i.caz)
       ?.  ?=([%pass * %arvo *] i.caz)  $(caz t.caz)
-      =;  $@(~ [add=$@(? resource-deet) res=_+:*arvo-resource])
-        ?@  -  $(caz t.caz)
-        ?:  |(?=(^ add) add)
-          ::TODO  prevent agent from creating the same resources twice
-          %_  $
-            caz                  t.caz
-            resources.yoke       (~(put in resources.yoke) p.i.caz res)
-            resource-deets.yoke  ?@  add  resource-deets.yoke
-                                 (~(put by resource-deets.yoke) [p.i.caz res] add)
-          ==
+      =/  $@(~ [add=$@(? resource-deet) res=_+:*arvo-resource])
+        (card-to-res:track i.caz)
+      ?@  -  $(caz t.caz)
+      ?:  |(?=(^ add) add)
+        ::TODO  prevent agent from creating the same resources twice
         %_  $
           caz                  t.caz
-          resources.yoke       (~(del in resources.yoke) p.i.caz res)
-          resource-deets.yoke  (~(del by resource-deets.yoke) p.i.caz res)
+          resources.yoke       (~(put in resources.yoke) p.i.caz res)
+          resource-deets.yoke  ?@  add  resource-deets.yoke
+                               (~(put by resource-deets.yoke) [p.i.caz res] add)
         ==
-      =*  task  +.q.i.caz
-      ?+  task  ~
-        :: [%ames %keen *]                 [& %ames %keen spar.task]
-        :: [%ames %yawn *]                 [| %ames %keen spar.task]
-        [%behn %wait *]                 [& %behn %wait time.task]
-        [%behn %rest *]                 [| %behn %wait time.task]
-        [%clay %read *]                 :-  [%clay %warp ship desk rave]:task
-                                        [%clay %warp id.task]
-        [%clay %rest *]                 [| %clay %warp id.task]
-        [%clay %tire *]                 [?~(p.task | &) %clay %tire]
-        [%dill %logs *]                 [?~(p.task | &) %dill %logs]
-        [%dill %mass *]                 [& %dill %mass]
-        [%dill %shot @ %view *]         [& %dill %view ses.task]
-        [%dill %shot @ %flee *]         [| %dill %view ses.task]
-        [%eyre %connect *]              :-  [%eyre %binding wat.task]
-                                        [%eyre %binding binding.task]
-        [%eyre %disconnect *]           [| %eyre %binding binding.task]
-        [%eyre %set-response * ^]       :-  [%eyre %cache u.entry.task]
-                                        [%eyre %cache url.task]
-        [%eyre %set-response * ~]       [| %eyre %cache url.task]
-        [%iris %request *]              [& %iris %request]
-        [%iris %cancel-request ~]       [| %iris %request]
-        [%jael %public-keys ^]          :_  [%jael %keys]
-                                        ?:  =(~ u.sub.task)
-                                          [%jael %keys %public]
-                                        [%jael %keys u.sub.task]
-        [%jael %public-keys ~]          [| %jael %keys]
-        [%jael %private-keys ^]         :_  [%jael %keys]
-                                        [%jael %keys %private]
-        [%jael %private-keys ~]         [| %jael %keys]
-        [%lick %spin *]                 [& %lick %spin name.task]
-        [%lick %shut *]                 [| %lick %spin name.task]
+      %_  $
+        caz                  t.caz
+        resources.yoke       (~(del in resources.yoke) p.i.caz res)
+        resource-deets.yoke  (~(del by resource-deets.yoke) p.i.caz res)
       ==
     ::  +ap-handle-resource-gift: update tracked resource based on gift
     ::
@@ -2771,47 +2704,11 @@
       ::REVIEW  updating tracked _kernel_ resource based on _userspace_ gift
       |=  [=wire gift=gift-user-v1]
       ^+  yoke
-      =;  upd=(unit (each [_+:*arvo-resource resource-deet] _+:*arvo-resource))
-        ?-  upd
-          ~         yoke
-          [~ %& *]  yoke(resource-deets (~(put by resource-deets.yoke) [wire -.p.u.upd] +.p.u.upd))
-          [~ %| *]  %_  yoke
-                      resources       (~(del in resources.yoke) wire p.u.upd)
-                      resource-deets  (~(del by resource-deets.yoke) wire p.u.upd)
-                    ==
-        ==
-      ?+  gift  ~
-        [%behn *]        `|+[%behn %wait time.gift]
-        [%dill %meme *]  `|+[%dill %mass]
-      ::
-          [%dill %blit *]
-        =;  bye=?  ?:(bye `|+[%dill %view ses.gift] ~)
-        |-
-        ?&  ?=(^ biz.gift)
-        ?|  ?+(-.i.biz.gift | %bye &, %mor $(biz.gift p.i.biz.gift))
-            $(biz.gift t.biz.gift)
-        ==  ==
-      ::
-          [%clay %read *]
-        =*  rid  [%clay %warp id.gift]
-        =+  det=(~(got by resource-deets.yoke) wire rid)
-        ?>  ?=([%clay %warp *] det)
-        ::  %sing and %mult are always single-shot,
-        ::  %many gives a range of responses and has explicit "end" signal
-        ::
-        ?.  ?=(%many -.rave.det)  `|+[%clay %warp id.gift]
-        ?~  riot.gift             `|+[%clay %warp id.gift]
-        ::NOTE  %many requests always get %ud case in the response
-        ::NOTE  we don't care about resolving the original case, just increment
-        ::      past what we've received
-        ?>  ?=(%ud -.q.p.u.riot.gift)
-        =/  nex=@ud  +(p.q.p.u.riot.gift)
-        `&+[rid det(from.moat.rave ud+nex)]
-      ::
-        [%eyre *]  ?:  bound.gift  ~
-                   `|+[%eyre %binding binding.gift]
-        [%iris *]  `|+[%iris %request]
-        [%lick *]  ~
+      =/  [res=(set arvo-resource) dets=(map arvo-resource resource-deet)]
+        (gift-to-res:track wire gift resources.yoke resource-deets.yoke)
+      %_  yoke
+        resources       res
+        resource-deets  dets
       ==
     ::  +ap-handle-sky: apply effects to the agent's scry namespace
     ::

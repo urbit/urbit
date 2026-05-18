@@ -3752,7 +3752,7 @@
       ^-  $@(~ [add=$@(? resource-deet) res=_+:*arvo-resource])
       ?.  ?=([%pass * %arvo *] card)  ~
       =*  task  +.q.card
-      ?+  +.q.card  ~
+      ?+  task  ~
         :: [%ames %keen *]                 [& %ames %keen spar.task]
         :: [%ames %yawn *]                 [| %ames %keen spar.task]
         [%behn %wait *]                 [& %behn %wait time.task]
@@ -3781,7 +3781,6 @@
         [%jael %private-keys ^]         :_  [%jael %keys]
                                         [%jael %keys %private]
         [%jael %private-keys ~]         [| %jael %keys]
-        :: [%k ?(%fard %fyrd %lard) *]  [& %khan +<]:task
         [%lick %spin *]                 [& %lick %spin name.task]
         [%lick %shut *]                 [| %lick %spin name.task]
       ==
@@ -3809,8 +3808,7 @@
             $(biz.gift t.biz.gift)
         ==  ==
       ::
-          [%clay *]
-        ?>  ?=(%read +<.gift)
+          [%clay %read *]
         =*  rid  [%clay %warp id.gift]
         =+  det=(~(got by dets) wire rid)
         ?>  ?=([%clay %warp *] det)
@@ -3834,25 +3832,25 @@
     ::
     ++  drop-res
       |=  [res=arvo-resource dets=resource-deets]
-      ^-  (unit card:agent)
-      =;  tac=$@(~ task-user-v1)
-        ?~(tac ~ `[%pass wire.res %arvo tac])
+      ^-  (unit task-user-v1)
+      ::  TODO ripped from ap-nuke -> helper
+      ::
       ?-  +.res
-        [%behn %wait *]     [%behn %rest time.res]
-        [%clay %warp *]     [%clay %rest id.res]
-        [%clay %tire]       [%clay %tire ~]
-        [%dill %logs]       [%dill %logs ~]
+        [%behn %wait *]     `[%behn %rest time.res]
+        [%clay %warp *]     `[%clay %rest id.res]
+        [%clay %tire]       `[%clay %tire ~]
+        [%dill %logs]       `[%dill %logs ~]
         [%dill %mass]       ~
-        [%dill %view *]     [%dill %shot ses.res %flee ~]
-        [%eyre %binding *]  [%eyre %disconnect binding.res]
-        [%eyre %cache *]    [%eyre %set-response url.res ~]
-        [%iris %request]    [%iris %cancel-request ~]
+        [%dill %view *]     `[%dill %shot ses.res %flee ~]
+        [%eyre %binding *]  `[%eyre %disconnect binding.res]
+        [%eyre %cache *]    `[%eyre %set-response url.res ~]
+        [%iris %request]    `[%iris %cancel-request ~]
         [%jael %keys]       =+  d=(~(got by dets) res)
                             ?>  ?=([%jael %keys *] d)
                             ?:  ?=(%private wat.d)
-                              [%jael %private-keys ~]
-                            [%jael %public-keys ~]
-        [%lick %spin *]     [%lick %shut name.res]
+                              `[%jael %private-keys ~]
+                            `[%jael %public-keys ~]
+        [%lick %spin *]     `[%lick %shut name.res]
       ==
     --
   ::
