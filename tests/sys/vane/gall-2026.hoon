@@ -1157,6 +1157,10 @@
         (easy %jael %ruin ~met ~ ~)
         (easy %jael %trim 1)
       ::
+        :-  [%khan %fard *(fyrd:khan cage)]
+        [%k %fard %desk *(fyrd:khan cage)]
+        :-  [%khan %lard %bear-desk *shed:khan]
+        [%k %lard %desk %bear-desk *shed:khan]
         (easy %khan %trim 1)
         (easy %lick %trim 1)
     ==

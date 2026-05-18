@@ -1816,7 +1816,6 @@
               ==
             ::
               [%khan %fard *]  [%k +>-.neet from +>+.neet]
-              [%khan %fyrd *]  [%k +>-.neet from +>+.neet]
               [%khan %lard *]  [%k +>-.neet from +>+.neet]
               [%khan *]        [%k +>.neet]
             ::
@@ -2241,6 +2240,7 @@
           [%jael %public-keys *]    sign-arvo
           [%jael %turf *]           sign-arvo
           [%iris %http-response *]  sign-arvo
+          [%khan %arow *]           sign-arvo
           [%lick %soak *]           ~|  [%gall-lick-bad-name name.sign-arvo]
                                     ?>  &(?=(^ name.sign-arvo) =(agent-name i.name.sign-arvo))
                                     sign-arvo(name (tail name.sign-arvo))
@@ -2762,7 +2762,6 @@
         [%jael %private-keys ^]         :_  [%jael %keys]
                                         [%jael %keys %private]
         [%jael %private-keys ~]         [| %jael %keys]
-        :: [%k ?(%fard %fyrd %lard) *]  [& %khan +<]:task
         [%lick %spin *]                 [& %lick %spin name.task]
         [%lick %shut *]                 [| %lick %spin name.task]
       ==

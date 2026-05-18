@@ -3733,7 +3733,6 @@
         [%eyre %cache url=@t]  ::TODO  if we had the data we could reinflate...
         [%iris %request]
         [%jael %keys]
-        :: [%khan ?(%fard %fyrd %lard)]
         [%lick %spin =name:lick]
     ==  ==
   ::
@@ -4130,7 +4129,6 @@
       ::
         $:  %khan
         $%  [%fard p=(fyrd:khan cage)]
-            [%fyrd p=(fyrd:khan cast:khan)]
             [%lard =bear:khan =shed:khan]
             [%trim p=@ud]
         ==  ==
@@ -4161,6 +4159,7 @@
         [%jael %turf turf=(list turf)]
         ::TODO  khan gift(s)
         [%lick %soak =name:lick =mark =noun]
+        [%khan %arow res=(avow:khan cage)]
       ::
         [%syscall actual-kelvin=@ sign-arvo=*]  ::NOTE  secretly $sign-arvo, DO NOT DOCUMENT (;
         [%unsupported ~]
