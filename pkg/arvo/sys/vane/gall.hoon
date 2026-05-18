@@ -2880,17 +2880,18 @@
           [%pass * %agent * %leave *]
         =/  =wire  p.card
         =/  =dock  [ship name]:q.card
-        ::  ?.  (~(has by boat.yoke) wire dock)
-        ::    "missing subscription, got leave"
-        ~?  !(~(has by boat.yoke) wire dock)  "missing subscription, got leave {<[wire dock]>}"
-        (~(del by boat.yoke) [wire dock])
+          ?:  (~(has by boat.yoke) wire dock)
+            (~(del by boat.yoke) [wire dock])
+          %.  boat.yoke
+          %+  trace  odd.veb.bug.state
+          |+['missing subscription, got leave']~
       ::
           [%pass * %agent * ?(%watch %watch-as) *]
         =/  =wire  p.card
         =/  [=dock =task:agent:gall]  [[ship name] task]:q.card
-        ::  ?:  (~(has by boat.yoke) wire dock)
-        ::    "subscribe wire not unique"
-        ::    ap-error
+        ::TODO  should catch this case ("sub wire not unique") before calling
+        ::      +ap-handle-peers-tracking, probably in +ap-handle-result
+        ?<  (~(has by boat.yoke) wire dock)
         %+  ~(put by boat.yoke)  [wire dock]
         :-  acked=|
         path=?+(-.task !! %watch path.task, %watch-as path.task)
@@ -2927,9 +2928,8 @@
           [%pass * %agent * ?(%watch %watch-as) *]
         =/  =wire  p.card
         =/  [=dock =task:agent:gall]  [[ship name] task]:q.card
-        ::  ?:  (~(has by boat.yoke) wire dock)
-        ::    "subscribe wire not unique"
-        ::    ap-error
+        ::TODO  should catch duplicate subs earlier
+        ?<  (~(has by boar.yoke) wire dock)
         ::NOTE  0-check guards against pre-release bug
         =?  p.card  !=(0 sub-nonce.yoke)
           [(scot %ud sub-nonce.yoke) wire]
