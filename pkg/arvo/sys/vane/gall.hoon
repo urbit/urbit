@@ -2664,11 +2664,11 @@
       =^  caz=(list card:agent)  ap-core
         (ap-handle-peers-transforms -.p.result)
       ::
-      =^  fex  ap-core  (ap-handle-sky -.p.result)
+      =^  fex  ap-core  (ap-handle-sky caz)
       ::NOTE  hacky, mb do +uni:by with og-deets
       =/  moves         (zing (turn fex ap-from-internal(resource-deets.yoke og-deets)))
       ::TODO  why +ap-handle-kicks here, on .moves? those only result from
-      ::      formal %kick already present in the -.p.result cards
+      ::      formal %kick already present in the caz cards
       ::      same for +ap-handle-peers, none of the transforms above add/remove watches or leaves
       =.  bitt.yoke     (ap-handle-kicks moves)
       [moves ap-core]
