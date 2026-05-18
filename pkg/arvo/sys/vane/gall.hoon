@@ -2882,7 +2882,7 @@
         =/  =dock  [ship name]:q.card
         ::  ?.  (~(has by boat.yoke) wire dock)
         ::    "missing subscription, got leave"
-        ~?  (~(has by boat.yoke) wire dock)  "missing subscription, got leave {<[wire dock]>}"
+        ~?  !(~(has by boat.yoke) wire dock)  "missing subscription, got leave {<[wire dock]>}"
         (~(del by boat.yoke) [wire dock])
       ::
           [%pass * %agent * ?(%watch %watch-as) *]
@@ -2911,13 +2911,13 @@
           [%pass * %agent * %leave *]
         =/  =wire  p.card
         =/  =dock  [ship name]:q.card
-        ?.  (~(has by boat.yoke) wire dock)
+        ?.  (~(has by boar.yoke) wire dock)
           %.  $(cards t.cards)
           %+  trace  odd.veb.bug.state
           &+"missing subscription, got %leave"
+        =.  p.card     (ap-nonce-wire wire dock)
         =/  nonce=@    (~(got by boar.yoke) wire dock)
         =.  boar.yoke  (~(del by boar.yoke) [wire dock])
-        =.  p.card     (ap-nonce-wire wire dock)
         ::  if nonce = 0, this was a pre-nonce subscription so later
         ::  subscriptions need to start subscribing on the next nonce
         ::
