@@ -3734,6 +3734,7 @@
         [%iris %request]
         [%jael %keys]
         [%lick %spin =name:lick]
+        [%khan %thread =bear:khan name=(unit term)]
     ==  ==
   ::
   +$  resource-deet
@@ -3742,6 +3743,7 @@
         [%eyre %cache entry=cache-entry:eyre]
         [%clay %warp =ship =desk =rave:clay]
         [%jael %keys wat=?(%private %public (set ship))]
+        [%khan %thread result=(avow:khan cage)]  ::REVIEW  or unitize?
     ==
   ::
   ++  track  ::  resource tracking utils
@@ -3784,6 +3786,7 @@
         [%lick %spin *]                 [& %lick %spin name.task]
         [%lick %shut *]                 [| %lick %spin name.task]
       ==
+    ::  +apply-gift: affect resources for live agent
     ::
     ++  apply-gift
       |=  [=wire gift=gift-user-v1 res=(set arvo-resource) dets=resource-deets]
@@ -3828,6 +3831,7 @@
                    `|+[%eyre %binding binding.gift]
         [%iris *]  `|+[%iris %request]
         [%lick *]  ~
+        [%khan *]  `|+[%khan %thread bear name]:gift
       ==
     ::
     ++  drop-resource
@@ -3848,6 +3852,7 @@
                             ?:  ?=(%private wat.d)
                               `[%jael %private-keys ~]
                             `[%jael %public-keys ~]
+        [%khan %thread *]   ~
         [%lick %spin *]     `[%lick %shut name.res]
       ==
     --
@@ -4141,7 +4146,7 @@
   ::
   +$  gift-user-v1
     $%  [%ames %sage =sage:mess:ames]
-        [%behn %wake =time]  ::REVIEW
+        [%behn %wake =time]
         [%clay %read id=* =riot:clay]
         [%clay %tire p=(each rock:tire:clay wave:tire:clay)]
         [%clay %mere p=(each (set path) (pair term tang))]
@@ -4153,7 +4158,7 @@
         [%jael %private-keys =life vein=(map life ring)]
         [%jael %public-keys =public-keys-result:jael]
         [%jael %turf turf=(list turf)]
-        [%khan %arow res=(avow:khan cage)]
+        [%khan %arow =bear:khan name=(unit term) res=(avow:khan cage)]
         [%lick %soak =name:lick =mark =noun]
       ::
         [%syscall actual-kelvin=@ sign-arvo=*]  ::NOTE  secretly $sign-arvo, DO NOT DOCUMENT (;

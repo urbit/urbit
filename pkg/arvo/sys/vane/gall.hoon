@@ -814,6 +814,8 @@
     =/  dap=term  i.wire
     =/  yoke  (~(get by yokes.state) dap)
     ?.  ?=([~ %live *] yoke)
+      ::NOTE  seeing this indicates gall didn't clean up the nuked agent's
+      ::      resource properly
       %-  (slog leaf+"gall: {<dap>} dead, got {<+<.sign-arvo>}" ~)
       mo-core
     ?.  =(run-nonce.u.yoke i.t.wire)
@@ -827,9 +829,6 @@
         ?.  ?=([%hug @ *] t.t.wire)  [& t.t.wire]
         [| t.t.t.wire]
       ?>  ?=([@ *] t.t.t.wire)
-      ?:  ?=(%| -.agent.u.yoke)
-        %-  (slog leaf+"gall: {<dap>} dozing, dropping {<+<.sign-arvo>}" ~)
-        mo-core
       =/  app
         ::  .ship: ship.attributing.agent-routes from call-time
         =/  =ship  (slav %p i.t.t.wire)
@@ -841,8 +840,12 @@
         ::TODO  unsafe with old wires! crashes during/after migration
         ?>(?=(%blob -.c) p.c)
       ::
-      =.  app  (ap-generic-take:app syscall deets t.t.t.t.wire sign-arvo)
-      ap-abet:app
+      =<  ap-abet
+      %.  [syscall deets t.t.t.t.wire sign-arvo]
+      ?-  -.agent.u.yoke
+        %&  ap-generic-take:app
+        %|  ap-dozing-take:app
+      ==
     ?>  ?=([?(%gall %behn) %unto *] sign-arvo)
     =/  =ship  (slav %p i.t.t.t.wire)
     =/  other-agent  i.t.t.t.t.wire
@@ -1713,6 +1716,8 @@
                         [%dill %shot @ %view *]  `ses.neet
                         [%dill %shot @ %flee *]  `ses.neet
                         [%eyre %connect *]       `wat.neet
+                        [%khan %fard *]          `[bear `name]:p.neet
+                        [%khan %lard *]          `[bear.neet ~]
                       ::
                           [%eyre %disconnect *]
                         =;  det  ?>(?=([%eyre %binding *] det) `wat.det)
@@ -2118,6 +2123,21 @@
         ::
         (ap-generic-take | ~ wire.res [%iris %http-response %cancel ~])
       ::
+        ::  signal from deets (queued)
+        ::
+          [%khan %thread *]
+        =.  inflating  (~(del in inflating) &+res)
+        ?.  (~(has in resources.yoke) res)
+          ~&  %gall-strange-inflate-culled-thread
+          ap-core
+        ?~  det=(~(get by resource-deets.yoke) res)
+          ap-core
+        ?>  ?=([%khan %thread *] u.det)
+        ::  we depend on +ap-generic-take to untrack the resource
+        ::
+        ::NOTE  careful with the deets!
+        (ap-generic-take | [bear name]:res wire.res %khan %arow result.u.det)
+      ::
         ::  signal + re-establish
         ::
           [%lick %spin *]
@@ -2175,6 +2195,31 @@
         %+  ap-ingest  ~  |.
         (on-fail:ap-agent-core term (turn tang form))
       ap-core
+    ::  +ap-dozing-take: handle sign for suspended agent
+    ::
+    ++  ap-dozing-take
+      |=  [syscall=? deets=* =wire =sign-arvo]
+      ^+  ap-core
+      ?:  syscall
+        %-  (slog leaf+"gall: {<agent-name>} dozing, dropping %syscall {<+<.sign-arvo>}" ~)
+        ap-core
+      ?+  sign-arvo
+        ::NOTE  seeing this indicates gall didn't clean up the suspend agent's
+        ::      resource properly
+        %-  (slog leaf+"gall: {<agent-name>} dozing, dropping {<+<.sign-arvo>}" ~)
+        ap-core
+      ::
+          [%khan %arow *]
+        ::  because we can't deflate khan threads (no api), and we don't want
+        ::  to inflate anyway (no idempotency guarantee), we instead queue up
+        ::  a response if we get one
+        ::
+        =-  ap-core(resource-deets.yoke -)
+        =/  res=arvo-resource
+          [wire %khan %thread ;;([bear:khan (unit term)] deets)]
+        ?<  (~(has by resource-deets.yoke) res)
+        (~(put by resource-deets.yoke) res %khan %thread p.sign-arvo)
+      ==
     ::  +ap-generic-take: call agent with gift-user from sign-arvo
     ::
     ++  ap-generic-take
@@ -2205,7 +2250,8 @@
           [%jael %public-keys *]    sign-arvo
           [%jael %turf *]           sign-arvo
           [%iris %http-response *]  sign-arvo
-          [%khan %arow *]           sign-arvo
+          [%khan %arow *]           =+  ;;([=bear:khan name=(unit term)] deets)
+                                    [%khan %arow bear name p.sign-arvo]
           [%lick %soak *]           ~|  [%gall-lick-bad-name name.sign-arvo]
                                     ?>  &(?=(^ name.sign-arvo) =(agent-name i.name.sign-arvo))
                                     sign-arvo(name (tail name.sign-arvo))

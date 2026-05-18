@@ -1074,6 +1074,14 @@
       (ex-move ~[/sysduct] %pass gall-wire [%c %warp ~zod %desk ~ rave])
   ==
 ::
+++  test-khan-arow-during-suspend
+  ::  when an %arow response comes back for a %khan %thread,
+  ::  but the agent is suspended,
+  ::  deets should store the result,
+  ::  and inflation should inject it.
+  ::
+  ~  ::TODO
+::
 ::TODO  same style for simple +test-simply-tracked-tasks
 ++  test-misc-untracked-tasks
   %-  zing
