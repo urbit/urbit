@@ -13,7 +13,7 @@
 +$  thread-form    _*eval-form:eval:(strand ,vase)
 +$  trying         ?(%build %none)
 +$  clean-state
-  $:  %8
+  $:  %9
       starting=(map yarn [=trying =vase])
       running=(list yarn)
       tid=(map tid yarn)

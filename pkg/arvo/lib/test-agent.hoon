@@ -264,7 +264,7 @@
     =/  =duct  [%test-sub (scot %p src.bowl.s) path]~
     ~_  leaf+"sub on {(spud path)} not yet made by {(scow %p src.bowl.s)}"
     ?>  (~(has by sup.bowl.s) duct)
-    (~(del by sup.bowl.s) duct [src.bowl.s path])
+    (~(del by sup.bowl.s) duct)
   %.  s  %-  do
   |=  s=state
   (~(on-leave agent.s bowl.s) path)
