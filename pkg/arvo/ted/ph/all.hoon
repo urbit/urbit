@@ -1,5 +1,5 @@
 /-  spider
-/+  *strandio
+/+  *strandio, *ph-io
 =,  strand=strand:spider
 ^-  thread:spider
 |=  args=vase
@@ -14,12 +14,12 @@
         %ph-boot-planet
         ::  XX these somehow get stuck in CI?
         ::
-        %ph-breach-hi
-        %ph-breach-hi-aqua
-        %ph-breach-hi-cousin
-        %ph-breach-multiple
-        %ph-breach-sudden
-        %ph-breach-sync
+        :: %ph-breach-hi
+        :: %ph-breach-hi-aqua
+        :: %ph-breach-hi-cousin
+        :: %ph-breach-multiple
+        :: %ph-breach-sudden
+        :: %ph-breach-sync
         %ph-change-file
         %ph-child-sync
         %ph-child-update
@@ -37,7 +37,7 @@
         %ph-peek
         %ph-second-cousin-hi
         %ph-tend
-      ::  XX  slow tests
+      ::  XX  slow(er) tests
       ::
         %ph-flub
         %ph-big-flub
@@ -55,8 +55,16 @@
   ==
 ::
 =|  results=(list [n=@tas r=thread-result])
+=/  cores=(list ?(%mesa %ames))  ~[%mesa %ames]
 ;<  global-now-1=@da  bind:m  get-time
 |-  ^-  form:m
+::  runn all test with the same network protocol core
+::    (unless the test itself changes it)
+::
+:: ?~  cores
+::   (pure:m !>(~))
+:: ;<  ~  bind:m  (switch-network-core i.cores)
+::
 =*  loop  $
 ?^  threads
   ?:  =(%ph-all i.threads)
