@@ -770,11 +770,11 @@
   ^-  cord-cursor
   [0 (met 3 txt) txt]
 ++  token-map
-  |=  (list (pair cord regx))
-  ^-  [vec=(list regx) tags=(map @ cord)]
+  |=  (list (pair * regx))
+  ^-  [vec=(list regx) tags=(map @ *)]
   =-  [(flop vec) tags]
   %+  roll  +<
-  |=  [(pair cord regx) i=@ vec=(list regx) tags=(map @ cord)]
+  |=  [(pair * regx) i=@ vec=(list regx) tags=(map @ *)]
   :+  +(i)
     [q vec]
   (~(put by tags) i p)
@@ -1123,11 +1123,12 @@
       ?@  ruls  d
       $(ruls t.ruls, d (def-cord i.ruls))
     ++  select-rules
-      |=  ns=(list term)
+      |=  ns=(list $@(term [nam=term tag=*]))
       %-  token-map
       %+  turn  ns
-      |=  n=term
-      [n (~(got by d) n)]
+      |=  n=$@(term [nam=term tag=*])
+      ?@  n  [n (~(got by d) n)]
+      [tag.n (~(got by d) nam.n)]
     --
   --
 --
