@@ -862,7 +862,7 @@
     =/  decimal     (re-range '0' '9')
     =/  number      (re-plus decimal)
     =/  alpha       (re-or lc-alpha uc-alpha ~)
-    =/  alnum       (re-or alpha decimal ~)
+    =/  symbol      (re-cat alpha (re-star (re-or alpha decimal (re-char '-') ~)) ~)
     =/  soq         (re-char '\'')
     =/  bas         (re-char '\\')
     =/  white       (re-class & ' ' 9 10 13 ~)
@@ -892,7 +892,7 @@
     %-  token-map  :~
       quot+(qlike '\'' (re-char '\''))
       clas+(qlike ']' (re-cat (re-char '[') (re-opt (re-char '^')) ~))
-      id+(re-cat alpha (re-star alnum) ~)
+      id+symbol
       num+number
       ws+(re-plus white)
       one+(re-class & "()*+|&!?")
