@@ -2,6 +2,7 @@
 ::
 /+  *test, th=toyhoon, tp=toyhoon-parse
 ::
+=/  p  parser:tp
 =>  |%
     ++  test-slap
       |=  [sut=vase:th gol=type:th =naty:th expect=vase:th]
@@ -203,9 +204,17 @@
 ::
 ::TODO  test +proc
 ::
+++  test-cursor-tracking
+  =/  input=@t  '.+\0a1'
+  =+  res=~(tall p & (init-cord-cursor:tp input) [1 1] ~)
+  ?~  res  ~['failed to parse' input]
+  %+  expect-eq
+    !>([row=2 col=2])
+  !>(~(here parser:tp & s.res))
+::
 ++  make-parser-test
   |=  [input=@t =naty:th]
-  =+  res=~(tall parser:tp & (init-cord-cursor:tp input) [1 1] ~)
+  =+  res=~(tall p & (init-cord-cursor:tp input) [1 1] ~)
   ?~  res  ~['failed to parse' input]
   %+  weld
     (expect-eq !>(naty) !>(u.res))

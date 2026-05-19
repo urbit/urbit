@@ -297,35 +297,25 @@
     =/  r  (lex cur.st)
     ?@  r  ~
     =/  p  (proc tag.r i.cur.st i.cur.r)
-    ?@  p  ~  ::  for example, tall token in wide form
+    ?~  p  ~  ::  for example, tall token in wide mode
     [t.p p.p cur.r]
   ++  here  `post`?@(buf.st rap.st p.buf.st)
-  :: ++  gape
-  ::   |=  [beg=@ end=@ p=post]
-  ::   %+  fold-bytes  [txt.cur.st beg end]
-  ::   |=  [c=@ p=_p]  ^+  p
-  ::   ?:  =(10 c)
-  ::     p(row +(row.p), col 1)
-  ::   p(col +(col.p))
+  ++  gape
+    |=  [beg=@ end=@ p=post]
+    %+  fold-bytes  [txt.cur.st beg end]
+    |=  [c=@ p=_p]  ^+  p
+    ?:  =(10 c)
+      p(row +(row.p), col 1)
+    p(col +(col.p))
   ++  proc
     |=  [=tag beg=@ end=@]
     ^-  $@(~ [t=toke p=post])
-    :: ?:  =(%gap tag)
-    ::   ?.  tol  ~
-    ::   gap+(gape beg end rap.st)
-    :: ?:  =(%stet tag)
-    ::   ?.  tol  ~
-    ::   stet+rap.st(col +(+(col.rap.st)))
-    :: ?:  =(%ipfx tag)
-    ::   :_  rap.st(col +(+(col.rap.st)))
-    ::   ?+  (chunk beg 1)  !!
-    ::     %'+'  %ilus
-    ::     %'='  %itis
-    ::   ==
-    ::  if there were any tall form atoms, we would have to
-    ::  have to deal with their internal gaps here
+    ?:  &(tol.tag !tol)  ~
     =/  len  (sub end beg)
-    :_  rap.st(col (add len col.rap.st))
+    :_  ?.  tol.tag
+          rap.st(col (add len col.rap.st))
+        (gape beg end rap.st)
+    ::
     ^-  toke
     ?+  tag.tag  [tag.tag tol.tag]
       ?(%ace %gap %dot %per)  tag.tag
