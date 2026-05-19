@@ -57,6 +57,9 @@
       ::    will trigger on the most specific binding first. Eyre should send
       ::    back an error response if an already bound binding exists.
       ::
+      ::    only userspace bindings (%app and %gen) are stored in this list,
+      ::    eyre-served endpoints (under /~) are resolved specially.
+      ::
       ::    TODO: It would be nice if we had a path trie. We could decompose
       ::    the :binding into a (map (unit @t) (trie knot =action)).
       ::
@@ -916,7 +919,7 @@
     ::  .pathowner: desk that the target path is bound to (~ for base/eyre)
     ::
     =/  pathowner=(unit desk)
-      =/  [=action @t]
+      =/  =action
         (get-action-for-binding url.request)
       ?+  -.action  ~
         %gen  `desk.generator.action
@@ -964,32 +967,6 @@
           ~
           complete=%.y
       ==
-    =/  [=action suburl=@t]
-      ::  in the ip case, always resolve the route
-      ::
-      ?:  ?=(%| -.target)
-        (get-action-for-binding url.request)
-      ::  if there is no pathowner (aka the pathowner is eyre)
-      ::  then we _always resolve the route_,
-      ::  because eyre handles the request itself.
-      ::
-      ?~  pathowner
-        ::NOTE  per .pathowner implementation, this will always be an
-        ::      "eyre endpoint", never %app or %gen
-        (get-action-for-binding url.request)
-      ::NOTE  should be handled directly above this
-      ?~  desk.p.target  ~|(%eyre-confused-branching !!)
-      ::  if the subdomain points to a desk that does not own the request path,
-      ::  (a desk that did not bind that path,) we cannot resolve the request.
-      ::
-      ?.  =(u.desk.p.target u.pathowner)
-        [[%four-oh-four ~] url.request]
-      ::  finally, if we are serving under a known domain, whose subdomain
-      ::  maps to a desk that owns the request path, resolve to the configured
-      ::  binding.
-      ::
-      (get-action-for-binding url.request)
-    ::
     ::TODO  we might want to mint new identities only for requests that end
     ::      up going into userspace, not the ones that get handled by eyre.
     ::      perhaps that distinction, where userspace requests are async, but
@@ -1044,10 +1021,11 @@
     ::  top-level domain. in that case, we can turn auth-state into a %made
     ::  instead by minting the cookie (xx invalid cases). the action handling
     ::  further down will only have to serve the appropriate redirect.
+    ::  this is the %holm %gain case.
     ::
     =^  auth-state=t  state
       ?.  ?&  ?=(%negotiate -.auth-state)
-              ?=(%holm -.action)
+              =('/~/holm' (end 3^7 url.request))
               ?=([%& * ^] target)
           ==
         [auth-state state]
@@ -1085,7 +1063,7 @@
         ::      deletes the connection from state.
         %+  ~(put by connections.state)  duct
         ^-  outstanding-connection
-        [action [| secure address request] [session [[%fake *@p] ~]] ~ 0]
+        [*action [| secure address request] [session [[%fake *@p] ~]] ~ 0]
       ::  their cookie was invalid, make sure they expire it
       ::
       =/  bod=octs  (as-octs:mimes:html 'bad session auth')
@@ -1216,6 +1194,34 @@
       (~(get by cache.state) url.request)
     ?:  &(?=([~ @ ^] cached) ?=(%'GET' method.request))
       (handle-cache-req authenticated request u.val.u.cached)
+    ::
+    =/  =action
+      ::  in the ip case, always resolve the route
+      ::
+      ?:  ?=(%| -.target)
+        (get-action-for-binding url.request)
+      ::  if there is no pathowner (aka the pathowner is eyre)
+      ::  then we _always resolve the route_,
+      ::  because eyre handles the request itself.
+      ::
+      ?~  pathowner
+        ::NOTE  per .pathowner implementation, this will always be an
+        ::      "eyre endpoint", never %app or %gen
+        (get-action-for-binding url.request)
+      ::NOTE  should be handled directly above this
+      ?~  desk.p.target  ~|(%eyre-confused-branching !!)
+      ::  if the subdomain points to a desk that does not own the request path,
+      ::  (a desk that did not bind that path,) we cannot resolve the request.
+      ::
+      ?.  =(u.desk.p.target u.pathowner)
+        ::TODOxx  isn't this branch impossible? handled by redirect above
+        ::        should probably fold the above redirect into here
+        [%four-oh-four ~]
+      ::  finally, if we are serving under a known domain, whose subdomain
+      ::  maps to a desk that owns the request path, resolve to the configured
+      ::  binding.
+      ::
+      (get-action-for-binding url.request)
     ::
     ?-    -.action
         %holm
@@ -1353,7 +1359,7 @@
       (handle-request:by-channel [suv identity] address request)
     ::
         %scry
-      (handle-scry authenticated address request(url suburl))
+      (handle-scry authenticated address request)
     ::
         %name
       (handle-name identity request)
@@ -1364,6 +1370,7 @@
     ::
         %ip
       (handle-ip address request)
+    ::
         %boot
       (handle-boot identity request)
     ::
@@ -1578,6 +1585,9 @@
     ::  make sure the path contains an app to scry into
     ::
     =+  req=(parse-request-line url.request)
+    =.  site.req
+      ?>  ?=([%'~' %scry *] site.req)
+      t.t.site.req
     ?.  ?=(^ site.req)
       (error-response 400 "scry path must start with app name")
     ::  attempt the scry that was asked for
@@ -3823,7 +3833,7 @@
   ::    Adds =binding =action if there is no conflicting bindings.
   ::
   ++  add-binding
-    |=  [=binding =action]
+    |=  [=binding action=$>(?(%app %gen) action)]
     ^-  [(list move) server-state]
     =^  success  bindings.state
       ::  prevent binding in reserved namespaces
@@ -3854,7 +3864,7 @@
   ::
   ++  get-action-for-binding
     |=  url=@t
-    ^-  [=action suburl=@t]
+    ^-  action
     ::  url is the raw thing passed over the 'Request-Line'.
     ::
     ::    todo: this is really input validation, and we should return a 500 to
@@ -3862,26 +3872,33 @@
     ::
     =/  request-line  (parse-request-line url)
     =/  parsed-url=(list @t)  site.request-line
-    =?  parsed-url  ?=([%'~' %channel-jam *] parsed-url)
-      parsed-url(i.t %channel)
+    ::  resolve eyre namespace manually
+    ::
+    ?:  ?=([%'~' *] parsed-url)
+      ?+  t.parsed-url  [%four-oh-four ~]
+        [%login ~]      [%authentication ~]
+        [%eauth ~]      [%eauth ~]
+        [%auth ~]       [%auth ~]
+        [%holm *]       [%holm ~]
+        [%logout ~]     [%logout ~]
+        [%channel *]    [%channel ~]
+        [%scry *]       [%scry ~]
+        [%name ~]       [%name ~]
+        [%host ~]       [%host ~]
+        [%ip ~]         [%ip ~]
+        [%boot *]       [%boot ~]
+        [%sponsor *]    [%sponsor ~]
+      ==
+    ::  resolve broader namespace by userspace bindings map
     ::
     =/  bindings  bindings.state
     |-
     ::
-    ?~  bindings
-      [[%four-oh-four ~] url]
+    ?~  bindings  [%four-oh-four ~]
     ::
-    ?~  suffix=(find-suffix path.binding.i.bindings parsed-url)
+    ?~  (find-suffix path.binding.i.bindings parsed-url)
       $(bindings t.bindings)
-    ::
-    :-  action.i.bindings
-    %^  cat  3
-      %+  roll
-        ^-  (list @t)
-        (join '/' (flop ['' u.suffix]))
-      (cury cat 3)
-    ?~  ext.request-line  ''
-    (cat 3 '.' u.ext.request-line)
+    action.i.bindings
   ::  +give-session-tokens: send valid local session tokens to unix
   ::
   ++  give-session-tokens
@@ -4157,24 +4174,8 @@
   ::  %init: tells us what our ship name is
   ::
   ?:  ?=(%init -.task)
-    ::  set up system bindings and always-known domains
+    ::  set up always-known domains
     ::
-    =.  bindings.server-state.ax
-      =-  (roll - insert-binding)
-      ^-  (list [binding ^duct action])
-      :~  [/~/login duct [%authentication ~]]
-          [/~/eauth duct [%eauth ~]]
-          [/~/auth duct [%auth ~]]
-          [/~/logout duct [%logout ~]]
-          [/~/channel duct [%channel ~]]
-          [/~/scry duct [%scry ~]]
-          [/~/name duct [%name ~]]
-          [/~/host duct [%host ~]]
-          [/~/ip duct [%ip ~]]
-          [/~/boot duct [%boot ~]]
-          [/~/sponsor duct [%sponsor ~]]
-          [/~/holm duct [%holm ~]]  ::TODO  add to migration
-      ==
     =.  domains.server-state.ax
       ::TODO  add to migration
       (~(put in domains.server-state.ax) 'localhost' ~)
@@ -4695,7 +4696,7 @@
 ++  http-server-gate  ..$
 ::  +load: migrate old state to new state (called on vane reload)
 ::
-::TODOxx  migrations
+::TODOxx  migrations (auth tokens, bindings, etc)
 ++  load
   =>  |%
       +$  axle-any
@@ -4825,16 +4826,11 @@
   ~>  %spin.['load/eyre']
   ?-    -.old
   ::
-  ::  adds /~/name
+  ::  adds /~/name (later deprecated by general /~ resolution)
   ::
       %~2020.10.18
     %=  $
         date.old  %~2022.7.26
-    ::
-        bindings.server-state.old
-      %+  insert-binding
-        [/~/name outgoing-duct.server-state.old [%name ~]]
-      bindings.server-state.old
     ==
   ::
   ::  enables https redirects if certificate configured
@@ -4912,27 +4908,13 @@
     ::   |=  c=channel-3
     ::   ^-  channel
     ::   [-.c [%ours ~] +.c]
-    :: ::
-    ::     bindings.old
-    ::   %+  insert-binding  [/~/host outgoing-duct.old [%host ~]]
-    ::   %+  insert-binding  [/~/eauth outgoing-duct.old [%eauth ~]]
-    ::   bindings.old
     :: ==
   ::
-  ::  adds /~/boot, /~/sponsor and /~/ip
+  ::  adds /~/boot, /~/sponsor and /~/ip (later deprecated by general /~ resolution)
   ::
       %~2023.5.15
     %=  $
         date.old  %~2024.8.20
-    ::
-        bindings.old
-      %+  insert-binding
-        [/~/boot outgoing-duct.old [%boot ~]]
-      %+  insert-binding
-        [/~/sponsor outgoing-duct.old [%sponsor ~]]
-      %+  insert-binding
-        [/~/ip outgoing-duct.old [%ip ~]]
-      bindings.old
     ==
   ::
       %~2024.8.20
@@ -4943,8 +4925,6 @@
     :: ==
   ::
       %~2025.1.31
-    =.  bindings.old
-      (insert-binding [/~/holm outgoing-duct.old [%holm ~]] bindings.old)
     http-server-gate(ax old)
   ::
   ==
