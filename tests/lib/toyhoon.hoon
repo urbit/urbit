@@ -225,6 +225,8 @@
   =/  w=wing:th  [%| 0 `%$]~
   ;:  weld
     (make-parser-test '123' [%noun [%atom %ud ~] 123])
+    (make-parser-test '%123' [%noun [%atom %ud `123] 123])
+    (make-parser-test '%foo' [%noun [%atom %tas `%foo] %foo])
     (make-parser-test '.+(1)' [%dtls %noun [%atom %ud ~] 1])
     (make-parser-test '.+  2' [%dtls %noun [%atom %ud ~] 2])
     (make-parser-test '.+  .+(3)' [%dtls %dtls %noun [%atom %ud ~] 3])

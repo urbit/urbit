@@ -4,7 +4,7 @@
 |%
 +$  tag
   $:  tol=?
-      $=  tag
+      $=  dat
       $@  $?  %ace   %gap   %per   %dot   %com
               %axis  %lark  %skip
               ::TODO  %sym
@@ -25,8 +25,7 @@
   $@  ?(%ace %gap %dot %per)
   $%  [%limb =limb]
     ::
-      [%atom tol=? a=@]  ::  %atomw + %atomt
-      ::TODO [%atom const=? tol=? =aura a=@]  ::  %atomw + %atomt
+      [%atom tol=? const=? =aura a=@]  ::  %atomw + %atomt
     ::
       $:  ?(%dttr %dtwt %dtls %dtts %wtcl %tsgr %tsls %cnts %sggr %brcn %brpt %ktls %wtpt %wtcn %wtkt)
           tol=?
@@ -44,13 +43,14 @@
 ::
 ++  def
   =/  rul  de:torp
-  ::TODO  dtwt(,dtwt_,dtls(,dtls_,dtts(,dtts_,wtcl(,wtcl_,tsgr(,tsgr_,tsls(,tsls_,dot,ε,axis,skip,lark,com,cnts(,cnts_,gap_stat,cen_sym,sggr(,sggr_,ktls(,ktls_,wtpt(,wtpt_,wtcn(,wtcn_,wtkt(,wtkt_,cltr(,[,],cltr_,sym,tar,gap_stet,slus,gap_stop,bar,wut,brpt_,brcn_,$
   ::NOTE  important that %atomw is before %atomt,
   ::      if ambiguous we prefer the former
   %.  ^-  (list $@(term (pair term tag)))
       :~  ace+|+%ace    gap+&+%gap    per+|+%per    dot+|+%dot  com+|+%com
           axis+|+%axis  lark+|+%lark  skip+|+%skip
           ::  %sym
+          c-tas+|+[%atom & %tas]
+          c-ud-w+|+[%atom & %ud]  c-ud-t+&+[%atom & %ud]
           a-ud-w+|+[%atom | %ud]  a-ud-t+&+[%atom | %ud]
           dttrw+|+%dttr  dttrt+&+%dttr    dtwtw+|+%dtwt  dtwtt+&+%dtwt    dtlsw+|+%dtls  dtlst+&+%dtls    dttsw+|+%dtts  dttst+&+%dtts
           wtclw+|+%wtcl  wtclt+&+%wtcl
@@ -97,6 +97,11 @@
     ( '$' | [a-z][a-z0-9-]* )
     '''
   ::
+    :-  %c-tas
+    '''
+    '%' sym
+    '''
+  ::
     :-  %a-ud-w
     '''
     '0' | ( [1-9] [0-9]{0,2} ( '.' [0-9]{3} )* )
@@ -104,6 +109,16 @@
   ::
     :-  %a-ud-t
     'a-ud-w'  ::TODO  real tall
+  ::
+    :-  %c-ud-w
+    '''
+    '%' a-ud-w
+    '''
+  ::
+    :-  %c-ud-t
+    '''
+    '%' a-ud-t
+    '''
   ::
     :-  %axis
     '''
@@ -317,14 +332,22 @@
         (gape beg end rap.st)
     ::
     ^-  toke
-    ?+  tag.tag  [tag.tag tol.tag]
-      ?(%ace %gap %dot %per)  tag.tag
+    ?+  dat.tag  [dat.tag tol.tag]
+      ?(%ace %gap %dot %per)  dat.tag
     ::
         [%atom *]
-      :+  %atom  tol.tag
-      %+  big:digits  10
-      %-  decimal:digits
-      (skip (trip (chunk i.cur.st len)) |=(c=@ =('.' c)))
+      :-  %atom
+      :^  tol.tag  const.dat.tag  aura.dat.tag
+      =>  ?.(const.dat.tag . .(i.cur.st +(i.cur.st), len (dec len)))
+      ?+  aura.dat.tag  ~|(strange-aura=aura.dat.tag !!)
+          %ud
+        %+  big:digits  10
+        %-  decimal:digits
+        (skip (trip (chunk i.cur.st len)) |=(c=@ =('.' c)))
+      ::
+          %tas
+        (chunk i.cur.st len)
+      ==
     ::
       %com    [%limb %| 0 ~]
       %axis   :+  %limb  %&
@@ -402,7 +425,7 @@
     ^-  (mandatory naty _st)
     =+  peek  ?@  -  ~  =>  [t=u +(st s)]
     ?+  t  wide(tol |)
-      [%atom %& *]  [%noun [%atom %ud ~] a.t]^move
+      [%atom %& *]  [%noun [%atom aura.t ?.(const.t ~ `a.t)] a.t]^move
       [%dttr %&]    =+  tall-2(st move)       ?@  -  ~  [[%dttr u] s]
       [%dtwt %&]    =+  tall(st move)         ?@  -  ~  [[%dtwt u] s]
       [%dtls %&]    =+  tall(st move)         ?@  -  ~  [[%dtls u] s]
@@ -432,7 +455,7 @@
     ?+  t  ~
       [%limb *]     =+  (wing-tail limb.t)  ?@  -  ~  [[%cnts u ~] s]
       ::TODO  handle %dot
-      [%atom %| *]  [%noun [%atom %ud ~] a.t]^st
+      [%atom %| *]  [%noun [%atom aura.t ?.(const.t ~ `a.t)] a.t]^st
       [%dttr %|]    =+  wide-2         ?@  -  ~  [[%dttr u] s]
       [%dtwt %|]    =+  wide-1         ?@  -  ~  [[%dtwt u] s]
       [%dtls %|]    =+  wide-1         ?@  -  ~  [[%dtls u] s]
