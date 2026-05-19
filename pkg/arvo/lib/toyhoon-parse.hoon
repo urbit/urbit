@@ -2,13 +2,44 @@
 /+  *deriv
 ::
 |%
++$  tag
+  $:  tol=?
+      $=  tag
+      $@  $?  %ace   %gap   %per   %dot   %com
+              %axis  %lark  %skip
+              ::TODO  %sym
+              %dttr  %dtwt  %dtls  %dtts
+              %wtcl
+              %tsgr  %tsls
+              %cnts
+              %sggr
+              %brcn  %brpt
+              %ktls
+              %wtpt  %wtcn  %wtkt
+          ==
+      $%  [%atom const=? =aura]
+      ==
+  ==
+::
++$  toke
+  $@  ?(%ace %gap %dot %per)
+  $%  [%limb =limb]
+    ::
+      [%atom tol=? a=@]  ::  %atomw + %atomt
+      ::TODO [%atom const=? tol=? =aura a=@]  ::  %atomw + %atomt
+    ::
+      $:  ?(%dttr %dtwt %dtls %dtts %wtcl %tsgr %tsls %cnts %sggr %brcn %brpt %ktls %wtpt %wtcn %wtkt)
+          tol=?
+      ==
+  ==
+::
 ++  gate
-  =+  [vec tag]=def
+  =+  [vec tagmap]=def
   :: ~>  %slog.[0 (machine:mump (vector-dfa vec))]
   =/  fol=nock
-    (cord-nock (vector-dfa vec) (pick-first-mapped tag))
+    (cord-nock (vector-dfa vec) (pick-first-mapped tagmap))
   =/  levi  |=(* &)
-  !<  (tokenize-gate cord-cursor)
+  !<  $-(cord-cursor $@(~ [=tag cur=cord-cursor]))
   `|=(bus=cord-cursor .*(bus fol))
 ::
 ++  def
@@ -16,18 +47,19 @@
   ::TODO  dtwt(,dtwt_,dtls(,dtls_,dtts(,dtts_,wtcl(,wtcl_,tsgr(,tsgr_,tsls(,tsls_,dot,ε,axis,skip,lark,com,cnts(,cnts_,gap_stat,cen_sym,sggr(,sggr_,ktls(,ktls_,wtpt(,wtpt_,wtcn(,wtcn_,wtkt(,wtkt_,cltr(,[,],cltr_,sym,tar,gap_stet,slus,gap_stop,bar,wut,brpt_,brcn_,$
   ::NOTE  important that %atomw is before %atomt,
   ::      if ambiguous we prefer the former
-  %.  :~  %ace  %gap  %per  %dot  %com
-          %axis  %lark  %skip
+  %.  ^-  (list $@(term (pair term tag)))
+      :~  ace+|+%ace    gap+&+%gap    per+|+%per    dot+|+%dot  com+|+%com
+          axis+|+%axis  lark+|+%lark  skip+|+%skip
           ::  %sym
-          %atomw  %atomt
-          %dttrw  %dttrt    %dtwtw  %dtwtt    %dtlsw  %dtlst    %dttsw  %dttst
-          %wtclw  %wtclt
-          %tsgrw  %tsgrt    %tslsw  %tslst
-          %cntsw  %cntst
-          %sggrw  %sggrt
-          %brcnw  %brcnt    %brptw  %brptt
-          %ktlsw  %ktlst
-          %wtptw  %wtptt    %wtcnw  %wtcnt    %wtktw  %wtktt
+          a-ud-w+|+[%atom | %ud]  a-ud-t+&+[%atom | %ud]
+          dttrw+|+%dttr  dttrt+&+%dttr    dtwtw+|+%dtwt  dtwtt+&+%dtwt    dtlsw+|+%dtls  dtlst+&+%dtls    dttsw+|+%dtts  dttst+&+%dtts
+          wtclw+|+%wtcl  wtclt+&+%wtcl
+          tsgrw+|+%tsgr  tsgrt+&+%tsgr    tslsw+|+%tsls  tslst+&+%tsls
+          cntsw+|+%cnts  cntst+&+%cnts
+          sggrw+|+%sggr  sggrt+&+%sggr
+          brcnw+|+%brcn  brcnt+&+%brcn    brptw+|+%brpt  brptt+&+%brpt
+          ktlsw+|+%ktls  ktlst+&+%ktls
+          wtptw+|+%wtpt  wtptt+&+%wtpt    wtcnw+|+%wtcn  wtcnt+&+%wtcn    wtktw+|+%wtkt  wtktt+&+%wtkt
       ==
   %~  select-rules  rul
   %-  ~(def-cords rul ~)  :~
@@ -65,13 +97,13 @@
     ( '$' | [a-z][a-z0-9-]* )
     '''
   ::
-    :-  %atomw  ::TODO  moar auras
+    :-  %a-ud-w
     '''
     '0' | ( [1-9] [0-9]{0,2} ( '.' [0-9]{3} )* )
     '''
   ::
-    :-  %atomt
-    'atomw'
+    :-  %a-ud-t
+    'a-ud-w'  ::TODO  real tall
   ::
     :-  %axis
     '''
@@ -229,28 +261,6 @@
   ::~&  'runt'
   ::~>  %slog.[2 (machine:mump (vector-dfa -:def))]
   =>  |%
-      +$  toke
-        $@  ?(%ace %gap %dot %per)
-        $%  [%limb =limb]
-          ::
-            [%atom tol=? a=@]  ::  %atomw + %atomt
-          ::
-            [%dttr tol=?]
-            [%dtwt tol=?]
-            [%dtls tol=?]
-            [%dtts tol=?]
-            [%wtcl tol=?]
-            [%tsgr tol=?]
-            [%tsls tol=?]
-            [%cnts tol=?]
-            [%sggr tol=?]
-            [%brcn tol=?]
-            [%brpt tol=?]
-            [%ktls tol=?]
-            [%wtpt tol=?]
-            [%wtcn tol=?]
-            [%wtkt tol=?]
-        ==
       +$  post  [row=@ col=@]
       --
   =/  lex  gate
@@ -298,7 +308,7 @@
   ::     p(row +(row.p), col 1)
   ::   p(col +(col.p))
   ++  proc
-    |=  [tag=* beg=@ end=@]
+    |=  [=tag beg=@ end=@]
     ^-  $@(~ [t=toke p=post])
     :: ?:  =(%gap tag)
     ::   ?.  tol  ~
@@ -317,11 +327,11 @@
     =/  len  (sub end beg)
     :_  rap.st(col (add len col.rap.st))
     ^-  toke
-    ?+  tag  ~|(unhandled-tag=tag !!)
-      ?(%ace %gap %dot %per)  tag
+    ?+  tag.tag  [tag.tag tol.tag]
+      ?(%ace %gap %dot %per)  tag.tag
     ::
-        ?(%atomw %atomt)
-      :+  %atom  ?=(%atomt tag)
+        [%atom *]
+      :+  %atom  tol.tag
       %+  big:digits  10
       %-  decimal:digits
       (skip (trip (chunk i.cur.st len)) |=(c=@ =('.' c)))
@@ -351,37 +361,6 @@
       =+  s=(sub ket beg)
       =+  n=(cut 3 [ket (sub len s)] txt.cur.st)
       [s ~ ?:(=('$' n) %$ n)]
-    ::
-      %dttrw  [%dttr |]
-      %dttrt  [%dttr &]
-      %dtwtw  [%dtwt |]
-      %dtwtt  [%dtwt &]
-      %dtlsw  [%dtls |]
-      %dtlst  [%dtls &]
-      %dttsw  [%dtts |]
-      %dttst  [%dtts &]
-      %wtclw  [%wtcl |]
-      %wtclt  [%wtcl &]
-      %tsgrw  [%tsgr |]
-      %tsgrt  [%tsgr &]
-      %tslsw  [%tsls |]
-      %tslst  [%tsls &]
-      %cntsw  [%cnts |]
-      %cntst  [%cnts &]
-      %sggrw  [%sggr |]
-      %sggrt  [%sggr &]
-      %brcnw  [%brcn |]
-      %brcnt  [%brcn &]
-      %brptw  [%brpt |]
-      %brptt  [%brpt &]
-      %ktlsw  [%ktls |]
-      %ktlst  [%ktls &]
-      %wtptw  [%wtpt |]
-      %wtptt  [%wtpt &]
-      %wtcnw  [%wtcn |]
-      %wtcnt  [%wtcn &]
-      %wtktw  [%wtkt |]
-      %wtktt  [%wtkt &]
     ::
       :: %lark  :+  %atom  |
       ::         %+  fold-bytes  [txt.cur.st beg end]

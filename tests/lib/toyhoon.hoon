@@ -180,8 +180,8 @@
     ==
   !>((scan "[[1 2] .+(3) 4 5]" apex:parse:th))
 ::
-++  make-tokenizer-test
-  |=  [input=@t match=[tag=* i=@ud]]
+++  make-primitive-test
+  |=  [input=@t match=[tag=tag:tp i=@ud]]
   =+  res=(gate:tp (init-cord-cursor:tp input))
   ?~  res  `tang`~['failed to tokenize' input]
   %+  weld
@@ -190,15 +190,15 @@
 ::
 ++  test-primitive-lexer
   ;:  weld
-    (make-tokenizer-test '.*(123)' %dttrw 3)
-    (make-tokenizer-test '123' %atomw 3)
-    (make-tokenizer-test '1.234' %atomw 5)
+    (make-primitive-test '.*(123)' |+%dttr 3)
+    (make-primitive-test '123' |+[%atom | %ud] 3)
+    (make-primitive-test '1.234' |+[%atom | %ud] 5)
   ::
-    (make-tokenizer-test '+2' %axis 2)
-    (make-tokenizer-test '+>' %lark 2)
-    (make-tokenizer-test '$' %skip 1)
-    (make-tokenizer-test '^$' %skip 2)
-    (make-tokenizer-test 'a.b' %skip 1)
+    (make-primitive-test '+2' |+%axis 2)
+    (make-primitive-test '+>' |+%lark 2)
+    (make-primitive-test '$' |+%skip 1)
+    (make-primitive-test '^$' |+%skip 2)
+    (make-primitive-test 'a.b' |+%skip 1)
   ==
 ::
 ::TODO  test +proc
