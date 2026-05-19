@@ -689,6 +689,7 @@
         =:  retry-timer.ames-gate  ames-retry
                 ahoy-on.ames-gate  ahoy-on
            network-core.ames-gate  `network-core
+            packet-size.ames-gate  25  ::  4MB  XX allow custom
           ==
         (~(put by van.mod.arvo-core) %ames vane(vase !>(ames-gate)))
       abet-pe:p(snap arvo-core)
