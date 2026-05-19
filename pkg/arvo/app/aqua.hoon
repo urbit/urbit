@@ -669,7 +669,7 @@
             :: [/d/term/1 %verb ~]  :: XX uncomment for verbose mode
           ::
             ?:  fake.ae  ~
-            :~  =+  [%raw-poke %noun %refresh-rate ~s30]
+            :~  =+  [%raw-poke %noun %refresh-rate ~s5]
                 [/g/aqua/reduce-refresh-rate %deal [. . /]:who.ae %azimuth -]
                 =+  [%poke azimuth-poke/!>([%kick ~])]
                 [/g/aqua/watch %deal [. . /]:who.ae %azimuth -]
