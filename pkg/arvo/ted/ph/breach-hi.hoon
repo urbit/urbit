@@ -5,6 +5,7 @@
 |=  vase
 =/  m  (strand ,vase)
 ;<  t=drivers  bind:m  start-azimuth
+;<  ~          bind:m  (switch-network-core %ames)  :: XX %mesa doens't work
 ;<  ~          bind:m  (spawn ~bud)
 ;<  ~          bind:m  (spawn ~dev)
 ;<  ~          bind:m  (init-ship ~bud |)

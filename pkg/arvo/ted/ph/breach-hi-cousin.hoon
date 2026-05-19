@@ -8,6 +8,8 @@
 ^-  thread:spider
 |=  vase
 =/  m  (strand ,vase)
+:: ;<  ~          bind:m  (switch-network-core %ames)
+::
 ;<  t=drivers  bind:m  start-azimuth
 ;<  ~          bind:m  (spawn ~bud)
 ;<  ~          bind:m  (spawn ~dev)

@@ -7,6 +7,8 @@
 ^-  thread:spider
 |=  vase
 =/  m  (strand ,vase)
+:: ;<  ~          bind:m  (switch-network-core %ames)  :: XX %mesa doens't work
+::
 ;<  t=drivers      bind:m  start-azimuth
 ;<  ~              bind:m  (spawn ~bud)
 ;<  ~              bind:m  (spawn ~marbud)
