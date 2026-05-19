@@ -4,7 +4,12 @@
 ^-  thread:spider
 |=  vase
 =/  m  (strand ,vase)
+=/  cores=(list ?(%mesa %ames))  ~[%mesa %ames]
+|-  ^-  form:m
+?~  cores
+  (pure:m *vase)
 ;<  t=drivers  bind:m  start-azimuth
+;<  ~          bind:m  (switch-network-core i.cores)
 ;<  ~          bind:m  (spawn ~bud)
 ;<  ~          bind:m  (spawn ~marbud)
 ;<  ~          bind:m  (spawn ~linnup-torsyx)
@@ -21,4 +26,4 @@
 ;<  ~          bind:m  (send-hi ~torsyx-linnup-torsyx ~dev)
 ;<  ~          bind:m  (send-hi ~dev ~torsyx-linnup-torsyx)
 ;<  ~          bind:m  (end t)
-(pure:m *vase)
+$(cores t.cores)
