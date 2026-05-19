@@ -401,11 +401,6 @@
     ^-  $@(~ s=_st)
     =+  gulp  ?@  -  ~
     ?:(=(u t) s ~)
-  :: ++  expect-atom
-  ::   ^-  (mandatory @ _st)
-  ::   =+  peek  ?@  -  ~
-  ::   ?.  ?=([%atom *] u)  ~
-  ::   [a.u move(st s)]
   ++  two-plus
     |*  m=mold
     |=  [sep=toke one=$-(_st (mandatory m _st))]
@@ -436,7 +431,15 @@
       [%tsgr %&]    =+  tall-2(st move)       ?@  -  ~  [[%tsgr u] s]
       [%tsls %&]    =+  tall-2(st move)       ?@  -  ~  [[%tsls u] s]
       [%cnts %&]    !!  ::TODO
-      [%sggr %&]    !!  ::TODO
+      [%sggr %&]    =+  peek(st move)         ?@  -  ~  =>  [t=u +(st s)]
+                    ?.  ?=([%atom @ %& %tas @] t)  ~
+                    =+  peek(st move)  ?@  -  ~  =>  [tt=u +(st s)]
+                    ?.  ?=(%dot tt)
+                      =+  (expect %gap)  ?@  -  ~  =>  +(st s)
+                      =+  tall           ?@  -  ~  [[%sggr a.t u] s]
+                    =+  tall(st move)  ?@  -  ~  =>  [clu=u +(st s)]
+                    =+  (expect %gap)  ?@  -  ~  =>  +(st s)
+                    =+  tall           ?@  -  ~  [[%sggr [a.t clu] u] s]
       [%brcn %&]    !!  ::TODO
       [%brpt %&]    !!  ::TODO
       [%ktls %&]    =+  tall-2(st move)       ?@  -  ~  [[%ktls u] s]
@@ -466,7 +469,15 @@
       [%tsgr %|]    =+  wide-2         ?@  -  ~  [[%tsgr u] s]
       [%tsls %|]    =+  wide-2         ?@  -  ~  [[%tsls u] s]
       [%cnts %|]    !!  ::TODO
-      [%sggr %|]    !!  ::TODO
+      [%sggr %|]    =+  peek           ?@  -  ~  =>  [t=u +(st s)]
+                    ?.  ?=([%atom %| %& %tas @] t)  ~
+                    =+  peek(st move)  ?@  -  ~  =>  [tt=u +(st s)]
+                    ?.  ?=(%dot tt)
+                      =+  (expect %ace)  ?@  -  ~  =>  +(st s)
+                      =+  wide-1         ?@  -  ~  [[%sggr a.t u] s]
+                    =+  wide(st move)  ?@  -  ~  =>  [clu=u +(st s)]
+                    =+  (expect %ace)  ?@  -  ~  =>  +(st s)
+                    =+  wide-1         ?@  -  ~  [[%sggr [a.t clu] u] s]
       [%brcn %|]    !!  ::TODO
       [%brpt %|]    !!  ::TODO
       [%ktls %|]    =+  wide-2         ?@  -  ~  [[%ktls u] s]
