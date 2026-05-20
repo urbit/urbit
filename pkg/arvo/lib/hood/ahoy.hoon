@@ -188,7 +188,7 @@
     =?  no-response.sat  nuke  ~
     =?  hashes.sat       nuke  ~
     =?  this  nuke
-      (emit %pass /ahoy/chums %arvo %syscall %b %wait now.bowl)
+      (emit %pass /ahoy/chums %arvo %behn %wait now.bowl)
     ::  get all peers from ames
     ::
     =/  peers=(map ship ?(%alien %known))
@@ -212,7 +212,7 @@
     ::
     =/  data=^vase  !>([~ timeout.sat hashes.sat pend last-hash.sat veb])
     %+  emit  %pass
-    [(dispatch-thread %comb dry ~) %arvo %syscall %k %fard q.byk.bowl %comb %noun data]
+    [(dispatch-thread %comb dry ~) %arvo %khan %fard q.byk.bowl %comb %noun data]
   ::
   ++  time       |=(tim=@dr this(timeout.sat tim))
   ++  hash       |=(has=@uvi this(last-hash.sat has))
@@ -248,18 +248,24 @@
     =.  pending-ahoy.sat  (~(put in pending-ahoy.sat) ship)
     %^  emit  %pass
       (dispatch-thread %prob force `ship)
-    [%arvo %syscall %k %fard q.byk.bowl %prob %noun data]
+    [%arvo %khan %fard q.byk.bowl %prob %noun data]
   ::
   --
 ::
 ++  take-arvo
   |=  [=wire gift=gift-user-v1:gall]  =<  abet
-  ::TODO  more nuanced, do less syscalls
-  =/  =sign-arvo
-    ?>  ?=([%syscall *] gift)
-    !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
+  =?  gift  ?=(%syscall -.gift)
+    =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
+    ?+  sign-arvo  gift
+      [%behn %wake *]  [%behn %wake now.bowl]
+        [%khan %arow *]
+      :*  %khan  %arow  q.byk.bowl
+          ?>(?=([%thread ?(%comb %prob) *] wire) `+<.wire)
+          p.sign-arvo
+      ==
+    ==
   =>  .(wire `(pole knot)`wire)
-  |^  ?+    wire  ~|([%ahoy-bad-take-wire wire +<.sign-arvo] !!)
+  |^  ?+    wire  ~|([%ahoy-bad-take-wire wire ?:(?=(%unsupported -.gift) -.gift +<.gift)] !!)
       ::
           [%thread %comb rest=*]
         =/  dry=?
@@ -296,6 +302,9 @@
       ::
       ::   3. get %done for local migration; it should not have errored
       ::
+        =/  =sign-arvo
+          ?>  ?=([%syscall *] gift)
+          !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
         =/  [test=? who=@p]
           ?+  rest.wire  ~|(wire !!)
             [who=@ ~]        [%.n (slav %p who.rest.wire)]
@@ -311,14 +320,14 @@
   ::
   ++  take-thread
     |=  [force-test=? who=ship]
-    ?>  ?=([%khan %arow *] sign-arvo)
-    ?:  ?=(%.n -.p.sign-arvo)
+    ?>  ?=([%khan %arow *] gift)
+    ?:  ?=(%.n -.res.gift)
       ::  if the thread crashed, remove from pending so we can %prob again
       ::
       =.  pending-ahoy.sat  (~(del in pending-ahoy.sat) who)
-      (flog %crud [mote tang]:p.p.sign-arvo)
+      (flog %crud [mote tang]:p.res.gift)
     =+  !<  [[num=@ud has=@uvi wen=@da] no-response=?]
-            q.p.p.sign-arvo
+            q.p.res.gift
     ::
     =?  hashes.sat  !no-response  :: only update hashes if we did get a response
       ?.  (~(has by hashes.sat) who)
