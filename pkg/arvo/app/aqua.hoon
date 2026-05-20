@@ -24,6 +24,7 @@
 /+  pill, azimuth, naive, default-agent, aqua-azimuth, dbug, verb
 /=  arvo-gate  /sys/arvo
 /=  ames-gate  /sys/vane/ames
+/=  gall-raw  /sys/vane/gall
 =/  larva-ames  (ames-gate ~zod)
 =.  larva-ames
   %_  larva-ames
@@ -37,6 +38,7 @@
     ++  larva-arvo    ..poke:+>.arvo-gate
     ++  arvo-core    ..^poke:+>.arvo-gate
     ++  ames-gate    _ames-adult
+    ++  gall-gate    _(gall-raw ~zod)
     +$  versioned-state
       $%  state-0
       ==
@@ -50,6 +52,7 @@
           ames-retry=_~s1
           ahoy-on=_|
           network-core=?(%ames %mesa)
+          system-flow=?
       ==
     ::
     +$  pill-0
@@ -572,6 +575,9 @@
       [%ahoy-on on=?]
     this(ahoy-on on.val)
   ::
+      [%system-flow on=?]
+    this(system-flow on.val)
+  ::
       [%network-core core=?(%ames %mesa)]
     this(network-core core.val)
   ::
@@ -638,7 +644,7 @@
       %-  zing
       :~
         :~  [/ %wack 0]  ::  eny
-            :: [/ %verb `|]  :: possible verb
+            [/ %verb `|]  :: possible verb
             :^  /  %wyrd  [~.nonce /aqua] :: dummy runtime version + nonce
             ^-  (list (pair term @))
             :~  zuse+zuse
@@ -683,7 +689,18 @@
     =.  this
       =/  p  (pe who.ae)
       =+  !<(=_arvo-core [-:!>(arvo-core) snap.initted])
-      =/  =vane  (~(got by van.mod.arvo-core) %ames)
+      =/  vanes=(list term)  ~[%gall %ames]
+      |-  ^+  this
+      ?~  vanes
+        abet-pe:p(snap arvo-core)
+      =/  =vane  (~(got by van.mod.arvo-core) i.vanes)
+      ?:  =(%gall i.vanes)
+        =+  !<(=gall-gate [-:!>((gall-raw ~zod)) q.vase.vane])
+        =.  van.mod.arvo-core
+          =.  system-flow.gall-gate  system-flow
+          (~(put by van.mod.arvo-core) %gall vane(vase !>(gall-gate)))
+        $(vanes t.vanes)
+      ?>  =(%ames i.vanes)
       =+  !<(=ames-gate [-:!>(ames-adult) q.vase.vane])
       =.  van.mod.arvo-core
         =:  retry-timer.ames-gate  ames-retry
@@ -692,7 +709,7 @@
             packet-size.ames-gate  25  ::  4MB  XX allow custom
           ==
         (~(put by van.mod.arvo-core) %ames vane(vase !>(ames-gate)))
-      abet-pe:p(snap arvo-core)
+      $(vanes t.vanes)
     ::  call %born in %ames now to update ames-retry
     ::
     =.  this
