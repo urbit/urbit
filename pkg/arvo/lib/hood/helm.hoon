@@ -39,6 +39,9 @@
 ++  abet  [(flop moz) sat]
 ++  flog  |=(=flog:dill (emit %pass /di %arvo %syscall %d %flog flog))
 ++  emit  |=(card this(moz [+< moz]))
+++  emit-syscall
+  |=  [=wire =note-arvo]
+  (emit %pass wire %arvo %syscall note-arvo)
 ::  +emil: emit multiple cards
 ::
 ++  emil
@@ -140,7 +143,7 @@
 ::
 ++  poke-mass
   |=  ~  =<  abet
-  (emit %pass /heft %arvo %syscall %d %flog %heft ~)
+  (emit-syscall /heft %d %flog %heft ~)
 ::
 ++  poke-automass
   |=  recur=@dr
@@ -154,28 +157,28 @@
 ::
 ++  poke-meld
   |=  [memo=? ford=?]  =<  abet
-  (emit %pass /pack %arvo %syscall %d %flog %meld memo ford)
+  (emit-syscall /pack %d %flog %meld memo ford)
 ::
 ++  poke-pack
   |=  ~  =<  abet
-  (emit %pass /pack %arvo %syscall %d %flog %pack ~)
+  (emit-syscall /pack %d %flog %pack ~)
 ::
 ++  poke-pans
   |=  pans=(list note-arvo)
   ?~  pans  abet
-  =.  this  (emit %pass /helm/pans %arvo %syscall i.pans)
+  =.  this  (emit-syscall /helm/pans i.pans)
   $(pans t.pans)
 ::
 ++  poke-pass
   |=  =note-arvo  =<  abet
-  (emit %pass /helm/pass %arvo %syscall note-arvo)
+  (emit-syscall /helm/pass note-arvo)
 ::
 ++  take-wake-automass
   |=  way=wire
   =.  nex.mass-timer.sat  (add now.bowl tim.mass-timer.sat)
   =<  abet
   %-  emil
-  :~  [%pass /heft %arvo %syscall %d %flog %crud %hax-heft ~]
+  :~  [%pass /heft %arvo %syscall `note-arvo`[%d %flog %crud %hax-heft ~]]
       [%pass way.mass-timer.sat %arvo %behn %wait nex.mass-timer.sat]
   ==
 ::
@@ -195,14 +198,14 @@
     ?~  ship  /test
     ?:  dry   /test/(scot %p u.ship)
     /(scot %p u.ship)
-  abet:(emit %pass wire %arvo %syscall %a %mate ship dry=%.y)
+  abet:(emit-syscall wire %a %mate ship dry=%.y)
 ::
 ++  poke-mass-rege
   |=  [ship=(unit ship) dry=?]
   =/  =wire
     :+  %helm  %rege
     ?.(dry ~ /test)
-  abet:(emit %pass wire %arvo %syscall %a %rege ship dry)
+  abet:(emit-syscall wire %a %rege ship dry)
 ::
 ++  take-test-mate
   |=  [way=wire error=(unit error:ames)]
@@ -217,7 +220,7 @@
     ~&  >>>   %local-migration-failed
     abet
   ~&  >   %local-migration-worked
-  abet:(emit %pass [%helm %ahoy way] %arvo %syscall %a %plea her %$ path %ahoy ~)
+  abet:(emit-syscall [%helm %ahoy way] %a %plea her %$ path %ahoy ~)
 ::
 ++  take-migrate
   |=  [way=wire error=(unit error:ames)]
@@ -237,7 +240,7 @@
   ::  are not flows in a weird state. if we don't crash, send the %back $plea
   ::
   =^  rege-moves  sat  (poke-mass-rege `her test=%.y)
-  =^  back-moves  sat  abet:(emit %pass wire %arvo %syscall %a %plea her %$ path %back ~)
+  =^  back-moves  sat  abet:(emit-syscall wire %a %plea her %$ path %back ~)
   (emil (weld rege-moves back-moves))
 ::
 ++  take-rege
@@ -246,20 +249,20 @@
     ?~  error
       ~&  >   %rege-test-worked
       ~&  >>  %test-local-rege
-      abet:(emit %pass /helm/migrate %arvo %syscall %a %rege (slaw %p i.t.way) dry=%.y)
+      abet:(emit-syscall /helm/migrate %a %rege (slaw %p i.t.way) dry=%.y)
     %-  (slog %take-rege-test-failed u.error)
     abet
   ?>  ?=([@ ~] way)
   ?~  error
       ~&  >   %remote-regress-worked
       ~&  >>  %try-local-rege
-    abet:(emit %pass /helm/migrate %arvo %syscall %a %rege (slaw %p i.way) dry=%.n)
+    abet:(emit-syscall /helm/migrate %a %rege (slaw %p i.way) dry=%.n)
   ~&  >>>  %rege-crash
   ::  XX retry?
   ::
   %-  (slog %take-rege-failed u.error)
   abet
-  :: abet:(emit %pass `wire`[%helm %ahoy-crash way] %arvo %syscall %b %wait (add now.bowl ~s30)) :: XX exp backoff?
+  :: abet:(emit %pass `wire`[%helm %ahoy-crash way] %behn %wait (add now.bowl ~s30)) :: XX exp backoff?
 ::
 ++  poke-hi
   |=  mes=@t  =<  abet
@@ -294,7 +297,7 @@
 ::
 ++  poke-trim
   |=  pri=@ud  =<  abet
-  (emit %pass /pack %arvo %syscall %d %flog %crop pri)
+  (emit-syscall /pack %d %flog %crop pri)
 ::
 ++  poke-verb                                         ::  toggle verbose
   |=  ~  =<  abet
@@ -319,12 +322,12 @@
 ++  poke-gall-lave
   |=  [dry=? subs=(list [?(%g %a) ship term duct])]  =<  abet
   ?:  dry  this
-  (emit %pass /helm %arvo %syscall %g %lave subs)
+  (emit-syscall /helm %g %lave subs)
 ::
 ++  poke-eyre-lave
   |=  [dry=? subs=(list [%g ship term duct])]  =<  abet
   ?:  dry  this
-  (emit %pass /helm %arvo %syscall %g %lave subs)
+  (emit-syscall /helm %g %lave subs)
 ::
 ++  poke-ames-wake
   |=  ~  =<  abet
@@ -333,7 +336,7 @@
 ++  poke-ames-kroc
   |=  [dry=? bones=(list [ship bone])]  =<  abet
   ?:  dry  this
-  (emit %pass /helm %arvo %syscall %a %kroc bones)
+  (emit-syscall /helm %a %kroc bones)
 ::
 ++  poke-ames-cong
   |=  cong=[msg=@ud mem=@ud]  =<  abet
@@ -342,8 +345,7 @@
 ++  poke-serve
   |=  [=binding:eyre =generator:eyre]  =<  abet
   ::  we %syscall to avoid resource tracking
-  =/  =note-arvo  [%e %serve binding generator]
-  (emit %pass /helm/serv %arvo %syscall note-arvo)
+  (emit-syscall /helm/serv %e %serve binding generator)
 ::
 ++  poke-cors-approve
   |=  =origin:eyre
@@ -358,7 +360,7 @@
 ++  poke-doff
   |=  [dude=(unit dude:gall) ship=(unit ship)]
   =<  abet
-  (emit %pass /helm/doff %arvo %syscall %g %doff dude ship)
+  (emit-syscall /helm/doff %g %doff dude ship)
 ::
 ++  poke-dns-config
   |=  [addr=(each address:dns @t) collector=dock self-check=? reset=?]
