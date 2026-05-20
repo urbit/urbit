@@ -81,9 +81,15 @@
     [%aqua ~]   ~&(aqua-sub+[our=our src=src]:bowl ~)
     :: XX allow users for crashes here to trigger naxplanations
     ::
-      [%subs ~]  ~&  subs+[our=our src=src]:bowl  ~ :: (on-watch:def path)
+      [%subs ~]
+    ~&  >   subs+[our=our src=src]:bowl
+    ~&  >>  %sending-to-aqua
+    [%give %fact [/aqua]~ noun/!>(subscribed/src.bowl)]~
+    :: (on-watch:def path)
+  ::
       [%sabs ~]  ~&  sabs+[our=our src=src]:bowl  ~ :: (on-watch:def path)
       [%sups ~]  ~&  sups+[our=our src=src]:bowl
+  ::
     :~  [%give %fact ~ atom+!>(%done)]
         [%give %kick ~ ~]
     ==
