@@ -781,7 +781,7 @@
   ;<  gall-wire-b=wire        bind:m
     (a2k-wire %mock /agent/wire `~2345.6.7)
   ;<  gall-wire-a=wire      bind:m
-    (a2a-wire %mock [~fun %bar] /agent/wire)
+    (a2a-wire %mock [~fun %bar] /agent/wire)  ::  TODO: investigate why wire is missing sub-nonce
   ;<  moz=(list move:gall)  bind:m
     (do-call ~ %idle %mock)
   ;<  ~  bind:m
