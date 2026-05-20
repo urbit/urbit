@@ -84,7 +84,7 @@
     ::
     ++  start-azimuth-load
       ^-  card
-      [%pass /al %arvo %syscall %k %fard %base %azimuth-load %noun !>(~)]
+      [%pass /al %arvo %khan %fard %base %azimuth-load %noun !>(~)]
     --
 ::
 =<
@@ -395,19 +395,19 @@
   ::
   ++  on-arvo
     |=  [=wire gift=gift-user-v1:gall]
-    ?:  &(=(/al wire) ?=(%syscall -.gift))
-      =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
-      ?>  ?=(%arow +<.sign-arvo)
-      ?-    -.p.sign-arvo
-          %&  `this
-          %|
-        %-  (slog 'loading azimuth snapshot failed! still trying' p.p.sign-arvo)
-        [~[(init-timer (add ~s10 now.bowl))] this]
-      ==
     =?  gift  ?=(%syscall -.gift)
       =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
-      ?.  ?=([%behn %wake *] sign-arvo)  gift
-      [%behn %wake now.bowl]
+      ?+  sign-arvo  gift
+        [%behn %wake *]  [%behn %wake now.bowl]
+        [%khan %arow *]  [%khan %arow %base `%azimuth-load p.sign-arvo]
+      ==
+    ?:  &(=(/al wire) ?=([%khan %arow *] gift))
+      ?-    -.res.gift
+          %&  `this
+          %|
+        %-  (slog 'loading azimuth snapshot failed! still trying' p.res.gift)
+        [~[(init-timer (add ~s10 now.bowl))] this]
+      ==
     ?.  &(=(/init wire) ?=([%behn %wake *] gift))
       (on-arvo:def wire gift)
     :_  this

@@ -748,7 +748,7 @@
   |=  [=bear:khan =shed:khan =wire]
   =/  m  (strand ,~)
   ^-  form:m
-  (send-raw-card %pass wire %arvo %syscall %k %lard bear shed)
+  (send-raw-card %pass wire %arvo %khan %lard bear shed)
 ::
 ::  Queue on skip, try next on fail %ignore
 ::

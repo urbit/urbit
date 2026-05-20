@@ -1325,7 +1325,7 @@
     [%kiln %zinc syd (scot %p her) sud nun wire]
   ++  lard
     |=  [=wire =shed:khan]
-    (emit %pass (ware wire) %arvo %syscall %k %lard %base shed)
+    (emit %pass (ware wire) %arvo %khan %lard %base shed)
   ++  merg
     |=  [=wire =desk]
     %:  emit
@@ -1381,6 +1381,10 @@
   ++  take
     |=  [=wire gift=gift-user-v1:gall]
     ^+  ..abet
+    =?  gift  ?=(%syscall -.gift)
+      =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
+      ?.  ?=([%khan %arow *] sign-arvo)  gift
+      [%khan %arow %base ~ p.sign-arvo]
     ?>  ?=([@ @ *] wire)
     ?.  =(nun i.wire)
       ..abet
@@ -1391,25 +1395,21 @@
       ?.  =(0 let)
         ~>  %slog.(fmt "sync-bad-stage {<let>} {<wire>}")
         ..abet
-      ?>  ?=([%syscall *] gift)
-      =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
-      ?>  ?=(%arow +<.sign-arvo)
-      ?:  ?=(%| -.p.sign-arvo)
+      ?>  ?=([%khan %arow *] gift)
+      ?:  ?=(%| -.res.gift)
         ~>  %slog.(fmt "activation failed into {here}; retrying sync")
-        %-  (slog p.p.sign-arvo)
+        %-  (slog p.res.gift)
         init
       ::  Now that we know the revision, start main download loop
       ::
-      =.  let  !<(@ud q.p.p.sign-arvo)
+      =.  let  !<(@ud q.p.res.gift)
       next
     ::
         %next
-      ?>  ?=([%syscall *] gift)
-      =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
-      ?>  ?=(%arow +<.sign-arvo)
-      ?:  ?=(%| -.p.sign-arvo)
+      ?>  ?=([%khan %arow *] gift)
+      ?:  ?=(%| -.res.gift)
         ::  ~>  %slog.(fmt "download failed into {here}; retrying sync")
-        ::  %-  (slog p.p.sign-arvo)
+        ::  %-  (slog p.res.gift)
         =.  ..abet  drop
         init
       ::
