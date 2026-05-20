@@ -364,7 +364,7 @@
   |=  [addr=(each address:dns @t) collector=dock self-check=? reset=?]
   =<  abet
   =;  =shed:khan
-    (emit %pass /helm/dns-config %arvo %syscall %k %lard %base shed)
+    (emit %pass /helm/dns-config %arvo %khan %lard %base shed)
   |^  ^-  shed:khan
   =/  m  (strand:rand ,vase)
   ;<  ip=@if        bind:m  get-ip
@@ -684,16 +684,17 @@
   |=  [=wire gift=gift-user-v1:gall]
   =?  gift  ?=([%syscall *] gift)
     =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
-    ?.  ?=([%behn %wake *] sign-arvo)  gift
-    [%behn %wake now.bowl]
+    ?+  sign-arvo  gift
+      [%behn %wake *]  [%behn %wake now.bowl]
+      [%khan %arow *]  [%khan %arow %base ~ p.sign-arvo]
+    ==
   ::
   ?+  wire  ~|  :+  %helm-bad-take-wire  wire
                 ?:(?=(%unsupported -.gift) -.gift +<.gift)
                 !!
     [%dns-config ~]   %-  take-arow-dns-config
-                      ?>  ?=(%syscall -.gift)
-                      =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
-                      ?>  ?=(%arow +<.sign-arvo)  +>.sign-arvo
+                      ?>  ?=([%khan %arow *] gift)
+                      res.gift
     [%automass *]     ?>  ?=([%behn %wake *] gift)
                       (take-wake-automass t.wire)
     [%serv *]         %+  take-bound  t.wire
