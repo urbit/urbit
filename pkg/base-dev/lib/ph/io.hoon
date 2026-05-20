@@ -158,15 +158,13 @@
   (init-ship moon |)
 ::
 ++  init-ship
-  =|  core=?(%mesa %ames)  :: XX make %mesa the default core
   |=  [=ship fake=?]
   =/  m  (strand ,~)
   ^-  form:m
-  ;<  ~  bind:m  (send-events (init:util ship fake ~ core))
+  ;<  ~  bind:m  (send-events (init:util ship fake ~))
   (check-ship-booted ship)
 ::
 ++  init-comet
-  =|  core=?(%mesa %ames)  :: XX make %mesa the default core
   |=  comet=ship
   =/  m  (strand ,~)
   ^-  form:m
@@ -185,7 +183,7 @@
   ::
   ?>  ?=(^ (veri:dawn:vere comet feed *point:azimuth-types ~))
   ~&  >  "mining comet under {<(^sein:title comet)>}"
-  ;<  ~  bind:m  (send-events (init:util comet fake=%.n `feed core))
+  ;<  ~  bind:m  (send-events (init:util comet fake=%.n `feed))
   (check-ship-booted comet)
 ::
 ::  Load network core protocol
@@ -198,7 +196,7 @@
   (pure:m ~)
 ::
 ++  aqua-setup
-  |=  aqua-action=?([%ahoy-on ?] [%ames-retry wen=@dr])  :: XX to sur/aquarium
+  |=  =aqua-action
   =/  m  (strand ,~)
   ^-  form:m
   (poke-our %aqua %noun !>(aqua-action))
@@ -207,7 +205,7 @@
   |=  core=?(%mesa %ames)
   =/  m  (strand ,~)
   ^-  form:m
-  (poke-our %aqua %noun !>(network-core/core))
+  (aqua-setup network-core/core)
 ::
 ++  check-ship-booted
   |=  =ship
@@ -405,9 +403,9 @@
   ::
   ;<  corked=(unit ?)  bind:m  (scry-aqua (unit ?) our aqua-pax)
   ?~  corked
-    (pure:m %.n)
+    loop  ::  (pure:m %.n)
   ?.  u.corked  ::  XX check .her as well
-    (pure:m %.n)
+    loop  ::  (pure:m %.n)
   ~&  >>  flow-is-corked/flow
   (pure:m %.y)
 ::

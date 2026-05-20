@@ -16,11 +16,9 @@
 ::  Start a ship (low-level; prefer +raw-ship)
 ::
 ++  init
-  |=  [who=ship ake=? eed=(unit feed:jael) ore=?(%mesa %ames)]
+  |=  [who=ship ake=? eed=(unit feed:jael)]
   ^-  (list aqua-event)
-  :~  [%init-ship who ake eed]
-      [%event who [/a/aqua/load %load ore]]
-  ==
+  [%init-ship who ake eed]~
 ::
 ::  Send dojo command
 ::
