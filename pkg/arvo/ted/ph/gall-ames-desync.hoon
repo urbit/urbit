@@ -31,14 +31,17 @@
 :: seq = 2 (~dev -> %ack -> XX)    ; leave %ack gets lost
 :: seq = 3 (~dev -> %ack -> ~bud)  ; %cork deletes the flow on the backward flow
 ::
-::    - %ack for cork arrives, but %leave still outstanding
-:: seq = 3 (~dev -> %ack -> ~bud)  ; %cork %ack gets confused with %leave %ack
+::    - %ack for cork (seq = 3) arrives, but %leave still outstanding
+:: seq = 3 (~dev -> %ack -> ~bud)  ; ~bud says "this %ack is not %cork"
 ::                                 ; %cork  (seq = 3) gets cleared from queue
 ::                                 ; %leave (seq = 2) outstanding
 ::
 ::    - %leave is resent, but the flow is corked; automatic %ack
 :: seq = 2 (~bud -> %leave -> ~dev)
 :: seq = 2 (~dev -> %ack -> ~bud)  ; always %ack if the flow is corked
+::    - ack-for-cork gets triggered; flow is corked
+::    - when %gall gets the %ack for a %leave, enqueue a %cork
+::    - but flow is corked (i.e. not in ossuary); skip %cork
 ::
 /-  spider, aquarium
 /+  *ph-io
@@ -125,6 +128,7 @@
 ::
 ;<  ~  bind:m  (poke-our %aqua %aqua-rule !>([%clear-rules ~bud ~dev]))
 ::  check that ~dev has halted this flow
+::  XX this gets blocked in %mesa
 ::
 ;<  ~  bind:m  (wait-for-has-halt ~dev ~bud %pub)
 ::  check that remote flubs are received
@@ -146,7 +150,7 @@
 ~&  >>  "check that flow 8 is corked on publisher"
 ;<  *  bind:m
   ?:  ?=(%ames i.cores)  (wait-for-cork ~dev ~bud &+9)
-  (peek-for-cork ~bud ~dev |+[8 %bak])
+  (peek-for-cork ~bud ~dev |+[8 %for])
 ::
 ;<  ~  bind:m  (end tids)
 $(cores t.cores)
