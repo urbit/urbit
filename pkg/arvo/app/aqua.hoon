@@ -644,7 +644,7 @@
       %-  zing
       :~
         :~  [/ %wack 0]  ::  eny
-            [/ %verb `|]  :: possible verb
+            :: [/ %verb `|]  :: possible verb
             :^  /  %wyrd  [~.nonce /aqua] :: dummy runtime version + nonce
             ^-  (list (pair term @))
             :~  zuse+zuse
