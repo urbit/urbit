@@ -77,7 +77,7 @@
 ::
 ~&  >  "Retrieving file list in /{(trip dir)}."
 ;<  ~  bind:m  (send-raw-card:strandio (build-tree-request repo commit))
-;<  res=(pair wire sign-arvo)  bind:m  take-sign-arvo:strandio
+;<  res=(pair wire gift-user-v1:gall)  bind:m  take-gift-user:strandio
 ?.  ?=([%iris %http-response %finished *] q.res)
   (strand-fail:strand %bad-sign ~)
 ?~  full-file.client-response.q.res
@@ -102,7 +102,7 @@
 ?~  res  (pure:m !>(`(list (pair path (pair @ud @)))`sob))
 ~&  >>  path.i.res
 ;<  ~  bind:m  (send-raw-card:strandio (build-file-request repo commit path.i.res))
-;<  new=(pair wire sign-arvo)  bind:m  take-sign-arvo:strandio
+;<  new=(pair wire gift-user-v1:gall)  bind:m  take-gift-user:strandio
 ?.  ?=([%iris %http-response %finished *] q.new)
   (strand-fail:strand %bad-sign ~)
 ?~  full-file.client-response.q.new
