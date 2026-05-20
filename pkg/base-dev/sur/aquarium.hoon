@@ -33,10 +33,16 @@
 +$  rule-actions
   $%  [?(%drop-link %hold-link %flush-link) from=@p to=@p]
       [%drop-next from=@p to=@p n=@ud]
-      [%clear-rules ~]
+      [%clear-rules from=@p to=@p]
   ==
 ::
 +$  net-rules  (set net-rule)
++$  aqua-action
+  $%  [%ahoy-on ?]
+      [%ames-retry wen=@dr]
+      [%network-core core=?(%mesa %ames)]
+      [%system-flow on=?]
+  ==
 ::
 +$  unix-event  ::NOTE  like unix-event:pill-lib but for all tasks
   %+  pair  wire

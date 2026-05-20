@@ -150,15 +150,15 @@
       =/  rcvr=@p  (lane-to-ship p.q.ue)
       =+  rule=(~(get by rules.state) who rcvr=(lane-to-ship p.q.ue))
       ?.  ?&  ?=(^ rule)
-              ?=(?(%drop-link [%drop-next ~] %hold-link) u.rule)
+              ?=(?(%drop-link [%drop-next *] %hold-link) u.rule)
           ==
         (handle-send our.bowl now.bowl who ue)^this
       ?-    u.rule
           %drop-link  `this  :: drop all packets [sndr -> rcvr]
       ::
-          [%drop-next n=@]   :: drop this packet [sndr -> rcvr], and update count
+          [%drop-next n=@]   :: drop this packet [sndr -> rcvr]; update count
         =.  rules.state
-          ?:  =(0 n.u.rule)
+          ?:  =(1 n.u.rule)
             (~(del by rules.state) who^rcvr)
           (~(put by rules.state) who^rcvr u.rule(n (dec n.u.rule)))
         `this
@@ -178,23 +178,38 @@
   |=  aq=rule-actions
   ^-  (quip card:agent:gall _this)
   ?-    -.aq
-      %drop-link    `this
-      %drop-next    `this
+      %drop-link
+    =.  state
+      state(rules (~(put by rules.state) [from to]:aq %drop-link))
+    `this
+  ::
+      %drop-next
+    =.  state
+      state(rules (~(put by rules.state) [from to]:aq [%drop-next n.aq]))
+    `this
+  ::
       %flush-link
     :_  this(ames.state ~, rules.state (~(del by rules.state) [from to]:aq))
     ^-  (list card:agent:gall)
+    ::  handle in reverse of arrival order
+    ::    (XX add flag for in-order arrival)
+    ::
     %-  zing
     %+  turn  ames.state
     |=  [who=@p ue=unix-effect]
     ?>  ?=(%send -.q.ue)
     (handle-send our.bowl now.bowl who ue)
-    ::
-      %clear-rules  `this
-    ::
+  ::
+      %clear-rules
+    =.  state
+      state(rules (~(del by rules.state) [from to]:aq))
+    `this
+  ::
       %hold-link
     =.  state
       state(rules (~(put by rules.state) [from to]:aq %hold-link))
     `this
+  ::
   ==
 ::
 ++  handle-arvo-response  |=(* !!)
