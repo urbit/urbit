@@ -271,8 +271,8 @@
                       riot=(unit [[care:clay case desk] path r=cage:a235])
               ==  ==
             new-vase
-      ?.  ?=(%writ -.task)           new-vase
-      ?~  riot.task                  new-vase
+      ?.  ?=(%writ -.task)  new-vase
+      ?~  riot.task         new-vase
       !>  ^-  $>(%writ gift:clay)
       [%writ ~ u.riot.task(r (next-cage:a235 r.u.riot.task))]
       ::
