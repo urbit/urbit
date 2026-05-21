@@ -93,6 +93,15 @@
     :-  %read
     [[[rcvr rcvr-tick.shot] path.peep] [lan sndr-tick.shot] num.peep]
   ::
+  =/  from-comet=?
+    |(?=(%pawn (clan:title sndr)) ?=(%pawn (clan:title sndr.shot)))
+  ?:  ?&  !from-comet
+          =(rcvr rcvr.shot)  :: forwards are handled normally
+      ==
+    :-  %|
+    :-  %.n  ^-  aqua-event
+    [%event rcvr /a/newt/0v1n.2m9vh %hear lan pac]
+  ::
   =+  ;;  sign-attest=(soft [~ signature=@ signed=@])
           (mole |.((cue content.shot)))
   =+  ^=  open-pack
@@ -100,49 +109,37 @@
         ~
       ;;  (soft [~ open-packet:ames-raw])
       (mole |.((cue signed:(need u.sign-attest))))
-  ::
-  =/  first-atts=?  &(?=(^ open-pack) !(~(has in comets) rcvr))
-  ?:  ?&  ::  skip if sndr is not a comet
-          ::
-          ?|  ?=(%pawn (clan:title sndr))
-              ?=(%pawn (clan:title sndr.shot))
-          ==
-          ::  if this is going to be forwarded, skip checks
-          ::
-          =(rcvr rcvr.shot)
-          ::  check attestation
-          ::
-          ?|  ?&  ?=(~ open-pack)
-                  ::  if this is not an attestation packet, check that we have already
-                  ::  added an attestation to the set
-                  ::
-                  !(~(has in comets) rcvr)
-              ==
-              ?&  ::  if this is an attestation packet, check if the rcvr has
-                  ::  the comet as %known -- this is a workaround to prevent a
-                  ::  bail:evil that will end up blocking the queue of the
-                  ::  %aqua host, when it tries to decrypt an open-packet
-                  ::
-                  ::  is-known  XX
-                  ::  XX this is not enough. at this point the comet might not
-                  ::
-                  ::  be known but a previous resend of the attestation packet
-                  ::  will make it known, and this one will fail to decrypt and
-                  ::  then we will bail:evil.
-                  ::
-                  ::  the solution is to track attestation packets and only
-                  ::  deliver them one time, and flag them as such
-                  ::
-                  ::  we track attestation packets to every ship to only deliver
-                  ::  them once.
-                  ::
-                  ::  if we have processed the attestaton for this rcvr; skip
-                  ::
-                  !first-atts
-      ==  ==  ==
+  ?:  ?&  ?=(~ open-pack)
+         !(~(has in comets) rcvr.shot)
+      ==
+    ::  if this is not an attestation packet, and have not handled the
+    ::  attestation packet before, we need to drop this packet
+    ::
     [%& ~]
+  ?:  ?&  ?=(^ open-pack)
+          (~(has in comets) rcvr.shot)
+      ==
+    ::  if this is an attestation packet, and have already handled the
+    ::  attestation packet before, we need to drop this packet
+    ::
+    [%& ~]
+  ?:  ?&  ?=(^ open-pack)
+          !(~(has in comets) rcvr.shot)
+      ==
+    ::  if this is an attestation packet, and have not handled the
+    ::  attestation packet before, we need to handle this packet
+    ::
+    :-  %|
+    :-  %.y  ^-  aqua-event
+    [%event rcvr /a/newt/0v1n.2m9vh %hear lan pac]
+  ::  at this point this should not be an attestation packet, and we
+  ::  should have handled the attestation before
+  ::
+  ?>  ?&  ?=(~ open-pack)
+          (~(has in comets) rcvr.shot)
+      ==
   :-  %|
-  :-  first-atts  ^-  aqua-event
+  :-  %.n  ^-  aqua-event
   [%event rcvr /a/newt/0v1n.2m9vh %hear lan pac]
 ::
 --
@@ -169,14 +166,15 @@
         =/  ev=(each (unit aqua-event) [? aqua-event])
           (handle-send who rcvr hear-lane shot pac=q.q.ue comets.state)
         ?:  ?=([%& ~] ev)  `this
-        :_  this
         ?:  ?=([%| *] ev)
           :: ~!  ev
           =?  comets.state  -.p.ev
             (~(put in comets.state) rcvr)
+          :_  this
           (emit-aqua-events our.bowl ^-((list aqua-event) [+.p.ev ~]))
         ::  don't update state, but process packet
         ::
+        :_  this
         (emit-aqua-events our.bowl ^-((list aqua-event) [u.p.ev ~]))
       ?-    u.rule
           %drop-link  `this  :: drop all packets [sndr -> rcvr]
