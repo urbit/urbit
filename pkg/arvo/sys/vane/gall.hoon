@@ -1751,6 +1751,8 @@
               ::
                 %rite  [%c %info des %& sob]:neet
                 %name  [%c %info des %| lab yon]:neet
+                %ward  ?^  p.neet  [%c %ward ~]
+                       [%c %wink ~]
               ==
             ::
               [%dill *]        [%d +>.neet]
@@ -2072,7 +2074,7 @@
       ?-    +.res
         ::  re-establish trivially
         ::
-          ?([%behn %wait *] [%clay %tire] [%dill *])
+          ?([%behn %wait *] [%clay ?(%tire %ward)] [%dill *])
         =.  inflating  (~(del in inflating) &+res)
         ?.  (~(has in resources.yoke) res)  ap-core
         %-  ap-move
@@ -2081,6 +2083,7 @@
         ?-  +.res
           [%behn %wait *]  [%behn %wait time.res]
           [%clay %tire]    [%clay %tire `~]
+          [%clay %ward]    [%clay %ward `~]
           [%dill %logs]    [%dill %logs `~]
           [%dill %mass]    [%dill %mass ~]
           [%dill %view *]  [%dill %shot ses.res %view ~]
@@ -2239,6 +2242,7 @@
           [%clay %writ *]           [%clay %read deets p.sign-arvo]
           [%clay %tire *]           sign-arvo
           [%clay %mere *]           sign-arvo
+          [%clay %ward *]           sign-arvo
           [%dill %blit *]           [%dill %blit ;;(@tas deets) p.sign-arvo]
           [%dill %logs *]           sign-arvo
           [%dill %meme *]           sign-arvo

@@ -3726,6 +3726,7 @@
         [%behn %wait =time]
         [%clay %warp id=*]
         [%clay %tire]
+        [%clay %ward]
         [%dill %logs]
         [%dill %mass]
         [%dill %view ses=@tas]
@@ -3763,6 +3764,7 @@
                                         [%clay %warp id.task]
         [%clay %rest *]                 [| %clay %warp id.task]
         [%clay %tire *]                 [?~(p.task | &) %clay %tire]
+        [%clay %ward *]                 [?~(p.task | &) %clay %ward]
         [%dill %logs *]                 [?~(p.task | &) %dill %logs]
         [%dill %mass *]                 [& %dill %mass]
         [%dill %shot @ %view *]         [& %dill %view ses.task]
@@ -3841,6 +3843,7 @@
         [%behn %wait *]     `[%behn %rest time.res]
         [%clay %warp *]     `[%clay %rest id.res]
         [%clay %tire]       `[%clay %tire ~]
+        [%clay %ward]       `[%clay %ward ~]
         [%dill %logs]       `[%dill %logs ~]
         [%dill %mass]       ~
         [%dill %view *]     `[%dill %shot ses.res %flee ~]
@@ -4057,6 +4060,10 @@
             [%zest des=desk liv=zest:clay]         ::TODO  unify?
             [%tire p=(unit ~)]  ::NOTE  sub
           ::
+            [%pine des=desk add=? pes=(set perm)]
+            [%seal des=desk add=? pes=(set perm)]
+            [%ward p=(unit ~)]
+          ::
             [%merg des=desk her=@p dem=desk cas=case how=germ:clay]
             [%fuse des=desk bas=beak con=(list [beak $~(%init germ:clay)])]
             [%drop des=desk]
@@ -4150,6 +4157,7 @@
         [%clay %read id=* =riot:clay]
         [%clay %tire p=(each rock:tire:clay wave:tire:clay)]
         [%clay %mere p=(each (set path) (pair term tang))]
+        [%clay %ward =cast:ward:clay]
         [%dill %blit ses=@tas biz=(list blit:dill)]
         [%dill %logs =told:dill]
         [%dill %meme p=(list quac:dill)]

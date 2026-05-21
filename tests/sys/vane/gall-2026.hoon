@@ -409,6 +409,19 @@
           ~
           `[%c %tire `~]
       ==
+      ^-  tracked-task
+      :*  [%clay %ward `~]
+          [%c %ward ~]
+          [%clay %ward]^~
+          ~
+        ::
+          [%clay %ward ~]
+          [%c %wink ~]
+          ~
+        ::
+          ~
+          `[%c %ward ~]
+      ==
     ::
       ^-  tracked-task
       :*  [%dill %logs `~]
@@ -1148,6 +1161,8 @@
         (easy %clay %rein *desk *rein:clay)
         (easy %clay %zeal *(list [=desk =$~(%dead zest:clay)]))
         (easy %clay %zest *desk *zest:clay)
+        (easy %clay %pine *desk & *(set perm:gall))
+        (easy %clay %seal *desk & *(set perm:gall))
         (easy %clay %merg *desk *@p *desk *case *germ:clay)
         (easy %clay %fuse *desk *beak *(list [beak $~(%init germ:clay)]))
         (easy %clay %drop *desk)
