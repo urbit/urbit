@@ -2664,24 +2664,22 @@
       ?:  ?=(%| -.result)
         `ap-core
       ::
-      =.  agent.yoke  &++.p.result
+      =.  agent.yoke      &++.p.result
       ::TODO  if we filter out "duplicate resource creation" cards here,
       ::      then we don't have to account for them in +ap-handle-peers and co
       ::      (and if we don't, we have to update handle-peers and co)
-      =/  og-deets      resource-deets.yoke
-      =.  yoke          (ap-handle-resources -.p.result)
-      =.  boat.yoke     (ap-handle-peers-tracking -.p.result)
-      =.  -.p.result    (skip -.p.result ap-redundant)
-      =^  caz=(list card:agent)  ap-core
-        (ap-handle-peers-transforms -.p.result)
-      ::
-      =^  fex  ap-core  (ap-handle-sky caz)
+      =/  og-deets        resource-deets.yoke
+      =^  caz       yoke  (ap-handle-resources -.p.result)
+      =^  caz  boat.yoke  (ap-handle-peers-tracking caz)
+      =.  caz             (skip caz ap-redundant)
+      =^  caz  ap-core    (ap-handle-peers-transforms caz)
+      =^  fex  ap-core    (ap-handle-sky caz)
       ::NOTE  hacky, mb do +uni:by with og-deets
-      =/  moves         (zing (turn fex ap-from-internal(resource-deets.yoke og-deets)))
+      =/  moves           (zing (turn fex ap-from-internal(resource-deets.yoke og-deets)))
       ::TODO  why +ap-handle-kicks here, on .moves? those only result from
       ::      formal %kick already present in the caz cards
       ::      same for +ap-handle-peers, none of the transforms above add/remove watches or leaves
-      =.  bitt.yoke     (ap-handle-kicks moves)
+      =.  bitt.yoke       (ap-handle-kicks moves)
       [moves ap-core]
     ::  +ap-redundant: true for side-effects redundant with deflation
     ::
@@ -2723,24 +2721,49 @@
     ::  +ap-handle-resources: track resources created/used by the agent
     ::
     ++  ap-handle-resources
+      =|  out=(list card:agent)
+      =|  dol=(unit desk)
       |=  caz=(list card:agent)
-      ^+  yoke  ::NOTE  just .resources and .resource-deets, should unify those
-      ?~  caz  yoke
-      ?:  ?=([%pass * %dole *] i.caz)  $(q.i.caz rote.q.i.caz)
-      ?.  ?=([%pass * %arvo *] i.caz)  $(caz t.caz)
+      ^+  [out yoke]  ::NOTE  just .resources and .resource-deets, should unify those
+      ?~  caz  [(flop out) yoke]
+      ?.  ?=([%pass *] i.caz)
+        $(caz t.caz, out [i.caz out])
+      ::  if the card is a dole, unpack it and process the inner task
+      ::
+      ?:  ?=([%dole *] q.i.caz)
+        $(q.i.caz rote.q.i.caz, dol `from.q.i.caz)
+      ::  cad: re-packaged i.caz
+      ::
+      =/  cad  ?~(dol i.caz [%pass p.i.caz %dole u.dol q.i.caz])
+      =.  dol  ~
+      ::  if the card is not a task-user-v1, nothing to track here
+      ::
+      ?.  ?=([%arvo *] q.i.caz)
+        $(caz t.caz, out [cad out])
+      ::
       =/  $@(~ [add=$@(? resource-deet) res=_+:*arvo-resource])
         (card-resource:track i.caz)
-      ?@  -  $(caz t.caz)
+      ?~  -  $(caz t.caz, out [cad out])
       ?:  |(?=(^ add) add)
-        ::TODO  prevent agent from creating the same resources twice
+        ::  drop cards that would create duplicate resources on the floor
+        ::
+        ?:  (~(has in resources.yoke) p.i.caz res)
+          %.  $(caz t.caz)
+          %-  slog
+          :~  leaf+"gall: {<agent-name>}: duplicate resource creation:"
+              leaf+"      {<p.i.caz>}"
+              leaf+"      {<res>}"
+          ==
         %_  $
           caz                  t.caz
+          out                  [cad out]
           resources.yoke       (~(put in resources.yoke) p.i.caz res)
           resource-deets.yoke  ?@  add  resource-deets.yoke
                                (~(put by resource-deets.yoke) [p.i.caz res] add)
         ==
       %_  $
         caz                  t.caz
+        out                  [cad out]
         resources.yoke       (~(del in resources.yoke) p.i.caz res)
         resource-deets.yoke  (~(del by resource-deets.yoke) p.i.caz res)
       ==
@@ -2813,27 +2836,37 @@
     ::
     ++  ap-handle-peers-tracking
       |=  cards=(list card:agent)
-      ^+  boat.yoke
+      ^+  [cards boat.yoke]
+      =-  [(flop out) boat]
       %+  roll  cards
-      |=  [=card:agent boat=_boat.yoke]
-      =?  card  ?=([%pass * %dole *] card)
-        card(q rote.q.card)
-      ?+  card  boat
-          [%pass * %agent * %leave *]
+      =|  dol=(unit desk)
+      |=  [=card:agent out=(list card:agent) boat=_boat.yoke]
+      ^+  [out boat]
+      ?.  ?=([%pass *] card)  [[card out] boat]
+      ?:  ?=([%dole *] q.card)
+        $(card card(q rote.q.card), dol `from.q.card)
+      =/  cad  ?~(dol card [%pass p.card %dole u.dol q.card])
+      ?+  q.card  [[cad out] boat]
+          [%agent * %leave *]
+        :-  [cad out]
         =/  =wire  p.card
         =/  =dock  [ship name]:q.card
-          ?:  (~(has by boat.yoke) wire dock)
-            (~(del by boat.yoke) [wire dock])
-          %.  boat.yoke
-          %+  trace  odd.veb.bug.state
-          |+['missing subscription, got leave']~
+        ?:  (~(has by boat.yoke) wire dock)
+          (~(del by boat.yoke) [wire dock])
+        %.  boat.yoke
+        %+  trace  odd.veb.bug.state
+        |+['missing subscription, got leave']~
       ::
-          [%pass * %agent * ?(%watch %watch-as) *]
+          [%agent * ?(%watch %watch-as) *]
         =/  =wire  p.card
         =/  [=dock =task:agent:gall]  [[ship name] task]:q.card
-        ::TODO  should catch this case ("sub wire not unique") before calling
-        ::      +ap-handle-peers-tracking, probably in +ap-handle-result
-        ?<  (~(has by boat.yoke) wire dock)
+        ?:  (~(has by boat.yoke) wire dock)
+          %.  [out boat]
+          %-  slog
+          :~  leaf+"gall: {<agent-name>}: subscribe wire not unique"
+              leaf+"      {<wire>} -> {<dock>}"
+          ==
+        :-  [cad out]
         %+  ~(put by boat.yoke)  [wire dock]
         :-  acked=|
         path=?+(-.task !! %watch path.task, %watch-as path.task)

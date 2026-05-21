@@ -1081,6 +1081,32 @@
   ::  and inflation should inject it.
   ::
   ~  ::TODO
+  ::TODO  and other khan tracking tests
+::
+++  test-duplicate-subscription-wire
+  ::  when an agent issues the same subscription (same wire & target agent,
+  ::  but possibly different sub path) gall must ignore it safely
+  ::
+  %-  eval-mare
+  ;<  *                     bind:m  (do-load %mock easy:mock)
+  ;<  moz=(list move:gall)  bind:m  (mock-card %pass /agent/wire %agent [~fun %bar] %watch /blah)
+  ::
+  ;<  gall-wire-a=wire      bind:m
+    (a2a-wire %mock [~fun %bar] /1/agent/wire)  ::  TODO: investigate why wire is missing sub-nonce
+  ;<  ~  bind:m
+    %+  ex-moves  moz
+    :~  (ex-move default-duct %give %unto %poke-ack ~)
+        (ex-move ~[/sysduct] %pass gall-wire-a [%g %deal [~dev ~fun /gall/desk] %bar %watch /blah])  ::TODO  deal constructor
+    ==
+  ::  if the agent issues the same sub (identifier) again, gall must no-op
+  ::
+  ;<  moz=(list move:gall)  bind:m  (mock-card %pass /agent/wire %agent [~fun %bar] %watch /blah-2)
+  ::
+  ;<  ~  bind:m
+    %+  ex-moves  moz
+    :~  (ex-move default-duct %give %unto %poke-ack ~)
+    ==
+  (pure:m ~)
 ::
 ::TODO  same style for simple +test-simply-tracked-tasks
 ++  test-misc-untracked-tasks
@@ -1165,10 +1191,6 @@
         (easy %jael %ruin ~met ~ ~)
         (easy %jael %trim 1)
       ::
-        :-  [%khan %fard *(fyrd:khan cage)]
-        [%k %fard %desk *(fyrd:khan cage)]
-        :-  [%khan %lard %bear-desk *shed:khan]
-        [%k %lard %desk %bear-desk *shed:khan]
         (easy %khan %trim 1)
         (easy %lick %trim 1)
     ==
