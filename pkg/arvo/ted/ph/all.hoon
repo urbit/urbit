@@ -12,8 +12,6 @@
     :~  %ph-add
         %ph-boot-az
         %ph-boot-planet
-        ::  XX these somehow get stuck in CI?
-        ::
         %ph-breach-hi
         %ph-breach-hi-cousin
         %ph-breach-multiple
@@ -36,8 +34,6 @@
         %ph-peek
         %ph-second-cousin-hi
         %ph-tend
-      ::  XX  slow(er) tests
-      ::
         %ph-flub
         %ph-big-flub
         %ph-ahoy

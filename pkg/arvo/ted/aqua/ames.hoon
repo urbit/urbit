@@ -15,6 +15,10 @@
   $:  rules=(map [from=@p to=@p] net-rule)  ::  XX more than one rule per link
       ames=held-pacs  :: XX  make a FIFO queue
       mesa=held-pacs  ::
+    ::  packets from comets;
+    ::  to guarantee that attestations are always injected first
+    ::
+      comets=(set to=@p)
   ==
 ::
 ++  emit-aqua-events
@@ -28,64 +32,6 @@
   %+  emit-aqua-events  our
   [%event who [/a/newt/0v1n.2m9vh %born ~]]~
 ::
-++  handle-send
-  =,  ames
-  |=  [our=ship now=@da sndr=@p way=wire %send lan=lane pac=@]
-  ^-  (list card:agent:gall)
-  =/  rcvr=ship  (lane-to-ship lan)
-  =/  hear-lane  (ship-to-lane sndr)
-  =/  =shot      (sift-shot pac)
-  ?:  &(!sam.shot req.shot)  :: is fine request
-    =/  [%0 =peep]  (sift-wail `@ux`content.shot)
-    %+  emit-aqua-events  our
-    :_  ~
-    :-  %read
-    [[[rcvr rcvr-tick.shot] path.peep] [hear-lane sndr-tick.shot] num.peep]
-  =+  ^=  peers
-      ;;  (unit (map ship ?(%alien %known)))
-      .^  *
-          %gx
-          (scot %p our)
-          %aqua
-          (scot %da now)
-          /i/(scot %p rcvr)/ax/(scot %p rcvr)//(scot %da now)/peers/noun
-      ==
-  =/  is-known=?
-    ?.  ?=(^ peers)  |
-    =+  peer=(~(get by u.peers) sndr)
-    ?.  ?=(^ peer)  |
-    =(%known u.peer)
-  ?:  ?&  :: =-  ~?  -  %is-pawn
-          ::     -
-          ?|  ?=(%pawn (clan:title sndr))
-              ?=(%pawn (clan:title sndr.shot))
-          ==
-          ::  if this is going to be forwarded, skip checks
-          ::
-          :: =-  ~?  -  %not-forwarded
-          ::     -
-          =(rcvr rcvr.shot)
-          =+  ;;(out=(soft [~ signature=@ signed=@]) (mole |.((cue content.shot))))
-          ?|  ?&  ?=(~ out)
-                  ::  if this is not an attestation packet, check that the receiver
-                  ::  has the peer as known
-                  ::
-                  !is-known
-              ==
-              ?&  ?=(^ out)
-                  ?=(^ ;;((soft [~ open-packet:ames-raw]) (mole |.((cue signed:(need (need out)))))))
-                  ::  if this is an attestation packet, check if the rcvr has the comet
-                  ::  as %known -- this is a workaround to prevent a bail:evil that will
-                  ::  end up blocking the queue of the %aqua host, when it tries to decrypt
-                  ::  an open-packet
-                  ::
-                  is-known
-      ==  ==  ==
-    :: ~&  >   "skip packet"^content.shot
-    ~
-  :: ~&  >>   "inject packet"^content.shot
-  %+  emit-aqua-events  our
-  [%event rcvr /a/newt/0v1n.2m9vh %hear hear-lane pac]~
 ::  XX  this should use the (TODO) message layer in %ames
 ::
 ++  handle-push
@@ -133,6 +79,72 @@
     ship
   0xdead.beef.cafe
 ::
+++  handle-send
+  =,  ames
+  |=  [sndr=@p rcvr=@p lan=lane =shot pac=@ comets=(set @p)]
+  ^-  %+  each
+        (unit aqua-event)
+      [? aqua-event] :: if comet attestation handle and update state
+  ::
+  ?:  &(!sam.shot req.shot)  :: is fine request; handle
+    =/  [%0 =peep]  (sift-wail `@ux`content.shot)
+    :-  %&
+    :-  ~  ^-  aqua-event
+    :-  %read
+    [[[rcvr rcvr-tick.shot] path.peep] [lan sndr-tick.shot] num.peep]
+  ::
+  =+  ;;  sign-attest=(soft [~ signature=@ signed=@])
+          (mole |.((cue content.shot)))
+  =+  ^=  open-pack
+      ?.  ?=(^ sign-attest)
+        ~
+      ;;  (soft [~ open-packet:ames-raw])
+      (mole |.((cue signed:(need u.sign-attest))))
+  ::
+  =/  first-atts=?  &(?=(^ open-pack) !(~(has in comets) rcvr))
+  ?:  ?&  ::  skip if sndr is not a comet
+          ::
+          ?|  ?=(%pawn (clan:title sndr))
+              ?=(%pawn (clan:title sndr.shot))
+          ==
+          ::  if this is going to be forwarded, skip checks
+          ::
+          =(rcvr rcvr.shot)
+          ::  check attestation
+          ::
+          ?|  ?&  ?=(~ open-pack)
+                  ::  if this is not an attestation packet, check that we have already
+                  ::  added an attestation to the set
+                  ::
+                  !(~(has in comets) rcvr)
+              ==
+              ?&  ::  if this is an attestation packet, check if the rcvr has
+                  ::  the comet as %known -- this is a workaround to prevent a
+                  ::  bail:evil that will end up blocking the queue of the
+                  ::  %aqua host, when it tries to decrypt an open-packet
+                  ::
+                  ::  is-known  XX
+                  ::  XX this is not enough. at this point the comet might not
+                  ::
+                  ::  be known but a previous resend of the attestation packet
+                  ::  will make it known, and this one will fail to decrypt and
+                  ::  then we will bail:evil.
+                  ::
+                  ::  the solution is to track attestation packets and only
+                  ::  deliver them one time, and flag them as such
+                  ::
+                  ::  we track attestation packets to every ship to only deliver
+                  ::  them once.
+                  ::
+                  ::  if we have processed the attestaton for this rcvr; skip
+                  ::
+                  !first-atts
+      ==  ==  ==
+    [%& ~]
+  :-  %|
+  :-  first-atts  ^-  aqua-event
+  [%event rcvr /a/newt/0v1n.2m9vh %hear lan pac]
+::
 --
 ::
 =|  state=driver-state
@@ -148,11 +160,24 @@
     ::
         %send
       =/  rcvr=@p  (lane-to-ship p.q.ue)
-      =+  rule=(~(get by rules.state) who rcvr=(lane-to-ship p.q.ue))
+      =+  rule=(~(get by rules.state) sndr=who rcvr)
       ?.  ?&  ?=(^ rule)
               ?=(?(%drop-link [%drop-next *] %hold-link) u.rule)
           ==
-        (handle-send our.bowl now.bowl who ue)^this
+        =/  hear-lane   (ship-to-lane who)
+        =/  =shot:ames  (sift-shot:ames q.q.ue)
+        =/  ev=(each (unit aqua-event) [? aqua-event])
+          (handle-send who rcvr hear-lane shot pac=q.q.ue comets.state)
+        ?:  ?=([%& ~] ev)  `this
+        :_  this
+        ?:  ?=([%| *] ev)
+          :: ~!  ev
+          =?  comets.state  -.p.ev
+            (~(put in comets.state) rcvr)
+          (emit-aqua-events our.bowl ^-((list aqua-event) [+.p.ev ~]))
+        ::  don't update state, but process packet
+        ::
+        (emit-aqua-events our.bowl ^-((list aqua-event) [u.p.ev ~]))
       ?-    u.rule
           %drop-link  `this  :: drop all packets [sndr -> rcvr]
       ::
@@ -173,7 +198,6 @@
     ==
   [cards this]
 ::
-::
 ++  handle-aqua-rule
   |=  aq=rule-actions
   ^-  (quip card:agent:gall _this)
@@ -189,16 +213,20 @@
     `this
   ::
       %flush-link
-    :_  this(ames.state ~, rules.state (~(del by rules.state) [from to]:aq))
-    ^-  (list card:agent:gall)
-    ::  handle in reverse of arrival order
+    ::  remove all rules
+    ::
+    =.  rules.state  (~(del by rules.state) [from to]:aq)
+    =;  [c=(list card:agent:gall) =_this]
+      [c this(ames.state ~)]  :: clear queue
+    %+  reel   ames.state
+    |=  [[who=@p ue=unix-effect] c=(list card:agent:gall) t=_this]
+    ?>  ?=(%send -.q.ue)
+    =^  new-c  t  (handle-unix-effect who ue)
+    ?>  ?=([^ ~] new-c)
+    ::  new-c has only one card so we handle in reverse of arrival order
     ::    (XX add flag for in-order arrival)
     ::
-    %-  zing
-    %+  turn  ames.state
-    |=  [who=@p ue=unix-effect]
-    ?>  ?=(%send -.q.ue)
-    (handle-send our.bowl now.bowl who ue)
+    [(weld new-c c)]^t
   ::
       %clear-rules
     =.  state
