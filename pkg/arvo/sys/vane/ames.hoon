@@ -6006,6 +6006,8 @@
                   =/  dat  [her bone=bone message-num=message-num]
                   |.("flow is halted; drop bone={<bone>}")
               peer-core
+            %-  %+  pe-trace  rcv.veb
+                |.("hear shut {<her>} {<seq=message-num.shut-packet>}")
             ?:  ?=(%& -.meat.shut-packet)
               =+  ?.  &(?=(^ dud) msg.veb)  ~
                   =/  [num-fragments=@ud =fragment-num =fragment]
@@ -7861,7 +7863,7 @@
               =.  live-messages.state  (~(del by live-messages.state) seq)
               ::
               %-  %+  pe-trace  msg.veb
-                  |.("hear {<her>} {<seq=seq>} {<num-fragments.u.live>}kb")
+                  |.("handle {<her>} {<seq=seq>} {<num-fragments.u.live>}kb")
               =/  message=*
                 (assemble-fragments [num-fragments fragments]:u.live)
               =/  empty=?    =(~ pending-vane-ack.state)
