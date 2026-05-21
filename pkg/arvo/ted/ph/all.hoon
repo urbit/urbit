@@ -10,31 +10,37 @@
   ?-    group
       ~
     :~  %ph-add
-        :: %ph-boot-az
-        :: %ph-boot-planet
+        %ph-boot-az
+        %ph-boot-planet
+        ::  XX these somehow get stuck in CI?
+        ::
         :: %ph-breach-hi
         :: %ph-breach-hi-aqua
         :: %ph-breach-hi-cousin
-        %ph-breach-multiple
+        :: %ph-breach-multiple
         :: %ph-breach-sudden
         :: %ph-breach-sync
-        :: %ph-change-file
-        :: %ph-child-sync
+        %ph-change-file
+        %ph-child-sync
         %ph-child-update
-        %ph-flub
-        :: %ph-hi
-        :: %ph-hi-az
+        %ph-hi
+        %ph-hi-az
         %ph-hi-comet-az
-        :: %ph-hi-cousin-az
-        :: %ph-hi-linnup-az
-        :: %ph-hi-linnup-az-backward
-        :: %ph-hi-marbud-az
-        :: %ph-hi-nephew-az
-        :: %ph-hi-uncle-az
+        %ph-hi-cousin-az
+        %ph-hi-linnup-az
+        %ph-hi-linnup-az-backward
+        %ph-hi-marbud-az
+        %ph-hi-nephew-az
+        %ph-hi-uncle-az
         %ph-moon-az
         %ph-peek
         %ph-second-cousin-hi
         %ph-tend
+      ::  XX  slow tests
+      ::
+        %ph-flub
+        %ph-big-flub
+        %ph-ahoy
     ==
   ::
       [%all ~]
@@ -48,6 +54,7 @@
   ==
 ::
 =|  results=(list [n=@tas r=thread-result])
+;<  global-now-1=@da  bind:m  get-time
 |-  ^-  form:m
 =*  loop  $
 ?^  threads
@@ -66,6 +73,8 @@
 ?~  results
   ~&  "ph-all: all done"
   ;<  ~  bind:m  (flog-text "ph-all: all done")
+  ;<  global-now-2=@da  bind:m  get-time
+  ~&  >  ph-all-took/`@dr`(sub global-now-2 global-now-1)
   (pure:m !>(~))  ::TODO  maybe collate vases
 ?:  ?=(%& -.r.i.results)  loop(results t.results)
 =*  name  n.i.results

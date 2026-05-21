@@ -5,13 +5,14 @@
 |=  vase
 |^
 =/  m  (strand ,vase)
-;<  ~                bind:m  start-simple
+=|  tids=drivers
+;<  =_tids           bind:m  start-simple
 ;<  ~                bind:m  (init-ship ~bud &)
 ;<  ~                bind:m  (init-ship ~marbud &)
 ;<  *                bind:m  (modify ~bud %base)
 ;<  [=path file=@t]  bind:m  (modify ~bud %kids)
 ;<  ~                bind:m  (check-touched ~marbud %kids path file)
-;<  ~                bind:m  end
+;<  ~                bind:m  (end tids)
 (pure:m *vase)
 ::
 ++  modify

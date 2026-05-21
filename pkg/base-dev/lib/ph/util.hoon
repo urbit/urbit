@@ -55,9 +55,7 @@
     |=  [=path txt=@t]
     [path ~ /text/plain (as-octs:mimes:html txt)]
   %+  send-events-to  who
-  :~
-    [/c/sync/0v1n.2m9vh %into des | input]
-  ==
+  [/c/sync/0v1n.2m9vh %into des | input]~
 ::
 ::  Checks whether the given event is a dojo output blit containing the
 ::  given tape

@@ -15,12 +15,16 @@
 ^-  thread:spider
 |=  vase
 =/  m  (strand ,vase)
-=/  cores=(list ?(%mesa %ames))  ~[%mesa]
+=/  cores=(list ?(%mesa %ames))  ~[%mesa %ames]
 |-  ^-  form:m
 ?~  cores  (pure:m *vase)
-;<  ~  bind:m  start-simple
+=|  tids=drivers
+;<  =_tids  bind:m  start-simple
+::
 ::
 =*  loop  $
+;<  ~  bind:m  (aqua-setup ahoy-on/|)
+;<  ~  bind:m  (switch-network-core i.cores)
 ;<  ~  bind:m  (init-ship ~bud fake=&)
 ;<  ~  bind:m  (dojo ~bud "|pass [%a %load {<i.cores>}]")
 ;<  ~  bind:m  (init-ship ~dev fake=&)
@@ -138,15 +142,7 @@
 ::
 ::  revive subscriber agent
 ::
-;<  ~  bind:m  (dojo ~bud "|rein %base [%.y %sub]")
-::  check that flow 8 is corked on both
-::  (first on the publisher if %ames)
-::
-~&  >>  "check that flow 8 is corked"
-;<  ~  bind:m
-  %^  wait-for-cork  ~dev  ~bud
-  ?:  ?=(%ames i.cores)  &+9
-  |+[8 %bak]
+;<  ~  bind:m  (sleep ~s2)
 ;<  ~  bind:m  (dojo ~bud "|rein %base [%.n %sub]")
 ::  send facts again
 ::
@@ -159,12 +155,26 @@
 ;<  ~  bind:m  (sleep ~s1)
 ::
 ;<  ~  bind:m  (dojo ~bud "|rein %base [%.y %sub]")
-;<  *  bind:m
+;<  noun-1=^noun  bind:m
   (wait-for-fact rcv=~bud %noun /aqua/watch/sub (gate ,(list [path @]) [/new 1]~))
-;<  *  bind:m
+;<  noun-2=^noun  bind:m
   (wait-for-fact rcv=~bud %noun /aqua/watch/sub (gate ,(list [path @]) [/new 2]~))
-;<  *  bind:m
+;<  noun-3=^noun  bind:m
   (wait-for-fact rcv=~bud %noun /aqua/watch/sub (gate ,(list [path @]) [/new 3]~))
 ::
-;<  ~  bind:m  end
+::  check that flow 8 is corked on both
+::
+~&  >>  "check that flow 8 is corked on subscriber"
+;<  corked-for=?  bind:m
+  %^  peek-for-cork  ~bud  ~dev
+  ?:  ?=(%ames i.cores)  &+8
+  |+[8 %for]
+~&  >>  "check that flow 8 is corked on publisher"
+;<  corked-bak=?  bind:m
+  %^  peek-for-cork  ~dev  ~bud
+  ?:  ?=(%ames i.cores)  &+9
+  |+[8 %bak]
+~|  [corked-for corked-bak]
+?>  =([corked-for corked-bak] [& &])
+;<  ~  bind:m  (end tids)
 $(cores t.cores)
