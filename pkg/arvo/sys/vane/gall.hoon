@@ -2696,20 +2696,9 @@
       |-
       ?+  card  ~
           [%pass * %arvo *]
-        =*  task  +.q.card
-        ?+  task  ~
-          :: [%ames %yawn *]                 &+[p.card %ames %keen spar.task]
-          [%behn %rest *]                 &+[p.card %behn %wait time.task]
-          [%clay %rest *]                 &+[p.card %clay %warp id.task]
-          [%clay %tire ~ ~]               &+[p.card %clay %tire]
-          [%dill %logs ~ ~]               &+[p.card %dill %logs]
-          [%dill %shot @ %flee ~]         &+[p.card %dill %view ses.task]
-          [%eyre %disconnect *]           &+[p.card %eyre %binding binding.task]
-          [%iris %cancel-request ~]       &+[p.card %iris %request]
-          [%jael %public-keys ~]          &+[p.card %jael %keys]
-          [%jael %private-keys ~]         &+[p.card %jael %keys]
-          [%lick %shut *]                 &+[p.card %lick %spin name.task]
-        ==
+        =+  res=(card-resource:track card)
+        ?.  ?=([%| *] res)  ~
+        &+[p.card res.res]
       ::
           [%pass * %agent *]
         ?+  -.task.q.card  ~
