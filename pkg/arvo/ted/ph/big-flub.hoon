@@ -7,7 +7,6 @@
 =>  |%  ++  gate
           |*  [typ=mold exp=noun]
           |=  [=mark val=noun]
-          ~&  [exp val mark]
           ?+  mark  %.n
               %noun  =(exp ;;(typ val))
           ==
@@ -15,7 +14,7 @@
 ^-  thread:spider
 |=  vase
 =/  m  (strand ,vase)
-=/  cores=(list ?(%mesa %ames))  ~[%ames]
+=/  cores=(list ?(%mesa %ames))  ~[%ames]  :: XX %mesa
 |-  ^-  form:m
 ?~  cores  (pure:m *vase)
 =|  tids=drivers
