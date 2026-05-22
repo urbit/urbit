@@ -67,10 +67,13 @@
     loop(threads t.threads)
   ;<  now-1=@da       bind:m  get-time
   ;<  ~               bind:m  (flog-text "ph-all: {<i.threads>} started")
+  ::  by default, turn probbing off for every tests
+  ::
+  ;<  ~  bind:m  (aqua-setup ahoy-on/|)
   ;<  =thread-result  bind:m  (await-thread i.threads *vase)
   ;<  ~               bind:m  (flog-text "ph-all: {<i.threads>} complete")
   ;<  now-2=@da       bind:m  get-time
-  ~&  >>  took/`@dr`(sub now-2 now-1)
+  ~&  >>  "ph-all: {<i.threads>} took {<`@dr`(sub now-2 now-1)>}"
   loop(threads t.threads, results [[i.threads thread-result] results])
 ::
 |-
