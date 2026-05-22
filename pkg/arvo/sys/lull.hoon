@@ -3785,6 +3785,8 @@
         [%jael %private-keys ^]         :_  [%jael %keys]
                                         [%jael %keys %private]
         [%jael %private-keys ~]         [| %jael %keys]
+        [%khan %fard *]                 [& %khan %thread bear.p.task `name.p.task]
+        [%khan %lard *]                 [& %khan %thread bear.task ~]
         [%lick %spin *]                 [& %lick %spin name.task]
         [%lick %shut *]                 [| %lick %spin name.task]
       ==
