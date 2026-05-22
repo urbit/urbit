@@ -1087,14 +1087,82 @@
       (ex-move ~[/sysduct] %pass gall-wire [%c %warp ~zod %desk ~ rave])
   ==
 ::
-++  test-khan-arow-during-suspend
+++  khan-tasks
+  ^-  %-  list
+  $:  =task-user-v1:gall
+      [res=_+:*arvo-resource:gall det=(unit resource-deet:gall)]
+      wire-deets=(unit *)
+      gift=gift-user-v1:gall
+  ==
+  =/  shed=shed:khan
+    =/  m  (strand:rand ,vase)
+    (pure:m !>(~))
+  =/  result=(avow:khan cage)  [%.y [%noun !>(~)]]
+  ::
+  :~  :*  [%khan %fard [%desk %thread %noun !>(~)]]
+          [%khan %thread %desk `%thread]^`[%khan %thread result]
+          `[%desk `%thread]
+          [%khan %arow %desk `%thread result]
+      ==
+      :*  [%khan %lard [%desk shed]]
+          [%khan %thread %desk ~]^`[%khan %thread result]
+          `[%desk ~]
+          [%khan %arow %desk ~ result]
+      ==
+  ==
+++  test-khan-tracking-behaviour
   ::  when an %arow response comes back for a %khan %thread,
   ::  but the agent is suspended,
   ::  deets should store the result,
   ::  and inflation should inject it.
   ::
-  ~  ::TODO
-  ::TODO  and other khan tracking tests
+  %-  zing
+  %+  turn  khan-tasks
+  |=  $:  task=task-user-v1:gall
+          [res=_+:*arvo-resource:gall det=(unit resource-deet:gall)]
+          wire-deets=(unit *)
+          gift=gift-user-v1:gall
+      ==
+  %-  eval-mare
+  ;<  *  bind:m  (do-load %mock easy:mock)
+  ;<  gall-wire=wire  bind:m
+    (a2k-wire %mock /agent/wire wire-deets)
+  =/  =sign-arvo  [%khan %arow [%.y [%noun !>(~)]]]
+  ::
+  ;<  *  bind:m  (mock-card %pass /agent/wire %arvo task)
+  ;<  ~  bind:m  (ex-resources %mock [[/agent/wire res]^~ ~])
+  %-  branch
+  :~
+    :-  'arvo closes'
+    ;<  moz=(list move:gall)  bind:m
+      (do-take [gall-wire default-duct] sign-arvo)
+    ;<  ~  bind:m
+        %+  ex-moves  moz
+        :~  (ex-on-arvo /agent/wire gift)
+        ==
+    (ex-resources %mock ~)
+    ::
+    :-  'gall suspend & revive'
+    ;<  *  bind:m  (do-call ~ %idle %mock)
+    ;<  *  bind:m
+      (do-take [gall-wire default-duct] sign-arvo)
+    ::
+    ;<  ~  bind:m  (ex-resources %mock [[/agent/wire res] det]~)
+    ::
+    ;<  moz=(list move:gall)  bind:m  (do-load %mock easy:mock)
+    ;<  ~  bind:m
+      %+  ex-moves  moz
+      :~  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
+          (ex-on-arvo /agent/wire gift)
+      ==
+    (ex-resources %mock ~)
+  ::
+    :-  'gall nukes'
+    ;<  moz=(list move:gall)  bind:m  (do-call ~ %nuke %mock)
+    ;<  ~  bind:m  (ex-moves moz ~)
+    ;<  y=yoke:gall  bind:m  (get-yoke %mock)
+    (ex-equal !>(-.y) !>(%nuke))
+  ==
 ::
 ++  test-duplicate-subscription-wire
   ::  when an agent issues the same subscription (same wire & target agent,
