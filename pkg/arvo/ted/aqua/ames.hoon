@@ -18,7 +18,7 @@
     ::  packets from comets;
     ::  to guarantee that attestations are always injected first
     ::
-      comets=(set to=@p)
+      comets=(set [from=@p to=@p])
   ==
 ::
 ++  emit-aqua-events
@@ -81,66 +81,38 @@
 ::
 ++  handle-send
   =,  ames
-  |=  [sndr=@p rcvr=@p lan=lane =shot pac=@ comets=(set @p)]
-  ^-  %+  each
-        (unit aqua-event)
-      [? aqua-event] :: if comet attestation handle and update state
+  |=  [sndr=@p rcvr=@p lan=lane =shot pac=@ comets=(set [@p @p])]
+  ^-  (each (unit aqua-event) [? aqua-event])
+  =/  hear=aqua-event
+    [%event rcvr /a/newt/0v1n.2m9vh %hear lan pac]
+  :: fine request; handle
   ::
-  ?:  &(!sam.shot req.shot)  :: is fine request; handle
+  ?:  &(!sam.shot req.shot)
     =/  [%0 =peep]  (sift-wail `@ux`content.shot)
     :-  %&
     :-  ~  ^-  aqua-event
     :-  %read
     [[[rcvr rcvr-tick.shot] path.peep] [lan sndr-tick.shot] num.peep]
+  ::  handle normally if the sender is not a comet or this is a forward
   ::
-  =/  from-comet=?
-    |(?=(%pawn (clan:title sndr)) ?=(%pawn (clan:title sndr.shot)))
-  ?:  ?&  !from-comet
-          =(rcvr rcvr.shot)  :: forwards are handled normally
-      ==
-    :-  %|
-    :-  %.n  ^-  aqua-event
-    [%event rcvr /a/newt/0v1n.2m9vh %hear lan pac]
-  ::
+  ?.  ?=(%pawn (clan:title sndr.shot))
+    [%| %.n hear]
+  ?.  =(rcvr rcvr.shot)
+    [%| %.n hear]
   =+  ;;  sign-attest=(soft [~ signature=@ signed=@])
-          (mole |.((cue content.shot)))
-  =+  ^=  open-pack
-      ?.  ?=(^ sign-attest)
-        ~
-      ;;  (soft [~ open-packet:ames-raw])
-      (mole |.((cue signed:(need u.sign-attest))))
-  ?:  ?&  ?=(~ open-pack)
-         !(~(has in comets) rcvr.shot)
-      ==
-    ::  if this is not an attestation packet, and have not handled the
-    ::  attestation packet before, we need to drop this packet
-    ::
-    [%& ~]
-  ?:  ?&  ?=(^ open-pack)
-          (~(has in comets) rcvr.shot)
-      ==
-    ::  if this is an attestation packet, and have already handled the
-    ::  attestation packet before, we need to drop this packet
-    ::
-    [%& ~]
-  ?:  ?&  ?=(^ open-pack)
-          !(~(has in comets) rcvr.shot)
-      ==
-    ::  if this is an attestation packet, and have not handled the
-    ::  attestation packet before, we need to handle this packet
-    ::
-    :-  %|
-    :-  %.y  ^-  aqua-event
-    [%event rcvr /a/newt/0v1n.2m9vh %hear lan pac]
-  ::  at this point this should not be an attestation packet, and we
-  ::  should have handled the attestation before
+      (mole |.((cue content.shot)))
+  =/  is-attest=?
+    ?.  ?=(^ sign-attest)
+      %.n
+    ?=  ^
+    ;;  (soft [~ open-packet:ames-raw])
+    (mole |.((cue signed:(need u.sign-attest))))
+  ::  drop: duplicate attestation or pre-attestation data
   ::
-  ?>  ?&  ?=(~ open-pack)
-          (~(has in comets) rcvr.shot)
-      ==
-  :-  %|
-  :-  %.n  ^-  aqua-event
-  [%event rcvr /a/newt/0v1n.2m9vh %hear lan pac]
+  ?:  .=  is-attest
+        (~(has in comets) [sndr.shot rcvr.shot])
+    [%& ~]
+  [%| is-attest hear]
 ::
 --
 ::
@@ -167,9 +139,8 @@
           (handle-send who rcvr hear-lane shot pac=q.q.ue comets.state)
         ?:  ?=([%& ~] ev)  `this
         ?:  ?=([%| *] ev)
-          :: ~!  ev
           =?  comets.state  -.p.ev
-            (~(put in comets.state) rcvr)
+            (~(put in comets.state) [sndr.shot rcvr.shot])
           :_  this
           (emit-aqua-events our.bowl ^-((list aqua-event) [+.p.ev ~]))
         ::  don't update state, but process packet
@@ -220,10 +191,6 @@
     |=  [[who=@p ue=unix-effect] c=(list card:agent:gall) t=_this]
     ?>  ?=(%send -.q.ue)
     =^  new-c  t  (handle-unix-effect who ue)
-    ?>  ?=([^ ~] new-c)
-    ::  new-c has only one card so we handle in reverse of arrival order
-    ::    (XX add flag for in-order arrival)
-    ::
     [(weld new-c c)]^t
   ::
       %clear-rules
