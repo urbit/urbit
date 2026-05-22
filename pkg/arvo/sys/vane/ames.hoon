@@ -519,11 +519,11 @@
     ++  is-our-bulk
       |=  [our=ship ames-state=axle =balk]
       ^-  ?
-      =-  ~?  =(| -)
+      ?.  =(our her.balk)  %.n
+      =-  ~?  !-
             [%fine-mismatch our=[rift life]:ames-state her=[her rif lyf]:balk]
           -
-      ?&  =(our her.balk)
-          =(rift.ames-state rif.balk)
+      ?&  =(rift.ames-state rif.balk)
           =(life.ames-state lyf.balk)
       ==
     ::
