@@ -53,6 +53,7 @@
           ahoy-on=_|
           network-core=?(%ames %mesa)
           system-flow=?
+          pump-window=_5
       ==
     ::
     +$  pill-0
@@ -707,6 +708,7 @@
                 ahoy-on.ames-gate  ahoy-on
            network-core.ames-gate  `network-core
             packet-size.ames-gate  25  ::  4MB  XX allow custom
+            pump-window.ames-gate  `pump-window
           ==
         (~(put by van.mod.arvo-core) %ames vane(vase !>(ames-gate)))
       $(vanes t.vanes)

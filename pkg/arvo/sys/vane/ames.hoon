@@ -82,9 +82,12 @@
 =,  ames
 =*  point               point:jael
 =*  public-keys-result  public-keys-result:jael
-=/  packet-size  13
-=/  retry-timer  ~m2    ::  only used in /mesa/retry and /dead-flow timers
-=/  ahoy-on=?    %.y
+::  hardcoded values tuned in app/aqua
+::
+=/  packet-size             13
+=/  retry-timer             ~m2    ::  only used in /mesa/retry and /dead-flow timers
+=/  ahoy-on=?               %.y
+=/  pump-window=(unit @ud)  ~
 =|  network-core=(unit ?(%mesa %ames))  ::  used in %aqua tests
 ::
 =>  ::  common helpers
@@ -4869,6 +4872,7 @@
               |.("requested attestation")
           ?.  =(%pawn (clan:title our))
             event-core
+          ~&  >>  on-hear-keys/[%attestation-packet sndr.shot]
           =/  =blob  (attestation-packet sndr.shot 1)
           %-  send-blob
           [for=| sndr.shot blob (~(get by peers.ames-state) sndr.shot)]
@@ -6135,6 +6139,7 @@
                 ?&  ?=(%pawn (clan:title our))
                     =(1 current:(~(got by snd.peer-state) bone))
                 ==
+              ~&  >>  on-wake/[%attestation-packet her.channel]
               =/  =blob  (attestation-packet [her life.hers]:channel)
               (send-blob for=| her blob `known/peer-state)
             ?:  ?|  (is-corked bone)
@@ -7181,6 +7186,7 @@
               ::  if nothing to send, no-op
               ::
               ?:  &(=(~ unsent-messages) =(~ unsent-fragments)):state
+                :: ~&  >>  nothing-to-send/state
                 pump
               ::  we have unsent fragments of the current message; feed them
               ::
@@ -7942,6 +7948,7 @@
                   ?.  =(vane.plea %$)
                     ?+    vane.plea  ~|(ames-evil-vane/our^her^vane.plea !!)
                         ?(%c %e %g %j)
+                      ~&  >>>  message-num^plea
                       (pe-emit duct %pass wire vane.plea %plea her plea)
                     ==
                   ::  a %cork and %ahoy pleas (both introduced to account
@@ -8493,6 +8500,7 @@
             ::
             ++  num-slots
               ^-  @ud
+              ?^  pump-window  u.pump-window
               (sub-safe cwnd live-packets)
             ::
             ::  +clamp-rto: apply min and max to an .rto value
@@ -11959,6 +11967,7 @@
           ::  if we're a comet, send self-attestation packet first
           ::
           =?  ames-core  =(%pawn (clan:title our))
+            ~&  >>  sy-meet-alien-ship/[%attestation-packet ship]
             =/  =blob  (attestation-packet:ames-core ship life.point)
             %-  send-blob:ames-core
             [for=| ship blob (~(get by peers.ames-state) ship)]
