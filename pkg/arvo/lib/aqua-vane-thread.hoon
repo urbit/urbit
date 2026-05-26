@@ -19,7 +19,7 @@
   --
 --
 ::
-=|  agent=?(%lago %ames)
+=|  agent=?(%lago %aqua)
 =;  core
   |=  [effect-filter=(list term) handler=vane-handler]
   ^-  thread:spider
