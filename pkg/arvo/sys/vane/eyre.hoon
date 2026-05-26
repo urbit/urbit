@@ -3935,8 +3935,9 @@
       ?@  identity  identity
       ?+(-.who.identity who.who.identity %ours our)
     =/  sap=path
-      ?@  identity  /eyre
-      ?~  scope.identity  /eyre
+      ?@  identity                    /eyre
+      ?~  scope.identity              /eyre
+      ?:  ?=(%base u.scope.identity)  /eyre
       /eyre/[u.scope.identity]
     [duct %pass wire %g %deal [from ship sap] dude task]
   ::
