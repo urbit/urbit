@@ -326,9 +326,9 @@
         ~?  aqua-debug=&  [who=who %unknown-effect i.effects]
         ..abet-pe
       =.  ..abet-pe  (publish-effect u.sof)
-      ?.  ?=(%send -.q.u.sof)
+      ?.  ?=(?(%push %send) -.q.u.sof)
         ..abet-pe
-      (route-send u.sof)
+      (route-ames u.sof)
     $(effects t.effects)
   ::
   ::  Give effect to our subscribers
@@ -352,10 +352,13 @@
   ::
   ::  Inject a %send packet directly into the receiver's event queue
   ::
-  ++  route-send
+  ++  route-ames
     |=  uf=unix-effect
     ^+  ..abet-pe
-    ?>  ?=(%send -.q.uf)
+    ?.  ?=(%send -.q.uf)
+      ::  XX TODO %push
+      ::
+      ..abet-pe
     =/  rcvr=@p  (lane-to-ship p.q.uf)
     =/  hear-lane  (ship-to-lane who)
     =+  rule=(~(get by rules) who^rcvr)
