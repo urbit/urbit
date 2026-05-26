@@ -355,79 +355,76 @@
   ++  route-ames
     |=  uf=unix-effect
     ^+  ..abet-pe
-    ?.  ?=(%send -.q.uf)
+    =/  rcvr=ship
+      ?:  ?=(%send -.q.uf)
+        (lane-to-ship p.q.uf)
+      ?>  ?=(%push -.q.uf)
+      =/  =pact:pact:ames  (parse-packet:^ames-gate q.q.uf)
+      ?-  +<.pact
+        %peek  her.name.pact
+        %poke  her.ack.pact
+        %page  ?>  ?=(^ p.q.uf)
+              ?>  ?=(@ i.p.q.uf)
+              `@p`i.p.q.uf
+      ==
+    =+  rule=(~(get by rules) who^rcvr)
+    ?:  ?&  ?=(^ rule)
+            ?=(?(%drop-link [%drop-next *] %hold-link) u.rule)
+        ==
+      ?-    u.rule
+          %drop-link  ..abet-pe
+      ::
+          [%drop-next n=@]
+        =.  rules
+          ?:  =(1 n.u.rule)
+            (~(del by rules) who^rcvr)
+          (~(put by rules) who^rcvr u.rule(n (dec n.u.rule)))
+        ..abet-pe
+      ::
+          %hold-link
+        =?  ames-qeu  ?=(%send -.q.uf)
+          [[(lent ames-qeu) who uf] ames-qeu]
+        =?  mesa-qeu  ?=(%push -.q.uf)
+          [[(lent ames-qeu) who uf] mesa-qeu]
+        ..abet-pe
+      ==
+    ?:  ?=(%push -.q.uf)
       ::  XX TODO %push
       ::
       ..abet-pe
-    =/  rcvr=@p  (lane-to-ship p.q.uf)
+    ?>  ?=(%send -.q.uf)
     =/  hear-lane  (ship-to-lane who)
-    =+  rule=(~(get by rules) who^rcvr)
-    ?.  ?&  ?=(^ rule)
-            ?=(?(%drop-link [%drop-next *] %hold-link) u.rule)
-        ==
-      ::  no active rule: inject %hear into receiver's queue
+    ::  no active rule: inject %hear into receiver's queue
+    ::
+    =/  =shot:ames  (sift-shot:ames q.q.uf)
+    ?.  &(?=(%pawn (clan:title sndr.shot)) =(rcvr rcvr.shot))
+      ::  non-comet or forwarded packet: inject directly in the rcvr queue
       ::
-      =/  =shot:ames  (sift-shot:ames q.q.uf)
-      ?.  &(?=(%pawn (clan:title sndr.shot)) =(rcvr rcvr.shot))
-        ::  non-comet or forwarded packet: inject directly in the rcvr queue
-        ::
-        =.  this
-            =<  abet-pe
-          %-  push-events:(pe rcvr)
-          [/a/newt/0v1n.2m9vh %hear hear-lane q.q.uf]~
-        ..abet-pe
-        :: =.  ships.piers
-        ::   =/  rp  (~(gut by ships.piers) rcvr *pier)
-        ::   %+  ~(put by ships.piers)  rcvr
-        ::   %_  rp
-        ::     next-events
-        ::     %-  ~(gas to next-events.rp)
-        ::     ~[[/a/newt/0v1n.2m9vh %hear hear-lane q.q.uf]]
-        ::   ==
-        :: ..abet-pe
-      ::  comet going directly to rcvr: check attestation state
-      ::
-      =+  ;;  sign-attest=(soft [~ signature=@ signed=@])
-          (mole |.((cue content.shot)))
-      =/  is-attest=?
-        ?.  ?=(^ sign-attest)  %.n
-        ?=  ^
-        ;;  (soft [~ open-packet:^ames-gate])
-        (mole |.((cue signed.u.sign-attest)))
-      ::  drop if dup attestation or pre-attestation data
-      ::
-      ?:  =(is-attest (~(has in comets) [sndr.shot rcvr.shot]))
-        ..abet-pe
-      =?  comets  is-attest
-        (~(put in comets) [sndr.shot rcvr.shot])
       =.  this
-        =<  abet-pe
+          =<  abet-pe
         %-  push-events:(pe rcvr)
         [/a/newt/0v1n.2m9vh %hear hear-lane q.q.uf]~
       ..abet-pe
-      :: =.  ships.piers
-      ::   =/  rp  (~(gut by ships.piers) rcvr *pier)
-      ::   %+  ~(put by ships.piers)  rcvr
-      ::   %_    rp
-      ::       next-events
-      ::     %-  ~(gas to next-events.rp)
-      ::     ~[[/a/newt/0v1n.2m9vh %hear hear-lane q.q.uf]]
-      ::   ==
-      :: ..abet-pe
-    ?-    u.rule
-        %drop-link  ..abet-pe
+    ::  comet going directly to rcvr: check attestation state
     ::
-        [%drop-next n=@]
-      =.  rules
-        ?:  =(1 n.u.rule)
-          (~(del by rules) who^rcvr)
-        (~(put by rules) who^rcvr u.rule(n (dec n.u.rule)))
-      ..abet-pe
+    =+  ;;  sign-attest=(soft [~ signature=@ signed=@])
+        (mole |.((cue content.shot)))
+    =/  is-attest=?
+      ?.  ?=(^ sign-attest)  %.n
+      ?=  ^
+      ;;  (soft [~ open-packet:^ames-gate])
+      (mole |.((cue signed.u.sign-attest)))
+    ::  drop if dup attestation or pre-attestation data
     ::
-        %hold-link
-      =.  ames-qeu  [[(lent ames-qeu) who uf] ames-qeu]
+    ?:  =(is-attest (~(has in comets) [sndr.shot rcvr.shot]))
       ..abet-pe
-    ==
+    =?  comets  is-attest
+      (~(put in comets) [sndr.shot rcvr.shot])
+    =.  this
+      =<  abet-pe
+      %-  push-events:(pe rcvr)
+      [/a/newt/0v1n.2m9vh %hear hear-lane q.q.uf]~
+    ..abet-pe
   ::
   --
 ::
