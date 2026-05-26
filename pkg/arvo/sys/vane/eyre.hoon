@@ -3831,7 +3831,7 @@
   ::    Adds =binding =action if there is no conflicting bindings.
   ::
   ++  add-binding
-    |=  [=binding action=$>(?(%app %gen) action)]
+    |=  [=binding action=$~([%app %$] $>(?(%app %gen) action))]
     ^-  [(list move) server-state]
     =^  success  bindings.state
       ::  prevent binding in reserved namespaces
