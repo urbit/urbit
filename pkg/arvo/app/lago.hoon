@@ -389,8 +389,16 @@
         ..abet-pe
       ==
     ?:  ?=(%push -.q.uf)
-      ::  XX TODO %push
-      ::
+      =/  =pact:pact:ames  (parse-packet:^ames-gate q.q.uf)  :: XX dup
+      =.  this
+        =<  abet-pe
+        %-  push-events:(pe rcvr)
+        :_  ~
+        :*  /a/newt/0v1n.2m9vh
+            %heer
+            lan=?:(?=(%page +<.pact) `@ux`rcvr `@ux`who)
+            q.q.uf
+        ==
       ..abet-pe
     ?>  ?=(%send -.q.uf)
     =/  hear-lane  (ship-to-lane who)
@@ -401,7 +409,7 @@
       ::  non-comet or forwarded packet: inject directly in the rcvr queue
       ::
       =.  this
-          =<  abet-pe
+        =<  abet-pe
         %-  push-events:(pe rcvr)
         [/a/newt/0v1n.2m9vh %hear hear-lane q.q.uf]~
       ..abet-pe
