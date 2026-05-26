@@ -19,6 +19,7 @@
   --
 --
 ::
+=|  agent=?(%lago %ames)
 =;  core
   |=  [effect-filter=(list term) handler=vane-handler]
   ^-  thread:spider
@@ -31,9 +32,9 @@
     ::
     ;<  ~  bind:m
       ?:  =(%filter i.effect-filter)
-        (watch-our:strandio /net-control %aqua /net-control)
+        (watch-our:strandio /net-control agent /net-control)
       =/  =path  /effect/[i.effect-filter]
-      (watch-our:strandio path %aqua path)
+      (watch-our:strandio path agent path)
     loop(effect-filter t.effect-filter)
   ;<  ~  bind:m
     %-  (main-loop:strandio ,_handler)
@@ -56,11 +57,7 @@
     (~(handle-aqua-rule handler bowl) rule)
   ?~  cards
     (pure:m handler)
-  ::  send in next event to avoid inverting subscription flow.  real
-  ::  solution is probably for gall to drip subscription updates.
-  ::
-  ;<  ~                        bind:m  (sleep:strandio ~s0)
-  ;<  ~                        bind:m  (send-raw-cards:strandio cards)
+  ;<  ~  bind:m  (send-raw-cards:strandio cards)
   (pure:m handler)
 ::
 ++  handle-unix-effect
