@@ -11,11 +11,15 @@
 ;<  ~  bind:m  (switch-network-core %ames)
 ;<  ~  bind:m  (init-ship ~bud &)
 ;<  ~  bind:m  (init-ship ~dev &)
+;<  ~  bind:m  (init-ship ~marbud &)
+;<  ~  bind:m  (init-ship ~dister-dozzod-marbud &)
 :: ;<  ~  bind:m  (dojo ~bud "|ames/verb %fin %for %ges %kay %msg %odd %rcv %rot %snd %sun")
 :: ;<  ~  bind:m  (dojo ~dev "|ames/verb %fin %for %ges %kay %msg %odd %rcv %rot %snd %sun")
 ;<  ~  bind:m  (send-hi ~bud ~dev)
-::
-;<  ~  bind:m  (sleep ~s5)
+;<  ~  bind:m  (send-hi ~bud ~marbud)
+;<  ~  bind:m  (send-hi ~dister-dozzod-marbud ~marbud)
+;<  ~  bind:m  (send-hi ~marbud ~dister-dozzod-marbud)
+;<  ~  bind:m  (send-hi ~dister-dozzod-marbud ~dev)
 ::  stop all driver threads and clean up ames packets in %lago
 ::
 ;<  ~  bind:m  (end tids)

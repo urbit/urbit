@@ -9,35 +9,37 @@
 =/  threads=(list @tas)
   ?-    group
       ~
-    :~  %ph-add
-        %ph-boot-az
-        %ph-boot-planet
-        %ph-breach-hi
-        %ph-breach-hi-cousin
-        %ph-breach-multiple
-        %ph-breach-sudden
-        %ph-breach-sync
-        %ph-change-file
-        %ph-child-sync
-        %ph-child-update
-        %ph-hi
-        %ph-hi-out-of-order
-        %ph-hi-az
-        %ph-hi-comet-az
-        %ph-hi-cousin-az
-        %ph-hi-linnup-az
-        %ph-hi-linnup-az-backward
-        %ph-hi-marbud-az
-        %ph-hi-nephew-az
-        %ph-hi-uncle-az
-        %ph-moon-az
-        %ph-peek
-        %ph-second-cousin-hi
-        %ph-tend
-        %ph-flub
-        %ph-big-flub
-        %ph-ahoy
-        %ph-gall-ames-desync
+    :~  :: %ph-add
+        :: %ph-boot-az
+        :: %ph-boot-planet
+        :: %ph-breach-hi
+        :: %ph-breach-hi-cousin
+        :: %ph-breach-multiple
+        :: %ph-breach-sudden
+        :: %ph-breach-sync
+        :: %ph-change-file
+        :: %ph-child-sync
+        :: %ph-child-update
+        :: %ph-hi
+        :: :: %ph-hi-out-of-order
+        :: %ph-hi-az
+        :: %ph-hi-comet-az
+        :: %ph-hi-cousin-az
+        :: %ph-hi-linnup-az
+        :: %ph-hi-linnup-az-backward
+        :: %ph-hi-marbud-az
+        :: %ph-hi-nephew-az
+        :: %ph-hi-uncle-az
+        :: %ph-moon-az
+        :: %ph-peek
+        :: %ph-second-cousin-hi
+        :: %ph-tend
+        :: %ph-flub
+        :: %ph-big-flub
+        :: %ph-ahoy
+        :: %ph-gall-ames-desync
+        %ph-hi-lago
+        :: %ph-flub-lago  :: XX
     ==
   ::
       [%all ~]
