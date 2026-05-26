@@ -1,20 +1,20 @@
 /-  *aquarium, spider
 /+  libstrand=strand, *strandio, util=ph-util, aqua-azimuth, vere
 =,  strand=strand:libstrand
-|%
+|_  agent=?(%lago %aqua)
 +$  drivers  (map term tid:spider)
 ::
 ++  send-events
   |=  events=(list aqua-event)
   =/  m  (strand ,~)
   ^-  form:m
-  (poke-our %aqua %aqua-events !>(events))
+  (poke-our agent %aqua-events !>(events))
 ::
 ++  send-azimuth-action
   |=  =azimuth-action
   =/  m  (strand ,~)
   ^-  form:m
-  (poke-our %aqua %azimuth-action !>(azimuth-action))
+  (poke-our agent %azimuth-action !>(azimuth-action))
 ::
 ++  take-unix-effect
   =/  m  (strand ,[ship unix-effect])
@@ -27,18 +27,40 @@
   =/  m  (strand ,rule-actions)
   ^-  form:m
   ;<  =cage  bind:m  (take-fact /net-control)
-  ~?  >  ?=(%aqua-rule p.cage)
-    p.cage
   ?>  ?=(%aqua-rule p.cage)
   (pure:m !<(rule-actions q.cage))
 ::
+++  net-hold
+  |=  [from=@p to=@p]
+  =/  m  (strand ,~)
+  ^-  form:m
+  (poke-our agent %aqua-rule !>(`rule-actions`[%hold-link from to]))
+::
+++  net-flush
+  |=  [from=@p to=@p]
+  =/  m  (strand ,~)
+  ^-  form:m
+  ;<  =bowl:spider  bind:m  get-bowl
+  %-  send-raw-card
+  [%pass /net-flush %agent [our.bowl %aqua] %poke %aqua-rule !>(`rule-actions`[%flush-link from to])]
+::
 ++  start-simple
   (start-test %aqua-ames %aqua-behn %aqua-dill %aqua-eyre ~)
+::
+++  start-lago
+  (start-test %aqua-behn %aqua-dill %aqua-eyre ~)
 ::
 ++  start-azimuth
   =/  m  (strand ,drivers)
   ^-  form:m
   ;<  tids=drivers  bind:m  start-simple
+  ;<  ~  bind:m  init
+  (pure:m tids)
+::
+++  start-azimuth-lago
+  =/  m  (strand ,drivers)
+  ^-  form:m
+  ;<  tids=drivers  bind:m  start-lago
   ;<  ~  bind:m  init
   (pure:m tids)
 ::
@@ -49,7 +71,7 @@
   =/  m  (strand ,drivers)
   ^-  form:m
   ;<  tids=drivers  bind:m  (start-threads vane-threads)
-  ;<  ~  bind:m  (watch-our /effect %aqua /effect)
+  ;<  ~  bind:m  (watch-our /effect agent /effect)
   ::  Get our very own event with no mistakes in it... yet.
   ::
   ::  We want to wait for the vane threads to actually start and get
@@ -72,7 +94,7 @@
   =/  m  (strand ,~)
   ^-  form:m
   ;<  ~  bind:m  (stop-threads tids)
-  ;<  ~  bind:m  (leave-our /effect %aqua)
+  ;<  ~  bind:m  (leave-our /effect agent)
   (pure:m ~)
 ::
 ++  start-threads
@@ -199,7 +221,7 @@
   |=  =aqua-action
   =/  m  (strand ,~)
   ^-  form:m
-  (poke-our %aqua %noun !>(aqua-action))
+  (poke-our agent %noun !>(aqua-action))
 ::
 ++  switch-network-core
   |=  core=?(%mesa %ames)
@@ -237,6 +259,7 @@
   |-  ^-  form:m
   =*  loop  $
   ;<  [her=^ship =unix-effect]  bind:m  take-unix-effect
+  ~?  >>  !?=([^ %blit *] unix-effect)  her^unix-effect
   ?:  (is-dojo-output:util ship her unix-effect tape)
     (pure:m ~)
   loop
@@ -568,7 +591,7 @@
   .^  mold
       %gx
       (scot %p our.bowl)
-      %aqua
+      agent
       (scot %da now.bowl)
       aqua-pax
   ==

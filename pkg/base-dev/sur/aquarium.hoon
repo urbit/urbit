@@ -62,6 +62,7 @@
       [%restore-snap lab=term]
       [%read [from=[=ship life=@ubC] =path] for=[=lane:ames life=@ubC] num=@ud]
       [%event who=ship ue=unix-event]
+      [%reset-routing ~]
   ==
 ::
 +$  azimuth-action
