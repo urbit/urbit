@@ -328,7 +328,6 @@
       =.  ..abet-pe  (publish-effect u.sof)
       ?.  ?=(%send -.q.u.sof)
         ..abet-pe
-      ~&  >>>  sof
       (route-send u.sof)
     $(effects t.effects)
   ::
@@ -357,18 +356,14 @@
     |=  uf=unix-effect
     ^+  ..abet-pe
     ?>  ?=(%send -.q.uf)
-    ~!  uf
-    ~&  >>  route-send/who
     =/  rcvr=@p  (lane-to-ship p.q.uf)
     =/  hear-lane  (ship-to-lane who)
     =+  rule=(~(get by rules) who^rcvr)
-    ~&  rule/rule
     ?.  ?&  ?=(^ rule)
             ?=(?(%drop-link [%drop-next *] %hold-link) u.rule)
         ==
       ::  no active rule: inject %hear into receiver's queue
       ::
-      ~&  >  "no active rule: inject %hear into receiver's queue"
       =/  =shot:ames  (sift-shot:ames q.q.uf)
       ?.  &(?=(%pawn (clan:title sndr.shot)) =(rcvr rcvr.shot))
         ::  non-comet or forwarded packet: inject directly in the rcvr queue
@@ -427,7 +422,6 @@
       ..abet-pe
     ::
         %hold-link
-      ~&  >  holding/[who rcvr]^(lent ames-qeu)
       =.  ames-qeu  [[(lent ames-qeu) who uf] ames-qeu]
       ..abet-pe
     ==
@@ -707,7 +701,6 @@
     `state(rules (~(del by rules.state) [from to]:aq))
   ::
       %hold-link
-    ~&  >>  active/[[from to]:aq %hold-link]
     `state(rules (~(put by rules.state) [from to]:aq %hold-link))
   ::
   ==
