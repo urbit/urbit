@@ -911,14 +911,27 @@
         [*action [| secure address request] [*@uv [[%fake *@p] ~]] ~ 0]
       %-  handle-response
       :*  %start
-          [400 ~]
+          [400 ~]  ::TODOxx  421 "misdirected request"?
           `(as-octs:mimes:html 'bad host')
           complete=%.y
       ==
     =*  target  u.proto-target
-    ::  .pathowner: desk that the target path is bound to (~ for base/eyre)
+    ::  .pathowner: desk that the target path is bound to (~ for eyre)
+    ::
+    ::    if pathowner is ~, the target endpoint is available across all
+    ::    subdomains.
+    ::    if it is a desk value, the target endpoint is only available at that
+    ::    desk's subdomain, and any requests for the endpoint outside of that
+    ::    will be redirected to the appropriate subdomain.
     ::
     =/  pathowner=(unit desk)
+      ::  /~ paths always owned by eyre
+      ::
+      ::TODOxx  what about /_~_ ?
+      ?:  =('/~/' (end 3^3 url.request))  ~
+      ::  other paths owned by whatever their binding corresponds to
+      ::  (could still be eyre!)
+      ::
       =/  =action
         (get-action-for-binding url.request)
       ?+  -.action  ~
@@ -3886,6 +3899,8 @@
         [%ip ~]         [%ip ~]
         [%boot *]       [%boot ~]
         [%sponsor *]    [%sponsor ~]
+      ::
+        [%spider *]     [%app %spider]
       ==
     ::  resolve broader namespace by userspace bindings map
     ::
