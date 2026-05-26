@@ -260,5 +260,10 @@
     (make-parser-test '~>(%slog.0 0)' [%sggr [%slog z] z])
     (make-parser-test '~>  %slog  0' [%sggr %slog z])
     (make-parser-test '~>  %slog.0  0' [%sggr [%slog z] z])
+  ::
+    (make-parser-test '%=($ $ 0)' [%cnts w [w z] ~])
+    (make-parser-test '%=  $  $  0  ==' [%cnts w [w z] ~])
+    (make-parser-test '%=($ $ 0, $ 0)' [%cnts w [w z] [w z] ~])
+    (make-parser-test '%=  $  $  0  $  0  ==' [%cnts w [w z] [w z] ~])
   ==
 --

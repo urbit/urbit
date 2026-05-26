@@ -6,6 +6,7 @@
   $:  tol=?
       $=  dat
       $@  $?  %ace   %gap   %per   %dot   %com
+              %coma  %stis  :: %slus  %shep
               %axis  %lark  %skip
               ::TODO  %sym
               %dttr  %dtwt  %dtls  %dtts
@@ -16,18 +17,19 @@
               %brcn  %brpt
               %ktls
               %wtpt  %wtcn  %wtkt
+              %cltr
           ==
       $%  [%atom const=? =aura]
       ==
   ==
 ::
 +$  toke
-  $@  ?(%ace %gap %dot %per)
+  $@  ?(%ace %gap %dot %per %coma %stis) :: %slus %shep)
   $%  [%limb =limb]
     ::
       [%atom tol=? const=? =aura a=@]  ::  %atomw + %atomt
     ::
-      $:  ?(%dttr %dtwt %dtls %dtts %wtcl %tsgr %tsls %cnts %sggr %brcn %brpt %ktls %wtpt %wtcn %wtkt)
+      $:  ?(%dttr %dtwt %dtls %dtts %wtcl %tsgr %tsls %cnts %sggr %brcn %brpt %ktls %wtpt %wtcn %wtkt %cltr)
           tol=?
       ==
   ==
@@ -47,6 +49,7 @@
   ::      if ambiguous we prefer the former
   %.  ^-  (list $@(term (pair term tag)))
       :~  ace+|+%ace    gap+&+%gap    per+|+%per    dot+|+%dot  com+|+%com
+          coma+|+%coma  stis+&+%stis  :: shep+&+%slus  shep+&+%shep
           axis+|+%axis  lark+|+%lark  skip+|+%skip
           ::  %sym
           c-tas+|+[%atom & %tas]
@@ -91,6 +94,25 @@
     '''
     ','
     '''
+  ::
+    :-  %coma
+    '''
+    com ace
+    '''
+  ::
+    :-  %stis
+    '''
+    gap '=='
+    '''
+  ::   :-  %slus
+  ::   '''
+  ::   '++' gap
+  ::   '''
+  :: ::
+  ::   :-  %shep
+  ::   '''
+  ::   gap '--'
+  ::   '''
   ::
     :-  %sym
     '''
@@ -333,7 +355,7 @@
     ::
     ^-  toke
     ?+  dat.tag  [dat.tag tol.tag]
-      ?(%ace %gap %dot %per)  dat.tag
+      ?(%ace %gap %dot %per %coma %stis)  dat.tag
     ::
         [%atom *]
       :-  %atom
@@ -430,7 +452,23 @@
                     =+  tall-2                ?@  -  ~  [[%wtcl t u] s]
       [%tsgr %&]    =+  tall-2(st move)       ?@  -  ~  [[%tsgr u] s]
       [%tsls %&]    =+  tall-2(st move)       ?@  -  ~  [[%tsls u] s]
-      [%cnts %&]    !!  ::TODO
+      [%cnts %&]    =+  wing-full(st move)    ?@  -  ~  =>  [w=u +(st s)]
+                    =+  (expect %gap)         ?@  -  ~  =>  +(st s)
+                    =+  wing-full             ?@  -  ~  =>  [v=u +(st s)]
+                    =+  (expect %gap)         ?@  -  ~  =>  +(st s)
+                    =+  tall                  ?@  -  ~  =>  :_  +(st s)
+                                                            ^-  l=(list [wing naty])
+                                                            [v u]~
+                    |-  ^-  (mandatory naty _st)
+                    =+  peek                  ?@  -  ~  =>  [p=u +(st s)]
+                    ?+  p  ~
+                        %gap
+                      =+  wing-full(st move)  ?@  -  ~  =>  [v=u +(st s)]
+                      =+  (expect %gap)       ?@  -  ~  =>  +(st s)
+                      =+  tall                ?@  -  ~  $(l [[v u] l], st s)
+                    ::
+                      %stis  [[%cnts w (flop l)] move]
+                    ==
       [%sggr %&]    =+  peek(st move)         ?@  -  ~  =>  [t=u +(st s)]
                     ?.  ?=([%atom @ %& %tas @] t)  ~
                     =+  peek(st move)  ?@  -  ~  =>  [tt=u +(st s)]
@@ -468,7 +506,23 @@
                     =+  wide-2         ?@  -  ~  [[%wtcl t u] s]
       [%tsgr %|]    =+  wide-2         ?@  -  ~  [[%tsgr u] s]
       [%tsls %|]    =+  wide-2         ?@  -  ~  [[%tsls u] s]
-      [%cnts %|]    !!  ::TODO
+      [%cnts %|]    =+  wing-full        ?@  -  ~  =>  [w=u +(st s)]
+                    =+  (expect %ace)    ?@  -  ~  =>  +(st s)
+                    =+  wing-full        ?@  -  ~  =>  [v=u +(st s)]
+                    =+  (expect %ace)    ?@  -  ~  =>  +(st s)
+                    =+  wide             ?@  -  ~  =>  :_  +(st s)
+                                                       ^-  l=(list [wing naty])
+                                                       [v u]~
+                    |-  ^-  (mandatory naty _st)
+                    =+  peek             ?@  -  ~  =>  [p=u +(st s)]
+                    ?+  p  ~
+                        %coma
+                      =+  wing-full(st move)  ?@  -  ~  =>  [v=u +(st s)]
+                      =+  (expect %ace)  ?@  -  ~  =>  +(st s)
+                      =+  wide           ?@  -  ~  $(l [[v u] l], st s)
+                    ::
+                      %per  [[%cnts w (flop l)] move]
+                    ==
       [%sggr %|]    =+  peek           ?@  -  ~  =>  [t=u +(st s)]
                     ?.  ?=([%atom %| %& %tas @] t)  ~
                     =+  peek(st move)  ?@  -  ~  =>  [tt=u +(st s)]

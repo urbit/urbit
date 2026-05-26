@@ -32,7 +32,7 @@ MoreEditPairsT -> gap EditPairT MoreEditPairsT
 MoreEditPairsT -> ε
 EditPairsT -> EditPairT MoreEditPairsT
 EditPairT -> Wing gap Tall
-Tall -> cnts_ Wing gap EditPairsT gap_stat
+Tall -> cnts_ Wing gap EditPairsT gap_stet
 TagOrClue -> cen_sym MaybeClue
 MaybeClue -> dot Wide
 MaybeClue -> ε
@@ -68,7 +68,7 @@ TallLayout -> cltr_ LayoutElementT gap LayoutElementT MoreLayoutElementsT gap_st
 Layout -> TallLayout gap
 Layout -> WideLayout gap
 Layout -> ε
-Arm -> slus gap sym gap Tall
+Arm -> slus_gap sym gap Tall
 MoreArms -> gap Arm MoreArms
 MoreArms -> ε
 Battery -> Arm MoreArms gap_stop
