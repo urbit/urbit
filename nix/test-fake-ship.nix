@@ -82,7 +82,7 @@ let
         %-  poke
         :*  [ship %dojo]
             %lens-command
-            !>([%$ [%dojo '+pill/${pill}'] [%app %aqua]])
+            !>([%$ [%dojo '+pill/${pill}'] [%app %lago]])
         ==
         (pure:m !>(~))
       '';
@@ -114,12 +114,12 @@ in pkgs.stdenvNoCC.mkDerivation {
     sleep 2
     #  XX  turn on when bail:evil crash for comets is fixed
     #
-    # Start aqua app
-    echo "Starting aqua app..."
-    ${click} -k -p -i ${dojoCommand "start" "hood" "%aqua"} ./pier
+    # Start lago app
+    echo "Starting lago app..."
+    ${click} -k -p -i ${dojoCommand "start" "hood" "%lago"} ./pier
     sleep 2
 
-    # Load brass pill into aqua; XX store/read brass pill in/from clay?
+    # Load brass pill into lago; XX store/read brass pill in/from clay?
     echo "Loading brass pill..."
     ${click} -k -p -i ${buildPillThread "brass"} ./pier
     sleep 2
