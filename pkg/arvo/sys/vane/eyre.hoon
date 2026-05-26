@@ -1660,16 +1660,14 @@
       ==
     ::  otherwise, subscribe to the agent and poke it with the request
     ::
-    =/  src=@p
-      ?+(-.who.identity who.who.identity %ours our)
     :_  state
     :~  %+  deal-as
           /watch-response/[eyre-id]
-        [src our app %watch /http-response/[eyre-id]]
+        [identity our app %watch /http-response/[eyre-id]]
       ::
         %+  deal-as
           /run-app-request/[eyre-id]
-        :^  src  our  app
+        :^  identity  our  app
         :+  %poke  %handle-http-request
         !>(`[@ta inbound-request:eyre]`[eyre-id inbound-request])
     ==
