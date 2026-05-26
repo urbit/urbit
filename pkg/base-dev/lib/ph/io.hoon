@@ -259,7 +259,6 @@
   |-  ^-  form:m
   =*  loop  $
   ;<  [her=^ship =unix-effect]  bind:m  take-unix-effect
-  ~?  >>  !?=([^ %blit *] unix-effect)  her^unix-effect
   ?:  (is-dojo-output:util ship her unix-effect tape)
     (pure:m ~)
   loop
