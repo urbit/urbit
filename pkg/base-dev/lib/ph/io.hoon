@@ -425,9 +425,9 @@
   ::
   ;<  corked=(unit ?)  bind:m  (scry-aqua (unit ?) our aqua-pax)
   ?~  corked
-    loop  ::  (pure:m %.n)
+    (pure:m %.n)
   ?.  u.corked  ::  XX check .her as well
-    loop  ::  (pure:m %.n)
+    (pure:m %.n)
   ~&  >>  flow-is-corked/flow
   (pure:m %.y)
 ::

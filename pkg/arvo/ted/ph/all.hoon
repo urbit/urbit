@@ -39,7 +39,8 @@
         :: %ph-ahoy
         :: %ph-gall-ames-desync
         %ph-hi-lago
-        :: %ph-flub-lago  :: XX
+        %ph-peek-lago
+        %ph-flub-lago  :: XX
     ==
   ::
       [%all ~]

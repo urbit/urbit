@@ -405,6 +405,20 @@
     ::  no active rule: inject %hear into receiver's queue
     ::
     =/  =shot:ames  (sift-shot:ames q.q.uf)
+    ?:  &(!sam.shot req.shot)
+      ::  transform %fine request into a %read
+      ::
+      =/  [%0 =peep:ames]  (sift-wail:ames `@ux`content.shot)
+      =/  read=(list aqua-event)
+        :_  ~
+        :-  %read
+        [[[rcvr rcvr-tick.shot] path.peep] [hear-lane sndr-tick.shot] num.peep]
+      ::  XX process the %peek in here instead of poking ourselves
+      ::
+      %-  emit-cards
+      ^-  (list card:agent:gall)  :_  ~
+      ^-  card:agent:gall
+      [%pass /aqua-events %agent [~zod %lago] %poke %aqua-events !>(read)]
     ?.  &(?=(%pawn (clan:title sndr.shot)) =(rcvr rcvr.shot))
       ::  non-comet or forwarded packet: inject directly in the rcvr queue
       ::
