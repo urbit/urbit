@@ -3975,22 +3975,80 @@
         [%fling ~]                     ::  anything over the network
     ==
   +$  perm-arvo  ::TODO  expand
-    $%  [%ames ~]
-        [%behn ~]
-      ::
-        $:  %clay
-        $%  [%write dash]  ::  %info %merg %fuse
-            [%local cash]  ::  %warp for local
-            [%peers cash]  ::  %warp for remote
+    $%  $:  %ames
+        $%  [%prod ~]                                 ::  %prod - re-send a packet per flow, to all peers if .ships is ~
+            [%debug ~]                                ::  %sift %spew
+            [%block ~]                                ::  %snub
+            [%cong ~]                                 ::  %cong - adjust congestion control parameters
+            [%timer ~]                                ::  %stir - recover from timer desync and assorted debug commands
+            [%probe ~]                                ::  %keen %yawn - request remote scry
+            ::  review: %serve
+            [%serve =dash]                            ::  %grow %tomb %cull %tend %germ %snip - remote scry management
+            ::  %trim
         ==  ==
       ::
-        [%dill ~]
-        [%eyre ~]
-        [%gall ~]
-        [%iris ~]
-        [%jael ~]
-        [%khan ~]
-        [%lick ~]
+        $:  %behn
+        $%  [%timer ~]
+        ==  ==
+      ::
+        $:  %clay
+        $%  [%write dash]                             ::  %info %merg %fuse
+            [%local cash]                             ::  %warp for local
+            [%peers cash]                             ::  %warp for remote
+            [%desks des=(unit desk)]                  ::  %esse %rein %zeal
+            [%pulse ~]                                ::  %tire
+            ::  xx: should %perm be with %cred and %crow ?
+            [%group ~]                                ::  %cred %crow
+            [%clay-perms des=(unit desk)]             ::  %perm
+            [%user-perms ~]                           ::  %seal
+            [%guard ~]                                ::  %ward
+            [%mount dash]                             ::  %mont %ogre %dirk
+        ==  ==
+      ::
+        $:  %dill
+        $%  [%print ~]                                ::  %logs %crud %talk %text
+            [%loom ~]                                 ::  %mass %meld %pack %trim
+        ==  ==
+      ::
+        $:  %eyre
+        $%  [%trace ~]                                ::  %spew
+            [%eauth ~]                                ::  %eauth-host
+            [%certs ~]                                ::  %rule
+            [%serve ~]                                ::  %connect %disconnect %set-response
+            [%perms ~]                                ::  %approve-origin %reject-origin
+        ==  ==
+      ::
+        $:  %gall
+        $%  [%reset des=(unit desk) dud=(list dude)]  ::  %jolt
+            [%pause dud=(list dude)]                  ::  %idle
+            [%clear dud=(list dude)]                  ::  %nuke
+            [%trace ~]                                ::  %spew %sift
+            [%flush ~]                                ::  %sear
+        ==  ==
+      ::
+        $:  %iris
+        $%  [%fetch ~]                                ::  %request %cancel-request
+        ==  ==
+      ::
+        $:  %jael
+        $%  [%privy ~]                                ::  %private-keys
+            [%peers ~]                                ::  %public-keys
+            [%watch ~]                                ::  %listen - set eth source
+            [%turf ~]                                 ::  %turf
+            [%spawn ~]                                ::  %moon
+            [%rekey ~]                                ::  %rekey
+            [%reset ~]                                ::  %step - reset +code
+            ::  xx:  should it just be [%blast ~]
+            [%blast =(set ship)]                      ::  %ruin - pretend to breach
+        ==  ==
+      ::
+        $:  %khan
+        $%  [%thread ~]                               ::  %fard %lard
+        ==  ==
+      ::
+        $:  %lick
+        $%  [%ports ~]                                :: %spin %shut %spit
+        ==  ==
     ==
   ::
   +$  load  (list [=dude =beak per=[peg=(set perm) peq=(set perm)] =agent])  ::  loadout
