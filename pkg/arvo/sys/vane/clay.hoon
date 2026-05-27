@@ -635,76 +635,6 @@
     =.  res  `?~(res faz (slop faz u.res))
     $(vaz t.vaz)
   ::
-  ++  built-ins
-    ::TODO  could fetch from base desk instead?
-    |^  ^-  (list [path cage])
-        :~  [/mar/seal/hoon seal]
-            [/mar/mime/hoon mime]
-        ==
-    ::
-    ++  seal  :-  %hoon  !>  ^-  @t
-      :: =>  [seal=^seal ..zuse]
-      '''
-      |_  seal=[%0 (list perm:gall)]
-      ++  grab
-        |%
-        ++  noun  ,[%0 (list perm:gall)]
-        ++  mime
-          |=  [=mite len=@ud tex=@]
-          !<([%0 (list perm:gall)] (slap !>([%0 ~]) (ream tex)))
-        --
-      ++  grow
-        |%
-        ++  noun  seal
-        ++  mime  `^mime`[/text/x-seal (as-octs:mimes:html hoon)]
-        ++  hoon
-          ^-  @t
-          %-  crip
-          ?~  +.seal  "[%0 ~]"
-          %+  welp
-            ;:(welp ":-  " <-.seal> "  :~  ")
-          %-  of-wall:format
-          %-  snoc  :_  "=="
-          %+  turn  +.seal
-          |=(=perm:gall <perm>)
-        --
-      ++  grad  %noun
-      --
-      '''
-    ::
-    ++  mime  :-  %hoon  !>  ^-  @t
-      :: =>  [mime=^mime ..zuse]
-      '''
-      |_  own=mime
-      ++  grow
-        ^?
-        |%
-        ++  jam  `@`q.q.own
-        --
-      ::
-      ++  grab                                                ::  convert from
-        ^?
-        |%
-        ++  noun  mime                                  ::  clam from %noun
-        ++  tape
-          |=(a=_"" [/application/x-urb-unknown (as-octt:mimes:html a)])
-        --
-      ++  grad
-        ^?
-        |%
-        ++  form  %mime
-        ++  diff  |=(mime +<)
-        ++  pact  |=(mime +<)
-        ++  join  |=([mime mime] `(unit mime)`~)
-        ++  mash
-          |=  [[ship desk mime] [ship desk mime]]
-          ^-  mime
-          ~|(%mime-mash !!)
-        --
-      --
-      '''
-    --
-  ::
   ++  ford
     !:
     =>  |%
@@ -881,10 +811,7 @@
         --
     ~%  %ford-gate  ..ford  ~
     |=  args
-    ::  trunk: built-in files containing /mar/seal
     ::
-    =/  trunk=(map path cage)
-      (~(gas by *(map path cage)) built-ins)
     ~%  %ford-core  ..$  ~
     |%
     ::  Chapter for constructing $bush (dependency graph of a file) given its
@@ -1072,8 +999,6 @@
       ~>  %memo./clay/ford
       ~|  %error-validating^path
       %-  (trace 1 |.("read file {(spud path)}"))
-      ?:  &(!(~(has by files) path) (~(has by trunk) path))
-        (~(got by trunk) path)
       =/  file
         ~|  %file-not-found^path
         (~(got by files) path)
@@ -1234,7 +1159,7 @@
       |-  ^-  (unit path)
       ?~  paz  ~
       =/  pux=path  pre^(snoc i.paz %hoon)
-      ?:  |((~(has by files) pux) (~(has by trunk) pux))
+      ?:  (~(has by files) pux)
         `pux
       $(paz t.paz)
     ::
@@ -1580,7 +1505,28 @@
     |=  tak=tako
     %-  ford:fusion
     :_  [lat.ran veb.bug]
+    %-  apply-built-ins
     (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
+  ::
+  ++  apply-built-ins
+    |=  files=(map path (each page lobe))
+    ^+  files
+    %-  ~(gas by files)
+    %+  murn
+      ^-  (list path)
+      :~  /mar/mime/hoon
+          /mar/bill/hoon
+          /mar/seal/hoon
+      ==
+    =/  =dojo  (~(got by dos.rom) %base)
+    =/  =yaki  (~(got by hut.ran) (~(got by hit.dom.dojo) let.dom.dojo))
+    |=  =path
+    ?:  (~(has by files) path)  ~
+    ~|  %missing-built-in^path
+    =/  lob  (~(got by q.yaki) path)
+    ~|  %built-in-not-page
+    =/  pag  (~(got by lat.ran) lob)
+    `[path &+pag]
   ::
   ++  request-wire
     |=  [kind=@ta =ship =desk index=@ud]
@@ -2067,6 +2013,7 @@
     =?  changes  updated  (changes-for-upgrade q.old-yaki deletes changes)
     ::
     =/  files
+      %-  apply-built-ins
       =/  original=(map path (each page lobe))
         (~(run by q.old-yaki) |=(=lobe |+lobe))
       %-  ~(dif by (~(uni by original) changes))
@@ -2322,6 +2269,7 @@
       ::  ? remove deletes
       ::
       =/  all-changes=(map path (each page lobe))
+        %-  apply-built-ins
         =/  original=(map path (each page lobe))
           (~(run by q.yaki) |=(=lobe |+lobe))
         (~(uni by original) changes)
@@ -3218,7 +3166,7 @@
     =.  mon                                             ::  [ergo]
       (~(put by mon) pot [her syd ud+for-yon] spur)
     =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) u.yon))
-    =/  files  (~(run by q.yaki) |=(=lobe |+lobe))
+    =/  files  (apply-built-ins (~(run by q.yaki) |=(=lobe |+lobe)))
     =/  =args:ford:fusion  [files lat.ran veb.bug]
     =^  mim  args
       (checkout-mime args ~ ~(key by files))
