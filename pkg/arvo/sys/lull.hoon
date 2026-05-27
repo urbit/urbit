@@ -3976,54 +3976,52 @@
     ==
   +$  perm-arvo  ::TODO  expand
     $%  $:  %ames
-        $%  [%prod ~]                                 ::  %prod - re-send a packet per flow, to all peers if .ships is ~
+        $%  [%block ~]                                ::  %snub
+            [%reads dash]                             ::  local %keen
+            [%keens ~]                                ::  remote %keen
+            [%write ~]  ::NOTE  agent-namespaced      ::  %grow %tomb %cull %tend %germ %snip
             [%debug ~]                                ::  %sift %spew
-            [%block ~]                                ::  %snub
-            [%cong ~]                                 ::  %cong - adjust congestion control parameters
-            [%timer ~]                                ::  %stir - recover from timer desync and assorted debug commands
-            [%probe ~]                                ::  %keen %yawn - request remote scry
-            ::  review: %serve
-            [%serve =dash]                            ::  %grow %tomb %cull %tend %germ %snip - remote scry management
-            ::  %trim
         ==  ==
       ::
         $:  %behn
-        $%  [%timer ~]
+        $%  [%timer ~]                                ::  %wait
         ==  ==
       ::
         $:  %clay
-        $%  [%write dash]                             ::  %info %merg %fuse
-            [%local cash]                             ::  %warp for local
-            [%peers cash]                             ::  %warp for remote
-            [%desks des=(unit desk)]                  ::  %esse %rein %zeal
-            [%pulse ~]                                ::  %tire
-            ::  xx: should %perm be with %cred and %crow ?
-            [%group ~]                                ::  %cred %crow
-            [%clay-perms des=(unit desk)]             ::  %perm
-            [%user-perms ~]                           ::  %seal
-            [%guard ~]                                ::  %ward
+        $%  [%local cash]                             ::  %read for local
+            [%peers cash]  ::REVIEW  cash -> ~ ?      ::  %read for remote
+            [%write dash]                             ::  %rite %name %merg %fuse %drop
+            [%crews ~]                                ::  %cred %crow
+            [%rules des=(unit desk)]                  ::  %perm
+            [%stone des=(unit desk)]  ::REVIEW        ::  %tomb
             [%mount dash]                             ::  %mont %ogre %dirk
+          ::
+            [%desks des=(unit desk)]                  ::  %esse %rein %zeal %zest
+            [%pulse ~]                                ::  %tire
+            [%perms ~]                                ::  %seal
+            [%guard ~]                                ::  %ward
         ==  ==
       ::
         $:  %dill
-        $%  [%print ~]                                ::  %logs %crud %talk %text
-            [%loom ~]                                 ::  %mass %meld %pack %trim
+        $%  [%terms ~]                                ::  %shot
+            [%print ~]                                ::  %crud %talk %text
+            [%sylog ~]  ::TODO  name                  ::  %logs
+            [%weigh ~]                                ::  %mass
+            [%press ~]                                ::  %meld %pack
         ==  ==
       ::
         $:  %eyre
-        $%  [%trace ~]                                ::  %spew
-            [%eauth ~]                                ::  %eauth-host
-            [%certs ~]                                ::  %rule
-            [%serve ~]                                ::  %connect %disconnect %set-response
-            [%perms ~]                                ::  %approve-origin %reject-origin
+        $%  [%setup ~]                                ::  %eauth-host %rule
+            [%serve =path]                            ::  %connect %set-response
+            [%cross ~]                                ::  %approve-origin %reject-origin
+            [%debug ~]                                ::  %spew
         ==  ==
       ::
-        $:  %gall
-        $%  [%reset des=(unit desk) dud=(list dude)]  ::  %jolt
-            [%pause dud=(list dude)]                  ::  %idle
-            [%clear dud=(list dude)]                  ::  %nuke
-            [%trace ~]                                ::  %spew %sift
-            [%flush ~]                                ::  %sear
+        $:  %gall  ::REVIEW  lifecycle perms
+        $%  [%reset des=(unit desk) dud=(unit dude)]  ::  %jolt
+            [%pause dud=(unit dude)]                  ::  %idle
+            [%clear dud=(unit dude)]                  ::  %nuke
+            [%debug ~]                                ::  %spew %sift
         ==  ==
       ::
         $:  %iris
@@ -4085,6 +4083,7 @@
             [%stir arg=@t]
           ::
             ::NOTE  not actually into %ames, just gall-side namespace management
+            ::      (per-agent namespace)
             [%keen secret=? =spar:ames]
             [%yawn =spar:ames]
             [%grow =spur =page]
