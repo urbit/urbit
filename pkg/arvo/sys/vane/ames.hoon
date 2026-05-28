@@ -1842,6 +1842,28 @@
     ::
     +|  %state-migrations
     ::
+    +$  axle-32
+      $+  axle-32
+      $:  peers=(map ship ship-state)
+          =unix=duct  ::  [//ames/0v0 ~]
+          =life
+          =rift
+          =bug
+          snub=[form=?(%allow %deny) ships=(set ship)]
+          cong=[msg=_5 mem=_100.000]
+          $=  dead
+          $:  flow=[%flow (unit dead-timer)]
+              chum=[%chum (unit dead-timer)]
+              cork=[%cork (unit dead-timer)]
+              rots=[%rots (unit dead-timer)]
+          ==
+          ::
+          =server=chain
+          [saf=keypairs =ring =pass]
+          chums=(map ship chum-state)
+          core=?(%ames %mesa)
+      ==
+    ::
     +$  axle-30
       $+  axle-30
       $:  peers=(map ship ship-state-30)
@@ -2622,8 +2644,9 @@
             [%28 axle-28-29]
             [%29 axle-28-29]
             [%30 axle-30]
-            [%31 axle]
-            [%32 axle]
+            [%31 axle-32]
+            [%32 axle-32]
+            [%33 axle]
         ==
     ::
     ::
@@ -2698,7 +2721,7 @@
       ~>  %slog.0^leaf/"ames: metamorphosis on %take"
       [:(weld molt-moves queu-moves take-moves) adult-gate]
     ::
-    ++  stay  [%32 larva/ames-state]
+    ++  stay  [%33 larva/ames-state]
     ++  scry  scry:adult-core
     ++  load
       |=  $=  old
@@ -2869,11 +2892,15 @@
               ==
               $:  %31                            :: enable Directed Messaging
                   ?(%adult %larva)               :: via %prob flow in lib/ahoy
-                  state=axle                     ::   (remove .weir flows)
+                  state=axle-32                  ::   (remove .weir flows)
               ==
               $:  %32                            :: use %ames as default core.
                   ?(%adult %larva)               :: migrate attestation flows
-                  state=axle                     :: clean up corked peeks
+                  state=axle-32                 :: clean up corked peeks
+              ==
+              $:  %33                            ::  add %hasx namespace
+                  ?(%adult %larva)               ::
+                  state=axle
           ==  ==
       |^  ?-  old
           [%4 %adult *]
@@ -3179,6 +3206,11 @@
         larval-gate
       ::
           [%32 *]
+        =.  cached-state  `[%32 state.old]
+        ~>  %slog.1^leaf/"ames: larva %32 reload"
+        larval-gate
+      ::
+          [%33 *]
         ?-  +<.old
           %larva  larval-gate
           %adult  (load:adult-core state.old)
@@ -3257,7 +3289,7 @@
       |^  ^+  [moz larval-core]
       ?~  cached-state  [~ larval-core]
       =*  old  u.cached-state
-      ?:  ?=(%32 -.old)
+      ?:  ?=(%33 -.old)
         ::  no state migrations left; update state, clear cache, and exit
         ::
         [(flop moz) larval-core(ames-state.adult-gate +.old, cached-state ~)]
@@ -3358,8 +3390,10 @@
         $(cached-state `30+(state-29-to-30 +.old))
       ?:  ?=(%30 -.old)
         $(cached-state `31+(state-30-to-31 +.old))
-      ?>  ?=(%31 -.old)
-      $(cached-state `32+(state-31-to-32 +.old))
+      ?:  ?=(%31 -.old)
+        $(cached-state `32+(state-31-to-32 +.old))
+      ?>  ?=(%32 -.old)
+      $(cached-state `33+(state-32-to-33 +.old))
       ::
       ++  our-beam  `beam`[[our %rift %da now] /(scot %p our)]
       ++  state-4-to-5
@@ -3971,11 +4005,11 @@
       ::
       ++  state-30-to-31
         |=  old=axle-30
-        ^-  axle
+        ^-  axle-32
         ~>  %slog.0^leaf/"ames: migrating from state %30 to %31"
         ~>  %slog.1^leaf/"mesa: Directed Messaging is on"
         %=    old
-            core  [%mesa ~]  :: XX remove, add real migration
+            core  %mesa
           ::
             chums
           ^-  (map ship chum-state)
@@ -4002,8 +4036,8 @@
         ==
       ::
       ++  state-31-to-32
-        |=  old=axle
-        ^-  axle
+        |=  old=axle-32
+        ^-  axle-32
         ~>  %slog.0^leaf/"ames: migrating from state %31 to %32"
         ~>  %slog.2^leaf/"mesa: turning on %ames for first contact"
         %=    old
@@ -4030,6 +4064,12 @@
             (~(del by tip) user-path)
           ==
         ==
+      ::
+      ++  state-32-to-33
+        |=  old=axle-32
+        ^-  axle
+        ~>  %slog.0^leaf/"ames: migrating from state %32 to %33"
+        old(core [core.old bins=~])
       ::
       --
     ::
@@ -12447,14 +12487,17 @@
                 key=`@`symmetric-key.per-fren
             ==
           ?>  ?=(%poke +<.poke)
+          ::
+          =/  han=name:pact
+            :+  [our rift.ames-state]  [13 ~]
+            %+  make-space-path  hasx-space
+            /a/x/1//hasx/(scot %p ship.p)/(scot %uvi has)
+          ?~  page=(co-get-page han)
+            ::  XX log
+            ~&  [%no-hanx-page han=han]  ~
           ::  XX  leave ack path as is
           ::  XX  check that his new poke fits the MTU?
-          ::
-          :-  ~
-          %_    poke
-              pat.pok
-            (make-space-path hasx-space /hasx/(scot %p ship.p)/(scot %uvi has))
-          ==
+        `[hop=0 %poke nam han u.page]
         ::
         ++  co-get-page
           |=  =name:pact
@@ -13586,7 +13629,9 @@
             %-  validate-path
             inner:(decrypt-path:mesa-core [pat.ack her.pok]:pact)
           ::
-          ?>  &(?=(flow-pith ack) ?=(flow-pith pok))
+          ?>  ?&  ?=(flow-pith ack)
+                  ?=(?(hasx-pith flow-pith) pok)
+              ==
           ?.  ?&  =(our our-ack)       ::  do we need to respond to this ack?
                   =(our-rift rif-ack)  ::  at the current rift
               ==
@@ -13632,8 +13677,10 @@
             `ames-state
           ?.  =(last-acked.u.sink mess.pok)
             %-  %+  ev-tace:ev-core  snd.veb.bug.ames-state
-                |.
-                "%rege $plea not last acked ({<mess.pok>}) bone={<bone.ack>}"
+                |.  """
+                    %rege $plea not last acked:
+                    ({<mess.pok>}) bone={<bone.ack>}
+                    """
             `ames-state
           =/  moves=(list move)
             ::  create temporary flow for ack payload
@@ -13807,7 +13854,7 @@
   take:am-core
 ::  +stay: extract state before reload
 ::
-++  stay  [%32 adult/ames-state]
+++  stay  [%33 adult/ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load

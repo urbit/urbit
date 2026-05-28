@@ -1599,7 +1599,7 @@
   ::    dead:        dead flow consolidation timer and recork timer, if set
   ::
   +$  axle
-    $+  axle-31
+    $+  axle-33
     $:  peers=(map ship ship-state)         ::  %ames protocol peers
         =unix=duct  ::  [//ames/0v0 ~]
         =life
@@ -1620,7 +1620,7 @@
         core=_`?(%ames %mesa)`%ames         ::  default network core protocol
                                             ::  (always %ames so we can guarantee
                                             ::   communication with past peers)
-        bins=(map @uvi @)                   :: temporary hash-addressed bindings
+        bins=(map @uvi @)                   ::  temporary hash-addressed bindings
     ==
   ::
   +$  dead-timer  [=duct =wire date=@da]
