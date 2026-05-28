@@ -1620,8 +1620,7 @@
         core=_`?(%ames %mesa)`%ames         ::  default network core protocol
                                             ::  (always %ames so we can guarantee
                                             ::   communication with past peers)
-        ::  TODOs
-        :: XX tmp=(map @ux page)            :: temporary hash-addressed bindings
+        bins=(map @uvi @)                   :: temporary hash-addressed bindings
     ==
   ::
   +$  dead-timer  [=duct =wire date=@da]

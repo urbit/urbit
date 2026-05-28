@@ -1814,6 +1814,13 @@
           ~
       ==
     ::
+    +$  hasx-pith
+      $:  %hasx
+          [%p rcvr=@p]
+          [%uvi bin=@uvi]
+          ~
+      ==
+    ::
     +$  cork-pith
       $:  %flow
           [%ud bone=@ud]
@@ -3968,7 +3975,7 @@
         ~>  %slog.0^leaf/"ames: migrating from state %30 to %31"
         ~>  %slog.1^leaf/"mesa: Directed Messaging is on"
         %=    old
-            core  %mesa
+            core  [%mesa ~]
           ::
             chums
           ^-  (map ship chum-state)
@@ -9196,9 +9203,10 @@
         ::      to/from-vane=%van
         ::      for-corks=%cor
         ::      for-poke-payloads=%pok
-        ::      for-flubs=%fub
+        ::      for-flubs=%fub  :: XX not used
+        ::      for-hasx=%hax
         ::  ==
-        +$  were  ?(%van %nax %ack %cor %pok %fub)
+        +$  were  ?(%van %nax %ack %cor %pok %fub %hax)
         +$  ev-flow-wire
           $:  %mesa
               %flow
@@ -9343,8 +9351,12 @@
               ::
               :-  (validate-path inner-poke-path)
               (validate-path inner:(decrypt-path [pat.ack her.pok]:pact))
+            ::  flow or hash namespaces
             ::
             ?>  &(?=(flow-pith ack) ?=(flow-pith pok))
+                    :: &(?=(~ ack) ?=(hasx-pith pok))  :: XX
+                ::==
+            ~!  pok
             ?.  ?&  =(our our-ack)       ::  do we need to respond to this ack?
                     =(our-rift rif-ack)  ::  at the current rift
                 ==
@@ -9405,11 +9417,24 @@
                   |.("peek for poke payload {<[flow=bone seq=mess]:pok>}")
               ::
               %^  ev-emit  hen  %pass
+              ::  %none namespace uses the path as is
+              ::
               [(fo-wire:fo-core %pok) %a %meek [none/~ [her pat]:pok.pact]]
             ::  authenticate one-fragment message
             ::
             ?>  %-  authenticate
                 [(root:lss (met 3 dat.data)^dat.data) aut.data pok.pact]
+            ::  if this one-fragment message is a /hasx peek for tmp binding
+            ::
+            ::  hasx: pok path too long; sender redirected; peek sender for original bytes
+            ::
+            ?:  ?=([%hasx *] inner-poke-path)   ::  XX  check ack path?
+              %-  %+  ev-tace  fin.veb.bug.ames-state
+                  |.("peek for pact binding")
+              %^  ev-emit  hen  %pass
+              ::  %none namespace uses the path as is
+              ::
+              [(fo-wire:fo %hax) %a %meek [none/~ [her pat]:pok.pact]]
             ::
             %:  hear-poke:ev-mess
               dud
@@ -9730,6 +9755,8 @@
                         &(=(%bak dire.message-path) =(%for dire.side))
                 ==  ==
             ?:  =(%fub were)
+              :: XX not used
+              ::
               %-  %+  ev-tace  msg.veb.bug.ames-state
                   |.("%cork %flub received; delete {<side>}")
               fo-abel:(fo-take-fub:fo-core sage)
@@ -9752,6 +9779,13 @@
           ::
           ::  XX  validate that wire and path match?
           ::
+          ::
+          ?:  =(%hax were)
+            ::  de-serialized q.sage and construct %poke
+            ::
+            ?>  ?=([%message %hasx @] q.sage)
+            =+  ;;  blob=@  +.q.q.sage
+            (hear-poke:ev-pact ~ *lane:pact pact=(parse-packet blob))
           ?>  ?=(flow-pith message-path)
           ::
           ?:  =(%pok were)
@@ -12372,24 +12406,54 @@
           ^-  (unit pact:pact)
           =/  nam  [[ship.p per-rift] [13 ~] path.p]
           ?~  q
+            ::  XX check if path.p is also too long ?
+            ::
             `[hop=0 %peek nam]
-          ::  XX assert that the serializes path fits in the MTU
-          ::  XX if path will be too long, put in [tmp] and use that path
-          ::  %-  mess:plot:d
-          ::  (en:name:d [[her=~nec rif=40] [boq=0 wan=~] pat=['c~_h' ~]]))
-          ::  [bloq=q=3 step=r=12]
-          ::  =/  has  (shax u.u.res)
-          ::  =.  tmp-chums.ames-state
-          ::    %+  ~(put by tmp-chums.ames-state)  has
-          ::    [%some-envelope original-path u.u.res])
-          ::  //ax/[$ship]//1/temp/[hash]
           ::
           =/  man=name:pact  [[our rift.ames-state] [13 ~] u.q]
           ::
           ?~  page=(co-get-page man)
             ::  XX
             ~&  [%no-page man=man]  ~
-          `[hop=0 %poke nam man u.page]
+          ::  check poke fits in MTU (1472 bytes)
+          ::
+          =/  poke=pact:pact  [hop=0 %poke nam man u.page]
+          =/  ser  p:(fax:plot (en:pact poke))
+          ?.  (gth (met 3 ser) 1.472)
+            `poke
+          ::  XX check that u.page fits MTU?
+          ::
+          ::  store original poke bytes keyed by hash
+          ::
+          =/  has  (shax ser)
+          ::  XX delete this binding when the poke has been processed
+          ::  XX we need a reverse mapping (map ack has) in flow-state
+          ::
+          =.  bins.ames-state  (~(put by bins.ames-state) has ser)
+          ::  encrypt hasx path with %chum so only this peer can fetch it
+          ::
+          =/  per-sat  (~(get by chums.ames-state) ship.p)
+          ?.  ?=([~ %known *] per-sat)
+            ~&  [%hasx-no-peer ship.p]
+            ~
+          =/  per-fren=fren-state  +.u.per-sat
+          =/  hasx-space=space
+            :*  %chum
+                server-life=life.ames-state
+                client=ship.p
+                client-life=life.per-fren
+                key=`@`symmetric-key.per-fren
+            ==
+          ?>  ?=(%poke +<.poke)
+          ~!  poke
+          :-  ~
+          %_    poke
+              pat.ack
+            /  :: XX ack path empty?
+          ::
+              pat.pok
+            (make-space-path hasx-space /hasx/(scot %p ship.p)/(scot %uvi has))
+          ==
         ::
         ++  co-get-page
           |=  =name:pact
@@ -12501,6 +12565,7 @@
           ::
           ?-    typ.wan.pac.nex
               %auth
+            ~&  >  %auth
             =/  nam  [[our rif] [boq ?:(nit ~ [%auth fag])] pat]
             ::  NB: root excluded as it can be recalculated by the client
             ::
@@ -12513,6 +12578,7 @@
             [[hop=0 %page nam dat ~] ~ pof]
           ::
               %data
+            ~&  >  %data
             =/  lss-proof
               =>  [ser=ser ..lss]
               :: ~>  %memo./ames/lss-data
@@ -12784,6 +12850,25 @@
               [~ ~]
             ?~(r=(fo-peek:fo-core %naxp u.seq) ~ ``[%message !>(u.r)])
           ==
+        ::  hasx: temporary bindings for bigger-than-MTU paths
+        ::
+        ++  peek-hasx
+          |=  [lyc=gang tyl=(pole knot)]
+          ^-  (unit (unit cage))
+          ?.  ?=([%hasx who=@p bin=@ ~] tyl)
+            ~
+          =/  bin  (slaw %uvi bin.tyl)
+          =/  who  (slaw %p who.tyl)
+          ?:  |(?=(~ bin) ?=(~ who))
+            [~ ~]
+          ?.  &(?=(^ lyc) (~(has in u.lyc) u.who))
+            ~
+          =+  per-sat=(get-per u.who)
+          ?.  ?=([~ ~ %known *] per-sat)
+            ~  ::  %alien or missing
+          ?~  stored=(~(get by bins.ames-state) u.bin)
+            ~
+          ``message/!>(hasx/u.stored)
         ::
         ++  peek
           ^-  roon
@@ -12817,12 +12902,13 @@
                 [%pawn %proof *]                   (peek-pawn tyl)
               ::  message-level private namespaces
               ::
-                $%([%flow *] [%meta *] [%whey *])
+                $%([%flow *] [%meta *] [%whey *] [%hasx *])
               ?:  =(~ lyc)  ~
               ?-  tyl
                 [%meta *]  (peek-meta lyc tyl)
                 [%flow *]  (peek-flow lyc tyl)
                 [%whey *]  (peek-whey lyc tyl)
+                [%hasx *]  (peek-hasx lyc tyl)
               ==
             ==
           ::  only respond for the local identity, %$ desk, current timestamp
