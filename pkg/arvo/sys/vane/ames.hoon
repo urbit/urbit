@@ -1817,7 +1817,8 @@
     +$  hasx-pith
       $:  %hasx
           [%p rcvr=@p]
-          [%uvi bin=@uvi]
+          [%uv bin=@uv]
+          ::  XX [%ud mess=@ud] ?
           ~
       ==
     ::
@@ -4398,6 +4399,21 @@
           !!  :: XX handle
         [space=[%shut u.kid -.u.key] cyf (open-path:crypt -.u.key u.cyf)]
       ==
+    ::
+    ++  open-path
+      |=  [=path =ship]
+      ^-  [=space cyf=(unit @) =pith]
+      =;  [s=space c=(unit @) inner=^path]
+        [s c (validate-path inner)]
+      (decrypt-path path ship)
+    ::
+    ++  open-poke-pact
+      |=  =pact:pact
+      ?>  ?=(%poke +<.pact)
+      ^-  [=space cyf=(unit @) pok=pith ack=pith]
+      =;  [s=space c=(unit @) p=pith]
+        [s c p pith:(open-path [pat.ack her.pok]:pact)]
+      (open-path [pat her]:pok.pact)
     ::
     --
 ::
@@ -9376,27 +9392,25 @@
             ::    - validation should crash event/no-op to ensure that no
             ::      state is changed
             ::
-            =/  [=space cyf=(unit @) =inner-poke=path]
+            =/  [=space cyf=(unit @) pok=(pole iota) ack=(pole iota)]
               ~|  inner-path/[pat.ack^pat.pok]:pact
-              (decrypt-path [pat her]:pok.pact)
+              (open-poke-pact pact)
+            ~!  pok/pok
+            =/  pok-rcvr=@p
+              ?:  ?=(flow-pith pok)
+                rcvr.pok
+              ?>  ?=(hasx-pith pok)
+              rcvr.pok
             ::
             ?:  ?=(%none -.space)
               %-  %+  %*(ev-tace ev-core her her-pok)  odd.veb.bug.ames-state
                   |.  %+  weld  "weird poke lifes={<life.per^life.ames-state>}"
                       " pok={<pat.pok.pact>}; skip"
               ev-core
-            ::
-            =/  [pok=(pole iota) ack=(pole iota)]
-              ::  path validation/decryption
-              ::
-              :-  (validate-path inner-poke-path)
-              (validate-path inner:(decrypt-path [pat.ack her.pok]:pact))
             ::  flow or hash namespaces
             ::
-            ?>  &(?=(flow-pith ack) ?=(flow-pith pok))
-                    :: &(?=(~ ack) ?=(hasx-pith pok))  :: XX
-                ::==
             ~!  pok
+            ?>  ?=(flow-pith ack)
             ?.  ?&  =(our our-ack)       ::  do we need to respond to this ack?
                     =(our-rift rif-ack)  ::  at the current rift
                 ==
@@ -9404,12 +9418,12 @@
                   =+  rifs=[our=our-rift pac=rif-ack]
                   |.("not our ack rcvr={<our-ack>} rifs={<rifs>}; skip")
               ev-core
-            ?.  ?&  =(our rcvr.pok)      ::  are we the receiver of the poke?
+            ?.  ?&  =(our pok-rcvr)      ::  are we the receiver of the poke?
                     =(rift.per rif-pok)  ::  at their current rift
                 ==
               =+  rifs=[her=rift.per pac=rif-pok]
               %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("poke for {<rcvr.pok>} at rifts={<rifs>}; skip")
+                  |.("poke for {<pok-rcvr>} at rifts={<rifs>}; skip")
               ev-core
             ?.  =(her-pok rcvr.ack)      ::  do ack and pokes match?
               %-  %+  ev-tace  odd.veb.bug.ames-state
@@ -9439,10 +9453,23 @@
             ?.  =(1 (div (add tob.data.pact 1.023) 1.024))
               %-  %+  ev-tace  msg.veb.bug.ames-state
                   |.("hear incomplete message")
+              ::  if /hasx namespace, peek for tmp binding
+              ::              ::
+              ?:  ?=(hasx-pith pok)   ::  XX  check ack path?
+                %-  %+  ev-tace  fin.veb.bug.ames-state
+                    |.("peek for pact binding")
+                ::  XX TODO don't peek if the message has been already acked
+                ::
+                %^  ev-emit  hen  %pass
+                ::  %none namespace uses the path as is
+                ::
+                [(fo-wire:fo %hax) %a %meek [none/~ [her pat]:pok.pact]]
               :: XX assert load is plea/boon?
+              ::
+              ?>  ?=(flow-pith pok)
               =+  fo-core=(fo-abed:fo [bone dire]:ack)
               ?:  (fo-message-is-acked:fo-core mess.pok)
-                ::  don't peek if the message havs been already acked
+                ::  don't peek if the message has been already acked
                 ::
                 ?:  (gte (sub last-acked.rcv:fo-core mess.pok) 10)
                   %-  %+  ev-tace  odd.veb.bug.ames-state
@@ -9464,18 +9491,8 @@
             ::
             ?>  %-  authenticate
                 [(root:lss (met 3 dat.data)^dat.data) aut.data pok.pact]
-            ::  if this one-fragment message is a /hasx peek for tmp binding
             ::
-            ::  hasx: pok path too long; sender redirected; peek sender for original bytes
-            ::
-            ?:  ?=([%hasx *] inner-poke-path)   ::  XX  check ack path?
-              %-  %+  ev-tace  fin.veb.bug.ames-state
-                  |.("peek for pact binding")
-              %^  ev-emit  hen  %pass
-              ::  %none namespace uses the path as is
-              ::
-              [(fo-wire:fo %hax) %a %meek [none/~ [her pat]:pok.pact]]
-            ::
+            ?>  ?=(flow-pith pok)
             %:  hear-poke:ev-mess
               dud
               [her.ack.pact (pout ack)]
@@ -11635,11 +11652,11 @@
                       c
                     ::  sequence number is in the path; get it from the tip
                     ::
-                    =/  [=space pax=^path]
-                      [space inner]:(decrypt-path path her)
+                    =/  [=space cyf=(unit @) nax-path=(pole iota)]
+                      (open-path path her)
                     ?>  ?=(%chum -.space)
-                    =/  nax-path=(pole iota)  (validate-path pax)
                     ?>  ?=(flow-pith nax-path)
+                    ~!  nax-path
                     mess.nax-path
                   pump(current ?:(=(0 current) next current))
                 ::  if there are queued message acks, current has been nacked
@@ -13611,26 +13628,21 @@
               (~(put by chums.ames-state.me-core) her-pok known/per)
             ==
           =+  ev-core=(ev-abed:ev:mesa-core hen her-pok^per)
-          ::  XX refactor; same as hear-poke:ev-pact:ev:mesa
           ::
-          =/  [=space cyf=(unit @) =inner-poke=path]
+          =/  [=space cyf=(unit @) pok=(pole iota) ack=(pole iota)]
             ~|  inner-path/[pat.ack^pat.pok]:pact
-            (decrypt-path:mesa-core [pat her]:pok.pact)
+            (open-poke-pact:mesa-core pact)
           ::
+          ?.  ?=(flow-pith pok)
+            %-  %+  ev-tace:ev-core  odd.veb.bug.ames-state
+                |.("weird poke; skip")
+            `ames-state
           ?:  ?=(%none -.space)
             %-  %+  ev-tace:ev-core  odd.veb.bug.ames-state
                 |.("weird poke life={<life.per>} pok={<pat.pok.pact>}; skip")
             `ames-state
-          =/  [pok=(pole iota) ack=(pole iota)]
-            ::  path validation/decryption
-            ::
-            :-  (validate-path inner-poke-path)
-            %-  validate-path
-            inner:(decrypt-path:mesa-core [pat.ack her.pok]:pact)
           ::
-          ?>  ?&  ?=(flow-pith ack)
-                  ?=(?(hasx-pith flow-pith) pok)
-              ==
+          ?>  ?=(flow-pith ack)
           ?.  ?&  =(our our-ack)       ::  do we need to respond to this ack?
                   =(our-rift rif-ack)  ::  at the current rift
               ==
