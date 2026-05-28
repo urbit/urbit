@@ -11886,11 +11886,15 @@
           =/  =pass         pass:(~(got by keys.point) life.point)
           =/  =public-keys  ded:ex:(com:nu:cric:crypto pass)
           :: XX remove; needed when changing types in %lull (for testing)
-          :: =.  priv.ames-state
-          ::   ;;  @
+          :: =/  bob
           ::   =<  q.q  %-  need  %-  need
           ::   =-  ~&  priv/-  -
           ::   (rof [~ ~] /ames %j `beam`[[our %vein %da now] /1])
+          :: =+  ;;  =ring  bob
+          :: =/  cic    (nol:nu:cric:crypto ring)
+          :: =.  ring.ames-state  ring
+          :: =.  saf.ames-state   saf:ex:cic
+          :: =.  pass.ames-state  pub:ex:cic
           ::
           =/  pk=private-keys  sek.saf.ames-state
           =/  =symmetric-key   (derive-symmetric-key public-keys pk)
