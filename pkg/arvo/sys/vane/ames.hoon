@@ -3975,7 +3975,7 @@
         ~>  %slog.0^leaf/"ames: migrating from state %30 to %31"
         ~>  %slog.1^leaf/"mesa: Directed Messaging is on"
         %=    old
-            core  [%mesa ~]
+            core  [%mesa ~]  :: XX remove, add real migration
           ::
             chums
           ^-  (map ship chum-state)
