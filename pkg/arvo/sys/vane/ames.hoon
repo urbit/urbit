@@ -12428,6 +12428,8 @@
           =/  has  (shax ser)
           ::  XX delete this binding when the poke has been processed
           ::  XX we need a reverse mapping (map ack has) in flow-state
+          ::  XX or eviction policy on bins.ames-state since we have
+          ::     redundantly added the ship?
           ::
           =.  bins.ames-state  (~(put by bins.ames-state) has ser)
           ::  encrypt hasx path with %chum so only this peer can fetch it
@@ -12445,12 +12447,11 @@
                 key=`@`symmetric-key.per-fren
             ==
           ?>  ?=(%poke +<.poke)
-          ~!  poke
+          ::  XX  leave ack path as is
+          ::  XX  check that his new poke fits the MTU?
+          ::
           :-  ~
           %_    poke
-              pat.ack
-            /  :: XX ack path empty?
-          ::
               pat.pok
             (make-space-path hasx-space /hasx/(scot %p ship.p)/(scot %uvi has))
           ==
