@@ -12323,6 +12323,7 @@
         ++  co-abet  [(flop moves) ames-state]
         ++  co-abed  |=(=duct co-core(hen duct))
         ++  co-emit  |=(=move co-core(moves [move moves]))
+        ++  co-emil  |=(moz=(list move) co-core(moves (weld (flop moz) moves)))
         ++  co-tace
           |=  [verb=? her=ship print=(trap tape)]
           ^+  same
@@ -12441,7 +12442,7 @@
               (~(put by chums.ames-state) ship.remote known/per)
             ==
           ::
-          =/  [hasx=(unit [has=@uvi ser=@ =move]) pact=(unit pact:pact)]
+          =/  [hasx=(unit [has=@uvi ser=@ moz=(list move)]) pact=(unit pact:pact)]
             [p q]:(co-make-pact remote payload rift.per)
           =?  co-core  ?=(~ pact)
             ~|  [remote=remote payload=payload rift=rift.per]
@@ -12456,7 +12457,7 @@
             ::     redundantly added the ship?
             ::
             =.  bins.ames-state  (~(put by bins.ames-state) [has ser]:u.hasx)
-            (co-emit move.u.hasx)
+            (co-emil moz.u.hasx)
           =|  new=request-state
           =.  for.new  (~(put ju for.new) hen %sage)
           =.  pay.new  payload
@@ -12479,12 +12480,47 @@
         ::
         ++  co-make-pact
           |=  [p=spar q=(unit path) =per=rift]
-          ^-  [p=(unit [has=@uvi ser=@ =move]) q=(unit pact:pact)]
-          =/  nam  [[ship.p per-rift] [13 ~] path.p]
+          ^-  [p=(unit [has=@uvi ser=@ (list move)]) q=(unit pact:pact)]
+          :: ^-  [p=(unit [has=@uvi ser=@ move]) q=(unit pact:pact)]
+          =/  per-sat  (~(get by chums.ames-state) ship.p)
+          ?.  ?=([~ %known *] per-sat)
+            ~&  [%hasx-no-peer ship.p]
+            ~^~
+          =/  per-fren=fren-state  +.u.per-sat
+          =/  hasx-space=space
+            :*  %chum
+                server-life=life.ames-state
+                client=ship.p
+                client-life=life.per-fren
+                key=`@`symmetric-key.per-fren
+            ==
+          =/  nam=name:pact  [[ship.p per-rift] [13 ~] path.p]
           ?~  q
             ::  XX check if path.p is also too long ?
             ::
-            ``[hop=0 %peek nam]
+            =/  peek=pact:pact  [hop=0 %peek nam]
+            =/  ser  p:(fax:plot (en:pact peek))
+            ?.  (gth (met 3 ser) 1.472)
+              ``peek
+            =/  has  (shax ser)
+            =/  ham=name:pact
+              :+  [ship.p per-rift]  [13 ~]
+              %+  make-space-path  hasx-space
+              ::  wrap the poke path under the %hasx namespace
+              ::
+              %+  weld  /a/x/1//hasx/(scot %uvi has)
+              ::  decrypt ack-path
+              ::
+              (pout pith:(open-path [pat her]:nam))
+            :_  ~
+            :^  ~  has  ser
+            ::  XX  emit poke pact to tell the payload
+            ::  producer to turn around and +peek for the
+            ::  has -> ser binding.
+            ::  this should be handled informally by the mesa
+            ::  driver, but we should also write the spec for it
+            ::
+            ~
           ::
           =/  man=name:pact  [[our rift.ames-state] [13 ~] u.q]
           ::
@@ -12500,18 +12536,6 @@
           =/  has  (shax ser)
           ::  encrypt hasx path with %chum so only this peer can fetch it
           ::
-          =/  per-sat  (~(get by chums.ames-state) ship.p)
-          ?.  ?=([~ %known *] per-sat)
-            ~&  [%hasx-no-peer ship.p]
-            ~^~
-          =/  per-fren=fren-state  +.u.per-sat
-          =/  hasx-space=space
-            :*  %chum
-                server-life=life.ames-state
-                client=ship.p
-                client-life=life.per-fren
-                key=`@`symmetric-key.per-fren
-            ==
           ?>  ?=(%poke +<.poke)
           ::
           =/  han=name:pact
@@ -12523,20 +12547,21 @@
             ::  decrypt poke-path
             ::
             (pout pith:(open-path [pat her]:man))
-          ::  we have just added this binding, but have not= completed
+          ::  we have just added this binding, but have not completed
           ::  the arvo event that will finalize it in state so co-get-page
           ::  won't find it at this current event when trying to peek for it.
           ::  we enqueue a %prod for the next event, when the payload for the
           ::  %hanx will be available
           ::
-          ?~  page=(co-get-page han)
-            ::  XX log?
-            :_  ~
-            `[has ser [hen %pass /hasx-prod %a %prod ship.p ~]]
-          ::  XX  leave ack path as is
-          ::  XX  check that his new poke fits the MTU?
-          ::
-          ``[hop=0 %poke nam han u.page]
+          ?^  page=(co-get-page han)
+            ::  XX  leave ack path as is
+            ::  XX  check that his new poke fits the MTU?
+            ::
+            ``[hop=0 %poke nam han u.page]
+          ::  XX log?
+          :_  ~
+          `[has ser [hen %pass /hasx-prod %a %prod ship.p ~]~]
+
         ::
         ++  co-get-page
           |=  =name:pact
