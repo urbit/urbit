@@ -3166,7 +3166,7 @@
     =.  mon                                             ::  [ergo]
       (~(put by mon) pot [her syd ud+for-yon] spur)
     =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) u.yon))
-    =/  files  (apply-built-ins (~(run by q.yaki) |=(=lobe |+lobe)))
+    =/  files  (~(run by q.yaki) |=(=lobe |+lobe))
     =/  =args:ford:fusion  [files lat.ran veb.bug]
     =^  mim  args
       (checkout-mime args ~ ~(key by files))
