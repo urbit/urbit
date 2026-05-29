@@ -928,9 +928,9 @@
     (snag-moke 0 moves1)
   =/  comet-roof
     (make-roof /(scot %p our-comet) noun+!>(~[0]))
-  =^  moves2  bud
+  =^  moves3  bud
     (call bud(rof comet-roof) ~[//unix] %heer (snag-push 0 moves2))
-  =/  [=lane:pact:ames blob=@]  (snag-push 0 moves2)
+  =/  [=lane:pact:ames blob=@]  (snag-push 0 moves3)
   =/  =pact:pact:ames
     :-  hop=0
     :-  %peek

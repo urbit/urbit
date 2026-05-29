@@ -12481,21 +12481,23 @@
         ++  co-make-pact
           |=  [p=spar q=(unit path) =per=rift]
           ^-  [p=(unit [has=@uvi ser=@ (list move)]) q=(unit pact:pact)]
-          :: ^-  [p=(unit [has=@uvi ser=@ move]) q=(unit pact:pact)]
-          =/  per-sat  (~(get by chums.ames-state) ship.p)
-          ?.  ?=([~ %known *] per-sat)
-            ~&  [%hasx-no-peer ship.p]
-            ~^~
-          =/  per-fren=fren-state  +.u.per-sat
+          =/  nam=name:pact  [[ship.p per-rift] [13 ~] path.p]
           =/  hasx-space=space
+            =/  per-sat  (~(get by chums.ames-state) ship.p)
+            ?.  ?=([~ %known *] per-sat)
+              ::  we assume that this is a %publ, for comet attestations
+              ::  which fits in one packet
+              ::
+              *space
+            =/  per-fren=fren-state  +.u.per-sat
             :*  %chum
                 server-life=life.ames-state
                 client=ship.p
                 client-life=life.per-fren
                 key=`@`symmetric-key.per-fren
             ==
-          =/  nam=name:pact  [[ship.p per-rift] [13 ~] path.p]
           ?~  q
+            ::  %peeks
             ::  XX check if path.p is also too long ?
             ::
             =/  peek=pact:pact  [hop=0 %peek nam]
@@ -12521,7 +12523,7 @@
             ::  driver, but we should also write the spec for it
             ::
             ~
-          ::
+          ::  %pokes
           =/  man=name:pact  [[our rift.ames-state] [13 ~] u.q]
           ::
           ?~  page=(co-get-page man)

@@ -179,7 +179,9 @@
   ^-  @
   =/  sample     [now=~1111.1.1 eny=`@`0xdead.beef poke-roof]
   =/  ames-core  (ames-gate sample)
-  ?~  pact=(co-make-pact:co:mesa:ames-core spar `path per-rift)
+  =/  pact=(unit pact:pact:ames)
+    q:(co-make-pact:co:mesa:ames-core spar `path per-rift)
+  ?~  pact
     !!
   p:(fax:plot (en:pact:ames u.pact))
 ::
