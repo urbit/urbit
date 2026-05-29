@@ -1816,9 +1816,11 @@
     ::
     +$  hasx-pith
       $:  %hasx
-          [%p rcvr=@p]
+          [%ud bone=@ud]
           [%uv bin=@uv]
-          ::  XX [%ud mess=@ud] ?
+          =dire
+          [%p rcvr=@p]
+          [%ud mess=@ud]
           ~
       ==
     ::
@@ -9395,7 +9397,6 @@
             =/  [=space cyf=(unit @) pok=(pole iota) ack=(pole iota)]
               ~|  inner-path/[pat.ack^pat.pok]:pact
               (open-poke-pact pact)
-            ~!  pok/pok
             =/  pok-rcvr=@p
               ?:  ?=(flow-pith pok)
                 rcvr.pok
@@ -9407,9 +9408,8 @@
                   |.  %+  weld  "weird poke lifes={<life.per^life.ames-state>}"
                       " pok={<pat.pok.pact>}; skip"
               ev-core
-            ::  flow or hash namespaces
+            ::   validation of flow or hash namespaces
             ::
-            ~!  pok
             ?>  ?=(flow-pith ack)
             ?.  ?&  =(our our-ack)       ::  do we need to respond to this ack?
                     =(our-rift rif-ack)  ::  at the current rift
@@ -9450,55 +9450,50 @@
             ::
             =?  ev-core  ?=(~ lane.per)  (ev-update-qos %dead last-contact=now)
             ::
-            ?.  =(1 (div (add tob.data.pact 1.023) 1.024))
-              %-  %+  ev-tace  msg.veb.bug.ames-state
-                  |.("hear incomplete message")
-              ::  if /hasx namespace, peek for tmp binding
-              ::              ::
-              ?:  ?=(hasx-pith pok)   ::  XX  check ack path?
-                %-  %+  ev-tace  fin.veb.bug.ames-state
-                    |.("peek for pact binding")
-                ::  XX TODO don't peek if the message has been already acked
-                ::
-                %^  ev-emit  hen  %pass
-                ::  %none namespace uses the path as is
-                ::
-                [(fo-wire:fo %hax) %a %meek [none/~ [her pat]:pok.pact]]
-              :: XX assert load is plea/boon?
+            ?.  ?|  ?=(hasx-pith pok)      ::  /hasx namespace, peek for tmp binding
+                    ?&  ?=(flow-pith pok)  ::  imcompete flow poke
+                        (gth (div (add tob.data.pact 1.023) 1.024) 1)
+                    ==
+                ==
+              ::  authenticate one-fragment %poke
               ::
-              ?>  ?=(flow-pith pok)
-              =+  fo-core=(fo-abed:fo [bone dire]:ack)
-              ?:  (fo-message-is-acked:fo-core mess.pok)
-                ::  don't peek if the message has been already acked
-                ::
-                ?:  (gte (sub last-acked.rcv:fo-core mess.pok) 10)
-                  %-  %+  ev-tace  odd.veb.bug.ames-state
-                      |.("poke [bon, seq]={<[bone mess]:pok>} outside of window")
-                  ev-core
-                %-  %+  ev-tace  rcv.veb.bug.ames-state
-                    |.("poke [bon, seq]={<[bone mess]:pok>} already acked")
-                ::
-                fo-abet:(fo-send-ack:fo-core mess.pok)
+              ?>  %-  authenticate
+                  [(root:lss (met 3 dat.data)^dat.data) aut.data pok.pact]
               ::
-              %-  %+  ev-tace  fin.veb.bug.ames-state
-                  |.("peek for poke payload {<[flow=bone seq=mess]:pok>}")
-              ::
-              %^  ev-emit  hen  %pass
-              ::  %none namespace uses the path as is
-              ::
-              [(fo-wire:fo-core %pok) %a %meek [none/~ [her pat]:pok.pact]]
-            ::  authenticate one-fragment message
+              %:  hear-poke:ev-mess
+                dud
+                [her.ack.pact (pout ack)]
+                [her.pok.pact (pout pok)]
+                ;;(gage:mess (cue (decrypt-spac space dat.data cyf)))
+              ==
+            =,  bug.ames-state
+            ::  don't peek if the message has been already acked
             ::
-            ?>  %-  authenticate
-                [(root:lss (met 3 dat.data)^dat.data) aut.data pok.pact]
+            =+  fo-core=(fo-abed:fo [bone dire]:ack)
+            =+  dat="flow [bon, seq]={<[bone mess]:ack>}"
+            ?:  (fo-message-is-acked:fo-core mess.ack)
+              ?:  (gte (sub last-acked.rcv.fo-core mess.ack) 10)
+                %-  (ev-tace odd.veb |.("poke {dat} outside of window; skip"))
+                ev-core
+              %-  (ev-tace msg.veb.bug.ames-state |.("{dat} already acked"))
+              fo-abet:(fo-send-ack:fo-core mess.ack)
             ::
-            ?>  ?=(flow-pith pok)
-            %:  hear-poke:ev-mess
-              dud
-              [her.ack.pact (pout ack)]
-              [her.pok.pact (pout pok)]
-              ;;(gage:mess (cue (decrypt-spac space dat.data cyf)))
-            ==
+            %-  (ev-tace msg.veb |.("hear incomplete %poke {dat}"))
+            =+  %.  ~
+                 %+  ev-tace  fin.veb
+                ?+    pok  !!
+                  flow-pith  |.("peek for poke payload {dat}")
+                  hasx-pith  |.("peek for hasx binding {dat}")
+                ==
+            =/  peek-wire=wire
+              ?+    pok  !!
+                flow-pith  (fo-wire:fo %pok)
+                hasx-pith  (fo-wire:fo %hax)
+              ==
+            ::  %none namespace uses the path as is
+            ::
+            %^  ev-emit  hen  %pass
+            [peek-wire %a %meek [none/~ [her pat]:pok.pact]]
           ::
           ++  hear-peek
             |=  [=lane:pact =name:pact]
@@ -12915,17 +12910,25 @@
         ++  peek-hasx
           |=  [lyc=gang tyl=(pole knot)]
           ^-  (unit (unit cage))
-          ?.  ?=([%hasx who=@p bin=@ ~] tyl)
+          ?.  ?=([%hasx bone=@ bin=@ =dire who=@ mess=@ ~] tyl)
             ~
           =/  bin  (slaw %uvi bin.tyl)
           =/  who  (slaw %p who.tyl)
-          ?:  |(?=(~ bin) ?=(~ who))
+          =/  bon  (slaw %p bone.tyl)
+          =/  mes  (slaw %p mess.tyl)
+          ?:  |(?=(~ bin) ?=(~ who) ?=(~ bon) ?=(~ mes))
             [~ ~]
           ?.  &(?=(^ lyc) (~(has in u.lyc) u.who))
             ~
           =+  per-sat=(get-per u.who)
           ?.  ?=([~ ~ %known *] per-sat)
             ~  ::  %alien or missing
+          ::  flow should exist, unacked; payload outstanding
+          ::
+          =+  ev-core=(ev-abed:ev ~[//scry] u.who +.u.u.per-sat)
+          =+  fo-core=(fo-abed:fo:ev-core side=[u.bon dire.tyl])
+          ?~  (fo-peek:fo-core %poke u.mes)
+            ~
           ?~  stored=(~(get by bins.ames-state) u.bin)
             ~
           ``message/!>(hasx/u.stored)
