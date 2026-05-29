@@ -1816,8 +1816,12 @@
     ::
     +$  hasx-pith
       $:  %hasx
-          [%ud bone=@ud]
           [%uv bin=@uv]
+          ::  XX  $flow-pith
+          ::
+           %flow
+          [%ud bone=@ud]
+          =load
           =dire
           [%p rcvr=@p]
           [%ud mess=@ud]
@@ -1839,7 +1843,7 @@
       $:  %pawn
           %proof
           [%p rcvr=@p]
-          [%ud life=@ud]  :: XX redundant?
+          [%ud life=@ud]  ::  requester life
           ~
       ==
     ::
@@ -1931,7 +1935,6 @@
           tip=(jug =user=path [duct =ames=path])
           weir=(jug side [tag=term data=*])
       ==
-    ::
     ::
     +$  axle-28-29
       $:  peers=(map ship ship-state-28-29)
@@ -9398,10 +9401,10 @@
               ~|  inner-path/[pat.ack^pat.pok]:pact
               (open-poke-pact pact)
             =/  pok-rcvr=@p
-              ?:  ?=(flow-pith pok)
-                rcvr.pok
-              ?>  ?=(hasx-pith pok)
-              rcvr.pok
+              ?+  pok  !!
+                flow-pith  rcvr.pok
+                hasx-pith  rcvr.pok
+              ==
             ::
             ?:  ?=(%none -.space)
               %-  %+  %*(ev-tace ev-core her her-pok)  odd.veb.bug.ames-state
@@ -11411,7 +11414,11 @@
               ::  coming from %ames) $peek request
               ::
               =/  co  co(ames-state ames-state.core)
-              ?~  pact=(co-make-pact:co [her.core path] pay.req rift.per.core)
+              ::  ignore possible hasx card to not enter in a %prod loop
+              ::
+              =/  pact=(unit pact:pact)
+                q:(co-make-pact:co [her.core path] pay.req rift.per.core)
+              ?~  pact
                 ::  XX don't crash since we are going to block the queue
                 ev-core:core
               ?:  =(~ unix-duct)
@@ -12243,13 +12250,15 @@
           ::  we call the arm directly instead of sending a %meek task
           ::  so we can set up the comet lane which is not in state
           ::
-          ?~  pact=(co-make-pact:co `spar`comet^path ~ rift=0)
+          =/  p=(unit pact:pact)
+            q:(co-make-pact:co `spar`comet^path ~ rift=0)
+          ?~  p
             %-  %^  al-tace  odd.veb.bug.ames-state  comet
                 |.("peek for comet attestation failed")
             al-core
           %-  %^  al-tace  fin.veb.bug.ames-state  comet
               |.("peek for comet attestation proof")
-          (al-emit (give-push comet u.pact (make-lanes comet `[0 lane] *qos)))
+          (al-emit (give-push comet u.p (make-lanes comet `[0 lane] *qos)))
         ::
         ++  al-take-proof
           |=  [=lane:pact hop=@ud =name:pact =data:pact =next:pact]
@@ -12432,9 +12441,22 @@
               (~(put by chums.ames-state) ship.remote known/per)
             ==
           ::
-          ?~  pact=(co-make-pact remote payload rift.per)
+          =/  [hasx=(unit [has=@uvi ser=@ =move]) pact=(unit pact:pact)]
+            [p q]:(co-make-pact remote payload rift.per)
+          =?  co-core  ?=(~ pact)
             ~|  [remote=remote payload=payload rift=rift.per]
-            !!
+            ::  if we can't make the pact for this remote^payload we only
+            ::  handle the %hasx case where the payload will be available
+            ::  in the next arvo event
+            ::
+            ?>  ?=(^ hasx)
+            ::  XX delete this binding when the poke has been processed
+            ::  XX we need a reverse mapping (map ack has) in flow-state
+            ::  XX or eviction policy on bins.ames-state since we have
+            ::     redundantly added the ship?
+            ::
+            =.  bins.ames-state  (~(put by bins.ames-state) [has ser]:u.hasx)
+            (co-emit move.u.hasx)
           =|  new=request-state
           =.  for.new  (~(put ju for.new) hen %sage)
           =.  pay.new  payload
@@ -12449,47 +12471,39 @@
           ?:  =(~ unix-duct)
             %.  co-core
             (slog leaf+"ames: unix-duct pending; will retry %push" ~)
+          ?~  pact
+            co-core
           (co-emit (give-push who u.pact (make-lanes who [lane qos]:per)))
         ::
         +|  %internals
         ::
         ++  co-make-pact
           |=  [p=spar q=(unit path) =per=rift]
-          ^-  (unit pact:pact)
+          ^-  [p=(unit [has=@uvi ser=@ =move]) q=(unit pact:pact)]
           =/  nam  [[ship.p per-rift] [13 ~] path.p]
           ?~  q
             ::  XX check if path.p is also too long ?
             ::
-            `[hop=0 %peek nam]
+            ``[hop=0 %peek nam]
           ::
           =/  man=name:pact  [[our rift.ames-state] [13 ~] u.q]
           ::
           ?~  page=(co-get-page man)
             ::  XX
-            ~&  [%no-page man=man]  ~
+            ~&  [%no-page man=man]  ~^~
           ::  check poke fits in MTU (1472 bytes)
           ::
           =/  poke=pact:pact  [hop=0 %poke nam man u.page]
           =/  ser  p:(fax:plot (en:pact poke))
           ?.  (gth (met 3 ser) 1.472)
-            `poke
-          ::  XX check that u.page fits MTU?
-          ::
-          ::  store original poke bytes keyed by hash
-          ::
+            ``poke
           =/  has  (shax ser)
-          ::  XX delete this binding when the poke has been processed
-          ::  XX we need a reverse mapping (map ack has) in flow-state
-          ::  XX or eviction policy on bins.ames-state since we have
-          ::     redundantly added the ship?
-          ::
-          =.  bins.ames-state  (~(put by bins.ames-state) has ser)
           ::  encrypt hasx path with %chum so only this peer can fetch it
           ::
           =/  per-sat  (~(get by chums.ames-state) ship.p)
           ?.  ?=([~ %known *] per-sat)
             ~&  [%hasx-no-peer ship.p]
-            ~
+            ~^~
           =/  per-fren=fren-state  +.u.per-sat
           =/  hasx-space=space
             :*  %chum
@@ -12503,13 +12517,26 @@
           =/  han=name:pact
             :+  [our rift.ames-state]  [13 ~]
             %+  make-space-path  hasx-space
-            /a/x/1//hasx/(scot %p ship.p)/(scot %uvi has)
+            ::  wrap the poke path under the %hasx namespace
+            ::
+            %+  weld  /a/x/1//hasx/(scot %uvi has)
+            ::  decrypt poke-path
+            ::
+            (pout pith:(open-path [pat her]:man))
+          ::  we have just added this binding, but have not= completed
+          ::  the arvo event that will finalize it in state so co-get-page
+          ::  won't find it at this current event when trying to peek for it.
+          ::  we enqueue a %prod for the next event, when the payload for the
+          ::  %hanx will be available
+          ::
           ?~  page=(co-get-page han)
-            ::  XX log
-            ~&  [%no-hanx-page han=han]  ~
+            ::  XX log?
+            :_  ~
+            `[has ser [hen %pass /hasx-prod %a %prod ship.p ~]]
           ::  XX  leave ack path as is
           ::  XX  check that his new poke fits the MTU?
-        `[hop=0 %poke nam han u.page]
+          ::
+          ``[hop=0 %poke nam han u.page]
         ::
         ++  co-get-page
           |=  =name:pact
@@ -12621,7 +12648,6 @@
           ::
           ?-    typ.wan.pac.nex
               %auth
-            ~&  >  %auth
             =/  nam  [[our rif] [boq ?:(nit ~ [%auth fag])] pat]
             ::  NB: root excluded as it can be recalculated by the client
             ::
@@ -12634,7 +12660,6 @@
             [[hop=0 %page nam dat ~] ~ pof]
           ::
               %data
-            ~&  >  %data
             =/  lss-proof
               =>  [ser=ser ..lss]
               :: ~>  %memo./ames/lss-data
@@ -12910,12 +12935,14 @@
         ++  peek-hasx
           |=  [lyc=gang tyl=(pole knot)]
           ^-  (unit (unit cage))
-          ?.  ?=([%hasx bone=@ bin=@ =dire who=@ mess=@ ~] tyl)
+          ?.  ?=([%hasx bin=@ flow=*] tyl)
             ~
-          =/  bin  (slaw %uvi bin.tyl)
-          =/  who  (slaw %p who.tyl)
-          =/  bon  (slaw %p bone.tyl)
-          =/  mes  (slaw %p mess.tyl)
+          ?.  ?=([%flow bone=@ =load =dire rcvr=@ mess=@ ~] flow.tyl)
+            ~
+          =/  bin  (slaw %uv bin.tyl)
+          =/  who  (slaw %p rcvr.flow.tyl)
+          =/  bon  (slaw %ud bone.flow.tyl)
+          =/  mes  (slaw %ud mess.flow.tyl)
           ?:  |(?=(~ bin) ?=(~ who) ?=(~ bon) ?=(~ mes))
             [~ ~]
           ?.  &(?=(^ lyc) (~(has in u.lyc) u.who))
@@ -12926,7 +12953,7 @@
           ::  flow should exist, unacked; payload outstanding
           ::
           =+  ev-core=(ev-abed:ev ~[//scry] u.who +.u.u.per-sat)
-          =+  fo-core=(fo-abed:fo:ev-core side=[u.bon dire.tyl])
+          =+  fo-core=(fo-abed:fo:ev-core side=[u.bon dire.flow.tyl])
           ?~  (fo-peek:fo-core %poke u.mes)
             ~
           ?~  stored=(~(get by bins.ames-state) u.bin)
@@ -13906,7 +13933,7 @@
       ~
     ::  private, message-level namespaces
     ::
-    ?:  ?=(?(%flow %cork) -.tyl)
+    ?:  ?=(?(%flow %cork %hasx) -.tyl)
       (scry:me-core sample)
     ?:  ?=([%meta req=*] tyl)
       ?+  req.tyl                ~
