@@ -3974,47 +3974,47 @@
         [%reads vane=term cash]        ::  local scries
         [%fling ~]                     ::  anything over the network
     ==
-  +$  perm-arvo  ::TODO  expand
+  +$  perm-arvo
     $%  $:  %ames
-        $%  [%block ~]                                ::  %snub
-            [%reads dash]                             ::  local %keen
-            [%keens ~]                                ::  remote %keen
-            [%write ~]  ::NOTE  agent-namespaced      ::  %grow %tomb %cull %tend %germ %snip
-            [%debug ~]                                ::  %sift %spew
+        $%  [%block ~]                                  ::  %snub
+            [%reads dash]                               ::  local %keen
+            [%keens ~]                                  ::  remote %keen
+            [%write ~]  ::NOTE  agent-namespaced        ::  %grow %tomb %cull %tend %germ %snip
+            [%debug ~]                                  ::  %sift %spew
         ==  ==
       ::
         $:  %behn
-        $%  [%timer ~]                                ::  %wait
+        $%  [%timer ~]                                  ::  %wait
         ==  ==
       ::
         $:  %clay
-        $%  [%local cash]                             ::  %read for local
-            [%peers cash]  ::REVIEW  cash -> ~ ?      ::  %read for remote
-            [%write dash]                             ::  %rite %name %merg %fuse %drop
-            [%crews ~]                                ::  %cred %crow
-            [%rules des=(unit desk)]                  ::  %perm
-            [%stone des=(unit desk)]  ::REVIEW        ::  %tomb
-            [%mount dash]                             ::  %mont %ogre %dirk
+        $%  [%local cash]                               ::  %read for local
+            [%peers ~]                                  ::  %read for remote
+            [%write dash]                               ::  %rite %name %merg %fuse %drop
+            [%crews ~]                                  ::  %cred %crow
+            [%rules des=(unit desk)]                    ::  %perm
+            [%stone des=(unit desk)]                    ::  %tomb
+            [%mount dash]                               ::  %mont %ogre %dirk
           ::
-            [%desks des=(unit desk)]                  ::  %esse %rein %zeal %zest
-            [%pulse ~]                                ::  %tire
-            [%perms ~]                                ::  %seal
-            [%guard ~]                                ::  %ward
+            [%desks des=(unit desk)]                    ::  %esse %rein %zeal %zest
+            [%pulse ~]                                  ::  %tire
+            [%perms ~]                                  ::  %seal
+            [%guard ~]                                  ::  %ward
         ==  ==
       ::
         $:  %dill
-        $%  [%terms ~]                                ::  %shot
-            [%print ~]                                ::  %crud %talk %text
-            [%sylog ~]  ::TODO  name                  ::  %logs
-            [%weigh ~]                                ::  %mass
-            [%press ~]                                ::  %meld %pack
+        $%  [%terms ~]                                  ::  %shot
+            [%print ~]                                  ::  %crud %talk %text
+            [%sylog ~]  ::TODO  name                    ::  %logs
+            [%weigh ~]                                  ::  %mass
+            [%press ~]                                  ::  %meld %pack
         ==  ==
       ::
         $:  %eyre
-        $%  [%setup ~]                                ::  %eauth-host %rule
-            [%serve =path]                            ::  %connect %set-response
-            [%cross ~]                                ::  %approve-origin %reject-origin
-            [%debug ~]                                ::  %spew
+        $%  [%setup ~]                                  ::  %eauth-host %rule
+            [%serve =path]                              ::  %connect %set-response
+            [%cross ~]                                  ::  %approve-origin %reject-origin
+            [%debug ~]                                  ::  %spew
         ==  ==
       ::
         $:  %gall
@@ -4023,27 +4023,24 @@
         ==  ==
       ::
         $:  %iris
-        $%  [%fetch ~]                                ::  %request %cancel-request
+        $%  [%fetch ~]                                  ::  %request
         ==  ==
       ::
         $:  %jael
-        $%  [%privy ~]                                ::  %private-keys
-            [%peers ~]                                ::  %public-keys
-            [%watch ~]                                ::  %listen - set eth source
-            [%turf ~]                                 ::  %turf
-            [%spawn ~]                                ::  %moon
-            [%rekey ~]                                ::  %rekey
-            [%reset ~]                                ::  %step - reset +code
-            ::  xx:  should it just be [%blast ~]
-            [%blast =(set ship)]                      ::  %ruin - pretend to breach
+        $%  [%privy ~]                                  ::  %private-keys
+            [%watch ~]                                  ::  %listen
+            [%moons ~]                                  ::  %moon
+            [%rekey ~]                                  ::  %rekey
+            [%login ~]                                  ::  %step
+            [%blast ~]                                  ::  %ruin
         ==  ==
       ::
         $:  %khan
-        $%  [%thread ~]                               ::  %fard %lard
+        $%  [%twine ~]                                  ::  %fard %lard
         ==  ==
       ::
         $:  %lick
-        $%  [%ports ~]                                :: %spin %shut %spit
+        $%  [%ports ~]                                  ::  %spin %shut %spit
         ==  ==
     ==
   ::
@@ -4360,19 +4357,19 @@
             %arvo
           =/  task=task-user-v1  +.note
           ?-  -.task
-            %ames  [%ames ~]
-            %behn  [%behn ~]
+            %ames  [%super ~]  ::TODO
+            %behn  [%super ~]  ::TODO
           ::
               %clay
             [%super ~]  ::TODO
           ::
-            %dill  [%dill ~]
-            %eyre  [%eyre ~]
-            %gall  [%gall ~]
-            %iris  [%iris ~]
-            %jael  [%jael ~]
-            %khan  [%khan ~]
-            %lick  [%lick ~]
+            %dill  [%super ~]  ::TODO
+            %eyre  [%super ~]  ::TODO
+            %gall  [%super ~]  ::TODO
+            %iris  [%super ~]  ::TODO
+            %jael  [%super ~]  ::TODO
+            %khan  [%super ~]  ::TODO
+            %lick  [%super ~]  ::TODO
           ::
             %syscall  [%super ~]
             ::  TODO
