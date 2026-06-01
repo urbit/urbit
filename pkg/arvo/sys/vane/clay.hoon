@@ -1511,12 +1511,20 @@
   ++  apply-built-ins
     |=  files=(map path (each page lobe))
     ^+  files
+    ::  built-ins come from clay, so never apply there
+    ::REVIEW  feels weird because .files decoupled from .syd,
+    ::        but in practice they're always "our"/"local" files...
+    ::
+    ?:  =(%base syd)  files
     %-  ~(gas by files)
     %+  murn
       ^-  (list path)
-      :~  /mar/mime/hoon
+      :~  /mar/noun/hoon
+          /mar/hoon/hoon
+          /mar/mime/hoon
           /mar/bill/hoon
           /mar/seal/hoon
+          /mar/kelvin/hoon
       ==
     =/  =dojo  (~(got by dos.rom) %base)
     =/  =yaki  (~(got by hut.ran) (~(got by hit.dom.dojo) let.dom.dojo))
