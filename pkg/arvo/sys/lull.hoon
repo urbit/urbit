@@ -3682,7 +3682,7 @@
     $%  [%clog id=*]                                    ::  clog notification
         [%deal p=sack q=term r=deal]                    ::  full transmission
         [%sear =ship]                                   ::  clear pending queues
-        [%jolt =desk =dude]                             ::  (re)start agent
+        [%jolt =desk =dude]                             ::  deprecated
         [%idle =dude]                                   ::  suspend agent
         [%load =load]                                   ::  load agent
         [%nuke =dude]                                   ::  delete agent
@@ -4017,11 +4017,9 @@
             [%debug ~]                                ::  %spew
         ==  ==
       ::
-        $:  %gall  ::REVIEW  lifecycle perms
-        $%  [%reset des=(unit desk) dud=(unit dude)]  ::  %jolt
-            [%pause dud=(unit dude)]                  ::  %idle
-            [%clear dud=(unit dude)]                  ::  %nuke
-            [%debug ~]                                ::  %spew %sift
+        $:  %gall
+        $%  [%clear dud=(unit dude)]                    ::  %nuke
+            [%debug ~]                                  ::  %spew %sift
         ==  ==
       ::
         $:  %iris
@@ -4163,9 +4161,7 @@
         ==  ==
       ::
         $:  %gall
-        $%  [%jolt =desk =dude]
-            [%idle =dude]
-            [%nuke =dude]
+        $%  [%nuke =dude]
           ::
             [%spew veb=(list verb:gall)]
             [%sift dudes=(list dude)]
