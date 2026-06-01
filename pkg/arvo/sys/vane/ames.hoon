@@ -1814,6 +1814,12 @@
           ~
       ==
     ::
+    +$  hasx-peek
+      $:  %hasx
+          [%uv bin=@uv]
+          ~
+      ==
+    ::
     +$  hasx-pith
       $:  %hasx
           [%uv bin=@uv]
@@ -9265,9 +9271,10 @@
         ::      for-corks=%cor
         ::      for-poke-payloads=%pok
         ::      for-flubs=%fub  :: XX not used
-        ::      for-hasx=%hax
+        ::      for-hasx-pokes=%hax
+        ::      for-hasx-peeks=%pax
         ::  ==
-        +$  were  ?(%van %nax %ack %cor %pok %fub %hax)
+        +$  were  ?(%van %nax %ack %cor %pok %fub %hax %pax)
         +$  ev-flow-wire
           $:  %mesa
               %flow
@@ -9398,8 +9405,15 @@
             ::      state is changed
             ::
             =/  [=space cyf=(unit @) pok=(pole iota) ack=(pole iota)]
-              ~|  inner-path/[pat.ack^pat.pok]:pact
+              ~|  inner-path/[pat.ack pat.pok]:pact
               (open-poke-pact pact)
+            ?:  ?&  ?=(hasx-peek ack)
+                    ?=(hasx-peek pok)
+                ==
+              ::  %none namespace uses the path as is
+              ::
+              %^  ev-emit  hen  %pass
+              [(fo-wire:fo %pax) %a %meek [none/~ [her pat]:pok.pact]]
             =/  pok-rcvr=@p
               ?+  pok  !!
                 flow-pith  rcvr.pok
@@ -9453,11 +9467,11 @@
             ::
             =?  ev-core  ?=(~ lane.per)  (ev-update-qos %dead last-contact=now)
             ::
+            ::
             ?.  ?|  ?=(hasx-pith pok)      ::  /hasx namespace, peek for tmp binding
                     ?&  ?=(flow-pith pok)  ::  imcompete flow poke
                         (gth (div (add tob.data.pact 1.023) 1.024) 1)
-                    ==
-                ==
+                ==  ==
               ::  authenticate one-fragment %poke
               ::
               ?>  %-  authenticate
@@ -9483,7 +9497,7 @@
             ::
             %-  (ev-tace msg.veb |.("hear incomplete %poke {dat}"))
             =+  %.  ~
-                 %+  ev-tace  fin.veb
+                %+  ev-tace  fin.veb
                 ?+    pok  !!
                   flow-pith  |.("peek for poke payload {dat}")
                   hasx-pith  |.("peek for hasx binding {dat}")
@@ -9800,9 +9814,7 @@
           =/  message-path=(pole iota)  (validate-path path.p.sage)
           =+  fo-core=(fo-abed:fo side)
           ::
-          ?:  ?|  =(%cor were)
-                  =(%fub were)
-              ==
+          ?:  |(=(%cor were) =(%fub were))
             ::  validate %cork path and wire
             ::
             ?>  ?&  ?=(cork-pith message-path)
@@ -9834,13 +9846,16 @@
           ::
           ::  XX  validate that wire and path match?
           ::
-          ::
-          ?:  =(%hax were)
-            ::  de-serialized q.sage and construct %poke
+          ?:  ?=(?(%hax %pax) were)
+            ::  de-serialized q.sage and construct %poke/%peek
             ::
             ?>  ?=([%message %hasx @] q.sage)
             =+  ;;  blob=@  +.q.q.sage
-            (hear-poke:ev-pact ~ *lane:pact pact=(parse-packet blob))
+            =+  pact=(parse-packet blob)
+            ?-  were
+              %hax  ?>(?=(%poke +<.pact) (hear-poke:ev-pact ~ *@ux pact))
+              %pax  ?>(?=(%peek +<.pact) (hear-peek:ev-pact *@ux name.pact))
+            ==
           ?>  ?=(flow-pith message-path)
           ::
           ?:  =(%pok were)
@@ -12508,24 +12523,27 @@
             =/  has  (shax ser)
             =/  ham=name:pact
               :+  [ship.p per-rift]  [13 ~]
-              %+  make-space-path  hasx-space
-              ::  wrap the poke path under the %hasx namespace
+              ::  %chum namespace is used for any path encrypted with all
+              ::  the other namespaces
               ::
-              %+  weld  /a/x/1//hasx/(scot %uvi has)
-              ::  decrypt ack-path
-              ::
-              (pout pith:(open-path [pat her]:nam))
-            ::  for %peeks, .nam can be arbitrarily long but we capped them
-            ::  at (bex 16) = 65.535) so we shouldn't add the original .nam to
-            ::  the %poke packet
+              (make-space-path hasx-space /a/x/1//hasx/(scot %uvi has))
             ::
             ?^  page=(co-get-page ham)
               ::  XX  check that his new poke fits the MTU?
               ::
+              ::  for %peeks, .nam can be arbitrarily long but we cap them
+              ::  at (bex 16) = 65.535) so we shouldn't add the original .nam
+              ::  to the %poke packet
+              ::  XX have ack = pok = /chum/.../a/x/1//hasx/[...]
+              ::     for the ack we switch lifes to encode the /hasx path
               ::
-              :+  ~  ~
-              ^-  pact:pact
-              [hop=0 %poke nam(pat /) ham u.page]
+              =.  pat.nam
+                ?>  ?=([%chum *] hasx-space)
+                =,  hasx-space
+                %+  make-space-path
+                  hasx-space(server-life client-life, client-life server-life)
+                /a/x/1//hasx/(scot %uvi has)
+              ``[hop=0 %poke nam(pat pat.ham) ham u.page]
           :_  ~
           ::  %prod will emit the poke pact to tell the payload
           ::  server to turn around and +peek for the has -> ser binding.
@@ -12974,13 +12992,22 @@
           ^-  (unit (unit cage))
           ?.  ?=([%hasx bin=@ flow=*] tyl)
             ~
+          ?~  bin=(slaw %uv bin.tyl)
+            [~ ~]
           ?.  ?=([%flow bone=@ =load =dire rcvr=@ mess=@ ~] flow.tyl)
-            ~
-          =/  bin  (slaw %uv bin.tyl)
+            ::  hash-bindings for %peeks
+            ::
+            ?^  flow.tyl
+              [~ ~]
+            ?~  stored=(~(get by bins.ames-state) u.bin)
+              ~
+            ``message/!>(hasx/u.stored)
+          ::  hash-bindings for %pokes
+          ::
           =/  who  (slaw %p rcvr.flow.tyl)
           =/  bon  (slaw %ud bone.flow.tyl)
           =/  mes  (slaw %ud mess.flow.tyl)
-          ?:  |(?=(~ bin) ?=(~ who) ?=(~ bon) ?=(~ mes))
+          ?:  |(?=(~ who) ?=(~ bon) ?=(~ mes))
             [~ ~]
           ?.  &(?=(^ lyc) (~(has in u.lyc) u.who))
             ~
