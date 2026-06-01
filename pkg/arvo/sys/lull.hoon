@@ -3969,10 +3969,10 @@
         [%super ~]  ::  anything, required for syscalls
     ==
   +$  perm-gall
-    $%  [%write dude=?(~ dude)]        ::  local pokes
-        [%watch dude=?(~ dude) =path]  ::  local watches
-        [%reads vane=term cash]        ::  local scries
-        [%fling ~]                     ::  anything over the network
+    $%  [%write dude=(unit dude)]        ::  local pokes
+        [%watch dude=(unit dude) =path]  ::  local watches
+        [%reads vane=term cash]          ::  local scries
+        [%fling ~]                       ::  anything over the network
     ==
   +$  perm-arvo
     $%  $:  %ames
@@ -4349,10 +4349,10 @@
         ?-  -.note
             %agent
           ?-  -.task.note
-            %watch             [%watch name.note path.task.note]
-            %watch-as          [%watch name.note path.task.note]
-            %leave             [%watch name.note ~]
-            ?(%poke %poke-as)  [%write name.note]
+            %watch             [%watch `name.note path.task.note]
+            %watch-as          [%watch `name.note path.task.note]
+            %leave             [%watch `name.note ~]
+            ?(%poke %poke-as)  [%write `name.note]
           ==
             %arvo
           =/  task=task-user-v1  +.note
