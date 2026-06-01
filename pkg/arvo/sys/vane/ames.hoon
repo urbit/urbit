@@ -4081,7 +4081,7 @@
         |=  old=axle-32
         ^-  axle
         ~>  %slog.0^leaf/"ames: migrating from state %32 to %33"
-        old(core [core.old bins=~])
+        old(core [core.old bins=~ lids=~])
       ::
       --
     ::
@@ -9898,6 +9898,13 @@
           %-  ~(rep by listeners)
           |=  [[hen=duct ints=(set ints)] core=_ev-core]
           =.  tip.per.core  (~(del ju tip.per.core) path hen ames-path)
+          ::  if this packet was too big to handle, remove hash-binding
+          ::
+          =+  hasx=(~(get by lids.ames-state.core) hen)
+          =?  bins.ames-state.core  ?=(^ hasx)
+            (~(del by bins.ames-state.core) u.hasx)
+          =?  lids.ames-state.core  ?=(^ hasx)
+            (~(del by lids.ames-state.core) hen)
           %-  ~(rep by ints)
           |=  [int=^ints c=_core]
           ?@  int
@@ -12473,12 +12480,10 @@
             ::  in the next arvo event
             ::
             ?>  ?=(^ hasx)
-            ::  XX delete this binding when the poke has been processed
-            ::  XX we need a reverse mapping (map ack has) in flow-state
-            ::  XX or eviction policy on bins.ames-state since we have
-            ::     redundantly added the ship?
+            ::  we will delete this binding when the poke has been processed
             ::
             =.  bins.ames-state  (~(put by bins.ames-state) [has ser]:u.hasx)
+            =.  lids.ames-state  (~(put by lids.ames-state) hen has.u.hasx)
             (co-emil moz.u.hasx)
           =|  new=request-state
           =.  for.new  (~(put ju for.new) hen %sage)

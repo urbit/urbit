@@ -1621,6 +1621,7 @@
                                             ::  (always %ames so we can guarantee
                                             ::   communication with past peers)
         bins=(map @uvi @)                   ::  temporary hash-addressed bindings
+        lids=(map duct @uvi)                ::  reverse hash-addressed bindings
     ==
   ::
   +$  dead-timer  [=duct =wire date=@da]
