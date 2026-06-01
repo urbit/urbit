@@ -12498,7 +12498,8 @@
             ==
           ?~  q
             ::  %peeks
-            ::  XX check if path.p is also too long ?
+            ::
+            ::  check if path.p fits in the MTU
             ::
             =/  peek=pact:pact  [hop=0 %peek nam]
             =/  ser  p:(fax:plot (en:pact peek))
@@ -12514,15 +12515,25 @@
               ::  decrypt ack-path
               ::
               (pout pith:(open-path [pat her]:nam))
-            :_  ~
-            :^  ~  has  ser
-            ::  XX  emit poke pact to tell the payload
-            ::  producer to turn around and +peek for the
-            ::  has -> ser binding.
-            ::  this should be handled informally by the mesa
-            ::  driver, but we should also write the spec for it
+            ::  for %peeks, .nam can be arbitrarily long but we capped them
+            ::  at (bex 16) = 65.535) so we shouldn't add the original .nam to
+            ::  the %poke packet
             ::
-            ~
+            ?^  page=(co-get-page ham)
+              ::  XX  check that his new poke fits the MTU?
+              ::
+              ::
+              :+  ~  ~
+              ^-  pact:pact
+              [hop=0 %poke nam(pat /) ham u.page]
+          :_  ~
+          ::  %prod will emit the poke pact to tell the payload
+          ::  server to turn around and +peek for the has -> ser binding.
+          ::
+          ::  this should be handled informally by the mesa
+          ::  driver (but formal %poke handling is also supported)
+          ::
+          `[has ser [hen %pass /hasx-prod %a %prod ship.p ~]~]
           ::  %pokes
           =/  man=name:pact  [[our rift.ames-state] [13 ~] u.q]
           ::
@@ -12560,7 +12571,6 @@
             ::  XX  check that his new poke fits the MTU?
             ::
             ``[hop=0 %poke nam han u.page]
-          ::  XX log?
           :_  ~
           `[has ser [hen %pass /hasx-prod %a %prod ship.p ~]~]
 
