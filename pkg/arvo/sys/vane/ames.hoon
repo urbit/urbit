@@ -9483,6 +9483,13 @@
                 [her.pok.pact (pout pok)]
                 ;;(gage:mess (cue (decrypt-spac space dat.data cyf)))
               ==
+            ::  authenticate %auth fragment
+            ::
+            ?>  %-  authenticate
+                :+  (recover-root:verifier:lss proof=(rip 8 dat.data))
+                  aut.data
+                pok.pact
+            ::
             =,  bug.ames-state
             ::  don't peek if the message has been already acked
             ::
