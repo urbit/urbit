@@ -10026,6 +10026,11 @@
               ::  XX what if other listener subscribed to %rate gifts?
               ::
               :: (~(rep by u.ints) |=([=ints f=_for.u.ms] (~(del ju f) hen ints)))
+            =+  hasx=(~(get by lids.ames-state.core) hen)
+            =?  bins.ames-state.core  ?=(^ hasx)
+              (~(del by bins.ames-state.core) u.hasx)
+            =?  lids.ames-state.core  ?=(^ hasx)
+              (~(del by lids.ames-state.core) hen)
             core(tip.per (~(del ju tip.per.core) path hen ames-path))
           =+  ?^  listener  ~
               ((ev-tace odd.veb.bug.ames-state |.("listener not in pit")) ~)
