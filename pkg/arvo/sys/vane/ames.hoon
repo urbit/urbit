@@ -1823,14 +1823,14 @@
     +$  hasx-pith
       $:  %hasx
           [%uv bin=@uv]
+          [%p rcvr=@p]
           ::  XX  $flow-pith
           ::
-           %flow
-          [%ud bone=@ud]
-          =load
-          =dire
-          [%p rcvr=@p]
-          [%ud mess=@ud]
+          ::  %flow
+          :: [%ud bone=@ud]
+          :: =load
+          :: =dire
+          :: [%ud mess=@ud]
           ~
       ==
     ::
@@ -12606,12 +12606,14 @@
           =/  han=name:pact
             :+  [our rift.ames-state]  [13 ~]
             %+  make-space-path  hasx-space
-            ::  wrap the poke path under the %hasx namespace
-            ::
-            %+  weld  /a/x/1//hasx/(scot %uvi has)
-            ::  decrypt poke-path
-            ::
-            (pout pith:(open-path [pat her]:man))
+            /a/x/1//hasx/(scot %uvi has)/(scot %p ship.p)
+            :: XX
+            :: ::  wrap the poke path under the %hasx namespace
+            :: ::
+            :: %+  weld  /a/x/1//hasx/(scot %uvi has)
+            :: ::  decrypt poke-path
+            :: ::
+            :: (pout pith:(open-path [pat her]:man))
           ::  we have just added this binding, but have not completed
           ::  the arvo event that will finalize it in state so co-get-page
           ::  won't find it at this current event when trying to peek for it.
