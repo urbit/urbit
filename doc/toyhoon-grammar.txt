@@ -50,9 +50,9 @@ MoreWides -> ace Wide MoreWides
 MoreWides -> ε
 Wide -> cltr( Wide ace Wide MoreWides )
 Wide -> [ Wide ace Wide MoreWides ]
-MoreTalls -> Tall gap MoreTalls
+MoreTalls -> gap Tall MoreTalls
 MoreTalls -> ε
-Tall -> cltr_ Tall gap Tall gap MoreTalls
+Tall -> cltr_ Tall gap Tall MoreTalls gap_stis
 LayoutElementW -> sym
 LayoutElementW -> WideLayout
 LayoutElementW -> tar
