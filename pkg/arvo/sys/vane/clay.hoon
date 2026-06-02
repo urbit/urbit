@@ -154,7 +154,7 @@
         $(vaz t.vaz)
       ::
       ++  ford
-        !.
+        !:
         =>  |%
             +$  args
               $+  args
@@ -1343,7 +1343,6 @@
           $:  files=(map path (each page lobe))
               file-store=(map lobe page)
               verb=@
-              bud=_bud
           ==
         ::
         +$  bush
@@ -2236,7 +2235,7 @@
       ?:((~(has by hut.ran) p.lok) `p.lok ~)
     (bind (case-to-aeon-before lim lok) aeon-to-tako:ze)
   ::
-  ++  prep-pill
+  ++  make-arvo
     |=  pil=(unit pill)
     ^-  (unit *)
     ?~  pil  ~
@@ -2290,14 +2289,6 @@
       %2  ~&  %vere-fail  (mean p.res)
     ==
   ::
-  ++  get-ford
-    ^-  (unit @t)
-    =/  den  ((de now rof hen ruf) our %base)
-    =/  res  (aver:den ~ %q da+now /lib/ford/hoon)
-    ~&  >  [%get-ford ?=([~ ~ %hoon *] res)]
-    ?.  ?=([~ ~ %hoon *] res)  ~
-    (mole |.((page-to-cord u.u.res)))
-  ::
   ++  get-pill
     |=  tak=tako
     ^-  (unit pill)
@@ -2307,29 +2298,12 @@
     ?~  pil  ~
     =/  foo=(unit page)  (~(get by lat.ran) u.pil)
     ?~  foo  ~
-    :: =/  bar  !<(@ q.u.foo)
-    ~&  >>  [%get-pill-cell ?=([~ %pill ^] foo)]
     =+  ;;(pil=pill q.u.foo)
-    ~&  >>>  -.pil
     =?  pil  ?=(%cash -.pil)
       ^-  $>(%pill pill)
       [%pill +<.pil]
     ?>  ?=(%pill -.pil)
-    ::  XX unnecessary?
-    ::
-    =+  o=(pair ,* ,*) :: ,*)
-    =/  convert
-      |=  ova=(list o)
-      ^-  (list unix-event)
-      %+  turn  ova
-      |=  ovo=o
-      =/  sof  ((soft unix-event) ovo)
-      ?~  sof
-        ~&  [%unknown-event p.ovo]
-        !!
-      ~&  [%known-event (wire p.ovo) (@tas -.q.ovo)]
-      u.sof
-    `[%pill nam.pil boot-ova.pil (convert kernel-ova.pil) (convert userspace-ova.pil)]
+    `[%pill [nam boot-ova kernel-ova userspace-ova]:pil]
   ::
   +$  pill
     $%  [%ivory p=(list)]
@@ -2359,85 +2333,23 @@
         unix-task
     ==
   ::
-  ++  make-bud
-    |=  arv=(unit *)
-    ^+  bud
-    ~>  %bout.[1 %make-bud]
-    ?~  arv  bud
-    =/  wish  (cury wisher u.arv)
-    =/  hov  ;;(@ud (wish 'hoon-version'))
-    ~&  >>>  [%make-bud hoon-version=hov]
-    ::  TODO this was prod
-    ::
-    ?:  =(135 hov)
-      =/  zus=vase  ;;(vase (wish '!>(..zuse)'))
-      =/  nav=vase  ;;(vase (wish '(slap !>(..zuse) !,(*hoon nave:clay))'))
-      =/  cor=vase  ;;(vase (wish '(slap !>(..zuse) !,(*hoon cork))'))
-      =/  sam=vase  ;;(vase (wish '(slap !>(..zuse) !,(*hoon same))'))
-      =/  mim=vase  ;;(vase (wish '(slap !>(..zuse) !,(*hoon mime))'))
-      =/  cas=vase  ;;(vase (wish '(slap !>(..zuse) !,(*hoon cass:clay))'))
-      ~&  >  [%zuse-mug-135 `@ux`(mug zus)]
-      :*  zuse=zus
-          nave=nav
-          cork=cor
-          same=sam
-          mime=mim
-          cass=cas
-      ==
-    ?>  =(136 hov)
-    ::  XX which conditions?
-    ::
-    ::  untyped
-    ::
-    =/  zus  (wish '!>(..zuse)')
-    =/  nav  (wish '(slub !>(..zuse) !,(*hoon nave:clay))')
-    =/  cor  (wish '(slub !>(..zuse) !,(*hoon cork))')
-    =/  sam  (wish '(slub !>(..zuse) !,(*hoon same))')
-    =/  mim  (wish '(slub !>(..zuse) !,(*hoon mime))')
-    =/  cas  (wish '(slub !>(..zuse) !,(*hoon cass:clay))')
-    ~&  >  [%zuse-mug-136 `@ux`(mug zus)]
-    ::  TODO try met 3 jam zus hed tel
-    ::
-    =/  zus=vase  (next-vase:h136 ;;(vase:h136 zus))
-    =/  nav=vase  (next-vase:h136 ;;(vase:h136 nav))
-    =/  cor=vase  (next-vase:h136 ;;(vase:h136 cor))
-    =/  sam=vase  (next-vase:h136 ;;(vase:h136 sam))
-    =/  mim=vase  (next-vase:h136 ;;(vase:h136 mim))
-    =/  cas=vase  (next-vase:h136 ;;(vase:h136 cas))
-     :: XX combine with above
-    ::
-    ~&  >  [%zuse-mug-136-post-migration `@ux`(mug zus)]
-    :*  zuse=zus
-        nave=nav
-        cork=cor
-        same=sam
-        mime=mim
-        cass=cas
-    ==
-  ::
   ++  make-zuse
     |=  arv=(unit *)
+    ::  XX cask?
     ^-  vase
     ~>  %bout.[1 %make-zuse]
-    ?~  arv   zuse.bud
+    ?~  arv   !>(..zuse)
     =/  wish  (cury wisher u.arv)
     =/  hov  ;;(@ud (wish 'hoon-version'))
     ~&  >>>  [%mz-make-zuse hoon-version=hov]
     ::
+    =/  zus  (wish '!>(..zuse)')  ::  untyped
     ?:  =(135 hov)
-      =/  zus=vase  ;;(vase (wish '!>(..zuse)'))
-      ~&  >  [%mz-zuse-mug `@ux`(mug zus)]
-      zus
+      ;;(vase zus)
     ?>  =(136 hov)
-    ::  untyped
+    ::  XX need old vase
     ::
-    =/  zus  (wish '!>(..zuse)')
-    ~&  >  [%mz-zuse-mug-old `@ux`(mug zus)]
-    ::  TODO try met 3 jam zus hed tel
-    ::
-    =/  zus=vase  (next-vase:h136 ;;(vase:h136 zus))
-    ~&  >  [%mz-zuse-mug `@ux`(mug zus)]
-    zus
+    (next-vase:h136 ;;(vase:h136 zus))
   ::
   ++  wisher
     |=  [arv=* txt=@t]
@@ -2461,45 +2373,38 @@
     ::  pre-compute current ford type before bud gets updated
     ::
     =/  current-ford=vase
-      ~>  %memo./clay/ford-type
       (slub zuse.bud (ream ford-cord))
-    =/  prepped=(unit *)
-      ?.  !=(%base syd)  ~
+    =/  arv=(unit *)
+      ?:  =(%base syd)  ~
       =/  pil=(unit pill)  (get-pill tak)
-      ~&  >  [%pil ?=(^ pil)]
-      =>  [prep-pill=prep-pill pil=pil]
+      ~&  >  [%got-pill ?=(^ pil)]
+      =>  [make-arvo=make-arvo pil=pil]
       ~>  %memo./clay/ford
-      (prep-pill pil)
-    =?  bud  !=(%base syd)
-      =/  foo  (make-zuse prepped)
-      ~&  >  [%prepped ?=(^ prepped)]
-      =>  [make-bud=make-bud prepped=prepped]
+      (make-arvo pil)
+    =/  zud
+      =>  [make-zuse=make-zuse arv=arv]
       ~>  %memo./clay/ford
-      (make-bud prepped)
-    ~&  >  [%tf-bud-zus-mug `@ux`(mug zuse.bud)]
-    ~&  >  [syd (text zuse.bud)]
+      (make-zuse arv)
+    ~&  >  [%tf-zus-mug `@ux`(mug zud)]
     =/  fus=vase
-      ?~  prepped
+      ?~  arv
         ::  current era: compile ford-cord directly
         ::
-        (slub zuse.bud (ream ford-cord))
+        (slub zud (ream ford-cord))
       ::  old era: compile ford-cord on the old system where
       ::  ut and types are consistent, then migrate the result.
       ::  use the current-system ford type (same arm layout)
       ::  paired with the old-system noun.
       ::
-      =/  wish  (cury wisher u.prepped)
+      =/  wish  (cury wisher u.arv)
       =/  hov  ;;(@ud (wish 'hoon-version'))
       ?>  |(=(135 hov) =(136 hov))
       ?:  =(135 hov)
-        (slub zuse.bud (ream ford-cord))
+        (slub zud (ream ford-cord))
       ~>  %bout.[1 %old-ford]
       =/  builder  (wish '|=(fc=@t q:(slub !>(..zuse) (ream fc)))')
       =/  fus-noun  (slum builder ford-cord)
-      ~&  >  [%old-ford-noun-mug (mug fus-noun)]
-      ~&  >  [%current-ford-type-mug (mug p.current-ford)]
       [p.current-ford fus-noun]
-    ~&  >  [%tako-ford-fus (mug fus)]
     =/  files  (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
     ~(. (build-ford-api:fusion fus) files lat.ran veb.bug)
   ::
@@ -2915,7 +2820,7 @@
       %-  ~(dif by (~(uni by original) changes))
       %-  ~(gas by *(map path (each page lobe)))
       (turn ~(tap in deletes) |=(=path [path |+*lobe]))
-    =/  =args:ford:fusion  [files lat.ran veb.bug bud]
+    =/  =args:ford:fusion  [files lat.ran veb.bug]
     ::
     =^  change-cages  args  (checkout-changes args changes)
     =/  sane-continuation  (sane-changes changes change-cages)
@@ -3157,7 +3062,7 @@
         =/  original=(map path (each page lobe))
           (~(run by q.yaki) |=(=lobe |+lobe))
         (~(uni by original) changes)
-      =/  =args:ford:fusion  [all-changes lat.ran veb.bug bud]
+      =/  =args:ford:fusion  [all-changes lat.ran veb.bug]
       =^  all-change-cages  args  (checkout-changes args all-changes)
       =/  ccs=(list [=path =lobe =cage])  ~(tap by change-cages)
       |-  ^+  *sane-changes
@@ -4018,7 +3923,7 @@
       (~(put by mon) pot [her syd ud+for-yon] spur)
     =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) u.yon))
     =/  files  (~(run by q.yaki) |=(=lobe |+lobe))
-    =/  =args:ford:fusion  [files lat.ran veb.bug bud]
+    =/  =args:ford:fusion  [files lat.ran veb.bug]
     =^  mim  args
       (checkout-mime args ~ ~(key by files))
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
@@ -5510,7 +5415,6 @@
   ::
   ++  ford
     |=  [her=ship syd=desk yon=(unit aeon)]
-    ~&  >  [%ford-lu syd]
     =/  den  ((de now rof hen ruf) her syd)
     %-  tako-ford:den
     ::TODO  is this +got after +got semantically correct?
