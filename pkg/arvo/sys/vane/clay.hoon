@@ -1868,104 +1868,155 @@
       (^trace verb pri print)
     --
   ::
-  ::  +build-ford-api: wrap a compiled ford vase in a typed interface
+  ::  +noun-to-vase: coerce a noun to a vase
+  ::  +noun-to-cage: coerce a noun to a cage
   ::
-  ::    takes the result of (slap zuse.bud (ream ford-cord)) and
-  ::    produces a +ford-api core with the given args baked in.
-  ::    outputs are in the foreign type universe.
+  ::    for converting untyped results from slum back to typed values.
+  ::    if old, migrates h136 type metadata via next-vase.
+  ::
+  ++  noun-to-vase
+    |=  [old=? n=*]
+    ^-  vase
+    =/  v  ?:(old (slum next-vase:h136 n) n)
+    !<(vase [-:!>(*vase) v])
+  ::
+  ++  noun-to-cage
+    |=  [old=? n=*]
+    ^-  cage
+    ?>  ?=(^ n)
+    =/  vas  ?:(old (slum next-vase:h136 +.n) +.n)
+    !<(cage [-:!>(*cage) [;;(@tas -.n) vas]])
+  ::
+  ::  +build-ford-api: construct ford-api from a zuse noun.
+  ::
+  ::    compiles ford-cord, extracts vase-manipulation gates, and
+  ::    builds the ford-api door.  if wish is set, uses old-era gates
+  ::    from that system.  h136 outputs are migrated via next-vase.
   ::
   ++  build-ford-api
-    |=  raw=vase
-    ^-  ford-api
-    =/  fuz  (slub raw [%limb %fusion])
-    =/  ford-gate  (slub fuz [%limb %ford])
-    |_  [files=(map path (each page lobe)) file-store=(map lobe page) verb=@]
-    +*  cor  (slym ford-gate [files file-store verb])
+    |=  [zud=* wish=(unit $-(@t *))]
+    =/  wis=$-(@t *)  ?~(wish |=(@ !!) u.wish)
+    =/  old=?
+      ?~  wish  |
+      =/  hov  ;;(@ud (wis 'hoon-version'))
+      ?>  |(=(135 hov) =(136 hov))
+      =(136 hov)
+    =/  my-slam=*  ?~(wish slam (wis 'slam'))
+    =/  my-slub=*  ?~(wish slub (wis 'slub'))
+    =/  my-slop=*  ?~(wish slop (wis 'slop'))
+    =/  my-slym=*  ?~(wish slym (wis 'slym'))
+    =/  raw  (slum my-slub [zud (ream ford-cord)])
+    =/  fuz  (slum my-slub [raw [%limb %fusion]])
+    =/  ford-gate  (slum my-slub [fuz [%limb %ford]])
+    =/  ntv
+      |=  [old=? n=*]
+      ^-  vase
+      =/  v  ?:(old (slum next-vase:h136 n) n)
+      !<(vase [-:!>(*vase) v])
+    =/  ntc
+      |=  [old=? n=*]
+      ^-  cage
+      ?>  ?=(^ n)
+      =/  vas  ?:(old (slum next-vase:h136 +.n) +.n)
+      !<(cage [-:!>(*cage) [;;(@tas -.n) vas]])
+    |=  [files=(map path (each page lobe)) file-store=(map lobe page) verb=@]
+    =/  cor  (slum my-slym [ford-gate [files file-store verb]])
+    |%
     ++  read-file
       |=  =path
       ^-  cage
-      !<(cage (slam (slub cor [%limb %read-file]) !>(path)))
+      (ntc [old +:(slum my-slam [(slum my-slub [cor [%limb %read-file]]) !>(path)])])
     ::
     ++  build-file
       |=  =path
       ^-  vase
-      !<(vase (slam (slub cor [%limb %build-file]) !>(path)))
+      (ntv [old +:(slum my-slam [(slum my-slub [cor [%limb %build-file]]) !>(path)])])
     ::
     ++  build-nave
       |=  mak=mark
       ^-  vase
-      !<(vase (slam (slub cor [%limb %build-nave]) !>(mak)))
+      (ntv [old +:(slum my-slam [(slum my-slub [cor [%limb %build-nave]]) !>(mak)])])
     ::
     ++  build-dais
       |=  mak=mark
       ^-  dais
-      =/  nav=vase  (build-nave mak)
+      =/  nav  (slum my-slam [(slum my-slub [cor [%limb %build-nave]]) !>(mak)])
       ^-  dais
-      =>  [nav=nav ..zuse]
       |_  sam=vase
       ++  diff
         |=  new=vase
-        (slam (slub nav limb/%diff) (slop sam new))
-      ++  form  !<(mark (slub nav limb/%form))
+        ^-  vase
+        (ntv [old +:(slum my-slam [(slum my-slub [nav limb/%diff]) (slum my-slop [sam new])])])
+      ++  form  ;;(mark +:(slum my-slub [nav limb/%form]))
       ++  join
         |=  [a=vase b=vase]
         ^-  (unit (unit vase))
-        =/  res=vase  (slam (slub nav limb/%join) (slop a b))
-        ?~  q.res    ~
-        ?~  +.q.res  [~ ~]
-        ``(slub res !,(*hoon ?>(?=([~ ~ *] .) u.u)))
+        =/  res  +:(slum my-slam [(slum my-slub [nav limb/%join]) (slum my-slop [a b])])
+        ?~  res    ~
+        ?~  +.res  [~ ~]
+        ``(ntv [old +.+.res])
       ++  mash
         |=  [a=[=ship =desk diff=vase] b=[=ship =desk diff=vase]]
         ^-  (unit vase)
-        =/  res=vase
-          %+  slam  (slub nav limb/%mash)
-          %+  slop
-            :(slop [[%atom %p ~] ship.a] [[%atom %tas ~] desk.a] diff.a)
-          :(slop [[%atom %p ~] ship.b] [[%atom %tas ~] desk.b] diff.b)
-        ?~  q.res  ~
-        `(slub res !,(*hoon ?>((^ .) u)))
+        =/  res
+          %+  slum  my-slam
+          :-  (slum my-slub [nav limb/%mash])
+          %+  slum  my-slop
+          :-  %+  slum  my-slop
+              :-  [[%atom %p ~] ship.a]
+              (slum my-slop [[[%atom %tas ~] desk.a] diff.a])
+          %+  slum  my-slop
+          :-  [[%atom %p ~] ship.b]
+          (slum my-slop [[[%atom %tas ~] desk.b] diff.b])
+        ?~  +.res  ~
+        `(ntv [old +.+.res])
       ++  pact
         |=  diff=vase
-        (slam (slub nav limb/%pact) (slop sam diff))
+        ^-  vase
+        (ntv [old +:(slum my-slam [(slum my-slub [nav limb/%pact]) (slum my-slop [sam diff])])])
       ++  vale
-        |:  noun=q:(slub nav !,(*hoon *vale))
-        (slam (slub nav limb/%vale) noun/noun)
+        |=  noun=*
+        ^-  vase
+        (ntv [old +:(slum my-slam [(slum my-slub [nav limb/%vale]) noun/noun])])
       --
     ::
     ++  build-cast
       |=  [a=mark b=mark]
       ^-  vase
-      !<(vase (slam (slub cor [%limb %build-cast]) (slop !>(a) !>(b))))
+      (ntv [old +:(slum my-slam [(slum my-slub [cor [%limb %build-cast]]) (slum my-slop [!>(a) !>(b)])])])
     ::
     ++  build-tube
       |=  [a=mark b=mark]
       ^-  tube
-      !<(tube (slam (slub cor [%limb %build-tube]) (slop !>(a) !>(b))))
+      =/  tub  (slum my-slam [(slum my-slub [cor [%limb %build-tube]]) (slum my-slop [!>(a) !>(b)])])
+      |=  v=vase
+      ^-  vase
+      (ntv [old +:(slum my-slam [tub v])])
     ::
     ++  validate-page
       |=  [=path =page]
       ^-  cage
-      !<(cage (slam (slub cor [%limb %validate-page]) (slop !>(path) !>(page))))
+      (ntc [old +:(slum my-slam [(slum my-slub [cor [%limb %validate-page]]) (slum my-slop [!>(path) !>(page)])])])
     ::
     ++  page-to-cage
       |=  =page
       ^-  cage
-      !<(cage (slam (slub cor [%limb %page-to-cage]) !>(page)))
+      (ntc [old +:(slum my-slam [(slum my-slub [cor [%limb %page-to-cage]]) !>(page)])])
     ::
     ++  cast-path
       |=  [=path mak=mark]
       ^-  cage
-      !<(cage (slam (slub cor [%limb %cast-path]) (slop !>(path) !>(mak))))
+      (ntc [old +:(slum my-slam [(slum my-slub [cor [%limb %cast-path]]) (slum my-slop [!>(path) !>(mak)])])])
     ::
     ++  prelude
       |=  =path
       ^-  vase
-      !<(vase (slam (slub cor [%limb %prelude]) !>(path)))
+      (ntv [old +:(slum my-slam [(slum my-slub [cor [%limb %prelude]]) !>(path)])])
     ::
     ++  build-fit
       |=  [pre=@tas pax=@tas]
       ^-  vase
-      !<(vase (slam (slub cor [%limb %build-fit]) (slop !>(pre) !>(pax))))
+      (ntv [old +:(slum my-slam [(slum my-slub [cor [%limb %build-fit]]) (slum my-slop [!>(pre) !>(pax)])])])
     --
   ::
   ++  trace
@@ -2335,8 +2386,6 @@
   ::
   ++  make-zuse
     |=  arv=(unit *)
-    ::  XX cask?
-    ^-  vase
     ~>  %bout.[1 %make-zuse]
     ?~  arv   !>(..zuse)
     =/  wish  (cury wisher u.arv)
@@ -2347,9 +2396,10 @@
     ?:  =(135 hov)
       ;;(vase zus)
     ?>  =(136 hov)
-    ::  XX need old vase
+    ::  return raw old vase — no migration.
+    ::  stays in old type universe; callers use old slam/slub.
     ::
-    (next-vase:h136 ;;(vase:h136 zus))
+    zus
   ::
   ++  wisher
     |=  [arv=* txt=@t]
@@ -2370,10 +2420,6 @@
   ::
   ++  tako-ford
     |=  tak=tako
-    ::  pre-compute current ford type before bud gets updated
-    ::
-    =/  current-ford=vase
-      (slub zuse.bud (ream ford-cord))
     =/  arv=(unit *)
       ?:  =(%base syd)  ~
       =/  pil=(unit pill)  (get-pill tak)
@@ -2386,27 +2432,11 @@
       ~>  %memo./clay/ford
       (make-zuse arv)
     ~&  >  [%tf-zus-mug `@ux`(mug zud)]
-    =/  fus=vase
-      ?~  arv
-        ::  current era: compile ford-cord directly
-        ::
-        (slub zud (ream ford-cord))
-      ::  old era: compile ford-cord on the old system where
-      ::  ut and types are consistent, then migrate the result.
-      ::  use the current-system ford type (same arm layout)
-      ::  paired with the old-system noun.
-      ::
-      =/  wish  (cury wisher u.arv)
-      =/  hov  ;;(@ud (wish 'hoon-version'))
-      ?>  |(=(135 hov) =(136 hov))
-      ?:  =(135 hov)
-        (slub zud (ream ford-cord))
-      ~>  %bout.[1 %old-ford]
-      =/  builder  (wish '|=(fc=@t q:(slub !>(..zuse) (ream fc)))')
-      =/  fus-noun  (slum builder ford-cord)
-      [p.current-ford fus-noun]
     =/  files  (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
-    ~(. (build-ford-api:fusion fus) files lat.ran veb.bug)
+    =/  wish=(unit $-(@t *))
+      ?~  arv  ~
+      `|=(t=@t (wisher u.arv t))
+    ((build-ford-api:fusion [zud wish]) files lat.ran veb.bug)
   ::
   ++  request-wire
     |=  [kind=@ta =ship =desk index=@ud]
