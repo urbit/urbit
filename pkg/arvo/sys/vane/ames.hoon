@@ -9515,8 +9515,8 @@
                 ==
             =/  peek-wire=wire
               ?+    pok  !!
-                flow-pith  (fo-wire:fo %pok)
-                hasx-pith  (fo-wire:fo %hax)
+                flow-pith  (fo-wire:fo-core %pok)
+                hasx-pith  (fo-wire:fo-core %hax)
               ==
             ::  %none namespace uses the path as is
             ::
