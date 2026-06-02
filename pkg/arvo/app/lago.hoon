@@ -22,9 +22,9 @@
 ::
 /-  aquarium
 /+  pill, azimuth, naive, default-agent, aqua-azimuth, dbug, verb
-/=  arvo-gate  /sys/arvo
-/=  ames-gate  /sys/vane/ames
-/=  gall-raw  /sys/vane/gall
+/=  arvo-gate   /sys/arvo
+/=  ames-gate   /sys/vane/ames
+/=  gall-raw    /sys/vane/gall
 =/  larva-ames  (ames-gate ~zod)
 =.  larva-ames
   %_  larva-ames
@@ -49,11 +49,18 @@
           fresh-piers=(map [=ship fake=?] [=pier boths=(list unix-both)])
           fleet-snaps=(map term fleet)
           piers=fleet
+          rules=(map [from=@p to=@p] net-rule)
+          ames-qeu=held-pacs
+          mesa-qeu=held-pacs
+        ::  packets from comets;
+        ::  to guarantee that attestations are always injected first
+        ::
+          comets=(set [from=@p to=@p])
           ames-retry=_~s1
           ahoy-on=_|
           network-core=?(%ames %mesa)
           system-flow=?
-          pump-window=_5
+          pump-window=_6
       ==
     ::
     +$  pill-0
@@ -75,6 +82,9 @@
           namespace=(map path (list yowl:ames))
           tym=@da
       ==
+    ::
+    +$  held-pacs  (list [n=@ who=@p unix-effect])  ::  ames/mesa packets (XX set?)
+    ::
     --
 ::
 =|  state-0
@@ -116,9 +126,7 @@
           %azimuth-action  (poke-azimuth-action:ac !<(azimuth-action vase))
           %aqua-rule
         =+  !<(rule-actions vase)
-        ::  route poke from test thread to %ames driver
-        ::
-        [%give %fact ~[/net-control] mark vase]~^state
+        (poke-aqua-rule:ac -)
       ==
     [cards this]
   ::
@@ -317,7 +325,10 @@
       ?~  sof
         ~?  aqua-debug=&  [who=who %unknown-effect i.effects]
         ..abet-pe
-      (publish-effect u.sof)
+      =.  ..abet-pe  (publish-effect u.sof)
+      ?.  ?=(?(%push %send) -.q.u.sof)
+        ..abet-pe
+      (route-ames u.sof)
     $(effects t.effects)
   ::
   ::  Give effect to our subscribers
@@ -326,7 +337,7 @@
     |=  uf=unix-effect
     ^+  ..abet-pe
     =.  unix-effects  (~(add ja unix-effects) who uf)
-    =.  unix-boths  (~(add ja unix-boths) who [%effect uf])
+    =.  unix-boths    (~(add ja unix-boths) who [%effect uf])
     ..abet-pe
   ::
   ::  Give event to our subscribers
@@ -338,6 +349,105 @@
     =.  unix-events  (~(add ja unix-events) who ute)
     =.  unix-boths  (~(add ja unix-boths) who [%event ute])
     ..abet-pe
+  ::
+  ::  Inject a %send packet directly into the receiver's event queue
+  ::
+  ++  route-ames
+    |=  uf=unix-effect
+    ^+  ..abet-pe
+    =/  rcvr=ship
+      ?:  ?=(%send -.q.uf)
+        (lane-to-ship p.q.uf)
+      ?>  ?=(%push -.q.uf)
+      =/  =pact:pact:ames  (parse-packet:^ames-gate q.q.uf)
+      ?-  +<.pact
+        %peek  her.name.pact
+        %poke  her.ack.pact
+        %page  ?>  ?=(^ p.q.uf)
+              ?>  ?=(@ i.p.q.uf)
+              `@p`i.p.q.uf
+      ==
+    =+  rule=(~(get by rules) who^rcvr)
+    ?:  ?&  ?=(^ rule)
+            ?=(?(%drop-link [%drop-next *] %hold-link) u.rule)
+        ==
+      ?-    u.rule
+          %drop-link  ..abet-pe
+      ::
+          [%drop-next n=@]
+        =.  rules
+          ?:  =(1 n.u.rule)
+            (~(del by rules) who^rcvr)
+          (~(put by rules) who^rcvr u.rule(n (dec n.u.rule)))
+        ..abet-pe
+      ::
+          %hold-link
+        =?  ames-qeu  ?=(%send -.q.uf)
+          [[(lent ames-qeu) who uf] ames-qeu]
+        =?  mesa-qeu  ?=(%push -.q.uf)
+          [[(lent ames-qeu) who uf] mesa-qeu]
+        ..abet-pe
+      ==
+    ?:  ?=(%push -.q.uf)
+      =/  =pact:pact:ames  (parse-packet:^ames-gate q.q.uf)  :: XX dup
+      =.  this
+        =<  abet-pe
+        %-  push-events:(pe rcvr)
+        :_  ~
+        :*  /a/newt/0v1n.2m9vh
+            %heer
+            lan=?:(?=(%page +<.pact) `@ux`rcvr `@ux`who)
+            q.q.uf
+        ==
+      ..abet-pe
+    ?>  ?=(%send -.q.uf)
+    =/  hear-lane  (ship-to-lane who)
+    ::  no active rule: inject %hear into receiver's queue
+    ::
+    =/  =shot:ames  (sift-shot:ames q.q.uf)
+    ?:  &(!sam.shot req.shot)
+      ::  transform %fine request into a %read
+      ::
+      =/  [%0 =peep:ames]  (sift-wail:ames `@ux`content.shot)
+      =/  read=(list aqua-event)
+        :_  ~
+        :-  %read
+        [[[rcvr rcvr-tick.shot] path.peep] [hear-lane sndr-tick.shot] num.peep]
+      ::  XX process the %peek in here instead of poking ourselves
+      ::
+      %-  emit-cards
+      ^-  (list card:agent:gall)  :_  ~
+      ^-  card:agent:gall
+      [%pass /aqua-events %agent [~zod %lago] %poke %aqua-events !>(read)]
+    ?.  &(?=(%pawn (clan:title sndr.shot)) =(rcvr rcvr.shot))
+      ::  non-comet or forwarded packet: inject directly in the rcvr queue
+      ::
+      =.  this
+        =<  abet-pe
+        %-  push-events:(pe rcvr)
+        [/a/newt/0v1n.2m9vh %hear hear-lane q.q.uf]~
+      ..abet-pe
+    ::  comet going directly to rcvr: check attestation state
+    ::
+    =+  ;;  sign-attest=(soft [~ signature=@ signed=@])
+        (mole |.((cue content.shot)))
+    =/  is-attest=?
+      ?.  ?=(^ sign-attest)  %.n
+      ?=  ^
+      ;;  (soft [~ open-packet:^ames-gate])
+      (mole |.((cue signed.u.sign-attest)))
+    ::  drop if dup attestation or pre-attestation data
+    ::
+    ?:  =(is-attest (~(has in comets) [sndr.shot rcvr.shot]))
+      ..abet-pe
+    =?  comets  is-attest
+      (~(put in comets) [sndr.shot rcvr.shot])
+    =.  this
+      =<  abet-pe
+      %-  push-events:(pe rcvr)
+      [/a/newt/0v1n.2m9vh %hear hear-lane q.q.uf]~
+    ..abet-pe
+  ::
   --
 ::
 ++  this  .
@@ -393,7 +503,8 @@
     %+  turn  ~(tap by unix-effects)
     |=  [=ship ufs=(list unix-effect)]
     =/  =path  /effect/(scot %p ship)
-    %+  turn  ufs
+    %+  turn  (flop ufs)
+    :: %+  turn  ufs
     |=  uf=unix-effect
     [%give %fact ~[path] %aqua-effect !>(`aqua-effect`[ship uf])]
   ::
@@ -584,6 +695,37 @@
   ::
   ==
 ::
+++  poke-aqua-rule
+  |=  aq=rule-actions
+  ^-  (quip card:agent:gall _state)
+  ?-    -.aq
+      %drop-link
+    `state(rules (~(put by rules.state) [from to]:aq %drop-link))
+  ::
+      %drop-next
+    `state(rules (~(put by rules.state) [from to]:aq [%drop-next n.aq]))
+  ::
+      %flush-link
+    =.  rules.state  (~(del by rules.state) [from to]:aq)
+    =/  flushed=_state
+      %+  roll  ames-qeu.state
+      |=  [[n=@ who=@p ue=unix-effect] =_state]
+      ?>  ?=(%send -.q.ue)
+      =/  rcvr=@p  (lane-to-ship p.q.ue)
+      =/  rp  (~(gut by ships.piers.state) rcvr *pier)
+      =.  ships.piers.state
+        %+  ~(put by ships.piers.state)  rcvr
+        rp(next-events (~(gas to next-events.rp) ~[[/a/newt/0v1n.2m9vh %hear (ship-to-lane who) q.q.ue]]))
+      state
+    [`flushed(ames-qeu ~)]
+  ::
+      %clear-rules
+    `state(rules (~(del by rules.state) [from to]:aq))
+  ::
+      %hold-link
+    `state(rules (~(put by rules.state) [from to]:aq %hold-link))
+  ::
+  ==
 ::  Make changes to azimuth state for the current fleet
 ::
 ++  poke-azimuth-action
@@ -617,7 +759,7 @@
   %+  turn-events  events
   |=  [ae=aqua-event thus=_this]
   =.  this  thus
-  ?+  -.ae  (pe ~bud)  :: XX
+  ?-  -.ae
   ::
       %init-ship
     ::  XX  caching ships is no longer needed thanks to the %brass pill
@@ -751,6 +893,11 @@
       =.  this  thus
       (publish-effect:(pe who) [/ %kill ~])
     =.  piers  (~(got by fleet-snaps) lab.ae)
+    =:  rules     ~
+        comets    ~
+        ames-qeu  ~
+        mesa-qeu  ~
+      ==
     =.  this   start-azimuth-timer
     =.  this
       %+  turn-ships  (turn ~(tap by ships.piers) head)
@@ -821,6 +968,15 @@
     ~?  &(debug=| ?=(%receive -.q.ue.ae))
       raw-event=[who.ae ue.ae]
     (push-events:(pe who.ae) [ue.ae]~)
+  ::
+      %reset-routing
+    =:  rules     ~
+        comets    ~
+        ames-qeu  ~
+        mesa-qeu  ~
+      ==
+    (pe)
+  ::
   ==
 ::
 ::  Run a callback function against a list of ships, aggregating state
@@ -1030,4 +1186,27 @@
       (as-octs:mimes:html (get-public:aqua-azimuth who lyfe %crypt))
     (as-octs:mimes:html (get-public:aqua-azimuth who lyfe %auth))
   1
+::  XX to lib
+::
+++  lane-to-ship
+  |=  =lane:ames
+  ^-  ship
+  ::
+  ?-  -.lane
+    %&  p.lane
+    %|  =/  s  `ship``@`p.lane
+        ?.  =(s 0xdead.beef.cafe)
+          s
+        ~londeg-tirlys-somlyd-poltus--pintyn-tarbyl-bicnux-marbud
+  ==
+::
+++  ship-to-lane
+  |=  =ship
+  ^-  lane:ames
+  :-  %|
+  ^-  address:ames  ^-  @
+  ?.  =(ship ~londeg-tirlys-somlyd-poltus--pintyn-tarbyl-bicnux-marbud)
+    ship
+  0xdead.beef.cafe
+::
 --

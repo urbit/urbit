@@ -313,8 +313,11 @@
       ::
       =.  pending-ahoy.sat  (~(del in pending-ahoy.sat) who)
       (flog %crud [mote tang]:p.p.sign-arvo)
-    =+  !<  [[num=@ud has=@uvi wen=@da] no-response=?]
+    =+  !<  out=$@(~ [[num=@ud has=@uvi wen=@da] no-response=?])
             q.p.p.sign-arvo
+    ::
+    ?~  out  this
+    =,  out
     ::
     =?  hashes.sat  !no-response  :: only update hashes if we did get a response
       ?.  (~(has by hashes.sat) who)

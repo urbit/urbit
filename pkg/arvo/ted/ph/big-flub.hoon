@@ -7,7 +7,6 @@
 =>  |%  ++  gate
           |*  [typ=mold exp=noun]
           |=  [=mark val=noun]
-          ~&  [exp val mark]
           ?+  mark  %.n
               %noun  =(exp ;;(typ val))
           ==
@@ -15,10 +14,11 @@
 ^-  thread:spider
 |=  vase
 =/  m  (strand ,vase)
-=/  cores=(list ?(%mesa %ames))  ~[%ames]
+=/  cores=(list ?(%mesa %ames))  ~[%ames]  :: XX %mesa
 |-  ^-  form:m
 ?~  cores  (pure:m *vase)
-;<  ~  bind:m  start-simple
+=|  tids=drivers
+;<  =_tids  bind:m  start-simple
 ::
 =*  loop  $
 ;<  ~  bind:m  (init-ship ~bud fake=&)
@@ -83,5 +83,5 @@
 ;<  *  bind:m
   (wait-for-fact ~dev %noun /aqua/watch/pub (gate ,_~ ~))
 ::
-;<  ~  bind:m  end
+;<  ~  bind:m  (end tids)
 $(cores t.cores)

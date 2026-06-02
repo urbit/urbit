@@ -126,4 +126,6 @@
   =^  cards  piers
     abet-pe:(take-sigh-httr:(pe bowl who) t.wire httr)
   [cards this]
+::
+++  handle-aqua-rule  |=(* !!)
 --

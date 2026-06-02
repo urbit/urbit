@@ -42,15 +42,20 @@
     ^-  (quip card _this)
     ?.  ?=(%noun mark)
       (on-poke:def mark vase)
+    ~|  on-poke-crashed/mark^+<.vase
+    ?:  =(%null +<.vase)
+      ::  don't devase since this comes untyped over the wire
+      ::
+      :_  this
+      ~&(%sending-to-aqua [%give %fact [/aqua]~ noun/!>(~)]~)
     =+  !<(=action vase)
     ~&  >  %out
     :_  this
-    ?-  -.action
+    ?+  -.action  !!
       %send  ~&(%sending [%give %fact [/subs]~ noun+!>(data.action)]~)
       %bye   ~&(%kicking [%give %kick [/subs]~ `who.action]~)
       %flus  ~&(%flushing [%give %fact [/flus]~ atom+!>(data.action)]~)
       %flas  ~&(%flashing [%give %kick [/flus]~ `who.action]~)
-      %null  ~&(%sending-to-aqua [%give %fact [/aqua]~ noun/!>(~)]~)
       %germ  [%pass /my-wire %germ coop.action]~
       %tend  [%pass /my-wire %tend coop.action path.action page.action]~
       ::
@@ -76,9 +81,15 @@
     [%aqua ~]   ~&(aqua-sub+[our=our src=src]:bowl ~)
     :: XX allow users for crashes here to trigger naxplanations
     ::
-      [%subs ~]  ~&  subs+[our=our src=src]:bowl  ~ :: (on-watch:def path)
+      [%subs ~]
+    ~&  >   subs+[our=our src=src]:bowl
+    ~&  >>  %sending-to-aqua
+    [%give %fact [/aqua]~ noun/!>(subscribed/src.bowl)]~
+    :: (on-watch:def path)
+  ::
       [%sabs ~]  ~&  sabs+[our=our src=src]:bowl  ~ :: (on-watch:def path)
       [%sups ~]  ~&  sups+[our=our src=src]:bowl
+  ::
     :~  [%give %fact ~ atom+!>(%done)]
         [%give %kick ~ ~]
     ==

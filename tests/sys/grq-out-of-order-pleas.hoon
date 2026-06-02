@@ -14,14 +14,6 @@
 ::            - %cork is sent and handled
 ::          - flow is corked
 ::
-::   TODO:
-::          - %ack for %cork arrives first, flows gets deleted
-::          - %boon %flub arrives:
-::             - the flow then gets halted and the remote %flub is sent,
-::               but when it's handled the %flow is closed:
-::          crash!
-::
-::
 /+  *test, v=test-ames-gall, test-pub, test-sub
 |%
 ++  find-blob

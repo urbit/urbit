@@ -16,11 +16,9 @@
 ::  Start a ship (low-level; prefer +raw-ship)
 ::
 ++  init
-  |=  [who=ship ake=? eed=(unit feed:jael) ore=?(%mesa %ames)]
+  |=  [who=ship ake=? eed=(unit feed:jael)]
   ^-  (list aqua-event)
-  :~  [%init-ship who ake eed]
-      [%event who [/a/aqua/load %load ore]]
-  ==
+  [%init-ship who ake eed]~
 ::
 ::  Send dojo command
 ::
@@ -55,9 +53,7 @@
     |=  [=path txt=@t]
     [path ~ /text/plain (as-octs:mimes:html txt)]
   %+  send-events-to  who
-  :~
-    [/c/sync/0v1n.2m9vh %into des | input]
-  ==
+  [/c/sync/0v1n.2m9vh %into des | input]~
 ::
 ::  Checks whether the given event is a dojo output blit containing the
 ::  given tape

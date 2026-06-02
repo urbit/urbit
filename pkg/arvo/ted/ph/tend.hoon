@@ -3,7 +3,7 @@
 /*  tend-agent  %hoon  /tests/app/tend/hoon
 =,  strand=strand:spider
 =<  all
-|% 
+|%
 ++  tend
   |=  zuse=@ud
   =/  m  (strand ,~)
@@ -20,18 +20,19 @@
   (pure:m ~)
 ::
 ++  setup
-  =/  m  (strand ,~)
-  ;<  ~  bind:m  start-simple
+  =/  m  (strand ,drivers)
+  =|  tids=drivers
+  ;<  =_tids  bind:m  start-simple
   ::  testing usual case
-  ;<  ~  bind:m  (init-ship ~bud &)
-  ;<  ~  bind:m  (init-ship ~dev &)
-  ;<  ~  bind:m  (dojo ~bud "|mount %base")
-  ;<  ~  bind:m  (dojo ~dev "|mount %base")
-  ;<  ~  bind:m  (copy-file ~bud /app/tend/hoon tend-agent)
-  ;<  ~  bind:m  (copy-file ~dev /app/tend/hoon tend-agent)
-  ;<  ~  bind:m  (dojo ~bud "|start %tend")
-  ;<  ~  bind:m  (dojo ~dev "|start %tend")
-  (pure:m ~)
+  ;<  ~       bind:m  (init-ship ~bud &)
+  ;<  ~       bind:m  (init-ship ~dev &)
+  ;<  ~       bind:m  (dojo ~bud "|mount %base")
+  ;<  ~       bind:m  (dojo ~dev "|mount %base")
+  ;<  ~       bind:m  (copy-file ~bud /app/tend/hoon tend-agent)
+  ;<  ~       bind:m  (copy-file ~dev /app/tend/hoon tend-agent)
+  ;<  ~       bind:m  (dojo ~bud "|start %tend")
+  ;<  ~       bind:m  (dojo ~dev "|start %tend")
+  (pure:m tids)
 ::
 ++  all
   ^-  thread:spider
@@ -43,28 +44,28 @@
 ::
 ++  test-larval-ames
   =/  m  (strand ,~)
-  ;<  ~  bind:m  setup
-  ;<  ~  bind:m  (dojo ~bud ":tend [%germ /foo]")
-  ;<  ~  bind:m  (sleep:strandio ~s2)
-  ;<  ~  bind:m  (tend zuse)
-  ;<  ~  bind:m  (keen-wait-for-result 1 zuse)
+  ;<  t=drivers  bind:m  setup
+  ;<  ~          bind:m  (dojo ~bud ":tend [%germ /foo]")
+  ;<  ~          bind:m  (sleep:strandio ~s2)
+  ;<  ~          bind:m  (tend zuse)
+  ;<  ~          bind:m  (keen-wait-for-result 1 zuse)
   =/  zuse  (dec zuse)
-  ;<  ~  bind:m  (tend zuse)
-  ;<  ~  bind:m  (keen-wait-for-result 2 zuse)
-  ;<  ~  bind:m  end
+  ;<  ~          bind:m  (tend zuse)
+  ;<  ~          bind:m  (keen-wait-for-result 2 zuse)
+  ;<  ~          bind:m  (end t)
   (pure:m ~)
 ::
 ++  test-normal
   =/  m  (strand ,~)
-  ;<  ~  bind:m  setup
-  ;<  ~  bind:m  (send-hi ~bud ~dev) :: make sure both ames have metamorphosed
-  ;<  ~  bind:m  (dojo ~bud ":tend [%germ /foo]")
-  ;<  ~  bind:m  (sleep:strandio ~s2)
-  ;<  ~  bind:m  (tend zuse)
-  ;<  ~  bind:m  (keen-wait-for-result 1 zuse)
+  ;<  t=drivers  bind:m  setup
+  ;<  ~          bind:m  (send-hi ~bud ~dev) :: make sure both ames have metamorphosed
+  ;<  ~          bind:m  (dojo ~bud ":tend [%germ /foo]")
+  ;<  ~          bind:m  (sleep:strandio ~s2)
+  ;<  ~          bind:m  (tend zuse)
+  ;<  ~          bind:m  (keen-wait-for-result 1 zuse)
   =/  zuse  (dec zuse)
-  ;<  ~  bind:m  (tend zuse)
-  ;<  ~  bind:m  (keen-wait-for-result 2 zuse)
-  ;<  ~  bind:m  end
+  ;<  ~          bind:m  (tend zuse)
+  ;<  ~          bind:m  (keen-wait-for-result 2 zuse)
+  ;<  ~          bind:m  (end t)
   (pure:m ~)
 --

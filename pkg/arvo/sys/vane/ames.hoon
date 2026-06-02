@@ -82,9 +82,13 @@
 =,  ames
 =*  point               point:jael
 =*  public-keys-result  public-keys-result:jael
-=/  packet-size  13
-=/  retry-timer  ~m2    ::  only used in /mesa/retry and /dead-flow timers
-=/  ahoy-on=?    %.y
+::  hardcoded values tuned in app/aqua
+::
+=/  packet-size             13
+=/  retry-timer             ~m2    ::  only used in /mesa/retry and /dead-flow timers
+=/  ahoy-on=?               %.y
+=/  pump-window=(unit @ud)  ~
+=|  network-core=(unit ?(%mesa %ames))  ::  used in %aqua tests
 ::
 =>  ::  common helpers
     ~%  %ames  ..part  ~
@@ -518,11 +522,11 @@
     ++  is-our-bulk
       |=  [our=ship ames-state=axle =balk]
       ^-  ?
-      =-  ~?  =(| -)
+      ?.  =(our her.balk)  %.n
+      =-  ~?  !-
             [%fine-mismatch our=[rift life]:ames-state her=[her rif lyf]:balk]
           -
-      ?&  =(our her.balk)
-          =(rift.ames-state rif.balk)
+      ?&  =(rift.ames-state rif.balk)
           =(life.ames-state lyf.balk)
       ==
     ::
@@ -4045,6 +4049,10 @@
         mesa/chum-state
       ?^  ship-state=(~(get by peers.ames-state) ship)
         ames/ship-state
+      ::  modified by %aqua tests
+      ::
+      =?  core.ames-state  ?=(^ network-core)
+        u.network-core
       ?-(core.ames-state %mesa [%mesa ~], %ames [%ames ~])
     ::
     ++  got-per
@@ -4864,6 +4872,7 @@
               |.("requested attestation")
           ?.  =(%pawn (clan:title our))
             event-core
+          ~&  >>  on-hear-keys/[%attestation-packet sndr.shot]
           =/  =blob  (attestation-packet sndr.shot 1)
           %-  send-blob
           [for=| sndr.shot blob (~(get by peers.ames-state) sndr.shot)]
@@ -6001,6 +6010,8 @@
                   =/  dat  [her bone=bone message-num=message-num]
                   |.("flow is halted; drop bone={<bone>}")
               peer-core
+            %-  %+  pe-trace  rcv.veb
+                |.("hear shut {<her>} {<seq=message-num.shut-packet>}")
             ?:  ?=(%& -.meat.shut-packet)
               =+  ?.  &(?=(^ dud) msg.veb)  ~
                   =/  [num-fragments=@ud =fragment-num =fragment]
@@ -6128,6 +6139,7 @@
                 ?&  ?=(%pawn (clan:title our))
                     =(1 current:(~(got by snd.peer-state) bone))
                 ==
+              ~&  >>  on-wake/[%attestation-packet her.channel]
               =/  =blob  (attestation-packet [her life.hers]:channel)
               (send-blob for=| her blob `known/peer-state)
             ?:  ?|  (is-corked bone)
@@ -7174,6 +7186,7 @@
               ::  if nothing to send, no-op
               ::
               ?:  &(=(~ unsent-messages) =(~ unsent-fragments)):state
+                :: ~&  >>  nothing-to-send/state
                 pump
               ::  we have unsent fragments of the current message; feed them
               ::
@@ -7856,7 +7869,7 @@
               =.  live-messages.state  (~(del by live-messages.state) seq)
               ::
               %-  %+  pe-trace  msg.veb
-                  |.("hear {<her>} {<seq=seq>} {<num-fragments.u.live>}kb")
+                  |.("handle {<her>} {<seq=seq>} {<num-fragments.u.live>}kb")
               =/  message=*
                 (assemble-fragments [num-fragments fragments]:u.live)
               =/  empty=?    =(~ pending-vane-ack.state)
@@ -7935,6 +7948,7 @@
                   ?.  =(vane.plea %$)
                     ?+    vane.plea  ~|(ames-evil-vane/our^her^vane.plea !!)
                         ?(%c %e %g %j)
+                      ~&  >>>  message-num^plea
                       (pe-emit duct %pass wire vane.plea %plea her plea)
                     ==
                   ::  a %cork and %ahoy pleas (both introduced to account
@@ -8486,6 +8500,7 @@
             ::
             ++  num-slots
               ^-  @ud
+              ?^  pump-window  u.pump-window
               (sub-safe cwnd live-packets)
             ::
             ::  +clamp-rto: apply min and max to an .rto value
@@ -11952,6 +11967,7 @@
           ::  if we're a comet, send self-attestation packet first
           ::
           =?  ames-core  =(%pawn (clan:title our))
+            ~&  >>  sy-meet-alien-ship/[%attestation-packet ship]
             =/  =blob  (attestation-packet:ames-core ship life.point)
             %-  send-blob:ames-core
             [for=| ship blob (~(get by peers.ames-state) ship)]

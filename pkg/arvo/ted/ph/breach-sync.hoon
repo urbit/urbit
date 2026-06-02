@@ -7,7 +7,9 @@
 ^-  thread:spider
 |=  vase
 =/  m  (strand ,vase)
-;<  ~              bind:m  start-azimuth
+:: ;<  ~          bind:m  (switch-network-core %ames)  :: XX %mesa doens't work
+::
+;<  t=drivers      bind:m  start-azimuth
 ;<  ~              bind:m  (spawn ~bud)
 ;<  ~              bind:m  (spawn ~marbud)
 ;<  ~              bind:m  (init-ship ~bud |)
@@ -25,5 +27,5 @@
 ;<  file=@t        bind:m  (touch-file ~bud %kids %bar)
 ;<  file=@t        bind:m  (touch-file ~bud %kids %baz)
 ;<  ~              bind:m  (check-file-touched ~marbud %base file)
-;<  ~              bind:m  end
+;<  ~              bind:m  (end t)
 (pure:m *vase)
