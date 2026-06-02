@@ -438,6 +438,44 @@
       $(a [u a], st s)
     [[p q rev] st]
   ::
+  +$  tope  $-(toke ?)
+  ::
+  ++  more  ::  repeatedly separator+element
+    |*  m=mold
+    |=  $:  sep=tope
+            lem=$-(_st (mandatory m _st))
+        ==
+    =|  l=(list m)
+    |-  ^-  (mandatory (list m) _st)
+    =+  peek         ?@  -  ~  =>  [t=u +(st s)]
+    ?.  (sep t)                    [(flop l) st]
+    =+  (lem move)   ?@  -  ~  =>  [e=u +(st s)]
+    $(l [e l])
+  ::
+  ++  most  ::  element and then +more
+    |*  m=mold
+    |=  $:  sep=tope
+            lem=$-(_st (mandatory m _st))
+        ==
+    ^-  (mandatory (lest m) _st)
+    =+  (lem st)            ?@  -  ~  =>  [i=u +(st s)]
+    =+  ((more m) sep lem)  ?@  -  ~  =>  [l=u +(st s)]
+    [[i l] st]
+  ::
+  ++  tuplish
+    |*  m=mold
+    |=  $:  [beg=tope sep=tope end=tope]
+            lem=$-(_st (mandatory m _st))
+        ==
+    ^-  (mandatory [i=m t=(lest m)] _st)
+    =+  peek                         ?@  -  ~  =>  [t=u +(st s)]
+    ?.  (beg t)                             ~
+    =+  (lem move)                   ?@  -  ~  =>  [i=u +(st s)]
+    =+  peek                         ?@  -  ~  =>  [t=u +(st s)]
+    ?.  (sep t)                             ~
+    =+  ((most(st move) m) sep lem)  ?@  -  ~  =>  [l=u +(st s)]
+    ?.  (end t)                             ~      [[i l] move]
+  ::
   ++  tall
     ^-  (mandatory naty _st)
     =+  peek  ?@  -  ~  =>  [t=u +(st s)]
@@ -454,21 +492,14 @@
       [%tsls %&]    =+  tall-2(st move)       ?@  -  ~  [[%tsls u] s]
       [%cnts %&]    =+  wing-full(st move)    ?@  -  ~  =>  [w=u +(st s)]
                     =+  (expect %gap)         ?@  -  ~  =>  +(st s)
-                    =+  wing-full             ?@  -  ~  =>  [v=u +(st s)]
-                    =+  (expect %gap)         ?@  -  ~  =>  +(st s)
-                    =+  tall                  ?@  -  ~  =>  :_  +(st s)
-                                                            ^-  l=(list [wing naty])
-                                                            [v u]~
-                    |-  ^-  (mandatory naty _st)
-                    =+  peek                  ?@  -  ~  =>  [p=u +(st s)]
-                    ?+  p  ~
-                        %gap
-                      =+  wing-full(st move)  ?@  -  ~  =>  [v=u +(st s)]
-                      =+  (expect %gap)       ?@  -  ~  =>  +(st s)
-                      =+  tall                ?@  -  ~  $(l [[v u] l], st s)
-                    ::
-                      %stis  [[%cnts w (flop l)] move]
-                    ==
+                    =+  %+  (most (pair wing naty))
+                          |=(t=toke ?=(%gap t))
+                        |=  s=_st
+                        =+  wing-full(st s)       ?@  -  ~  =>  [v=u +(st s)]
+                        =+  (expect %gap)         ?@  -  ~  =>  +(st s)
+                        =+  tall                  ?@  -  ~  [[v u] s]
+                                              ?@  -  ~  =>  [l=u +(st s)]
+                    =+  (expect %stis)        ?@  -  ~      [[%cnts w l] s]
       [%sggr %&]    =+  peek(st move)         ?@  -  ~  =>  [t=u +(st s)]
                     ?.  ?=([%atom @ %& %tas @] t)  ~
                     =+  peek(st move)  ?@  -  ~  =>  [tt=u +(st s)]
@@ -508,21 +539,14 @@
       [%tsls %|]    =+  wide-2         ?@  -  ~  [[%tsls u] s]
       [%cnts %|]    =+  wing-full        ?@  -  ~  =>  [w=u +(st s)]
                     =+  (expect %ace)    ?@  -  ~  =>  +(st s)
-                    =+  wing-full        ?@  -  ~  =>  [v=u +(st s)]
-                    =+  (expect %ace)    ?@  -  ~  =>  +(st s)
-                    =+  wide             ?@  -  ~  =>  :_  +(st s)
-                                                       ^-  l=(list [wing naty])
-                                                       [v u]~
-                    |-  ^-  (mandatory naty _st)
-                    =+  peek             ?@  -  ~  =>  [p=u +(st s)]
-                    ?+  p  ~
-                        %coma
-                      =+  wing-full(st move)  ?@  -  ~  =>  [v=u +(st s)]
-                      =+  (expect %ace)  ?@  -  ~  =>  +(st s)
-                      =+  wide           ?@  -  ~  $(l [[v u] l], st s)
-                    ::
-                      %per  [[%cnts w (flop l)] move]
-                    ==
+                    =+  %+  (most (pair wing naty))
+                          |=(t=toke ?=(%coma t))
+                        |=  s=_st
+                        =+  wing-full(st s)  ?@  -  ~  =>  [v=u +(st s)]
+                        =+  (expect %ace)    ?@  -  ~  =>  +(st s)
+                        =+  wide             ?@  -  ~      [[v u] s]
+                                         ?@  -  ~  =>  [l=u +(st s)]
+                    =+  (expect %per)    ?@  -  ~      [[%cnts w l] st]
       [%sggr %|]    =+  peek           ?@  -  ~  =>  [t=u +(st s)]
                     ?.  ?=([%atom %| %& %tas @] t)  ~
                     =+  peek(st move)  ?@  -  ~  =>  [tt=u +(st s)]
@@ -580,18 +604,14 @@
   ::   =+  ((two-plus expr) +<)  ?@  -  ~  =>  [u +(st s)]
   ::   [[p q rev] st]
   :: ++  expr2p-w  (expr2p %ace |=(s=_st wide(st s)))
-  ++  wide-close
-    ^-  $@(~ s=_st)
-    =+  (expect %per)
-    ?@(- ~ s)
   :: ++  tall-close
   ::   ^-  $@(~ s=_st)
   ::   =+  (expect %gap)   ?@  -  ~  =>  +(st s)
   ::   =+  (expect %stet)  ?@  -  ~  s
   ++  wide-1
     ^-  (mandatory naty _st)
-    =+  wide        ?@  -  ~  =>  [one=u +(st s)]
-    =+  wide-close  ?@  -  ~  [one s]
+    =+  wide           ?@  -  ~  =>  [one=u +(st s)]
+    =+  (expect %per)  ?@  -  ~  [one s]
   ++  wide-2
     ^-  (mandatory [naty naty] _st)
     =+  wide           ?@  -  ~  =>  [one=u +(st s)]
@@ -612,84 +632,5 @@
     =+  wing-full      ?@  -  ~  =>  [w=u +(st s)]
     =+  (expect %gap)  ?@  -  ~  =>  +(st s)
     =+  tall-2         ?@  -  ~  [[w u] s]
-  :: ++  dtls-w
-  ::   ^-  (mandatory expr _st)
-  ::   =+  wide-1  ?@  -  ~  [[%dtls u] s]
-  :: ++  dtts-w
-  ::   ^-  (mandatory expr _st)
-  ::   =+  wide-2  ?@  -  ~  [[%dtts u] s]
-  :: ++  wide  ::  pel is part of the opening token
-  ::   ^-  (mandatory expr _st)
-  ::   =+  gulp  ?@  -  ~  =>  [t=u +(st s)]
-  ::   ?+  t  ~
-  ::     %sel          =+  expr2p-w       ?@  -  ~  =>  [es=u +(st s)]
-  ::                   =+  (expect %ser)  ?@  -  ~  [[%cltr es] s]
-  ::                   ::  awkwardly post-process es to make a big %dtsq?
-  ::     %fas          =+  expect-atom    ?@  -  ~  [[%dtfs u] s]
-  ::     %ilus         dtls-w
-  ::     %itis         dtts-w
-  ::     [%cltr %|]    =+  expr2p-w       ?@  -  ~  =>  [es=u +(st s)]
-  ::                   =+  wide-close     ?@  -  ~  [[%cltr es] s]
-  ::     [%atom %| *]  [%dtsq a.t]^st
-  ::     [%dtfs %|]    =+  expect-atom    ?@  -  ~  =>  [a=u +(st s)]
-  ::                   =+  wide-close     ?@  -  ~  [[%dtfs a] s]
-  ::     [%dtsq %|]    =+  lit-w          ?@  -  ~  =>  [v=u +(st s)]
-  ::                   =+  wide-close     ?@  -  ~  [[%dtsq v] s]
-  ::     [%dttr %|]    =+  wide-2         ?@  -  ~  [[%dttr u] s]
-  ::     [%dtwt %|]    dtls-w
-  ::     [%dtls %|]    =+  wide-1         ?@  -  ~  [[%dtls u] s]
-  ::     [%dtts %|]    dtts-w
-  ::     [%wtcl %|]    =+  wide           ?@  -  ~  =>  [t=u +(st s)]
-  ::                   =+  (expect %ace)  ?@  -  ~  =>  +(st s)
-  ::                   =+  wide-2         ?@  -  ~  [[%wtcl t u] s]
-  ::     [%tsgr %|]    =+  wide-2         ?@  -  ~  [[%tsgr u] s]
-  ::     [%tsls %|]    =+  wide-2         ?@  -  ~  [[%tsls u] s]
-  ::     [%dtcn %|]    =+  expect-atom    ?@  -  ~  =>  [a=u +(st s)]
-  ::                   =+  (expect %ace)  ?@  -  ~  =>  +(st s)
-  ::                   =+  wide-1         ?@  -  ~  [[%dtcn a u] s]
-  ::     [%dtbr %|]    =+  wide-1         ?@  -  ~  [[%dtbr u] s]
-  ::     [%dthx %|]    =+  expect-atom    ?@  -  ~  =>  [a=u +(st s)]
-  ::                   =+  (expect %ace)  ?@  -  ~  =>  +(st s)
-  ::                   =+  wide-2         ?@  -  ~  [[%dthx a u] s]
-  ::     [%sgpt %|]    =+  expect-atom    ?@  -  ~  =>  [a=u +(st s)]
-  ::                   =+  (expect %ace)  ?@  -  ~  =>  +(st s)
-  ::                   =+  wide-1         ?@  -  ~  [[%sgpt a u] s]
-  ::     [%sgkt %|]    =+  expect-atom    ?@  -  ~  =>  [a=u +(st s)]
-  ::                   =+  (expect %ace)  ?@  -  ~  =>  +(st s)
-  ::                   =+  wide-2         ?@  -  ~  [[%sgkt a u] s]
-  ::   ==
-  :: ++  tall  ::  gap is part of the opening token
-  ::   ^-  (mandatory expr _st)
-  ::   =+  peek  ?@  -  ~  =>  [t=u +(st s)]
-  ::   ?+  t  wide(tol |)
-  ::     [%atom *]   [%dtsq a.t]^move
-  ::     [%cltr %&]  =+  (expr2p(st move) %gap |=(s=_st tall(st s)))
-  ::                 ?@  -  ~  =>  [in=u +(st s)]
-  ::                 =+  tall-close  ?@  -  ~  [[%cltr in] s]
-  ::     [%dtfs %&]  =+  expect-atom(st move)  ?@  -  ~  [[%dtfs u] s]
-  ::     [%dtsq %&]  =+  lit-t(st move)        ?@  -  ~  [[%dtsq u] s]
-  ::     [%dttr %&]  =+  tall-2(st move)       ?@  -  ~  [[%dttr u] s]
-  ::     [%dtwt %&]  =+  tall(st move)         ?@  -  ~  [[%dtwt u] s]
-  ::     [%dtls %&]  =+  tall(st move)         ?@  -  ~  [[%dtls u] s]
-  ::     [%dtts %&]  =+  tall-2(st move)       ?@  -  ~  [[%dtts u] s]
-  ::     [%wtcl %&]  =+  tall(st move)         ?@  -  ~  =>  [t=u +(st s)]
-  ::                 =+  (expect %gap)         ?@  -  ~  =>  +(st s)
-  ::                 =+  tall-2                ?@  -  ~  [[%wtcl t u] s]
-  ::     [%tsgr %&]  =+  tall-2(st move)       ?@  -  ~  [[%tsgr u] s]
-  ::     [%tsls %&]  =+  tall-2(st move)       ?@  -  ~  [[%tsls u] s]
-  ::     [%dtcn %&]  =+  expect-atom(st move)  ?@  -  ~  =>  [a=u +(st s)]
-  ::                 =+  (expect %gap)         ?@  -  ~  =>  +(st s)
-  ::                 =+  tall                  ?@  -  ~  [[%dtcn a u] s]
-  ::     [%dtbr %&]  =+  tall(st move)         ?@  -  ~  [[%dtbr u] s]
-  ::     [%dthx %&]  =+  expect-atom(st move)  ?@  -  ~  =>  [a=u +(st s)]
-  ::                 =+  (expect %gap)         ?@  -  ~  =>  +(st s)
-  ::                 =+  tall-2                ?@  -  ~  [[%dthx a u] s]
-  ::     [%sgpt %&]  =+  expect-atom(st move)  ?@  -  ~  =>  [a=u +(st s)]
-  ::                 =+  (expect %gap)         ?@  -  ~  =>  +(st s)
-  ::                 =+  tall                  ?@  -  ~  [[%sgpt a u] s]
-  ::     [%sgkt %&]  =+  expect-atom(st move)  ?@  -  ~  =>  [a=u +(st s)]
-  ::                 =+  (expect %gap)         ?@  -  ~  =>  +(st s)
-  ::                 =+  tall-2                ?@  -  ~  [[%sgkt a u] s]
-  ::   ==
   --
 --
