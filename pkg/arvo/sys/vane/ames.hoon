@@ -9407,6 +9407,10 @@
             =/  [=space cyf=(unit @) pok=(pole iota) ack=(pole iota)]
               ~|  inner-path/[pat.ack pat.pok]:pact
               (open-poke-pact pact)
+            :: XX ?=(,[%publ @ %hasx *] ack)
+            ::    this way the driver understand that this is a hasx-peek
+            ::    without decryption, but we lose privacy
+            ::
             ?:  ?&  ?=(hasx-peek ack)
                     ?=(hasx-peek pok)
                 ==
@@ -12513,7 +12517,7 @@
             =/  per-sat  (~(get by chums.ames-state) ship.p)
             ?.  ?=([~ %known *] per-sat)
               ::  we assume that this is a %publ, for comet attestations
-              ::  which fits in one packet
+              ::  which fits the MTU
               ::
               *space
             =/  per-fren=fren-state  +.u.per-sat
@@ -12535,16 +12539,19 @@
             =/  has  (shax ser)
             =/  ham=name:pact
               :+  [ship.p per-rift]  [13 ~]
-              ::  %chum namespace is used for any path encrypted with all
-              ::  the other namespaces
+              ::  %chum namespace used by default
               ::
               (make-space-path hasx-space /a/x/1//hasx/(scot %uvi has))
             ::
             ?^  page=(co-get-page ham)
               ::  XX  check that his new poke fits the MTU?
               ::
-              ::  for %peeks, .nam can be arbitrarily long but we cap them
-              ::  at (bex 16) = 65.535) so we shouldn't add the original .nam
+              :: for %auth fragments the page is:
+              ::    [tob [%& mes] (rep 8 proof.lss-proof)]
+              ::    []
+              ::
+              ::  for %peeks, .nam can be arbitrarily long (but capped at
+              ::  (bex 16) = 65.535) so we shouldn't add the original .nam
               ::  to the %poke packet
               ::  XX have ack = pok = /chum/.../a/x/1//hasx/[...]
               ::     for the ack we switch lifes to encode the /hasx path
@@ -12553,6 +12560,16 @@
                 ?>  ?=([%chum *] hasx-space)
                 =,  hasx-space
                 %+  make-space-path
+                  ::  XX make this %publ?
+                  ::
+                  ::  /a/x/1//publ/[life]/hasx/(scot %uvi has)
+                  ::
+                  ::     this way we could signal to the driver that there
+                  ::     is a /hasx path in the pat.poke that needs to be
+                  ::     peeked without needing to decrypt the path
+                  ::
+                  ::  XX (but we lose privacy...)
+                  ::
                   hasx-space(server-life client-life, client-life server-life)
                 /a/x/1//hasx/(scot %uvi has)
               ``[hop=0 %poke nam(pat pat.ham) ham u.page]
