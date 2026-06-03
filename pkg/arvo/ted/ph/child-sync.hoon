@@ -9,7 +9,8 @@
 =*  loop  $
 ?~  cores  (pure:m *vase)
 ::
-;<  ~        bind:m  start-simple
+=|  tids=drivers
+;<  =_tids   bind:m  start-simple
 ;<  ~        bind:m  (init-ship ~bud fake=&)
 ;<  ~        bind:m  (dojo ~bud "|pass [%a %load {<i.cores>}]")
 ;<  ~        bind:m  (init-ship ~marbud fake=&)
@@ -17,6 +18,5 @@
 ;<  file=@t  bind:m  (touch-file ~bud %base %foo)
 ;<  ~        bind:m  (dojo ~bud "|merge %kids our %base")
 ;<  ~        bind:m  (check-file-touched ~marbud %base file)
-;<  ~        bind:m  end
-;<  ~  bind:m  end
+;<  ~        bind:m  (end tids)
 $(cores t.cores)

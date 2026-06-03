@@ -8,18 +8,20 @@
 ^-  thread:spider
 |=  vase
 =/  m  (strand ,vase)
-;<  ~  bind:m  start-azimuth
-;<  ~  bind:m  (spawn ~bud)
-;<  ~  bind:m  (spawn ~dev)
-;<  ~  bind:m  (spawn ~marbud)
-;<  ~  bind:m  (spawn ~mardev)
-;<  ~  bind:m  (init-ship ~bud |)
-;<  ~  bind:m  (init-ship ~dev |)
-;<  ~  bind:m  (init-ship ~marbud |)
-;<  ~  bind:m  (init-ship ~mardev |)
-;<  ~  bind:m  (send-hi ~marbud ~mardev)
-;<  ~  bind:m  (breach-and-hear ~mardev ~marbud)
-;<  ~  bind:m  (init-ship ~mardev |)
-;<  ~  bind:m  (send-hi ~marbud ~mardev)
-;<  ~  bind:m  end
+:: ;<  ~          bind:m  (switch-network-core %ames)
+::
+;<  t=drivers  bind:m  start-azimuth
+;<  ~          bind:m  (spawn ~bud)
+;<  ~          bind:m  (spawn ~dev)
+;<  ~          bind:m  (spawn ~marbud)
+;<  ~          bind:m  (spawn ~mardev)
+;<  ~          bind:m  (init-ship ~bud |)
+;<  ~          bind:m  (init-ship ~dev |)
+;<  ~          bind:m  (init-ship ~marbud |)
+;<  ~          bind:m  (init-ship ~mardev |)
+;<  ~          bind:m  (send-hi ~marbud ~mardev)
+;<  ~          bind:m  (breach-and-hear ~mardev ~marbud)
+;<  ~          bind:m  (init-ship ~mardev |)
+;<  ~          bind:m  (send-hi ~marbud ~mardev)
+;<  ~          bind:m  (end t)
 (pure:m *vase)

@@ -22,6 +22,28 @@
       aqua-event
   ==
 ::
++$  net-rule
+  $?  %drop-link       ::  drop all packets on this link
+      [%drop-next n=@] ::  drop next n packets, then remove rule
+      %hold-link       ::  queue packets (deliver on %flush)
+      %flush-link      ::  deliver all held packets on link
+      %clear-rules     ::  remove all rules (does not flush)
+  ==
+::
++$  rule-actions
+  $%  [?(%drop-link %hold-link %flush-link) from=@p to=@p]
+      [%drop-next from=@p to=@p n=@ud]
+      [%clear-rules from=@p to=@p]
+  ==
+::
++$  net-rules  (set net-rule)
++$  aqua-action
+  $%  [%ahoy-on ?]
+      [%ames-retry wen=@dr]
+      [%network-core core=?(%mesa %ames)]
+      [%system-flow on=?]
+  ==
+::
 +$  unix-event  ::NOTE  like unix-event:pill-lib but for all tasks
   %+  pair  wire
   $%  [%wack p=@]
@@ -85,5 +107,6 @@
       [%turf p=(list turf)]
       [%unto =unto:gall]  ::  internal gifts to host ships
                           ::   (%facts are transformed to %raw-facts)
+      [%response =http-event:http]
   ==
 --

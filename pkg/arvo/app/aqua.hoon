@@ -9,7 +9,7 @@
 ::
 ::  XX: update these examples
 ::  Then try stuff:
-::  :aqua [%init ~[~bud ~dev]]
+::  :aqua &aqua-events [%init-ship ~bud %.y feed=~]~
 ::  :aqua [%dojo ~[~bud ~dev] "[our eny (add 3 5)]"]
 ::  :aqua [%dojo ~[~bud] "|hi ~dev"]
 ::  :aqua [%wish ~[~bud ~dev] '(add 2 3)']
@@ -22,18 +22,38 @@
 ::
 /-  aquarium
 /+  pill, azimuth, naive, default-agent, aqua-azimuth, dbug, verb
+/=  arvo-gate  /sys/arvo
+/=  ames-gate  /sys/vane/ames
+/=  gall-raw  /sys/vane/gall
+=/  larva-ames  (ames-gate ~zod)
+=.  larva-ames
+  %_  larva-ames
+    rof  |=(* ``[%noun !>(*(list turf))])  :: needed by %born
+    now  ~1111.1.1
+    eny  0v3f.arfnf
+  ==
+=/  ames-adult   +:(call:(larva-ames) ~[//unix] ~ %born ~)
 =,  aquarium
 =>  $~  |%
+    ++  larva-arvo    ..poke:+>.arvo-gate
+    ++  arvo-core    ..^poke:+>.arvo-gate
+    ++  ames-gate    _ames-adult
+    ++  gall-gate    _(gall-raw ~zod)
     +$  versioned-state
       $%  state-0
       ==
     +$  state-0
       $:  %0
           pil=$>(%pill pill-0)
-          assembled=*
+          assembled=*  ::  XX _larva_arvo
           fresh-piers=(map [=ship fake=?] [=pier boths=(list unix-both)])
           fleet-snaps=(map term fleet)
           piers=fleet
+          ames-retry=_~s1
+          ahoy-on=_|
+          network-core=?(%ames %mesa)
+          system-flow=?
+          pump-window=_5
       ==
     ::
     +$  pill-0
@@ -48,7 +68,7 @@
     ::
     +$  fleet  [ships=(map ship pier) azi=az-state]
     +$  pier
-      $:  snap=*
+      $:  snap=*  ::  XX  _arvo-core
           event-log=(list unix-timed-event)
           next-events=(qeu unix-event)
           processing-events=?
@@ -94,6 +114,11 @@
           %pill            (poke-pill:ac !<(pill:pill vase))
           %noun            (poke-noun:ac !<(* vase))
           %azimuth-action  (poke-azimuth-action:ac !<(azimuth-action vase))
+          %aqua-rule
+        =+  !<(rule-actions vase)
+        ::  route poke from test thread to %ames driver
+        ::
+        [%give %fact ~[/net-control] mark vase]~^state
       ==
     [cards this]
   ::
@@ -103,6 +128,10 @@
     ?:  ?=([?(%effects %effect) ~] path)
       `this
     ?:  ?=([%effect @ ~] path)
+      `this
+    ?:  ?=([%net-control ~] path)
+      ::  %ames-driver subscribes here for network rules
+      ::
       `this
     ?.  ?=([?(%effects %effect %evens %boths) @ ~] path)
       ~|  [%aqua-bad-subscribe-path path]
@@ -252,7 +281,6 @@
     =/  pek  (slum peek [[~ ~] & pax])
     =+  ;;(res=(unit (cask)) pek)
     (bind res tail)
-      ::
   ::  Wish
   ::
   ++  wish
@@ -541,6 +569,19 @@
       [%clear-snap lab=@tas]
     =.  fleet-snaps  ~  ::  (~(del by fleet-snaps) lab.val)
     this
+  ::
+      [%ames-retry wen=@dr]
+    this(ames-retry wen.val)
+  ::
+      [%ahoy-on on=?]
+    this(ahoy-on on.val)
+  ::
+      [%system-flow on=?]
+    this(system-flow on.val)
+  ::
+      [%network-core core=?(%ames %mesa)]
+    this(network-core core.val)
+  ::
   ==
 ::
 ::  Make changes to azimuth state for the current fleet
@@ -630,12 +671,12 @@
             [/i/http-client/0v1n.2m9vh %born ~]
             [/e/http-server/0v1n.2m9vh %born ~]
             [/e/http-server/0v1n.2m9vh %live 8.080 `8.445]
-            [/a/newt/0v1n.2m9vh %born ~]
+            :: [/a/newt/0v1n.2m9vh %born ~] :: XX defer %ames %born
             [/d/term/1 %hail ~]
             :: [/d/term/1 %verb ~]  :: XX uncomment for verbose mode
           ::
             ?:  fake.ae  ~
-            :~  =+  [%raw-poke %noun %refresh-rate ~s30]
+            :~  =+  [%raw-poke %noun %refresh-rate ~s5]
                 [/g/aqua/reduce-refresh-rate %deal [. . /]:who.ae %azimuth -]
                 =+  [%poke azimuth-poke/!>([%kick ~])]
                 [/g/aqua/watch %deal [. . /]:who.ae %azimuth -]
@@ -644,6 +685,39 @@
       ==
     =.  this
       abet-pe:(ahoy fake):[ae initted]
+    ::  do config specific state modifications
+    ::
+    =.  this
+      =/  p  (pe who.ae)
+      =+  !<(=_arvo-core [-:!>(arvo-core) snap.initted])
+      =/  vanes=(list term)  ~[%gall %ames]
+      |-  ^+  this
+      ?~  vanes
+        abet-pe:p(snap arvo-core)
+      =/  =vane  (~(got by van.mod.arvo-core) i.vanes)
+      ?:  =(%gall i.vanes)
+        =+  !<(=gall-gate [-:!>((gall-raw ~zod)) q.vase.vane])
+        =.  van.mod.arvo-core
+          =.  system-flow.gall-gate  system-flow
+          (~(put by van.mod.arvo-core) %gall vane(vase !>(gall-gate)))
+        $(vanes t.vanes)
+      ?>  =(%ames i.vanes)
+      =+  !<(=ames-gate [-:!>(ames-adult) q.vase.vane])
+      =.  van.mod.arvo-core
+        =:  retry-timer.ames-gate  ames-retry
+                ahoy-on.ames-gate  ahoy-on
+           network-core.ames-gate  `network-core
+            packet-size.ames-gate  25  ::  4MB  XX allow custom
+            pump-window.ames-gate  `pump-window
+          ==
+        (~(put by van.mod.arvo-core) %ames vane(vase !>(ames-gate)))
+      $(vanes t.vanes)
+    ::  call %born in %ames now to update ames-retry
+    ::
+    =.  this
+      =<  abet-pe
+      =<  plow
+      (push-events:(pe who.ae) [/a/unix %born ~]~)
     (pe who.ae)
   ::
       %pause-events
@@ -694,7 +768,11 @@
       ?:  (gth num.ae (lent u.cash))
         (pe ship.from.ae)
       ::TODO  depends on /ted/aqua/ames behavior in a weird indirect way
-      =/  for=@p  `@`(tail lane.for.ae)  ::NOTE  moons & comets not supported
+      =/  for=@p
+        ?:  =([%.n p=0xdead.beef.cafe] lane.for.ae)
+          ~londeg-tirlys-somlyd-poltus--pintyn-tarbyl-bicnux-marbud
+        `@`(tail lane.for.ae)  ::  XX only custom comet supported
+                               ::     moons not supported
       %-  push-events:(pe for)
       %-  flop  =<  events
       %+  roll  u.cash

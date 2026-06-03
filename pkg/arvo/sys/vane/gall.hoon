@@ -3,6 +3,8 @@
 !?  163
 ::
 ::::
+=/  system-flow=?  &
+::
 |=  our=ship
 ::  veb: verbosity flags
 ::
@@ -486,6 +488,7 @@
   ++  mo-track-flubs
     |=  =ship
     ^+  mo-core
+    ?.  system-flow  mo-core  :: modified by /app/aqua
     ::  if already sent, no-op
     ::
     ?:  (~(has by flubs.state) ship)

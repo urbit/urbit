@@ -30,7 +30,10 @@
     /(scot %p our.bowl)//(scot %da now.bowl)/peers
   ==
 ?.  (~(has by peers) who)
-  !!  :: XX crash thread?
+  :: !!  :: XX crash thread?
+  ~?  >  veb
+    "ahoy-prob: {<who>} not in .peers; abort thread"
+  (pure:m !>(~))
 ::
 =/  start=@da  now.bowl
 ~?  >  veb  "ahoy-prob: start {<who>} {<now.bowl>}"

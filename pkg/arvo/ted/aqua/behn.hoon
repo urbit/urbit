@@ -110,4 +110,6 @@
   =^  cards  piers
     abet-pe:(take-wake:(pe bowl who) t.wire error.sign-arvo)
   [cards this]
+::
+++  handle-aqua-rule  |=(* !!)
 --
