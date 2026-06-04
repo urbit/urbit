@@ -4184,6 +4184,7 @@
             ~>  %slog.0^leaf/"ames: dropping malformed wire: {(spud wire)}"
             event-core
           ?>  ?=([@ her=ship *] u.parsed)
+          ~>  %spin.[(crip "on-take-done/{<her.u.parsed>}")]
           =/  peer-core  (abed-got:pe her.u.parsed)
           ?~  bon=(bone-ok u.parsed wire rift.peer-state.peer-core)
             event-core
@@ -4230,6 +4231,7 @@
           ++  prod-peer
             |=  her=ship
             ^+  event-core
+            ~>  %spin.[(crip "on-prod-peer/{<her>}")]
             =/  par  (get-peer-state her)
             ?~  par  event-core
             =/  peer-core  (abed-peer:pe her u.par)
@@ -4410,6 +4412,7 @@
           ~/  %on-hear-packet
           |=  [=lane =shot dud=(unit goof)]
           ^+  event-core
+          ~>  %spin.[(crip "on-hear-packet/{<sndr.shot>}")]
           %-  (ev-trace rcv.veb sndr.shot |.("received packet"))
           ::
           ?:  =(our sndr.shot)
@@ -4528,6 +4531,7 @@
           ~/  %on-hear-shut
           |=  [=lane =shot dud=(unit goof)]
           ^+  event-core
+          ~>  %spin.[(crip "on-hear-shut/{<sndr.shot>}")]
           =/  sndr-state  (~(get by peers.ames-state) sndr.shot)
           ::  If we don't know them, ask Jael for their keys. If they're a
           ::  comet, this will also cause us to request a self-attestation
@@ -4631,6 +4635,7 @@
             ~>  %slog.0^leaf/"ames: dropping malformed wire: {(spud wire)}"
             event-core
           ?>  ?=([@ her=ship *] u.parsed)
+          ~>  %spin.[(crip "on-take-noon/{<her.u.parsed>}")]
           =/  peer-core  (abed-got:pe her.u.parsed)
           ?~  bone=(bone-ok u.parsed wire rift.peer-state.peer-core)
             event-core
@@ -4646,6 +4651,7 @@
             event-core
           ::
           ?>  ?=([@ her=ship *] u.parsed)
+          ~>  %spin.[(crip "on-take-boon/{<her.u.parsed>}")]
           =/  peer-core  (abed-got:pe her.u.parsed)
           ?~  bone=(bone-ok u.parsed wire rift.peer-state.peer-core)
             event-core
@@ -4676,6 +4682,7 @@
         ++  on-sage
           |=  [=wire =sage:mess]
           ^+  event-core
+          ~>  %spin.[(crip "on-sage/{<ship.p.sage>}")]
           :: XX save or decrypt path?
           :: XX crash in decryption/cue indicates misbehaving peer
           ::
@@ -4983,6 +4990,7 @@
         ++  on-take-wake
           |=  [=wire error=(unit tang)]
           ^+  event-core
+          ~>  %spin.[(crip "on-take-wake{(spud (scag 1 wire))}")]
           ?:  ?=([%alien @ ~] wire)
             ::  if we haven't received an attestation, ask again
             ::
@@ -5564,6 +5572,7 @@
           ++  on-hear-shut-packet
             |=  [=lane =shut-packet dud=(unit goof)]
             ^+  peer-core
+            ~>  %spin.[(crip "on-hear-shut-packet/{<her>}/bone={<bone.shut-packet>}")]
             ::  update and print connection status
             ::
             =.  peer-core  (update-qos %ames %live last-contact=now)
@@ -5648,6 +5657,7 @@
           ++  on-wake
             |=  [=bone error=(unit tang)]
             ^+  peer-core
+            ~>  %spin.[(crip "on-wake/{<her>}/bone={<bone>}")]
             =?  peer-core  ?=(^ error)
               (pe-emit duct %pass /wake-fail %d %flog %crud %ames-wake u.error)
             ::  if we are still waiting for the %born task, reset timer
@@ -6551,6 +6561,7 @@
             ++  call
               |=  task=message-pump-task
               ^+  pump
+              ~>  %spin.[(crip "mu-pump/{<her>}/bone={<bone>}/{<-.task>}")]
               ::
               =.  pump  =~((dispatch-task task) feed-packets)
               =+  top=top-live:packet-pump
@@ -7161,6 +7172,7 @@
             ++  call
               |=  task=message-sink-task
               ^+  sink
+              ~>  %spin.[(crip "mi-sink/{<her>}/bone={<bone>}/{<-.task>}")]
               ?-    -.task
                   %drop  sink(nax.state (~(del in nax.state) message-num.task))
                   %done  (done ok.task)
@@ -7228,6 +7240,7 @@
             ++  hear
               |=  [=lane =shut-packet ok=?]
               ^+  sink
+              ~>  %spin.[(crip "mi-hear/{<her>}/bone={<bone>}/seq={<message-num.shut-packet>}")]
               ::  we know this is a fragment, not an ack; expose into namespace
               ::
               ?>  ?=(%& -.meat.shut-packet)
@@ -8825,6 +8838,7 @@
             |=  [dud=(unit goof) =lane:pact =pact:pact]
             ^+  ev-core
             ?>  ?=(%poke +<.pact)
+            ~>  %spin.[(crip "pact-hear-poke/{<her.pok.pact>}")]
             =*  data     data.pact
             =*  our-ack  her.ack.pact
             =*  rif-ack  rif.ack.pact
@@ -8945,6 +8959,7 @@
           ++  hear-page
             |=  [dud=(unit goof) =lane:pact =pact:pact]
             ^+  ev-core
+            ~>  %spin.[(crip "pact-hear-page/{<her>}")]
             ?>  ?=(%page +<.pact)
             =*  data     data.pact
             =*  name     name.pact
@@ -9099,6 +9114,7 @@
             =|  sealed-path=(unit path)   ::  XX set in the packet layer
             |=  [=spar =auth:mess res=@]  ::  XX assumes res and path decrypted
             ^+  ev-core
+            ~>  %spin.[(crip "mess-hear-page/{<ship.spar>}")]
             =*  ship  ship.spar
             ?>  =(her ship.spar)
             ::
@@ -9117,6 +9133,7 @@
           ++  hear-poke
             |=  [dud=(unit goof) =ack=spar =pok=spar =gage:mess]
             ^+  ev-core
+            ~>  %spin.[(crip "mess-hear-poke/{<ship.pok-spar>}")]
             ::  XX  we punch through the message layer directly from the
             ::  packet layer, so ack/poke path validation happens there
             ::
@@ -9210,6 +9227,7 @@
                   $>(?(%flub %spur %noon %boon %done) gift:gall)
               ==
           ^+  ev-core
+          ~>  %spin.[(crip "ev-take/{<her>}/bone={<bone>}")]
           =+  fo-core=(fo-abed:fo bone dire=%bak)
           ?-  -.sign
             ::  XX for %done, we ack one message at at time, seq is not needed?
@@ -9227,6 +9245,7 @@
         ++  ev-take-sage
           |=  [=were =side =sage:mess]
           ^+  ev-core
+          ~>  %spin.[(crip "ev-take-sage/{<her>}/{<were>}")]
           ::
           =/  message-path=(pole iota)  (validate-path path.p.sage)
           =+  fo-core=(fo-abed:fo side)
@@ -9721,6 +9740,7 @@
             ::
             ++  pump
               |=  load=mesa-message
+              ~>  %spin.[(crip "fo-pump/bone={<bone>}")]
               ?:  |((fo-to-close load) fo-corked halt.state)
                 %-  %+  ev-tace  odd.veb.bug.ames-state
                     ?:  (fo-to-close load)
@@ -9739,6 +9759,7 @@
             ::
             ++  sink
               |=  [seq=@ud =gage:mess ok=?]
+              ~>  %spin.[(crip "fo-sink/bone={<bone>}/seq={<seq>}")]
               ?.  ?=([%message mark *] gage)
                 %-  %+  ev-tace  odd.veb.bug.ames-state
                     |.("no op; weird %message gage {<-.gage>}")
@@ -10439,6 +10460,7 @@
         ++  sy-wake
           |=  [=wire error=(unit tang)]
           ^+  sy-core
+          ~>  %spin.[(crip "sy-wake{(spud (scag 1 wire))}")]
           =?  sy-core  ?=(^ error)   :: XX use verbosity flag
             (sy-emit hen %pass /crud %d %flog %crud %wake-error u.error)
           ?:  ?=([%recork ~] wire)
@@ -10964,6 +10986,7 @@
           ::
           ++  prod-peer
             |=  [[=ship per-sat=chum-state] core=_sy-core]
+            ~>  %spin.[(crip "prod-peer/{<ship>}")]
             ?.  ?=([%known *] per-sat)
               ::  XX  this shouldn't be needed
               ::  XX  only if %alien
