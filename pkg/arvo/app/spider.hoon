@@ -585,8 +585,12 @@
     ?@  per=(must:guard:gall our.bowl c)
       ?:  per  tang
       [leaf+"spider: never allowed: {<-.c>}" tang]
-    ?:  (have:guard:gall peg per)  tang
-    [leaf+"spider: missing permission: {<per>}" tang]
+    %+  welp
+      %+  murn  per
+      |=  =perm:gall
+      ?:  (have:guard:gall peg perm)  ~
+      `leaf+"spider: missing permission: {<perm>}"
+    tang
   [%| err=[%missing-permissions msg]]
 ::
 ++  begin-shed

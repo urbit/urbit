@@ -4308,13 +4308,18 @@
       --
     --
   ::
-  ++  guard  !:  ::  perm check utils
+  ++  guard  ::  perm check utils
     |%
     ++  rite  ::  namespace permission check
       |=  [our=ship pes=(set perm) [=view =beam]]
       ^-  ?
-      ?:  (~(has in pes) %super ~)  &
-      |  ::TODO
+      ?.  =(our p.beam)  |
+      =/  [vane=term care=(unit term)]
+        ?^  view  [way.view `car.view]
+        ?.  =(2 (met 3 view))
+          [view ~]
+        [(end 3 view) `(rsh 3 view)]
+      (have pes [%reads vane care `q.beam s.beam])
     ::
     ++  cres
       |=  [our=ship pes=(set perm) caz=(list card:agent)]
@@ -4324,58 +4329,263 @@
     ++  cred  ::  userspace permission check
       |=  [our=ship pes=(set perm) =card:agent]
       ^-  ?
-      ?@  per=(must our card)  per
-      (have pes ;;(perm per))
+      =/  per=$@(? (lest perm))  (must our card)
+      ?@  per  per
+      (levy `(list perm)`per (cury have pes))
     ::
     ++  have  ::  .pes has .mus or broader
       |=  [pes=(set perm) mus=perm]
       ^-  ?
       ?:  (~(has in pes) %super ~)  &
-      ?+  mus  (~(has in pes) mus)
-        [%write *]  |  ::TODO
-        [%watch *]  |  ::TODO
-        [%reads *]  |  ::TODO
-        [%clay *]   |  ::TODO
+      %+  lien  ~(tap in pes)
+      |=  per=perm
+      ?:  =(mus per)       &
+      ?.  =(-.mus -.per)   |
+      ?:  ?=(?(%write %watch %reads %fling) -.mus)
+        ?+  -.per  |
+            %write
+          ?>  ?=([%write *] mus)
+          (have-unit dude.mus dude.per)
+        ::
+            %watch
+          ?>  ?=([%watch *] mus)
+          ?&  (have-unit dude.mus dude.per)
+              (have-path path.mus path.per)
+          ==
+        ::
+            %reads
+          ?>  ?=([%reads *] mus)
+          ?&  =(vane.mus vane.per)
+              (have-unit care.mus care.per)
+              (have-unit desk.mus desk.per)
+              (have-path spur.mus spur.per)
+          ==
+        ::
+        %fling  ?>(?=(%fling -.mus) |)
+        ==
+      ?.  =(+<.mus +<.per)  |
+      ?+  per  |
+          [%clay %local *]  ::  cash
+        ?>  ?=([%clay %local *] mus)
+        ?&  (have-unit care.mus care.per)
+            (have-unit desk.mus desk.per)
+            (have-path spur.mus spur.per)
+        ==
+      ::
+          ?([%ames %reads *] [%clay %write *])  ::  dash
+        ?>  ?=(?([%ames %reads *] [%clay %write *]) mus)
+        ?&  (have-unit desk.mus desk.per)
+            (have-path spur.mus spur.per)
+        ==
+      ::
+          [%clay ?(%rules %stone %desks) *]  :: (unit desk)
+        ?>  ?=([%clay ?(%rules %stone %desks) *] mus)
+        (have-unit des.mus des.per)
+      ::
+          [%eyre %serve *]  ::  path
+        ?>  ?=([%eyre %serve *] mus)
+        (have-path path.mus path.per)
+      ::
+          [%gall %clear *]  :: (unit dude)
+        ?>  ?=([%gall %clear *] mus)
+        (have-unit dude.mus dude.per)
       ==
+    ::
+    ++  have-unit
+      |=  [mus=(unit) per=(unit)]
+      ?|  =(~ per)
+          =(mus per)
+      ==
+    ::
+    ++  have-path  ::  check if req path nested within per
+      |=  [req=path per=path]
+      =|  p=path
+      |-
+      ?:  =(p per)  &
+      ?~  req       |
+      $(p (welp p [i.req ~]), req t.req)
     ::
     ++  must  ::  perm required for card
       |=  [our=ship =card:agent]
-      ^-  $@(? perm)  ::  always/never allowed, or perm
+      ^-  $@(? (lest perm))  ::  always/never allowed, or lest perm
       ?-  -.card
           %give  &
-          %slip  |
+          %slip  $(card [%pass / p.card])
           %pass
         =/  =note:agent  q.card
         ?-  -.note
             %agent
           ?-  -.task.note
-            %watch             [%watch `name.note path.task.note]
-            %watch-as          [%watch `name.note path.task.note]
-            %leave             [%watch `name.note ~]
-            ?(%poke %poke-as)  [%write `name.note]
+            %watch             [%watch `name.note path.task.note]~
+            %watch-as          [%watch `name.note path.task.note]~
+            %leave             &
+            ?(%poke %poke-as)  [%write `name.note]~
           ==
             %arvo
           =/  task=task-user-v1  +.note
           ?-  -.task
-            %ames  [%super ~]  ::TODO
-            %behn  [%super ~]  ::TODO
+              %ames
+            ^-  $@(? (lest perm))
+            ?-  +<.task
+              ?(%prod %cong %stir)  [%super ~]~
+              ?(%sift %spew)        [%ames %debug ~]~
+              %snub                 [%ames %block ~]~
+              %keen                 ?.  =(our ship.spar.task)  [%ames %keens ~]~
+                                    ?.  ?=([@ @ @ @ *] path.spar.task)  |
+                                    =/  =spur  t.t.t.t:path.spar.task
+                                    [[%ames %reads `i.t.t.t:path.spar.task spur] ~]
+              %yawn                 &
+              ?(%grow %tomb %cull %tend %germ %snip)
+                                    [%ames %write ~]~
+              %trim                 [%super ~]~
+            ==
+          ::
+              %behn
+            ?-  +<.task
+              %wait                 [%behn %timer ~]~
+              %rest                 &
+              %trim                 [%super ~]~
+            ==
           ::
               %clay
-            [%super ~]  ::TODO
+            ^-  $@(? (lest perm))
+            ?-  +<.task
+                %read
+              ?.  =(our ship.task)  [%clay %peers ~]~
+              =/  to-per  |=  [care=(unit) =path]
+                          ^-  perm
+                          [%clay %local care `desk.task path]
+              ?-  -.rave.task
+                %sing  [(to-per [`care path]:mood.rave.task) ~]
+                %next  [(to-per [`care path]:mood.rave.task) ~]
+                %mult
+                  =/  paths=(list [care:clay path])  ~(tap in paths.mool.rave.task)
+                  =/  per  (turn paths |=([c=@ =path] (to-per [`c path])))
+                  ?~(per & per)
+                %many  [(to-per [~ path.moat.rave.task]) ~]
+              ==
+            ::
+              ?(%rest %pine)        &
+            ::
+                %rite
+              =/  per
+                %+  turn  sob.task
+                |=([=path *] [%clay %write `des.task path])
+              ?~(per & per)
+            ::
+              %name                 [%clay %write `des.task /]~
+              %merg                 [%clay %write `des.task /]~
+              %drop                 [%clay %write `des.task /]~
+              %fuse                 [%clay %write `des.task /]~
+              ?(%cred %crow)        [%clay %crews ~]~
+              %perm                 [%clay %rules `des.task]~
+              ?(%esse %rein %zest)  [%clay %desks `des.task]~
+            ::
+                %zeal
+              =/  per  (turn lit.task |=([=desk *] [%clay %desks `desk]))
+              ?~(per & per)
+            ::
+              %tire                 [%clay %pulse ~]~
+              %seal                 [%clay %perms ~]~
+              %ward                 [%clay %guard ~]~
+              ?(%mont %ogre %dirk)  [%clay %mount ~]~
+            ::
+                %tomb
+              ?+  -.clue.task       [%clay %stone ~]~
+                %pick               &
+                %norm               [%clay %stone `desk.clue.task]~
+                %worn               [%clay %stone `desk.clue.task]~
+                %seek               [%clay %stone `desk.clue.task]~
+              ==
+            ::
+              %trim                 [%super ~]~
+            ==
           ::
-            %dill  [%super ~]  ::TODO
-            %eyre  [%super ~]  ::TODO
-            %gall  [%super ~]  ::TODO
-            %iris  [%super ~]  ::TODO
-            %jael  [%super ~]  ::TODO
-            %khan  [%super ~]  ::TODO
-            %lick  [%super ~]  ::TODO
+              %dill
+            ?-  +<.task
+              %shot                 [%dill %terms ~]~
+              %logs                 [%dill %sylog ~]~
+              ?(%crud %talk %text)  [%dill %print ~]~
+              %mass                 [%dill %weigh ~]~
+              ?(%meld %pack)        [%dill %press ~]~
+              %trim                 [%super ~]~
+            ==
           ::
-            %syscall  [%super ~]
-            ::  TODO
+              %eyre
+            ?-  +<.task
+              ?(%rule %eauth-host)  [%eyre %setup ~]~
+              %connect              [%eyre %serve path.binding.task]~
+            ::
+                %set-response  ::  TODO: access smeg:de-purl:html
+              =/  pars  ;~(pfix fas (more fas smeg))
+              =/  segs  (pars [1 1] (trip url.task))
+              ?~  q.segs  |
+              [%eyre %serve p.u.q.segs]~
+            ::
+              %disconnect           &
+              ?(%approve-origin %reject-origin)
+                                    [%eyre %cross ~]~
+              %spew                 [%eyre %debug ~]~
+              %trim                 [%super ~]~
+            ==
+          ::
+              %gall
+            ?-  +<.task
+              %nuke                 [%gall %clear `dude.task]~
+              ?(%spew %sift)        [%gall %debug ~]~
+              ?(%sear %trim)        [%super ~]~
+            ==
+          ::
+              %iris
+            ?-  +<.task
+              %request              [%iris %fetch ~]~
+              %cancel-request       &
+              %trim                 [%super ~]~
+            ==
+          ::
+              %jael
+            ?-  +<.task
+              %private-keys         [%jael %privy ~]~
+              ?(%public-keys %turf)  &
+              %listen               [%jael %watch ~]~
+              %moon                 [%jael %moons ~]~
+              %rekey                [%jael %rekey ~]~
+              %step                 [%jael %login ~]~
+              %ruin                 [%jael %blast ~]~
+              %trim                 [%super ~]~
+            ==
+          ::
+              %khan
+            ?-  +<.task
+              ?(%fard %lard)        [%khan %twine ~]~
+              %trim                 [%super ~]~
+            ==
+          ::
+              %lick
+            ?-  +<.task
+              ?(%spin %shut %spit)  [%lick %ports ~]~
+              %trim                 [%super ~]~
+            ==
+          ::
+            %syscall  [%super ~]~
           ==
-          %dole  [%super ~]
+          %dole  [%super ~]~
         ==
+      ==
+    ::  TODO:  copied from zuse
+    ::
+    ++  smeg                                            ::  ++smeg:de-purl:html
+      (cook crip (star pcar))
+    ++  pcar                                            ::  ++pcar:de-purl:html
+      ;~(pose pure pesc psub col pat)
+    ++  pure                                            ::  ++pure:de-purl:html
+      ;~(pose aln hep cab dot zap sig tar soq pal par)
+    ++  pesc                                            ::  ++pesc:de-purl:html
+      ;~(pfix cen mes)
+    ++  psub                                            ::  ++psub:de-purl:html
+      ;~  pose
+        zap  buc  pam  soq  pal  par
+        tar  lus  com  mic  tis
       ==
     --
   ::
