@@ -338,16 +338,22 @@
 ++  on-init
   =<  abet
   ~>  %slog.(fmt "boot")
-  ::
-  =+  .^(desks=(set desk) %cd /(scot %p our)//(scot %da now))
-  =.  desks  (~(del in desks) %base)
-  =.  desks  (~(del in desks) %kids)
+  (emit [%pass /kiln/boot %arvo %behn %wait now])
+::
+++  boot-setup
+  =<  abet
+  ~>  %slog.(fmt "boot-setup")
   ::
   =/  sop=ship  (sein:title our now our)
   ::  set up base desk
   ::
   =?  ..on-init  ?=(?(%earl %duke %king) (clan:title our))
     abet:init:(apex:(sync %base sop %kids) `%kids)
+  ::
+  ::
+  =+  .^(desks=(set desk) %cd /(scot %p our)//(scot %da now))
+  =.  desks  (~(del in desks) %base)
+  =.  desks  (~(del in desks) %kids)
   ::  install other desks and make them public
   ::
   =/  dez=(list desk)  ~(tap in desks)
@@ -1102,6 +1108,7 @@
       [%clay %mere *]  sign-arvo
     ==
   ?-    wire
+      [%boot *]         boot-setup
       [%sync %merg *]   abet
       [%find-ship *]    abet
       [%sync *]         abet
