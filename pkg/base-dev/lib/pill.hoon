@@ -262,7 +262,7 @@
   ::
   :+  %pill  %solid
   :+  boot-ova  ~
-  =.  dez  (snoc dez [%base bas])
+  =.  dez  [[%base bas] dez]
   ;:  weld
     %+  turn  dez
     |=  [dek=desk bas=path]
@@ -321,7 +321,7 @@
     ==
   ::
   =/  userspace-ova
-    =.  dez  (snoc dez [%base bas])
+    =.  dez  [[%base bas] dez]
     ;:  weld
       %+  turn  dez
       |=  [dek=desk bas=path]
