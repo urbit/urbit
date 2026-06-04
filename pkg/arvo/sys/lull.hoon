@@ -3994,7 +3994,7 @@
             [%crews ~]                                  ::  %cred %crow
             [%rules des=(unit desk)]                    ::  %perm
             [%stone des=(unit desk)]                    ::  %tomb
-            [%mount dash]                               ::  %mont %ogre %dirk
+            [%mount ~]                                  ::  %mont %ogre %dirk
           ::
             [%desks des=(unit desk)]                    ::  %esse %rein %zeal %zest
             [%pulse ~]                                  ::  %tire
@@ -4018,7 +4018,7 @@
         ==  ==
       ::
         $:  %gall
-        $%  [%clear dud=(unit dude)]                    ::  %nuke
+        $%  [%clear dude=(unit dude)]                   ::  %nuke
             [%debug ~]                                  ::  %spew %sift
         ==  ==
       ::
