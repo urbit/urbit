@@ -198,12 +198,18 @@
         /[ego]/[syd]/[wen]/base/(scot %p her.u.sink)/[sud.u.sink]
       ==
     |=(=tako .^(@uv %cs /[ego]/[syd]/[wen]/hash/(scot %uv tako)))
+  =+  .^(=bond:ward:clay %cx /[ego]//[wen]/bond/[syd])
+  =/  has-perms
+    %-  ~(all in pew.bond)
+    |=(p=perm:gall (have:guard:gall peg.bond p))
   =/  dek  (~(got by tyr) syd)
   =/  sat
     ?-  zest.dek
-      %live  'running'
+      %live  ?:  has-perms  'running'
+              'running, available update requires permissions'
       %dead  'suspended'
-      %held  'suspended until next update'
+      %held  ?:  has-perms  'suspended until next update'
+             'suspended, requires permissions'
     ==
   =/  kul=cord  (print-wefts (waft-to-wefts waft))
   =/  ese=cord
