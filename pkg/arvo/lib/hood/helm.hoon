@@ -524,6 +524,14 @@
     (pure:m u.parsed)
   --
 ::
+++  poke-grant-perms
+  |=  grants=(jar desk perm:gall)
+  =<  abet
+  %-  emil
+  %+  turn  ~(tap by grants)
+  |=  [=desk per=(list perm:gall)]
+  [%pass /helm/perms/[desk] %arvo %clay %seal desk & (silt per)]
+::
 ++  take-arow-dns-config
   |=  res=(avow:khan cage)
   ?:  ?=(%& -.res)  abet
@@ -668,6 +676,7 @@
     %helm-verb             =;(f (f !<(_+<.f vase)) poke-verb)
     %helm-write-sec-atom   =;(f (f !<(_+<.f vase)) poke-sec-atom)
     %helm-dns-config       =;(f (f !<(_+<.f vase)) poke-dns-config)
+    %helm-grant-perms      =;(f (f !<(_+<.f vase)) poke-grant-perms)
   ==
 ::
 ++  take-agent
