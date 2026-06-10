@@ -1,6 +1,8 @@
-:: > =h -bar
-:: > `@ux`(mug h)
-:: 0x41fd.c951
+::  > `@ux`(mug q:.^(vase %ca %/mar/hoon/hoon))
+::  0x41fd.c951
+::  > =a -build-file %/mar/hoon/hoon
+::  > `@ux`(mug a)
+::  0x41fd.c951
 ::
 ::  build /mar/hoon/hoon using arvo from pill
 ::  produces a vase:h136 (unmigrated old types)
@@ -81,6 +83,8 @@
 ~&  >  [%mugs `@ux`(mug builder) `@ux`(mug ford-vase)]
 ::
 ~&  >  [%ford-vase-mug `@ux`(mug ford-vase)]
+~&  >  [%ford-vase-type-mug `@ux`(mug -.ford-vase)]
+~&  >  [%ford-vase-value-mug `@ux`(mug +.ford-vase)]
 ::
 ::  navigate to ++fusion > ++ford
 ::
@@ -95,19 +99,19 @@
   %-  ~(gas by *(map path (each page lobe:clay)))
   :~  [/mar/hoon/hoon [%& %hoon src]]
   ==
+~&  >  [%fils-mug `@ux`(mug fils)]
 ::
 ::  call ford gate with args [files file-store verb]
 ::  using old slym (untyped sample replacement)
 ::
 ~&  >  %building
 =/  cor=*  (slum old-slym [fod [fils ~ 0]])
+~&  >  [%cor-mug `@ux`(mug cor)]
 ::
 ::  get build-file arm and call it with path
-::  wish for the path vase in old arvo to get h136 type metadata
 ::
 =/  bf=*  (slum old-slub [cor [%limb %build-file]])
-=/  pax=*  (wish '!>(/mar/hoon/hoon)')
-=/  result=*  (slum old-slym [bf /mar/hoon/hoon])
+=/  result=*  +7:(slum old-slym [bf /mar/hoon/hoon])
 ~&  >  [%result-mug `@ux`(mug result)]
 result
 ::
