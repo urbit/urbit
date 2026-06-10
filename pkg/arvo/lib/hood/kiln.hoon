@@ -568,6 +568,7 @@
   ?+  mark  ~|([%poke-kiln-bad-mark mark] !!)
     %kiln-approve-merge      =;(f (f !<(_+<.f vase)) poke-approve-merge)
     %kiln-autocommit         =;(f (f !<(_+<.f vase)) poke-autocommit)
+    %kiln-autosync           =;(f (f !<(_+<.f vase)) poke-autosync)
     %kiln-bump               =;(f (f !<(_+<.f vase)) poke-bump)
     %kiln-cancel             =;(f (f !<(_+<.f vase)) poke-cancel)
     %kiln-cancel-autocommit  =;(f (f !<(_+<.f vase)) poke-cancel-autocommit)
@@ -626,6 +627,11 @@
   =.  commit-timer
     [/kiln/autocommit (add now recur) recur mon]
   (emit %pass way.commit-timer %arvo %b [%wait nex.commit-timer])
+::
+++  poke-autosync
+  |=  [mon=term on=?]
+  =<  abet
+  (emit %pass /autosync %arvo %c [%wath mon on])
 ::
 ++  poke-bump
   |=  ~

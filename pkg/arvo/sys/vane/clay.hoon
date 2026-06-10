@@ -210,6 +210,8 @@
 ::  --  `ran` is the object store.
 ::  --  `mon` is a collection of mount points (mount point name to urbit
 ::      location).
+::  --  `syn` is the set of mount points marked for auto-sync, watched by
+::      the runtime for filesystem events.
 ::  --  `hez` is the unix duct that %ergo's should be sent to.
 ::  --  `cez` is a collection of named permission groups.
 ::  --  `pud` is an update that's waiting on a kernel upgrade
@@ -219,6 +221,7 @@
       hoy=(map ship rung)                               ::  foreign
       ran=rang                                          ::  hashes
       mon=(map term beam)                               ::  mount points
+      syn=(set term)                                    ::  auto-sync mounts
       hez=(unit duct)                                   ::  sync duct
       cez=(map @ta crew)                                ::  permission groups
       tyr=(set duct)                                    ::  app subs
@@ -2975,6 +2978,7 @@
     ^+  ..unmount
     ?>  ?=(^ hez.ruf)
     =.  mon  (~(del by mon) pot)                        ::  [ergo]
+    =.  syn  (~(del in syn) pot)
     =?  mim.dom  !(want-mime 0)  ~
     (emit u.hez.ruf %give %ogre pot)
   ::
@@ -4665,7 +4669,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%16                                       ::  vane version
+    $:  ver=%17                                       ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
@@ -4690,7 +4694,11 @@
   ?-    -.req
       %boat
     :_  ..^$
-    [hen %give %hill (turn ~(tap by mon.ruf) head)]~
+    ^-  (list move)
+    :-  [hen %give %hill (turn ~(tap by mon.ruf) head)]
+    %+  turn  ~(tap in syn.ruf)
+    |=  pot=term
+    [hen %give %wath pot]
   ::
       %cred
     =.  cez.ruf
@@ -4829,6 +4837,18 @@
       ~&  [%not-mounted pot.req]
       [~ ..^$]
     [~[[u.hez.ruf %give %dirk pot.req]] ..^$]
+  ::
+      %wath
+    ?.  (~(has by mon.ruf) pot.req)
+      ~|([%wath-not-mounted pot.req] !!)
+    ?>  ?=(^ hez.ruf)
+    =.  syn.ruf
+      ?:  on.req  (~(put in syn.ruf) pot.req)
+      (~(del in syn.ruf) pot.req)
+    :_  ..^$
+    ?:  on.req
+      [u.hez.ruf %give %wath pot.req]~
+    [u.hez.ruf %give %wend pot.req]~
   ::
       %ogre
     ?:  =(~ hez.ruf)
@@ -5022,7 +5042,8 @@
   ::
   =>  |%
       +$  raft-any
-        $%  [%16 raft-16]
+        $%  [%17 raft-17]
+            [%16 raft-16]
             [%15 raft-15]
             [%14 raft-14]
             [%13 raft-13]
@@ -5034,7 +5055,22 @@
             [%7 raft-7]
             [%6 raft-6]
         ==
-      +$  raft-16  raft
+      +$  raft-17  raft
+      ::
+      +$  raft-16
+        $+  raft-16
+        $:  rom=room
+            hoy=(map ship rung)
+            ran=rang
+            mon=(map term beam)
+            hez=(unit duct)
+            cez=(map @ta crew)
+            tyr=(set duct)
+            tur=rock:tire
+            pud=(unit [=desk =yoki])
+            sad=(map ship @da)
+            bug=[veb=@ mas=@]
+        ==
       ::
       +$  flow  (map leak [refs=@ud =soak])
       +$  leak
@@ -5507,7 +5543,8 @@
   =?  old  ?=(%13 -.old)  14+(raft-13-to-14 +.old)
   =?  old  ?=(%14 -.old)  15+(raft-14-to-15 +.old)
   =?  old  ?=(%15 -.old)  16+(raft-15-to-16 +.old)
-  ?>  ?=(%16 -.old)
+  =?  old  ?=(%16 -.old)  17+(raft-16-to-17 +.old)
+  ?>  ?=(%17 -.old)
   ..^^$(ruf +.old)
   ::
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
@@ -5865,6 +5902,14 @@
       ?.  ?=([~ ~ *] c)  c
       ``(next-cage:a235 u.u.c)
     --
+  ::  +raft-16-to-17: add syn, the set of auto-synced mount points
+  ::
+  ++  raft-16-to-17
+    |=  raf=raft-16
+    ^-  raft-17
+    :*  rom.raf  hoy.raf  ran.raf  mon.raf  syn=~
+        hez.raf  cez.raf  tyr.raf  tur.raf  pud.raf  sad.raf  bug.raf
+    ==
   --
 ::
 ++  scry                                              ::  inspect
@@ -6005,7 +6050,7 @@
 ++  stay
   ^-  raft-any:load
   :-  ver
-  ^-  raft-16:load
+  ^-  raft-17:load
   ruf
 ::
 ++  take                                              ::  accept response

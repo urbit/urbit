@@ -1,0 +1,1 @@
+clay/autosync.hoon
