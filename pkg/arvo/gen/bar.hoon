@@ -77,7 +77,7 @@
 ::
 ~&  >  %parsing-ford
 =/  builder  (slum wish '!>(|=(fc=@t =+(x=(ride -:!>(..zuse) fc) [p.x .*(..zuse q.x)])))')
-=/  ford-vase  (slum old-slym [builder ford-cord])
+=/  ford-vase  (slum +3.builder ford-cord)
 ~&  >  [%mugs `@ux`(mug builder) `@ux`(mug ford-vase)]
 ::
 ~&  >  [%ford-vase-mug `@ux`(mug ford-vase)]
