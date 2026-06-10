@@ -2963,13 +2963,7 @@
     =/  for-yon  ?:(=(let.dom u.yon) 0 u.yon)
     =.  mon                                             ::  [ergo]
       (~(put by mon) pot [her syd ud+for-yon] spur)
-    =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) u.yon))
-    =/  files  (~(run by q.yaki) |=(=lobe |+lobe))
-    =/  =args:ford:fusion  [files lat.ran veb.bug]
-    =^  mim  args
-      (checkout-mime args ~ ~(key by files))
-    =.  mim.dom  (apply-changes-to-mim mim.dom mim)
-    (ergo for-yon mim)
+    (mirror pot)
   ::
   ::  Unmount a beam
   ::
