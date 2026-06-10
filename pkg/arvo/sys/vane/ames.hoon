@@ -82,9 +82,10 @@
 =,  ames
 =*  point               point:jael
 =*  public-keys-result  public-keys-result:jael
-=/  packet-size  13
-=/  retry-timer  ~m2    ::  only used in /mesa/retry and /dead-flow timers
-=/  ahoy-on=?    %.y
+=/  packet-size      13
+=/  retry-timer      ~m2    ::  only used in /mesa/retry and /dead-flow timers
+=/  ahoy-on=?        %.y
+=/  max-mtu=@ud      1.472  :: boq=3
 ::
 =>  ::  common helpers
     ~%  %ames  ..part  ~
@@ -9384,11 +9385,19 @@
             ::
             =?  ev-core  ?=(~ lane.per)  (ev-update-qos %dead last-contact=now)
             ::
-            ?.  =(1 (div (add tob.data.pact 1.023) 1.024))
+            =+  fo-core=(fo-abed:fo [bone dire]:ack)
+            ::  how many 1.024-byte fragments does tob require?
+            ::    e.g. boq=13 (frag=1.024); if tob=1.025 => 2 fragments
+            ::
+            =+  boq=13
+            =+  frag=(div (bex boq) 8) ::  fragment size in bytes (1.024 for boq=13)
+            ::  tob.data.pact is (met 3 dat.data.pact) in bytes
+            ::
+            ?:  (gth (div (add tob.data.pact (dec frag)) frag) 1)
               %-  %+  ev-tace  msg.veb.bug.ames-state
                   |.("hear incomplete message")
               :: XX assert load is plea/boon?
-              =+  fo-core=(fo-abed:fo [bone dire]:ack)
+              ::
               ?:  (fo-message-is-acked:fo-core mess.pok)
                 ::  don't peek if the message havs been already acked
                 ::
@@ -9407,6 +9416,20 @@
               %^  ev-emit  hen  %pass
               [(fo-wire:fo-core %pok) %a %meek [none/~ [her pat]:pok.pact]]
             ::  authenticate one-fragment message
+            ::
+            ::  if this is a one-fragment %data pact, tob would equal the size of
+            ::  dat but if it's an over-MTU %auth poke,
+            ::  (dat.data.pact = lss-root = 32B)
+            ::  and tob > 32B to create the over-MTU %auth packet
+            ::
+            ?:  !=(tob.data.pact (met 3 dat.data.pact))
+              ?>  %-  authenticate
+                  [dat.data aut.data pok.pact]
+              %-  %+  ev-tace  fin.veb.bug.ames-state
+                  |.("peek for n=1 over-mtu poke payload {<[flow=bone seq=mess]:pok>}")
+              %^  ev-emit  hen  %pass
+              [(fo-wire:fo-core %pok) %a %meek [none/~ [her pat]:pok.pact]]
+            ::  direct single-fragment: dat is full message; inject
             ::
             ?>  %-  authenticate
                 [(root:lss (met 3 dat.data)^dat.data) aut.data pok.pact]
@@ -9485,9 +9508,10 @@
                 ev-core
               =/  proof=(list @ux)  (rip 8 dat.data)
               ?>  %-  authenticate
-                  [(recover-root:verifier:lss proof) aut.data name]
-              =/  state    (init:verifier:lss tof proof)
-              =.  pit.per  (~(put by pit.per) sealed-path u.res(ps `[state ~]))
+                  [?:(=(1 tof) dat.data (recover-root:verifier:lss proof)) aut.data name]
+              =?  pit.per  !=(1 tof)
+                =/  state    (init:verifier:lss tof proof)
+                (~(put by pit.per) sealed-path u.res(ps `[state ~]))
               ::
               %-  (ev-tace snd.veb.bug.ames-state |.("request frag={<fag>}"))
               ::  request next fragment
@@ -12369,22 +12393,21 @@
           =/  nam  [[ship.p per-rift] [13 ~] path.p]
           ?~  q
             `[hop=0 %peek nam]
-          ::  XX assert that the serializes path fits in the MTU
-          ::  XX if path will be too long, put in [tmp] and use that path
-          ::  %-  mess:plot:d
-          ::  (en:name:d [[her=~nec rif=40] [boq=0 wan=~] pat=['c~_h' ~]]))
-          ::  [bloq=q=3 step=r=12]
-          ::  =/  has  (shax u.u.res)
-          ::  =.  tmp-chums.ames-state
-          ::    %+  ~(put by tmp-chums.ames-state)  has
-          ::    [%some-envelope original-path u.u.res])
-          ::  //ax/[$ship]//1/temp/[hash]
           ::
           =/  man=name:pact  [[our rift.ames-state] [13 ~] u.q]
           ::
           ?~  page=(co-get-page man)
-            ::  XX
-            ~&  [%no-page man=man]  ~
+            ~&([%no-page man=man] ~)  :: XX
+          =/  poke=pact:pact  [hop=0 %poke nam man u.page]
+          =/  [=bloq =step]   (met:plot (en:pact poke))
+          ?>  =(3 bloq)
+          ?.  (gth step max-mtu)
+            `poke
+          ::
+          %-  %^  co-tace  odd.veb.bug.ames-state  ship.p
+              |.("pact over-mtu page={<(met 3 dat.u.page)>}B; send %auth pact")
+          ?~  page=(co-get-page man(wan [%auth 0]))
+            ~&([%no-auth-page man=man] ~)  :: XX
           `[hop=0 %poke nam man u.page]
         ::
         ++  co-get-page
@@ -12498,14 +12521,14 @@
           ?-    typ.wan.pac.nex
               %auth
             =/  nam  [[our rif] [boq ?:(nit ~ [%auth fag])] pat]
-            ::  NB: root excluded as it can be recalculated by the client
+            ::  NB: root included for special one-fragment message %auth
             ::
             =/  lss-proof
               =>  [ser=ser ..lss]
               :: ~>  %memo./ames/lss-auth
               (build:lss (met 3 ser)^ser)
-            =/  pof=@ux  (rep 8 proof.lss-proof)
-            =/  dat  [tob [%& mes] (rep 8 proof.lss-proof)]  :: XX types
+            =/  pof=@ux  ?:(=(1 wid) root.lss-proof (rep 8 proof.lss-proof))
+            =/  dat  [tob [%& mes] pof]  :: XX types
             [[hop=0 %page nam dat ~] ~ pof]
           ::
               %data
@@ -12681,11 +12704,10 @@
           ::
           =/  =open-packet
             [pass.ames-state our life.ames-state u.rcvr u.life]
-          =/  sig
-            %+  sign-raw:ed:crypto  (jam open-packet)
-            [sgn.pub sgn.sek]:saf.ames-state
+          =/  msg  (jam open-packet)
+          =/  sig  (sign-raw:ed:crypto msg [sgn.pub sgn.sek]:saf.ames-state)
           :+  ~  ~
-          [%message !>(proof/sig)]
+          [%message !>(proof/(jam sig msg))]
         ::  publisher-side, weight of a noun at .pat, as measured by .boq
         ::
         ++  peek-whey
