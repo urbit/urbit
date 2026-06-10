@@ -2982,6 +2982,30 @@
     =?  mim.dom  !(want-mime 0)  ~
     (emit u.hez.ruf %give %ogre pot)
   ::
+  ::  Mirror a mount point's full contents out to unix
+  ::
+  ::  Used at auto-sync reconciliation: the runtime restores files
+  ::  that are missing on disk, skips files that match, and leaves
+  ::  locally-edited files for the inbound sync.  Mars is the ground
+  ::  truth for existence; earth is believed for live edits.
+  ::
+  ++  mirror
+    |=  pot=term
+    ^+  ..mirror
+    =/  bem=beam  (~(got by mon) pot)
+    ?>  ?=(%ud -.r.bem)
+    =/  for-yon  p.r.bem
+    ?:  &(=(0 for-yon) =(0 let.dom))
+      ..mirror
+    =/  yon  ?:(=(0 for-yon) let.dom for-yon)
+    =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) yon))
+    =/  files  (~(run by q.yaki) |=(=lobe |+lobe))
+    =/  =args:ford:fusion  [files lat.ran veb.bug]
+    =^  mim  args
+      (checkout-mime args ~ ~(key by files))
+    =.  mim.dom  (apply-changes-to-mim mim.dom mim)
+    (ergo for-yon mim)
+  ::
   ::  Set permissions for a node.
   ::
   ++  perm
@@ -4693,12 +4717,24 @@
   ::
   ?-    -.req
       %boat
-    :_  ..^$
-    ^-  (list move)
-    :-  [hen %give %hill (turn ~(tap by mon.ruf) head)]
-    %+  turn  ~(tap in syn.ruf)
-    |=  pot=term
-    [hen %give %wath pot]
+    =/  pots  ~(tap in syn.ruf)
+    =/  mos=(list move)
+      :-  [hen %give %hill (turn ~(tap by mon.ruf) head)]
+      %+  turn  pots
+      |=  pot=term
+      [hen %give %wath pot]
+    ::  re-mirror auto-synced mounts, restoring any files that went
+    ::  missing while we were down (after the %wath reconciliation
+    ::  scan has captured offline edits)
+    ::
+    |-  ^-  [(list move) _..^^$]
+    ?~  pots
+      [mos ..^^$]
+    =/  bem  (~(got by mon.ruf) i.pots)
+    =^  mor  ruf
+      =/  den  ((de now rof hen ruf) p.bem q.bem)
+      abet:(mirror:den i.pots)
+    $(pots t.pots, mos (weld mos mor))
   ::
       %cred
     =.  cez.ruf
@@ -4841,14 +4877,21 @@
       %wath
     ?.  (~(has by mon.ruf) pot.req)
       ~|([%wath-not-mounted pot.req] !!)
-    ?>  ?=(^ hez.ruf)
+    =/  dut=duct  (need hez.ruf)
     =.  syn.ruf
       ?:  on.req  (~(put in syn.ruf) pot.req)
       (~(del in syn.ruf) pot.req)
-    :_  ..^$
-    ?:  on.req
-      [u.hez.ruf %give %wath pot.req]~
-    [u.hez.ruf %give %wend pot.req]~
+    ?.  on.req
+      [[dut %give %wend pot.req]~ ..^$]
+    ::  mirror the mount after the %wath gift: the runtime arms its
+    ::  watchers and scans first, then the mirror restores anything
+    ::  missing on disk
+    ::
+    =/  bem  (~(got by mon.ruf) pot.req)
+    =^  mos  ruf
+      =/  den  ((de now rof hen ruf) p.bem q.bem)
+      abet:(mirror:den pot.req)
+    [[[dut %give %wath pot.req] mos] ..^$]
   ::
       %ogre
     ?:  =(~ hez.ruf)
