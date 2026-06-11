@@ -3739,7 +3739,7 @@
     ==  ==
   ::
   +$  resource-deet
-    $~  [%clay %warp ~zod %$ %sing %x *case *path]
+    $~  [%jael %keys %private]
     $%  [%eyre %binding wat=$@(term generator:eyre)]
         [%eyre %cache entry=cache-entry:eyre]
         [%clay %warp =ship =desk =rave:clay]
@@ -4357,6 +4357,13 @@
       ?@  -.per  -.per
       (levy `(list perm)`per (cury have pes))
     ::
+    ++  over  ::  find .pes that .mus nests under
+      |=  [pes=(set perm) mus=perm]
+      ^-  (list perm)
+      %+  roll  ~(tap in pes)
+      |=  [per=perm ped=(list perm)]
+      ?:((have (silt ~[per]) mus) [per ped] ped)
+    ::
     ++  have  ::  .pes has .mus or broader
       |=  [pes=(set perm) mus=perm]
       ^-  ?
@@ -4617,6 +4624,68 @@
       ;~  pose
         zap  buc  pam  soq  pal  par
         tar  lus  com  mic  tis
+      ==
+    --
+  ::
+  ++  prune
+    |%
+    ++  deps  ::  .res-deets mapped to .pes they depend on
+      |=  [our=ship pes=(set perm) res-deets=(map arvo-resource resource-deet)]
+      ^-  (jar arvo-resource perm)
+      %+  roll  ~(tap by res-deets)
+      |=  $:  [res=arvo-resource det=resource-deet]
+              dep=(jar arvo-resource perm)
+          ==
+      =/  res-per  (reqs our res det)
+      ?~  res-per  dep
+      =;  ped=(list perm)
+        ?~  ped  dep  (~(put by dep) res ped)
+      %-  zing
+      (turn res-per (cury over:guard pes))
+  ::
+    ++  reqs  ::  permissions required for a .res
+      |=  [our=ship res=arvo-resource det=resource-deet]
+      ^-  (list perm)
+      ?-  +.res
+        [%behn %wait *]     [%behn %timer ~]~
+          [%clay %warp *]
+        ?>  ?=([%clay %warp *] det)
+        ?.  =(our ship.det)  [%clay %peers ~]~
+        =/  to-per  |=  [care=(unit) =path]
+                    ^-  perm
+                    [%clay %local care `desk.det path]
+        ?-  -.rave.det
+          %sing  [(to-per [`care path]:mood.rave.det) ~]
+          %next  [(to-per [`care path]:mood.rave.det) ~]
+          %mult
+            =/  paths=(list [care:clay path])  ~(tap in paths.mool.rave.det)
+            =/  per  (turn paths |=([c=@ =path] (to-per [`c path])))
+            ?~(per ~ per)
+          %many  [(to-per [~ path.moat.rave.det]) ~]
+        ==
+      ::
+        [%clay %tire]       [%clay %pulse ~]~
+        [%clay %ward]       [%clay %guard ~]~
+        [%dill %logs]       [%dill %sylog ~]~
+        [%dill %mass]       [%dill %weigh ~]~
+        [%dill %view *]     [%dill %terms ~]~
+        [%eyre %binding *]  [%eyre %serve path.binding.res]~
+      ::
+          [%eyre %cache *]
+        =/  pars  ;~(pfix fas (more fas smeg:guard))
+        =/  segs  (pars [1 1] (trip url.res))
+        ?~  q.segs  ~   ::  review: should crash or return [%eyre %serve /]?
+        [%eyre %serve p.u.q.segs]~
+      ::
+        [%iris %request]    [%iris %fetch ~]~
+      ::
+          [%jael %keys]
+        ?>  ?=([%jael %keys *] det)
+        ?.  ?=([%jael %keys %private] det)  ~
+        [%jael %privy ~]~
+      ::
+        [%lick %spin *]     [%lick %ports ~]~
+        [%khan %thread *]   [%khan %twine ~]~
       ==
     --
   ::
