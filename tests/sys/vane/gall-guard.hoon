@@ -126,7 +126,6 @@
     %+  expect-eq
     !>  %.n
     !>  (have:guard:gall (sy [[%gall %clear `%foo] ~]) [%gall %clear `%bar])
-  ==
 ::
 ++  test-have-eyre-serve
   ;:  weld
@@ -154,12 +153,12 @@
   ;:  weld
     ::  %give is always allowed
     %+  expect-eq
-    !>  &
+    !>  [%.y ~]
     !>  (do-must [%give %fact ~[/path] %noun !>(~)])
   ::
-    ::  %slip is never allowed
+    ::  %slip
     %+  expect-eq
-    !>  |
+    !>  [%super ~]~
     !>  (do-must [%slip [%arvo %ames %prod ~]])
   ::
     ::  %dole
@@ -179,7 +178,7 @@
   ::
     ::  %leave
     %+  expect-eq
-    !>  &
+    !>  [%.y ~]
     !>  (do-must [%pass /path %agent [~dev %foo] %leave ~])
   ::
     ::  %poke
@@ -218,12 +217,12 @@
   ::
     ::  %keen local ship, not qualified path
     %+  expect-eq
-    !>  |
+    !>  [%.n leaf+"guard: can't resolve %ames %keen to permission malformed: path=/foo"]
     !>  (do-must [%pass /path %arvo %ames %keen %.n [~dev /foo]])
   ::
     ::  %yawn
     %+  expect-eq
-    !>  &
+    !>  [%.y ~]
     !>  (do-must [%pass /path %arvo %ames %yawn [~dev /foo/bar]])
   ::
     ::  %grow(%tomb %cull %tend %germ %snip)
@@ -244,7 +243,7 @@
     !>  (do-must [%pass /path %arvo %behn %wait ~2000.1.1])
   ::
     %+  expect-eq
-    !>  &
+    !>  [%.y ~]
     !>  (do-must [%pass /path %arvo %behn %rest ~2000.1.1])
   ==
 ::
@@ -253,7 +252,7 @@
     ::  %read local %sing
     %+  expect-eq
     !>  [%clay %local `%x `%base /foo]~
-  (do-must [%pass /path %arvo %clay %read 0 ~dev %base [%sing %x [%ud 1] /foo]])
+    !>  (do-must [%pass /path %arvo %clay %read 0 ~dev %base [%sing %x [%ud 1] /foo]])
   ::
     ::  %read local %many
     %+  expect-eq
@@ -262,7 +261,7 @@
   ::
     ::  %read local %mult empty paths expect always allowed
     %+  expect-eq
-    !>  &
+    !>  [%.y ~]
     !>  (do-must [%pass /path %arvo %clay %read 0 ~dev %base [%mult [%ud 1] ~]])
   ::
     ::  %read local %mult with paths
@@ -277,12 +276,12 @@
   ::
     ::  %rest is always allowed
     %+  expect-eq
-    !>  &
+    !>  [%.y ~]
     !>  (do-must [%pass /path %arvo %clay %rest 0])
   ::
     ::  %rite empty sob always allowed, no changes, no permissions
     %+  expect-eq
-    !>  &
+    !>  [%.y ~]
     !>  (do-must [%pass /path %arvo %clay %rite %base ~])
   ::
     ::  %rite with data
@@ -312,7 +311,7 @@
   ::
     ::  %zeal empty lit always allowed, no changes, no perms
     %+  expect-eq
-    !>  &
+    !>  [%.y ~]
     !>  (do-must [%pass /path %arvo %clay %zeal ~])
   ::
     ::  %zeal
@@ -342,7 +341,7 @@
   ::
     ::  %tomb %pick expect always allowed
     %+  expect-eq
-    !>  &
+    !>  [%.y ~]
     !>  (do-must [%pass /path %arvo %clay %tomb [%pick ~]])
   ::
     ::  %tomb %norm(%worn %seek)
@@ -398,12 +397,12 @@
   ::
     ::  %set-response: unparseable url to path
     %+  expect-eq
-    !>  |
+    !>  [%.n leaf+"guard: can't resolve %eyre %set-response to permission malformed: url=''"]
     !>  (do-must [%pass /path %arvo %eyre %set-response '' ~])
   ::
     ::  %disconnect is always allowed
     %+  expect-eq
-    !>  &
+    !>  [%.y ~]
     !>  (do-must [%pass /path %arvo %eyre %disconnect [~ /foo]])
   ::
     ::  %approve-origin(%reject-origin)
@@ -442,7 +441,7 @@
     !>  (do-must [%pass /path %arvo %iris %request *request:http *outbound-config:iris])
   ::
     %+  expect-eq
-    !>  &
+    !>  [%.y ~]
     !>  (do-must [%pass /path %arvo %iris %cancel-request ~])
   ==
 ::
@@ -454,7 +453,7 @@
   ::
     ::  %public-keys(%turf) always allowed
     %+  expect-eq
-    !>  &
+    !>  [%.y ~]
     !>  (do-must [%pass /path %arvo %jael %public-keys ~])
   ::
     %+  expect-eq

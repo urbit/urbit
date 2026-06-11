@@ -4332,11 +4332,29 @@
       ^-  ?
       (levy caz (cury (cury cred our) pes))
     ::
+    ++  cres-tang  ::  +cres with trace
+      |=  [our=ship pes=(set perm) caz=(list card:agent)]
+      ^-  (each ~ tang)
+      =;  trace=tang
+        ?~  trace  [%.y ~]
+        [%.n trace]
+      %+  roll  caz
+      |=  [=card:agent trace=tang]
+      =/  per=$^((each ~ tank) (lest perm))  (must our card)
+      ?@  -.per
+        ?:  ?=([%.n %leaf *] per)  [p.per trace]
+        trace
+      %-  welp  :_  trace
+      %+  murn  `(list perm)`per
+      |=  =perm
+      ?:  (have pes perm)  ~
+      `leaf+"guard: missing permission: {<perm>}"
+    ::
     ++  cred  ::  userspace permission check
       |=  [our=ship pes=(set perm) =card:agent]
       ^-  ?
-      =/  per=$@(? (lest perm))  (must our card)
-      ?@  per  per
+      =/  per  (must our card)
+      ?@  -.per  -.per
       (levy `(list perm)`per (cury have pes))
     ::
     ++  have  ::  .pes has .mus or broader
@@ -4413,10 +4431,15 @@
     ::
     ++  must  ::  perm required for card
       |=  [our=ship =card:agent]
-      ^-  $@(? (lest perm))  ::  always/never allowed, or lest perm
+      ^-  $^((each ~ tank) (lest perm))  ::  always/never allowed with trace, or lest perm
       ::TODO  do not require any perms for resource cleanup tasks
+      =/  trace
+        |=  [task=task-user-v1 =tape]
+        :-  %leaf
+        "guard: can't resolve {<-.task>} {<;;(@tas -.+.task)>} to permission {tape}"
+      ::
       ?-  -.card
-          %give  &
+          %give  [%.y ~]
           %slip  $(card [%pass / p.card])
           %pass
         =/  =note:agent  q.card
@@ -4425,23 +4448,24 @@
           ?-  -.task.note
             %watch             [%watch `name.note path.task.note]~
             %watch-as          [%watch `name.note path.task.note]~
-            %leave             &
+            %leave             [%.y ~]
             ?(%poke %poke-as)  [%write `name.note]~
           ==
             %arvo
           =/  task=task-user-v1  +.note
           ?-  -.task
               %ames
-            ^-  $@(? (lest perm))
+            ^-  $^((each ~ tank) (lest perm))
             ?-  +<.task
               ?(%prod %cong %stir)  [%super ~]~
               ?(%sift %spew)        [%ames %debug ~]~
               %snub                 [%ames %block ~]~
               %keen                 ?.  =(our ship.spar.task)  [%ames %keens ~]~
-                                    ?.  ?=([@ @ @ @ *] path.spar.task)  |
+                                    ?.  ?=([@ @ @ @ *] path.spar.task)
+                                      [%.n (trace task "malformed: path={(spud path.spar.task)}")]
                                     =/  =spur  t.t.t.t:path.spar.task
                                     [[%ames %reads `i.t.t.t:path.spar.task spur] ~]
-              %yawn                 &
+              %yawn                 [%.y ~]
               ?(%grow %tomb %cull %tend %germ %snip)
                                     [%ames %write ~]~
               %trim                 [%super ~]~
@@ -4450,12 +4474,12 @@
               %behn
             ?-  +<.task
               %wait                 [%behn %timer ~]~
-              %rest                 &
+              %rest                 [%.y ~]
               %trim                 [%super ~]~
             ==
           ::
               %clay
-            ^-  $@(? (lest perm))
+            ^-  $^((each ~ tank) (lest perm))
             ?-  +<.task
                 %read
               ?.  =(our ship.task)  [%clay %peers ~]~
@@ -4468,17 +4492,17 @@
                 %mult
                   =/  paths=(list [care:clay path])  ~(tap in paths.mool.rave.task)
                   =/  per  (turn paths |=([c=@ =path] (to-per [`c path])))
-                  ?~(per & per)
+                  ?~(per [%.y ~] per)
                 %many  [(to-per [~ path.moat.rave.task]) ~]
               ==
             ::
-              ?(%rest %pine)        &
+              ?(%rest %pine)        [%.y ~]
             ::
                 %rite
               =/  per
                 %+  turn  sob.task
                 |=([=path *] [%clay %write `des.task path])
-              ?~(per & per)
+              ?~(per [%.y ~] per)
             ::
               %name                 [%clay %write `des.task /]~
               %merg                 [%clay %write `des.task /]~
@@ -4490,7 +4514,7 @@
             ::
                 %zeal
               =/  per  (turn lit.task |=([=desk *] [%clay %desks `desk]))
-              ?~(per & per)
+              ?~(per [%.y ~] per)
             ::
               %tire                 [%clay %pulse ~]~
               %seal                 [%clay %perms ~]~
@@ -4499,7 +4523,7 @@
             ::
                 %tomb
               ?+  -.clue.task       [%clay %stone ~]~
-                %pick               &
+                %pick               [%.y ~]
                 %norm               [%clay %stone `desk.clue.task]~
                 %worn               [%clay %stone `desk.clue.task]~
                 %seek               [%clay %stone `desk.clue.task]~
@@ -4523,13 +4547,13 @@
               ?(%rule %eauth-host)  [%eyre %setup ~]~
               %connect              [%eyre %serve path.binding.task]~
             ::
-                %set-response  ::  TODO: access smeg:de-purl:html
+                %set-response
               =/  pars  ;~(pfix fas (more fas smeg))
               =/  segs  (pars [1 1] (trip url.task))
-              ?~  q.segs  |
+              ?~  q.segs  [%.n (trace task "malformed: url={<url.task>}")]
               [%eyre %serve p.u.q.segs]~
             ::
-              %disconnect           &
+              %disconnect           [%.y ~]
               ?(%approve-origin %reject-origin)
                                     [%eyre %cross ~]~
               %spew                 [%eyre %debug ~]~
@@ -4546,14 +4570,14 @@
               %iris
             ?-  +<.task
               %request              [%iris %fetch ~]~
-              %cancel-request       &
+              %cancel-request       [%.y ~]
               %trim                 [%super ~]~
             ==
           ::
               %jael
             ?-  +<.task
               %private-keys         [%jael %privy ~]~
-              ?(%public-keys %turf)  &
+              ?(%public-keys %turf)  [%.y ~]
               %listen               [%jael %watch ~]~
               %moon                 [%jael %moons ~]~
               %rekey                [%jael %rekey ~]~

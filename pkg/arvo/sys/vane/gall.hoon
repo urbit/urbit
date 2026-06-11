@@ -2667,11 +2667,11 @@
           %|  |+[%crash p.res]
         ::
             %&
-          =;  allowed=?
-            ?:  allowed  res
-            |+[%perms 'maybe details' ~]  ::TODO
-          ?:  =(%base q.beak.yoke)  &
-          %^  cres:guard  our
+          =;  allowed=(each ~ tang)
+            ?:  -.allowed  res
+            |+[%perms p.allowed]
+          ?:  =(%base q.beak.yoke)  [%& ~]
+          %^  cres-tang:guard  our
             peg:(~(gut by perms.state) q.beak.yoke [peg=~ peq=~])
           -.p.res
         ==

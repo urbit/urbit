@@ -577,21 +577,9 @@
   =/  dat  (~(got by serving.state) (yarn-to-tid yarn))
   ?:  =(%base from.dat)  [%& ~]
   =+  peg=(yarn-to-peg yarn bowl)
-  =/  has-per  (cres:guard:gall our.bowl peg cards)
-  ?:  has-per  [%& ~]
-  =/  msg=tang
-    %+  roll  cards
-    |=  [c=card =tang]
-    ?@  per=(must:guard:gall our.bowl c)
-      ?:  per  tang
-      [leaf+"spider: never allowed: {<-.c>}" tang]
-    %+  welp
-      %+  murn  per
-      |=  =perm:gall
-      ?:  (have:guard:gall peg perm)  ~
-      `leaf+"spider: missing permission: {<perm>}"
-    tang
-  [%| err=[%missing-permissions msg]]
+  =/  has-per  (cres-tang:guard:gall our.bowl peg cards)
+  ?:  -.has-per  [%& ~]
+  [%| err=[%missing-permissions +.has-per]]
 ::
 ++  begin-shed
   |=  [=yarn =shed:khan]
