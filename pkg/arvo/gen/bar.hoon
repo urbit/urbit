@@ -1,15 +1,10 @@
-::  > `@ux`(mug q:.^(vase %ca %/mar/hoon/hoon))
-::  0x41fd.c951
-::  > =a -build-file %/mar/hoon/hoon
-::  > `@ux`(mug a)
-::  0x41fd.c951
-::
-::  build /mar/hoon/hoon using arvo from pill
+::  build a file using arvo from pill
 ::  produces a vase:h136 (unmigrated old types)
+::  usage: =a +bar [[our %old da+now] /mar/hoon/hoon]
 ::
 /+  pill
 :-  %say
-|=  [[now=@da eny=@uvJ bec=beak] ~ ~]
+|=  [[now=@da eny=@uvJ bec=beak] [=beam ~] ~]
 =+  .^(pil=pill:pill %cx (en-beam [p.bec %base da+now] /brass/pill))
 |^
 :-  %noun
@@ -65,19 +60,21 @@
 =/  ford-vase  (slum builder ford-cord)
 =/  fuz=*    (slum old-slub [ford-vase [%limb %fusion]])
 =/  fod=*    (slum old-slub [fuz [%limb %ford]])
-::  construct files map with /mar/hoon/hoon source
+::  load all files from old desk
 ::
-=/  src=@t  .^(@t %cx (en-beam [p.bec q.bec da+now] /mar/hoon/hoon))
+~&  >  %loading-files
+=/  bek=beak  -.beam
 =/  fils=(map path (each page lobe:clay))
   %-  ~(gas by *(map path (each page lobe:clay)))
-  :~  [/mar/hoon/hoon [%& %hoon src]]
-  ==
-::  call ford with files, then build-file
+  %+  murn  .^((list path) %ct (en-beam bek /))
+  |=  =path
+  ?.  =(%hoon (rear path))  ~
+  `[path %& %hoon .^(@t %cx (en-beam bek path))]
 ::
-~&  >  %building
+~&  >  [%building s.beam]
 =/  cor=*  (slum old-slym [fod [fils ~ 0]])
 =/  bf=*   (slum old-slub [cor [%limb %build-file]])
-=/  result=*  +3:(slum +3.bf /mar/hoon/hoon)
+=/  result=*  +3:(slum +3.bf s.beam)
 ~&  >  [%result-mug `@ux`(mug result)]
 result
 ::
