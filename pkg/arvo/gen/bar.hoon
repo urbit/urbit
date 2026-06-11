@@ -23,11 +23,7 @@
   |=  =unix-event:pill
   ^-  unix-event:pill
   ?.  ?=([%what *] q.unix-event)  unix-event
-  =/  files=(list (pair path (cask)))
-    %+  skim  p.q.unix-event
-    |=  [=path *]
-    ?=([%sys *] path)
-  unix-event(q [%what files])
+  unix-event(q [%what (skim p.q.unix-event |=([=path *] ?=([%sys *] path)))])
 ::
 =/  =wynn
   :~  zuse+zuse
@@ -60,66 +56,34 @@
   ==
 =/  arv=*  +7.p.res
 =/  wish  (wisher arv)
-::
-::  extract old arvo's compiler tools via wish
-::  these operate on h136 types natively
-::
-~&  >  %extracting-tools
-=/  old-slap=*  (wish 'slap')
-=/  old-slam=*  (wish 'slam')
 =/  old-slub=*  (wish 'slub')
 =/  old-slym=*  (wish 'slym')
+::  compile ford-cord with old arvo's ride
 ::
-::  get zuse as vase:h136 (NOT migrated to h135)
-::
-=/  old-zuse=*  (wish '!>(..zuse)')
-~&  >  [%old-zuse-mug `@ux`(mug old-zuse)]
-::
-::  parse ford-cord with our parser to get hoon AST
-::
-~&  >  %parsing-ford
-=/  builder  (slum wish '!>(|=(fc=@t =+(x=(ride -:!>(..zuse) fc) [p.x .*(..zuse q.x)])))')
-=/  ford-vase  (slum +3.builder ford-cord)
-~&  >  [%mugs `@ux`(mug builder) `@ux`(mug ford-vase)]
-::
-~&  >  [%ford-vase-mug `@ux`(mug ford-vase)]
-~&  >  [%ford-vase-type-mug `@ux`(mug -.ford-vase)]
-~&  >  [%ford-vase-value-mug `@ux`(mug +.ford-vase)]
-::
-::  navigate to ++fusion > ++ford
-::
+~&  >  %compiling-ford
+=/  builder    (slum wish '|=(fc=@t =+(x=(ride -:!>(..zuse) fc) [p.x .*(..zuse q.x)]))')
+=/  ford-vase  (slum builder ford-cord)
 =/  fuz=*    (slum old-slub [ford-vase [%limb %fusion]])
 =/  fod=*    (slum old-slub [fuz [%limb %ford]])
-::
 ::  construct files map with /mar/hoon/hoon source
 ::
 =/  src=@t  .^(@t %cx (en-beam [p.bec q.bec da+now] /mar/hoon/hoon))
-~&  >  [%src-mug `@ux`(mug src)]
 =/  fils=(map path (each page lobe:clay))
   %-  ~(gas by *(map path (each page lobe:clay)))
   :~  [/mar/hoon/hoon [%& %hoon src]]
   ==
-~&  >  [%fils-mug `@ux`(mug fils)]
-::
-::  call ford gate with args [files file-store verb]
-::  using old slym (untyped sample replacement)
+::  call ford with files, then build-file
 ::
 ~&  >  %building
 =/  cor=*  (slum old-slym [fod [fils ~ 0]])
-~&  >  [%cor-mug `@ux`(mug cor)]
-::
-::  get build-file arm and call it with path
-::
-=/  bf=*  (slum old-slub [cor [%limb %build-file]])
-=/  result=*  +7:(slum old-slym [bf /mar/hoon/hoon])
+=/  bf=*   (slum old-slub [cor [%limb %build-file]])
+=/  result=*  +3:(slum +3.bf /mar/hoon/hoon)
 ~&  >  [%result-mug `@ux`(mug result)]
 result
 ::
 ++  wisher
   |=  arv=*
-  ?>  ?=(^ arv)
-  =/  ton=toon  (mock [arv +10.arv] ~)
-  =/  wish-gate=*  ?>(?=(%0 -.ton) p.ton)
+  =/  wish-gate=*  .*(arv [%9 10 %0 1])
   |=  txt=@t
   =/  res  (mule |.((slum wish-gate txt)))
   ?>  ?=(%& -.res)
