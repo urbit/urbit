@@ -1413,7 +1413,13 @@
       ^+  ap-core
       ?:  ?=(%| -.agent.yoke)  ap-core
       ~>  %spin.[(crip "on-save/{<agent-name>}")]
-      =>  [ken=ken.yoke (ap-ingest ~ |.([ap-yawn-all p.agent.yoke]))]
+      =>  :-  ken=ken.yoke  ::NOTE  retain for +ap-reinstall
+          ::NOTE  tmi
+          =+  [maybe-frag nu-core]=(ap-ingest ~ |.([ap-yawn-all p.agent.yoke]))
+          ?~  maybe-frag  nu-core
+          ::REVIEW  crash instead?
+          %.  nu-core
+          (slog 'gall: idle cleanup failed for {<agent-name>}' u.maybe-frag)
       ::  arvo-resources -> generate appropriate cleanup card
       ::
       %-  ap-move(ken.yoke ken, agent.yoke |+[clean=& on-save:ap-agent-core])
@@ -1466,7 +1472,10 @@
           `[%pass wire.res %arvo u.tac]
         ==
       =^  maybe-frag  ap-core  (ap-ingest ~ |.([will *agent]))
-      ap-core
+      ?~  maybe-frag  ap-core
+      ::REVIEW  crash instead?
+      %.  ap-core
+      (slog 'gall: nuke cleanup failed for {<agent-name>}' u.maybe-frag)
     ::
     ++  ap-match-coop
       |=  =path
@@ -2041,8 +2050,14 @@
       ::  re-start all of the agent's namespace read requests
       ::  (+ap-idle stopped them)
       ::
+      ::TODO  could also reinflate pen.yoke entries
       =?  ap-core  ?=(^ ken.yoke)
-        =-  +:(ap-ingest ~ |.([+< agent]))
+        ::REVIEW  what if we don't have perms to %keen anymore?
+        ::REVIEW  handle failure somehow?
+        =-  =+  [maybe-frag nu-core]=(ap-ingest ~ |.([+< agent]))
+            ?~  maybe-frag  nu-core
+            %.  nu-core
+            (slog 'gall: reinstall %keen failed for {<agent-name>}' u.maybe-frag)
         %-  zing
         %+  turn  ~(tap by `(jug spar:ames wire)`ken.yoke)
         |=  [=spar:ames wyz=(set wire)]
