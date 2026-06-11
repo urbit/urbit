@@ -45,7 +45,7 @@
   !!
 ::
 ++  on-fail
-  |~  [term tang]
+  |~  [frag:agent:gall call:agent:gall]
   ^-  (quip card:agent:gall agent:gall)
   !!
 --

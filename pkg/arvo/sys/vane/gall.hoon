@@ -45,6 +45,15 @@
       ==
   ~
 ::
+++  frag-to-tang
+    |=  =frag:agent
+    ^-  tang
+    :_  tang.frag
+    ?-  from.frag
+      %crash  'agent crashed'
+      %perms  'permission denied'
+    ==
+::
 ::  $bug: debug printing configuration
 ::
 ::    veb: verbosity toggles
@@ -397,7 +406,7 @@
       =/  ap-core  (ap-abed:ap dap [~ our prov])
       (ap-upgrade-state:ap-core ~)
     ::
-    =/  maybe-tang  -.wag
+    =/  maybe-tang  (bind -.wag frag-to-tang)
     =/  ap-core  +.wag
     ?^  maybe-tang
       =.  mo-core  old
@@ -1456,7 +1465,7 @@
           ?~  tac=(drop-resource:track res resource-deets.yoke)  ~
           `[%pass wire.res %arvo u.tac]
         ==
-      =^  maybe-tang  ap-core  (ap-ingest ~ |.([will *agent]))
+      =^  maybe-frag  ap-core  (ap-ingest ~ |.([will *agent]))
       ap-core
     ::
     ++  ap-match-coop
@@ -2015,7 +2024,7 @@
         =^  error  ap-core
           (ap-install(agent.yoke &+agent) `old-state)
         ?^  error
-          (mean >%load-failed< u.error)
+          (mean >%load-failed< (frag-to-tang u.error))
         ap-core
       ::  agent was suspended, we need to inflate its resources.
       ::  mark all the resources as to-be-inflated.
@@ -2049,7 +2058,7 @@
       =^  error  ap-core
         (ap-install(agent.yoke &+agent) `old-state)
       ?^  error
-        (mean >%load-failed< u.error)
+        (mean >%load-failed< (frag-to-tang u.error))
       ::  simulate kicks on the subscriptions that we closed for them
       ::
       =.  ap-core
@@ -2064,8 +2073,11 @@
         =:  boar.yoke  (~(del by boar.yoke) key)
             boat.yoke  (~(del by boat.yoke) key)
           ==
-        =^  tan  ap-core  (ap-ingest ~ |.((on-agent:ap-agent-core wire.key %kick ~)))
-        ?~(tan ap-core (ap-error %kick leaf/"take %kick failed (b)" u.tan))
+        =^  fag  ap-core  (ap-ingest ~ |.((on-agent:ap-agent-core wire.key %kick ~)))
+        ?~  fag  ap-core
+        %+  ap-error
+          [from.u.fag leaf/"take %kick failed (b)" tang.u.fag]
+        [%on-agent wire.key %kick ~]
       ::  reinflate arvo-resources
       ::
       %-  ~(rep in og-resources)
@@ -2170,10 +2182,10 @@
       ~>  %spin.[(crip "on-watch/{<agent-name>}")]
       =/  incoming   [ship.attributing.agent-routes pax]
       =.  bitt.yoke  (~(put by bitt.yoke) agent-duct incoming)
-      =^  maybe-tang  ap-core
+      =^  maybe-frag  ap-core
         %+  ap-ingest  %watch-ack  |.
         (on-watch:ap-agent-core pax)
-      ?^  maybe-tang
+      ?^  maybe-frag
         ap-silent-delete
       ap-core
     ::  +ap-poke: apply %poke.
@@ -2183,20 +2195,21 @@
       |=  =cage
       ^+  ap-core
       ~>  %spin.[(crip "on-poke/{<agent-name>}")]
-      =^  maybe-tang  ap-core
+      =^  maybe-frag  ap-core
         %+  ap-ingest  %poke-ack  |.
         (on-poke:ap-agent-core cage)
       ap-core
     ::  +ap-error: pour error.
     ::
     ++  ap-error
-      |=  [=term =tang]
+      |=  [=frag:agent =call:agent]
       ^+  ap-core
       ~>  %spin.[(crip "on-fail/{<agent-name>}")]
       =/  form  |=(=tank [%rose [~ "! " ~] tank ~])
-      =^  maybe-tang  ap-core
+      =^  maybe-frag  ap-core
         %+  ap-ingest  ~  |.
-        (on-fail:ap-agent-core term (turn tang form))
+        (on-fail:ap-agent-core frag(tang (turn tang.frag form)) call)
+      ::TODO  maybe print about +on-fail failure?
       ap-core
     ::  +ap-dozing-take: handle sign for suspended agent
     ::
@@ -2263,11 +2276,11 @@
       =.  yoke  (ap-handle-resource-gift wire gift)
       =?  ken.yoke   ?=([%ames %sage *] sign-arvo)
         (~(del ju ken.yoke) p.sage.sign-arvo wire)
-      =^  maybe-tang  ap-core
+      =^  maybe-frag  ap-core
         %+  ap-ingest  ~  |.
         (on-arvo:ap-agent-core wire gift)
-      ?^  maybe-tang
-        (ap-error %arvo-response u.maybe-tang)
+      ?^  maybe-frag
+        (ap-error u.maybe-frag %on-arvo wire gift)
       ap-core
     ::  +ap-specific-take: specific take.
     ::
@@ -2333,14 +2346,19 @@
       ++  ingest
         ~>  %spin.[(crip "on-agent/{<agent-name>}")]
         (ap-ingest ~ |.((on-agent:ap-agent-core agent-wire sign)))
+      ++  error
+        |=  [=frag:agent =tank]
+        %+  ap-error
+          [from.frag tank tang.frag]
+        [%on-agent agent-wire sign]
       ++  run-sign
         ?-    -.sign
             %poke-ack  !!
             %fact
-          =^  tan  ap-core  ingest
-          ?~  tan  ap-core
+          =^  fag  ap-core  ingest
+          ?~  fag  ap-core
           =.  ap-core  (ap-kill-down sub-key)
-          (ap-error -.sign leaf/"take %fact failed, closing subscription" u.tan)
+          (error u.fag leaf/"take %fact failed, closing subscription")
         ::
             %kick
           =:  boar.yoke  (~(del by boar.yoke) sub-key)
@@ -2405,39 +2423,39 @@
       ::
       ++  ingest-and-check-error
         ^+  ap-core
-        =^  tan  ap-core  ingest
-        ?~(tan ap-core (ap-error -.sign leaf/"take {<-.sign>} failed" u.tan))
+        =^  fag  ap-core  ingest
+        ?~(fag ap-core (error u.fag leaf/"take {<-.sign>} failed"))
       --
     ::  +ap-install: install wrapper.
     ::
     ++  ap-install
       |=  old-agent-state=(unit vase)
-      ^-  [(unit tang) _ap-core]
+      ^-  [(unit frag:agent) _ap-core]
       ::
-      =^  maybe-tang  ap-core  (ap-upgrade-state old-agent-state)
+      =^  maybe-frag  ap-core  (ap-upgrade-state old-agent-state)
       ::
       =.  agent-config
         :_  agent-config
         ^-  (each suss tang)
-        ?^  maybe-tang
-          |/u.maybe-tang
+        ?^  maybe-frag
+          |/(frag-to-tang u.maybe-frag)
         &/[agent-name ?~(old-agent-state %boot %bump) now]
       ::
-      [maybe-tang ap-core]
+      [maybe-frag ap-core]
     ::  +ap-upgrade-state: low-level install.
     ::
     ++  ap-upgrade-state
       ~/  %ap-upgrade-state
       |=  maybe-vase=(unit vase)
-      ^-  [(unit tang) _ap-core]
+      ^-  [(unit frag:agent) _ap-core]
       ~>  %spin.[(crip "on-init/{<agent-name>}")]
       ::
-      =^  maybe-tang  ap-core
+      =^  maybe-frag  ap-core
         %+  ap-ingest  ~
         ?~  maybe-vase
           |.  on-init:ap-agent-core
         |.  (on-load:ap-agent-core u.maybe-vase)
-      [maybe-tang ap-core]
+      [maybe-frag ap-core]
     ::  +ap-silent-delete: silent delete.
     ::
     ++  ap-silent-delete
@@ -2456,11 +2474,11 @@
       =/  incoming   u.maybe-incoming
       =.  bitt.yoke  (~(del by bitt.yoke) agent-duct)
       ::
-      =^  maybe-tang  ap-core
+      =^  maybe-frag  ap-core
         %+  ap-ingest  ~  |.
         (on-leave:ap-agent-core q.incoming)
-      ?^  maybe-tang
-        (ap-error %leave u.maybe-tang)
+      ?^  maybe-frag
+        (ap-error u.maybe-frag %on-leave q.incoming)
       ap-core
     ::  +ap-kill-up: 2-sided kill from publisher side
     ::
@@ -2620,31 +2638,30 @@
     ::
     ++  ap-ingest
       |=  [ack=?(%poke-ack %watch-ack ~) run=_^?(|.(*step:agent))]
-      ^-  [(unit tang) _ap-core]
-      =/  result  (ap-mule run)
-      =/  allowed=?
-        ?-  -.result
-          %&  ?:  =(%base q.beak.yoke)  &
-              %^  cres:guard  our
-                peg:(~(gut by perms.state) q.beak.yoke [peg=~ peq=~])
-              -.p.result
-          %|  &
-        ==
+      ^-  [(unit frag:agent) _ap-core]
       ::  if agent tried doing something without permission,
-      ::  we must never persist the .run result. instead:
-      ::  if we don't need to n/ack, return the failure right away.
-      ::  otherwise set the result to failure, and proceed as normal,
-      ::  optionally sending nacks.
+      ::  we must never persist the .run result
       ::
-      ?:  &(!allowed ?=(~ ack))
-        [`~['not permitted' 'maybe details'] ap-core]
-      =?  result  !allowed
-        [%| 'not-permitted' 'maybe details' ~]
+      =/  result=(each step:agent frag:agent)
+        =/  res  (ap-mule run)
+        ?-  -.res
+          %|  |+[%crash p.res]
+        ::
+            %&
+          =;  allowed=?
+            ?:  allowed  res
+            |+[%perms 'maybe details' ~]  ::TODO
+          ?:  =(%base q.beak.yoke)  &
+          %^  cres:guard  our
+            peg:(~(gut by perms.state) q.beak.yoke [peg=~ peq=~])
+          -.p.res
+        ==
       ::
-      =^  new-moves  ap-core  (ap-handle-result result)
-      =/  maybe-tang=(unit tang)
-        ?:  ?=(%& -.result)
-          ~
+      =^  new-moves  ap-core
+        ?:  ?=(%| -.result)  [~ ap-core]
+        (ap-handle-result p.result)
+      =/  maybe-frag=(unit frag:agent)
+        ?:  ?=(%& -.result)  ~
         `p.result
       =/  ack-moves=(list move)
         %-  zing
@@ -2652,28 +2669,25 @@
         ^-  (list carp)
         ?-  ack
           ~      ~
-          %poke-ack   [%give %poke-ack maybe-tang]~
-          %watch-ack  [%give %watch-ack maybe-tang]~
+          %poke-ack   [%give %poke-ack (bind maybe-frag tail)]~
+          %watch-ack  [%give %watch-ack (bind maybe-frag tail)]~
         ==
       ::
       =.  agent-moves
         :(weld (flop new-moves) ack-moves agent-moves)
-      [maybe-tang ap-core]
+      [maybe-frag ap-core]
     ::  +ap-handle-result: handle result.
     ::
     ++  ap-handle-result
       ~/  %ap-handle-result
-      |=  result=(each step:agent tang)
+      |=  result=step:agent
       ^-  [(list move) _ap-core]
-      ?:  ?=(%| -.result)
-        `ap-core
-      ::
-      =.  agent.yoke      &++.p.result
+      =.  agent.yoke      &++.result
       ::TODO  if we filter out "duplicate resource creation" cards here,
       ::      then we don't have to account for them in +ap-handle-peers and co
       ::      (and if we don't, we have to update handle-peers and co)
       =/  og-deets        resource-deets.yoke
-      =^  caz       yoke  (ap-handle-resources -.p.result)
+      =^  caz       yoke  (ap-handle-resources -.result)
       =^  caz  boat.yoke  (ap-handle-peers-tracking caz)
       =.  caz             (skip caz ap-redundant)
       =^  caz  ap-core    (ap-handle-peers-transforms caz)

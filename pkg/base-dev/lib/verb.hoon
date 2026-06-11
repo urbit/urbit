@@ -115,14 +115,14 @@
   (emit-event-plus bowl [%on-arvo wire [- +<]:gift] cards)
 ::
 ++  on-fail
-  |=  [=term =tang]
+  |=  [frag:agent:gall =call:agent:gall]
   ^-  (quip card:agent:gall agent:gall)
-  %-  (print bowl |.("{<dap.bowl>}: on-fail with term {<term>}"))
-  =^  cards  agent  (on-fail:ag term tang)
+  %-  (print bowl |.("{<dap.bowl>}: on-fail due to {<from>} during {<-.call>}"))
+  =^  cards  agent  (on-fail:ag [from tang] call)
   :_  this
   :_  :_  cards
-    (emit-event %on-fail term)
-  (emit-event-plus bowl [%on-fail term] cards)
+    (emit-event %on-fail from)
+  (emit-event-plus bowl [%on-fail from] cards)
 --
 ::
 ++  print

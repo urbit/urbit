@@ -153,9 +153,9 @@
     [cards this]
   ::
   ++  on-fail
-    |=  [=term =tang]
+    |=  [=frag:agent:gall =call:agent:gall]
     ^-  (quip card:agent:gall agent:gall)
-    =^  cards  agent  (on-fail:ag term tang)
+    =^  cards  agent  (on-fail:ag frag call)
     [cards this]
   --
 --

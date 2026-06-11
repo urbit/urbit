@@ -350,9 +350,9 @@
   ::  On unexpected failure, kill all outstanding strands
   ::
   ++  on-fail
-    |=  [=term =tang]
+    |=  [frag:agent:gall =call:agent:gall]
     ^-  (quip card _this)
-    %-  (slog leaf+"spider crashed, killing all strands: {<term>}" tang)
+    %-  (slog leaf+"spider crashed, killing all strands: {<from>} during {<-.call>}" tang)
     (on-load on-save)
   --
 ::

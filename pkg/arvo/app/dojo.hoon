@@ -1878,13 +1878,13 @@
 ::  if dojo fails unexpectedly, kill whatever each session is working on
 ::
 ++  on-fail
-  |=  [=term =tang]
+  |=  [frag:agent:gall =call:agent:gall]
   =/  sessions=(list (pair id session))  ~(tap by hoc)
   |-  ^-  (quip card:agent:gall _..on-init)
   ?~  sessions
     [~ ..on-init]
   =^  cards-1  state
-    he-abet:(~(he-lame he hid p.i.sessions ~ q.i.sessions) term tang)
+    he-abet:(~(he-lame he hid p.i.sessions ~ q.i.sessions) from tang)
   =^  cards-2  ..on-init
     $(sessions t.sessions)
   [(weld cards-1 cards-2) ..on-init]

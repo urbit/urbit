@@ -4265,6 +4265,12 @@
           [%fact =cage]
           [%kick ~]
       ==
+    +$  frag  [from=?(%crash %perms) =tang]
+    +$  call
+      $%  [%on-agent =wire =sign]
+          [%on-leave =path]
+          [%on-arvo =wire gift=gift-user-v1]
+      ==
     ++  form
       $_  ^|
       |_  bowl
@@ -4303,7 +4309,7 @@
         *(quip card _^|(..on-init))
       ::
       ++  on-fail
-        |~  [term tang]
+        |~  [frag call]
         *(quip card _^|(..on-init))
       --
     --
