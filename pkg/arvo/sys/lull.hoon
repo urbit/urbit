@@ -4414,6 +4414,7 @@
     ++  must  ::  perm required for card
       |=  [our=ship =card:agent]
       ^-  $@(? (lest perm))  ::  always/never allowed, or lest perm
+      ::TODO  do not require any perms for resource cleanup tasks
       ?-  -.card
           %give  &
           %slip  $(card [%pass / p.card])

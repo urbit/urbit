@@ -703,7 +703,7 @@
           :~  (ex-move ~[/sysduct] %pass gall-wire [%a %keen sec=~ spar])
               (ex-move default-duct %give %unto %poke-ack ~)
           ==
-        (pure:m ~)  ::TODO
+        (pure:m ~)
       ::
         :-  'encrypted keen'
         ;<  moz=(list move:gall)  bind:m
@@ -727,7 +727,7 @@
   |=  moz=(list move:gall)
   ;<  e=_+:*$>(%live egg:gall)  bind:m  (get-live-egg %mock)
   ;<  ~  bind:m  (ex-equal !>(ken.e) !>((~(put ju *(jug spar:ames wire)) spar /agent/wire)))
-  ::TODO  emit a second request?
+  ::TODO  emit a second request? response should come back on all requests
   ::  response comes back from ames
   ::
   %+  (merge ,~)

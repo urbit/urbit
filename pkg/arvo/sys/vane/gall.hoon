@@ -794,6 +794,8 @@
     ?.  =(run-nonce.u.yoke nonce.pole)
       %-  (slog leaf+"gall: got old stub for {<dap>}" ~)
       mo-core
+    ::TODO  maybe need to check for agent.yoke being running?
+    ::      otherwise +ap-agent-core may end up crashing on the assert...
     =/  =routes  [disclosing=~ attributing=[our /]]
     =/  ap-core  (ap-abed:ap agent.pole routes)
     ?+    rest.pole  ~|(mo-handle-key-bad-wire/wire !!)
@@ -2097,6 +2099,8 @@
       ::
       %-  ~(rep in og-resources)
       |=  [res=arvo-resource acc=_ap-core]
+      ::REVIEW  cards produced here don't go through +ap-ingest, so can happen
+      ::        regardless of permission state
       =.  ap-core  acc
       ?-    +.res
         ::  re-establish trivially
@@ -2638,7 +2642,7 @@
       |=  [lyc=gang pov=path =omen]
       ^-  (unit (unit (cask vase)))
       ?.  ?|  =(%base q.beak.yoke)
-          (rite:guard our peg:(~(gut by perms.state) q.beak.yoke [peg=~ peq=~]) [vis.omen bem.omen])
+              (rite:guard our peg:(~(gut by perms.state) q.beak.yoke [peg=~ peq=~]) [vis.omen bem.omen])
           ==
         =/  sef=tape  "%{(trip q.beak.yoke)}/{(trip agent-name)}"
         =/  tar=tape  "{<vis.omen>} {(spud (en-beam bem.omen))}"
