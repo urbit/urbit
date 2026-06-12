@@ -1433,7 +1433,7 @@
         %+  turn  ~(tap by boat.yoke)
         |=  [[=wire =dock] ? =path]
         %-  ap-from-internal
-        [%pass wire %agent dock %leave ~]
+        [%pass (ap-nonce-wire wire dock) %agent dock %leave ~]
       ::
         ::  suspend kernel resources
         ::
