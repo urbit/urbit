@@ -103,8 +103,6 @@
         :-  %on-load   echo:mock
         :-  %on-agent
         |=  a=vase
-        :: =+  !<([=wire =sign:agent:gall] a)
-        :: ~&  wire=wire
         (echo:mock a)
         :-  %on-arvo   echo:mock
         :-  %on-fail   |=(* ~&(%mock-on-fail ~))  ::TODO  echo?
@@ -140,8 +138,8 @@
     ++  on-leave  |=(path [(c %on-leave !>(+<)) this])
     ::
     ++  on-agent  |=([wire sign:agent:gall] [(c %on-agent !>(+<)) this])
-    ++  on-arvo   |=([wire sign-arvo] [(c %on-arvo !>(+<)) this])
-    ++  on-fail   |=([term tang] [(c %on-fail !>(+<)) this])
+    ++  on-arvo   |=([wire gift-user-v1:gall] [(c %on-arvo !>(+<)) this])
+    ++  on-fail   |=([[term tang] call:agent:gall] [(c %on-fail !>(+<)) this])
     ::
     ++  on-save   !>(~)
     ++  on-peek   |=(path ~)
@@ -372,6 +370,7 @@
 ::
 ::  tests
 ::
+::
 ++  test-subscribe
   %-  eval-mare
   ;<  *  bind:m  (do-load [[%agent-a easy:mock] [%mock easy:mock] ~])
@@ -460,7 +459,6 @@
     %-  make:mock
     [%on-fail |=(* ~)]~
   ;<  moz-load=(list move:gall)  bind:m  (do-load [[%agent-a easy:mock] [%mock agent] ~])
-  ~&  moz-load/moz-load
   ;<  nonce=[@t @ud]  bind:m  (get-nonce %mock)
   ;<  ~  bind:m  (ex-equal !>(-.nonce) !>(-.old-nonce))
   ;<  ~  bind:m  (ex !>(=(+.nonce +(+.old-nonce))))
@@ -513,7 +511,6 @@
     ==
   ;<  moz=(list move:gall)  bind:m  (do-call ~[/sysduct] (gall-deal %agent-a [%leave ~]))
   ::
-  ~&  moz=moz
   ;<  moz-revive=(list move:gall)  bind:m
     (do-load [[%mock easy:mock] [%agent-a (make:mock give-fact:mock)] ~])
   ;<  ~  bind:m
@@ -523,6 +520,38 @@
   ::
   ;<  new-nonce=[@t @ud]  bind:m  (get-nonce %mock)
   (ex !>(!=(-.nonce -.new-nonce)))
+::
+++  test-subscribe-and-suspend
+  %-  eval-mare
+  ;<  *  bind:m  (do-load [[%agent-a easy:mock] [%mock easy:mock] ~])
+  ::
+  ;<  old-nonce=[@t @ud]  bind:m  (get-nonce %mock)
+  ;<  wir=wire      bind:m
+    (a2a-wire %mock [~dev %agent-a] /agent/wire)
+  ::
+  ;<  ~  bind:m  (do-watch wir /agent/wire [%watch /sub/path])
+  ;<  ~  bind:m  (ex-boat %mock (malt [[/agent/wire ~dev %agent-a]^[| /sub/path] ~]))
+  ;<  ~  bind:m  (ex-boar %mock (malt [[/agent/wire ~dev %agent-a]^1 ~]))
+  ::
+  ::  pass %watch-ack from %agent-a back to %mock
+  ;<  take-watch-ack=(list move:gall)  bind:m
+    (do-take [wir ~[/sysduct]] [%gall %unto %watch-ack ~])
+  ;<  ~  bind:m  (ex-boat %mock (malt [[/agent/wire ~dev %agent-a]^[& /sub/path] ~]))
+  ;<  ~  bind:m  (ex-boar %mock (malt [[/agent/wire ~dev %agent-a]^1 ~]))
+  ;<  ~  bind:m
+    %+  ex-moves  take-watch-ack
+    :~  (ex-on-agent /agent/wire %watch-ack ~)
+    ==
+  ::
+  ::  suspend %mock with changes
+  ;<  moz-suspend=(list move:gall)  bind:m
+    (do-call ~ %idle %mock)
+  ;<  nonce=[@t @ud]  bind:m  (get-nonce %mock)
+  ;<  ~  bind:m  (ex-equal !>(-.nonce) !>(-.old-nonce))
+  ;<  ~  bind:m  (ex !>(=(+.nonce +(+.old-nonce))))
+  %+  ex-moves  moz-suspend
+  :~  (ex-move ~[/sysduct] %pass wir [%g (gall-deal %agent-a [%leave ~])])
+  ==
 ::
 ::  agent subscribed to a nuked agent, agent gets revived
 ++  test-subscribe-to-nuked-agent

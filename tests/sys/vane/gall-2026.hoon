@@ -136,7 +136,7 @@
     ::
     ++  on-agent  |=([wire sign:agent:gall] [(c %on-agent !>(+<)) this])
     ++  on-arvo   |=([wire gift-user-v1:gall] [(c %on-arvo !>(+<)) this])
-    ++  on-fail   |=([term tang] [(c %on-fail !>(+<)) this])
+    ++  on-fail   |=([[term tang] call:agent:gall] [(c %on-fail !>(+<)) this])
     ::
     ++  on-save   !>(~)
     ++  on-peek   |=(path ~)
@@ -335,7 +335,10 @@
 ::
 ++  a2a-wire
   |=  [=dude:gall =dock:gall =wire]
-  (use-wire dude %out (scot %p p.dock) q.dock wire)
+  =/  m  (mare ,^wire)
+  ;<  y=yoke:gall  bind:m  (get-yoke dude)
+  ?.  ?=(%live -.y)  (pure:m ~)
+  (use-wire dude %out (scot %p p.dock) q.dock [(scot %ud sub-nonce.y) wire])
 ::
 ::  tests
 ::
@@ -776,15 +779,6 @@
   %-  eval-mare
   ;<  *  bind:m  (do-load %mock easy:mock)
   =/  =rave:clay  [%sing %x ud+1 /some/txt]
-  ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %behn %wait ~2345.6.7)
-  ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %clay %read 123 ~zod %desk rave)
-  ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %eyre %connect [~ /x] %dude)
-  ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %iris %request *request:http *outbound-config:iris)
-  ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %lick %spin /mysocket)
-  ;<  *  bind:m  (mock-card %pass /agent/wire %agent [~fun %bar] %watch /blah)
-  ::  suspending the agent should "pause" all its resources.
-  ::  we delete the resources, but remember them for revival.
-  ::
   ;<  gall-wire=wire        bind:m
     (a2k-wire %mock /agent/wire ~)
   ;<  gall-wire-e=wire        bind:m
@@ -794,9 +788,19 @@
   ;<  gall-wire-b=wire        bind:m
     (a2k-wire %mock /agent/wire `~2345.6.7)
   ;<  gall-wire-a=wire      bind:m
-    (a2a-wire %mock [~fun %bar] /agent/wire)  ::  TODO: investigate why wire is missing sub-nonce
+    (a2a-wire %mock [~fun %bar] /agent/wire)
+  ::
+  ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %behn %wait ~2345.6.7)
+  ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %clay %read 123 ~zod %desk rave)
+  ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %eyre %connect [~ /x] %dude)
+  ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %iris %request *request:http *outbound-config:iris)
+  ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %lick %spin /mysocket)
+  ;<  *  bind:m  (mock-card %pass /agent/wire %agent [~fun %bar] %watch /blah)
   ;<  moz=(list move:gall)  bind:m
     (do-call ~ %idle %mock)
+  ::  suspending the agent should "pause" all its resources.
+  ::  we delete the resources, but remember them for revival.
+  ::
   ;<  ~  bind:m
     ::NOTE  moves sorted because otherwise dependent on set order
     %+  ex-moves  (sort moz aor)
@@ -1170,10 +1174,10 @@
   ::
   %-  eval-mare
   ;<  *                     bind:m  (do-load %mock easy:mock)
+  ;<  gall-wire-a=wire      bind:m
+    (a2a-wire %mock [~fun %bar] /agent/wire)
   ;<  moz=(list move:gall)  bind:m  (mock-card %pass /agent/wire %agent [~fun %bar] %watch /blah)
   ::
-  ;<  gall-wire-a=wire      bind:m
-    (a2a-wire %mock [~fun %bar] /1/agent/wire)  ::  TODO: investigate why wire is missing sub-nonce
   ;<  ~  bind:m
     %+  ex-moves  moz
     :~  (ex-move default-duct %give %unto %poke-ack ~)
@@ -1256,8 +1260,6 @@
         (easy %eyre %spew 1)
         (easy %eyre %trim 1)
       ::
-        (easy %gall %jolt %base %dbug)
-        (easy %gall %idle %dbug)
         (easy %gall %nuke %dbug)
         (easy %gall %spew %odd ~)
         (easy %gall %sift %dbug ~)
