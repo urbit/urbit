@@ -5,7 +5,7 @@
 +$  tag
   $:  tol=?
       $=  dat
-      $@  $?  %ace   %gap   %per   %dot   %com
+      $@  $?  %ace   %gap   %per   %dot   %com   %sel   %ser   %tar
               %coma  %stis  :: %slus  %shep
               %axis  %lark  %skip
               ::TODO  %sym
@@ -24,7 +24,7 @@
   ==
 ::
 +$  toke
-  $@  ?(%ace %gap %dot %per %coma %stis) :: %slus %shep)
+  $@  ?(%ace %gap %dot %per %sel %ser %tar %coma %stis) :: %slus %shep)
   $%  [%limb =limb]
     ::
       [%atom tol=? const=? =aura a=@]  ::  %atomw + %atomt
@@ -48,7 +48,7 @@
   ::NOTE  important that %atomw is before %atomt,
   ::      if ambiguous we prefer the former
   %.  ^-  (list $@(term (pair term tag)))
-      :~  ace+|+%ace    gap+&+%gap    per+|+%per    dot+|+%dot  com+|+%com
+      :~  ace+|+%ace    gap+&+%gap    per+|+%per    dot+|+%dot  com+|+%com  sel+|+%sel  ser+|+%ser   tar+|+%tar
           coma+|+%coma  stis+&+%stis  :: shep+&+%slus  shep+&+%shep
           axis+|+%axis  lark+|+%lark  skip+|+%skip
           ::  %sym
@@ -63,6 +63,7 @@
           brcnw+|+%brcn  brcnt+&+%brcn    brptw+|+%brpt  brptt+&+%brpt
           ktlsw+|+%ktls  ktlst+&+%ktls
           wtptw+|+%wtpt  wtptt+&+%wtpt    wtcnw+|+%wtcn  wtcnt+&+%wtcn    wtktw+|+%wtkt  wtktt+&+%wtkt
+          cltrw+|+%cltr  cltrt+&+%cltr
       ==
   %~  select-rules  rul
   %-  ~(def-cords rul ~)  :~
@@ -93,6 +94,18 @@
     :-  %com
     '''
     ','
+    '''
+    :-  %sel
+    '''
+    '['
+    '''
+    :-  %ser
+    '''
+    ']'
+    '''
+    :-  %tar
+    '''
+    '*'
     '''
   ::
     :-  %coma
@@ -290,6 +303,15 @@
     '?^' gap
     '''
   ::
+    :-  %cltrw
+    '''
+    ':*('
+    '''
+    :-  %cltrt
+    '''
+    ':*' gap
+    '''
+  ::
   ==
 ::
 ++  parser  :: modeled after te, but different (hard to abstract)
@@ -355,7 +377,7 @@
     ::
     ^-  toke
     ?+  dat.tag  [dat.tag tol.tag]
-      ?(%ace %gap %dot %per %coma %stis)  dat.tag
+      ?(%ace %gap %dot %per %sel %ser %tar %coma %stis)  dat.tag
     ::
         [%atom *]
       :-  %atom
@@ -474,6 +496,7 @@
     =+  peek                         ?@  -  ~  =>  [t=u +(st s)]
     ?.  (sep t)                             ~
     =+  ((most(st move) m) sep lem)  ?@  -  ~  =>  [l=u +(st s)]
+    ::REVIEW  need another peek?
     ?.  (end t)                             ~      [[i l] move]
   ::
   ++  tall
@@ -481,6 +504,12 @@
     =+  peek  ?@  -  ~  =>  [t=u +(st s)]
     ?+  t  wide(tol |)
       [%atom %& *]  [%noun [%atom aura.t ?.(const.t ~ `a.t)] a.t]^move
+      [%cltr %&]    =+  %+  (autocons(st move) naty)
+                          |=(t=toke ?=(%gap t))
+                        |=  s=_st
+                        tall(st s)
+                                              ?@  -  ~  =>  [n=u +(st s)]
+                    =+  (expect %stis)        ?@  -  ~  [n s]
       [%dttr %&]    =+  tall-2(st move)       ?@  -  ~  [[%dttr u] s]
       [%dtwt %&]    =+  tall(st move)         ?@  -  ~  [[%dtwt u] s]
       [%dtls %&]    =+  tall(st move)         ?@  -  ~  [[%dtls u] s]
@@ -528,6 +557,10 @@
       [%limb *]     =+  (wing-tail limb.t)  ?@  -  ~  [[%cnts u ~] s]
       ::TODO  handle %dot
       [%atom %| *]  [%noun [%atom aura.t ?.(const.t ~ `a.t)] a.t]^st
+      %sel          =+  wide-cell-bod  ?@  -  ~  =>  [n=u +(st s)]
+                    =+  (expect %ser)  ?@  -  ~  [n s]
+      [%cltr %|]    =+  wide-cell-bod  ?@  -  ~  =>  [n=u +(st s)]
+                    =+  (expect %per)  ?@  -  ~  [n s]
       [%dttr %|]    =+  wide-2         ?@  -  ~  [[%dttr u] s]
       [%dtwt %|]    =+  wide-1         ?@  -  ~  [[%dtwt u] s]
       [%dtls %|]    =+  wide-1         ?@  -  ~  [[%dtls u] s]
@@ -598,16 +631,7 @@
     ?.  ?=([%limb *] l)  done(st bak)  $(rev [limb.l rev], st move)
     ++  done  [(flop rev) st]
     --
-  :: ++  expr2p
-  ::   |=  [sep=toke exp=$-(_st (mandatory expr _st))]
-  ::   ^-  (mandatory [p=expr q=expr mor=(list expr)] _st)
-  ::   =+  ((two-plus expr) +<)  ?@  -  ~  =>  [u +(st s)]
-  ::   [[p q rev] st]
-  :: ++  expr2p-w  (expr2p %ace |=(s=_st wide(st s)))
-  :: ++  tall-close
-  ::   ^-  $@(~ s=_st)
-  ::   =+  (expect %gap)   ?@  -  ~  =>  +(st s)
-  ::   =+  (expect %stet)  ?@  -  ~  s
+  ::
   ++  wide-1
     ^-  (mandatory naty _st)
     =+  wide           ?@  -  ~  =>  [one=u +(st s)]
@@ -622,6 +646,52 @@
     =+  wing-full      ?@  -  ~  =>  [w=u +(st s)]
     =+  (expect %ace)  ?@  -  ~  =>  +(st s)
     =+  wide-2         ?@  -  ~  [[w u] s]
+  ++  wide-cell-bod
+    ^-  (mandatory naty _st)
+    %+  (autocons naty)
+      |=(t=toke ?=(%ace t))
+    |=(s=_st wide(st s))
+  ++  autocons
+    |*  m=mold
+    |=  $:  sep=tope
+            lem=$-(_st (mandatory m _st))
+        ==
+    ^-  (mandatory m _st)
+    =+  ((most m) sep lem)
+    ?@  -  ~
+    :_  s
+    |-  ^-  m
+    ?~(t.u i.u [i.u $(u t.u)])  ::TODO  paul homework
+  ++  wide-layout  ::  WideLayout
+    ^-  (mandatory layout _st)
+    =+  peek           ?@  -  ~  =>  [t=u +(st s)]
+    ?+  t  ~
+      %sel          =+  wide-layout-element(st move)  ?@  -  ~  =>  [h=u +(st s)]
+                    =+  (expect %ace)                 ?@  -  ~  =>  +(st s)
+                    =+  %+  (autocons layout)
+                          |=(t=toke ?=(%ace t))
+                        |=  s=_st
+                        wide-layout-element
+                                                      ?@  -  ~  =>  [l=[h u] +(st s)]
+                    =+  (expect %ser)                 ?@  -  ~  [l s]
+      [%cltr %|]    =+  wide-layout-element(st move)  ?@  -  ~  =>  [h=u +(st s)]
+                    =+  (expect %ace)                 ?@  -  ~  =>  +(st s)
+                    =+  %+  (autocons layout)
+                          |=(t=toke ?=(%ace t))
+                        |=  s=_st
+                        wide-layout-element
+                                                      ?@  -  ~  =>  [l=[h u] +(st s)]
+                    =+  (expect %per)                 ?@  -  ~  [l s]
+    ==
+  ++  wide-layout-element  ::  LayoutElementW
+    ^-  (mandatory layout _st)
+    =+  peek           ?@  -  ~  =>  [t=u +(st s)]
+    ?+  t  ~
+      [%limb %| %0 ~ @]   [u.q.limb.t move]
+      %tar                [[~ ~] move]
+      ?(%sel [%cltr %|])  wide-layout(st move)
+    ==
+  ::
   ++  tall-2
     ^-  (mandatory [naty naty] _st)
     =+  tall           ?@  -  ~  =>  [one=u +(st s)]

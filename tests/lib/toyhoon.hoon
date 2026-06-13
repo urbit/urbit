@@ -222,6 +222,8 @@
 ::
 ++  test-parser
   =/  z=naty:th  [%noun [%atom %ud ~] 0]
+  =/  o=naty:th  [%noun [%atom %ud ~] 1]
+  =/  t=naty:th  [%noun [%atom %ud ~] 2]
   =/  w=wing:th  [%| 0 `%$]~
   ;:  weld
     (make-parser-test '123' [%noun [%atom %ud ~] 123])
@@ -230,6 +232,10 @@
     (make-parser-test '.+(1)' [%dtls %noun [%atom %ud ~] 1])
     (make-parser-test '.+  2' [%dtls %noun [%atom %ud ~] 2])
     (make-parser-test '.+  .+(3)' [%dtls %dtls %noun [%atom %ud ~] 3])
+  ::
+    (make-parser-test ':*(0 1 2)' [z o t])
+    (make-parser-test '[0 1 2]' [z o t])
+    (make-parser-test ':*  0  1  2  ==' [z o t])
   ::
     (make-parser-test '$' [%cnts [%| 0 `%$]~ ~])
     (make-parser-test '^$' [%cnts [%| 1 `%$]~ ~])
