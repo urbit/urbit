@@ -220,6 +220,13 @@
     (expect-eq !>(naty) !>(u.res))
   (expect-eq !>(i.cur.s.res) !>(len.cur.s.res))  ::  fully parsed
 ::
+++  make-parser-fail-test
+  |=  input=@t
+  ^-  tang
+  =+  res=~(tall p & (init-cord-cursor:tp input) [1 1] ~)
+  ?^  res  ~['parsed unexpectedly' input]
+  ~
+::
 ++  test-parser
   =/  z=naty:th  [%noun [%atom %ud ~] 0]
   =/  o=naty:th  [%noun [%atom %ud ~] 1]
@@ -271,5 +278,21 @@
     (make-parser-test '%=  $  $  0  ==' [%cnts w [w z] ~])
     (make-parser-test '%=($ $ 0, $ 0)' [%cnts w [w z] [w z] ~])
     (make-parser-test '%=  $  $  0  $  0  ==' [%cnts w [w z] [w z] ~])
+  ::
+    (make-parser-test '|@  ++  a  0  --' [%brpt ~ (my [%a z] ~)])
+    (make-parser-test '|@  ++  a  0  ++  b  1  --' [%brpt ~ (my [%a z] [%b o] ~)])
+    (make-parser-test '|@  [a b]  ++  a  0  ++  b  1  --' [%brpt `[%a %b] (my [%a z] [%b o] ~)])
+    (make-parser-test '|@  [a *]  ++  a  0  ++  b  1  --' [%brpt `[%a `~] (my [%a z] [%b o] ~)])
+    (make-parser-test '|@  :*(a b)  ++  a  0  ++  b  1  --' [%brpt `[%a %b] (my [%a z] [%b o] ~)])
+    (make-parser-test '|@  :*(a *)  ++  a  0  ++  b  1  --' [%brpt `[%a `~] (my [%a z] [%b o] ~)])
+    (make-parser-test '|@  :*  a  b  ==  ++  a  0  ++  b  1  --' [%brpt `[%a %b] (my [%a z] [%b o] ~)])
+    (make-parser-test '|@  :*  a  *  ==  ++  a  0  ++  b  1  --' [%brpt `[%a `~] (my [%a z] [%b o] ~)])
+    (make-parser-test '|@  [[a b] c]  ++  a  0  ++  b  1  ++  c  2  --' [%brpt `[[%a %b] %c] (my [%a z] [%b o] [%c t] ~)])
+    (make-parser-test '|@  :*  [a b]  c  ==  ++  a  0  ++  b  1  ++  c  2  --' [%brpt `[[%a %b] %c] (my [%a z] [%b o] [%c t] ~)])
+    (make-parser-fail-test '|@  [a a]  ++  a  0  ++  b  1  --')
+    (make-parser-fail-test '|@  [a b]  ++  a  0  ++  a  1  --')
+    (make-parser-fail-test '|@  [a c]  ++  a  0  ++  b  1  --')
+    (make-parser-fail-test '|@  [a c]  ++  a  0  ++  b  1  ++  c  2  --')
+    (make-parser-fail-test '|@  [a * *]  ++  a  0  ++  b  1  ++  c  2  --')
   ==
 --
