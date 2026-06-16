@@ -1200,7 +1200,7 @@
     ::
     ::TODO  deprecate!
     ?:  =('/_~_/' (end [3 5] url.request))
-      (handle-http-scry authenticated request)
+      (handle-http-scry authenticated scope.identity request)
     ::  handle requests to the cache, if a non-empty entry exists
     ::
     =/  cached=(unit [aeon=@ud val=(unit cache-entry)])
@@ -1527,14 +1527,14 @@
   ::  +handle-http-scry: respond with scry result
   ::
   ++  handle-http-scry
-    |=  [authenticated=? =request:http]
+    |=  [authenticated=? scope=(unit desk) =request:http]
     |^  ^-  (quip move server-state)
     ?.  authenticated  (error-response 403 ~)
     ?.  =(%'GET' method.request)
       (error-response 405 "may only GET scries")
     =/  req  (parse-request-line url.request)
     =/  fqp  (fully-qualified site.req)
-    =/  mym  (scry-mime now rof [~ ~] ext.req site.req)
+    =/  mym  (scry-mime now rof `scope [~ ~] ext.req site.req)
     ?:  ?=(%| -.mym)  (error-response 500 p.mym)
     =*  mime  p.mym
     %-  handle-response
@@ -4046,8 +4046,9 @@
   ::      which the subscription was opened.
   /(scot %p ship)/[app]/(scot %p from)
 ::
+::REVIEW  mixing two permission/access control modalities...
 ++  scry-mime
-  |=  [now=@da rof=roof =gang ext=(unit @ta) pax=path]
+  |=  [now=@da rof=roof prov=(unit (unit desk)) =gang ext=(unit @ta) pax=path]
   |^  ^-  (each mime tape)
   ::  parse
   ::
@@ -4058,6 +4059,22 @@
     ?~  beam=(de-beam u.path)       ~
     `[u.view u.beam]
   ?~  u  [%| "invalid scry path"]
+  ::  we must have _some_ form of permissioning control
+  ::
+  ?:  &(?=(~ gang) ?=(~ prov))
+    [%| "unpermissioned scry"]
+  ::  if there is a non-root provenance scope,
+  ::  it must have sufficient permissions
+  ::
+  ?:  ?&  ?=([~ ~ *] prov)
+        ::
+          !&  ::TODO  re-enable after merge with userperms branch
+          :: =;  =bond:clay  !(rite:guard:gall our peg.bond u.u)
+          :: =+  r=(rof [~ ~] /eyre [%c %x] our %$ da+now /bond/[u.u.prov])
+          :: ?>  ?=([%bond ~ ~ *])
+          :: ;;(bond:clay q.u.u.r)
+      ==
+    [%| "no permission for scry"]
   ::  perform scry
   ::
   ?~  res=(rof gang /eyre u.u)  [%| "failed scry"]
@@ -4998,13 +5015,22 @@
     ?:  &(auth.u.val !=([~ ~] lyc))    ~
     ``noun+!>(u.val)
   ::
+  =^  provenance=(unit (unit desk))  tyl
+    ?.  ?=([%token @ *] tyl)  [~ tyl]
+    :_  t.t.tyl
+    ?:  =(%$ i.t.tyl)  ~
+    =+  sid=(slav %uv i.t.tyl)  ::TODO  may crash
+    ?~  ses=(~(get by sessions.auth.server-state.ax) sid)
+      ~
+    `scope.identity.u.ses
+  ::
   ?:  &(?=(%x ren) ?=([%range @ @ @ *] tyl))
     |^
     =/  beg=(unit @ud)  (slaw %ud i.t.tyl)
     =/  end=(unit @ud)  (slaw %ud i.t.t.tyl)
     =*  vew   i.t.t.t.tyl
     =*  rest  t.t.t.t.tyl
-    =/  mym  (scry-mime now rof lyc ~ [%$ vew (en-beam -.bem rest)])
+    =/  mym  (scry-mime now rof provenance lyc ~ [%$ vew (en-beam -.bem rest)])
     ?:  ?=(%| -.mym)  ~
     =*  mime  p.mym
     ?~  range=(get-range [beg end] p.q.mime)
@@ -5095,7 +5121,9 @@
       %*(. *request:http header-list ['cookie' u.cookies]~)
     ::
         [%'_~_' *]
-      =/  mym  (scry-mime now rof lyc (deft:de-purl:html tyl))
+      ::TODOxx  who would .^ this??
+      ~&  >>>  %this-will-never-fire
+      =/  mym  (scry-mime now rof provenance lyc (deft:de-purl:html tyl))
       ?:  ?=(%| -.mym)  [~ ~]
       ``noun+!>(p.mym)
     ==
