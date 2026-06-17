@@ -3719,23 +3719,22 @@
     ==
   ::
   ?:  ?=(%code-changed -.task)
-    ~>  %slog.[0 leaf+"eyre: code-changed: throwing away local sessions"]
-    =*  event-args  [[eny duct now rof] server-state.ax]
-    ::  find all the %ours sessions, we must close them
+    ~>  %slog.[0 leaf+"eyre: code-changed: throwing away cookies and sessions"]
+    =.  auth.server-state.ax  *authentication-state
     ::
-    =/  siz=(list @uv)
-      %+  murn  ~(tap by sessions.auth.server-state.ax)
-      |=  [sid=@uv session]
-      ?:(?=(%ours -.identity) (some sid) ~)
+    =/  event-args  [[eny duct now rof] server-state.ax]
+    =*  by-channel  by-channel:(per-server-event event-args)
+    =*  channel-state  channel-state.server-state.ax
+    ::
+    =/  channel-ids=(list @t)  ~(tap in ~(key by session.channel-state))
     =|  moves=(list (list move))
     |-  ^-  [(list move) _http-server-gate]
-    ?~  siz
+    ?~  channel-ids
       [(zing (flop moves)) http-server-gate]
-    ::  discard the session, clean up its channels
+    ::  discard channel state, and cancel any active gall subscriptions
     ::
-    =^  mov  server-state.ax
-      (close-session:authentication:(per-server-event event-args) i.siz |)
-    $(moves [mov moves], siz t.siz)
+    =^  mov  server-state.ax  (discard-channel:by-channel i.channel-ids |)
+    $(moves [mov moves], channel-ids t.channel-ids)  ::
   ::
   ?:  ?=(%eauth-host -.task)
     ?:  =(user.endpoint.auth.server-state.ax host.task)
