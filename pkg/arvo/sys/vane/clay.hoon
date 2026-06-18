@@ -1333,11 +1333,11 @@
   ::  +build-ford-api: construct ford-api from a desk's zuse + vase tools.
   ::
   ::    compiles ford-cord against the desk's zuse and runs every build
-  ::    in the desk's own type universe, returning raw desk-universe
-  ::    vases/cages.  no migration: for the native kelvin (wish=~) the
-  ::    live slub/slym/slam/slop are used and results are live vases;
-  ::    for a foreign kelvin the pill-derived tools are used and results
-  ::    stay in that universe (matching +bar).
+  ::    in the desk's own type universe.  for the native kelvin (wish=~)
+  ::    the live slub/slym/slam/slop are used and results are live vases;
+  ::    for a foreign kelvin the pill-derived tools are used.  outputs in
+  ::    the h136 universe are migrated to the live h135 universe via
+  ::    next-vase.
   ::
   ++  build-ford-api
     |=  [zud=* wish=(unit $-(@t *))]
@@ -1346,37 +1346,59 @@
     =/  my-slub=*  ?~(wish slub (wis 'slub'))
     =/  my-slop=*  ?~(wish slop (wis 'slop'))
     =/  my-slym=*  ?~(wish slym (wis 'slym'))
-    =/  raw  (slum my-slub [zud (ream ford-cord)])
+    ::  compile ford-cord against the desk's zuse.  for a foreign kelvin we
+    ::  must +ream it *inside* that arvo, so it parses against that kelvin's
+    ::  +hoon AST; the live +ream produces an AST the foreign compiler can't
+    ::  read.  (this mirrors +bar's `builder`.)
+    ::
+    =/  raw
+      ?~  wish
+        (slum my-slub [zud (ream ford-cord)])
+      =/  builder
+        (wis '|=(fc=@t =+(x=(ride -:!>(..zuse) fc) [p.x .*(..zuse q.x)]))')
+      (slum builder ford-cord)
     =/  fuz  (slum my-slub [raw [%limb %fusion]])
     =/  ford-gate  (slum my-slub [fuz [%limb %ford]])
-    ::  coerce raw (desk-universe) nouns to typed values, no migration
+    ::  the desk's hoon kelvin; h136 outputs must be migrated to live h135
+    ::
+    =/  hov=@ud  ?~(wish hoon-version ;;(@ud (wis 'hoon-version')))
+    =/  old=?  =(136 hov)
+    ::  coerce raw (desk-universe) nouns to typed values; if the desk is in
+    ::  the h136 universe, migrate the type metadata via next-vase
     ::
     =/  ntv
       |=  n=*
       ^-  vase
-      !<(vase [-:!>(*vase) n])
+      =/  v  ?:(old (slum next-vase:h136 n) n)
+      !<(vase [-:!>(*vase) v])
     =/  ntc
       |=  n=*
       ^-  cage
       ?>  ?=(^ n)
-      !<(cage [-:!>(*cage) [;;(@tas -.n) +.n]])
+      =/  vas  ?:(old (slum next-vase:h136 +.n) +.n)
+      !<(cage [-:!>(*cage) [;;(@tas -.n) vas]])
     |=  [files=(map path (each page lobe)) file-store=(map lobe page) verb=@]
     =/  cor  (slum my-slym [ford-gate [files file-store verb]])
     |%
     ++  read-file
       |=  =path
       ^-  cage
-      (ntc +:(slum my-slam [(slum my-slub [cor [%limb %read-file]]) !>(path)]))
+      (ntc (slum +:(slum my-slub [cor [%limb %read-file]]) path))
     ::
     ++  build-file
       |=  =path
       ^-  vase
-      (ntv +:(slum my-slam [(slum my-slub [cor [%limb %build-file]]) !>(path)]))
+      =/  built  (slum +:(slum my-slub [cor [%limb %build-file]]) path)
+      ?.  old  (ntv built)
+      ~&  >  [%agent-mug-before-next-vase `@ux`(mug built)]
+      =/  mig  (ntv built)
+      ~&  >  [%agent-mug-after-next-vase `@ux`(mug mig)]
+      mig
     ::
     ++  build-nave
       |=  mak=mark
       ^-  vase
-      (ntv +:(slum my-slam [(slum my-slub [cor [%limb %build-nave]]) !>(mak)]))
+      (ntv (slum +:(slum my-slub [cor [%limb %build-nave]]) mak))
     ::
     ++  build-dais
       |=  mak=mark
@@ -1424,7 +1446,7 @@
     ++  build-cast
       |=  [a=mark b=mark]
       ^-  vase
-      (ntv +:(slum my-slam [(slum my-slub [cor [%limb %build-cast]]) (slum my-slop [!>(a) !>(b)])]))
+      (ntv (slum +:(slum my-slub [cor [%limb %build-cast]]) [a b]))
     ::
     ++  build-tube
       |=  [a=mark b=mark]
@@ -1437,27 +1459,27 @@
     ++  validate-page
       |=  [=path =page]
       ^-  cage
-      (ntc +:(slum my-slam [(slum my-slub [cor [%limb %validate-page]]) (slum my-slop [!>(path) !>(page)])]))
+      (ntc (slum +:(slum my-slub [cor [%limb %validate-page]]) [path page]))
     ::
     ++  page-to-cage
       |=  =page
       ^-  cage
-      (ntc +:(slum my-slam [(slum my-slub [cor [%limb %page-to-cage]]) !>(page)]))
+      (ntc (slum +:(slum my-slub [cor [%limb %page-to-cage]]) page))
     ::
     ++  cast-path
       |=  [=path mak=mark]
       ^-  cage
-      (ntc +:(slum my-slam [(slum my-slub [cor [%limb %cast-path]]) (slum my-slop [!>(path) !>(mak)])]))
+      (ntc (slum +:(slum my-slub [cor [%limb %cast-path]]) [path mak]))
     ::
     ++  prelude
       |=  =path
       ^-  vase
-      (ntv +:(slum my-slam [(slum my-slub [cor [%limb %prelude]]) !>(path)]))
+      (ntv (slum +:(slum my-slub [cor [%limb %prelude]]) path))
     ::
     ++  build-fit
       |=  [pre=@tas pax=@tas]
       ^-  vase
-      (ntv +:(slum my-slam [(slum my-slub [cor [%limb %build-fit]]) (slum my-slop [!>(pre) !>(pax)])]))
+      (ntv (slum +:(slum my-slub [cor [%limb %build-fit]]) [pre pax]))
     --
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
