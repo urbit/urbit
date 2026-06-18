@@ -1349,7 +1349,7 @@
     ::  compile ford-cord against the desk's zuse.  for a foreign kelvin we
     ::  must +ream it *inside* that arvo, so it parses against that kelvin's
     ::  +hoon AST; the live +ream produces an AST the foreign compiler can't
-    ::  read.  (this mirrors +bar's `builder`.)
+    ::  read.
     ::
     =/  raw
       ?~  wish
@@ -1390,9 +1390,18 @@
       ^-  vase
       =/  built  (slum +:(slum my-slub [cor [%limb %build-file]]) path)
       ?.  old  (ntv built)
-      ~&  >  [%agent-mug-before-next-vase `@ux`(mug built)]
+      ::  value-mug is unchanged by next-vase (which only rewrites the type);
+      ::  vase-mug differs because the type metadata is migrated h136 -> h135.
+      ::
+      ~&  >  :*  %agent-before-next-vase
+                 value-mug=`@ux`(mug +:built)
+                 vase-mug=`@ux`(mug built)
+             ==
       =/  mig  (ntv built)
-      ~&  >  [%agent-mug-after-next-vase `@ux`(mug mig)]
+      ~&  >  :*  %agent-after-next-vase
+                 value-mug=`@ux`(mug +:mig)
+                 vase-mug=`@ux`(mug mig)
+             ==
       mig
     ::
     ++  build-nave
@@ -1800,7 +1809,6 @@
   ++  get-pill
     |=  tak=tako
     ^-  (unit pill)
-    ~&  >>  [%get-pill syd]
     =/  fiz=(map path lobe)  q:(tako-to-yaki:ze tak)
     =/  pil=(unit lobe)  (~(get by fiz) /brass/pill)
     ?~  pil  ~
@@ -1855,17 +1863,10 @@
   ::
   ++  wisher
     |=  [arv=* txt=@t]
-    :: ^-  (unit)
     ?>  ?=(^ arv)
     =/  res  (mock [arv +10.arv] ~)
-    ::  TODO safer?
     =/  wish  ?>(?=(%0 -.res) p.res)
-    =/  res
-      %-  mule  |.
-      (slum wish txt)
-    :: ?:  ?=(%| -.res)
-    ::   ~
-    :: `p.res
+    =/  res  (mule |.((slum wish txt)))
     ?>  ?=(%& -.res)
     p.res
   ::  Create a ford appropriate for the aeon
@@ -5018,9 +5019,7 @@
     |-  ^-  load:gall
     ?~  sat
       lad
-    ~&  >  [%build-agents-1 desk.i.sat]
     =/  f  (ford our desk.i.sat ~)
-    ~&  >  [%build-agents-2 desk.i.sat]
     =/  new=load:gall
       |-  ^-  load:gall
       ?~  bill.i.sat
