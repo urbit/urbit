@@ -286,7 +286,7 @@
     %^  ex-gall-deal  /watch-response/[eyre-id]  g-name
     [app %watch /http-response/[eyre-id]]
   =/  mov-2
-    =/  response  !>([eyre-id %.n %.n [%ipv4 .192.168.1.1] [%'GET' target ~ ~]])
+    =/  response  !>([eyre-id %.n [%fake g-name] %.n [%ipv4 .192.168.1.1] [%'GET' target ~ ~]])
     %^  ex-gall-deal  /run-app-request/[eyre-id]  g-name
     [app %poke %handle-http-request response]
   (expect-moves mos mov-1 mov-2 ~)
@@ -757,7 +757,7 @@
     [%app1 %watch /http-response/[eyre-id]]
   =/  mov-2
     =/  request  [%'GET' '/~landscape/inner-path' ['cookie' c]~ ~]
-    =/  response  !>([eyre-id %.y %.n [%ipv4 .192.168.1.1] request])
+    =/  response  !>([eyre-id %.y [%real ~nul] %.n [%ipv4 .192.168.1.1] request])
     %^  ex-gall-deal  /run-app-request/[eyre-id]  ~nul
     [%app1 %poke %handle-http-request response]
   (expect-moves mos mov-1 mov-2 ~)
