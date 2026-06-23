@@ -586,9 +586,13 @@
   ::
   ++  mo-receive-core
     ~/  %mo-receive-core
-    |=  [prov=path dap=term bek=beak =agent-any]
+    |=  [prov=path dap=term bek=beak zuv=@ud =vase]
     ^+  mo-core
     ::
+    =/  =agent-any
+      ?:  =(zuse zuv)
+        !<(agent-any vase)
+      !<(agent-any [-:!>(*agent-any) q.vase])
     =/  yak  (~(get by yokes.state) dap)
     =/  tex=(unit tape)
       ?~  yak  `"installing"
@@ -1295,7 +1299,7 @@
   ::  +mo-load: install agents
   ::
   ++  mo-load
-    |=  [prov=path agents=(list [=dude =beak =agent-any])]
+    |=  [prov=path agents=(list [=dude =beak zuv=@ud =vase])]
     =.  mo-core
       |-  ^+  mo-core
       ?~  agents  mo-core

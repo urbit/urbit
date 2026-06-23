@@ -3752,7 +3752,7 @@
     ==  ==                                              ::                                                  ::
   +$  dude  term                                        ::  server identity
   +$  gill  (pair ship term)                            ::  general contact
-  +$  load  (list [=dude =beak =agent-any])             ::  loadout
+  +$  load  (list [=dude =beak zus=@ud =vase])          ::  loadout
   +$  scar                                              ::  opaque duct
     $:  p=@ud                                           ::  bone sequence
         q=(map duct bone)                               ::  by duct

@@ -1362,6 +1362,7 @@
     ::  the desk's hoon kelvin; h136 outputs must be migrated to live h135
     ::
     =/  hov=@ud  ?~(wish hoon-version ;;(@ud (wis 'hoon-version')))
+    =/  zuv=@ud  ?~(wish zuse ;;(@ud (wis 'zuse')))
     =/  old=?  =(136 hov)
     ::  coerce raw (desk-universe) nouns to typed values; if the desk is in
     ::  the h136 universe, migrate the type metadata via next-vase
@@ -1371,15 +1372,19 @@
       ^-  vase
       =/  v  ?:(old (slum next-vase:h136 n) n)
       !<(vase [-:!>(*vase) v])
+      :: ;;(vase v)
     =/  ntc
       |=  n=*
       ^-  cage
       ?>  ?=(^ n)
+      ::  TODO next-cage:a235
       =/  vas  ?:(old (slum next-vase:h136 +.n) +.n)
       !<(cage [-:!>(*cage) [;;(@tas -.n) vas]])
+      :: ;;(cage [;;(@tas -.n) vas])
     |=  [files=(map path (each page lobe)) file-store=(map lobe page) verb=@]
     =/  cor  (slum my-slym [ford-gate [files file-store verb]])
     |%
+    ++  zuse-version  zuv
     ++  read-file
       |=  =path
       ^-  cage
@@ -1876,6 +1881,7 @@
     =/  arv=(unit *)
       ?:  =(%base syd)  ~
       =/  pil=(unit pill)  (get-pill tak)
+      ::  TODO move make-arvo outside of this core
       =>  [make-arvo=make-arvo pil=pil]
       ~>  %memo./clay/ford
       (make-arvo pil)
@@ -5027,10 +5033,8 @@
       =/  =vase
         %-  road  |.
         (build-file:f /app/[i.bill.i.sat]/hoon)
-      =/  agent-any  ~|  [%building-app bill.i.sat]
-        !<(agent-any:gall [-:!>(*agent-any:gall) q.vase])
       =/  lid  $(bill.i.sat t.bill.i.sat)
-      [[i.bill.i.sat [our desk.i.sat da+now] agent-any] lid]
+      [[i.bill.i.sat [our desk.i.sat da+now] zuse-version:f vase] lid]
     =.  lad  (weld lad new)
     $(sat t.sat)
   ::  build-dais for each mark
