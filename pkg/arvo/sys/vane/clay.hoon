@@ -1299,6 +1299,109 @@
     %+  stag  %tssg
     (most gap tall:(vang & pax))
   ==
+::
++$  pill
+  $%  [%ivory p=(list)]
+      $:  %pill
+          nam=term
+          boot-ova=(list)
+          kernel-ova=(list unix-event)
+          userspace-ova=(list unix-event)
+      ==
+      $:  %cash
+          $:  nam=term
+              boot-ova=(list)
+              kernel-ova=(list unix-event)
+              userspace-ova=(list unix-event)
+          ==
+          cache=(list)
+  ==  ==
+::
++$  unix-event
+  %+  pair  wire
+  $%  [%wack p=@]
+      [%what p=(list (pair path (cask)))]
+      [%whom p=ship]
+      [%boot ? $%($>(%fake task:jael) $>(%dawn task:jael))]
+      [%wyrd p=vere]
+      [%verb p=(unit ?)]
+      unix-task
+  ==
+::
+++  make-arvo
+  |=  pil=(unit pill)
+  ^-  (unit *)
+  ?~  pil  ~
+  =/  pil=$>(%pill pill)
+    ?+    -.u.pil  !!
+        %cash
+      ^-  $>(%pill pill)
+      [%pill +<.u.pil]
+    ::
+        %pill  u.pil
+    ==
+  ::
+  =.  kernel-ova.pil                            ::  filter to /sys
+    %+  turn  kernel-ova.pil
+    |=  =unix-event:pill
+    ^-  unix-event:pill
+    ?.  ?=([%what *] q.unix-event)  unix-event
+    =/  files=(list (pair path (cask)))
+      %+  skim  p.q.unix-event
+      |=  [=path *]
+      ?=([%sys *] path)
+    unix-event(q [%what files])
+  ::
+  =/  =wynn        ::  XX this is wrong, if we care, double bootstrap it?
+    :~  zuse+zuse
+        lull+lull
+        arvo+arvo
+        hoon+hoon-version
+        nock+4
+    ==
+  ::
+  =/  res=toon
+    %-  mock
+    :_  ~
+    :_  [%2 [%0 3] %0 2]
+    ;:  weld
+      boot-ova.pil
+      ^-  (list)
+      :~  [*@da //arvo %wack *@uvJ]
+          [*@da //arvo %whom *@p]
+          [*@da //arvo %wyrd [~.nonce /] wynn]
+      ==
+      `(list)`(turn kernel-ova.pil (lead *@da))
+      `(list)`[*@da [/d/term/1 %boot & %fake *@p]]^~
+    ==
+  ::
+  ?-  -.res
+    %0  `+7.p.res                       ::  success
+  ::
+    %1  ~&  [%vere-blocked p.res]  !!
+    %2  ~&  %vere-fail  (mean p.res)
+  ==
+::  +make-zuse: produce the desk's zuse vase, in the desk's own universe
+::
+::    for the native kelvin (no arvo) this is the live !>(..zuse); for a
+::    foreign kelvin it's the raw old vase, evaluated in the desk's arvo.
+::    no migration: callers build with the matching slub/slym.
+::
+++  make-zuse
+  |=  arv=(unit *)
+  ~>  %bout.[1 %make-zuse]
+  ?~  arv  !>(..zuse)
+  ((cury wisher u.arv) '!>(..zuse)')
+::
+++  wisher
+  |=  [arv=* txt=@t]
+  ?>  ?=(^ arv)
+  =/  res  (mock [arv +10.arv] ~)
+  =/  wish  ?>(?=(%0 -.res) p.res)
+  =/  res  (mule |.((slum wish txt)))
+  ?>  ?=(%& -.res)
+  p.res
+::
 --  =>
 ~%  %clay  +  ~
 |%
@@ -1757,60 +1860,6 @@
       ?:((~(has by hut.ran) p.lok) `p.lok ~)
     (bind (case-to-aeon-before lim lok) aeon-to-tako:ze)
   ::
-  ++  make-arvo
-    |=  pil=(unit pill)
-    ^-  (unit *)
-    ?~  pil  ~
-    =/  pil=$>(%pill pill)
-      ?+    -.u.pil  !!
-          %cash
-        ^-  $>(%pill pill)
-        [%pill +<.u.pil]
-      ::
-          %pill  u.pil
-      ==
-    ::
-    =.  kernel-ova.pil                            ::  filter to /sys
-      %+  turn  kernel-ova.pil
-      |=  =unix-event:pill
-      ^-  unix-event:pill
-      ?.  ?=([%what *] q.unix-event)  unix-event
-      =/  files=(list (pair path (cask)))
-        %+  skim  p.q.unix-event
-        |=  [=path *]
-        ?=([%sys *] path)
-      unix-event(q [%what files])
-    ::
-    =/  =wynn        ::  XX this is wrong, if we care, double bootstrap it?
-      :~  zuse+zuse
-          lull+lull
-          arvo+arvo
-          hoon+hoon-version
-          nock+4
-      ==
-    ::
-    =/  res=toon
-      %-  mock
-      :_  ~
-      :_  [%2 [%0 3] %0 2]
-      ;:  weld
-        boot-ova.pil
-        ^-  (list)
-        :~  [*@da //arvo %wack *@uvJ]
-            [*@da //arvo %whom *@p]
-            [*@da //arvo %wyrd [~.nonce /] wynn]
-        ==
-        `(list)`(turn kernel-ova.pil (lead *@da))
-        `(list)`[*@da [/d/term/1 %boot & %fake *@p]]^~
-      ==
-    ::
-    ?-  -.res
-      %0  `+7.p.res                       ::  success
-    ::
-      %1  ~&  [%vere-blocked p.res]  !!
-      %2  ~&  %vere-fail  (mean p.res)
-    ==
-  ::
   ++  get-pill
     |=  tak=tako
     ^-  (unit pill)
@@ -1826,54 +1875,6 @@
     ?>  ?=(%pill -.pil)
     `[%pill [nam boot-ova kernel-ova userspace-ova]:pil]
   ::
-  +$  pill
-    $%  [%ivory p=(list)]
-        $:  %pill
-            nam=term
-            boot-ova=(list)
-            kernel-ova=(list unix-event)
-            userspace-ova=(list unix-event)
-        ==
-        $:  %cash
-            $:  nam=term
-                boot-ova=(list)
-                kernel-ova=(list unix-event)
-                userspace-ova=(list unix-event)
-            ==
-            cache=(list)
-    ==  ==
-  ::
-  +$  unix-event
-    %+  pair  wire
-    $%  [%wack p=@]
-        [%what p=(list (pair path (cask)))]
-        [%whom p=ship]
-        [%boot ? $%($>(%fake task:jael) $>(%dawn task:jael))]
-        [%wyrd p=vere]
-        [%verb p=(unit ?)]
-        unix-task
-    ==
-  ::
-  ::  +make-zuse: produce the desk's zuse vase, in the desk's own universe
-  ::
-  ::    for the native kelvin (no arvo) this is the live !>(..zuse); for a
-  ::    foreign kelvin it's the raw old vase, evaluated in the desk's arvo.
-  ::    no migration: callers build with the matching slub/slym.
-  ::
-  ++  make-zuse
-    |=  arv=(unit *)
-    ~>  %bout.[1 %make-zuse]
-    ?~  arv  !>(..zuse)
-    ((cury wisher u.arv) '!>(..zuse)')
-  ::
-  ++  wisher
-    |=  [arv=* txt=@t]
-    ?>  ?=(^ arv)
-    =/  res  (mock [arv +10.arv] ~)
-    =/  wish  ?>(?=(%0 -.res) p.res)
-    =/  res  (mule |.((slum wish txt)))
-    ?>  ?=(%& -.res)
-    p.res
   ::  Create a ford appropriate for the aeon
   ::
   ++  tako-ford
@@ -1881,7 +1882,6 @@
     =/  arv=(unit *)
       ?:  =(%base syd)  ~
       =/  pil=(unit pill)  (get-pill tak)
-      ::  TODO move make-arvo outside of this core
       =>  [make-arvo=make-arvo pil=pil]
       ~>  %memo./clay/ford
       (make-arvo pil)
