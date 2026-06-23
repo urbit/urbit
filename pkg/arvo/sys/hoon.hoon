@@ -13913,7 +13913,232 @@
 ::    6f: older versions & migrations
 +|  %hoon-history
 ::
-++  h135  .
+++  h135
+  |%
+  ++  prev-vase
+    |=  a=vase
+    ^-  vase:h136
+    a(p (prev-type p.a))
+  ::
+  ++  prev-type
+    |=  a=type  ~+
+    ^-  type:h136
+    ?+  a  a
+      [%cell *]  [%cell $(a p.a) $(a q.a)]
+      [%core *]  [%core $(a p.a) (prev-coil q.a)]
+      [%face *]  [%face ?@(p.a p.a (prev-tune p.a)) $(a q.a)]
+      [%fork *]  [%fork (~(run in p.a) prev-type)]
+      [%hint *]  [%hint [$(a p.p.a) q.p.a] $(a q.a)]
+      [%hold *]  [%hold $(a p.a) (prev-hoon q.a)]
+    ==
+  ::
+  ++  prev-coil
+    |=  a=coil
+    ^-  coil:h136
+    :+  p.a
+      (prev-type q.a)
+    [p.r.a (~(run by q.r.a) prev-tome)]
+  ::
+  ++  prev-tome
+    |=  a=tome
+    ^-  tome:h136
+    [what=~ (~(run by a) prev-hoon)]
+  ::
+  ++  prev-tune
+    |=  a=tune
+    ^-  tune:h136
+    :-  (~(run by p.a) (curr bind prev-hoon))
+    (turn q.a prev-hoon)
+  ::
+  ++  prev-manx
+    |=  a=manx:hoot
+    ^-  manx:hoot:h136
+    [(prev-marx g.a) (prev-marl c.a)]
+  ::
+  ++  prev-marx
+    |=  a=marx:hoot
+    ^-  marx:hoot:h136
+    :-  n.a
+    %+  turn  a.a
+    |=  [n=mane:hoot v=(list beer:hoot)]
+    [n (turn v |=(b=beer:hoot ?@(b b `(prev-hoon p.b))))]
+  ::
+  ++  prev-marl
+    |=  a=marl:hoot
+    %+  turn  a
+    |=  a=tuna:hoot
+    ^-  tuna:hoot:h136
+    ?^  -.a  (prev-manx a)
+    [-.a (prev-hoon p.a)]
+  ::
+  ++  prev-skin
+    |=  a=skin
+    ^-  skin:h136
+    ?+  a  a
+      [%cell *]  [%cell $(a +<.a) $(a +>.a)]
+      [%dbug *]  [%dbug spot.a $(a skin.a)]
+      [%name *]  [%name term.a $(a skin.a)]
+      [%over *]  [%over wing.a $(a skin.a)]
+      [%spec *]  [%spec (prev-spec spec.a) $(a skin.a)]
+    ==
+  ::
+  ++  prev-spec
+    |=  a=spec  ~+
+    ^-  spec:h136
+    ?+  -.a  a
+      %dbug  [%dbug p.a $(a q.a)]
+      %made  [%made p.a $(a q.a)]
+      %make  [%make (prev-hoon p.a) (turn q.a prev-spec)]
+      %name  [%name p.a $(a q.a)]
+      %over  [%over p.a $(a q.a)]
+    ::
+      %bcgr  [%bcgr $(a p.a) $(a q.a)]
+      %bcbc  [%bcbc $(a p.a) (~(run by q.a) prev-spec)]
+      %bcbr  [%bcbr $(a p.a) (prev-hoon q.a)]
+      %bccb  [%bccb (prev-hoon p.a)]
+      %bccl  [%bccl $(a i.p.a) (turn t.p.a prev-spec)]
+      %bccn  [%bccn $(a i.p.a) (turn t.p.a prev-spec)]
+      %bcdt  [%bcdt $(a p.a) (~(run by q.a) prev-spec)]
+      %bcgl  [%bcgl $(a p.a) $(a q.a)]
+      %bchp  [%bchp $(a p.a) $(a q.a)]
+      %bckt  [%bckt $(a p.a) $(a q.a)]
+      %bcls  [%bcls p.a $(a q.a)]
+      %bcfs  [%bcfs $(a p.a) (~(run by q.a) prev-spec)]
+      %bcmc  [%bcmc (prev-hoon p.a)]
+      %bcpm  [%bcpm $(a p.a) (prev-hoon q.a)]
+      %bcsg  [%bcsg (prev-hoon p.a) $(a q.a)]
+      %bctc  [%bctc $(a p.a) (~(run by q.a) prev-spec)]
+      %bcts  [%bcts (prev-skin p.a) $(a q.a)]
+      %bcpt  [%bcpt $(a p.a) $(a q.a)]
+      %bcwt  [%bcwt $(a i.p.a) (turn t.p.a prev-spec)]
+      %bczp  [%bczp $(a p.a) (~(run by q.a) prev-spec)]
+    ==
+  ::
+  ++  prev-hoon
+    |=  a=hoon  ~+
+    ^-  hoon:h136
+    ?+  a  a
+      [^ *]      [$(a p.a) $(a q.a)]
+    ::
+      [%dbug *]  [%dbug p.a $(a q.a)]
+      [%hand *]  [%hand (prev-type p.a) q.a]
+      [%note *]  [%note p.a $(a q.a)]
+      [%fits *]  [%fits $(a p.a) q.a]
+      [%knit *]  [%knit (turn p.a |=(w=woof ?@(w w `^$(a p.w))))]
+      [%lost *]  [%lost $(a p.a)]
+      [%tell *]  [%tell (turn p.a prev-hoon)]
+      [%tune *]  [%tune ?@(p.a p.a (prev-tune p.a))]
+      [%yell *]  [%yell (turn p.a prev-hoon)]
+      [%xray *]  [%xray (prev-manx p.a)]
+    ::
+      [%brbc *]  [%brbc sample.a (prev-spec body.a)]
+      [%brcb *]  [%brcb (prev-spec p.a) (turn q.a |=([t=term h=hoon] [t (prev-hoon h)])) (~(run by r.a) prev-tome)]
+      [%brcl *]  [%brcl $(a p.a) $(a q.a)]
+      [%brcn *]  [%brcn p.a (~(run by q.a) prev-tome)]
+      [%brdt *]  [%brdt $(a p.a)]
+      [%brkt *]  [%brkt $(a p.a) (~(run by q.a) prev-tome)]
+      [%brhp *]  [%brhp $(a p.a)]
+      [%brsg *]  [%brsg (prev-spec p.a) $(a q.a)]
+      [%brtr *]  [%brtr (prev-spec p.a) $(a q.a)]
+      [%brts *]  [%brts (prev-spec p.a) $(a q.a)]
+      [%brpt *]  [%brpt p.a (~(run by q.a) prev-tome)]
+      [%brwt *]  [%brwt $(a p.a)]
+    ::
+      [%clcb *]  [%clcb $(a p.a) $(a q.a)]
+      [%clkt *]  [%clkt $(a p.a) $(a q.a) $(a r.a) $(a s.a)]
+      [%clhp *]  [%clhp $(a p.a) $(a q.a)]
+      [%clls *]  [%clls $(a p.a) $(a q.a) $(a r.a)]
+      [%clsg *]  [%clsg (turn p.a prev-hoon)]
+      [%cltr *]  [%cltr (turn p.a prev-hoon)]
+    ::
+      [%cncb *]  [%cncb p.a (turn q.a |=([w=wing h=hoon] [w (prev-hoon h)]))]
+      [%cndt *]  [%cndt $(a p.a) $(a q.a)]
+      [%cnhp *]  [%cnhp $(a p.a) $(a q.a)]
+      [%cncl *]  [%cncl $(a p.a) (turn q.a prev-hoon)]
+      [%cntr *]  [%cntr p.a $(a q.a) (turn r.a |=([w=wing h=hoon] [w (prev-hoon h)]))]
+      [%cnkt *]  [%cnkt $(a p.a) $(a q.a) $(a r.a) $(a s.a)]
+      [%cnls *]  [%cnls $(a p.a) $(a q.a) $(a r.a)]
+      [%cnsg *]  [%cnsg p.a $(a q.a) (turn r.a prev-hoon)]
+      [%cnts *]  [%cnts p.a (turn q.a |=([w=wing h=hoon] [w (prev-hoon h)]))]
+    ::
+      [%dtkt *]  [%dtkt (prev-spec p.a) $(a q.a)]
+      [%dtls *]  [%dtls $(a p.a)]
+      [%dttr *]  [%dttr $(a p.a) $(a q.a)]
+      [%dtts *]  [%dtts $(a p.a) $(a q.a)]
+      [%dtwt *]  [%dtwt $(a p.a)]
+    ::
+      [%ktbr *]  [%ktbr $(a p.a)]
+      [%ktcb *]  (prev-hoon q.a)  ::TODO  ?????
+      [%ktdt *]  [%ktdt $(a p.a) $(a q.a)]
+      [%ktls *]  [%ktls $(a p.a) $(a q.a)]
+      [%kthp *]  [%kthp (prev-spec p.a) $(a q.a)]
+      [%ktpm *]  [%ktpm $(a p.a)]
+      [%ktsg *]  [%ktsg $(a p.a)]
+      [%ktts *]  [%ktts (prev-skin p.a) $(a q.a)]
+      [%ktwt *]  [%ktwt $(a p.a)]
+      [%kttr *]  [%kttr (prev-spec p.a)]
+      [%ktcl *]  [%ktcl (prev-spec p.a)]
+    ::
+      [%sgbr *]  [%sgbr $(a p.a) $(a q.a)]
+      [%sgcb *]  [%sgcb $(a p.a) $(a q.a)]
+      [%sgcn *]  [%sgcn p.a $(a q.a) (turn r.a |=([t=term h=hoon] [t (prev-hoon h)])) $(a s.a)]
+      [%sgfs *]  [%sgfs p.a $(a q.a)]
+      [%sggl *]  [%sggl ?@(p.a p.a [p.p.a $(a q.p.a)]) $(a q.a)]
+      [%sggr *]  [%sggr ?@(p.a p.a [p.p.a $(a q.p.a)]) $(a q.a)]
+      [%sgbc *]  [%sgbc p.a $(a q.a)]
+      [%sgls *]  [%sgls p.a $(a q.a)]
+      [%sgpm *]  [%sgpm p.a $(a q.a) $(a r.a)]
+      [%sgts *]  [%sgts $(a p.a) $(a q.a)]
+      [%sgwt *]  [%sgwt p.a $(a q.a) $(a r.a) $(a s.a)]
+      [%sgzp *]  [%sgzp $(a p.a) $(a q.a)]
+    ::
+      [%mcts *]  [%mcts (prev-marl p.a)]
+      [%mccl *]  [%mccl $(a p.a) (turn q.a prev-hoon)]
+      [%mcfs *]  [%mcfs $(a p.a)]
+      [%mcgl *]  [%mcgl (prev-spec p.a) $(a q.a) $(a r.a) $(a s.a)]
+      [%mcsg *]  [%mcsg $(a p.a) (turn q.a prev-hoon)]
+      [%mcmc *]  [%mcmc (prev-spec p.a) $(a q.a)]
+    ::
+      [%tsbr *]  [%tsbr (prev-spec p.a) $(a q.a)]
+      [%tscl *]  [%tscl (turn p.a |=([w=wing h=hoon] [w (prev-hoon h)])) $(a q.a)]
+      [%tsfs *]  [%tsfs (prev-skin p.a) $(a q.a) $(a r.a)]
+      [%tsmc *]  [%tsmc (prev-skin p.a) $(a q.a) $(a r.a)]
+      [%tsdt *]  [%tsdt p.a $(a q.a) $(a r.a)]
+      [%tswt *]  [%tswt p.a $(a q.a) $(a r.a) $(a s.a)]
+      [%tsgl *]  [%tsgl $(a p.a) $(a q.a)]
+      [%tshp *]  [%tshp $(a p.a) $(a q.a)]
+      [%tsgr *]  [%tsgr $(a p.a) $(a q.a)]
+      [%tskt *]  [%tskt (prev-skin p.a) q.a $(a r.a) $(a s.a)]
+      [%tsls *]  [%tsls $(a p.a) $(a q.a)]
+      [%tssg *]  [%tssg (turn p.a prev-hoon)]
+      [%tstr *]  [%tstr [p.p.a (bind q.p.a prev-spec)] $(a q.a) $(a r.a)]
+      [%tscm *]  [%tscm $(a p.a) $(a q.a)]
+    ::
+      [%wtbr *]  [%wtbr (turn p.a prev-hoon)]
+      [%wthp *]  [%wthp p.a (turn q.a |=([s=spec h=hoon] [(prev-spec s) (prev-hoon h)]))]
+      [%wtcl *]  [%wtcl $(a p.a) $(a q.a) $(a r.a)]
+      [%wtdt *]  [%wtdt $(a p.a) $(a q.a) $(a r.a)]
+      [%wtkt *]  [%wtkt p.a $(a q.a) $(a r.a)]
+      [%wtgl *]  [%wtgl $(a p.a) $(a q.a)]
+      [%wtgr *]  [%wtgr $(a p.a) $(a q.a)]
+      [%wtls *]  [%wtls p.a $(a q.a) (turn r.a |=([s=spec h=hoon] [(prev-spec s) (prev-hoon h)]))]
+      [%wtpm *]  [%wtpm (turn p.a prev-hoon)]
+      [%wtpt *]  [%wtpt p.a $(a q.a) $(a r.a)]
+      [%wtsg *]  [%wtsg p.a $(a q.a) $(a r.a)]
+      [%wthx *]  [%wthx (prev-skin p.a) q.a]
+      [%wtts *]  [%wtts (prev-spec p.a) q.a]
+      [%wtzp *]  [%wtzp $(a p.a)]
+    ::
+      [%zpcm *]  [%zpcm $(a p.a) $(a q.a)]
+      [%zpgr *]  [%zpgr $(a p.a)]
+      [%zpgl *]  [%zpgl (prev-spec p.a) $(a q.a)]
+      [%zpmc *]  [%zpmc $(a p.a) $(a q.a)]
+      [%zpts *]  [%zpts $(a p.a)]
+      [%zppt *]  [%zppt p.a $(a q.a) $(a r.a)]
+      [%zpwt *]  [%zpwt p.a $(a q.a)]
+    ==
+  --
+::
 ++  h136
   =,  h135
   |%
