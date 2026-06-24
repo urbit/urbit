@@ -3688,6 +3688,7 @@
             =boar
             resources=(set arvo-resource)
             code=~
+            zus=@ud
             old-state=[%| vase]
             =beak
             marks=(map duct mark)
@@ -3696,7 +3697,27 @@
             pen=(jug spar:ames wire)
             gem=(jug coop [path page])
     ==  ==
-  +$  egg-any  $%([%15 egg-15] [%16 egg-16] [%20 egg])
+  +$  egg-20                                            ::  pre-zus migratory agent
+    $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)]
+        $:  %live
+            control-duct=duct
+            run-nonce=@t
+            sub-nonce=@
+            =stats
+            =bitt
+            =boat
+            =boar
+            resources=(set arvo-resource)
+            code=~
+            old-state=[%| vase]
+            =beak
+            marks=(map duct mark)
+            sky=farm
+            ken=(jug spar:ames wire)
+            pen=(jug spar:ames wire)
+            gem=(jug coop [path page])
+    ==  ==
+  +$  egg-any  $%([%15 egg-15] [%16 egg-16] [%20 egg-20] [%21 egg])
   +$  egg-15
     $%  [%nuke sky=(map spur @ud)]
     $:  %live

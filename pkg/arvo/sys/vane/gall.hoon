@@ -60,9 +60,9 @@
 ::  $move: Arvo-level move
 ::
 +$  move  [=duct move=(wind note-arvo gift-arvo)]
-::  $state-20: overall gall state, versioned
+::  $state-21: overall gall state, versioned
 ::
-+$  state-20  [%20 state]
++$  state-21  [%21 state]
 ::  $state: overall gall state
 ::
 ::    system-duct: TODO document
@@ -111,6 +111,7 @@
 ::    boat: outgoing subscriptions
 ::    boar: and their nonces
 ::    code: most recently loaded code
+::    zus: agent's zuse kelvin (for cross-kelvin vase era conversion)
 ::    agent: agent core
 ::    beak: compilation source
 ::    marks: mark conversion requests
@@ -134,6 +135,7 @@
       =boar
       resources=(set arvo-resource)
       code=*
+      zus=@ud
       agent=(each model vase)
       =beak
       marks=(map duct mark)
@@ -440,11 +442,25 @@
       flubs=(jug ship app=term)
       halts=(jug app=term [ship duct])
   ==
-+$  spore-20  [%20 spore]
++$  spore-21  [%21 spore]
+::  $spore-20: pre-zus spore, for migration
+::
++$  spore-20
+  $:  system-duct=duct
+      outstanding=(map [wire duct] (qeu remote-request))
+      contacts=(set ship)
+      eggs=(map term egg-20)
+      blocked=(map term (qeu blocked-move))
+      =bug
+      leaves=(unit [=duct =wire date=@da])
+      flub-ducts=(map ship duct)
+      flubs=(jug ship app=term)
+      halts=(jug app=term [ship duct])
+  ==
 --
 ::  adult gall vane interface, for type compatibility with pupa
 ::
-=|  state=state-20
+=|  state=state-21
 |=  [now=@da eny=@uvJ rof=roof]
 =*  gall-payload  .
 ~%  %gall-top  ..part  ~
@@ -615,7 +631,7 @@
         mo-core
       ::
       =.  yokes.state
-        (~(put by yokes.state) dap u.yak(beak bek, code agent-any))
+        (~(put by yokes.state) dap u.yak(beak bek, code agent-any, zus zuv))
       =.  mo-core
         ?-    mod.agent-any
             %new-agent
@@ -637,6 +653,7 @@
           control-duct  hen
           beak          bek
           code          agent-any
+          zus           zuv
           agent         &+agent-any
           run-nonce     (scot %uw (end 5 (shas %yoke-nonce eny)))
       ::
@@ -3222,7 +3239,7 @@
       =>  [ken=ken.yoke (op-ingest ~ |.([op-yawn-all fom.p.agent.yoke]))]
       ::  arvo-resources -> generate appropriate cleanup card
       ::
-      %-  op-move(ken.yoke ken, agent.yoke |+on-save:op-agent-core)
+      %-  op-move(ken.yoke ken, agent.yoke |+(op-next-vase on-save:op-agent-core))
       ;:  weld
         ::  close outgoing subscriptions
         ::
@@ -3629,6 +3646,58 @@
     ++  op-agent-core
       ?>  ?=(%& -.agent.yoke)
       ~(. fom.p.agent.yoke op-construct-bowl)
+    ::  cross-kelvin vase era conversion
+    ::
+    ::    a previous-kelvin (h136) agent runs natively in its own type
+    ::    era; we convert vases at the gall<->agent boundary. inputs go
+    ::    current(h135) -> agent(h136) with +prev-vase; outputs go
+    ::    agent(h136) -> current(h135) with +next-vase. the bowl is
+    ::    kelvin-invariant data (no embedded vase) and needs no conversion.
+    ::
+    ::  +op-old: is this agent a previous-kelvin agent?
+    ::
+    ++  op-old  ^-  ?  !=(zuse zus.yoke)
+    ::  +op-prev-vase: current(h135) -> agent era(h136), for inputs
+    ::
+    ++  op-prev-vase
+      |=  v=vase  ^-  vase
+      ?.  op-old  v
+      !<(vase [-:!>(*vase) (slum prev-vase:h135 v)])
+    ::  +op-next-vase: agent era(h136) -> current(h135), for outputs
+    ::
+    ++  op-next-vase
+      |=  v=vase  ^-  vase
+      ?.  op-old  v
+      !<(vase [-:!>(*vase) (slum next-vase:h136 v)])
+    ::  +op-prev-cage / +op-next-cage: convert a cage's vase
+    ::
+    ++  op-prev-cage  |=(=cage ^-(^cage cage(q (op-prev-vase q.cage))))
+    ++  op-next-cage  |=(=cage ^-(^cage cage(q (op-next-vase q.cage))))
+    ::  +op-prev-sign: convert input sign's embedded vase (on-agent)
+    ::
+    ++  op-prev-sign
+      |=  =sign:agent-old  ^-  sign:agent-old
+      ?.  ?=(%fact -.sign)  sign
+      sign(cage (op-prev-cage cage.sign))
+    ::  +op-next-note: convert output note's embedded vase (%poke cards)
+    ::
+    ++  op-next-note
+      |=  =note:agent-old  ^-  note:agent-old
+      ?.  ?=(%agent -.note)  note
+      ?+  -.task.note  note
+        %poke     note(cage.task (op-next-cage cage.task.note))
+        %poke-as  note(cage.task (op-next-cage cage.task.note))
+      ==
+    ::  +op-next-card: convert output card's embedded vases
+    ::
+    ++  op-next-card
+      |=  =card:agent-old  ^-  card:agent-old
+      ?-  -.card
+        %give  ?.  ?=(%fact -.p.card)  card
+               card(cage.p (op-next-cage cage.p.card))
+        %pass  card(q (op-next-note q.card))
+        %slip  card(p (op-next-note p.card))
+      ==
     ::  +op-ducts-from-paths: get ducts subscribed to paths
     ::
     ++  op-ducts-from-paths
@@ -3689,7 +3758,9 @@
       ::  call the app's +on-peek, producing [~ ~] if it crashes
       ::
       =/  peek-result=(each (unit (unit cage)) tang)
-        (op-mule-peek |.((on-peek:op-agent-core [care tyl])))
+        =/  res  (op-mule-peek |.((on-peek:op-agent-core [care tyl])))
+        ?.  ?=([%& ~ ~ *] res)  res
+        res(u.u.p (op-next-cage u.u.p.res))
       ?:  ?=(%| -.peek-result)
         ?.  veb  [~ ~]
         ((slog leaf+"peek bad result" p.peek-result) [~ ~])
@@ -3776,7 +3847,7 @@
       ~>  %spin.[(crip "on-save/{<agent-name>}")]
       =/  old-state=vase
         ?:  ?=(%& -.agent.yoke)
-          on-save:op-agent-core
+          (op-next-vase on-save:op-agent-core)
         p.agent.yoke
       ?.  =(%| -.agent.yoke)
         ::  load the agent back up
@@ -3904,7 +3975,7 @@
       ~>  %spin.[(crip "on-poke/{<agent-name>}")]
       =^  maybe-tang  op-core
         %+  op-ingest  %poke-ack  |.
-        (on-poke:op-agent-core cage)
+        (on-poke:op-agent-core (op-prev-cage cage))
       op-core
     ::  +op-error: pour error.
     ::
@@ -4014,7 +4085,7 @@
       ++  sub-key  [agent-wire dock]
       ++  ingest
         ~>  %spin.[(crip "on-agent/{<agent-name>}")]
-        (op-ingest ~ |.((on-agent:op-agent-core agent-wire sign)))
+        (op-ingest ~ |.((on-agent:op-agent-core agent-wire (op-prev-sign sign))))
       ++  run-sign
         ?-    -.sign
             %poke-ack  !!
@@ -4118,7 +4189,7 @@
         %+  op-ingest  ~
         ?~  maybe-vase
           |.  on-init:op-agent-core
-        |.  (on-load:op-agent-core u.maybe-vase)
+        |.  (on-load:op-agent-core (op-prev-vase u.maybe-vase))
       [maybe-tang op-core]
     ::  +op-silent-delete: silent delete.
     ::
@@ -4318,6 +4389,10 @@
       =.  agent.yoke
         ?>  ?=(%& -.agent.yoke)              ::  XX
         [%& mod.p.agent.yoke +.p.result]
+      ::  convert previous-kelvin (h136) output vases to current (h135);
+      ::  the new agent state stays native in the door above
+      ::
+      =.  -.p.result       (turn -.p.result op-next-card)
       ::TODO  if we filter out "duplicate resource creation" cards here,
       ::      then we don't have to account for them in +op-handle-peers and co
       ::      (and if we don't, we have to update handle-peers and co)
@@ -4636,11 +4711,12 @@
       =?  old  ?=(%17 -.old)  (spore-17-to-18 +.old)
       =?  old  ?=(%18 -.old)  (spore-18-to-19 +.old)
       =?  old  ?=(%19 -.old)  (spore-19-to-20 +.old)
-      ?>  ?=(%20 -.old)
+      =?  old  ?=(%20 -.old)  (spore-20-to-21 +.old)
+      ?>  ?=(%21 -.old)
       gall-payload(state old)
   ::
   +$  spore-any
-    $%  [%20 spore]
+    $%  [%21 spore]
         [%7 spore-7]
         [%8 spore-8]
         [%9 spore-9]
@@ -4654,6 +4730,7 @@
         [%17 spore-17]
         [%18 spore-18]
         [%19 spore-19]
+        [%20 spore-20]
     ==
   +$  spore-19  spore-18
   ::
@@ -5048,7 +5125,7 @@
   ::
   ++  spore-19-to-20
     |=  old=spore-19
-    ^-  spore-20
+    ^-  [%20 spore-20]
     ::  XX
     !!
     :: :-  %20
@@ -5075,6 +5152,39 @@
     ::     [%| %fact *]     move.b(cage.p (next-cage:a235 cage.p.move.b))
     ::   ==
     :: ==
+  ::  +spore-20-to-21: add per-agent zuse kelvin (.zus), defaulting to the
+  ::  current kelvin (existing agents are native, not cross-kelvin)
+  ::
+  ++  spore-20-to-21
+    |=  old=spore-20
+    :-  %21
+    ^-  spore
+    %=    old
+        eggs
+      %-  ~(run by eggs.old)
+      |=  e=egg-20
+      ^-  egg
+      ?:  ?=(%nuke -.e)  e
+      :*  %live
+          control-duct.e
+          run-nonce.e
+          sub-nonce.e
+          stats.e
+          bitt.e
+          boat.e
+          boar.e
+          resources.e
+          code.e
+          zuse
+          old-state.e
+          beak.e
+          marks.e
+          sky.e
+          ken.e
+          pen.e
+          gem.e
+      ==
+    ==
   --
 ::  +scry: standard scry
 ::
@@ -5226,7 +5336,7 @@
           %old-agent  on-save:fom.p.agent.u.yok
         ==
       ==
-    ``noun+!>(`egg-any`[%20 egg])
+    ``noun+!>(`egg-any`[%21 egg])
   ::
   ?:  ?&  =(%w care)
           =([%$ %da now] coin)
@@ -5357,7 +5467,7 @@
 ::REVIEW  wrt resource suspension
 ::
 ++  stay
-  ^-  spore-20
+  ^-  spore-21
   =;  eggs=(map term egg)  state(yokes eggs)
   %-  ~(run by yokes.state)
   |=  =yoke
