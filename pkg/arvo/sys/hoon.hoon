@@ -13210,7 +13210,7 @@
                   ['?' (rune wut %ktwt expa)]
                   ['*' (rune tar %kttr exqa)]
                   [':' (rune col %ktcl exqa)]
-                  ['#' (rune hax %ktcb expb)]
+                  ['_' (rune cab %ktcb expb)]
               ==
             ==
           :-  '~'

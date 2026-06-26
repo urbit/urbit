@@ -2620,6 +2620,7 @@
             [%30 axle-30]
             [%31 axle]
             [%32 axle]
+            [%33 axle]
         ==
     ::
     ::
@@ -2694,7 +2695,7 @@
       ~>  %slog.0^leaf/"ames: metamorphosis on %take"
       [:(weld molt-moves queu-moves take-moves) adult-gate]
     ::
-    ++  stay  [%32 larva/ames-state]
+    ++  stay  [%33 larva/ames-state]
     ++  scry  scry:adult-core
     ++  load
       |=  $=  old
@@ -2870,6 +2871,10 @@
               $:  %32                            :: use %ames as default core.
                   ?(%adult %larva)               :: migrate attestation flows
                   state=axle                     :: clean up corked peeks
+              ==
+              $:  %33                            :: fix broken rifts
+                  ?(%adult %larva)               ::
+                  state=axle
           ==  ==
       |^  ?-  old
           [%4 %adult *]
@@ -3175,10 +3180,16 @@
         larval-gate
       ::
           [%32 *]
+        =.  cached-state  `[%32 state.old]
+        ~>  %slog.1^leaf/"ames: larva %32 reload"
+        larval-gate
+      ::
+          [%33 *]
         ?-  +<.old
           %larva  larval-gate
           %adult  (load:adult-core state.old)
         ==
+      ::
       ==
       ::
       ++  event-9-til-11-to-12
@@ -3253,7 +3264,7 @@
       |^  ^+  [moz larval-core]
       ?~  cached-state  [~ larval-core]
       =*  old  u.cached-state
-      ?:  ?=(%32 -.old)
+      ?:  ?=(%33 -.old)
         ::  no state migrations left; update state, clear cache, and exit
         ::
         [(flop moz) larval-core(ames-state.adult-gate +.old, cached-state ~)]
@@ -3354,8 +3365,10 @@
         $(cached-state `30+(state-29-to-30 +.old))
       ?:  ?=(%30 -.old)
         $(cached-state `31+(state-30-to-31 +.old))
-      ?>  ?=(%31 -.old)
-      $(cached-state `32+(state-31-to-32 +.old))
+      ?:  ?=(%31 -.old)
+        $(cached-state `32+(state-31-to-32 +.old))
+      ?>  ?=(%32 -.old)
+      $(cached-state `33+(state-32-to-33 +.old))
       ::
       ++  our-beam  `beam`[[our %rift %da now] /(scot %p our)]
       ++  state-4-to-5
@@ -4024,6 +4037,61 @@
             ?.  (~(has in corked.c) (slav %ud bone.user-path) %for)
               tip
             (~(del by tip) user-path)
+          ==
+        ==
+      ::
+      ++  state-32-to-33
+        |=  old=axle
+        ^-  axle
+        ~>  %slog.0^leaf/"ames: migrating from state %32 to %33"
+        ::  first pass to fix rifts in .chums
+        ::
+        =.  chums.old
+          ^-  (map ship chum-state)
+          %-  ~(urn by chums.old)
+          |=  [=ship c=chum-state]
+          ^-  chum-state
+          ?:  ?=(%alien -.c)  c
+          ^-  chum-state
+          %_    c
+              rift
+            =;  rift=@ud
+              =+  ?:  =(rift rift.c)  ~
+                  %.  ~
+                  %:  trace   %mesa   odd.veb.bug.old   ship
+                      ships.bug.ames-state
+                      |.("fixing rift from {<rift.c>} to {<rift>}")
+                  ==
+              rift
+            ?:  ?=(%pawn (clan:title ship))  0
+            ;;  @ud
+            =<  q.q  %-  need  %-  need
+            (rof [~ ~] /ames %j `beam`[[our %rift %da now] /(scot %p ship)])
+          ==
+        ::  last pass to fix rifts in .peers
+        ::
+        %=    old
+            peers
+          ^-  (map ship ship-state)
+          %-  ~(urn by peers.old)
+          |=  [=ship s=ship-state]
+          ^-  ship-state
+          ?:  ?=(%alien -.s)  s
+          ^-  ship-state
+          %_    s
+              rift
+            =;  rift=@ud
+              =+  ?:  =(rift rift.s)  ~
+                  %.  ~
+                  %:  trace   %ames   odd.veb.bug.old   ship
+                      ships.bug.ames-state
+                      |.("fixing rift from {<rift.s>} to {<rift>}")
+                  ==
+              rift
+            ?:  ?=(%pawn (clan:title ship))  0
+            ;;  @ud
+            =<  q.q  %-  need  %-  need
+            (rof [~ ~] /ames %j `beam`[[our %rift %da now] /(scot %p ship)])
           ==
         ==
       ::
@@ -11098,6 +11166,12 @@
               ::
               sy-core
             ?.  ?=([?(%ames %mesa) ~ %known *] peer)
+              ::  XX if this is the first time we contact this ship, the
+              ::  %keys diff should be the first to be given to %ames, then
+              ::  %rift, then %spon. a different order would end up with the
+              ::  .rift.peer beeing dropped by the bunt in the point we pass
+              ::  to on-publ-full
+              ::
               =|  =point:jael
               =.  life.point     life
               =.  keys.point     (my [life crypto-suite pass]~)
@@ -11146,10 +11220,11 @@
             %-  %+  %*(ev-tace ev her ship)  sun.veb.bug.ames-state
                 |.("hear new sponsor={<sponsor>}")
             ::
-            =?  sy-core  =(our ship)
+            =/  our-saxo=(list @p)  sy-get-sponsors
+            =?  sy-core  ?=(^ (find ~[ship] our-saxo))
               ?~  unix-duct
                 sy-core
-              (sy-emit unix-duct %give %saxo sy-get-sponsors)
+              (sy-emit unix-duct %give %saxo our-saxo)
             ?~  sponsor
               %-  (slog leaf+"ames: {(scow %p ship)} lost sponsor, ignoring" ~)
               sy-core
@@ -13782,7 +13857,7 @@
   take:am-core
 ::  +stay: extract state before reload
 ::
-++  stay  [%32 adult/ames-state]
+++  stay  [%33 adult/ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load

@@ -1927,7 +1927,7 @@
           ::
           =/  =wire       /eauth/keen/(scot %p ship)/(scot %uv nonce)
           =.   time       (sub time (mod time eauth-cache-rounding))
-          =/  =spar:ames  [ship /e/x/(scot %da time)//eauth/url]
+          =/  =spar:ames  [ship /e/x/(scot:h136 %da time)//eauth/url]
           [duct %pass wire %a ?-(kind %keen keen+[~ spar], %yawn yawn+spar)]
         ::
         ++  send-boon
