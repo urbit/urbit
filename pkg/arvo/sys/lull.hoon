@@ -4630,25 +4630,32 @@
   ++  prune
     |%
     ++  deps  ::  .res-deets mapped to .pes they depend on
-      |=  [our=ship pes=(set perm) res-deets=(map arvo-resource resource-deet)]
+      |=  $:  our=ship
+              pes=(set perm)
+              resources=(list arvo-resource)
+              dets=(map arvo-resource resource-deet)
+          ==
       ^-  (jar arvo-resource perm)
-      %+  roll  ~(tap by res-deets)
-      |=  $:  [res=arvo-resource det=resource-deet]
+      %+  roll  resources
+      |=  $:  res=arvo-resource
               dep=(jar arvo-resource perm)
           ==
-      =/  res-per  (reqs our res det)
-      ?~  res-per  dep
+      =/  res-per  (reqs our res dets)
+      ?~  res-per  (~(put by dep) res ~)
       =;  ped=(list perm)
         ?~  ped  dep  (~(put by dep) res ped)
+      ::  check if required permission for task nests under granted perm
       %-  zing
       (turn res-per (cury over:guard pes))
   ::
     ++  reqs  ::  permissions required for a .res
-      |=  [our=ship res=arvo-resource det=resource-deet]
+      |=  [our=ship res=arvo-resource dets=(map arvo-resource resource-deet)]
       ^-  (list perm)
       ?-  +.res
         [%behn %wait *]     [%behn %timer ~]~
+      ::
           [%clay %warp *]
+        =+  det=(~(got by dets) res)
         ?>  ?=([%clay %warp *] det)
         ?.  =(our ship.det)  [%clay %peers ~]~
         =/  to-per  |=  [care=(unit) =path]
@@ -4660,7 +4667,7 @@
           %mult
             =/  paths=(list [care:clay path])  ~(tap in paths.mool.rave.det)
             =/  per  (turn paths |=([c=@ =path] (to-per [`c path])))
-            ?~(per ~ per)
+            ?~(per !! per)
           %many  [(to-per [~ path.moat.rave.det]) ~]
         ==
       ::
@@ -4674,18 +4681,21 @@
           [%eyre %cache *]
         =/  pars  ;~(pfix fas (more fas smeg:guard))
         =/  segs  (pars [1 1] (trip url.res))
-        ?~  q.segs  ~   ::  review: should crash or return [%eyre %serve /]?
+        ?~  q.segs  [%eyre %serve /]~   ::  review: should crash or return [%eyre %serve /]?
         [%eyre %serve p.u.q.segs]~
       ::
         [%iris %request]    [%iris %fetch ~]~
       ::
           [%jael %keys]
+        =+  det=(~(got by dets) res)
         ?>  ?=([%jael %keys *] det)
         ?.  ?=([%jael %keys %private] det)  ~
         [%jael %privy ~]~
       ::
         [%lick %spin *]     [%lick %ports ~]~
-        [%khan %thread *]   [%khan %twine ~]~
+        ::  khan thread resource is never deflated
+        ::    keep resource to deliver gift
+        [%khan %thread *]   ~
       ==
     --
   ::
