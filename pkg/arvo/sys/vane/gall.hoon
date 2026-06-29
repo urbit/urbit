@@ -366,11 +366,18 @@
       ==
     =+  ?~  tex  ~
         ~>  %slog.[0 leaf+"gall: {u.tex} {<dap>}"]  ~
+    ::  check if old granted permissions nest within new granted perms
     ::
+    =/  mis
+      ?:  ?=(%base q.bek)  ~
+      %+  skip
+        %~  tap  in
+        peg:(~(gut by perms.state) q.bek [peg=~ peq=~])
+      (cury have:guard:gall peg.per)
     =.  perms.state  (~(gas by perms.state) [q.bek per]~)
     ::
     ?:  ?=([~ %live *] yak)
-      ?:  &(=(q.beak.u.yak q.bek) =(code.u.yak agent) =(-.agent.u.yak &))
+      ?:  &(=(q.beak.u.yak q.bek) =(code.u.yak agent) =(-.agent.u.yak &) =(~ mis))
         mo-core
       ::
       =.  yokes.state
@@ -2026,6 +2033,14 @@
         ?:  ?=(%& -.agent.yoke)
           on-save:ap-agent-core
         state.p.agent.yoke
+      ::  allowed resources by granted permissions
+      ::
+      =/  perms  peg:(~(gut by perms.state) q.beak.yoke [peg=~ peq=~])
+      =/  allow-res=(set arvo-resource)
+        ?:  ?=(%base q.beak.yoke)  resources.yoke
+        %~  key  by
+        (deps:prune our perms ~(tap in resources.yoke) resource-deets.yoke)
+      ::
       ::NOTE  tmi...
       ?:  ?|  =(%& -.agent.yoke)        ::  running, or
               ?=([%| %| *] agent.yoke)  ::  dirty suspend
@@ -2036,7 +2051,27 @@
           (ap-install(agent.yoke &+agent) `old-state)
         ?^  error
           (mean >%load-failed< (frag-to-tang u.error))
-        ap-core
+        ?:  ?=(%base q.beak.yoke)  ap-core
+        ::  suspending agent resources if permission been revoked
+        ::
+        =/  kick-res=(list arvo-resource)
+          ~(tap in (~(dif in resources.yoke) allow-res))
+        |-  ^+  ap-core
+        ?~  kick-res  ap-core
+        ?~  tac=(drop-resource:track i.kick-res resource-deets.yoke)
+          $(kick-res t.kick-res)
+        ?<  ?=(%ames -.u.tac)  ::  see +drop-resource
+        =.  ap-core  (ap-move (ap-from-internal [%pass wire.i.kick-res %arvo u.tac]))
+        =.  resources.yoke       (~(del in resources.yoke) i.kick-res)
+        =.  resource-deets.yoke  (~(del by resource-deets.yoke) i.kick-res)
+        $(kick-res t.kick-res)
+      ::
+      =.  resources.yoke        (~(int in resources.yoke) allow-res)
+      =.  resource-deets.yoke
+        %-  ~(rep by resource-deets.yoke)
+        |=  [[=arvo-resource =resource-deet] resource-deets=(map arvo-resource resource-deet)]
+        ?.  (~(has in allow-res) arvo-resource)  resource-deets
+        (~(put by resource-deets) [arvo-resource resource-deet])
       ::  agent was suspended, we need to inflate its resources.
       ::  mark all the resources as to-be-inflated.
       ::TODO  consider the %keen inflation (and its ordering) in this light

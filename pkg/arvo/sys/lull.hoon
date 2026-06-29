@@ -4652,7 +4652,7 @@
       |=  [our=ship res=arvo-resource dets=(map arvo-resource resource-deet)]
       ^-  (list perm)
       ?-  +.res
-        [%behn %wait *]     [%behn %timer ~]~
+        [%behn %wait *]     ~  ::  keep existing %behn resources
       ::
           [%clay %warp *]
         =+  det=(~(got by dets) res)
