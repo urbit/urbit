@@ -2729,7 +2729,7 @@
       ?:  =(e 0x1f)  (con s (con 0x7f80.0000 (lsh [0 13] m)))
       ?:  =(e 0)
         ?:  =(m 0)  s
-        (con s `@`(~(mul rs [r .1e-5]) (~(sun rs [r .1e-5]) m) `@rs`0x3380.0000))
+        (con s `@`(~(mul rs [r .1e-5 .0]) (~(sun rs [r .1e-5 .0]) m) `@rs`0x3380.0000))
       (con s (con (lsh [0 23] (^add e 112)) (lsh [0 13] m)))
     ::  +rndup: should the magnitude be incremented?  rem=discarded bits,
     ::  half=tie point, lsb=kept low bit, neg=sign.  Honors the door's r.
