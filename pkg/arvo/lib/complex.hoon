@@ -167,6 +167,9 @@
   ::
   ::  Returns the modulus |z| as a real-valued complex [|z|, 0], computed via
   ::  hypot (scale by the larger component to avoid overflow).
+  ::  Returns a packed `@c*` value (not a scalar `@r*`): the modulus is in the
+  ::  real-component slot, the imaginary slot is zeroed.  To extract the scalar:
+  ::  `(re (~(abs cs:complex %n) z))` (substituting the appropriate door).
   ::    Examples
   ::      > (~(abs cs:complex %n) 0x4080.0000.4040.0000)       ::  |3+4i|=5
   ::      0x40a0.0000
@@ -186,6 +189,7 @@
   ::    +equ:  [@cs @cs] -> ?
   ::
   ::  Loobean: bit-equality of both components (matches the %i754 convention).
+  ::  Component bits must match exactly: `NaN != NaN` and `+0.0 != -0.0` as individual float components.
   ::    Examples
   ::      > (~(equ cs:complex %n) 0x4000.0000.3f80.0000 0x4000.0000.3f80.0000)
   ::      %.y
@@ -266,6 +270,8 @@
   ::    +clog:  @cs -> @cs
   ::
   ::  Principal complex logarithm ln(z) = ln|z| + i*atan2(b, a).
+  ::  At `z = 0`, returns `-infinity + 0i` (the logarithmic singularity: real part
+  ::  is IEEE -infinity, imaginary part is `atan2(0,0) = 0`).
   ::  Source
   ++  clog
     |=  p=@
@@ -325,6 +331,9 @@
   ::    +cpow:  [@cs @cs] -> @cs
   ::
   ::  Complex power z^w = exp(w * ln z) (principal branch).
+  ::  When `z = 0`, the result is `NaN` because the implementation routes through
+  ::  `clog(0) = -infinity`, and the Taylor series cannot evaluate
+  ::  `exp(-infinity * w)` correctly.
   ::  Source
   ++  cpow  |=([p=@ q=@] (cexp (mul q (clog p))))
   --
@@ -461,6 +470,9 @@
   ::
   ::  Returns the modulus |z| as a real-valued complex [|z|, 0], computed via
   ::  hypot (scale by the larger component to avoid overflow).
+  ::  Returns a packed `@c*` value (not a scalar `@r*`): the modulus is in the
+  ::  real-component slot, the imaginary slot is zeroed.  To extract the scalar:
+  ::  `(re (~(abs cd:complex %n) z))` (substituting the appropriate door).
   ::    Examples
   ::      > (~(abs cd:complex %n) 0x4010.0000.0000.0000.4008.0000.0000.0000)  ::  |3+4i|=5
   ::      0x4014.0000.0000.0000
@@ -480,6 +492,7 @@
   ::    +equ:  [@cd @cd] -> ?
   ::
   ::  Loobean: bit-equality of both components (matches the %i754 convention).
+  ::  Component bits must match exactly: `NaN != NaN` and `+0.0 != -0.0` as individual float components.
   ::    Examples
   ::      > (~(equ cd:complex %n) 0x4000.0000.0000.0000.3ff0.0000.0000.0000 0x4000.0000.0000.0000.3ff0.0000.0000.0000)
   ::      %.y
@@ -498,7 +511,7 @@
   ::
   ::  Transcendental / elementary functions.  Self-contained real @rd series
   ::  (naive Taylor/AGM, fixed term counts -- accurate near the expansion point,
-  ::  matching /lib/math and /lib/unum); component arithmetic stays on stdlib +rs.
+  ::  matching /lib/math and /lib/unum); component arithmetic stays on stdlib +rd.
   ::
   ++  rpi   `@rd`.~3.14159265358979                  :: pi at @rd
   ++  rexp
@@ -557,6 +570,8 @@
   ::    +clog:  @cd -> @cd
   ::
   ::  Principal complex logarithm ln(z) = ln|z| + i*atan2(b, a).
+  ::  At `z = 0`, returns `-infinity + 0i` (the logarithmic singularity: real part
+  ::  is IEEE -infinity, imaginary part is `atan2(0,0) = 0`).
   ::  Source
   ++  clog
     |=  p=@
@@ -616,6 +631,9 @@
   ::    +cpow:  [@cd @cd] -> @cd
   ::
   ::  Complex power z^w = exp(w * ln z) (principal branch).
+  ::  When `z = 0`, the result is `NaN` because the implementation routes through
+  ::  `clog(0) = -infinity`, and the Taylor series cannot evaluate
+  ::  `exp(-infinity * w)` correctly.
   ::  Source
   ++  cpow  |=([p=@ q=@] (cexp (mul q (clog p))))
   --
@@ -750,6 +768,9 @@
   ::    +abs:  @ch -> @ch
   ::
   ::  Returns the modulus |z| as a real-valued complex [|z|, 0], via hypot.
+  ::  Returns a packed `@c*` value (not a scalar `@r*`): the modulus is in the
+  ::  real-component slot, the imaginary slot is zeroed.  To extract the scalar:
+  ::  `(re (~(abs ch:complex %n) z))` (substituting the appropriate door).
   ::    Examples
   ::      > (~(abs ch:complex %n) 0x4400.4200)  ::  |3+4i|=5
   ::      0x4500
@@ -769,6 +790,7 @@
   ::    +equ:  [@ch @ch] -> ?
   ::
   ::  Loobean: bit-equality of both components.
+  ::  Component bits must match exactly: `NaN != NaN` and `+0.0 != -0.0` as individual float components.
   ::    Examples
   ::      > (~(equ ch:complex %n) 0x4000.3c00 0x4000.3c00)
   ::      %.y
@@ -787,7 +809,7 @@
   ::
   ::  Transcendental / elementary functions.  Self-contained real @rh series
   ::  (naive Taylor/AGM, fixed term counts -- accurate near the expansion point,
-  ::  matching /lib/math and /lib/unum); component arithmetic stays on stdlib +rs.
+  ::  matching /lib/math and /lib/unum); component arithmetic stays on stdlib +rh.
   ::
   ++  rpi   `@rh`.~~3.14159                  :: pi at @rh
   ++  rexp
@@ -846,6 +868,8 @@
   ::    +clog:  @ch -> @ch
   ::
   ::  Principal complex logarithm ln(z) = ln|z| + i*atan2(b, a).
+  ::  At `z = 0`, returns `-infinity + 0i` (the logarithmic singularity: real part
+  ::  is IEEE -infinity, imaginary part is `atan2(0,0) = 0`).
   ::  Source
   ++  clog
     |=  p=@
@@ -905,6 +929,9 @@
   ::    +cpow:  [@ch @ch] -> @ch
   ::
   ::  Complex power z^w = exp(w * ln z) (principal branch).
+  ::  When `z = 0`, the result is `NaN` because the implementation routes through
+  ::  `clog(0) = -infinity`, and the Taylor series cannot evaluate
+  ::  `exp(-infinity * w)` correctly.
   ::  Source
   ++  cpow  |=([p=@ q=@] (cexp (mul q (clog p))))
   --
@@ -1041,6 +1068,9 @@
   ::    +abs:  @cq -> @cq
   ::
   ::  Returns the modulus |z| as a real-valued complex [|z|, 0], via hypot.  |3+4i|=5.
+  ::  Returns a packed `@c*` value (not a scalar `@r*`): the modulus is in the
+  ::  real-component slot, the imaginary slot is zeroed.  To extract the scalar:
+  ::  `(re (~(abs cq:complex %n) z))` (substituting the appropriate door).
   ::    Examples
   ::      > (~(abs cq:complex %n) 0x4001.0000.0000.0000.0000.0000.0000.0000.4000.8000.0000.0000.0000.0000.0000.0000)
   ::      0x4001.4000.0000.0000.0000.0000.0000.0000
@@ -1060,6 +1090,7 @@
   ::    +equ:  [@cq @cq] -> ?
   ::
   ::  Loobean: bit-equality of both components.
+  ::  Component bits must match exactly: `NaN != NaN` and `+0.0 != -0.0` as individual float components.
   ::    Examples
   ::      > =z  0x4000.0000.0000.0000.0000.0000.0000.0000.3fff.0000.0000.0000.0000.0000.0000.0000  ::  1+2i
   ::      > (~(equ cq:complex %n) z z)
@@ -1077,7 +1108,7 @@
   ::
   ::  Transcendental / elementary functions.  Self-contained real @rq series
   ::  (naive Taylor/AGM, fixed term counts -- accurate near the expansion point,
-  ::  matching /lib/math and /lib/unum); component arithmetic stays on stdlib +rs.
+  ::  matching /lib/math and /lib/unum); component arithmetic stays on stdlib +rq.
   ::
   ++  rpi   `@rq`.~~~3.14159265358979323846                  :: pi at @rq
   ++  rexp
@@ -1136,6 +1167,8 @@
   ::    +clog:  @cq -> @cq
   ::
   ::  Principal complex logarithm ln(z) = ln|z| + i*atan2(b, a).
+  ::  At `z = 0`, returns `-infinity + 0i` (the logarithmic singularity: real part
+  ::  is IEEE -infinity, imaginary part is `atan2(0,0) = 0`).
   ::  Source
   ++  clog
     |=  p=@
@@ -1195,6 +1228,9 @@
   ::    +cpow:  [@cq @cq] -> @cq
   ::
   ::  Complex power z^w = exp(w * ln z) (principal branch).
+  ::  When `z = 0`, the result is `NaN` because the implementation routes through
+  ::  `clog(0) = -infinity`, and the Taylor series cannot evaluate
+  ::  `exp(-infinity * w)` correctly.
   ::  Source
   ++  cpow  |=([p=@ q=@] (cexp (mul q (clog p))))
   --
