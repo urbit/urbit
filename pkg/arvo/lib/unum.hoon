@@ -10,6 +10,10 @@
 ::  - @rqb @rqh @rqs            :: quires
 ::  - @rvb @rvh @rvs            :: valids  (not yet implemented)
 ::
+::  Aura note: `@rq` is the Hoon stdlib aura for IEEE 754 binary128 (quad float).
+::  `@rpq` (posit-128) is a different format that coincidentally shares the `q`
+::  suffix.  The quire auras `@rqb`/`@rqh`/`@rqs` are likewise distinct from both.
+::
 ::  STANDARD, NOT LEGACY.  The 2022 standard fixes the exponent size at
 ::  es = 2 for every width (the exponent field is a 2-bit unsigned integer,
 ::  0..3), so useed = 2^2^es = 16.  This differs from the 2017 draft (and
@@ -168,6 +172,8 @@
   ++  gte-s  |=([a=@s b=@s] ^-(? !=(-1 (cmp:si a b))))
   ++  lte-s  |=([a=@s b=@s] ^-(? !=(--1 (cmp:si a b))))
   ::  Comparisons (= two's-complement integer ordering of the raw bits, sec 5.3).
+  ::  NaR (the most-negative bit pattern, e.g. `0x80` for posit8) compares less
+  ::  than every real posit, including negative ones (2022 Posit Standard §5.3).
   ++  gth  |=([a=@ b=@] ^-(? (~(gth twoc:twoc bloq) a b)))
   ++  lth  |=([a=@ b=@] ^-(? (~(lth twoc:twoc bloq) a b)))
   ++  gte  |=([a=@ b=@] ^-(? (~(gte twoc:twoc bloq) a b)))
@@ -499,6 +505,11 @@
     =/  acc  ?:(neg (^sub qmod q) q)
     ?:  =(0 acc)  zero
     (bit [%p !neg (dif:si --0 (sun:si qscale)) acc])
+  ::    +q-mul-add:  [quire posit posit] -> quire
+  ::
+  ::  Exact fused multiply-accumulate into the quire: returns `q + a*b` in the
+  ::  quire's `16n`-bit fixed-point representation.  No rounding; rounding only
+  ::  occurs when `++q-to-p` converts back to a posit.
   ++  q-mul-add
     |=  [q=@ a=@ b=@]
     ^-  @
@@ -512,17 +523,41 @@
     =/  m   (lsh [0 (abs:si :(sum:si e.ua e.ub (sun:si qscale)))] (^mul a.ua a.ub))
     =/  qc  ?:(=(s.ua s.ub) m (^sub qmod m))
     (mod (^add q qc) qmod)
+  ::    +q-mul-sub:  [quire posit posit] -> quire
+  ::
+  ::  Exact fused multiply-subtract: returns `q - a*b`.  No rounding.
   ++  q-mul-sub  |=([q=@ a=@ b=@] ^-(@ (q-mul-add q a (neg b))))
+  ::    +q-add-p:  [quire posit] -> quire
+  ::
+  ::  Exact posit-to-quire addition: returns `q + p`.  No rounding.
   ++  q-add-p  |=([q=@ p=@] ^-(@ (q-mul-add q p one)))
+  ::    +q-sub-p:  [quire posit] -> quire
+  ::
+  ::  Exact posit-to-quire subtraction: returns `q - p`.  No rounding.
   ++  q-sub-p  |=([q=@ p=@] ^-(@ (q-mul-add q (neg p) one)))
+  ::    +q-negate:  quire -> quire
+  ::
+  ::  Exact quire negation.  No rounding.
   ++  q-negate  |=(q=@ ^-(@ ?:(=(q-nar q) q-nar (mod (^sub qmod q) qmod))))
+  ::    +q-add-q:  [quire quire] -> quire
+  ::
+  ::  Exact quire-to-quire addition.  No rounding.
   ++  q-add-q
     |=  [x=@ y=@]
     ^-  @
     ?:  |(=(q-nar x) =(q-nar y))  q-nar
     (mod (^add x y) qmod)
+  ::    +q-sub-q:  [quire quire] -> quire
+  ::
+  ::  Exact quire-to-quire subtraction.  No rounding.
   ++  q-sub-q  |=([x=@ y=@] ^-(@ (q-add-q x (q-negate y))))
   ::    +fdp:  (list @) -> (list @) -> @  (fused dot product, single rounding)
+  ::
+  ::  Accumulates av[i]*bv[i] into the quire exactly, then rounds once via
+  ::  +q-to-p.  If the two lists differ in length, iteration stops when the
+  ::  shorter list is exhausted -- the tail of the longer list is silently
+  ::  ignored.  Callers are responsible for ensuring equal-length inputs for
+  ::  a full dot product.
   ++  fdp
     |=  [av=(list @) bv=(list @)]
     ^-  @
