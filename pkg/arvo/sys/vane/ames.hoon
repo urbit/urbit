@@ -5694,7 +5694,7 @@
           ==
         ::
         ++  on-ack-ahoy
-          |=  =shot
+          |=  [=lane =shot]
           ^+  event-core
           ?.  sam.shot
             %-  (ev-trace odd.veb sndr.shot |.("weird no ames"))
@@ -5768,7 +5768,7 @@
           =/  ack-packet=^shut-packet
             :-  (mix 0b1 bone.u.shut-packet)
             [message-num.u.shut-packet %| %| !error lag=*@dr]
-          %:  send-blob  for=|  sndr.shot
+          =/  b=^blob
             %-  etch-shot
             %:  etch-shut-packet:ames
               ack-packet
@@ -5776,9 +5776,16 @@
               our               sndr.shot
               our-life.channel  life.hers.channel
             ==
+          ::  ack on the lane it came from, also send to galaxy just in case
           ::
-            ship-state=~  :: send-blob finds the migrated peer in chums
-          ==
+          =?  event-core  ?=(^ unix-duct)
+            (emit unix-duct %give %send lane b)
+          ?:  ?=(%& -.lane)
+            event-core
+          =/  gal=(unit @ux)  (get-sponsor sndr.shot)
+          ?:  |(?=(~ gal) ?=(~ unix-duct))
+            event-core
+          (emit unix-duct %give %send [%& `@pC`u.gal] b)
         ::
         +|  %implementation
         ::  +enqueue-alien-todo: helper to enqueue a pending request
@@ -13321,7 +13328,7 @@
           [~ %known *]
         =^  moves-ahoy  ames-state
           =<  abet
-          %.(shot on-ack-ahoy:(ev:am-core now^eny^rof hen ames-state))
+          %.([lane shot] on-ack-ahoy:(ev:am-core now^eny^rof hen ames-state))
         ?:  ?=(^ moves-ahoy)
           [moves-ahoy vane-gate]
         =^  moves-peer  vane-gate
