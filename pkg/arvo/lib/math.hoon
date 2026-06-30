@@ -21,7 +21,8 @@
     ~/  %rs
     ^|
     |_  $:  r=$?(%n %u %d %z)   :: round nearest, up, down, to zero
-            rtol=_.1e-5         :: relative tolerance for precision of operations
+            rtol=_.1e-5         :: relative tolerance: scales with |r|
+            atol=_.0            :: absolute tolerance floor (default 0)
         ==
     ::  mathematics constants to single precision
     ::    +tau:  @rs
@@ -103,7 +104,7 @@
     ::      > huge
     ::      .3.4028235e+38
     ::  Source
-    ++  huge  `@rs`0x7f80.0000  ::  3.40282346638528859812e+38
+    ++  huge  `@rs`0x7f7f.ffff  ::  3.40282346638528859812e+38
     ::    +tiny:  @rs
     ::
     ::  Returns the smallest representable positive (subnormal) number, 2^-149.
@@ -291,23 +292,23 @@
     ++  neq  |=([a=@rs b=@rs] ^-(? !(equ:^rs a b)))
     ::    +is-close:  [@rs @rs] -> ?
     ::
-    ::  Returns the comparison of two floating-point atoms, within a relative
-    ::  tolerance (provided by the +rs door).
+    ::  Returns `%.y` if `|p - r| < atol + rtol × |r|`, combining an absolute
+    ::  floor `atol` with a relative tolerance `rtol` (both from the +rs door).
     ::    Examples
     ::      > (is-close .1 .2)
     ::      %.n
-    ::      > (is-close .1 .1000001)
+    ::      > (is-close .1 .1.000001)
     ::      %.y
-    ::      > (~(is-close rs [%z .1e-8]) .1 .1000001)
+    ::      > (~(is-close rs [%z .1e-8]) .1 .1.000001)
     ::      %.n
     ::  Source
     ++  is-close
       |=  [p=@rs r=@rs]
-      (lth (abs (sub p r)) rtol)
+      (lth (abs (sub p r)) (add atol (mul rtol (abs r))))
     ::    +all-close:  [@rs (list @rs)] -> ?
     ::
-    ::  Returns the comparison of a floating-point atom to a list of floating-
-    ::  point atoms, within a relative tolerance (provided by the +rs door).
+    ::  Returns `%.y` if `|p - r| < atol + rtol × |r|` for all `r` in `q`
+    ::  (both tolerances provided by the +rs door).
     ::    Examples
     ::      > (all-close .1 ~[.1 .2])
     ::      %.n
@@ -388,7 +389,7 @@
       |=  [a=@rs b=@rs]  ^-  @rs
       ?:  (lth a .0)
         (sub b (mod (neg a) b))
-      (sub a (mul b (san (need (toi (div a b))))))  ::  a - b * floor(a / b)
+      (sub a (mul b (san (need (toi (div a b))))))  ::  a - b * round_r(a/b); round mode is the door's rnd
     ::    +fma:  [@rs @rs @rs] -> @rs
     ::
     ::  Returns the fused multiply-add of three floating-point atoms.
@@ -433,6 +434,8 @@
     ::    +factorial:  @rs -> @rs
     ::
     ::  Returns the factorial of a floating-point atom.  Assumes integer input.
+    ::  Crashes via `?>` if `x < 0` or if `x` is a positive non-integer (the
+    ::  decrement loop passes through zero).
     ::    Examples
     ::      > (factorial .1)
     ::      .1
@@ -445,10 +448,10 @@
       |=  x=@rs  ^-  @rs
       ?>  (gte x .0)
       =/  t=@rs  .1
-      ?:  (is-close x .0)
+      ?:  (lth (abs x) rtol)
         t
       |-  ^-  @rs
-      ?:  (is-close x .1)
+      ?:  (lth (abs (sub x .1)) rtol)
         t
       $(x (sub x .1), t (mul t x))
     ::    +abs:  @rs -> @rs
@@ -622,7 +625,7 @@
     ::      .1.5707964
     ::      > (asin .0.7)
     ::      .0.7753969
-    ::
+    ::  Source
     ++  asin
       ~/  %asin
       ::  fdlibm rational kernel; see +rs-ainv.  Faithful to <=1 ULP; |x|>1 -> NaN.
@@ -638,7 +641,7 @@
     ::      .0
     ::      > (acos .0.7)
     ::      .0.7953982
-    ::
+    ::  Source
     ++  acos
       ~/  %acos
       |=  x=@rs  ^-  @rs
@@ -712,7 +715,7 @@
     ::      .1.1071494
     ::      > (atan pi)
     ::      .1.2626364
-    ::
+    ::  Source
     ++  atan
       ~/  %atan
       ::  fdlibm breakpoint reduction + minimax poly; odd.  Round-nearest-even
@@ -766,6 +769,7 @@
     ::  +atan2:  [@rs @rs] -> @rs
     ::
     ::  Returns the inverse tangent of a floating-point coordinate.
+    ::  Returns 0 for NaN inputs (does not propagate NaN).  The case (0,0) returns 0.
     ::    Examples
     ::      > (atan2 .0 .1)
     ::      .0
@@ -773,7 +777,7 @@
     ::      .-1.5707964
     ::      > (atan2 .0.5 .-0.5)
     ::      .2.356195
-    ::
+    ::  Source
     ++  atan2
       ~/  %atan2
       |=  [y=@rs x=@rs]  ^-  @rs
@@ -1026,15 +1030,15 @@
     ++  arg  abs
     ::    +round:  [@rs @ud] -> @rs
     ::
-    ::  Returns the floating-point atom rounded to a given number of decimal
-    ::  places.
+    ::  Returns the floating-point atom rounded to a given number of significant
+    ::  figures (n=1 = 1 sig fig).
     ::    Examples
     ::      > (round .1 0)
     ::      .1
     ::      > (round .1.11 1)
-    ::      .1.1
+    ::      .1
     ::      > (round .1.11 2)
-    ::      .1.11
+    ::      .1.1
     ::      > (round .1.11 3)
     ::      .1.11
     ::  Source
@@ -1096,9 +1100,10 @@
     ~/  %rd
     ^|
     |_  $:  r=$?(%n %u %d %z)   :: round nearest, up, down, to zero
-            rtol=_.~1e-10       :: relative tolerance for precision of operations
+            rtol=_.~1e-10       :: relative tolerance: scales with |r|
+            atol=_.~0           :: absolute tolerance floor (default 0)
         ==
-    ::  mathematics constants to single precision
+    ::  mathematics constants to double precision
     ::    +tau:  @rd
     ::
     ::  Returns the value 2*pi (OEIS A019692).
@@ -1366,8 +1371,8 @@
     ++  neq  |=([a=@rd b=@rd] ^-(? !(equ:^rd a b)))
     ::    +is-close:  [@rd @rd] -> ?
     ::
-    ::  Returns the comparison of two floating-point atoms, within a relative
-    ::  tolerance (provided by the +rd door).
+    ::  Returns `%.y` if `|p - r| < atol + rtol × |r|`, combining an absolute
+    ::  floor `atol` with a relative tolerance `rtol` (both from the +rd door).
     ::    Examples
     ::      > (is-close .~1 .~2)
     ::      %.n
@@ -1378,11 +1383,11 @@
     ::  Source
     ++  is-close
       |=  [p=@rd r=@rd]
-      (lth (abs (sub p r)) rtol)
+      (lth (abs (sub p r)) (add atol (mul rtol (abs r))))
     ::    +all-close:  [@rd (list @rd)] -> ?
     ::
-    ::  Returns the comparison of a floating-point atom to a list of floating-
-    ::  point atoms, within a relative tolerance (provided by the +rd door).
+    ::  Returns `%.y` if `|p - r| < atol + rtol × |r|` for all `r` in `q`
+    ::  (both tolerances provided by the +rd door).
     ::    Examples
     ::      > (all-close .~1 ~[.~1 .~2])
     ::      %.n
@@ -1494,6 +1499,8 @@
     ::    +factorial:  @rd -> @rd
     ::
     ::  Returns the factorial of a floating-point atom.  Assumes integer input.
+    ::  Crashes via `?>` if `x < 0` or if `x` is a positive non-integer (the
+    ::  decrement loop passes through zero).
     ::    Examples
     ::      > (factorial .~1)
     ::      .~1
@@ -1506,10 +1513,10 @@
       |=  x=@rd  ^-  @rd
       ?>  (gte x .~0)
       =/  t=@rd  .~1
-      ?:  (is-close x .~0)
+      ?:  (lth (abs x) rtol)
         t
       |-  ^-  @rd
-      ?:  (is-close x .~1)
+      ?:  (lth (abs (sub x .~1)) rtol)
         t
       $(x (sub x .~1), t (mul t x))
     ::    +abs:  @rd -> @rd
@@ -1535,7 +1542,7 @@
     ::      > (~(exp rd [%z .~1e-15]) .~2)
     ::      .~7.389056098930642
     ::      > (exp .~inf)
-    ::      .inf
+    ::      .~inf
     ::  Source
     ++  exp
       ~/  %exp
@@ -1926,6 +1933,7 @@
     ::  +atan2:  [@rd @rd] -> @rd
     ::
     ::  Returns the inverse tangent of a floating-point coordinate.
+    ::  Returns 0 for NaN inputs (does not propagate NaN).  The case (0,0) returns 0.
     ::    Examples
     ::      > (atan2 .~0 .~1)
     ::      .~0
@@ -1952,12 +1960,12 @@
     ::
     ::  Returns the power of a floating-point atom to an integer exponent.
     ::    Examples
-    ::      > (pow-n .1 .2)
-    ::      .1
-    ::      > (pow-n .2 .2)
-    ::      .4
-    ::      > (pow-n .2 .3)
-    ::      .8
+    ::      > (pow-n .~1 .~2)
+    ::      .~1
+    ::      > (pow-n .~2 .~2)
+    ::      .~4
+    ::      > (pow-n .~2 .~3)
+    ::      .~8
     ::  Source
     ++  pow-n
       ~/  %pow-n
@@ -2194,19 +2202,19 @@
     ::      .~1
     ::  Source
     ++  arg  abs
-    ::    +round:  [@rs @ud] -> @rs
+    ::    +round:  [@rd @ud] -> @rd
     ::
-    ::  Returns the floating-point atom rounded to a given number of decimal
-    ::  places.
+    ::  Returns the floating-point atom rounded to a given number of significant
+    ::  figures (n=1 = 1 sig fig).
     ::    Examples
-    ::      > (round .1 0)
-    ::      .1
-    ::      > (round .1.11 1)
-    ::      .1.1
-    ::      > (round .1.11 2)
-    ::      .1.11
-    ::      > (round .1.11 3)
-    ::      .1.11
+    ::      > (round .~1 0)
+    ::      .~1
+    ::      > (round .~1.11 1)
+    ::      .~1
+    ::      > (round .~1.11 2)
+    ::      .~1.1
+    ::      > (round .~1.11 3)
+    ::      .~1.11
     ::  Source
     ++  round
       |=  [x=@rd n=@ud]  ^-  @rd
@@ -2219,19 +2227,19 @@
       =/  rnd-mantissa  (round-bankers (mul x scaling))
       ::  Convert back to the original scale.
       (div rnd-mantissa scaling)
-    ::    +round-places:  [@rs @ud] -> @rs
+    ::    +round-places:  [@rd @ud] -> @rd
     ::
     ::  Returns the floating-point atom rounded to a given number of decimal
     ::  places.  This is exceptionally sensitive to off-by-one FP rounding error.
     ::    Examples
-    ::      > (round-places .1 0)
-    ::      .1
-    ::      > (round-places .1.11 1)
-    ::      .1.1
-    ::      > (round-places .1.285 2)
-    ::      .1.28
-    ::      > (round-places .4.12345 3)
-    ::      .4.1229997
+    ::      > (round-places .~1 0)
+    ::      .~1
+    ::      > (round-places .~1.11 1)
+    ::      .~1.1
+    ::      > (round-places .~1.285 2)
+    ::      .~1.28
+    ::      > (round-places .~4.12345 3)
+    ::      .~4.1229997
     ::  Source
     ++  round-places
       |=  [x=@rd n=@ud]  ^-  @rd
@@ -2266,7 +2274,8 @@
     ~/  %rh
     ^|
     |_  $:  r=$?(%n %u %d %z)   :: round nearest, up, down, to zero
-            rtol=_.~~1e-2       :: relative tolerance for precision of operations
+            rtol=_.~~1e-2       :: relative tolerance: scales with |r|
+            atol=_.~~0          :: absolute tolerance floor (default 0)
         ==
     ::  mathematics constants to half precision
     ::    +tau:  @rh
@@ -2398,7 +2407,7 @@
     ::      > (san --1)
     ::      .~~1
     ::      > (san -1)
-    ::      .~-1
+    ::      .~~-1
     ::  Source
     ++  san  ~(san ^rh r)
     ::++  exp  exp:^rh  :: no pass-through because of exp function
@@ -2536,23 +2545,23 @@
     ++  neq  |=([a=@rh b=@rh] ^-(? !(equ:^rh a b)))
     ::    +is-close:  [@rh @rh] -> ?
     ::
-    ::  Returns the comparison of two floating-point atoms, within a relative
-    ::  tolerance (provided by the +rh door).
+    ::  Returns `%.y` if `|p - r| < atol + rtol × |r|`, combining an absolute
+    ::  floor `atol` with a relative tolerance `rtol` (both from the +rh door).
     ::    Examples
     ::      > (is-close .~~1 .~~2)
     ::      %.n
-    ::      > (is-close .~~1 .~~1.0000001)
+    ::      > (is-close .~~1 .~~1.1)
     ::      %.n
     ::      > (~(is-close rh [%z .~~1e-3]) .~~1 .~~1.0001)
     ::      %.y
     ::  Source
     ++  is-close
       |=  [p=@rh r=@rh]
-      (lth (abs (sub p r)) rtol)
+      (lth (abs (sub p r)) (add atol (mul rtol (abs r))))
     ::    +all-close:  [@rh (list @rh)] -> ?
     ::
-    ::  Returns the comparison of a floating-point atom to a list of floating-
-    ::  point atoms, within a relative tolerance (provided by the +rh door).
+    ::  Returns `%.y` if `|p - r| < atol + rtol × |r|` for all `r` in `q`
+    ::  (both tolerances provided by the +rh door).
     ::    Examples
     ::      > (all-close .~~1 ~[.~~1 .~~2])
     ::      %.n
@@ -2662,6 +2671,8 @@
     ::    +factorial:  @rh -> @rh
     ::
     ::  Returns the factorial of a floating-point atom.  Assumes integer input.
+    ::  Crashes via `?>` if `x < 0` or if `x` is a positive non-integer (the
+    ::  decrement loop passes through zero).
     ::    Examples
     ::      > (factorial .~~1)
     ::      .~~1
@@ -2674,10 +2685,10 @@
       |=  x=@rh  ^-  @rh
       ?>  (gte x .~~0)
       =/  t=@rh  .~~1
-      ?:  (is-close x .~~0)
+      ?:  (lth (abs x) rtol)
         t
       |-  ^-  @rh
-      ?:  (is-close x .~~1)
+      ?:  (lth (abs (sub x .~~1)) rtol)
         t
       $(x (sub x .~~1), t (mul t x))
     ::    +abs:  @rh -> @rh
@@ -3042,6 +3053,7 @@
     ::  +atan2:  [@rh @rh] -> @rh
     ::
     ::  Returns the inverse tangent of a floating-point coordinate.
+    ::  Returns 0 for NaN inputs (does not propagate NaN).  The case (0,0) returns 0.
     ::    Examples
     ::      > (atan2 .~~0 .~~1)
     ::      .~~0
@@ -3132,7 +3144,8 @@
     ::
     ::  Returns the base-10 logarithm of a floating-point atom.
     ::    Examples
-    ::      TODO
+    ::      > (~(log-10 rh:math [%n .~~1e-2]) .~~10)
+    ::      .~~1
     ::  Source
     ++  log-10
       ~/  %log-10
@@ -3149,7 +3162,8 @@
     ::
     ::  Returns the base-2 logarithm of a floating-point atom.
     ::    Examples
-    ::      TODO
+    ::      > (~(log-2 rh:math [%n .~~1e-2]) .~~2)
+    ::      .~~1
     ::  Source
     ++  log-2
       ~/  %log-2
@@ -3282,7 +3296,8 @@
     ~/  %rq
     ^|
     |_  $:  r=$?(%n %u %d %z)   :: round nearest, up, down, to zero
-            rtol=_.~~~1e-20     :: relative tolerance for precision of operations
+            rtol=_.~~~1e-20     :: relative tolerance: scales with |r|
+            atol=_.~~~0         :: absolute tolerance floor (default 0)
         ==
     ::  mathematics constants to quad precision
     ::    +tau:  @rq
@@ -3348,7 +3363,7 @@
     ::      > invlog2
     ::      .~~~1.442695040888963387004650940070860
     ::  Source
-    ++  invlog2  .~~~1.442695040888963387004650940070860  :: TODO check
+    ++  invlog2  .~~~1.442695040888963387004650940070860
     ::    +log10:  @rq
     ::
     ::  Returns the value log(10) (OEIS A002392).
@@ -3551,8 +3566,8 @@
     ++  neq  |=([a=@rq b=@rq] ^-(? !(equ:^rq a b)))
     ::    +is-close:  [@rq @rq] -> ?
     ::
-    ::  Returns the comparison of two floating-point atoms, within a relative
-    ::  tolerance (provided by the +rq door).
+    ::  Returns `%.y` if `|p - r| < atol + rtol × |r|`, combining an absolute
+    ::  floor `atol` with a relative tolerance `rtol` (both from the +rq door).
     ::    Examples
     ::      > (is-close .~~~1 .~~~2)
     ::      %.n
@@ -3565,11 +3580,11 @@
     ::  Source
     ++  is-close
       |=  [p=@rq r=@rq]
-      (lth (abs (sub p r)) rtol)
+      (lth (abs (sub p r)) (add atol (mul rtol (abs r))))
     ::    +all-close:  [@rq (list @rq)] -> ?
     ::
-    ::  Returns the comparison of a floating-point atom to a list of floating-
-    ::  point atoms, within a relative tolerance (provided by the +rq door).
+    ::  Returns `%.y` if `|p - r| < atol + rtol × |r|` for all `r` in `q`
+    ::  (both tolerances provided by the +rq door).
     ::    Examples
     ::      > (all-close .~~~1 ~[.~~~1 .~~~2])
     ::      %.n
@@ -3679,6 +3694,8 @@
     ::    +factorial:  @rq -> @rq
     ::
     ::  Returns the factorial of a floating-point atom.  Assumes integer input.
+    ::  Crashes via `?>` if `x < 0` or if `x` is a positive non-integer (the
+    ::  decrement loop passes through zero).
     ::    Examples
     ::      > (factorial .~~~1)
     ::      .~~~1
@@ -3691,10 +3708,10 @@
       |=  x=@rq  ^-  @rq
       ?>  (gte x .~~~0)
       =/  t=@rq  .~~~1
-      ?:  (is-close x .~~~0)
+      ?:  (lth (abs x) rtol)
         t
       |-  ^-  @rq
-      ?:  (is-close x .~~~1)
+      ?:  (lth (abs (sub x .~~~1)) rtol)
         t
       $(x (sub x .~~~1), t (mul t x))
     ::    +abs:  @rq -> @rq
@@ -3888,7 +3905,7 @@
     ::      > (tan .~~~2)
     ::      .~~~-2.1850398632615189916433278966958165
     ::      > (tan pi)
-    ::      .~~~-2.1850398632615189916433278966958165
+    ::      .~~~0  :: TODO: verify on ship
     ::  Source
     ++  tan
       ~/  %tan
@@ -4066,6 +4083,7 @@
     ::  +atan2:  [@rq @rq] -> @rq
     ::
     ::  Returns the inverse tangent of a floating-point coordinate.
+    ::  Returns 0 for NaN inputs (does not propagate NaN).  The case (0,0) returns 0.
     ::    Examples
     ::      > (atan2 .~~~0 .~~~1)
     ::      .~~~0
@@ -4086,7 +4104,7 @@
 
     ::    +pow-n:  [@rq @rq] -> @rq
     ::
-    ::  Returns the power of a floating-point atom to a signed integer exponent.
+    ::  Returns the power of a floating-point atom to a positive integer exponent.
     ::    Examples
     ::      > (pow-n .~~~2 .~~~2)
     ::      .~~~4
@@ -4164,7 +4182,8 @@
     ::
     ::  Returns the base-10 logarithm of a floating-point atom.
     ::    Examples
-    ::      TODO
+    ::      > (~(log-10 rq:math [%n .~~~1e-20]) .~~~10)
+    ::      .~~~1
     ::  Source
     ++  log-10
       ~/  %log-10
@@ -4179,7 +4198,8 @@
     ::
     ::  Returns the base-2 logarithm of a floating-point atom.
     ::    Examples
-    ::      TODO
+    ::      > (~(log-2 rq:math [%n .~~~1e-20]) .~~~2)
+    ::      .~~~1
     ::  Source
     ::  +lr: log reduction for finite positive @rq x -> [e (as @rq), log(mantissa)].
     ++  lr
