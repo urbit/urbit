@@ -478,6 +478,33 @@
     |=  [verb=? =dude print=(each tape tang)]
     ^+  same
     (^trace verb dude dudes.bug.state print)
+  ::  +vez: cross-kelvin vase era conversion, shared by +ap and +op
+  ::
+  ::    .old is set when the agent is a previous-kelvin (h136) agent.
+  ::    inputs go current(h135) -> agent(h136) with +prev; outputs go
+  ::    agent(h136) -> current(h135) with +next. type-agnostic; the
+  ::    model-typed card/note/sign walkers live in +ap and +op.
+  ::
+  ::    note: this only re-encodes a vase's type representation; it cannot
+  ::    reconcile a mold that itself changed shape across the kelvins. the
+  ::    $type mold differs between h135 and h136, so a vase whose *value*
+  ::    embeds the type-system molds (a $type, $vase, $hoon, $dais, a whole
+  ::    agent, &c) will not nest under the target kelvin's mold after
+  ::    conversion. ordinary payloads, carrying concrete types, convert fine.
+  ::
+  ++  vez
+    |_  old=?
+    ++  prev
+      |=  v=vase  ^-  vase
+      ?.  old  v
+      !<(vase [-:!>(*vase) (slum prev-vase:h135 v)])
+    ++  next
+      |=  v=vase  ^-  vase
+      ?.  old  v
+      !<(vase [-:!>(*vase) (slum next-vase:h136 v)])
+    ++  prev-cage  |=(=cage ^-(^cage cage(q (prev q.cage))))
+    ++  next-cage  |=(=cage ^-(^cage cage(q (next q.cage))))
+    --
   ::
   ::  +mo-abed: initialise state with the provided duct
   ::  +mo-abet: finalize, reversing moves
@@ -1782,7 +1809,7 @@
       =>  [ken=ken.yoke (ap-ingest ~ |.([ap-yawn-all fom.p.agent.yoke]))]
       ::  arvo-resources -> generate appropriate cleanup card
       ::
-      %-  ap-move(ken.yoke ken, agent.yoke |+on-save:ap-agent-core)
+      %-  ap-move(ken.yoke ken, agent.yoke |+(next:ez on-save:ap-agent-core))
       ;:  weld
         ::  close outgoing subscriptions
         ::
@@ -2169,6 +2196,43 @@
     ++  ap-agent-core
       ?>  ?=(%& -.agent.yoke)
       ~(. fom.p.agent.yoke ap-construct-bowl)
+    ::  cross-kelvin vase era conversion; see +vez for rationale and caveats.
+    ::
+    ::    the model tag (%new-agent) is orthogonal to kelvin: an agent of
+    ::    either model can be previous-kelvin, so we gate purely on .zus.
+    ::    the type-agnostic vase/cage converters live in +vez (+ez here);
+    ::    only the model-typed card/note/sign walkers are core-local.
+    ::
+    ::  +ap-old: is this agent a previous-kelvin agent?
+    ::  +ez: vase converter bound to this agent's era
+    ::
+    ++  ap-old  ^-  ?  !=(zuse zus.yoke)
+    ++  ez  ~(. vez ap-old)
+    ::  +ap-prev-sign: convert input sign's embedded vase (on-agent)
+    ::
+    ++  ap-prev-sign
+      |=  =sign:agent  ^-  sign:agent
+      ?.  ?=(%fact -.sign)  sign
+      sign(cage (prev-cage:ez cage.sign))
+    ::  +ap-next-note: convert output note's embedded vase (%poke cards)
+    ::
+    ++  ap-next-note
+      |=  =note:agent  ^-  note:agent
+      ?.  ?=(%agent -.note)  note
+      ?+  -.task.note  note
+        %poke     note(cage.task (next-cage:ez cage.task.note))
+        %poke-as  note(cage.task (next-cage:ez cage.task.note))
+      ==
+    ::  +ap-next-card: convert output card's embedded vases
+    ::
+    ++  ap-next-card
+      |=  =card:agent  ^-  card:agent
+      ?-  -.card
+        %give  ?.  ?=(%fact -.p.card)  card
+               card(cage.p (next-cage:ez cage.p.card))
+        %pass  card(q (ap-next-note q.card))
+        %slip  card(p (ap-next-note p.card))
+      ==
     ::  +ap-ducts-from-paths: get ducts subscribed to paths
     ::
     ++  ap-ducts-from-paths
@@ -2229,7 +2293,9 @@
       ::  call the app's +on-peek, producing [~ ~] if it crashes
       ::
       =/  peek-result=(each (unit (unit cage)) tang)
-        (ap-mule-peek |.((on-peek:ap-agent-core [care tyl])))
+        =/  res  (ap-mule-peek |.((on-peek:ap-agent-core [care tyl])))
+        ?.  ?=([%& ~ ~ *] res)  res
+        res(u.u.p (next-cage:ez u.u.p.res))
       ?:  ?=(%| -.peek-result)
         ?.  veb  [~ ~]
         ((slog leaf+"peek bad result" p.peek-result) [~ ~])
@@ -2320,7 +2386,7 @@
       ~>  %spin.[(crip "on-save/{<agent-name>}")]
       =/  old-state=vase
         ?:  ?=(%& -.agent.yoke)
-          on-save:ap-agent-core
+          (next:ez on-save:ap-agent-core)
         p.agent.yoke
       ?.  =(%| -.agent.yoke)
         ::  load the agent back up
@@ -2446,7 +2512,7 @@
       ~>  %spin.[(crip "on-poke/{<agent-name>}")]
       =^  maybe-tang  ap-core
         %+  ap-ingest  %poke-ack  |.
-        (on-poke:ap-agent-core cage)
+        (on-poke:ap-agent-core (prev-cage:ez cage))
       ap-core
     ::  +ap-error: pour error.
     ::
@@ -2556,7 +2622,7 @@
       ++  sub-key  [agent-wire dock]
       ++  ingest
         ~>  %spin.[(crip "on-agent/{<agent-name>}")]
-        (ap-ingest ~ |.((on-agent:ap-agent-core agent-wire sign)))
+        (ap-ingest ~ |.((on-agent:ap-agent-core agent-wire (ap-prev-sign sign))))
       ++  run-sign
         ?-    -.sign
             %poke-ack  !!
@@ -2660,7 +2726,7 @@
         %+  ap-ingest  ~
         ?~  maybe-vase
           |.  on-init:ap-agent-core
-        |.  (on-load:ap-agent-core u.maybe-vase)
+        |.  (on-load:ap-agent-core (prev:ez u.maybe-vase))
       [maybe-tang ap-core]
     ::  +ap-silent-delete: silent delete.
     ::
@@ -2860,6 +2926,10 @@
       =.  agent.yoke
         ?>  ?=(%& -.agent.yoke)              ::  XX
         [%& mod.p.agent.yoke +.p.result]
+      ::  convert previous-kelvin (h136) output vases to current (h135);
+      ::  the new agent state stays native in the door above
+      ::
+      =.  -.p.result       (turn -.p.result ap-next-card)
       ::TODO  if we filter out "duplicate resource creation" cards here,
       ::      then we don't have to account for them in +ap-handle-peers and co
       ::      (and if we don't, we have to update handle-peers and co)
@@ -3239,7 +3309,7 @@
       =>  [ken=ken.yoke (op-ingest ~ |.([op-yawn-all fom.p.agent.yoke]))]
       ::  arvo-resources -> generate appropriate cleanup card
       ::
-      %-  op-move(ken.yoke ken, agent.yoke |+(op-next-vase on-save:op-agent-core))
+      %-  op-move(ken.yoke ken, agent.yoke |+(next:ez on-save:op-agent-core))
       ;:  weld
         ::  close outgoing subscriptions
         ::
@@ -3646,47 +3716,32 @@
     ++  op-agent-core
       ?>  ?=(%& -.agent.yoke)
       ~(. fom.p.agent.yoke op-construct-bowl)
-    ::  cross-kelvin vase era conversion
+    ::  cross-kelvin vase era conversion; see +vez for rationale and caveats.
     ::
-    ::    a previous-kelvin (h136) agent runs natively in its own type
-    ::    era; we convert vases at the gall<->agent boundary. inputs go
-    ::    current(h135) -> agent(h136) with +prev-vase; outputs go
-    ::    agent(h136) -> current(h135) with +next-vase. the bowl is
-    ::    kelvin-invariant data (no embedded vase) and needs no conversion.
+    ::    the model tag (%old-agent) is orthogonal to kelvin: an agent of
+    ::    either model can be previous-kelvin, so we gate purely on .zus.
+    ::    the type-agnostic vase/cage converters live in +vez (+ez here);
+    ::    only the model-typed card/note/sign walkers are core-local.
     ::
     ::  +op-old: is this agent a previous-kelvin agent?
+    ::  +ez: vase converter bound to this agent's era
     ::
     ++  op-old  ^-  ?  !=(zuse zus.yoke)
-    ::  +op-prev-vase: current(h135) -> agent era(h136), for inputs
-    ::
-    ++  op-prev-vase
-      |=  v=vase  ^-  vase
-      ?.  op-old  v
-      !<(vase [-:!>(*vase) (slum prev-vase:h135 v)])
-    ::  +op-next-vase: agent era(h136) -> current(h135), for outputs
-    ::
-    ++  op-next-vase
-      |=  v=vase  ^-  vase
-      ?.  op-old  v
-      !<(vase [-:!>(*vase) (slum next-vase:h136 v)])
-    ::  +op-prev-cage / +op-next-cage: convert a cage's vase
-    ::
-    ++  op-prev-cage  |=(=cage ^-(^cage cage(q (op-prev-vase q.cage))))
-    ++  op-next-cage  |=(=cage ^-(^cage cage(q (op-next-vase q.cage))))
+    ++  ez  ~(. vez op-old)
     ::  +op-prev-sign: convert input sign's embedded vase (on-agent)
     ::
     ++  op-prev-sign
       |=  =sign:agent-old  ^-  sign:agent-old
       ?.  ?=(%fact -.sign)  sign
-      sign(cage (op-prev-cage cage.sign))
+      sign(cage (prev-cage:ez cage.sign))
     ::  +op-next-note: convert output note's embedded vase (%poke cards)
     ::
     ++  op-next-note
       |=  =note:agent-old  ^-  note:agent-old
       ?.  ?=(%agent -.note)  note
       ?+  -.task.note  note
-        %poke     note(cage.task (op-next-cage cage.task.note))
-        %poke-as  note(cage.task (op-next-cage cage.task.note))
+        %poke     note(cage.task (next-cage:ez cage.task.note))
+        %poke-as  note(cage.task (next-cage:ez cage.task.note))
       ==
     ::  +op-next-card: convert output card's embedded vases
     ::
@@ -3694,7 +3749,7 @@
       |=  =card:agent-old  ^-  card:agent-old
       ?-  -.card
         %give  ?.  ?=(%fact -.p.card)  card
-               card(cage.p (op-next-cage cage.p.card))
+               card(cage.p (next-cage:ez cage.p.card))
         %pass  card(q (op-next-note q.card))
         %slip  card(p (op-next-note p.card))
       ==
@@ -3760,7 +3815,7 @@
       =/  peek-result=(each (unit (unit cage)) tang)
         =/  res  (op-mule-peek |.((on-peek:op-agent-core [care tyl])))
         ?.  ?=([%& ~ ~ *] res)  res
-        res(u.u.p (op-next-cage u.u.p.res))
+        res(u.u.p (next-cage:ez u.u.p.res))
       ?:  ?=(%| -.peek-result)
         ?.  veb  [~ ~]
         ((slog leaf+"peek bad result" p.peek-result) [~ ~])
@@ -3847,7 +3902,7 @@
       ~>  %spin.[(crip "on-save/{<agent-name>}")]
       =/  old-state=vase
         ?:  ?=(%& -.agent.yoke)
-          (op-next-vase on-save:op-agent-core)
+          (next:ez on-save:op-agent-core)
         p.agent.yoke
       ?.  =(%| -.agent.yoke)
         ::  load the agent back up
@@ -3975,7 +4030,7 @@
       ~>  %spin.[(crip "on-poke/{<agent-name>}")]
       =^  maybe-tang  op-core
         %+  op-ingest  %poke-ack  |.
-        (on-poke:op-agent-core (op-prev-cage cage))
+        (on-poke:op-agent-core (prev-cage:ez cage))
       op-core
     ::  +op-error: pour error.
     ::
@@ -4189,7 +4244,7 @@
         %+  op-ingest  ~
         ?~  maybe-vase
           |.  on-init:op-agent-core
-        |.  (on-load:op-agent-core (op-prev-vase u.maybe-vase))
+        |.  (on-load:op-agent-core (prev:ez u.maybe-vase))
       [maybe-tang op-core]
     ::  +op-silent-delete: silent delete.
     ::
