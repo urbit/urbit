@@ -47,6 +47,7 @@
   ::  neg(min) = min (wraps).
   ++  neg  |=(a=@ ^-(@ (mod +((not 0 len (mod a len-mod))) len-mod)))
   ++  sub  |=([a=@ b=@] ^-(@ (add a (neg b))))
+  ::  low-order bits of a product are sign-independent, so modular unsigned mul is also correct signed mul
   ++  mul  |=([a=@ b=@] ^-(@ (mod (^mul (mod a len-mod) (mod b len-mod)) len-mod)))
   ::  +abs: |a| as a two's-complement value (abs(min) wraps back to min).
   ++  abs  |=(a=@ ^-(@ ?:(=(1 (msb a)) (neg a) (mod a len-mod))))
