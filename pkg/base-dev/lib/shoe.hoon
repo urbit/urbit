@@ -374,6 +374,12 @@
   ++  on-peek
     |=  =path
     ^-  (unit (unit cage))
+    ::  /x/sole/sessions: JSON array of active session names (@ta cords)
+    ?:  =(/x/sole/sessions path)
+      =/  names=(list json)
+        %+  turn  ~(tap in ~(key by soles))
+        |=([who=@p ses=@ta] s+ses)
+      ``json+!>([%a names])
     ?.  =(/x/dbug/state path)  (on-peek:og path)
     ``noun+(slop on-save:og !>(shoe=state))
   ::
