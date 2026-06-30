@@ -7858,7 +7858,7 @@
                   %^  pe-emit  duct  %pass
                   :-  (make-bone-wire her rift.hers.channel bone.shut-packet)
                   [%g %plea her u.m(path /gp/[agent])]
-                  sink
+                sink
               ::  last-heard<seq<10+last-heard; packet in a live message
               ::
               =/  =partial-rcv-message
