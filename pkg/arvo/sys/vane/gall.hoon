@@ -692,11 +692,13 @@
           %d  (mo-give %unto %raw-fact mark.ames-response noun.ames-response)
           %x
         =.  mo-core  (mo-give %unto %kick ~)
-        =?  outstanding.state  =(~ outs)
-          ::  if there is an outstanding $plea don't delete it from
-          ::  .outstanding to avoid a %gall-missing print
-          ::
-          (~(del by outstanding.state) key)
+        ::  delete any outstanding $plea. when it gets acked we will
+        ::  see a beningn %gall-missing print for both acked and nacked
+        ::  (most likely) %leaves. leaving here a %leave that could be nacked
+        ::  would cause a gall/ames desync since the flow is corked way before
+        ::  the /nacked-leave timer resends the %leave
+        ::
+        =.  outstanding.state  (~(del by outstanding.state) key)
         (mo-pass sys+wire a/cork+ship)
       ==
     ::
