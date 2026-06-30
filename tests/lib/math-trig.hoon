@@ -4,10 +4,10 @@
 ::
 /+  *test, math
 |%
-++  sd  |=(x=@rd ^-(@ `@`(~(sin rd:math [%n .~1e-10]) x)))
-++  cd  |=(x=@rd ^-(@ `@`(~(cos rd:math [%n .~1e-10]) x)))
-++  ss  |=(x=@rs ^-(@ `@`(~(sin rs:math [%n .1e-5]) x)))
-++  cs  |=(x=@rs ^-(@ `@`(~(cos rs:math [%n .1e-5]) x)))
+++  sd  |=(x=@rd ^-(@ `@`(~(sin rd:math [%n .~1e-10 .~0]) x)))
+++  cd  |=(x=@rd ^-(@ `@`(~(cos rd:math [%n .~1e-10 .~0]) x)))
+++  ss  |=(x=@rs ^-(@ `@`(~(sin rs:math [%n .1e-5 .0]) x)))
+++  cs  |=(x=@rs ^-(@ `@`(~(cos rs:math [%n .1e-5 .0]) x)))
 ::  ==== @rd ====
 ++  test-sin-0     (expect-eq !>(`@`0x0) !>((sd `@rd`0x0)))
 ++  test-sin-half  (expect-eq !>(`@`0x3fde.aee8.744b.05f0) !>((sd `@rd`0x3fe0.0000.0000.0000)))

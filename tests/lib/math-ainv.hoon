@@ -4,10 +4,10 @@
 ::
 /+  *test, math
 |%
-++  sad  |=(x=@rd ^-(@ `@`(~(asin rd:math [%n .~1e-10]) x)))
-++  cad  |=(x=@rd ^-(@ `@`(~(acos rd:math [%n .~1e-10]) x)))
-++  sas  |=(x=@rs ^-(@ `@`(~(asin rs:math [%n .1e-5]) x)))
-++  cas  |=(x=@rs ^-(@ `@`(~(acos rs:math [%n .1e-5]) x)))
+++  sad  |=(x=@rd ^-(@ `@`(~(asin rd:math [%n .~1e-10 .~0]) x)))
+++  cad  |=(x=@rd ^-(@ `@`(~(acos rd:math [%n .~1e-10 .~0]) x)))
+++  sas  |=(x=@rs ^-(@ `@`(~(asin rs:math [%n .1e-5 .0]) x)))
+++  cas  |=(x=@rs ^-(@ `@`(~(acos rs:math [%n .1e-5 .0]) x)))
 ::  ==== @rd asin ====
 ++  test-asin-0     (expect-eq !>(`@`0x0) !>((sad `@rd`0x0)))
 ++  test-asin-half  (expect-eq !>(`@`0x3fe0.c152.382d.7366) !>((sad `@rd`0x3fe0.0000.0000.0000)))

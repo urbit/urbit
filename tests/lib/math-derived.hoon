@@ -7,14 +7,14 @@
 ::
 /+  *test, math
 |%
-++  l2d   |=(x=@rd ^-(@ `@`(~(log-2 rd:math [%n .~1e-10]) x)))
-++  l10d  |=(x=@rd ^-(@ `@`(~(log-10 rd:math [%n .~1e-10]) x)))
-++  pd    |=([x=@rd n=@rd] ^-(@ `@`(~(pow rd:math [%n .~1e-10]) x n)))
-++  cbd   |=(x=@rd ^-(@ `@`(~(cbt rd:math [%n .~1e-10]) x)))
-++  l2s   |=(x=@rs ^-(@ `@`(~(log-2 rs:math [%n .1e-5]) x)))
-++  l10s  |=(x=@rs ^-(@ `@`(~(log-10 rs:math [%n .1e-5]) x)))
-++  ps    |=([x=@rs n=@rs] ^-(@ `@`(~(pow rs:math [%n .1e-5]) x n)))
-++  cbs   |=(x=@rs ^-(@ `@`(~(cbt rs:math [%n .1e-5]) x)))
+++  l2d   |=(x=@rd ^-(@ `@`(~(log-2 rd:math [%n .~1e-10 .~0]) x)))
+++  l10d  |=(x=@rd ^-(@ `@`(~(log-10 rd:math [%n .~1e-10 .~0]) x)))
+++  pd    |=([x=@rd n=@rd] ^-(@ `@`(~(pow rd:math [%n .~1e-10 .~0]) x n)))
+++  cbd   |=(x=@rd ^-(@ `@`(~(cbt rd:math [%n .~1e-10 .~0]) x)))
+++  l2s   |=(x=@rs ^-(@ `@`(~(log-2 rs:math [%n .1e-5 .0]) x)))
+++  l10s  |=(x=@rs ^-(@ `@`(~(log-10 rs:math [%n .1e-5 .0]) x)))
+++  ps    |=([x=@rs n=@rs] ^-(@ `@`(~(pow rs:math [%n .1e-5 .0]) x n)))
+++  cbs   |=(x=@rs ^-(@ `@`(~(cbt rs:math [%n .1e-5 .0]) x)))
 ::  ==== @rd ====
 ++  test-log2-8     (expect-eq !>(`@`0x4008.0000.0000.0000) !>((l2d `@rd`0x4020.0000.0000.0000)))
 ++  test-log10-1e3  (expect-eq !>(`@`0x4008.0000.0000.0000) !>((l10d `@rd`0x408f.4000.0000.0000)))

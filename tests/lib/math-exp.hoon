@@ -6,8 +6,8 @@
 ::
 /+  *test, math
 |%
-++  es  |=(x=@rs ^-(@ `@`(~(exp rs:math [%n .1e-5]) x)))
-++  ed  |=(x=@rd ^-(@ `@`(~(exp rd:math [%n .~1e-10]) x)))
+++  es  |=(x=@rs ^-(@ `@`(~(exp rs:math [%n .1e-5 .0]) x)))
+++  ed  |=(x=@rd ^-(@ `@`(~(exp rd:math [%n .~1e-10 .~0]) x)))
 ::  ==== @rd core ====
 ++  test-rd-0      (expect-eq !>(`@`0x3ff0.0000.0000.0000) !>((ed `@rd`0x0)))
 ++  test-rd-half   (expect-eq !>(`@`0x3ffa.6129.8e1e.069c) !>((ed `@rd`0x3fe0.0000.0000.0000)))

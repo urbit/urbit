@@ -4,9 +4,9 @@
 ::
 /+  *test, math
 |%
-++  ad   |=(x=@rd ^-(@ `@`(~(atan rd:math [%n .~1e-10]) x)))
-++  as   |=(x=@rs ^-(@ `@`(~(atan rs:math [%n .1e-5]) x)))
-++  a2d  |=([y=@rd x=@rd] ^-(@ `@`(~(atan2 rd:math [%n .~1e-10]) y x)))
+++  ad   |=(x=@rd ^-(@ `@`(~(atan rd:math [%n .~1e-10 .~0]) x)))
+++  as   |=(x=@rs ^-(@ `@`(~(atan rs:math [%n .1e-5 .0]) x)))
+++  a2d  |=([y=@rd x=@rd] ^-(@ `@`(~(atan2 rd:math [%n .~1e-10 .~0]) y x)))
 ::  ==== @rd ====
 ++  test-atan-0      (expect-eq !>(`@`0x0) !>((ad `@rd`0x0)))
 ++  test-atan-half   (expect-eq !>(`@`0x3fdd.ac67.0561.bb4f) !>((ad `@rd`0x3fe0.0000.0000.0000)))

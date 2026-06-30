@@ -5,8 +5,8 @@
 ::
 /+  *test, math
 |%
-++  qd  |=(x=@rd ^-(@ `@`(~(sqt rd:math [%n .~1e-10]) x)))
-++  qs  |=(x=@rs ^-(@ `@`(~(sqt rs:math [%n .1e-5]) x)))
+++  qd  |=(x=@rd ^-(@ `@`(~(sqt rd:math [%n .~1e-10 .~0]) x)))
+++  qs  |=(x=@rs ^-(@ `@`(~(sqt rs:math [%n .1e-5 .0]) x)))
 ::  ==== @rd ====
 ++  test-rd-2    (expect-eq !>(`@`0x3ff6.a09e.667f.3bcd) !>((qd `@rd`0x4000.0000.0000.0000)))
 ++  test-rd-half  (expect-eq !>(`@`0x3fe6.a09e.667f.3bcd) !>((qd `@rd`0x3fe0.0000.0000.0000)))

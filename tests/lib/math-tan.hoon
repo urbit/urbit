@@ -5,7 +5,7 @@
 ::
 /+  *test, math
 |%
-++  td  |=(x=@rd ^-(@ `@`(~(tan rd:math [%n .~1e-10]) x)))
+++  td  |=(x=@rd ^-(@ `@`(~(tan rd:math [%n .~1e-10 .~0]) x)))
 ++  test-tan-0     (expect-eq !>(`@`0x0) !>((td `@rd`0x0)))
 ++  test-tan-half  (expect-eq !>(`@`0x3fe1.7b4f.5bf3.474a) !>((td `@rd`0x3fe0.0000.0000.0000)))
 ++  test-tan-1     (expect-eq !>(`@`0x3ff8.eb24.5cbe.e3a6) !>((td `@rd`0x3ff0.0000.0000.0000)))

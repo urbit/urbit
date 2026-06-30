@@ -5,8 +5,8 @@
 ::
 /+  *test, math
 |%
-++  ls  |=(x=@rs ^-(@ `@`(~(log rs:math [%n .1e-5]) x)))
-++  ld  |=(x=@rd ^-(@ `@`(~(log rd:math [%n .~1e-10]) x)))
+++  ls  |=(x=@rs ^-(@ `@`(~(log rs:math [%n .1e-5 .0]) x)))
+++  ld  |=(x=@rd ^-(@ `@`(~(log rd:math [%n .~1e-10 .~0]) x)))
 ::  ==== @rd ====
 ++  test-rd-1      (expect-eq !>(`@`0x0) !>((ld `@rd`0x3ff0.0000.0000.0000)))
 ++  test-rd-2      (expect-eq !>(`@`0x3fe6.2e42.fefa.39ef) !>((ld `@rd`0x4000.0000.0000.0000)))
