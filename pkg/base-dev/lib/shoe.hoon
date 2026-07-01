@@ -374,7 +374,6 @@
   ++  on-peek
     |=  =path
     ^-  (unit (unit cage))
-    ::  /x/sole/sessions: JSON array of active session names (@ta cords)
     ?:  =(/x/sole/sessions path)
       =/  names=(list json)
         %+  turn  ~(tap in ~(key by soles))
