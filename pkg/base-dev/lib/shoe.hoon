@@ -375,10 +375,20 @@
     |=  =path
     ^-  (unit (unit cage))
     ?:  =(/x/sole/sessions path)
-      =/  names=(list json)
-        %+  turn  ~(tap in ~(key by soles))
-        |=([who=@p ses=@ta] s+ses)
-      ``json+!>([%a names])
+      :^    ~
+          ~
+        %noun
+      !>  ^-  (map sole-id sole-share)
+      soles
+    ?:  =(/x/sole/sessions/json path)
+      :^    ~
+          ~
+        %json
+      !>  ^-  json
+      :-  %a
+      %+  turn
+        ~(tap in ~(key by soles))
+      |=([who=@p ses=@ta] s+ses)
     ?.  =(/x/dbug/state path)  (on-peek:og path)
     ``noun+(slop on-save:og !>(shoe=state))
   ::
