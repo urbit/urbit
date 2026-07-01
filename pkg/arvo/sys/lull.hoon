@@ -3722,7 +3722,8 @@
   ::
   +$  arvo-resource
     $:  =wire
-    $%  ::REVIEW  what if this in place of .ken? [%ames %keen =spar:ames]
+    $%
+        [%ames %keen =spar:ames]
         [%behn %wait =time]
         [%clay %warp id=*]
         [%clay %tire]
@@ -3740,7 +3741,8 @@
   ::
   +$  resource-deet
     $~  [%jael %keys %private]
-    $%  [%eyre %binding wat=$@(term generator:eyre)]
+    $%  [%ames %keen sec=(unit resolved=(unit mis=?))]  ::  mis - pen resolved, key is missing
+        [%eyre %binding wat=$@(term generator:eyre)]
         [%eyre %cache entry=cache-entry:eyre]
         [%clay %warp =ship =desk =rave:clay]
         [%jael %keys wat=?(%private %public (set ship))]
@@ -3756,8 +3758,9 @@
       ?.  ?=([%pass * %arvo *] card)  ~
       =*  task  +.q.card
       ?+  task  ~
-        :: [%ames %keen *]                 [& %ames %keen spar.task]
-        :: [%ames %yawn *]                 [| %ames %keen spar.task]
+        [%ames %keen *]                 :-  [%ames %keen ?:(secret.task `~ ~)]
+                                        [%ames %keen spar.task]
+        [%ames %yawn *]                 [| %ames %keen spar.task]
         [%behn %wait *]                 [& %behn %wait time.task]
         [%behn %rest *]                 [| %behn %wait time.task]
         [%clay %read *]                 :-  [%clay %warp ship desk rave]:task
@@ -3804,6 +3807,7 @@
                     (~(del by dets) wire p.u.upd)
         ==
       ?+  gift  ~
+        [%ames %sage *]  `|+[%ames %keen p.sage.gift]
         [%behn *]        `|+[%behn %wait time.gift]
         [%dill %meme *]  `|+[%dill %mass]
       ::
@@ -3842,6 +3846,10 @@
       |=  [res=arvo-resource dets=resource-deets]
       ^-  (unit task-user-v1)
       ?-  +.res
+        [%ames %keen *]     =+  d=(~(got by dets) res)
+                            ?>  ?=([%ames %keen *] d)
+                            ?.  |(=(~ sec.d) ?=([~ ~ @] sec.d))  ~
+                            `[%ames %yawn spar.res]
         [%behn %wait *]     `[%behn %rest time.res]
         [%clay %warp *]     `[%clay %rest id.res]
         [%clay %tire]       `[%clay %tire ~]
@@ -3879,8 +3887,6 @@
             =beak
             marks=(map duct mark)
             sky=farm
-            ken=(jug spar:ames wire)
-            pen=(jug spar:ames wire)
             gem=(jug coop [path page])
     ==  ==
   +$  egg-any  $%([%15 egg-15] [%16 egg-16] [%20 egg-20] [%21 egg])
@@ -4652,6 +4658,7 @@
       |=  [our=ship res=arvo-resource dets=(map arvo-resource resource-deet)]
       ^-  (list perm)
       ?-  +.res
+        [%ames %keen *]     ~  ::  keep existing %keen resources
         [%behn %wait *]     ~  ::  keep existing %behn resources
       ::
           [%clay %warp *]
@@ -4715,7 +4722,11 @@
       |=  e=egg-20
       ^-  egg
       ?.  ?=(%live -.e)  e
-      =>  e
+      =/  ken-res=[res=(set arvo-resource) dets=(map arvo-resource resource-deet)]
+        (keen-to-resource ken.e &)
+      =/  pen-res=[res=(set arvo-resource) dets=(map arvo-resource resource-deet)]
+        (keen-to-resource pen.e |)
+      =,  e
       :*  %live
           control-duct
           run-nonce
@@ -4724,15 +4735,13 @@
           bitt
           boat
           boar
-          resources=~
-          resource-deets=~
+          resources=(~(uni in res.ken-res) res.pen-res)
+          resource-deets=(~(uni by dets.ken-res) dets.pen-res)
           code
           [%| clean=| +.old-state]  ::REVIEW  clean
           beak
           marks
           sky
-          ken
-          pen
           gem
       ==
     ::
@@ -4992,6 +5001,22 @@
       ^-  (list [=coop =hutch])
       loop(wer (snoc wer seg), farm f)
     --
+    ++  keen-to-resource
+      |=  [reqs=(jug spar:ames wire) ken=?]
+      ^-  [(set arvo-resource) (map arvo-resource resource-deet)]
+      %+  roll  ~(tap by reqs)
+      |=  $:  [=spar:ames wis=(set wire)]
+              $:  resources=(set arvo-resource)
+                  deets=(map arvo-resource resource-deet)
+              ==
+          ==
+      =/  res
+        %+  turn  ~(tap by wis)
+        |=(wir=wire [wir %ames %keen spar])
+      :-  (silt res)
+      %-  ~(gas by deets)
+      %+  turn  res
+      |=(r=arvo-resource [r [%ames %keen ?:(ken ~ `~)]])
   --  ::gall
 ::  %iris http-client interface
 ::

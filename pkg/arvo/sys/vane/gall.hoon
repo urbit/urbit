@@ -144,8 +144,6 @@
           =beak
           marks=(map duct mark)
           sky=farm
-          ken=(jug spar:ames wire)
-          pen=(jug spar:ames wire)
           gem=(jug coop [path page])
   ==  ==
 ::  $blocked-move: enqueued move to an agent
@@ -1325,10 +1323,11 @@
         %.  ap-core
         %+  trace  odd.veb.bug.state
         &+"brood request {<pole>} invalid, dropping"
-      =.  pen.yoke  (~(put ju pen.yoke) [ship pole] wire)
       ::NOTE  requests the key even if a request is already in-flight, ames de-dupes
       =/  =fine-request  [%0 rest.pole]
       =/  =plea:ames     [%g /gk/[app.pole] fine-request]
+      ::REVIEW  keen now are per-wire resources, should brood plea be keyed
+      ::  by wire instead of spar?
       =/  out=^wire
         (welp /key/[agent-name]/[run-nonce.yoke]/bod/(scot %p ship) pole)
       (ap-move [hen %pass out %a %plea ship plea]~)
@@ -1339,39 +1338,46 @@
       ~|  ap-take-brood/wire
       ?>  ?=([@ *] wire)  :: TODO: strip crash semantics
       =/  =ship  (slav %p i.wire)
-      =/  wis=(list ^wire)  ~(tap in (~(get ju pen.yoke) [ship t.wire]))
+      =/  res=(list arvo-resource)
+        %+  skim  ~(tap in resources.yoke)
+        |=(res=arvo-resource =([%ames %keen [ship t.wire]] +.res))
       ?+    syn  ~|(weird-sign-ap-take-brood/-.syn !!)
           [%ames %boon *]
         =/  bud  (fall ((soft fine-response) payload.syn) *fine-response)
         |-
-        ?~  wis
-          =.  pen.yoke  (~(del by pen.yoke) [ship t.wire])
-          ap-core
+        ?~  res  ap-core
         ::  if we are not given a key, tell the agent "no result" immediately
+        ::  if agent is suspended, record missing key in details
         ::
         ?~  bod.bud
-          =.  ap-core  (ap-generic-take | ~ i.wis %ames %sage [ship t.wire] ~)
-          $(wis t.wis)
+          =?  ap-core  ?=(%& -.agent.yoke)
+            (ap-generic-take | ~ -.i.res %ames %sage [ship t.wire] ~)
+          =?  resource-deets.yoke  ?=(%| -.agent.yoke)
+            (~(put by resource-deets.yoke) i.res %ames %keen ``&)
+          $(res t.res)
         ::  now that we have the key, request the data
         ::NOTE  we don't store the key, accounting for rekeys etc
         ::NOTE  no de/multiplexing, one %keen per interested wire, ames de-dupes
         ::
-        =.  ken.yoke  (~(put ju ken.yoke) [ship t.wire] i.wis)
-        =.  ap-core   (ap-pass i.wis %jump %a %keen `[idx key]:hutch.u.bod.bud ship t.wire)
-        $(wis t.wis)
+        =.  resource-deets.yoke
+          ?>  (~(has by resource-deets.yoke) i.res)
+          (~(put by resource-deets.yoke) i.res [%ames %keen ``|])
+        =?  ap-core   ?=(%& -.agent.yoke)
+          (ap-pass -.i.res %jump %a %keen `[idx key]:hutch.u.bod.bud ship t.wire)
+        $(res t.res)
       ::
           [%ames %done *]
         ?~  error.syn
           ap-core
         |-
-        ?~  wis
-          =.  pen.yoke  (~(del by pen.yoke) [ship t.wire])
-          ap-core
-        =.  ap-core
-          %.  (ap-generic-take | ~ i.wis %ames %sage [ship t.wire] ~)
+        ?~  res  ap-core
+        =?  resource-deets.yoke  ?=(%| -.agent.yoke)
+          (~(put by resource-deets.yoke) i.res %ames %keen ``&)
+        =?  ap-core  ?=(%& -.agent.yoke)  ::REVIEW  produce trace when agent is supended?
+          %.  (ap-generic-take | ~ -.i.res %ames %sage [ship t.wire] ~)
           %+  trace  odd.veb.bug.state
           &+"bad brood res {<ship>} {<t.wire>}"
-        $(wis t.wis)
+        $(res t.res)
       ==
     ::
     ++  ap-serve-brood
@@ -1404,34 +1410,14 @@
       =/  =brood  [u.cop hutch]
       [[%.y `brood] ap-abet]
     ::
-    ++  ap-yawn-all
-      ^-  (list card:agent)
-      %-  zing
-      %+  turn  ~(tap by ken.yoke)
-      |=  [=spar:ames wyz=(set wire)]
-      %+  turn  ~(tap in wyz)
-      |=  =wire
-      ::NOTE  syscall because we don't want any card-processing logic to update
-      ::      .ken or other state to reflect this action. gall will revivify
-      ::      the keen when the agent comes back alive.
-      ::TODO  that is probably bad/wrong, don't want any signs to come into the
-      ::      agent at all
-      [%pass wire %arvo %syscall %a %yawn spar]
     ::
     ++  ap-idle
       ^+  ap-core
       ?:  ?=(%| -.agent.yoke)  ap-core
       ~>  %spin.[(crip "on-save/{<agent-name>}")]
-      =>  :-  ken=ken.yoke  ::NOTE  retain for +ap-reinstall
-          ::NOTE  tmi
-          =+  [maybe-frag nu-core]=(ap-ingest ~ |.([ap-yawn-all p.agent.yoke]))
-          ?~  maybe-frag  nu-core
-          ::REVIEW  crash instead?
-          %.  nu-core
-          (slog 'gall: idle cleanup failed for {<agent-name>}' u.maybe-frag)
       ::  arvo-resources -> generate appropriate cleanup card
       ::
-      %-  ap-move(ken.yoke ken, agent.yoke |+[clean=& on-save:ap-agent-core])
+      %-  ap-move(agent.yoke |+[clean=& on-save:ap-agent-core])
       ;:  weld
         ::  close outgoing subscriptions
         ::
@@ -1449,6 +1435,8 @@
         %+  turn  ~(tap in resources.yoke)
         |=  res=arvo-resource
         ?~  tac=(drop-resource:track res resource-deets.yoke)  ~
+        ?:  ?=([%ames %yawn *] u.tac)
+          (ap-from-internal %pass wire.res %jump %a +.u.tac)
         ?<  ?=(%ames -.u.tac)  ::  see +drop-resource
         (ap-from-internal %pass wire.res %arvo u.tac)
       ==
@@ -1472,8 +1460,6 @@
           |=  [[=wire =dock] ? =path]
           [%pass wire %agent dock %leave ~]
         ::
-          ap-yawn-all
-        ::
           %+  murn  ~(tap in resources.yoke)
           |=  res=arvo-resource
           ^-  (unit card:agent)
@@ -1496,14 +1482,11 @@
       ^+  ap-core
       ?:  secret
         (ap-request-brood wire spar)
-      =.  ken.yoke  (~(put ju ken.yoke) spar wire)
       (ap-pass wire %jump %a %keen ~ spar)
     ::
     ++  ap-yawn
       |=  [=wire =spar:ames]
       ^+  ap-core
-      =.  pen.yoke  (~(del ju pen.yoke) spar wire)
-      =.  ken.yoke  (~(del ju ken.yoke) spar wire)
       (ap-pass wire %jump %a %yawn spar)
     ::  +ap-tend: bind path in namespace, encrypted
     ::
@@ -2075,8 +2058,6 @@
       ::  agent was suspended, we need to inflate its resources.
       ::  mark all the resources as to-be-inflated.
       ::TODO  consider the %keen inflation (and its ordering) in this light
-      ::TODO  don't want this to be subject to permission checks!
-      ::      we're doing this on the agent's behalf, it should always succeed
       ::
       =.  inflating
         %-  %~  uni  in
@@ -2084,22 +2065,6 @@
             (~(run in resources.yoke) (lead %&))
         ^+  inflating
         (~(run in ~(key by boat.yoke)) (lead %|))
-      ::  re-start all of the agent's namespace read requests
-      ::  (+ap-idle stopped them)
-      ::
-      ::TODO  could also reinflate pen.yoke entries
-      =?  ap-core  ?=(^ ken.yoke)
-        ::REVIEW  what if we don't have perms to %keen anymore?
-        ::REVIEW  handle failure somehow?
-        =-  =+  [maybe-frag nu-core]=(ap-ingest ~ |.([+< agent]))
-            ?~  maybe-frag  nu-core
-            %.  nu-core
-            (slog 'gall: reinstall %keen failed for {<agent-name>}' u.maybe-frag)
-        %-  zing
-        %+  turn  ~(tap by `(jug spar:ames wire)`ken.yoke)
-        |=  [=spar:ames wyz=(set wire)]
-        ::TODO  .ken needs to have [secret=? spar:ames] key so we can do this correctly
-        (turn ~(tap in wyz) |=(=wire [%pass wire %arvo %ames %keen secret=| spar]))
       ::  we take a copy here because we want to only operate on resources
       ::  that existed during +ap-idle, not ones created during +ap-install
       ::
@@ -2139,6 +2104,25 @@
       =.  ap-core  acc
       ?-    +.res
         ::  re-establish trivially
+        ::
+          [%ames %keen *]
+        ::  re-start all of the agent's namespace read requests
+        ::  (+ap-idle stopped them)
+        ::
+        =.  inflating  (~(del in inflating) &+res)
+        ?.  (~(has in resources.yoke) res)  ap-core
+        =+  det=(~(got by resource-deets.yoke) res)
+        ?>  ?=([%ames %keen *] det)
+        ?~  sec.det
+          (ap-pass wire.res %jump %a %keen ~ spar.res)
+        ?~  u.sec.det  ap-core  ::  encrypted keen awaiting key
+        ?:  +.u.sec.det
+          ::  brood resolved with no key while suspended
+          (ap-generic-take | ~ wire.res %ames %sage spar.res ~)
+        ::  got key while suspended, reset to pending and re-request brood
+        =.  resource-deets.yoke
+          (~(put by resource-deets.yoke) res det(sec `~))
+        (ap-request-brood wire.res spar.res)
         ::
           ?([%behn %wait *] [%clay ?(%tire %ward)] [%dill *])
         =.  inflating  (~(del in inflating) &+res)
@@ -2328,8 +2312,6 @@
                                     sign-arvo(name (tail name.sign-arvo))
         ==
       =.  yoke  (ap-handle-resource-gift wire gift)
-      =?  ken.yoke   ?=([%ames %sage *] sign-arvo)
-        (~(del ju ken.yoke) p.sage.sign-arvo wire)
       =^  maybe-frag  ap-core
         %+  ap-ingest  ~  |.
         (on-arvo:ap-agent-core wire gift)

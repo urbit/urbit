@@ -754,7 +754,7 @@
   =/  =spar:ames  [~fun /g/x/~2222.2.2/dude/some/thing]
   ;<  gall-wire=wire  bind:m
     (a2k-wire %mock /agent/wire ~)  ::TODO  different from +test-lick-socket
-  %+  (merge (list move:gall))
+  %+  (merge ,~)
     :~  :-  'unencrypted keen'
         ;<  moz=(list move:gall)  bind:m
           (mock-card %pass /agent/wire %arvo %ames %keen secret=| spar)
@@ -763,7 +763,7 @@
           :~  (ex-move ~[/sysduct] %pass gall-wire [%a %keen sec=~ spar])
               (ex-move default-duct %give %unto %poke-ack ~)
           ==
-        (pure:m ~)
+        (ex-resources %mock [/agent/wire [%ames %keen spar]]^`[%ames %keen ~] ~)
       ::
         :-  'encrypted keen'
         ;<  moz=(list move:gall)  bind:m
@@ -775,6 +775,8 @@
           :~  (ex-move default-duct %pass plea-wire [%a %plea ship.spar [%g /gk/dude %0 /some/thing]])
               (ex-move default-duct %give %unto %poke-ack ~)
           ==
+        ;<  ~  bind:m
+          (ex-resources %mock [/agent/wire [%ames %keen spar]]^`[%ames %keen `~] ~)
         =/  =brood:gall  [path.spar 1 2 3]
         ;<  moz=(list move:gall)  bind:m
           (do-take [plea-wire ~[/sysduct]] %ames %boon %0 `brood)
@@ -782,11 +784,9 @@
           %+  ex-moves  moz
           :~  (ex-move ~[/sysduct] %pass gall-wire [%a %keen sec=`+.hutch.brood spar])
           ==
-        (pure:m ~)
+        (ex-resources %mock [/agent/wire [%ames %keen spar]]^`[%ames %keen ``|] ~)
     ==
-  |=  moz=(list move:gall)
-  ;<  e=_+:*$>(%live egg:gall)  bind:m  (get-live-egg %mock)
-  ;<  ~  bind:m  (ex-equal !>(ken.e) !>((~(put ju *(jug spar:ames wire)) spar /agent/wire)))
+  |=  ~
   ::TODO  emit a second request? response should come back on all requests
   ::  response comes back from ames
   ::
@@ -801,10 +801,163 @@
           (do-take [gall-wire ~[/sysduct]] %ames %sage `sage:mess:ames`[spar ~])
         (ex-moves moz (ex-on-arvo /agent/wire %ames %sage spar ~) ~)
     ==
-  |=  ~
-  ;<  e=_+:*$>(%live egg:gall)  bind:m  (get-live-egg %mock)
-  ;<  ~  bind:m  (ex-equal !>(ken.e) !>(*(jug spar:ames wire)))
-  (pure:m ~)
+  |=   ~
+  (ex-resources %mock ~)
+::
+++  test-keen-resources
+  %-  eval-mare
+  ;<  *  bind:m  do-load-mock-super
+  ::  agent issues a plain %keen
+  ::
+  =/  =spar:ames  [~fun /g/x/~2222.2.2/dude/some/thing]
+  =/  enc-res     [/agent/wire [%ames %keen spar]]^`[%ames %keen `~]
+  ;<  gall-wire=wire  bind:m
+    (a2k-wire %mock /agent/wire ~)  ::TODO  different from +test-lick-socket
+  %-  branch
+  :~  :-  'unencrypted keen'
+      ;<  moz=(list move:gall)  bind:m
+        (mock-card %pass /agent/wire %arvo %ames %keen secret=| spar)
+      ;<  ~  bind:m
+        %+  ex-moves  moz  ::TODO  different from +test-lick-socket
+        :~  (ex-move ~[/sysduct] %pass gall-wire [%a %keen sec=~ spar])
+            (ex-move default-duct %give %unto %poke-ack ~)
+        ==
+      ;<  ~  bind:m
+        (ex-resources %mock [/agent/wire [%ames %keen spar]]^`[%ames %keen ~] ~)
+      %-  branch
+      :~  :-  'suspend & revive'
+          ;<  moz=(list move:gall)  bind:m
+            (do-call ~ %idle %mock)
+          ;<  ~  bind:m
+            %+  ex-moves  moz
+            :~  (ex-move ~[/sysduct] %pass gall-wire [%a %yawn spar])
+            ==
+          ;<  ~  bind:m
+            (ex-resources %mock [/agent/wire [%ames %keen spar]]^`[%ames %keen ~] ~)
+          ;<  y=yoke:gall  bind:m  (get-yoke %mock)
+          ?.  &(?=(%live -.y) ?=(%| -.agent.y))
+            (fail:m 'agent not suspended' ~)
+          ;<  moz=(list move:gall)  bind:m
+            do-load-mock-super
+          ;<  ~  bind:m
+            %+  ex-moves  moz
+            :~  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
+                (ex-move ~[/sysduct] %pass gall-wire [%a %keen sec=~ spar])
+            ==
+          (ex-resources %mock [/agent/wire [%ames %keen spar]]^`[%ames %keen ~] ~)
+        ::
+          :-  'nuke'
+          ;<  moz=(list move:gall)  bind:m
+            (do-call ~ %nuke %mock)
+          %+  ex-moves  moz
+          :~  (ex-move ~[/sysduct] %pass gall-wire [%a %yawn spar])
+          ==
+      ==
+    ::
+      :-  'encrypted keen'
+        ;<  moz=(list move:gall)  bind:m
+          (mock-card %pass /agent/wire %arvo %ames %keen secret=& spar)
+        =/  plea-wire=wire
+          [%key %mock '0w3.lBw1H' %bod (scot %p ship.spar) path.spar]  ::TODO  construct from helper
+        ;<  ~  bind:m
+          %+  ex-moves  moz  ::TODO  different from +test-lick-socket
+          :~  (ex-move default-duct %pass plea-wire [%a %plea ship.spar [%g /gk/dude %0 /some/thing]])
+              (ex-move default-duct %give %unto %poke-ack ~)
+          ==
+        ;<  ~  bind:m
+          (ex-resources %mock enc-res ~)
+        %-   branch
+        :~  :-  'suspend & revive: boon no key'
+            ;<  moz=(list move:gall)  bind:m
+              (do-call ~ %idle %mock)
+            ;<  ~  bind:m  (ex-moves moz ~)
+            ;<  ~  bind:m  (ex-resources %mock enc-res ~)
+            ;<  y=yoke:gall  bind:m  (get-yoke %mock)
+            ?.  &(?=(%live -.y) ?=(%| -.agent.y))
+              (fail:m 'agent not suspended' ~)
+            ;<  moz=(list move:gall)  bind:m
+              (do-take [plea-wire ~[/sysduct]] %ames %boon %0 ~)
+            ;<  ~  bind:m  (ex-moves moz ~)
+            ;<  ~  bind:m
+              (ex-resources %mock [/agent/wire [%ames %keen spar]]^`[%ames %keen ``&] ~)
+            ;<  moz=(list move:gall)  bind:m
+              do-load-mock-super
+            ;<  ~  bind:m
+              %+  ex-moves  moz
+              :~  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
+                ::  review: wire
+                  (ex-on-arvo /agent/wire [%ames %sage spar ~])
+              ==
+            (ex-resources %mock ~)
+          ::
+            :-  'suspend & revive before got brood'
+            ;<  moz=(list move:gall)  bind:m
+              (do-call ~ %idle %mock)
+            ;<  ~  bind:m  (ex-moves moz ~)
+            ;<  ~  bind:m  (ex-resources %mock enc-res ~)
+            ;<  y=yoke:gall  bind:m  (get-yoke %mock)
+            ?.  &(?=(%live -.y) ?=(%| -.agent.y))
+              (fail:m 'agent not suspended' ~)
+            ;<  moz=(list move:gall)  bind:m
+              do-load-mock-super
+            ;<  ~  bind:m
+              %+  ex-moves  moz
+              :~  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
+              ==
+            (ex-resources %mock enc-res ~)
+          ::
+            :-  'suspend & revive'
+            ;<  moz=(list move:gall)  bind:m
+              (do-call ~ %idle %mock)
+            ;<  ~  bind:m  (ex-moves moz ~)
+            ;<  ~  bind:m  (ex-resources %mock enc-res ~)
+            ;<  y=yoke:gall  bind:m  (get-yoke %mock)
+            ?.  &(?=(%live -.y) ?=(%| -.agent.y))
+              (fail:m 'agent not suspended' ~)
+            ;<  moz=(list move:gall)  bind:m
+              (do-take [plea-wire ~[/sysduct]] %ames %boon %0 `[path.spar 1 2 3])
+            ;<  ~  bind:m  (ex-moves moz ~)
+            ;<  ~  bind:m
+              (ex-resources %mock [/agent/wire [%ames %keen spar]]^`[%ames %keen ``|] ~)
+            ;<  moz=(list move:gall)  bind:m  do-load-mock-super
+            ;<  ~  bind:m
+              %+  ex-moves  moz
+              :~  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
+                  (ex-move default-duct %pass plea-wire [%a %plea ship.spar [%g /gk/dude %0 /some/thing]])
+              ==
+            (ex-resources %mock [/agent/wire [%ames %keen spar]]^`[%ames %keen `~] ~)
+        ==
+  ==
+::
+++  test-keen-nuke-got-brood
+  %-  eval-mare
+  ;<  *  bind:m  do-load-mock-super
+  ::
+  =/  =spar:ames  [~fun /g/x/~2222.2.2/dude/some/thing]
+  ;<  gall-wire=wire  bind:m
+    (a2k-wire %mock /agent/wire ~)
+  ;<  moz=(list move:gall)  bind:m
+    (mock-card %pass /agent/wire %arvo %ames %keen secret=& spar)
+  =/  plea-wire=wire
+    [%key %mock '0w3.lBw1H' %bod (scot %p ship.spar) path.spar]
+  ;<  ~  bind:m
+    %+  ex-moves  moz  ::TODO  different from +test-lick-socket
+    :~  (ex-move default-duct %pass plea-wire [%a %plea ship.spar [%g /gk/dude %0 /some/thing]])
+        (ex-move default-duct %give %unto %poke-ack ~)
+    ==
+  ;<  ~  bind:m
+    (ex-resources %mock [/agent/wire [%ames %keen spar]]^`[%ames %keen `~] ~)
+  ;<  moz=(list move:gall)  bind:m
+    (do-call ~ %nuke %mock)
+  ;<  ~  bind:m
+    %+  ex-moves  moz  ~
+  ;<  y=yoke:gall  bind:m  (get-yoke %mock)
+  ;<  ~  bind:m
+    (ex-equal !>(-.y) !>(%nuke))
+  =/  =brood:gall  [path.spar 1 2 3]
+  ;<  moz=(list move:gall)  bind:m
+          (do-take [plea-wire ~[/sysduct]] %ames %boon %0 `brood)
+  (ex-moves moz ~)
 ::
 ++  test-nuke-closes-resources
   %-  eval-mare
