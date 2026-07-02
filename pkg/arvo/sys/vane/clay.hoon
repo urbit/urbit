@@ -3275,12 +3275,11 @@
       ?.  =(%held liv.dom)  ..park
       (emit hen %pass /park-held/[syd] %b %wait now)
     =/  ped=(set perm:gall)  get-seal
-    ::TODO  instead, run permission check against would-be new granted set
-    ::      using +have:guard:gall to account for superset permissions
-    =/  in-per  (~(any in pes) |=(p=perm:gall (~(has in ped) p)))
-    ?:  &(=(%live liv.dom) in-per)
+    =/  peg      (~(dif in peg.dom) pes)
+    =/  allowed  (levy ~(tap in ped) (cury have:guard:gall peg))
+    ?:  &(=(%live liv.dom) !allowed)
       (mean leaf+"clay: can't remove required permissions: desk is %live, suspend first" ~)
-    (send-ward(peg.dom (~(dif in peg.dom) pes)) syd)
+    (send-ward(peg.dom peg) syd)
   ::
   ++  set-zest                                          ::  [goad] <
     |=  liv=zest
