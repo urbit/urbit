@@ -4,6 +4,8 @@
 /*  lib-skel  %hoon  /lib/skeleton/hoon
 /*  mar-noun  %hoon  /mar/noun/hoon
 /*  mar-hoon  %hoon  /mar/hoon/hoon
+/*  mar-mime  %hoon  /mar/mime/hoon
+/*  mar-seal  %hoon  /mar/seal/hoon
 /*  mar-txt   %hoon  /mar/txt/hoon
 /*  mar-kel   %hoon  /mar/kelvin/hoon
 /*  mar-bill  %hoon  /mar/bill/hoon
@@ -240,7 +242,14 @@
     ^-  (list [path (each page:clay lobe:clay)])
     ;:  welp
       ?:  =(%base desk)
-        [/sys/zuse/hoon [%& hoon+(zuse-upd ?@(kel kel i.kel))]]~
+        :~  [/mar/noun/hoon [%& hoon+mar-noun]]
+            [/mar/hoon/hoon [%& hoon+mar-hoon]]
+            [/mar/mime/hoon [%& hoon+mar-mime]]
+            [/mar/bill/hoon [%& hoon+mar-bill]]
+            [/mar/seal/hoon [%& hoon+mar-seal]]
+            [/mar/kelvin/hoon [%& hoon+mar-kel]]
+            [/sys/zuse/hoon [%& hoon+(zuse-upd ?@(kel kel i.kel))]]
+        ==
       ?.  =(%foo desk)  ~
       :~  [/app/bar/hoon [%& agent]]
           [/desk/bill [%& noun+:~(%bar)]]
@@ -509,8 +518,8 @@
 ++  pers-n  (cork (curr scag def-perms) sy)
 ++  def-perms
   ^-  (list perm:gall)
-  :~  [%behn ~]
-      [%eyre ~]
+  :~  [%behn %timer ~]
+      [%eyre %setup ~]
   ==
 ++  desk-seal
   |=  pern=@ud
@@ -1481,7 +1490,7 @@
   ;<  ~                 bind:m
     %+  expect-moves  mov4
     ::  not passing perms here, already got %ward on %seal
-    (ex-kernel-build ~ [[%foo | ~ ~ (silt :~([%eyre ~]))] ~])
+    (ex-kernel-build ~ [[%foo | ~ ~ (silt :~([%eyre %setup ~]))] ~])
   ;<  ~        bind:m  (do-zeal [%foo %held]~)
   ;<  ~                 bind:m  (set-kelvin 406)
   ;<  mov5=(list move)  bind:m  do-pork
