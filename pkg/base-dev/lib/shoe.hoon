@@ -377,18 +377,9 @@
     ?:  =(/x/sole/sessions path)
       :^    ~
           ~
-        %noun
-      !>  ^-  (map sole-id sole-share)
-      soles
-    ?:  =(/x/sole/sessions/json path)
-      :^    ~
-          ~
-        %json
-      !>  ^-  json
-      :-  %a
-      %+  turn
-        ~(tap in ~(key by soles))
-      |=([who=@p ses=@ta] s+ses)
+        %sole-sessions
+      !>  ^-  (set sole-id)
+      ~(key by soles)
     ?.  =(/x/dbug/state path)  (on-peek:og path)
     ``noun+(slop on-save:og !>(shoe=state))
   ::
