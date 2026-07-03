@@ -28,6 +28,20 @@
 ++  test-sin-pi    (expect-eq !>(`@`0x13ed) !>((sh `@rh`0x4248)))
 ++  test-cos-1     (expect-eq !>(`@`0x3853) !>((ch `@rh`0x3c00)))
 ++  test-tan-1     (expect-eq !>(`@`0x3e3a) !>((th `@rh`0x3c00)))
+::  large-|x| regression: the native-@rh reduction (pre-fix) corrupted qf
+::  once q=round(|x|*2/pi) exceeded @rh's 2048 exact-integer ceiling
+::  (|x|~500), producing 4-11 order-of-magnitude-wrong "ULP" errors by
+::  these points -- see NEXT-STEPS.md.  Expected = f32 sin/cos/tan of the
+::  widened value, rounded once to f16 (numpy float16 of the true value).
+++  test-sin-large-1  (expect-eq !>(`@`0x3aa7) !>((sh `@rh`0x6a53)))  :: x=3238
+++  test-cos-large-1  (expect-eq !>(`@`0xb871) !>((ch `@rh`0x6a53)))
+++  test-tan-large-1  (expect-eq !>(`@`0xbdfe) !>((th `@rh`0x6a53)))
+++  test-sin-large-2  (expect-eq !>(`@`0xb7fd) !>((sh `@rh`0x6e1f)))  :: x=6268
+++  test-cos-large-2  (expect-eq !>(`@`0xbaef) !>((ch `@rh`0x6e1f)))
+++  test-tan-large-2  (expect-eq !>(`@`0x389c) !>((th `@rh`0x6e1f)))
+++  test-sin-large-3  (expect-eq !>(`@`0xbc00) !>((sh `@rh`0x793e)))  :: x=42944
+++  test-cos-large-3  (expect-eq !>(`@`0x9261) !>((ch `@rh`0x793e)))
+++  test-tan-large-3  (expect-eq !>(`@`0x6504) !>((th `@rh`0x793e)))
 ++  test-atan-1    (expect-eq !>(`@`0x3a48) !>((ath `@rh`0x3c00)))
 ++  test-atan-2    (expect-eq !>(`@`0x3c6e) !>((ath `@rh`0x4000)))
 ++  test-asin-half  (expect-eq !>(`@`0x3830) !>((ash `@rh`0x3800)))

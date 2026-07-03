@@ -613,8 +613,64 @@
     ::  Source
     ++  tan
       ~/  %tan
+      ::  Dedicated kernel (faithful, ~0.94 ULP; the sin/cos ratio was ~1.2
+      ::  ULP).  q*pi/2 reduction (same 3-part split as +sin/+cos), odd q
+      ::  uses the -cot path.  See +rs-tan.  No @rh/@rq equivalent: @rh's
+      ::  11-bit mantissa can't support a multi-step kernel beating the
+      ::  ratio, and @rq's series needs 45+ growing-magnitude terms that
+      ::  destabilize native chained rounding -- see NEXT-STEPS.md.
       |=  x=@rs  ^-  @rs
-      (div (sin x) (cos x))
+      (main:rs-tan x)
+    ::  +rs-tan: dedicated tangent kernel for the @rs door, see +tan.
+    ++  rs-tan
+      |%
+      ++  redq
+        |=  ax=@rs  ^-  [q=@s rhi=@rs rlo=@rs]
+        =/  q   (need (~(toi ^rs %n) (~(mul ^rs %n) ax `@rs`0x3f22.f983)))
+        =/  qf  (~(sun ^rs %n) (abs:si q))
+        =/  r1  (~(sub ^rs %n) ax (~(mul ^rs %n) qf `@rs`0x3fc9.0000))
+        =/  r2  (~(sub ^rs %n) r1 (~(mul ^rs %n) qf `@rs`0x39fd.a000))
+        =/  w   (~(mul ^rs %n) qf `@rs`0x33a2.2169)
+        =/  rhi  (~(sub ^rs %n) r2 w)
+        =/  rlo  (~(sub ^rs %n) (~(sub ^rs %n) r2 rhi) w)
+        [q rhi rlo]
+      ::  +ktan:  [x=rhi y=rlo iy] -> @rs   (tan of the reduced small angle;
+      ::  iy=--1 wants tan directly, iy=-1 wants -cot via reciprocal).
+      ::  Q(z) = (tan(r)/r - 1)/z, Chebyshev-fit over z=r^2 in [0,(pi/4)^2]
+      ::  (7 coeffs, degree 6 -- more coeffs don't reduce the measured error
+      ::  further, it's dominated by chained-rounding, not truncation).  The
+      ::  dominant linear term x is added LAST (w2 = x+r, not folded into
+      ::  the polynomial product) -- this ordering, mirroring fdlibm's own
+      ::  kernel_tan, is what keeps this faithful; multiplying x through the
+      ::  whole polynomial first measured ~1.5 ULP instead of ~0.94.
+      ++  ktan
+        |=  [x=@rs y=@rs iy=@s]  ^-  @rs
+        =/  z   (~(mul ^rs %n) x x)
+        =/  cs=(list @rs)
+          :~  `@rs`0x3b7b.dd30  `@rs`0x3a9b.5ccb  `@rs`0x3c23.3846
+              `@rs`0x3cb1.1eca  `@rs`0x3d5d.294d  `@rs`0x3e08.8844
+              `@rs`0x3eaa.aaab
+          ==
+        =/  acc  (roll cs |=([c=@rs a=@rs] (~(add ^rs %n) (~(mul ^rs %n) a z) c)))
+        =/  s        (~(mul ^rs %n) z x)
+        =/  corrpoly  (~(mul ^rs %n) s acc)
+        =/  rlocorr  (~(mul ^rs %n) y (~(add ^rs %n) `@rs`0x3f80.0000 z))
+        =/  rr       (~(add ^rs %n) corrpoly rlocorr)
+        =/  w2       (~(add ^rs %n) x rr)
+        ?:  =(iy --1)  w2
+        (~(div ^rs %n) `@rs`0xbf80.0000 w2)
+      ++  main
+        |=  x=@rs  ^-  @rs
+        ?:  !(~(equ ^rs %n) x x)  `@rs`0x7fc0.0000
+        ?:  |(=(x `@rs`0x7f80.0000) =(x `@rs`0xff80.0000))  `@rs`0x7fc0.0000
+        ?:  |(=(x `@rs`0x0) =(x `@rs`0x8000.0000))  x
+        =/  neg  (rsh [0 31] x)
+        =/  ax   `@rs`(dis x 0x7fff.ffff)
+        =/  red  (redq ax)
+        =/  iy   ?:(=(0 (dis (abs:si q.red) 1)) --1 -1)
+        =/  t    (ktan rhi.red rlo.red iy)
+        ?:(=(neg 1) (~(sub ^rs %n) `@rs`0x0 t) t)
+      --
     ::  +asin:  @rs -> @rs
     ::
     ::  Returns the inverse sine of a floating-point atom.
@@ -2818,13 +2874,20 @@
     ::  Source
     ++  sin
       ~/  %sin
-      ::  native f16: q*pi/2 reduction + fdlibm sin/cos kernels (see +rh-trig).
+      ::  native f16 reduction is unsafe past |x|~500 (q=round(|x|*2/pi)
+      ::  exceeds @rh's 2048 exact-integer ceiling, corrupting qf and hence
+      ::  the whole reduction -- see NEXT-STEPS.md).  Fixed by computing in
+      ::  the (more precise) @rs door -- exact widen via +widen-hs, @rs's own
+      ::  24-bit-mantissa reduction stays exact up to q~2^24, vastly beyond
+      ::  anything @rh's dynamic range (max ~65504) can demand -- then a
+      ::  single correctly-rounded narrow via +narrow-sh.
       |=  x=@rh  ^-  @rh
       ?:  !(~(equ ^rh %n) x x)  `@rh`0x7e00                       :: NaN
       ?:  |(=(x `@rh`0x7c00) =(x `@rh`0xfc00))  `@rh`0x7e00       :: +-inf
       ?:  |(=(x `@rh`0x0) =(x `@rh`0x8000))  x                    :: +-0 -> +-0
-      %-  trig-fin:rh-trig
-      [%.y `@rh`(dis x 0x7fff) (rsh [0 15] x)]
+      =/  wide  `@rs`(widen-hs x)
+      =/  wsin  (~(sin rs [%n .1e-5 .0]) wide)
+      `@rh`(narrow-sh wsin)
     ::    +cos:  @rh -> @rh
     ::
     ::  Returns the cosine of a floating-point atom.
@@ -2838,53 +2901,13 @@
     ::  Source
     ++  cos
       ~/  %cos
+      ::  see +sin: same large-argument reduction fix, computed via @rs.
       |=  x=@rh  ^-  @rh
       ?:  !(~(equ ^rh %n) x x)  `@rh`0x7e00
       ?:  |(=(x `@rh`0x7c00) =(x `@rh`0xfc00))  `@rh`0x7e00
-      %-  trig-fin:rh-trig
-      [%.n `@rh`(dis x 0x7fff) 0]
-    ::  +rh-trig: native f16 sin/cos engine (fdlibm kernels, 2-coeff each).
-    ++  rh-trig
-      |%
-      ++  sc  ^-((list @rh) :~(`@rh`0xb155 `@rh`0x2044))
-      ++  cc  ^-((list @rh) :~(`@rh`0x2955 `@rh`0x95b0))
-      ++  neg  |=(a=@rh ^-(@rh (~(sub ^rh %n) `@rh`0x0 a)))
-      ++  ksin
-        |=  [xx=@rh yy=@rh]  ^-  @rh
-        =/  z   (~(mul ^rh %n) xx xx)
-        =/  r   (roll (flop (tail sc)) |=([c=@rh a=@rh] (~(add ^rh %n) (~(mul ^rh %n) a z) c)))
-        =/  v   (~(mul ^rh %n) z xx)
-        =/  aa  (~(sub ^rh %n) (~(mul ^rh %n) `@rh`0x3800 yy) (~(mul ^rh %n) v r))
-        =/  bb  (~(sub ^rh %n) (~(mul ^rh %n) z aa) yy)
-        =/  dd  (~(sub ^rh %n) bb (~(mul ^rh %n) v (head sc)))
-        (~(sub ^rh %n) xx dd)
-      ++  kcos
-        |=  [xx=@rh yy=@rh]  ^-  @rh
-        =/  z   (~(mul ^rh %n) xx xx)
-        =/  rc  (roll (flop cc) |=([c=@rh a=@rh] (~(add ^rh %n) (~(mul ^rh %n) a z) c)))
-        =/  hz  (~(mul ^rh %n) `@rh`0x3800 z)
-        =/  w2  (~(sub ^rh %n) `@rh`0x3c00 hz)
-        =/  aa  (~(sub ^rh %n) (~(sub ^rh %n) `@rh`0x3c00 w2) hz)
-        =/  bb  (~(sub ^rh %n) (~(mul ^rh %n) (~(mul ^rh %n) z z) rc) (~(mul ^rh %n) xx yy))
-        (~(add ^rh %n) w2 (~(add ^rh %n) aa bb))
-      ::  +trig-fin: [is-sin? |x| sign-bit] -> sin x (is-sin?) or cos x
-      ++  trig-fin
-        |=  [s=? ax=@rh sb=@]  ^-  @rh
-        =/  q   (need (~(toi ^rh %n) (~(mul ^rh %n) ax `@rh`0x3918)))
-        =/  qf  (~(sun ^rh %n) (abs:si q))
-        =/  r1  (~(sub ^rh %n) ax (~(mul ^rh %n) qf `@rh`0x3e00))
-        =/  r2  (~(sub ^rh %n) r1 (~(mul ^rh %n) qf `@rh`0x2c80))
-        =/  w   (~(mul ^rh %n) qf `@rh`0xfed)
-        =/  rhi  (~(sub ^rh %n) r2 w)
-        =/  rlo  (~(sub ^rh %n) (~(sub ^rh %n) r2 rhi) w)
-        =/  m   (dis (abs:si q) 3)
-        =/  ks  (ksin rhi rlo)
-        =/  kc  (kcos rhi rlo)
-        ?:  s
-          =/  v  ?:(=(m 0) ks ?:(=(m 1) kc ?:(=(m 2) (neg ks) (neg kc))))
-          ?:(=(sb 1) (neg v) v)
-        ?:(=(m 0) kc ?:(=(m 1) (neg ks) ?:(=(m 2) (neg kc) ks)))
-      --
+      =/  wide  `@rs`(widen-hs x)
+      =/  wcos  (~(cos rs [%n .1e-5 .0]) wide)
+      `@rh`(narrow-sh wcos)
     ::    +tan:  @rh -> @rh
     ::
     ::  Returns the tangent of a floating-point atom.
