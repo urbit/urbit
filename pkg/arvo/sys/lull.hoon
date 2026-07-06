@@ -4688,7 +4688,10 @@
           [%eyre %cache *]
         =/  pars  ;~(pfix fas (more fas smeg:guard))
         =/  segs  (pars [1 1] (trip url.res))
-        ?~  q.segs  [%eyre %serve /]~   ::  review: should crash or return [%eyre %serve /]?
+        ::NOTE  technically not possible to hit the "failed to parse" case here,
+        ::      because we previously parsed in +must:guard. so doesn't matter
+        ::      what we return here; perm for root is safest.
+        ?~  q.segs  [%eyre %serve /]~
         [%eyre %serve p.u.q.segs]~
       ::
         [%iris %request]    [%iris %fetch ~]~
@@ -4700,8 +4703,10 @@
         [%jael %privy ~]~
       ::
         [%lick %spin *]     [%lick %ports ~]~
-        ::  khan thread resource is never deflated
-        ::    keep resource to deliver gift
+      ::
+        ::  khan thread resource is never deflated,
+        ::  keep resource to deliver gift
+        ::
         [%khan %thread *]   ~
       ==
     --

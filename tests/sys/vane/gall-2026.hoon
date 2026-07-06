@@ -746,6 +746,9 @@
   :~  [/agent/wire %lick %spin /mysocket]^~
   ==
 ::
+::TODO  write a test that is the server-side end of this, which we test for
+::      receiving this [%keen spar] and ensuring that it produces the %boon
+::      that we simulate here
 ++  test-keen-request
   %-  eval-mare
   ;<  *  bind:m  do-load-mock-super

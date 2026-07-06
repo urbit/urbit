@@ -2024,6 +2024,12 @@
         %~  key  by
         (deps:prune our perms ~(tap in resources.yoke) resource-deets.yoke)
       ::
+      ::TODO  both cases below need to notify the agent about the resources
+      ::      that they're dropping/deleting due to perms. (the resources
+      ::      dropped by .allow-res/+deps:prune).
+      ::      probably want a separate loop for that ahead of the other
+      ::      reinflation logic
+      ::
       ::NOTE  tmi...
       ?:  ?|  =(%& -.agent.yoke)        ::  running, or
               ?=([%| %| *] agent.yoke)  ::  dirty suspend
@@ -2043,7 +2049,12 @@
         ?~  kick-res  ap-core
         ?~  tac=(drop-resource:track i.kick-res resource-deets.yoke)
           $(kick-res t.kick-res)
+        ::  +reqs:prune will always allow %ames resources.
+        ::  we never want to produce any here due to +ap-from-internal api
+        ::
         ?<  ?=(%ames -.u.tac)  ::  see +drop-resource
+        ::NOTE  we bypass +ap-handle-result, do (essentially) the
+        ::      +ap-handle-resource bookkeeping directly here
         =.  ap-core  (ap-move (ap-from-internal [%pass wire.i.kick-res %arvo u.tac]))
         =.  resources.yoke       (~(del in resources.yoke) i.kick-res)
         =.  resource-deets.yoke  (~(del by resource-deets.yoke) i.kick-res)
@@ -2116,6 +2127,9 @@
         ?~  sec.det
           (ap-pass wire.res %jump %a %keen ~ spar.res)
         ?~  u.sec.det  ap-core  ::  encrypted keen awaiting key
+        ::TODO  if it's safe, want to store the key if we've received it and
+        ::      use it here to re-start from the exact point we left off:
+        ::      requesting with the received key
         ?:  +.u.sec.det
           ::  brood resolved with no key while suspended
           (ap-generic-take | ~ wire.res %ames %sage spar.res ~)
