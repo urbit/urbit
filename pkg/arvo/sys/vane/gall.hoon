@@ -1320,6 +1320,8 @@
       |=  [=wire =ship =(pole knot)]
       ^+  ap-core
       ?.  ?=([%g %x cas=@ app=@ rest=*] pole)
+        ::  TODO: call bad %sage result?
+        ::  api could be changed so this would not happened
         %.  ap-core
         %+  trace  odd.veb.bug.state
         &+"brood request {<pole>} invalid, dropping"
@@ -1353,7 +1355,7 @@
           =?  ap-core  ?=(%& -.agent.yoke)
             (ap-generic-take | ~ -.i.res %ames %sage [ship t.wire] ~)
           =?  resource-deets.yoke  ?=(%| -.agent.yoke)
-            (~(put by resource-deets.yoke) i.res %ames %keen ``&)
+            (~(put by resource-deets.yoke) i.res %ames %keen ``~)
           $(res t.res)
         ::  now that we have the key, request the data
         ::NOTE  we don't store the key, accounting for rekeys etc
@@ -1361,9 +1363,9 @@
         ::
         =.  resource-deets.yoke
           ?>  (~(has by resource-deets.yoke) i.res)
-          (~(put by resource-deets.yoke) i.res [%ames %keen ``|])
+          (~(put by resource-deets.yoke) i.res [%ames %keen ```[idx key]:hutch.u.bod.bud])
         =?  ap-core   ?=(%& -.agent.yoke)
-          (ap-pass -.i.res %jump %a %keen `[idx key]:hutch.u.bod.bud ship t.wire)
+          (ap-pass -.i.res %arvo %ames %keen & ship t.wire)
         $(res t.res)
       ::
           [%ames %done *]
@@ -1372,7 +1374,7 @@
         |-
         ?~  res  ap-core
         =?  resource-deets.yoke  ?=(%| -.agent.yoke)
-          (~(put by resource-deets.yoke) i.res %ames %keen ``&)
+          (~(put by resource-deets.yoke) i.res %ames %keen ``~)
         =?  ap-core  ?=(%& -.agent.yoke)  ::REVIEW  produce trace when agent is supended?
           %.  (ap-generic-take | ~ -.i.res %ames %sage [ship t.wire] ~)
           %+  trace  odd.veb.bug.state
@@ -1436,7 +1438,7 @@
         |=  res=arvo-resource
         ?~  tac=(drop-resource:track res resource-deets.yoke)  ~
         ?:  ?=([%ames %yawn *] u.tac)
-          (ap-from-internal %pass wire.res %jump %a +.u.tac)
+          (ap-from-internal %pass wire.res %arvo %ames +.u.tac)
         ?<  ?=(%ames -.u.tac)  ::  see +drop-resource
         (ap-from-internal %pass wire.res %arvo u.tac)
       ==
@@ -1482,12 +1484,12 @@
       ^+  ap-core
       ?:  secret
         (ap-request-brood wire spar)
-      (ap-pass wire %jump %a %keen ~ spar)
+      (ap-pass wire %arvo %ames %keen | spar)
     ::
     ++  ap-yawn
       |=  [=wire =spar:ames]
       ^+  ap-core
-      (ap-pass wire %jump %a %yawn spar)
+      (ap-pass wire %arvo %ames %yawn spar)
     ::  +ap-tend: bind path in namespace, encrypted
     ::
     ++  ap-tend
@@ -1615,10 +1617,9 @@
     ::
     +$  carp  $+  carp  (wind neet gift:agent)
     +$  tick
-      ::  remote scry already processed, exclude those cards
       $%  $<(%ames task-user-v1)
       $:  %ames
-          $<  ?(%keen %yawn %grow %tomb %cull %tend %germ %snip)
+          $<  ?(%grow %tomb %cull %tend %germ %snip)
           _+:*$>(%ames task-user-v1)
       ==  ==
     +$  real-neet  $+  real-neet
@@ -1749,7 +1750,14 @@
           ::
               %arvo
             ?-  +.neet
-              [%ames *]        [%a +>.neet]
+              [%ames *]
+            ?.  ?=(%keen +>-.neet)  [%a +>.neet]
+            =/  det  (~(got by resource-deets.yoke) p.card %ames %keen spar.neet)
+            ?>  ?=([%ames %keen *] det)
+            ?~  sec.det   [%a %keen ~ spar.neet]
+            ?~  resolved.u.sec.det  ~|([%bad-gall-bookkeeping %expect-brood-resolved] !!)
+            ?~  key.u.resolved.u.sec.det  ~|([%bad-gall-bookkeeping %missing-keen-key] !!)
+            [%a %keen key.u.resolved.u.sec.det spar.neet]
               [%behn *]        [%b +>.neet]
             ::
                 [%clay *]
@@ -2125,12 +2133,12 @@
         =+  det=(~(got by resource-deets.yoke) res)
         ?>  ?=([%ames %keen *] det)
         ?~  sec.det
-          (ap-pass wire.res %jump %a %keen ~ spar.res)
-        ?~  u.sec.det  ap-core  ::  encrypted keen awaiting key
+          (ap-pass wire.res %arvo %ames %keen | spar.res)
+        ?~  resolved.u.sec.det  ap-core  ::  encrypted keen awaiting key
         ::TODO  if it's safe, want to store the key if we've received it and
         ::      use it here to re-start from the exact point we left off:
         ::      requesting with the received key
-        ?:  +.u.sec.det
+        ?~  key.u.resolved.u.sec.det
           ::  brood resolved with no key while suspended
           (ap-generic-take | ~ wire.res %ames %sage spar.res ~)
         ::  got key while suspended, reset to pending and re-request brood

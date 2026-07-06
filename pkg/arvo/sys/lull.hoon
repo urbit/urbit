@@ -3741,7 +3741,7 @@
   ::
   +$  resource-deet
     $~  [%jael %keys %private]
-    $%  [%ames %keen sec=(unit resolved=(unit mis=?))]  ::  mis - pen resolved, key is missing
+    $%  [%ames %keen sec=(unit resolved=(unit key=(unit [idx=@ key=@])))]
         [%eyre %binding wat=$@(term generator:eyre)]
         [%eyre %cache entry=cache-entry:eyre]
         [%clay %warp =ship =desk =rave:clay]
@@ -3848,7 +3848,7 @@
       ?-  +.res
         [%ames %keen *]     =+  d=(~(got by dets) res)
                             ?>  ?=([%ames %keen *] d)
-                            ?.  |(=(~ sec.d) ?=([~ ~ @] sec.d))  ~
+                            ?.  |(=(~ sec.d) ?=([~ ~ ~ *] sec.d))  ~
                             `[%ames %yawn spar.res]
         [%behn %wait *]     `[%behn %rest time.res]
         [%clay %warp *]     `[%clay %rest id.res]
@@ -4085,6 +4085,7 @@
           ::
             ::NOTE  not actually into %ames, just gall-side namespace management
             ::      (per-agent namespace)
+            :: review: [%keen secret=(each [cas=@ app=@tas spar:ames] spar:ames)]
             [%keen secret=? =spar:ames]
             [%yawn =spar:ames]
             [%grow =spur =page]

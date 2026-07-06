@@ -787,7 +787,7 @@
           %+  ex-moves  moz
           :~  (ex-move ~[/sysduct] %pass gall-wire [%a %keen sec=`+.hutch.brood spar])
           ==
-        (ex-resources %mock [/agent/wire [%ames %keen spar]]^`[%ames %keen ``|] ~)
+        (ex-resources %mock [/agent/wire [%ames %keen spar]]^`[%ames %keen ```[idx key]:hutch.brood] ~)
     ==
   |=  ~
   ::TODO  emit a second request? response should come back on all requests
@@ -882,7 +882,7 @@
               (do-take [plea-wire ~[/sysduct]] %ames %boon %0 ~)
             ;<  ~  bind:m  (ex-moves moz ~)
             ;<  ~  bind:m
-              (ex-resources %mock [/agent/wire [%ames %keen spar]]^`[%ames %keen ``&] ~)
+              (ex-resources %mock [/agent/wire [%ames %keen spar]]^`[%ames %keen ``~] ~)
             ;<  moz=(list move:gall)  bind:m
               do-load-mock-super
             ;<  ~  bind:m
