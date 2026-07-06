@@ -1626,7 +1626,6 @@
       $%  [%agent [=ship name=term] task=$%(task:agent [%raw-poke =mark =noun])]
           [%arvo tick]
           [%huck [=ship name=term] note-arvo=[%b %huck sign-arvo=[%gall %unto %kick ~]]]
-          [%jump =note-arvo]  ::  "out" for doing sys stuff post-post-processing on agent behalf
       ==
     +$  neet  $+  neet
       $%  real-neet
@@ -1711,7 +1710,6 @@
           ?-  -.neet
             %agent  [%out (scot %p ship.neet) name.neet wire]
             %huck   [%out (scot %p ship.neet) name.neet wire]
-            %jump   [%hug (scot %p ship.attributing.agent-routes) %$ wire]
             %arvo   =-  ?:  ?=(%syscall +<.neet)  -
                         [%hug -]
                     :+  (scot %p ship.attributing.agent-routes)  ::REVIEW  mb change?
@@ -1745,7 +1743,6 @@
           =/  prov=path  /gall/[from]
           ?-  -.neet
             %huck   note-arvo.neet
-            %jump   note-arvo.neet
             %agent  [%g %deal [our ship.neet prov] [name task]:neet]
           ::
               %arvo
@@ -2860,7 +2857,7 @@
         [%pass * %arvo %ames %germ *]  $(caz t.caz, ap-core (ap-germ +>+.q.i.caz))
         [%pass * %arvo %ames %snip *]  $(caz t.caz, ap-core (ap-snip +>+.q.i.caz))
       ::
-        ::  state changes _and_ +ap-pass of the corresponding %jump
+        ::  state changes _and_ +ap-pass of the corresponding tasks
         [%pass * %arvo %ames %keen *]  $(caz t.caz, ap-core (ap-keen p.i.caz +>+.q.i.caz))
         [%pass * %arvo %ames %yawn *]  $(caz t.caz, ap-core (ap-yawn p.i.caz +>+.q.i.caz))
         :: [%pass * ?(%agent %arvo %pyre) *]  $(caz t.caz, fex [i.caz fex])
