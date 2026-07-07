@@ -296,5 +296,20 @@
     (make-parser-fail-test '|@  [a * *]  ++  a  0  ++  b  1  ++  c  2  --')
     (make-parser-fail-test '|@  :*  a  b  ++  a  0  ++  b  1  --')
     (make-parser-fail-test '|@  [a b  ++  a  0  ++  b  1  --')
+  ::
+    (make-parser-test '|%  ++  a  0  --' [%brcn %gold ~ (my [%a z] ~)])
+    (make-parser-test '|%  |  ++  a  0  --' [%brcn %iron ~ (my [%a z] ~)])
+    (make-parser-test '|%  ?  ++  a  0  --' [%brcn %lead ~ (my [%a z] ~)])
+    (make-parser-test '|%  ++  a  0  ++  b  1  --' [%brcn %gold ~ (my [%a z] [%b o] ~)])
+    (make-parser-test '|%  [a b]  ++  a  0  ++  b  1  --' [%brcn %gold `[%a %b] (my [%a z] [%b o] ~)])
+    (make-parser-test '|%  [a *]  ++  a  0  ++  b  1  --' [%brcn %gold `[%a `~] (my [%a z] [%b o] ~)])
+    (make-parser-test '|%  |  [a *]  ++  a  0  ++  b  1  --' [%brcn %iron `[%a `~] (my [%a z] [%b o] ~)])
+    (make-parser-test '|%  :*(a b)  ++  a  0  ++  b  1  --' [%brcn %gold `[%a %b] (my [%a z] [%b o] ~)])
+    (make-parser-test '|%  :*(a *)  ++  a  0  ++  b  1  --' [%brcn %gold `[%a `~] (my [%a z] [%b o] ~)])
+    (make-parser-test '|%  :*  a  b  ==  ++  a  0  ++  b  1  --' [%brcn %gold `[%a %b] (my [%a z] [%b o] ~)])
+    (make-parser-test '|%  ?  :*  a  b  ==  ++  a  0  ++  b  1  --' [%brcn %lead `[%a %b] (my [%a z] [%b o] ~)])
+    (make-parser-test '|%  :*  a  *  ==  ++  a  0  ++  b  1  --' [%brcn %gold `[%a `~] (my [%a z] [%b o] ~)])
+    (make-parser-test '|%  [[a b] c]  ++  a  0  ++  b  1  ++  c  2  --' [%brcn %gold `[[%a %b] %c] (my [%a z] [%b o] [%c t] ~)])
+    (make-parser-test '|%  :*  [a b]  c  ==  ++  a  0  ++  b  1  ++  c  2  --' [%brcn %gold `[[%a %b] %c] (my [%a z] [%b o] [%c t] ~)])
   ==
 --

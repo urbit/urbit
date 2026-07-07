@@ -5,7 +5,7 @@
 +$  tag
   $:  tol=?
       $=  dat
-      $@  $?  %ace   %gap   %per   %dot   %com   %sel   %ser   %tar
+      $@  $?  %ace   %gap   %per   %dot   %com   %sel   %ser   %tar  %bar  %wut
               %coma  %stis  %slus  %shep
               %axis  %lark  %skip
               ::TODO  %sym
@@ -24,7 +24,7 @@
   ==
 ::
 +$  toke
-  $@  ?(%ace %gap %dot %per %sel %ser %tar %coma %stis %slus %shep)
+  $@  ?(%ace %gap %dot %per %sel %ser %tar %bar %wut %coma %stis %slus %shep)
   $%  [%limb =limb]
     ::
       [%atom tol=? const=? =aura a=@]  ::  %atomw + %atomt
@@ -48,7 +48,7 @@
   ::NOTE  important that %atomw is before %atomt,
   ::      if ambiguous we prefer the former
   %.  ^-  (list $@(term (pair term tag)))
-      :~  ace+|+%ace    gap+&+%gap    per+|+%per    dot+|+%dot  com+|+%com  sel+|+%sel  ser+|+%ser   tar+|+%tar
+      :~  ace+|+%ace    gap+&+%gap    per+|+%per    dot+|+%dot  com+|+%com  sel+|+%sel  ser+|+%ser   tar+|+%tar  bar+|+%bar  wut+|+%wut
           coma+|+%coma  stis+&+%stis  slus+&+%slus  shep+|+%shep
           axis+|+%axis  lark+|+%lark  skip+|+%skip
           ::  %sym
@@ -106,6 +106,14 @@
     :-  %tar
     '''
     '*'
+    '''
+    :-  %bar
+    '''
+    '|'
+    '''
+    :-  %wut
+    '''
+    '?'
     '''
   ::
     :-  %coma
@@ -377,7 +385,7 @@
     ::
     ^-  toke
     ?+  dat.tag  [dat.tag tol.tag]
-      ?(%ace %gap %dot %per %sel %ser %tar %coma %stis %slus %shep)  dat.tag
+      ?(%ace %gap %dot %per %sel %ser %tar %bar %wut %coma %stis %slus %shep)  dat.tag
     ::
         [%atom *]
       :-  %atom
@@ -538,7 +546,20 @@
                     =+  tall(st move)  ?@  -  ~  =>  [clu=u +(st s)]
                     =+  (expect %gap)  ?@  -  ~  =>  +(st s)
                     =+  tall           ?@  -  ~  [[%sggr [a.t clu] u] s]
-      [%brcn %&]    !!  ::TODO
+      [%brcn %&]    =+  variance(st move)     ?@  -  ~  =>  [v=u +(st s)]
+                    =+  any-layout            ?@  -  ~  =>  [l=n +(st s)]
+                    =+  (expect %slus)        ?@  -  ~  =>  +(st s)
+                    =+  %+  (most (pair term naty))
+                          |=(t=toke ?=(%slus t))
+                        |=  s=_st
+                        =+  peek(st s)          ?@  -  ~  =>  [t=u +(st s)]
+                        ?.  ?=([%limb %| %0 ~ @] t)    ~  =>  [a=u.q.limb.t +(st move)]
+                        =+  (expect %gap)       ?@  -  ~  =>  +(st s)
+                        =+  tall                ?@  -  ~  =>  [b=u +(st s)]
+                        =+  (expect %gap)       ?@  -  ~  [[a b] s]
+                                              ?@  -  ~  =>  [b=u +(st s)]
+                    =+  (expect %shep)        ?@  -  ~  =>  +(st s)
+                    ?~  cor=(validate-layout l b)    ~  [[%brcn v u.cor] st]
       [%brpt %&]    =+  any-layout(st move)   ?@  -  ~  =>  [l=n +(st s)]
                     =+  (expect %slus)        ?@  -  ~  =>  +(st s)
                     =+  %+  (most (pair term naty))
@@ -774,6 +795,15 @@
         ?(%sel [%cltr %|])
       =+  wide-layout    ?@  -  ~  =>  [l=u +(st s)]
       =+  (expect %gap)  ?@  -  ~  [`l s]
+    ==
+  ::
+  ++  variance
+    ^-  (mandatory ?(%gold %iron %lead) _st)
+    =+  peek                            ?@  -  ~  =>  [t=u +(st s)]
+    ::NOTE  intentionally not moving post-peek
+    ?+  t  [%gold st]
+      %bar  =+  (expect(st move) %gap)  ?@  -  ~  [%iron s]
+      %wut  =+  (expect(st move) %gap)  ?@  -  ~  [%lead s]
     ==
   ::
   ++  nullable-c  :: nullable grammar arm with certainly cellular product
