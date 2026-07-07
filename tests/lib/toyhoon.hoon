@@ -294,5 +294,7 @@
     (make-parser-fail-test '|@  [a c]  ++  a  0  ++  b  1  --')
     (make-parser-fail-test '|@  [a c]  ++  a  0  ++  b  1  ++  c  2  --')
     (make-parser-fail-test '|@  [a * *]  ++  a  0  ++  b  1  ++  c  2  --')
+    (make-parser-fail-test '|@  :*  a  b  ++  a  0  ++  b  1  --')
+    (make-parser-fail-test '|@  [a b  ++  a  0  ++  b  1  --')
   ==
 --

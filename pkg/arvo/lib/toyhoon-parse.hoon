@@ -539,9 +539,7 @@
                     =+  (expect %gap)  ?@  -  ~  =>  +(st s)
                     =+  tall           ?@  -  ~  [[%sggr [a.t clu] u] s]
       [%brcn %&]    !!  ::TODO
-      [%brpt %&]    =^  l  st  any-layout(st move)
-                    =+  ?:(?=(^ l) (expect %gap) s=st)  ::REVIEW  gap jank
-                                              ?@  -  ~  =>  +(st s)
+      [%brpt %&]    =+  any-layout(st move)   ?@  -  ~  =>  [l=n +(st s)]
                     =+  (expect %slus)        ?@  -  ~  =>  +(st s)
                     =+  %+  (most (pair term naty))
                           |=(t=toke ?=(%slus t))
@@ -766,12 +764,21 @@
   ::
   ++  any-layout
     ^-  (nullable-a layout _st)
-    =+  peek            ?@  -  [~ st]  =>  [t=u +(st s)]
+    =+  peek             ?@  -  ~  =>  [t=u +(st s)]
+    ::NOTE  intentionally not moving post-peek
     ?+  t  [~ st]
         [%cltr %&]
-      =+  tall-layout   ?@  -  [~ st]  [`u s]
+      =+  tall-layout    ?@  -  ~  =>  [l=u +(st s)]
+      =+  (expect %gap)  ?@  -  ~  [`l s]
+    ::
         ?(%sel [%cltr %|])
-      =+  wide-layout   ?@  -  [~ st]  [`u s]
+      =+  wide-layout    ?@  -  ~  =>  [l=u +(st s)]
+      =+  (expect %gap)  ?@  -  ~  [`l s]
     ==
+  ::
+  ++  nullable-c  :: nullable grammar arm with certainly cellular product
+    |$([c st] $@(~ [n=$@(~ u=c) s=st]))
+  ++  nullable-a  :: with a possibly atomic product
+    |$([a st] $@(~ [n=(unit a) s=st]))
   --
 --
