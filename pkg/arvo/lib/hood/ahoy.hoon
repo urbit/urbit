@@ -1,17 +1,19 @@
 ::  ahoy: migrate peers to %mesa
 ::
-::  flow:
+::  flows:
 ::
 :: %comb poke
 ::   -> gather all peers in peers.ames-state
 ::   -> pass pending peers and last known cases to -comb
 ::
-::  -comb thread:
+:: %prob poke for .ship
+::
+::  -prob thread:
 ::
 :: on-arvo %keen response (handle-sage):
 ::   -> parse kelvin from response
-::   -> if hash != last-hash: peek next case for same peer
-::   -> if hash == last-hash: will send dry %mate (test-mate)
+::   -> if hash not in trigs.sat: peek next case for same peer
+::   -> if hash     in trigs.sat: will send dry %mate (test-mate)
 ::   -> try next peer in pending queue
 ::
 :: on-arvo timer fire:
@@ -20,7 +22,7 @@
 ::
 ::  when all peers are done, give back result to agent
 ::
-::  for all peers which hash == last-hash, ahoy (dry mode supported)
+::  for all peers which hash in trigs.sat, ahoy (dry mode supported)
 ::
 :: on-arvo %mate done (take-mate):
 ::   -> if error: mark broken
@@ -39,20 +41,20 @@
 /+  strandio
 =*  card  card:agent:gall
 |%
-+$  state  state-1
++$  state  state-2
 +$  any-state
  $~  *state
  $%  state-0
      state-1
+     state-2
  ==
-+$  state-0  [%0 _+:*state-1]
-+$  state-1
-  $:  %1
+
++$  state-2
+  $:  %2
       ::  peers not responding, as of last attempt
       ::
       no-response=(map ship attempt=@da)
       ::  last known kids hash and case per peer, timestamped
-      ::
       ::
       hashes=(map ship [num=@ud has=@uvi when=@da])
       ::  timeout duration to cancel +peek
@@ -61,10 +63,9 @@
       ::  peers we can't migrate
       ::
       broken=(map ship attempt=@da)  :: XX add offending flows?
-      ::  hash to trigger migration
+      ::  hashes to trigger migration (from 409k-2)
       ::
-      last-hash=_0v1l.j5i77.ga13o.okjjk.tv6m9.c9pg4.
-                      7i10l.9mgpp.shtut.q530n.41il8  :: 409k-2
+      trigs=(set @uvi)
       ::  ships with an %ahoy flow in flight
       ::
       pending-ahoy=(set ship)
@@ -72,6 +73,17 @@
       ::
       veb=_|
   ==
++$  state-1
+  $:  %1
+      no-response=(map ship attempt=@da)
+      hashes=(map ship [num=@ud has=@uvi when=@da])
+      timeout=_~s12
+      broken=(map ship attempt=@da)
+      last-hash=@uvi
+      pending-ahoy=(set ship)
+      veb=_|
+  ==
++$  state-0  [%0 _+:*state-1]
 ::
 --
 =>  |%  ++  dispatch-thread
@@ -136,8 +148,11 @@
 ::
 ++  on-init  =<  abet
   %_    this
-      last-hash.sat
-    0v1l.j5i77.ga13o.okjjk.tv6m9.c9pg4.7i10l.9mgpp.shtut.q530n.41il8  :: 409k-2
+      trigs.sat
+    %-  ~(gas in *(set @uvi))
+    :~  0v1l.j5i77.ga13o.okjjk.tv6m9.c9pg4.7i10l.9mgpp.shtut.q530n.41il8  :: 409k-2
+        ::  ...
+    ==
   ==
 ::
 ++  on-peek  abet
@@ -149,7 +164,33 @@
     ::  disable %mesa as the default core for new peers
     ::
     $(old old(- %1), this (emit %pass /ames %arvo %a %load %ames))
-  ?>  ?=(%1 -.old)
+  ?:  ?=(%1 -.old)
+    ::  enable %mesa as the default first-contact network core
+    ::
+    =.  this  (emit %pass /ames %arvo %a %load %mesa)
+    ::  add migration hashes from 409k-2 until XX 408k
+    ::
+    ::  XX this is needed for ships that are on the pre-release moon
+    ::  ~binnec, for anybody else we should just read the contents of
+    ::  sys.kelvin and check for 408k
+    ::
+    =|  sat-2=state-2
+    =.  sat-2
+      %_  sat-2
+        no-response   no-response.old
+        hashes        hashes.old
+        timeout       timeout.old
+        broken        broken.old
+        trigs         %-  ~(gas in *(set @uvi))
+                      :~  0v1l.j5i77.ga13o.okjjk.tv6m9.c9pg4.7i10l.9mgpp.shtut.q530n.41il8  :: 409k-2
+                          ::  ...
+                      ==
+      ::
+        pending-ahoy  pending-ahoy.old
+        veb           veb.old
+      ==
+    $(old sat-2)
+  ?>  ?=(%2 -.old)
   this(sat old)
 ::  handle ahoy actions:
 ::
@@ -210,12 +251,12 @@
         p
       who^p
     ::
-    =/  data=^vase  !>([~ timeout.sat hashes.sat pend last-hash.sat veb])
+    =/  data=^vase  !>([~ timeout.sat hashes.sat pend trigs.sat veb])
     %+  emit  %pass
     [(dispatch-thread %comb dry ~) %arvo %k %fard q.byk.bowl %comb %noun data]
   ::
   ++  time       |=(tim=@dr this(timeout.sat tim))
-  ++  hash       |=(has=@uvi this(last-hash.sat has))
+  ++  hash       |=(has=@uvi this(trigs.sat (~(put in trigs.sat) has)))
   ++  verb       this(veb.sat !veb.sat)
   ++  wipe       |=  who=(unit @p)  ^+  this
                  ?^(who (wipe-ship u.who^** this) (~(rep by broken.sat) wipe-ship))
@@ -244,7 +285,7 @@
           [1 0v0 now.bowl]
         u.case
       ::
-      [~ timeout.sat num^has^wen ship last-hash.sat veb.sat]
+      [~ timeout.sat num^has^wen ship trigs.sat veb.sat]
     =.  pending-ahoy.sat  (~(put in pending-ahoy.sat) ship)
     %^  emit  %pass
       (dispatch-thread %prob force `ship)
@@ -341,9 +382,9 @@
     =+  .^  chums=(map ship ?(%known %alien))  %ax
           /(scot %p our.bowl)//(scot %da now.bowl)/chums
         ==
-    ::  ahoy the peer if on last-hash, not yet migrated, and not pending
+    ::  ahoy the peer if on any of the trigs.sat, not yet migrated, and not pending
     ::
-    ?:  ?|  !=(last-hash.sat has)
+    ?:  ?|  !(~(has in trigs.sat) has)
             (~(has by chums) who)
         ==
       ::  delete the peer from pending and try again on next %prob
