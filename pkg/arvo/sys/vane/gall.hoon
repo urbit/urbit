@@ -2307,6 +2307,7 @@
         [%ames %sage *]           sign-arvo
         [%behn %wake *]           [%behn %wake ;;(time deets)]
         [%clay %writ *]           [%clay %read deets p.sign-arvo]
+        [%clay %wris *]           [%clay %reds deets p.sign-arvo q.sign-arvo]
         [%clay %tire *]           [%clay %tire p.sign-arvo]
         [%clay %mere *]           sign-arvo
         [%clay %ward *]           sign-arvo

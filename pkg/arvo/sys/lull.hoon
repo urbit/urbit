@@ -3809,21 +3809,12 @@
       ?+  gift  ~
         [%ames %sage *]  `|+[%ames %keen p.sage.gift]
         [%behn *]        `|+[%behn %wait time.gift]
-        [%dill %meme *]  `|+[%dill %mass]
-      ::
-          [%dill %blit *]
-        =;  bye=?  ?:(bye `|+[%dill %view ses.gift] ~)
-        |-
-        ?&  ?=(^ biz.gift)
-        ?|  ?+(-.i.biz.gift | %bye &, %mor $(biz.gift p.i.biz.gift))
-            $(biz.gift t.biz.gift)
-        ==  ==
       ::
           [%clay %read *]
         =*  rid  [%clay %warp id.gift]
         =+  det=(~(got by dets) wire rid)
         ?>  ?=([%clay %warp *] det)
-        ::  %sing and %mult are always single-shot,
+        ::  %sing is always single-shot,
         ::  %many gives a range of responses and has explicit "end" signal
         ::
         ?.  ?=(%many -.rave.det)  `|+[%clay %warp id.gift]
@@ -3834,6 +3825,24 @@
         ?>  ?=(%ud -.q.p.u.riot.gift)
         =/  nex=@ud  +(p.q.p.u.riot.gift)
         `&+[rid det(from.moat.rave ud+nex)]
+      ::
+          [%clay %reds *]
+        ::  %mult is always single shot
+        ::
+        =+  det=(~(got by dets) wire [%clay %warp id.gift])
+        ?>  ?=([%clay %warp *] det)
+        ?>  ?=(%mult -.rave.det)
+        `|+[%clay %warp id.gift]
+      ::
+        [%dill %meme *]  `|+[%dill %mass]
+      ::
+          [%dill %blit *]
+        =;  bye=?  ?:(bye `|+[%dill %view ses.gift] ~)
+        |-
+        ?&  ?=(^ biz.gift)
+        ?|  ?+(-.i.biz.gift | %bye &, %mor $(biz.gift p.i.biz.gift))
+            $(biz.gift t.biz.gift)
+        ==  ==
       ::
         [%eyre *]     ?:  bound.gift  ~
                       `|+[%eyre %binding binding.gift]
@@ -4216,6 +4225,7 @@
         [%behn %wake =time]
         [%clay %read id=* =riot:clay]
         [%clay %tire p=(each rock:tire:clay wave:tire:clay)]
+        [%clay %reds id=* p=[%da p=@da] q=(set (pair care:clay path))]
         [%clay %mere p=(each (set path) (pair term tang))]
         [%clay %ward =cast:ward:clay]
         [%dill %blit ses=@tas biz=(list blit:dill)]

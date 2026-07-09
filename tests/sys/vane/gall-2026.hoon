@@ -407,6 +407,25 @@
       ==
     ::
       ^-  tracked-task
+      =/  =rave:clay
+        :+  %mult  [%da ~2026.1.2]
+        %-  silt
+        ^-  (list (pair care:clay path))
+        [[%x /foo/hoon] [%y /bar/hoon] ~]
+      :*  [%clay %read 'someid' ~fun %desk rave]
+          [%c %warp ~fun %desk ~ rave]
+          [%clay %warp 'someid']^`[%clay %warp ~fun %desk rave]
+          `'someid'
+        ::
+          [%clay %rest 'someid']
+          [%c %warp ~fun %desk ~]
+          `[%clay %wris [%da ~2026.1.2] ~]^[%clay %reds 'someid' [%da ~2026.1.2] ~]
+        ::
+          ~
+          `[%c %warp ~fun %desk ~ rave]
+      ==
+    ::
+      ^-  tracked-task
       :*  [%clay %tire `~]
           [%c %tire `~]
           [%clay %tire]^~
