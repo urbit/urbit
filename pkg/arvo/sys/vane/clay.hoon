@@ -1520,25 +1520,30 @@
     ++  build-dais
       |=  mak=mark
       ^-  dais
-      =/  nav  (slum my-slam [(slum my-slub [cor [%limb %build-nave]]) !>(mak)])
+      ::  +:  unwraps the vase-of-vase +slam produces (build-nave returns a
+      ::  vase), so .nav is the nave itself and its arms (%vale/%diff/&c) are
+      ::  reachable by the +slub limbs below.
+      ::
+      =/  nav  +:(slum my-slam [(slum my-slub [cor [%limb %build-nave]]) !>(mak)])
       ^-  dais
       |_  sam=vase
       ++  diff
         |=  new=vase
         ^-  vase
-        (ntv +:(slum my-slam [(slum my-slub [nav limb/%diff]) (slum my-slop [sam new])]))
+        (ntv (slum my-slam [(slum my-slub [nav limb/%diff]) (slum my-slop [sam new])]))
       ++  form  ;;(mark +:(slum my-slub [nav limb/%form]))
       ++  join
         |=  [a=vase b=vase]
         ^-  (unit (unit vase))
-        =/  res  +:(slum my-slam [(slum my-slub [nav limb/%join]) (slum my-slop [a b])])
-        ?~  res    ~
-        ?~  +.res  [~ ~]
-        ``(ntv +.+.res)
+        =/  res  (ntv (slum my-slam [(slum my-slub [nav limb/%join]) (slum my-slop [a b])]))
+        ?~  q.res    ~
+        ?~  +.q.res  [~ ~]
+        ``(slub res !,(*hoon ?>(?=([~ ~ *] .) u.u)))
       ++  mash
         |=  [a=[=ship =desk diff=vase] b=[=ship =desk diff=vase]]
         ^-  (unit vase)
         =/  res
+          %-  ntv
           %+  slum  my-slam
           :-  (slum my-slub [nav limb/%mash])
           %+  slum  my-slop
@@ -1548,16 +1553,20 @@
           %+  slum  my-slop
           :-  [[%atom %p ~] ship.b]
           (slum my-slop [[[%atom %tas ~] desk.b] diff.b])
-        ?~  +.res  ~
-        `(ntv +.+.res)
+        ?~  q.res  ~
+        `(slub res !,(*hoon ?>((^ .) u)))
       ++  pact
         |=  diff=vase
         ^-  vase
-        (ntv +:(slum my-slam [(slum my-slub [nav limb/%pact]) (slum my-slop [sam diff])]))
+        (ntv (slum my-slam [(slum my-slub [nav limb/%pact]) (slum my-slop [sam diff])]))
       ++  vale
         |=  noun=*
         ^-  vase
-        (ntv +:(slum my-slam [(slum my-slub [nav limb/%vale]) noun/noun]))
+        ::  no +:  the nave arms (vale=noun:grab, diff, pact, &c) return the
+        ::  marked VALUE, so +slam already yields the value-as-vase [type val];
+        ::  +: would strip the type and +ntv would then mis-wrap the raw atom.
+        ::
+        (ntv (slum my-slam [(slum my-slub [nav limb/%vale]) noun/noun]))
       --
     ::
     ++  build-cast
@@ -1571,7 +1580,11 @@
       =/  tub  (slum my-slam [(slum my-slub [cor [%limb %build-tube]]) (slum my-slop [!>(a) !>(b)])])
       |=  v=vase
       ^-  vase
-      (ntv +:(slum my-slam [tub v]))
+      ::  wrap .v as a vase-typed value: the raw +slam reads its sample's
+      ::  own type, so passing .v bare makes it check the payload's type
+      ::  (e.g. a loob) against .tub's $vase sample and nest-fail.
+      ::
+      (ntv +:(slum my-slam [tub !>(v)]))
     ::
     ++  validate-page
       |=  [=path =page]
