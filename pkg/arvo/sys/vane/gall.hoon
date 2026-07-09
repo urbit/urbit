@@ -2326,7 +2326,7 @@
         ``want^p.res
       =/  msg  "%{(trip agent-name)}: ".
                "peek failed tube from {(trip have)} to {(trip want)}"
-      ((slog leaf+msg ~) ~)
+      ((slog leaf+msg p.res) ~)
     ::  +ap-move: send move directly
     ::
     ++  ap-move
@@ -2605,8 +2605,13 @@
           ?:  =(~ agent-wire)
             on-missing
           =/  has-nonce=(unit @ud)  (slaw %ud (head agent-wire))
-          ?:  &(?=(~ has-nonce) ?=(%kick -.sign))
-            on-weird-kick
+          ::  a nonce-less wire that didn't match a pre-nonce subscription
+          ::  above has no subscription to route to; no-op rather than crash
+          ::  (%kick gets its own trace, mirroring the nonced path below)
+          ::
+          ?:  ?=(~ has-nonce)
+            ?:  ?=(%kick -.sign)  on-weird-kick
+            on-missing
           ::  pop nonce off .agent-wire and match against stored subscription
           ::
           ?>  ?=(^ has-nonce)
@@ -3104,13 +3109,18 @@
           [%pass * %agent * %leave *]
         =/  =wire  p.card
         =/  =dock  [ship name]:q.card
-        ?.  (~(has by boat.yoke) wire dock)
+        ::  guard on .boar (the nonce map we read below), not .boat: tracking
+        ::  has already folded the whole batch into .boat, so a same-batch
+        ::  leave+rewatch would pass a .boat check but crash on the not-yet-
+        ::  transformed .boar nonce.  no nonce => nothing to cancel.
+        ::
+        ?.  (~(has by boar.yoke) wire dock)
           %.  $(cards t.cards)
           %+  trace  odd.veb.bug.state
           &+"missing subscription, got %leave"
         =/  nonce=@    (~(got by boar.yoke) wire dock)
-        =.  boar.yoke  (~(del by boar.yoke) [wire dock])
-        =.  p.card     (ap-nonce-wire wire dock)
+        =.  p.card     (ap-nonce-wire wire dock)   ::  reads .boar; must run
+        =.  boar.yoke  (~(del by boar.yoke) [wire dock])   ::  before this del
         ::  if nonce = 0, this was a pre-nonce subscription so later
         ::  subscriptions need to start subscribing on the next nonce
         ::
@@ -3846,7 +3856,7 @@
         ``want^p.res
       =/  msg  "%{(trip agent-name)}: ".
                "peek failed tube from {(trip have)} to {(trip want)}"
-      ((slog leaf+msg ~) ~)
+      ((slog leaf+msg p.res) ~)
     ::  +op-move: send move directly
     ::
     ++  op-move
@@ -4123,8 +4133,13 @@
           ?:  =(~ agent-wire)
             on-missing
           =/  has-nonce=(unit @ud)  (slaw %ud (head agent-wire))
-          ?:  &(?=(~ has-nonce) ?=(%kick -.sign))
-            on-weird-kick
+          ::  a nonce-less wire that didn't match a pre-nonce subscription
+          ::  above has no subscription to route to; no-op rather than crash
+          ::  (%kick gets its own trace, mirroring the nonced path below)
+          ::
+          ?:  ?=(~ has-nonce)
+            ?:  ?=(%kick -.sign)  on-weird-kick
+            on-missing
           ::  pop nonce off .agent-wire and match against stored subscription
           ::
           ?>  ?=(^ has-nonce)
@@ -4625,13 +4640,18 @@
           [%pass * %agent * %leave *]
         =/  =wire  p.card
         =/  =dock  [ship name]:q.card
-        ?.  (~(has by boat.yoke) wire dock)
+        ::  guard on .boar (the nonce map we read below), not .boat: tracking
+        ::  has already folded the whole batch into .boat, so a same-batch
+        ::  leave+rewatch would pass a .boat check but crash on the not-yet-
+        ::  transformed .boar nonce.  no nonce => nothing to cancel.
+        ::
+        ?.  (~(has by boar.yoke) wire dock)
           %.  $(cards t.cards)
           %+  trace  odd.veb.bug.state
           &+"missing subscription, got %leave"
         =/  nonce=@    (~(got by boar.yoke) wire dock)
-        =.  boar.yoke  (~(del by boar.yoke) [wire dock])
-        =.  p.card     (op-nonce-wire wire dock)
+        =.  p.card     (op-nonce-wire wire dock)   ::  reads .boar; must run
+        =.  boar.yoke  (~(del by boar.yoke) [wire dock])   ::  before this del
         ::  if nonce = 0, this was a pre-nonce subscription so later
         ::  subscriptions need to start subscribing on the next nonce
         ::
