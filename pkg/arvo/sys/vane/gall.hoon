@@ -1993,6 +1993,8 @@
               ^=  sky                                 ::  bindings
               %-  ~(run-plot of-farm sky.yoke)
               (bake tail ,plot)
+              ras=resources.yoke                      ::  resources
+              rad=resource-deets.yoke                 ::  resource details
           ==                                          ::
           :*  act=change.stats.yoke                   ::  tick
               eny=eny.stats.yoke                      ::  nonce

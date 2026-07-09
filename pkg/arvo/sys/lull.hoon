@@ -3966,6 +3966,8 @@
         $:  wex=boat                                    ::  outgoing subs
             sup=bitt                                    ::  incoming subs
             sky=(map path fans)                         ::  scry bindings
+            ras=(set arvo-resource)                     ::  agent resources
+            rad=(map arvo-resource resource-deet)       ::  resource details
         ==                                              ::
         $:  act=@ud                                     ::  change number
             eny=@uvJ                                    ::  entropy
