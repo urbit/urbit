@@ -101,15 +101,15 @@
   |=  [=wire gift=gift-user-v1:gall]
   ^-  (quip card:agent:gall agent:gall)
   %-  %+  print  bowl  |.
-      ?:  ?=(%unsupported -.gift)
-        "{<dap.bowl>}: on-arvo on wire {<wire>}, %unsupported"
+      ?:  ?=(?(%unsupported %revoked) -.gift)
+        "{<dap.bowl>}: on-arvo on wire {<wire>}, {<-.gift>}"
       "{<dap.bowl>}: on-arvo on wire {<wire>}, {<[- +<]:gift>}"
   =^  cards  agent  (on-arvo:ag wire gift)
   :_  this
-  ?:  ?=(%unsupported -.gift)
+  ?:  ?=(?(%unsupported %revoked) -.gift)
     :_  :_  cards
-      (emit-event %on-arvo wire %$ %unsupported)
-    (emit-event-plus bowl [%on-arvo wire %$ %unsupported] cards)
+      (emit-event %on-arvo wire %$ -.gift)
+    (emit-event-plus bowl [%on-arvo wire %$ -.gift] cards)
   :_  :_  cards
     (emit-event %on-arvo wire [- +<]:gift)
   (emit-event-plus bowl [%on-arvo wire [- +<]:gift] cards)

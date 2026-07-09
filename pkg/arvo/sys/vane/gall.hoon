@@ -2028,12 +2028,8 @@
         ?:  ?=(%base q.beak.yoke)  resources.yoke
         %~  key  by
         (deps:prune our perms ~(tap in resources.yoke) resource-deets.yoke)
-      ::
-      ::TODO  both cases below need to notify the agent about the resources
-      ::      that they're dropping/deleting due to perms. (the resources
-      ::      dropped by .allow-res/+deps:prune).
-      ::      probably want a separate loop for that ahead of the other
-      ::      reinflation logic
+      =/  kick-res=(list arvo-resource)
+        ~(tap in (~(dif in resources.yoke) allow-res))
       ::
       ::NOTE  tmi...
       ?:  ?|  =(%& -.agent.yoke)        ::  running, or
@@ -2048,8 +2044,6 @@
         ?:  ?=(%base q.beak.yoke)  ap-core
         ::  suspending agent resources if permission been revoked
         ::
-        =/  kick-res=(list arvo-resource)
-          ~(tap in (~(dif in resources.yoke) allow-res))
         |-  ^+  ap-core
         ?~  kick-res  ap-core
         ?~  tac=(drop-resource:track i.kick-res resource-deets.yoke)
@@ -2061,37 +2055,35 @@
         ::NOTE  we bypass +ap-handle-result, do (essentially) the
         ::      +ap-handle-resource bookkeeping directly here
         =.  ap-core  (ap-move (ap-from-internal [%pass wire.i.kick-res %arvo u.tac]))
-        =.  resources.yoke       (~(del in resources.yoke) i.kick-res)
-        =.  resource-deets.yoke  (~(del by resource-deets.yoke) i.kick-res)
+        =.  ap-core  (ap-signal-drop-resource i.kick-res)
         $(kick-res t.kick-res)
       ::
-      =.  resources.yoke        (~(int in resources.yoke) allow-res)
-      =.  resource-deets.yoke
-        %-  ~(rep by resource-deets.yoke)
-        |=  [[=arvo-resource =resource-deet] resource-deets=(map arvo-resource resource-deet)]
-        ?.  (~(has in allow-res) arvo-resource)  resource-deets
-        (~(put by resource-deets) [arvo-resource resource-deet])
+      ::  we take a copy here because we want to only operate on resources
+      ::  that existed during +ap-idle, not ones created during +ap-install
+      =/  og-boat       boat.yoke
+      =/  og-resources  (~(int in resources.yoke) allow-res)
       ::  agent was suspended, we need to inflate its resources.
       ::  mark all the resources as to-be-inflated.
-      ::TODO  consider the %keen inflation (and its ordering) in this light
       ::
       =.  inflating
         %-  %~  uni  in
             ^+  inflating
-            (~(run in resources.yoke) (lead %&))
+            (~(run in og-resources) (lead %&))
         ^+  inflating
-        (~(run in ~(key by boat.yoke)) (lead %|))
-      ::  we take a copy here because we want to only operate on resources
-      ::  that existed during +ap-idle, not ones created during +ap-install
-      ::
-      =/  og-boat       boat.yoke
-      =/  og-resources  resources.yoke
+        (~(run in ~(key by og-boat)) (lead %|))
       ::  load the agent back up
       ::
       =^  error  ap-core
         (ap-install(agent.yoke &+agent) `old-state)
       ?^  error
         (mean >%load-failed< (frag-to-tang u.error))
+      ::  on the agent's behalf, drop resources revoked due to perms,
+      ::  and notify the agent
+      ::
+      =.  ap-core
+        |-  ^+  ap-core
+        ?~  kick-res  ap-core
+        $(kick-res t.kick-res, ap-core (ap-signal-drop-resource i.kick-res))
       ::  simulate kicks on the subscriptions that we closed for them
       ::
       =.  ap-core
@@ -2132,9 +2124,6 @@
         ?~  sec.det
           (ap-pass wire.res %arvo %ames %keen | spar.res)
         ?~  resolved.u.sec.det  ap-core  ::  encrypted keen awaiting key
-        ::TODO  if it's safe, want to store the key if we've received it and
-        ::      use it here to re-start from the exact point we left off:
-        ::      requesting with the received key
         ?~  key.u.resolved.u.sec.det
           ::  brood resolved with no key while suspended
           (ap-generic-take | ~ wire.res %ames %sage spar.res ~)
@@ -2223,6 +2212,13 @@
         %-  ap-from-internal
         [%pass wire.res %arvo [%lick %spin name.res]]
       ==
+    ::  +ap-signal-drop-resource: construct gift notifying agent
+    ::  about resource being revoked due to perms and drop resource.
+    ::
+    ++  ap-signal-drop-resource
+    |=  res=arvo-resource
+    ^+  ap-core
+    (ap-handle-gift wire.res [%revoked res])
     ::  +ap-subscribe-as: apply %watch-as.
     ::
     ++  ap-subscribe-as
@@ -2300,36 +2296,41 @@
       |=  [syscall=? deets=* =wire =sign-arvo]
       ^+  ap-core
       ~>  %spin.[(crip "on-arvo/{<agent-name>}")]
-      =/  gift=gift-user-v1
-        ?:  syscall  [%syscall kelvin=zuse sign-arvo]
-        ?+  sign-arvo
-            ~&  [%gall-unexpected-sign [- +<]:sign-arvo]
-            ~&  %gall-will-inject-syscall  ::REVIEW
-            [%syscall kelvin=zuse sign-arvo]
-        ::
-          [%ames %sage *]           sign-arvo
-          [%behn %wake *]           [%behn %wake ;;(time deets)]
-          [%clay %writ *]           [%clay %read deets p.sign-arvo]
-          [%clay %tire *]           sign-arvo
-          [%clay %mere *]           sign-arvo
-          [%clay %ward *]           sign-arvo
-          [%dill %blit *]           [%dill %blit ;;(@tas deets) p.sign-arvo]
-          [%dill %logs *]           sign-arvo
-          [%dill %meme *]           sign-arvo
-          [%eyre %bound *]          :*  %eyre  %bound
-                                        accepted.sign-arvo  binding.sign-arvo
-                                        ;;($@(term generator:eyre) deets)
-                                    ==
-          [%jael %private-keys *]   sign-arvo
-          [%jael %public-keys *]    sign-arvo
-          [%jael %turf *]           sign-arvo
-          [%iris %http-response *]  sign-arvo
-          [%khan %arow *]           =+  ;;([=bear:khan name=(unit term)] deets)
-                                    [%khan %arow bear name p.sign-arvo]
-          [%lick %soak *]           ~|  [%gall-lick-bad-name name.sign-arvo]
-                                    ?>  &(?=(^ name.sign-arvo) =(agent-name i.name.sign-arvo))
-                                    sign-arvo(name (tail name.sign-arvo))
-        ==
+      %+  ap-handle-gift  wire
+      ^-  gift-user-v1
+      ?:  syscall  [%syscall kelvin=zuse sign-arvo]
+      ?+  sign-arvo
+          ~&  [%gall-unexpected-sign [- +<]:sign-arvo]
+          ~&  %gall-will-inject-syscall  ::REVIEW
+          [%syscall kelvin=zuse sign-arvo]
+      ::
+        [%ames %sage *]           sign-arvo
+        [%behn %wake *]           [%behn %wake ;;(time deets)]
+        [%clay %writ *]           [%clay %read deets p.sign-arvo]
+        [%clay %tire *]           [%clay %tire p.sign-arvo]
+        [%clay %mere *]           sign-arvo
+        [%clay %ward *]           sign-arvo
+        [%dill %blit *]           [%dill %blit ;;(@tas deets) p.sign-arvo]
+        [%dill %logs *]           sign-arvo
+        [%dill %meme *]           sign-arvo
+        [%eyre %bound *]          :*  %eyre  %bound
+                                      accepted.sign-arvo  binding.sign-arvo
+                                      ;;($@(term generator:eyre) deets)
+                                  ==
+        [%jael %private-keys *]   sign-arvo
+        [%jael %public-keys *]    sign-arvo
+        [%jael %turf *]           sign-arvo
+        [%iris %http-response *]  sign-arvo
+        [%khan %arow *]           =+  ;;([=bear:khan name=(unit term)] deets)
+                                  [%khan %arow bear name p.sign-arvo]
+        [%lick %soak *]           ~|  [%gall-lick-bad-name name.sign-arvo]
+                                  ?>  &(?=(^ name.sign-arvo) =(agent-name i.name.sign-arvo))
+                                  sign-arvo(name (tail name.sign-arvo))
+      ==
+  ::
+    ++  ap-handle-gift
+      |=  [=wire gift=gift-user-v1]
+      ^+  ap-core
       =.  yoke  (ap-handle-resource-gift wire gift)
       =^  maybe-frag  ap-core
         %+  ap-ingest  ~  |.

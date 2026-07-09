@@ -3835,11 +3835,12 @@
         =/  nex=@ud  +(p.q.p.u.riot.gift)
         `&+[rid det(from.moat.rave ud+nex)]
       ::
-        [%eyre *]  ?:  bound.gift  ~
-                   `|+[%eyre %binding binding.gift]
-        [%iris *]  `|+[%iris %request]
-        [%lick *]  ~
-        [%khan *]  `|+[%khan %thread bear name]:gift
+        [%eyre *]     ?:  bound.gift  ~
+                      `|+[%eyre %binding binding.gift]
+        [%iris *]     `|+[%iris %request]
+        [%lick *]     ~
+        [%khan *]     `|+[%khan %thread bear name]:gift
+        [%revoked *]  `|++>.gift
       ==
     ::
     ++  drop-resource
@@ -4230,6 +4231,7 @@
       ::
         [%syscall actual-kelvin=@ sign-arvo=*]  ::NOTE  secretly $sign-arvo, DO NOT DOCUMENT (;
         [%unsupported ~]
+        [%revoked =arvo-resource]
     ==
   ::
   ::  +agent: app core

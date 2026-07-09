@@ -361,7 +361,6 @@
     ::
       signal=(unit gift-user-v1:gall)
       revive=(unit note-arvo)
-      perm-req=?
   ==
 ++  tracked-tasks
   ^-  (list tracked-task)
@@ -377,7 +376,6 @@
         ::
           ~
           `[%b %wait ~2026.1.2]
-          %.n
       ==
     ::
       ^-  tracked-task
@@ -392,7 +390,6 @@
         ::
           ~
           `[%c %warp ~fun %desk ~ %sing *mood:clay]
-          %.y
       ==
     ::
       ^-  tracked-task
@@ -407,7 +404,6 @@
         ::
           ~
           `[%c %warp ~fun %desk ~ %many | ud+1 ud+3 /foo/hoon]
-          %.y
       ==
     ::
       ^-  tracked-task
@@ -422,7 +418,6 @@
         ::
           ~
           `[%c %tire `~]
-          %.y
       ==
       ^-  tracked-task
       :*  [%clay %ward `~]
@@ -436,7 +431,6 @@
         ::
           ~
           `[%c %ward ~]
-          %.y
       ==
     ::
       ^-  tracked-task
@@ -451,7 +445,6 @@
         ::
           ~
           `[%d %logs `~]
-          %.y
       ==
     ::
       ^-  tracked-task
@@ -466,7 +459,6 @@
         ::
           ~
           `[%d %shot %sesh %view ~]
-          %.y
       ==
     ::
       ^-  tracked-task
@@ -481,7 +473,6 @@
         ::
           ~
           `[%e %connect [~ ['foo']~] %foo]
-          %.y
       ==
     ::
       ^-  tracked-task
@@ -498,7 +489,6 @@
         ::
           ~
           `[%e %set-response '/some/url' `entry]
-          %.y
       ==
     ::
       ^-  tracked-task
@@ -513,7 +503,6 @@
         ::
           ~
           `[%j %private-keys ~]
-          %.y
       ==
     ::
       ^-  tracked-task
@@ -528,7 +517,6 @@
         ::
           ~
           `[%j %public-keys ~]
-          %.n
       ==
     ::
       ^-  tracked-task
@@ -544,7 +532,6 @@
         ::
           ~
           `[%j %public-keys sis]
-          %.n
       ==
     ::
       ^-  tracked-task
@@ -559,7 +546,6 @@
         ::
           `[%lick %soak /mysocket %disconnect ~]
           `[%l %spin [%mock /mysocket]]
-          %.y
       ==
   ==
 ++  test-normal-tracking-behavior
@@ -640,55 +626,32 @@
       ;<  y=yoke:gall  bind:m  (get-yoke %mock)
       ?.  &(?=(%live -.y) ?=(%| -.agent.y))
         (fail:m 'agent not suspended' ~)
+      %+  (merge (list move:gall))
+        :~  :-  'revive'  do-load-mock-super
+          ::
+            :-  'duplicate resource creation'
+            %^  do-load  %mock
+              %-  make:mock
+              [%on-load |=(* `[%pass /agent/wire %arvo task])]~
+            [%.y ~]
+        ==
+      |=  moz=(list move:gall)
       ::  reviving the agent should reinflate its resource
       ::
-      %-  branch
-      :~  :-  'revive'
-          ;<  moz=(list move:gall)  bind:m
-            do-load-mock-super
-          ;<  ~  bind:m
-            %+  ex-moves  moz
-            :-  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
-            =;  mos=(list (unit $-(move:gall tang)))
-              (murn mos same)
-            :~  ?~(signal ~ `(ex-on-arvo /agent/wire u.signal))
-                ?~(revive ~ `(ex-move ~[/sysduct] %pass gall-wire u.revive))
-            ==
-          (ex-resources %mock [/agent/wire res]^det ~)
-        ::
-          :-  'revive perm revoked'
-          ;<  moz=(list move:gall)  bind:m
-            (do-load %mock easy:mock [%.n ~])
-          ?:  perm-req
-            ;<  ~  bind:m
-              %+  ex-moves  moz
-              :~  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
-              ==
-            (ex-resources %mock ~)
-          ;<  ~  bind:m
-            %+  ex-moves  moz
-            :-  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
-            =;  mos=(list (unit $-(move:gall tang)))
-              (murn mos same)
-            :~  ?~(signal ~ `(ex-on-arvo /agent/wire u.signal))
-                ?~(revive ~ `(ex-move ~[/sysduct] %pass gall-wire u.revive))
-            ==
-          (ex-resources %mock [/agent/wire res]^det ~)
-      ==
-      :-  'gall revoke perm'
-      ;<  moz=(list move:gall)  bind:m
-          (do-load %mock easy:mock [%.n ~])
-      ?:  perm-req
-        ;<  ~  bind:m
-          %+  ex-moves  moz
-          :~  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
-              (ex-move ~[/sysduct] %pass gall-wire kill)
-          ==
-        (ex-resources %mock ~)
       ;<  ~  bind:m
         %+  ex-moves  moz
-        [(ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]]) ~]
+        :-  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
+        =;  mos=(list (unit $-(move:gall tang)))
+          (murn mos same)
+        :~  ?~(signal ~ `(ex-on-arvo /agent/wire u.signal))
+            ?~(revive ~ `(ex-move ~[/sysduct] %pass gall-wire u.revive))
+        ==
       (ex-resources %mock [/agent/wire res]^det ~)
+    ::
+      :-  'duplicate resource creation'
+      ;<  moz=(list move:gall)  bind:m
+        (mock-card %pass /agent/wire %arvo task)
+      (ex-moves moz (ex-move default-duct %give %unto %poke-ack ~) ~)
   ==
 ::
 ++  test-timer-tracking
@@ -921,7 +884,7 @@
               (do-take [plea-wire ~[/sysduct]] %ames %boon %0 `[path.spar 1 2 3])
             ;<  ~  bind:m  (ex-moves moz ~)
             ;<  ~  bind:m
-              (ex-resources %mock [/agent/wire [%ames %keen spar]]^`[%ames %keen ``|] ~)
+              (ex-resources %mock [/agent/wire [%ames %keen spar]]^`[%ames %keen ```[2 3]] ~)
             ;<  moz=(list move:gall)  bind:m  do-load-mock-super
             ;<  ~  bind:m
               %+  ex-moves  moz
@@ -1030,35 +993,22 @@
     (fail:m 'agent not suspended' ~)
   ::  reviving the agent should reiflate its resources
   ::
-  ::  TODO:  branch maybe partial perms ?
-  %-  branch
-  :~  :-  'revive with perms'
-      ;<  moz=(list move:gall)  bind:m
-        do-load-mock-super
-      ;<  ~  bind:m
-        ::NOTE  moves sorted because otherwise dependent on set order
-        ::TODO  that doesn't always help! do something better here...
-        %+  ex-moves  (sort moz aor)
-        :~  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
-            (ex-move ~[/sysduct] %pass gall-wire [%l %spin [%mock /mysocket]])
-            (ex-move ~[/sysduct] %pass gall-wire-e [%e %connect [~ /x] %dude])
-            (ex-move ~[/sysduct] %pass gall-wire-c [%c %warp ~zod %desk ~ rave])
-            (ex-move ~[/sysduct] %pass gall-wire-b [%b %wait ~2345.6.7])
-            (ex-on-arvo /agent/wire [%iris %http-response %cancel ~])
-            (ex-on-arvo /agent/wire [%lick %soak /mysocket %disconnect ~])
-            (ex-on-agent /agent/wire %kick ~)
-        ==
-      (pure:m ~)
-    ::
-      :-  'revive without perms'
-      ;<  moz=(list move:gall)  bind:m
-        (do-load %mock easy:mock [%.n ~])
-      %+  ex-moves  (sort moz aor)
-      :~  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
-          (ex-move ~[/sysduct] %pass gall-wire-b [%b %wait ~2345.6.7])
-          (ex-on-agent /agent/wire %kick ~)
-      ==
-  ==
+  ;<  moz=(list move:gall)  bind:m
+    do-load-mock-super
+  ;<  ~  bind:m
+    ::NOTE  moves sorted because otherwise dependent on set order
+    ::TODO  that doesn't always help! do something better here...
+    %+  ex-moves  (sort moz aor)
+    :~  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
+        (ex-move ~[/sysduct] %pass gall-wire [%l %spin [%mock /mysocket]])
+        (ex-move ~[/sysduct] %pass gall-wire-e [%e %connect [~ /x] %dude])
+        (ex-move ~[/sysduct] %pass gall-wire-c [%c %warp ~zod %desk ~ rave])
+        (ex-move ~[/sysduct] %pass gall-wire-b [%b %wait ~2345.6.7])
+        (ex-on-arvo /agent/wire [%iris %http-response %cancel ~])
+        (ex-on-arvo /agent/wire [%lick %soak /mysocket %disconnect ~])
+        (ex-on-agent /agent/wire %kick ~)
+    ==
+  (pure:m ~)
 ::
 ++  test-redundant-arvo-deflate-onload
   ::  agent unsets timer during +on-load (during reinstall):
@@ -1535,8 +1485,7 @@
   ==
 --
 ::
-::TODO  test duplicate resource creation for failure
-::TODO  same during reinstall/reload
+::TODO  test duplicate resource creation on reinstall/reload
 ::
 ::TODO  test keen wire consistent between %keen, %keen w/ secret, reinstall
 ::TODO  test namespace revision nrs across nukes
