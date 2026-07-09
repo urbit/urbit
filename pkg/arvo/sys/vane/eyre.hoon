@@ -3265,6 +3265,11 @@
   ++  add-binding
     |=  [=binding =action]
     ^-  [(list move) server-state]
+    =/  og-binding=(unit [=_binding =_duct _action])
+      |-  ?~  bindings.state  ~
+      ?:  =([site path]:binding [site path]:binding.i.bindings.state)
+        `i.bindings.state
+      $(bindings.state t.bindings.state)
     =^  success  bindings.state
       ::  prevent binding in reserved namespaces
       ::
@@ -3275,7 +3280,9 @@
         [| bindings.state]
       [& (insert-binding [binding duct action] bindings.state)]
     :_  state
-    [duct %give %bound & binding]~
+    :-  [duct %give %bound success binding]
+    ?.  ?&(success ?=(^ og-binding))  ~
+    [[duct %give %bound | binding]:u.og-binding ~]
   ::  +remove-binding: removes a binding if it exists and is owned by this duct
   ::
   ++  remove-binding

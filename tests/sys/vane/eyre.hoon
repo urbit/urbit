@@ -271,11 +271,16 @@
   [%'PUT' url header-list `body]
 ::
 ++  connect
-  |=  [app=@t pax=path]
+  |=  [app=@t pax=path overwrite=(unit [app=@t pax=path])]
   =/  m  (mare ,~)
   ^-  form:m
   ;<  mos=(list move)  bind:m  (call ~[/[app]] [%connect [~ pax] app])
-  (expect-moves mos (ex ~[/[app]] %give %bound %.y [~ pax]) ~)
+  ?~  overwrite
+    (expect-moves mos (ex ~[/[app]] %give %bound %.y [~ pax]) ~)
+  %+  expect-moves  mos
+  :~  (ex ~[/[app]] %give %bound %.y [~ pax])
+      (ex ~[/[app.u.overwrite]] %give %bound %.n [~ pax.u.overwrite])
+  ==
 ::
 ++  request
   |=  [app=@t pax=path]
@@ -568,11 +573,11 @@
   ;<  ~  bind:m  (wait ~d1)
   ::  app1 binds successfully
   ::
-  ;<  ~  bind:m  (connect %app1 /)
+  ;<  ~  bind:m  (connect %app1 / ~)
   ;<  ~  bind:m  (wait ~d1)
   ::  app2 tries to bind to the same path and succeeds
   ::
-  (connect %app2 /)
+  (connect %app2 / `[%app1 /])
 ::
 ++  test-remove-binding
   %-  eval-mare
@@ -581,7 +586,7 @@
   ;<  ~  bind:m  (wait ~d1)
   ::  app1 binds successfully
   ::
-  ;<  ~  bind:m  (connect %app1 /)
+  ;<  ~  bind:m  (connect %app1 / ~)
   ;<  ~  bind:m  (wait ~d1)
   ::  app1 unbinds
   ::
@@ -590,7 +595,7 @@
   ;<  ~  bind:m  (wait ~d1)
   ::  app2 binds successfully
   ::
-  (connect %app2 /)
+  (connect %app2 / ~)
 ::
 ++  test-host-matching
   ;:  weld
@@ -620,7 +625,7 @@
   ;<  ~  bind:m  (wait ~d1)
   ::  app1 binds successfully
   ::
-  ;<  ~  bind:m  (connect %app1 /)
+  ;<  ~  bind:m  (connect %app1 / ~)
   ;<  ~  bind:m  (wait ~d1)
   ::  outside requests a path that app1 has bound to
   ::
@@ -645,7 +650,7 @@
   ;<  ~  bind:m  (wait ~d1)
   ::  app1 binds successfully
   ::
-  ;<  ~  bind:m  (connect %app1 /)
+  ;<  ~  bind:m  (connect %app1 / ~)
   ;<  ~  bind:m  (wait ~d1)
   ::  outside requests a path that app1 has bound to
   ::
@@ -670,7 +675,7 @@
   ;<  ~  bind:m  (wait ~d1)
   ::  app1 binds successfully
   ::
-  ;<  ~  bind:m  (connect %app1 /)
+  ;<  ~  bind:m  (connect %app1 / ~)
   ;<  ~  bind:m  (wait ~d1)
   ::  outside requests a path that app1 has bound to
   ::
@@ -706,7 +711,7 @@
   ;<  ~  bind:m  (wait ~d1)
   ::  dead-app binds successfully
   ::
-  ;<  ~  bind:m  (connect %dead-app /)
+  ;<  ~  bind:m  (connect %dead-app / ~)
   ;<  ~  bind:m  (wait ~d1)
   ::  outside requests a path that dead-app has bound to
   ::
@@ -726,7 +731,7 @@
   ;<  ~  bind:m  (wait ~d1)
   ::  app1 binds successfully
   ::
-  ;<  ~  bind:m  (connect %app1 /'~landscape')
+  ;<  ~  bind:m  (connect %app1 /'~landscape' ~)
   ;<  ~  bind:m  (wait ~d1)
   ::  outside requests a path that app1 has bound to
   ::
@@ -1370,7 +1375,7 @@
   ;<  ~  bind:m  (wait ~d1)
   ::  app1 binds successfully
   ::
-  ;<  ~  bind:m  (connect %app1 /)
+  ;<  ~  bind:m  (connect %app1 / ~)
   ;<  ~  bind:m  (wait ~d1)
   ::  outside requests a path that app1 has bound to
   ::
