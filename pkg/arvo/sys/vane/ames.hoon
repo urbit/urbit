@@ -8108,7 +8108,20 @@
                   %drop  sink(nax.state (~(del in nax.state) message-num.task))
                   %done  (done ok.task)
                   %flub
-                ?:  ?=([%flub ~] task)  sink
+                ?:  ?=([%flub ~] task)
+                  ::  a running agent has recevied a /gp plea with
+                  ::  no blocked moves; remove pending
+                  ::
+                  ?~  next=~(top to pending-vane-ack.state)
+                    ::  XX if there is nothing in pending, rewind last-heard?
+                    ::
+                    sink
+                  ?:  &  sink
+                  ::  is this safe to do?
+                  ::
+                  %-  %+  pe-trace  odd.veb
+                      |.("redeliver pending {<message-num.u.next>} bone={<bone>}")
+                  (handle-sink message-num.u.next message.u.next ok=%.y)
                 =?  peer-core  ?=([%flub ? ^] task)
                   ::  /gf system flow established; halt the flow
                   ::
@@ -8263,8 +8276,8 @@
                       |.  ^-  tape
                       "hear last in-progress; try to %flub {<[agent data]>}"
                   %^  pe-emit  duct  %pass
-                  :-  (make-bone-wire her rift.hers.channel bone.shut-packet)
-                  [%g %plea her u.m(path /gp/[agent])]
+                    :-  (make-bone-wire her rift.hers.channel bone.shut-packet)
+                    [%g %plea her u.m(path /gp/[agent])]
                   sink
               ::  last-heard<seq<10+last-heard; packet in a live message
               ::
