@@ -8119,7 +8119,6 @@
                   sink
                 %-  %+  pe-trace  odd.veb
                         |.("%flubbing: {<bone=bone>} last={<last-heard.state>}")
-                =+  left=q:~(get to pending-vane-ack.state)
                 %_  sink
                   pending-vane-ack.state  ~                :: drop all pending
                         last-heard.state  last-acked.state :: rewind last heard
