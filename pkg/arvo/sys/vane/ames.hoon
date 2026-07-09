@@ -10831,12 +10831,18 @@
               ::  halt the flow
               ::
                   %flub
-                =?  halt.state   ?=([? ^] +.sign)  %.y
-                =?     fo-core   ?=([? ^] +.sign)
-                  (fo-emit hen %pass /halt %g %halt her u.dap.sign bone)
-                =?  pending-ack.rcv  &(?=([? *] +.sign) !blocked.sign)
-                  %.n  :: XX  tack.pending-ack.rcv
-                fo-core
+                ?~  +.sign
+                  ::  a running agent has recevied a /gp plea with
+                  ::  no blocked moves; remove pending
+                  ::
+                  =.  pending-ack.rcv  %.n
+                  fo-core
+                =?  pending-ack.rcv  !blocked.sign  %.n
+                ?~  dap.sign  fo-core
+                ::  if system-flow is established, halt flow and send %boon %flub
+                ::
+                =.  halt.state  %.y
+                (fo-emit hen %pass /halt %g %halt her u.dap.sign bone)
               ::  un-halt the flow
               ::
                   %spur

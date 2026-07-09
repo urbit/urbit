@@ -1129,6 +1129,20 @@
         %u  [%leave ~]
       ==
     (mo-pass wire %g %deal [ship our /] agent-name deal)
+  ::  +mo-remote-blocked: check if .dap has a remote blocked move for .ship
+  ::
+  ++  mo-remote-blocked
+    |=  [=ship dap=term]
+    ^-  ?
+    ?~  waiting=(~(get by blocked.state) dap)
+      %.n
+    %+  lien  ~(tap to u.waiting)
+    ::  check if any of the blocked moves is attributed to .ship
+    ::
+    |=  =blocked-move
+    ?&  ?=(%& -.move.blocked-move)
+        =(ship ship.attributing.routes.blocked-move)
+    ==
   ::  +mo-do-flub: drop incoming pleas in %ames
   ::
   ::    (if the /gf system flow has been established, notify the other ship
@@ -1153,10 +1167,10 @@
     ::  currently we always halt it
     ::
     %^  mo-give  %flub
-    ::  if we have blocked moves, skip the %flub handling logic in %ames
+    ::  if we have remote blocked moves, skip the %flub handling logic in %ames
     ::  if /gf system flow is not established, skip sending the %flub $boon
     ::
-      maybe-blocked=?=(^ (~(get by blocked.state) agent-name))
+      maybe-blocked=(mo-remote-blocked ship agent-name)
     ?.((~(has by flub-ducts.state) ship) ~ `agent-name)
   ::
   ++  mo-handle-flub-plea
@@ -2434,11 +2448,19 @@
       %-  %^  trace:mo-core  &(?=([%gp @ ~] path) odd.veb.bug.state)  agent-name
           &+"on {<ship>} flubbing in-progress flow"
       (mo-do-flub:mo-core ship agent-name)
-    ?:  ?=([%gp @ ~] path)
+    ?:  ?=([%ge @ ~] path)
+      (mo-handle-ames-request:mo-core ship agent-name +.ames-request-all)
+    ::  the agent is running but the flow's %plea is still pending in
+    ::  %ames. if we don't have blocked remote moves tell %ames to delete
+    ::  its pending-ack
+    ::
+    ?:  (mo-remote-blocked:mo-core ship agent-name)
       %-  %^  trace:mo-core  odd.veb.bug.state  agent-name
-          &+"on {<ship>} weird in-progress flow; running agent; skip %flub"
+          &+"on {<ship>} in-progress flow; %plea enqueued; wait"
       mo-core
-    (mo-handle-ames-request:mo-core ship agent-name +.ames-request-all)
+    %-  %^  trace:mo-core  odd.veb.bug.state  agent-name
+        &+"on {<ship>} in-progress flow; running agent; redeliver"
+    (mo-give:mo-core %flub ~)
   ::
       %sear  mo-abet:(mo-filter-queue:mo-core ship.task)
       %jolt  mo-abet:(mo-jolt:mo-core dude.task our desk.task)
