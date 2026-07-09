@@ -405,6 +405,7 @@
 ::
 ++  look
   ~/  %look
+  !:
   |=  [rof=roof lyc=gang pov=path]
   ^-  root
   ~/  %in
@@ -414,6 +415,10 @@
   ?~  dat=(rof lyc pov u.mon)  ~
   ?~  u.dat  [~ ~]
   =*  vax  q.u.u.dat
+  ::  TODO move under =>
+  =?  ref  =(-.ref %136)
+    :-  %135
+    (slum next-type:h136 +.ref)
   ?.  =>  [ref=ref vax=p=p.vax hoon-version=hoon-version wa=wa worm=worm]
       ~>  %memo./arvo/look                  ::  with memoization
       ?&  ?=(^ ref)
