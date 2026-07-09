@@ -405,7 +405,6 @@
 ::
 ++  look
   ~/  %look
-  !:
   |=  [rof=roof lyc=gang pov=path]
   ^-  root
   ~/  %in
