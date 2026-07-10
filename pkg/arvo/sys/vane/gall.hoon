@@ -1140,16 +1140,29 @@
     ::  check if any of the blocked moves is attributed to .ship
     ::
     |=  =blocked-move
-    ?&  ?=(%& -.move.blocked-move)
-        =(ship ship.attributing.routes.blocked-move)
-        ::  the enqueued deal's duct is the original %ames delivery duct
-        ::  prefixed with our own /sys/req wire; match on the %ames
-        ::  bone-wire so we don't mix flows from the same ship
-        ::
-        ?&  ?=(^ duct)
-            ?=([gall-wire=* ames-wire=^ *] duct.blocked-move)
-            =(i.duct i.t.duct.blocked-move)
+    ?.  ?&  ?=(%& -.move.blocked-move)
+            =(ship ship.attributing.routes.blocked-move)
+            ?=(^ duct)
+            ?=([^ ^ *] duct.blocked-move)
         ==
+      %.n
+    ::
+    =/  req=(pole knot)  i.duct.blocked-move
+    =/  del=(pole knot)  i.t.duct.blocked-move
+    =/  hen=(pole knot)  i.duct
+    ::  try to match exact flow so we don't end-up mixing
+    ::  different flows
+    ::
+    ?&  ?=([%gall %sys %req ship=@ dap=@ ~] req)
+        =(`ship (slaw %p ship.req))
+        =(dap dap.req)
+      ::
+        ?=([%ames %bone ship=@ rest=*] del)
+        ?=([%ames %bone ship=@ rest=*] hen)
+        =(`ship (slaw %p ship.del))
+        =(`ship (slaw %p ship.hen))
+        =(rest.del rest.hen)  :: XX old pre-rift wires?
+                              :: XX check if rifts match?
     ==
   ::  +mo-do-flub: drop incoming pleas in %ames
   ::
