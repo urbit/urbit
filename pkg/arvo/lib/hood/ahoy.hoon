@@ -39,15 +39,17 @@
 /+  strandio
 =*  card  card:agent:gall
 |%
-+$  state  state-1
++$  state  state-2
 +$  any-state
  $~  *state
  $%  state-0
      state-1
+     state-2
  ==
 +$  state-0  [%0 _+:*state-1]
-+$  state-1
-  $:  %1
++$  state-1  [%1 _+:*state-2]
++$  state-2
+  $:  %2
       ::  peers not responding, as of last attempt
       ::
       no-response=(map ship attempt=@da)
@@ -137,7 +139,7 @@
 ++  on-init  =<  abet
   %_    this
       last-hash.sat
-    0v1l.j5i77.ga13o.okjjk.tv6m9.c9pg4.7i10l.9mgpp.shtut.q530n.41il8  :: 409k-2
+    0v11.11111.11111.11111.11111.11111.11111.11111.11111.11111.11111  :: XX off
   ==
 ::
 ++  on-peek  abet
@@ -149,7 +151,10 @@
     ::  disable %mesa as the default core for new peers
     ::
     $(old old(- %1), this (emit %pass /ames %arvo %a %load %ames))
-  ?>  ?=(%1 -.old)
+  ?:  ?=(%1 -.old)
+    =.  last-hash.old
+      0v11.11111.11111.11111.11111.11111.11111.11111.11111.11111.11111
+    $(old old(- %2))
   this(sat old)
 ::  handle ahoy actions:
 ::
