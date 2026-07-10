@@ -8109,16 +8109,20 @@
                   %done  (done ok.task)
                   %flub
                 ?:  ?=([%flub ~] task)
-                  ::  a running agent has recevied a /gp plea with
-                  ::  no blocked moves; remove pending
+                  ::  a running agent has received a /gp plea with no
+                  ::  blocked moves.
+                  ::  the trigger for the /gp plea in %ames is state in
+                  ::  pending-vane-ack.state which has not been acked
+                  ::  so we can attempt to redeliver the head of the pending
+                  ::  queue from the payload stored there.
+
+                  ::  note: we can't rely on the sender's pump, since we don't
+                  ::  know if the sender is/will be rewound via a $boon %spur
                   ::
                   ?~  next=~(top to pending-vane-ack.state)
                     ::  XX if there is nothing in pending, rewind last-heard?
                     ::
                     sink
-                  ?:  &  sink
-                  ::  is this safe to do?
-                  ::
                   %-  %+  pe-trace  odd.veb
                       |.("redeliver pending {<message-num.u.next>} bone={<bone>}")
                   (handle-sink message-num.u.next message.u.next ok=%.y)
