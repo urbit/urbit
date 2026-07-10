@@ -3419,9 +3419,12 @@
   ::  +inbound-request: +http-request and metadata
   ::
   +$  inbound-request
-    $:  ::  authenticated: has a valid session cookie
+    $:  ::  authenticated: has a valid session cookie for our ship
         ::
         authenticated=?
+        ::  identity: source of the request
+        ::
+        =identity
         ::  secure: whether this request was encrypted (https)
         ::
         secure=?

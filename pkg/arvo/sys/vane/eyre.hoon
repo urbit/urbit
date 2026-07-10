@@ -43,7 +43,7 @@
 ++  axle
   $:  ::  date: date at which http-server's state was updated to this data structure
       ::
-      date=%~2025.1.31
+      date=%~2026.6.22
       ::  server-state: state of inbound requests
       ::
       =server-state
@@ -767,7 +767,7 @@
     =/  act  [%app app=%lens]
     ::
     =/  connection=outstanding-connection
-      [act [& secure address request] [*@uv [%ours ~]] ~ 0]
+      [act [& [%ours ~] secure address request] [*@uv [%ours ~]] ~ 0]
     ::
     =.  connections.state
       %.  (~(put by connections.state) duct connection)
@@ -815,7 +815,7 @@
         ::      deletes the connection from state.
         %+  ~(put by connections.state)  duct
         ^-  outstanding-connection
-        [action [| secure address request] [invalid %fake *@p] ~ 0]
+        [action [| [%fake *@p] secure address request] [invalid %fake *@p] ~ 0]
       ::  their cookie was invalid, make sure they expire it
       ::
       =/  bod=octs  (as-octs:mimes:html 'bad session auth')
@@ -847,7 +847,7 @@
     ::  record that we started an asynchronous response
     ::
     =/  connection=outstanding-connection
-      [action [authenticated secure address request] [suv identity] ~ 0]
+      [action [authenticated identity secure address request] [suv identity] ~ 0]
     =.  connections.state
       ::  NB: required by +handle-response and +handle-request:authentication.
       ::  XX optimize, not all requests are asynchronous
@@ -4137,7 +4137,8 @@
             [date=%~2023.4.11 server-state-3]
             [date=%~2023.5.15 server-state-4]
             [date=%~2024.8.20 server-state-4]
-            [date=%~2025.1.31 server-state]
+            [date=%~2025.1.31 server-state-5]
+            [date=%~2026.6.22 server-state]
         ==
       ::
       +$  server-state-0
@@ -4213,7 +4214,7 @@
         ==
       +$  outstanding-connection-3
         $:  =action
-            =inbound-request
+            inbound-request=inbound-request-5
             response-header=(unit response-header:http)
             bytes-sent=@ud
         ==
@@ -4241,7 +4242,7 @@
         $:  bindings=(list [=binding =duct =action])
             cache=(map url=@t [aeon=@ud val=(unit cache-entry)])
             =cors-registry
-            connections=(map duct outstanding-connection)
+            connections=(map duct outstanding-connection-5)
             auth=authentication-state
             =channel-state
             domains=(set turf)
@@ -4250,6 +4251,18 @@
             outgoing-duct=duct
             verb=@
         ==
+      ::
+      +$  server-state-5
+        $_  =|  cur=server-state
+        cur(connections *(map duct outstanding-connection-5))
+      ::
+      +$  outstanding-connection-5
+        $_  =|  cur=outstanding-connection
+        cur(inbound-request *inbound-request-5)
+      ::  inbound-request without .identity
+      ::
+      +$  inbound-request-5
+        _[&1 |2]:*inbound-request
       --
   |=  old=axle-any
   ^+  http-server-gate
@@ -4326,7 +4339,7 @@
         connections.old
       %-  ~(run by connections.old)
       |=  outstanding-connection-3
-      ^-  outstanding-connection
+      ^-  outstanding-connection-5
       [action inbound-request [*@uv [%ours ~]] response-header bytes-sent]
     ::
         auth.old
@@ -4371,6 +4384,22 @@
     ==
   ::
       %~2025.1.31
+    %=    $
+        date.old  %~2026.6.22
+    ::
+        connections.old
+      %-  ~(run by connections.old)
+      |=  v=outstanding-connection-5
+      ^-  outstanding-connection
+      %=    v
+          inbound-request
+        :+  &1.inbound-request.v
+          ?:(authenticated.inbound-request.v [%ours ~] [%fake *@p])
+        |1.inbound-request.v
+      ==
+    ==
+  ::
+      %~2026.6.22
     http-server-gate(ax old)
   ::
   ==
