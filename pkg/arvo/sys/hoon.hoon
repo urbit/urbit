@@ -9480,7 +9480,7 @@
                   $(sut q.sut, lon [~ lon], p.heg +(p.heg))
                 ?.  =(0 p.heg)
                   next(p.heg (dec p.heg))
-                =+  tor=(fund way u.u.tyr)
+                =+  tor=(fund(sut q.sut) way u.u.tyr)
                 ?-  -.tor
                   %&  [%& (weld p.p.tor `vein`[~ `axe lon]) q.p.tor]
                   %|  [%| %| p.p.tor (comb [%0 axe] q.p.tor)]
