@@ -63,8 +63,8 @@
       broken=(map ship attempt=@da)  :: XX add offending flows?
       ::  hash to trigger migration
       ::
-      last-hash=_0v1l.j5i77.ga13o.okjjk.tv6m9.c9pg4.
-                      7i10l.9mgpp.shtut.q530n.41il8  :: 409k-2
+      last-hash=_0v11.11111.11111.11111.11111.11111.
+                      11111.11111.11111.11111.11111  :: disabled for now
       ::  ships with an %ahoy flow in flight
       ::
       pending-ahoy=(set ship)

@@ -150,7 +150,7 @@
     +$  note
       $~  [%b %wait *@da]
       $%  $:  %a
-              $>(?(%deep %keen %meek %moke %mage %prod %stir) task)
+              $>(?(%deep %keen %meek %moke %mage %prod %stir %rege) task)
           ==
           $:  %b
               $>(?(%wait %rest) task:behn)
@@ -2624,6 +2624,7 @@
             [%34 axle]
             [%35 axle]
             [%36 axle]
+            [%37 axle]
         ==
     ::
     ::
@@ -2698,7 +2699,7 @@
       ~>  %slog.0^leaf/"ames: metamorphosis on %take"
       [:(weld molt-moves queu-moves take-moves) adult-gate]
     ::
-    ++  stay  [%36 %larva state=ames-state cache=cached-state]
+    ++  stay  [%37 %larva state=ames-state cache=cached-state]
     ++  scry  scry:adult-core
     ++  load
       |=  $=  old
@@ -2892,6 +2893,13 @@
               ==  ==
               $:  %36                            :: remove stale %for flows
               $%  $:  %larva                     :: created by the %clos %stir
+                      state=axle                 ::
+                      cache=_cached-state
+                  ==
+                  [%adult state=axle]
+              ==  ==
+              $:  %37                            :: remove chums that had %mesa
+              $%  $:  %larva                     :: turned on (pre-)
                       state=axle                 ::
                       cache=_cached-state
                   ==
@@ -3226,11 +3234,17 @@
         larval-gate(cached-state cache.old)
       ::
           [%36 %adult *]
-        (load:adult-core state.old)
+        =.  cached-state  `[%36 state.old]
+        ~>  %slog.1^leaf/"ames: larva %36 reload"
+        larval-gate
       ::
           [%36 %larva *]
-        ::  larva doesn't use or update ames-state
-        ::
+        larval-gate(cached-state cache.old)
+      ::
+          [%37 %adult *]
+        (load:adult-core state.old)
+      ::
+          [%37 %larva *]
         larval-gate(cached-state cache.old)
       ::
       ==
@@ -3307,7 +3321,7 @@
       |^  ^+  [moz larval-core]
       ?~  cached-state  [~ larval-core]
       =*  old  u.cached-state
-      ?:  ?=(%36 -.old)
+      ?:  ?=(%37 -.old)
         ::  no state migrations left; update state, clear cache, and exit
         ::
         [(flop moz) larval-core(ames-state.adult-gate +.old, cached-state ~)]
@@ -3417,8 +3431,10 @@
         $(u.cached-state old(- %34), moz (weld moz moz-34))
       ?:  ?=(%34 -.old)
         $(cached-state `35+(state-34-to-35 +.old))
-      ?>  ?=(%35 -.old)
-      $(cached-state `36+(state-35-to-36 +.old))
+      ?:  ?=(%35 -.old)
+        $(cached-state `36+(state-35-to-36 +.old))
+      ?>  ?=(%36 -.old)
+      $(-.u.cached-state %37, moz (weld moz (moves-36-to-37 +.old)))
       ::
       ++  our-beam  `beam`[[our %rift %da now] /(scot %p our)]
       ++  state-4-to-5
@@ -4495,6 +4511,32 @@
             (~(del by p) ames-path)
           ==
         ==
+      ::
+      ++  moves-36-to-37
+        |=  old=axle
+        ^-  (list move)
+        ~>  %slog.0^leaf/"ames: migrating from state %36 to %37"
+        =+  fo-mop=fo-mop:fo:ev:mesa:adult-core
+        ^-  (list move)
+        %-  ~(rep by chums.old)
+        |=  [[=ship c=chum-state] moz=(list move)]
+        ^+  moz
+        ?:  ?=(%alien -.c)  moz
+        =/  all-outstanding=?
+          %-  ~(rep by flows.c)
+          |=  [[=side sat=flow-state] all=?]
+          ?:  ?=(%bak dire.side)
+            %.n
+          ?&  all
+              ?|  =(sat *flow-state)
+                  ?&  =((dec next.snd.sat) (wyt:fo-mop loads.snd.sat))
+                      =(rcv.sat rcv:*flow-state)
+          ==  ==  ==
+        ?.  all-outstanding
+          moz
+        :_  moz
+        ^-  move
+        [[//ames]~ %pass /rege %a %rege `ship dry=%.n]
       ::
       --
     ::
@@ -14414,7 +14456,7 @@
   take:am-core
 ::  +stay: extract state before reload
 ::
-++  stay  [%36 adult/ames-state]
+++  stay  [%37 adult/ames-state]
 ::  +load: load in old state after reload
 ::
 ++  load
