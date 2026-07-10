@@ -2436,6 +2436,8 @@
         [%ogre p=@tas]                                  ::  delete mount point
         [%rule red=dict wit=dict]                       ::  node r+w permissions
         [%tire p=(each rock:tire wave:tire)]            ::  app state
+        [%wath p=@tas]                                  ::  watch mount point
+        [%wend p=@tas]                                  ::  unwatch mount point
         [%writ p=riot]                                  ::  response
         [%wris p=[%da p=@da] q=(set (pair care path))]  ::  many changes
     ==                                                  ::
@@ -2474,6 +2476,7 @@
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
         [%warp wer=ship rif=riff]                       ::  internal file req
+        [%wath pot=term on=?]                           ::  (un)mark auto-sync
         [%werp who=ship wer=ship rif=riff-any]          ::  external file req
         [%wick ~]                                       ::  try upgrade
         [%zeal lit=(list [=desk =zest])]                ::  batch zest

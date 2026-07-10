@@ -1,0 +1,1 @@
+clay/cancel-autosync.hoon
