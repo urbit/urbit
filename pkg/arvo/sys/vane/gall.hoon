@@ -1132,7 +1132,7 @@
   ::  +mo-remote-blocked: check if .dap has a remote blocked move for .ship
   ::
   ++  mo-remote-blocked
-    |=  [=ship dap=term]
+    |=  [=duct =ship dap=term]
     ^-  ?
     ?~  waiting=(~(get by blocked.state) dap)
       %.n
@@ -1142,6 +1142,14 @@
     |=  =blocked-move
     ?&  ?=(%& -.move.blocked-move)
         =(ship ship.attributing.routes.blocked-move)
+        ::  the enqueued deal's duct is the original %ames delivery duct
+        ::  prefixed with our own /sys/req wire; match on the %ames
+        ::  bone-wire so we don't mix flows from the same ship
+        ::
+        ?&  ?=(^ duct)
+            ?=([gall-wire=* ames-wire=^ *] duct.blocked-move)
+            =(i.duct i.t.duct.blocked-move)
+        ==
     ==
   ::  +mo-do-flub: drop incoming pleas in %ames
   ::
@@ -1170,7 +1178,7 @@
     ::  if we have remote blocked moves, skip the %flub handling logic in %ames
     ::  if /gf system flow is not established, skip sending the %flub $boon
     ::
-      maybe-blocked=(mo-remote-blocked ship agent-name)
+      maybe-blocked=(mo-remote-blocked hen ship agent-name)
     ?.((~(has by flub-ducts.state) ship) ~ `agent-name)
   ::
   ++  mo-handle-flub-plea
@@ -2454,7 +2462,7 @@
     ::  %ames. if we don't have blocked remote moves tell %ames to delete
     ::  its pending-ack
     ::
-    ?:  (mo-remote-blocked:mo-core ship agent-name)
+    ?:  (mo-remote-blocked:mo-core duct ship agent-name)
       %-  %^  trace:mo-core  odd.veb.bug.state  agent-name
           &+"on {<ship>} in-progress flow; %plea enqueued; wait"
       mo-core
