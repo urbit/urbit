@@ -1507,6 +1507,9 @@
     ++  ap-germ
       |=  =coop
       =/  pen  (~(get by gem.yoke) coop)
+      ::  TODO: change gate on the node being a %coop, not just existing;
+      ::    else a non %coop namespace at this path makes +ap-stub (put-hutch:of-farm)
+      ::    drop the reserved keys.
       =/  exists  !=(~ (~(get of-farm sky.yoke) coop))
       =?  gem.yoke  &(!exists ?=(~ pen))
         (~(put by gem.yoke) coop ~)
