@@ -224,7 +224,6 @@
       tyr=(set duct)                                    ::  app subs
       tur=rock:tire                                     ::  last tire
       pud=(unit [=desk =yoki])                          ::  pending update
-      sad=(map ship @da)                                ::  scry known broken
       bug=[veb=@ mas=@]                                 ::  verbosity
   ==                                                    ::
 ::
@@ -287,7 +286,7 @@
       have=(map lobe fell)
       need=(list $@(lobe [=tako =path =lobe]))          ::  opt deets for scry
       nako=(qeu (unit nako))
-      busy=(unit $@(%ames [kind=@ta =time =path]))      ::  pending request
+      busy=(unit $@(%ames [kind=@ta =path]))            ::  pending request
   ==
 ::
 ::  Domestic ship.
@@ -408,8 +407,6 @@
 ::  %utilities
 ::
 |%
-++  scry-timeout-time  ~m5
-++  scry-retry-time    ~h1
 ::  +sort-by-head: sorts alphabetically using the head of each element
 ::
 ++  sort-by-head
@@ -1457,26 +1454,12 @@
   ::
   ++  send-over-scry
     |=  [kind=@ta =duct =ship index=@ud =desk =mood]
-    ^-  [[timeout=@da =path] _..send-over-scry]
-    =/  =time  (add now scry-timeout-time)
+    ^-  [=path _..send-over-scry]
     =/  =wire  (request-wire kind ship desk index)
     =/  =path
       =,  mood
       [%c care (scot case) desk path]
-    :-  [time path]
-    %-  emil
-    :~  [hen %pass wire %a %keen ~ ship path]
-        [hen %pass wire %b %wait time]
-    ==
-  ::
-  ++  cancel-scry-timeout
-    |=  inx=@ud
-    ~|  [%strange-timeout-cancel-no-scry-request her syd inx]
-    ?>  ?=(^ ref)
-    =/  sat=update-state  (~(got by bom.u.ref) inx)
-    ?>  ?=([~ ^] busy.sat)
-    =/  =wire  (request-wire kind.u.busy.sat her syd inx)
-    (emit hen %pass wire %b %rest time.u.busy.sat)
+    [path (emit hen %pass wire %a %keen ~ ship path)]
   ::
   ++  foreign-capable
     |=  =rave
@@ -3137,13 +3120,9 @@
     ?.  ?=([~ ^] busy.sat)
       %.  [hen her u.nux [syd ~]]
       send-over-ames(ref `(unit rind)`ref)    ::  XX TMI
-    %-  emil
     =*  bus  u.busy.sat
     =/  =wire  (request-wire kind.bus her syd u.nux)
-    ~&  %cancel-request-yawn
-    :~  [hen %pass wire %a %yawn her path.bus]
-        [hen %pass wire %b %rest time.bus]
-    ==
+    (emit hen %pass wire %a %yawn her path.bus)
   ::
   ::  Handles a request.
   ::
@@ -3165,36 +3144,6 @@
     ?~  new-sub
       ..start-request
     (duce for u.new-sub)
-  ::
-  ::  +retry-with-ames: we tried scrying. now try with ames instead.
-  ::
-  ++  retry-with-ames
-    |=  [kind=@ta inx=@ud]
-    ^+  ..retry-with-ames
-    ~|  [%retry-with-ames kind]
-    ?>  ?=(%back-index kind)
-    ~|  [%strange-retry-no-request her syd inx]
-    ?>  ?=(^ ref)
-    =/  sat=update-state  (~(got by bom.u.ref) inx)
-    ::  mark her as having broken scry comms
-    ::
-    =.  sad  (~(put by sad) her now)
-    ::  clean up scry request & timer
-    ::
-    =.  ..retry-with-ames
-      =<  ?>(?=(^ ref) .)
-      ~|  [%strange-retry-not-scry her syd inx busy.sat -.rave.sat]
-      =/  bus  ?>(?=([~ ^] busy.sat) u.busy.sat)
-      =/  =wire  (request-wire kind her syd inx)
-      %-  emil
-      ~&  %retry-with-ames-yawn
-      :~  [hen %pass wire %b %rest time.bus]
-          [hen %pass wire %a %yawn her path.bus]
-      ==
-    ::  re-send over ames
-    ::
-    =.  bom.u.ref  (~(put by bom.u.ref) inx sat(busy ~))
-    abet:work:(foreign-update inx)
   ::
   ::  Called when a foreign ship answers one of our requests.
   ::
@@ -3440,18 +3389,12 @@
         $(need.sat t.need.sat)
       ::  otherwise, fetch the next blob (aka fell)
       ::
-      =^  scry=(unit [@ta @da path])  ..foreign-update
+      =^  scry=(unit [@ta path])  ..foreign-update
         =<  ?>(?=(^ ref) .)
         ::  if we know a revision & path for the blob,
-        ::  and :ship's remote scry isn't known to be broken,
-        ::  or we learned it was broken more than an hour ago,
+        ::  make the request over remote scry
         ::
-        ?:  ?&  ?=(^ i.need.sat)
-            ?|  !(~(has by sad) her)
-                (gth now (add scry-retry-time (~(got by sad) her)))
-            ==  ==
-          ::  make the request over remote scry
-          ::
+        ?:  ?=(^ i.need.sat)
           =/  =mood  [%q uv+tako path]:i.need.sat
           =<  [`[%back-index -] +]
           (send-over-scry %back-index hen her inx syd mood)
@@ -4674,7 +4617,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%16                                       ::  vane version
+    $:  ver=%17                                       ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
@@ -4917,11 +4860,6 @@
     ::
         [%trim ~]
       [~ ..^$]
-    ::
-        [%fine ~]
-      ~&  "clay: resetting fine state.  old:"
-      ~&  sad.ruf
-      `..^$(sad.ruf ~)
     ==
   ::
       %tire
@@ -5031,7 +4969,8 @@
   ::
   =>  |%
       +$  raft-any
-        $%  [%16 raft-16]
+        $%  [%17 raft-17]
+            [%16 raft-16]
             [%15 raft-15]
             [%14 raft-14]
             [%13 raft-13]
@@ -5043,7 +4982,48 @@
             [%7 raft-7]
             [%6 raft-6]
         ==
-      +$  raft-16  raft
+      +$  raft-17  raft
+      ::
+      +$  raft-16
+        $+  raft-16
+        $:  rom=room
+            hoy=(map ship rung-16)
+            ran=rang
+            mon=(map term beam)
+            hez=(unit duct)
+            cez=(map @ta crew)
+            tyr=(set duct)
+            tur=rock:tire
+            pud=(unit [=desk =yoki])
+            sad=(map ship @da)
+            bug=[veb=@ mas=@]
+        ==
+      +$  rung-16
+        $:  rus=(map desk rede-16)
+        ==
+      +$  rede-16
+        $:  lim=@da
+            ref=(unit rind-16)
+            qyx=cult
+            dom=dome
+            per=regs
+            pew=regs
+            fiz=melt
+        ==
+      +$  rind-16
+        $:  nix=@ud
+            bom=(map @ud update-state-16)
+            fod=(map duct @ud)
+            haw=(map mood (unit cage))
+        ==
+      +$  update-state-16
+        $:  =duct
+            =rave
+            have=(map lobe fell)
+            need=(list $@(lobe [=tako =path =lobe]))
+            nako=(qeu (unit nako))
+            busy=(unit $@(%ames [kind=@ta =time =path]))
+        ==
       ::
       +$  flow  (map leak [refs=@ud =soak])
       +$  leak
@@ -5109,7 +5089,7 @@
         ==
       +$  rind-15
         $:  nix=@ud
-            bom=(map @ud update-state)
+            bom=(map @ud update-state-16)
             fod=(map duct @ud)
             haw=(map mood (unit cage-15))
         ==
@@ -5158,7 +5138,7 @@
         ==
       +$  rind-14
         $:  nix=@ud
-            bom=(map @ud update-state)
+            bom=(map @ud update-state-16)
             fod=(map duct @ud)
             haw=(map mood (unit cage-15))
         ==
@@ -5516,7 +5496,8 @@
   =?  old  ?=(%13 -.old)  14+(raft-13-to-14 +.old)
   =?  old  ?=(%14 -.old)  15+(raft-14-to-15 +.old)
   =?  old  ?=(%15 -.old)  16+(raft-15-to-16 +.old)
-  ?>  ?=(%16 -.old)
+  =?  old  ?=(%16 -.old)  17+(raft-16-to-17 +.old)
+  ?>  ?=(%17 -.old)
   ..^^$(ruf +.old)
   ::
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
@@ -5798,7 +5779,7 @@
             bom.u
           %-  ~(run by bom.u.ref.rede-13)
           |=  update-state-11
-          ^-  update-state
+          ^-  update-state-16
           =/  busy  ?:(busy `%ames ~)
           [duct rave ~ need nako busy]
         ==
@@ -5866,13 +5847,55 @@
     ::
     ++  rind-15-to-rind
       |=  r=rind-15
-      ^-  rind
+      ^-  rind-16
       r(haw (~(run by haw.r) (curr bind next-cage:a235)))
     ::
     ++  cach-15-to-cach
       |=  c=cach-15
       ?.  ?=([~ ~ *] c)  c
       ``(next-cage:a235 u.u.c)
+    --
+  ::  +raft-16-to-17: remove sad, remove scry timeouts from busy
+  ::
+  ++  raft-16-to-17
+    |=  raf=raft-16
+    |^  ^-  raft-17
+        :*  rom.raf
+            (~(run by hoy.raf) rung-16-to-rung)
+            ran.raf
+            mon.raf
+            hez.raf
+            cez.raf
+            tyr.raf
+            tur.raf
+            pud.raf
+            bug.raf
+        ==
+    ::
+    ++  rung-16-to-rung
+      |=  r=rung-16
+      ^-  rung
+      [rus=(~(run by rus.r) rede-16-to-rede)]
+    ::
+    ++  rede-16-to-rede
+      |=  r=rede-16
+      ^-  rede
+      r(ref (bind ref.r rind-16-to-rind))
+    ::
+    ++  rind-16-to-rind
+      |=  r=rind-16
+      ^-  rind
+      r(bom (~(run by bom.r) update-state-16-to-update-state))
+    ::
+    ++  update-state-16-to-update-state
+      |=  u=update-state-16
+      ^-  update-state
+      %=    u
+          busy
+        ?~  busy.u    ~
+        ?@  u.busy.u  `%ames
+        `[kind.u.busy.u path.u.busy.u]
+      ==
     --
   --
 ::
@@ -6014,7 +6037,7 @@
 ++  stay
   ^-  raft-any:load
   :-  ver
-  ^-  raft-16:load
+  ^-  raft-17:load
   ruf
 ::
 ++  take                                              ::  accept response
@@ -6148,28 +6171,22 @@
         `[%1 `q.sage.hin]
       ::
       =^  mos  ruf
-        =/  den  ((de now rof hen ruf) her desk)
         ?~  fell
           ::  We shouldn't get back null on any of the fine requests we
           ::  make unless they're out of date
           ::
-          %-  (slog leaf+"clay: got null from {<her>}, falling back to ames" ~)
-          abet:(retry-with-ames:den %back-index index)
-        =?  den  ?=(%sage +<.hin)
-          (cancel-scry-timeout:den index)
+          %-  (slog leaf+"clay: got null backfill response from {<her>}" ~)
+          [~ ruf]
+        =/  den  ((de now rof hen ruf) her desk)
         abet:abet:(take-backfill:(foreign-update:den index) u.fell)
       [mos ..^$]
     ::
          %wake
       ?^  error.hin
         [[hen %slip %d %flog %crud %wake u.error.hin]~ ..^$]
-      =/  her=ship   (slav %p i.t.tea)
-      =/  =desk      (slav %tas i.t.t.tea)
-      =/  index=@ud  (slav %ud i.t.t.t.tea)
-      =^  mos  ruf
-        =/  den  ((de now rof hen ruf) her desk)
-        abet:(retry-with-ames:den %back-index index)
-      [mos ..^$]
+      ::  stale scry timeout timer, set before we stopped using them
+      ::
+      [~ ..^$]
     ==
   ::
   ?:  ?=([%seek @ @ ~] tea)
