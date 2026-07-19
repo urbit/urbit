@@ -4675,6 +4675,7 @@
           ?.  ?=(%agent -.in)                  `in
           ?.  ?=(%fact -.sign.in)              `in
           ?:  ?=(%thread-done p.cage.sign.in)  `in
+          ?:  =(src our):bowl.strand-input     `in
           ::
           :-  ~
           :^  %agent  wire.in  %fact
