@@ -1037,6 +1037,9 @@
       ::
       ?:  =(%noun mark.deal)
         (mo-apply-sure dap routes [%poke %noun %noun noun.deal])
+      ::  we do not defer noun validation if the poked agent is %spider,
+      ::  unlike with apps, because %spider may only be poked by us.
+      ::
       =/  =case  da+now
       =/  yok  (~(got by yokes.state) dap)
       =/  =desk  q.beak:?>(?=(%live -.yok) yok)  ::TODO acceptable assertion?
@@ -1052,9 +1055,6 @@
         ?:  ?=(%| -.res)
           =/  ror  "gall: raw-poke vale fail :{(trip dap)} {<mark.deal>}"
           (mo-give %unto %poke-ack `[leaf+ror p.res])
-        =.  mo-core
-          %+  mo-pass  /nowhere
-          [%c %warp our desk ~ %sing %b case /[mark.deal]]
         (mo-apply-sure dap routes [%poke mark.deal p.res])
       ==
     ::
@@ -1076,9 +1076,6 @@
         ?:  ?=(%| -.res)
           =/  ror  "gall: poke-as cast fail :{(trip dap)} {<mars>}"
           (mo-give %unto %poke-ack `[leaf+ror p.res])
-        =.  mo-core
-          %+  mo-pass  /nowhere
-          [%c %warp our desk ~ %sing %c case /[a.mars]/[b.mars]]
         (mo-apply-sure dap routes [%poke mark.deal p.res])
       ==
     ==
@@ -1603,11 +1600,7 @@
           ?:  ?=(%| -.res)
             %-  (slog leaf+"watch-as fact conversion failure" p.res)
             (ap-kill-up-slip duct)
-          :~  :*  duct  %pass  /nowhere  %c  %warp  our  q.beak.yoke  ~
-                  %sing  %c  case  mars-path
-              ==
-              [duct %give %unto %fact b.mars p.res]
-          ==
+          [duct %give %unto %fact b.mars p.res]~
         ==
       ::
           %pass
@@ -1922,7 +1915,7 @@
           [unto ap-core]
         =/  =case  da+now
         ?:  ?=(%spider agent-name)
-          :-  [%fact mark.unto !>(noun.unto)]
+          :-  [%fact mark.unto `vase`[%noun noun.unto]]
           ap-core
         =/  sky  (rof [~ ~] /gall %cb [our q.beak.yoke case] /[mark.unto])
         ?.  ?=([~ ~ *] sky)
@@ -1933,9 +1926,7 @@
         ?:  ?=(%| -.res)
           (mean leaf+"gall: ames vale fail {<mark.unto>}" p.res)
         :-  [%fact mark.unto p.res]
-        %-  ap-move  :_  ~
-        :^  hen  %pass  /nowhere
-        [%c %warp our q.beak.yoke ~ %sing %b case /[mark.unto]]
+        ap-core
       |^  ^+  ap-core
           ::  %poke-ack has no nonce; ingest directly
           ::
@@ -3201,8 +3192,6 @@
   ~>  %spin.['take/gall']
   ?^  dud
     ~&(%gall-take-dud ((slog tang.u.dud) [~ gall-payload]))
-  ?:  =(/nowhere wire)
-    [~ gall-payload]
   ?:  =(/clear-huck wire)
     =/  =gift  ?>(?=([%behn %heck %gall *] syn) +>+.syn)
     [[duct %give gift]~ gall-payload]
