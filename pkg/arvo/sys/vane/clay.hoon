@@ -3911,10 +3911,12 @@
       |=  tak=tako
       ^-  aeon  ~+
       ?:  =(0v0 tak)  0
+      =|  s=(set tako)
       =/  a=aeon  1
       |-
       ?:  (gth a let.dom)  ~|([%tako-mia tak] !!)
-      ?:  (~(has in (reachable-takos (~(got by hit.dom) a))) tak)  a
+      =.  s  (reachable-takos-into s (~(got by hit.dom) a))
+      ?:  (~(has in s) tak)  a
       $(a +(a))
     ::
     ::  Creates a nako of all the changes between a and b.
@@ -3938,16 +3940,18 @@
           ::  a should be excluded, so wait until we're past it
           ?:  (gte lower +(a))
             acc
-          =/  res=(set tako)  (reachable-takos (~(got by hit.dom) lower))
-          $(acc (~(uni in acc) res), lower +(lower))
+          =.  acc  (reachable-takos-into acc (~(got by hit.dom) lower))
+          $(lower +(lower))
       =/  includes=(set tako)
-          =|  acc=(set tako)
+          ::  seed with excludes so we stop at already-known history;
+          ::  the +dif below removes them from the final set
+          =/  acc=(set tako)  excludes
           =/  upper=@ud  b
           |-
           ?:  (lte upper a)
             acc
-          =/  res=(set tako)  (reachable-takos (~(got by hit.dom) upper))
-          $(acc (~(uni in acc) res), upper (dec upper))
+          =.  acc  (reachable-takos-into acc (~(got by hit.dom) upper))
+          $(upper (dec upper))
       [(~(run in (~(dif in includes) excludes)) tako-to-yaki) ~]
     ::  Traverse parentage and find all ancestor hashes
     ::
@@ -3955,8 +3959,19 @@
       |=  p=tako
       ^-  (set tako)
       ~+
-      =|  s=(set tako)
+      (reachable-takos-into ~ p)
+    ::  Traverse parentage, stopping at takos already in the set
+    ::
+    ::    Since reachability sets are closed under ancestry, seeding
+    ::    with a previous result visits each tako at most once across
+    ::    repeated calls.
+    ::
+    ++  reachable-takos-into
+      |=  [s=(set tako) p=tako]
+      ^-  (set tako)
       |-  ^-  (set tako)
+      ?:  (~(has in s) p)
+        s
       =.  s  (~(put in s) p)
       =+  y=(tako-to-yaki p)
       |-  ^-  (set tako)
@@ -4174,12 +4189,11 @@
         :-  -:!>(*(map lobe page))
         ^-  (map lobe page)
         %-  %~  rep  in
+            =|  ts=(set tako)
             |-  ^-  (set tako)
-            =/  ts=(set tako)
-              %-  reachable-takos
-              (~(got by hit.dom) let.dom)
+            =.  ts  (reachable-takos-into ts (~(got by hit.dom) let.dom))
             ?:  (lte let.dom 1)  ts
-            (~(uni in ts) $(let.dom (dec let.dom)))
+            $(let.dom (dec let.dom))
         |=  [t=tako o=(map lobe page)]
         %-  ~(gas by o)
         %+  turn
@@ -4389,12 +4403,14 @@
       ?.  ?|  =(0v0 tak)
           ?&  (~(has by hut.ran) tak)
               ?|  (~(any by hit.dom) |=(=tako =(tak tako)))  ::  fast-path
+                  =|  s=(set tako)
                   |-  ^-  ?
                   ?:  (lte let.dom 1)
                     %.n
-                  ?|  (~(has in (reachable-takos (aeon-to-tako:ze let.dom))) tak)
-                      $(let.dom (dec let.dom))
-                  ==
+                  =.  s  (reachable-takos-into s (aeon-to-tako:ze let.dom))
+                  ?:  (~(has in s) tak)
+                    %.y
+                  $(let.dom (dec let.dom))
               ==
               |(?=(~ for) (may-read u.for care.mun tak path.mun))
           ==  ==
