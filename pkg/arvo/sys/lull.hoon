@@ -4413,7 +4413,7 @@
               (have-path spur.mus spur.per)
           ==
         ::
-        %fling  ?>(?=(%fling -.mus) |)
+          %fling  ?>(?=(%fling -.mus) &)
         ==
       ?.  =(+<.mus +<.per)  |
       ?+  per  |
@@ -4473,6 +4473,7 @@
         =/  =note:agent  q.card
         ?-  -.note
             %agent
+          ?.  =(our ship.note)  [%fling ~]~
           ?-  -.task.note
             %watch             [%watch `name.note path.task.note]~
             %watch-as          [%watch `name.note path.task.note]~
