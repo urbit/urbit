@@ -5817,10 +5817,13 @@
           =/  ship-state  (~(get by peers.ames-state) ship)
           ?>  ?=([~ %known *] ship-state)
           =+  peer-core=(abed-peer:pe ship +.u.ship-state)
-          =/  =bone
-            ~|  goad-flow-missing/duct
-            (~(got by by-duct.ossuary.peer-state.peer-core) duct)
-          abet:(on-goad-flow:peer-core bone)
+          ?~  bone=(~(get by by-duct.ossuary.peer-state.peer-core) duct)
+            ::  XX has this flow been corked?
+            ::
+            %-  %^  ev-trace  odd.veb  ship
+                |.("goad-flow-missing: {<duct>}")
+            event-core
+          abet:(on-goad-flow:peer-core u.bone)
         ::  +on-stun: poke %ping app when hearing a STUN response
         ::
         ++  on-stun
@@ -8331,7 +8334,7 @@
                   %^  pe-emit  duct  %pass
                   :-  (make-bone-wire her rift.hers.channel bone.shut-packet)
                   [%g %plea her u.m(path /gp/[agent])]
-                  sink
+                sink
               ::  last-heard<seq<10+last-heard; packet in a live message
               ::
               =/  =partial-rcv-message
