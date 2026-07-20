@@ -443,11 +443,19 @@
   ;<  moz-germ=(list move:gall)  bind:m
     (mock-card %pass /agent/wire %arvo %ames %germ coop)
   ::
+  ;<  gall-wire=wire  bind:m  (a2k-wire %mock /agent/wire ~)
   =/  plug-wire  [%key %mock '0w3.lBw1H' %pug coop]
   ;<  ~  bind:m
     %+  ex-moves  moz-germ
-    :~  (ex-move default-duct %pass plug-wire [%a %plug [%g %x %mock %$ '1' coop]])
-        (ex-move default-duct %give %unto %poke-ack ~)
+    :~  (ex-move default-duct %give %unto %poke-ack ~)
+        (ex-move ~[/sysduct] %pass gall-wire [%g %name %mock %germ coop])
+    ==
+  =/  name-duct=duct  [gall-wire ~[/sysduct]]
+  ;<  moz-name=(list move:gall)  bind:m
+    (do-call name-duct [%name %mock %germ coop])
+  ;<  ~  bind:m
+    %+  ex-moves  moz-name
+    :~  (ex-move [gall-wire ~[/sysduct]] %pass plug-wire [%a %plug [%g %x %mock %$ '1' coop]])
     ==
   ::  sends %pass to %ames %plug to handle key reservation
   ::
@@ -462,7 +470,11 @@
   ;<  ~  bind:m
     %+  ex-moves  moz-tend
     :~  (ex-move default-duct %give %unto %poke-ack ~)
+        (ex-move ~[/sysduct] %pass gall-wire [%g %name %mock %tend coop /some/path [%txt 'foo']])
     ==
+  ;<  tend-moz=(list move:gall)  bind:m
+    (do-call name-duct [%name %mock %tend coop /some/path [%txt 'foo']])
+  ;<  ~  bind:m  (ex-moves tend-moz ~)
   ::
   ;<  moz=(list move:gall)  bind:m
     (do-call ~ %plea ~dev [%g /gk/mock [%0 %$ '1' coop]])

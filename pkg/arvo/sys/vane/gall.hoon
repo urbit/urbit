@@ -989,6 +989,27 @@
     ::NOTE  if we drop them here, may also need to tell ames to drop them
     ::
     ~(tap-hutch of-farm sky.yoke)
+  ::  +mo-name: agent scry namespace management
+  ::
+  ++  mo-name
+    |=  [prov=path =dude task=task-namespace-v1]
+    ^+  mo-core
+    ?~  yok=(~(get by yokes.state) dude)
+      ~>  %slog.0^leaf/"gall: ignoring %name for {<dude>}, not started"
+      mo-core
+    ?.  ?=(%live -.u.yok)
+      ~>  %slog.0^leaf/"gall: ignoring %name for {<dude>}, not running"
+      mo-core
+    =/  ap-core  (ap-yoke:ap dude [~ our prov] u.yok)
+    =<  ap-abet
+    ?-  -.task
+        %grow  (ap-grow:ap-core +.task)
+        %tomb  (ap-tomb:ap-core +.task)
+        %cull  (ap-cull:ap-core +.task)
+        %tend  (ap-tend:ap-core +.task)
+        %germ  (ap-germ:ap-core +.task)
+        %snip  (ap-snip:ap-core +.task)
+    ==
   ::  +mo-load: install agents
   ::
   ++  mo-load
@@ -1616,18 +1637,12 @@
     ::    We accept %huck to "fake" being a message to a ship but
     ::    actually send it to a vane.
     ::
-    ::    "after the remote scry handling, but before other card transforms"
+    ::    "after the remote scry req handling, but before other card transforms"
     ::
     +$  carp  $+  carp  (wind neet gift:agent)
-    +$  tick
-      $%  $<(%ames task-user-v1)
-      $:  %ames
-          $<  ?(%grow %tomb %cull %tend %germ %snip)
-          _+:*$>(%ames task-user-v1)
-      ==  ==
     +$  real-neet  $+  real-neet
       $%  [%agent [=ship name=term] task=$%(task:agent [%raw-poke =mark =noun])]
-          [%arvo tick]
+          [%arvo task-user-v1]
           [%huck [=ship name=term] note-arvo=[%b %huck sign-arvo=[%gall %unto %kick ~]]]
       ==
     +$  neet  $+  neet
@@ -1751,13 +1766,18 @@
               %arvo
             ?-  +.neet
               [%ames *]
-            ?.  ?=(%keen +>-.neet)  [%a +>.neet]
-            =/  det  (~(got by resource-deets.yoke) p.card %ames %keen spar.neet)
-            ?>  ?=([%ames %keen *] det)
-            ?~  sec.det   [%a %keen ~ spar.neet]
-            ?~  resolved.u.sec.det  ~|([%bad-gall-bookkeeping %expect-brood-resolved] !!)
-            ?~  key.u.resolved.u.sec.det  ~|([%bad-gall-bookkeeping %missing-keen-key] !!)
-            [%a %keen key.u.resolved.u.sec.det spar.neet]
+            ?+  +>-.neet  [%a +>.neet]
+                ?(%grow %tomb %cull %tend %germ %snip)
+              [%g %name agent-name +>.neet]  ::NOTE  yes, %g
+            ::
+                %keen
+              =/  det  (~(got by resource-deets.yoke) p.card %ames %keen spar.neet)
+              ?>  ?=([%ames %keen *] det)
+              ?~  sec.det   [%a %keen ~ spar.neet]
+              ?~  resolved.u.sec.det  ~|([%bad-gall-bookkeeping %expect-brood-resolved] !!)
+              ?~  key.u.resolved.u.sec.det  ~|([%bad-gall-bookkeeping %missing-keen-key] !!)
+              [%a %keen key.u.resolved.u.sec.det spar.neet]
+            ==
               [%behn *]        [%b +>.neet]
             ::
                 [%clay *]
@@ -2856,14 +2876,6 @@
       ^+  [fex ap-core]
       ?~  caz  [(flop fex) ap-core]
       ?-  i.caz
-        ::  just state changes
-        [%pass * %arvo %ames %grow *]  $(caz t.caz, ap-core (ap-grow +>+.q.i.caz))
-        [%pass * %arvo %ames %tomb *]  $(caz t.caz, ap-core (ap-tomb +>+.q.i.caz))
-        [%pass * %arvo %ames %cull *]  $(caz t.caz, ap-core (ap-cull +>+.q.i.caz))
-        [%pass * %arvo %ames %tend *]  $(caz t.caz, ap-core (ap-tend +>+.q.i.caz))
-        [%pass * %arvo %ames %germ *]  $(caz t.caz, ap-core (ap-germ +>+.q.i.caz))
-        [%pass * %arvo %ames %snip *]  $(caz t.caz, ap-core (ap-snip +>+.q.i.caz))
-      ::
         ::  state changes _and_ +ap-pass of the corresponding tasks
         [%pass * %arvo %ames %keen *]  $(caz t.caz, ap-core (ap-keen p.i.caz +>+.q.i.caz))
         [%pass * %arvo %ames %yawn *]  $(caz t.caz, ap-core (ap-yawn p.i.caz +>+.q.i.caz))
@@ -3070,6 +3082,7 @@
       %idle  mo-abet:(mo-idle:mo-core prov dude.task)
       %load  mo-abet:(mo-load:mo-core prov +.task)
       %nuke  mo-abet:(mo-nuke:mo-core prov dude.task)
+      %name  mo-abet:(mo-name:mo-core prov +.task)
       %doff  mo-abet:(mo-doff:mo-core prov +.task)
       %rake  mo-abet:(mo-rake:mo-core prov +.task)
       %lave  mo-abet:(mo-lave:mo-core prov +.task)

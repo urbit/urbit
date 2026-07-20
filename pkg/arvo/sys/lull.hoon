@@ -3686,6 +3686,7 @@
         [%idle =dude]                                   ::  suspend agent
         [%load =load]                                   ::  load agent
         [%nuke =dude]                                   ::  delete agent
+        [%name =dude task=task-namespace-v1]            ::  agent namespace mgmt
         [%doff dude=(unit dude) ship=(unit ship)]       ::  kill subscriptions
         [%rake dude=(unit dude) all=?]                  ::  reclaim old subs
         [%lave subs=(list [?(%g %a) ship dude duct])]   ::  delete stale bitt(s)
@@ -4100,12 +4101,9 @@
             :: review: [%keen secret=(each [cas=@ app=@tas spar:ames] spar:ames)]
             [%keen secret=? =spar:ames]
             [%yawn =spar:ames]
-            [%grow =spur =page]
-            [%tomb =case =spur]
-            [%cull =case =spur]
-            [%tend =coop =path =page]
-            [%germ =coop]
-            [%snip =coop]
+          ::
+            task-namespace-v1
+          ::
             [%trim p=@ud]
         ==  ==
       ::
@@ -4220,6 +4218,15 @@
         ==  ==
       ::
         [%syscall note-arvo=*]  ::NOTE  secretly $note-arvo, DO NOT DOCUMENT (;
+    ==
+  ::
+  +$  task-namespace-v1
+    $%  [%grow =spur =page]
+        [%tomb =case =spur]
+        [%cull =case =spur]
+        [%tend =coop =path =page]
+        [%germ =coop]
+        [%snip =coop]
     ==
   ::
   +$  gift-user-v1
