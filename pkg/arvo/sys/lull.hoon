@@ -3632,6 +3632,7 @@
         [%jolt =desk =dude]                             ::  (re)start agent
         [%idle =dude]                                   ::  suspend agent
         [%load =load]                                   ::  load agent
+        [%bump =beak bump=(list [=dude =agent])]        ::  load agent in a desk
         [%nuke =dude]                                   ::  delete agent
         [%doff dude=(unit dude) ship=(unit ship)]       ::  kill subscriptions
         [%rake dude=(unit dude) all=?]                  ::  reclaim old subs

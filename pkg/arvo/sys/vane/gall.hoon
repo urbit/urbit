@@ -963,6 +963,30 @@
     ~>  %slog.0^leaf/"gall: stopping {<i.kil>}"
     $(kil t.kil, mo-core (mo-idle prov i.kil))
   ::
+  ++  mo-bump
+    |=  [prov=path =beak agents=(list [=dude =agent])]
+    =.  mo-core
+      |-  ^+  mo-core
+      ?~  agents  mo-core
+      =*  rc  mo-receive-core
+      $(agents t.agents, mo-core (rc prov dude.i.agents beak agent.i.agents))
+    ::
+    =/  kil
+      =/  lol
+        %+  skim  ~(tap by yokes.state)
+        |=  [* y=yoke]
+        &(?=(%live -.y) -.agent.y =(q.beak.y q.beak))
+      ::
+      =/  mol  (~(gas by *(map term yoke)) lol)
+      =/  sol  ~(key by mol)
+      =/  new  (silt (turn agents head))
+      ~(tap in (~(dif in sol) new))
+    ::
+    |-  ^+  mo-core
+    ?~  kil  mo-core
+    ~>  %slog.0^leaf/"gall: stopping {<i.kil>}"
+    $(kil t.kil, mo-core (mo-idle prov i.kil))
+  ::
   ++  mo-authorized-coop
     |=  [lyc=(set ship) =farm dap=term =path =coop]
     %-  ~(all in lyc)
@@ -2487,6 +2511,7 @@
       %jolt  mo-abet:(mo-jolt:mo-core dude.task our desk.task)
       %idle  mo-abet:(mo-idle:mo-core prov dude.task)
       %load  mo-abet:(mo-load:mo-core prov +.task)
+      %bump  mo-abet:(mo-bump:mo-core prov +.task)
       %nuke  mo-abet:(mo-nuke:mo-core prov dude.task)
       %doff  mo-abet:(mo-doff:mo-core prov +.task)
       %rake  mo-abet:(mo-rake:mo-core prov +.task)

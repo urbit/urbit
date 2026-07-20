@@ -366,6 +366,7 @@
           $>  $?  %deal
                   %jolt
                   %load
+                  %bump
               ==
           task:gall
       ==                                                ::
@@ -1501,9 +1502,10 @@
   ::  fully-consistent state (eg not in the middle of a kelvin upgrade).
   ::
   ++  goad
+    |=  syd=(unit desk)
     ^+  ..park
     =^  moves-1  ruf  abet
-    =^  moves-2  ruf  abet:goad:(lu now rof hen ruf)
+    =^  moves-2  ruf  abet:(goad:(lu now rof hen ruf) syd)
     =.  ..park  apex
     (emil (weld moves-1 moves-2))
   ::
@@ -1853,7 +1855,7 @@
       (turn ~(tap in deletes) |=(=path [path |+*lobe]))
     =/  =args:ford:fusion  [files lat.ran veb.bug]
     ::
-    =^  change-cages  args  (checkout-changes args changes)
+    =/  change-cages  (checkout-changes args changes)
     =/  sane-continuation  (sane-changes changes change-cages)
     =/  new-pages=(map lobe page)
       %-  malt
@@ -1892,7 +1894,7 @@
     =/  mem  (want-mime 0)
     =/  res=[mum=(map path (unit mime)) mim=_mim.dom args=_args]
       ?.  mem  [~ ~ args]
-      =^  mum  args  (checkout-mime args deletes ~(key by changes))
+      =/  mum  (checkout-mime args deletes ~(key by changes))
       [mum (apply-changes-to-mim mim.dom mum) args]
     =.  mim.dom  mim.res
     =.  args     args.res
@@ -1931,7 +1933,7 @@
       ?-  liv.dom
         %held  (emit hen %pass /park-held/[syd] %b %wait now)
         %dead  ..park
-        %live  ?:(goat goad ..park)
+        %live  ?:(goat (goad `syd) ..park)
       ==
     ::  notify unix and subscribers
     ::
@@ -2011,12 +2013,12 @@
     ::
     ++  checkout-changes
       |=  [=ford=args:ford:fusion changes=(map path (each page lobe))]
-      ^-  [(map path [=lobe =cage]) args:ford:fusion]
+      ^-  (map path [=lobe =cage])
       %+  roll  `(list [path (each page lobe)])`~(tap by changes)
       |=  $:  [=path change=(each page lobe)]
-              [built=(map path [lobe cage]) cache=_ford-args]
+              built=(map path [lobe cage])
           ==
-      ^+  [built ford-args]
+      ^+  built
       =/  =cage
         ::  ~>  %slog.[0 leaf/"clay: validating {(spud path)}"]
         (read-file:(ford:fusion ford-args) path)
@@ -2028,7 +2030,7 @@
           ::
           %&  (page-to-lobe [p q.q]:cage)
         ==
-      [(~(put by built) path [lobe cage]) ford-args]
+      (~(put by built) path [lobe cage])
     ::
     ::  Print notification to console
     ::
@@ -2102,7 +2104,7 @@
           (~(run by q.yaki) |=(=lobe |+lobe))
         (~(uni by original) changes)
       =/  =args:ford:fusion  [all-changes lat.ran veb.bug]
-      =^  all-change-cages  args  (checkout-changes args all-changes)
+      =/  all-change-cages  (checkout-changes args all-changes)
       =/  ccs=(list [=path =lobe =cage])  ~(tap by change-cages)
       |-  ^+  *sane-changes
       ?^  ccs
@@ -2177,7 +2179,7 @@
     ?^  err
       ((slog leaf+"clay: desk {<syd>} failed to unsuspend" u.err) ..park)
     =.  liv.dom  %live
-    goad
+    (goad `syd)
   ::
   ::  We always say we're merging from 'ali' to 'bob'.  The basic steps,
   ::  not all of which are always needed, are:
@@ -2879,7 +2881,7 @@
             deletes=(set path)
             changes=(set path)
         ==
-    ^-  [(map path (unit mime)) args:ford:fusion]
+    ^-  (map path (unit mime))
     =/  mim=(map path (unit mime))
       =/  dels=(list path)  ~(tap by deletes)
       |-  ^-  (map path (unit mime))
@@ -2887,14 +2889,13 @@
         ~
       (~(put by $(dels t.dels)) i.dels ~)
     =/  cans=(list path)  ~(tap by changes)
-    |-  ^-  [(map path (unit mime)) args:ford:fusion]
-    ?~  cans
-      [mim ford-args]
+    |-  ^-  (map path (unit mime))
+    ?~  cans  mim
     =/  =cage
       ~|  mime-cast-fail+i.cans
       (cast-path:(ford:fusion ford-args) i.cans %mime)
-    =^  mim  ford-args  $(cans t.cans)
-    [(~(put by mim) i.cans `!<(mime q.cage)) ford-args]
+    =/  mim  $(cans t.cans)
+    (~(put by mim) i.cans `!<(mime q.cage))
   ::
   ::  Add or remove entries to the mime cache
   ::
@@ -2963,8 +2964,7 @@
     =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) u.yon))
     =/  files  (~(run by q.yaki) |=(=lobe |+lobe))
     =/  =args:ford:fusion  [files lat.ran veb.bug]
-    =^  mim  args
-      (checkout-mime args ~ ~(key by files))
+    =/  mim  (checkout-mime args ~ ~(key by files))
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
     (ergo for-yon mim)
   ::
@@ -4473,9 +4473,19 @@
   ::  [tare] >
   ::
   ++  goad
+    |=  syd=(unit desk)
     ^+  ..abet
+    ::  Hack: if %base desk is involved, the change might have caused gall
+    ::  recompilation, making it suspend all agents. In that case we rebuild
+    ::  agents from all desks to make sure they are unsuspended
+    ::
+    =?  syd  =(syd `%base)  ~
+    ::
     =^  sat=(list [=desk =bill])  ..abet
-      =/  desks=(list desk)  ~(tap in ~(key by dos.rom))
+      =/  desks=(list desk)
+        ?^  syd  ~[u.syd]
+        ~(tap in ~(key by dos.rom))
+      ::
       |-  ^-  [(list [desk bill]) _..abet]
       ?~  desks
         [~ ..abet]
@@ -4507,7 +4517,12 @@
     =+  (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
     ::
     =.  ..abet  tare                                    ::  [tare] >
-    (emit hen %pass /lu/load %g %load agents)
+    =/  task
+      ?~  syd  [%load agents]
+      =/  g  |=([=dude:gall * =agent:gall] [dude agent])
+      [%bump [our u.syd da+now] (turn agents g)]
+    ::
+    (emit hen %pass /lu/load %g task)
   ::  +override: apply rein to bill
   ::
   ++  override
@@ -4882,7 +4897,7 @@
     =^  m1  ruf
       =/  den  ((de now rof hen ruf) our des.req)
       abet:(set-rein:den ren.req)
-    =^  m2  ruf  abet:goad:(lu now rof hen ruf)         ::  [goad] >
+    =^  m2  ruf  abet:(goad:(lu now rof hen ruf) `des.req)  ::  [goad] >
     [(weld m1 m2) ..^$]
   ::
       %stir
@@ -4890,14 +4905,14 @@
         [%verb @]  [~ ..^$(veb.bug.ruf +.arg.req)]
         [%mass @]  [~ ..^$(mas.bug.ruf +.arg.req)]
         [%goad ~]
-      =^  mos  ruf  abet:goad:(lu now rof hen ruf)
+      =^  mos  ruf  abet:(goad):(lu now rof hen ruf)
       [mos ..^$]
     ::
         [%rise =desk =dude:gall on=(unit ?)]
       =^  m1  ruf
         =/  den  ((de now rof hen ruf) our desk.arg.req)
         abet:(rise:den dude.arg.req on.arg.req)
-      =^  m2  ruf  abet:goad:(lu now rof hen ruf)       ::  [goad] <
+      =^  m2  ruf  abet:(goad:(lu now rof hen ruf) `desk.arg.req)       ::  [goad] <
       [(weld m1 m2) ..^$]
     ::
         [%stay =desk ver=(unit weft)]
@@ -4984,7 +4999,7 @@
       $(mos (weld mos mos-new), lit.req t.lit.req)
     =^  m2  ruf
       abet:wick:((de now rof hen ruf) our %base)
-    =^  m3  ruf  abet:goad:(lu now rof hen ruf)
+    =^  m3  ruf  abet:(goad):(lu now rof hen ruf)
     [:(weld m1 m2 m3) ..^$]
   ::
       %zest
@@ -4993,7 +5008,7 @@
       ::  [wick] could be suspending the last blocking desk
       ::
       abet:wick:(set-zest:den liv.req)
-    =^  m2  ruf  abet:goad:(lu now rof hen ruf)
+    =^  m2  ruf  abet:(goad:(lu now rof hen ruf) `des.req)
     [(weld m1 m2) ..^$]
   ::
       %plea
