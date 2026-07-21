@@ -686,7 +686,7 @@
         target-path
     ==
   :+  %start
-    :-  303
+    :-  307
     :-  ['location' target]
     ?~  expire  ~
     ['set-cookie' u.expire]~
@@ -911,7 +911,7 @@
         [*action [| secure address request] [*@uv [[%fake *@p] ~]] ~ 0]
       %-  handle-response
       :*  %start
-          [400 ~]  ::TODOxx  421 "misdirected request"?
+          [421 ~]
           `(as-octs:mimes:html 'bad host')
           complete=%.y
       ==
@@ -976,7 +976,7 @@
         ==
       %-  handle-response
       :*  %start
-          [303 ['location' target-url]~]
+          [307 ['location' target-url]~]  ::NOTE  307 to retain req method+body
           ~
           complete=%.y
       ==
@@ -1243,25 +1243,31 @@
       :: ?:  ?=([~ * ^] target)
       ::   %^  return-static-data-on-duct  200  'text/html'
       ::   (build-subdomain-negotiation domain.p.target suburl)
+      =/  msg=tape  "holm: fail"
+      =*  fail
+        %^  return-static-data-on-duct  400  'text/html'
+        (error-page 400 & url.request msg)
       ?:  ?=(%| -.target)
         ::  this binding is for cross-domain auth negotiation,
         ::  doesn't make sense to hit in the ip address case
         ::
-        %^  return-static-data-on-duct  400  'text/html'
-        (error-page 400 & url.request "holm: no domain")
+        =.(msg "holm: no domain" fail)
       ::  top domain, %sink case
       ::
       ?~  desk.p.target
         ::  at this point, we expect the url.request to be of the shape
         ::  /~/holm/[scope]/[target-path]. get those values out.
         ::
-        =/  [scope=@t target-url=tape]
-          %+  rash  url.request
+        =/  res=(unit [scope=@t target-url=tape])
+          %+  rush  url.request
           ;~  pfix  (jest '/~/holm/')
           ;~  plug
             sym
             (star next)  ::REVIEWxx  doesn't enforce slash separator after sym
           ==  ==
+        ?~  res  =.(msg "holm: bad request url (sink)" fail)
+        =,  u.res
+        ::
         =^  tmp-token=@uv  authlets.auth.state
           =+  t=(end 3^8 (shas %holm eny))
           :-  t
@@ -1272,7 +1278,7 @@
           "//{(trip scope)}.{(trip (host-string -.p.target))}/~/holm/{(scow %uv tmp-token)}{target-url}"
         =^  moz=(list move)  state
           %-  handle-response
-          [%start [303 ['location' (crip redirect-url)]~] ~ &]
+          [%start [307 ['location' (crip redirect-url)]~] ~ &]
         [[expire moz] state]
       ::  subdomain, %gain case
       ::
@@ -1280,20 +1286,23 @@
       ::  /~/holm/[tmp-token]/[target-path]. get those values out.
       ::
       ::NOTE  tmp-token was already checked and turned into a new session
-      ::      in the %negotiate %holm logic above
-      ::REVIEWxx  comments for accuracy and clarity
+      ::      in the %negotiate %holm logic above. +handle-response will add
+      ::      the cookie for us
       ::
-      =/  [@uv target-url=tape]
-        %+  rash  url.request
+      =/  res=(unit [@uv target-url=tape])
+        %+  rush  url.request
         ;~  pfix  (jest '/~/holm/')
         ;~  plug
           ;~(pfix (jest '0v') viz:ag)
           (star next)
         ==  ==
+      ?~  res  =.(msg "holm: bad request url (gain)" fail)
+      =,  u.res
+      ::
       =/  redirect-url=tape
         "//{(trip u.host)}{target-url}"
       %-  handle-response
-      [%start [303 ['location' (crip redirect-url)]~] ~ &]
+      [%start [307 ['location' (crip redirect-url)]~] ~ &]
     ::
         %gen
       =/  bek=beak  [our desk.generator.action da+now]
