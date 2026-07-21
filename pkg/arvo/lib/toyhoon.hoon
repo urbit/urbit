@@ -94,14 +94,15 @@
     ::
       %face  dext(sut q.sut)
     ::
-      %bcpt  ?.  ?=(?([%atom *] %noun [%cell *] [%core *]) ref)  sint
+      %bcpt  ?:  ?=(%noun ref)  sint(ref [%bcpt [%atom %$ ~] [%cell %noun %noun]])
+             ?.  ?=(?([%atom *] [%cell *] [%core *]) ref)  sint
              |(dext(sut tom.sut) dext(sut cel.sut))
     ::
-      %bccn  ?.  ?=(?(%noun [%cell *] [%core *]) ref)  sint
+      %bccn  ?.  ?=(?([%cell *] [%core *]) ref)  sint
              %-  ~(any in p.sut)
              |=([a=@ b=aura c=type] dext(sut [%cell [%atom b `a] c]))
     ::
-      %bckt  ?.  ?=(?(%noun [%cell *] [%core *]) ref)  sint
+      %bckt  ?.  ?=(?([%cell *] [%core *]) ref)  sint
              |(dext(sut cel.sut) dext(sut tom.sut))
     ::
       %bcwt  ?.  ?=([%atom *] ref)  sint

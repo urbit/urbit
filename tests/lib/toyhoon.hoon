@@ -129,6 +129,12 @@
     [%cnts `wing`[%| 0 `%$]~ ~]
   (test-slap [%noun ~] %noun naty numb:pre 42)
 ::
+++  test-noun-nest
+  ;:  weld
+    (expect !>((nest:th %noun [%bcpt [%atom %$ ~] [%cell %noun %noun]])))
+    (expect !>((nest:th [%bcpt [%atom %$ ~] [%cell %noun %noun]] %noun)))
+  ==
+::
 ++  test-core-nesting-match
   ::TODO  same names & geometries nest
   =/  c1=naty:th
