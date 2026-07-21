@@ -85,6 +85,20 @@
   (test-slap [%noun ~] %noun naty %noun 'no')
   ::TODO  mb test for non-loob conditional
 ::
+++  test-wtcn
+  =/  sut=type:th
+    ::  n=$%([%a a=@] [%c c=^])
+    :+  %face  %n
+    [%bccn (my [%a %tas %face %a %atom %$ ~] [%c %tas %face %c %cell %noun %noun] ~)]
+  =/  wtcn=naty:th
+    ::  ?%(n %a a.n c.n)
+    [%wtcn ~[%n] %a [%cnts ~[%a %n] ~] [%cnts ~[%c %n] ~]]
+  =/  out-type=type:th
+    [%bcpt [%atom %$ ~] [%cell %noun %noun]]  ::  aka %noun..
+  %+  weld
+    (test-slap [sut a+1] %noun wtcn [out-type 1])
+  (test-slap [sut c+[2 3]] %noun wtcn [out-type [2 3]])
+::
 ++  test-cnts
   ::  ".", two flavors
   %+  weld

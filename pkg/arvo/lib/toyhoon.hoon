@@ -404,7 +404,15 @@
            =+  n=$(naty n.naty, sut (take sut vein cell))
            :-  (make-union -.y -.n)
            [%6 [%3 %0 (tend:ut vein)] +.n +.y]
-    %wtcn  !!
+    %wtcn  =/  [=vein =type]
+             =/  [=vein =opal]  (find sut %read wing.naty)
+             ?>  ?=(%leg -.opal)
+             [vein type.opal]
+           =/  [yt=^type nt=^type]  (pick-case type tom.naty)
+           =+  y=$(naty y.naty, sut (take sut vein yt))
+           =+  n=$(naty n.naty, sut (take sut vein nt))
+           :-  (make-union -.y -.n)
+           [%6 [%5 [%1 tom.naty] %0 (peg (tend:ut vein) 2)] +.y +.n]
     %wtkt  =/  [=vein =type]
              =/  [=vein =opal]  (find sut %read wing.naty)
              ?>  ?=(%leg -.opal)
@@ -691,6 +699,22 @@
     [%bcpt *]  +.a
     [%face *]  =/  [atom=type cell=type]  $(a q.a)
                [a(q atom) a(q cell)]
+    [%hold *]  $(a (drop a))  ::TODO  track!
+  ==
+::
+++  pick-case  ::  into with and without tom case in a
+  |=  [a=type tom=@]
+  ^-  [type type]
+  ?+  a  !!
+    [%bccn *]  :-  =+  (~(got by p.a) tom)
+                   [%cell [%atom aura `tom] type]
+               =.  p.a  (~(del by p.a) tom)
+               ?+  p.a  a
+                 ~        %void
+                 [* ~ ~]  [%cell [%atom aura.q `p] type.q]:n.p.a
+               ==
+    [%face *]  =/  [y=type n=type]  $(a q.a)
+               [a(q y) a(q n)]
     [%hold *]  $(a (drop a))  ::TODO  track!
   ==
 ::
