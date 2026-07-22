@@ -1143,6 +1143,12 @@
     ::
     =?  mo-core  ?=(%u -.ames-request)
       (mo-give %done ~)
+    ::  the /sys/req wire (and the internal /ames/bone wire in the duct),
+    ::  are patterned-matched by +mo-remote-blocked to recognize
+    ::  blocked remote %deals;
+    ::
+    ::  if we update it here, we need to updade it there
+    ::
     =/  =wire  /sys/req/(scot %p ship)/[agent-name]
     ::
     =/  =deal
@@ -1158,36 +1164,68 @@
   ++  mo-remote-blocked
     |=  [=duct =ship dap=term]
     ^-  ?
-    ?~  waiting=(~(get by blocked.state) dap)
-      %.n
-    %+  lien  ~(tap to u.waiting)
-    ::  check if any of the blocked moves is attributed to .ship
+    ::  extra safe checks so
     ::
-    |=  =blocked-move
-    ?.  ?&  ?=(%& -.move.blocked-move)
-            =(ship ship.attributing.routes.blocked-move)
-            ?=(^ duct)
-            ?=([^ ^ *] duct.blocked-move)
-        ==
-      %.n
+    |^  ?~  waiting=(~(get by blocked.state) dap)
+          %.n
+        ?.  ?=(^ duct)
+          %.n
+        ?~  hen=(parse-bone-wire i.duct)
+          %.n
+        ?.  =(ship her.u.hen)
+          %.n
+        %+  lien  ~(tap to u.waiting)
+        ::  check if any of the blocked moves is attributed to .ship
+        ::
+        |=  =blocked-move
+        ?.  ?&  ?=(%& -.move.blocked-move)
+                =(ship ship.attributing.routes.blocked-move)
+                ?=([^ ^ *] duct.blocked-move)
+            ==
+          %.n
+        =/  req=(pole knot)  i.duct.blocked-move
+        ?.  ?&  ?=([%gall %sys %req ship=@ dap=@ ~] req)
+                =(`ship (slaw %p ship.req))
+                =(dap dap.req)
+            ==
+          %.n
+        ::  match the exact flow so we don't end up mixing
+        ::  different flows
+        ::
+        ?~  del=(parse-bone-wire i.t.duct.blocked-move)
+          %.n
+        ?&  =(ship her.u.del)
+            =(bone.u.del bone.u.hen)
+            ::  ?=(~ rift...) in unlikely but this would be a move
+            ::  enqueued before rifts were included in %ames bone wires;
+            ::
+            ::  if we do have rifts from old breached peers this flow
+            ::  has been corked/removed so we report it as not-blocked
+            ::  since the %done handling in %ames would no-op anyway
+            ::
+            ?|  ?=(~ rift.u.del)
+                ?=(~ rift.u.hen)
+                =(u.rift.u.del u.rift.u.hen)
+        ==  ==
+    ::  +parse-bone-wire: (see +parse-bone-wire in %ames)
     ::
-    =/  req=(pole knot)  i.duct.blocked-move
-    =/  del=(pole knot)  i.t.duct.blocked-move
-    =/  hen=(pole knot)  i.duct
-    ::  try to match exact flow so we don't end-up mixing
-    ::  different flows
-    ::
-    ?&  ?=([%gall %sys %req ship=@ dap=@ ~] req)
-        =(`ship (slaw %p ship.req))
-        =(dap dap.req)
+    ++  parse-bone-wire
+      |=  =wire
+      ^-  (unit [her=@p rift=(unit @ud) =bone:ames])
+      =/  w=(pole knot)  wire
+      ?+    w  ~
+          [%ames %bone ship=@ bone=@ ~]
+        ?~  who=(slaw %p ship.w)   ~
+        ?~  bon=(slaw %ud bone.w)  ~
+        `[u.who ~ u.bon]
       ::
-        ?=([%ames %bone ship=@ rest=*] del)
-        ?=([%ames %bone ship=@ rest=*] hen)
-        =(`ship (slaw %p ship.del))
-        =(`ship (slaw %p ship.hen))
-        =(rest.del rest.hen)  :: XX old pre-rift wires?
-                              :: XX check if rifts match?
-    ==
+          [%ames %bone ship=@ rift=@ bone=@ ~]
+        ?~  who=(slaw %p ship.w)   ~
+        ?~  rif=(slaw %ud rift.w)  ~
+        ?~  bon=(slaw %ud bone.w)  ~
+        `[u.who `u.rif u.bon]
+      ==
+    --
   ::  +mo-do-flub: drop incoming pleas in %ames
   ::
   ::    (if the /gf system flow has been established, notify the other ship
