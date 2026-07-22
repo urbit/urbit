@@ -69,7 +69,7 @@
 ::
 ;<  ~  bind:m  (keen:strandio wire-keen spar sec=~)
 ;<  ~  bind:m
-  (send-raw-card:strandio %pass wire-timer %arvo %b %wait timeout-time)
+  (send-raw-card:strandio %pass wire-timer %arvo %behn %wait timeout-time)
 ::
 ::  race sage vs timer
 ::
@@ -87,11 +87,11 @@
   ::
   ::  sage response: give kids hash
   ::
-      [~ %sign * %ames %sage *]
+      [~ %gift * %ames %sage *]
     ?.  =(wire-keen wire.u.in.tin)
       `[%skip ~]
-    =/  =sage:mess:ames  sage.sign-arvo.u.in.tin
-    :^    [%pass wire-timer %arvo %b %rest timeout-time]~
+    =/  =sage:mess:ames  sage.gift.u.in.tin
+    :^    [%pass wire-timer %arvo %behn %rest timeout-time]~
         %done
       %.y
     ::
@@ -103,12 +103,10 @@
   ::
   ::  timer: peer timed out
   ::
-      [~ %sign * %behn %wake *]
+      [~ %gift * %behn %wake *]
     ?.  =(wire-timer wire.u.in.tin)
       `[%skip ~]
-    ?^  error.sign-arvo.u.in.tin
-      `[%fail %timer-error u.error.sign-arvo.u.in.tin]
-    :-  [%pass wire-keen %arvo %a %yawn spar]~
+    :-  [%pass wire-keen %arvo %ames %yawn spar]~
     [%done [%.n !>(*(unit @uvi))]]
   ==
 ::
