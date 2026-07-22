@@ -8180,7 +8180,7 @@
                   ::  pending-vane-ack.state which has not been acked
                   ::  so we can attempt to redeliver the head of the pending
                   ::  queue from the payload stored there.
-
+                  ::
                   ::  note: we can't rely on the sender's pump, since we don't
                   ::  know if the sender is/will be rewound via a $boon %spur
                   ::
@@ -8433,7 +8433,19 @@
             ++  done
               |=  ok=?
               ^+  sink
-              ::
+              ?:  =(~ pending-vane-ack.state)
+                ::  a %done for no-pending ack means a wrongly handled %flub
+                ::  (%gall still held the $plea this %done belonged to, but
+                ::  told %ames to flub it, rewinding .last-heard and dropping
+                ::  acks) in that case we just wait for the sender to re-send
+                ::  the message
+                ::
+                ::  instead of crashing, no-op, since we would abort the
+                ::  unsuspension of the agent
+                ::
+                %-  %+  pe-trace  odd.veb
+                    |.("drop %done bone={<bone>}; missing pending")
+                sink
               =^  pending  pending-vane-ack.state
                 ~(get to pending-vane-ack.state)
               =/  =message-num  message-num.p.pending
@@ -10908,13 +10920,18 @@
               :: ack from client vane
               ::
                   %done
-                ?>  =(%.y pending-ack.rcv)
+                ?.  pending-ack.rcv
+                  ::  (see +done handling in %ames)
+                  ::
+                  %-  %+  ev-tace  odd.veb.bug.ames-state
+                      |.("drop %done bone={<bone>}; missing pending")
+                  fo-core
                 (fo-take-done +.sign)
               ::  halt the flow
               ::
                   %flub
                 ?~  +.sign
-                  ::  a running agent has recevied a /gp plea with
+                  ::  a running agent has received a /gp plea with
                   ::  no blocked moves; remove pending
                   ::
                   =.  pending-ack.rcv  %.n
