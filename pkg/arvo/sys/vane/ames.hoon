@@ -4545,6 +4545,8 @@
         |=  [[=ship c=chum-state] moz=(list move)]
         ^+  moz
         ?:  ?=(%alien -.c)  moz
+        ::  same checks as +pe-can-rege
+        ::
         =/  all-outstanding=?
           %-  ~(rep by flows.c)
           |=  [[=side sat=flow-state] all=?]
@@ -13914,7 +13916,9 @@
         ::    in this case we just ack plea if it is indeed an %ahoy.
         ::
         ::    if this was not an %ahoy plea, check if we can move the ship back
-        ::    to .peers, if this is a first contact (e.g after a breach)
+        ::    to .peers, if this is a first contact (e.g after a breach), or a
+        ::    crossed first contact with a pre-%mesa peer whose state can be
+        ::    regressed safely
         ::
         ::    (any %fine requests should have been migrated and responses should
         ::    only come via %heer or %mess)
