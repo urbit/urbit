@@ -944,11 +944,19 @@
         ?>  ?=([~ ~ %desk *] res)
         `!<(desk q.u.u.res)
       ==
+    ::  when dealing with requests to domains on paths with non-eyre owners,
+    ::  if the request targets the base subdomain, redirect to root. or:
     ::  if the domain is known, but doesn't match the pathowner (either because
     ::  it's requesting at the wrong subdomain, or at top-level for a subdomain
     ::  path), redirect to the subdomain that "owns" the requested url/binding.
+    ::  (but don't do that for base-desk requests on root domain!)
     ::
-    ?:  &(?=(%& -.target) ?=(^ pathowner) !=(pathowner desk.p.target))
+    ?:  ?&  ?=(%& -.target)  ?=(^ pathowner)
+            ?|  ?=([~ %base] desk.p.target)
+            ?&  !=(pathowner desk.p.target)
+                !&(?=(~ desk.p.target) ?=(%base u.pathowner))  ::  base on root
+            ==  ==
+        ==
       ::NOTE  some code duplication with below, but request handling deserves
       ::      a refactor anyway
       =.  connections.state
@@ -962,7 +970,7 @@
         [*action [| secure address request] [*@uv [[%fake *@p] ~]] ~ 0]
       =/  target-url=@t
         %+  rap  3
-        :~  '//'  u.pathowner  '.'
+        :~  '//'  ?:(=(%base u.pathowner) '' (cat 3 u.pathowner '.'))
             (host-string -.p.target)  url.request
         ==
       %-  handle-response
@@ -1212,8 +1220,13 @@
         ::NOTE  per .pathowner implementation, this will always be an
         ::      "eyre endpoint", never %app or %gen
         (get-action-for-binding url.request)
-      ::NOTE  should be handled directly above this
-      ?~  desk.p.target  ~|(%eyre-confused-branching !!)
+      ::  if the request is for root domain, it should've been redirected
+      ::  to the path owner's subdomain, unless it's base (served on root)
+      ::
+      ?~  desk.p.target
+        ~|  %eyre-shouldve-redirected
+        ?>  =(%base u.pathowner)
+        (get-action-for-binding url.request)
       ::  if the subdomain points to a desk that does not own the request path,
       ::  (a desk that did not bind that path,) we cannot resolve the request.
       ::
