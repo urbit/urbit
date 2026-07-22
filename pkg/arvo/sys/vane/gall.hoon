@@ -1147,6 +1147,12 @@
     ::
     =?  mo-core  ?=(%u -.ames-request)
       (mo-give %done ~)
+    ::  the /sys/req wire (and the internal /ames/bone wire in the duct),
+    ::  are patterned-matched by +mo-remote-blocked to recognize
+    ::  blocked remote %deals;
+    ::
+    ::  if we update it here, we need to updade it there
+    ::
     =/  =wire  /sys/req/(scot %p ship)/[agent-name]
     ::
     =/  =deal
@@ -1157,6 +1163,73 @@
         %u  [%leave ~]
       ==
     (mo-pass wire %g %deal [ship our /] agent-name deal)
+  ::  +mo-remote-blocked: check if .dap has a remote blocked move for .ship
+  ::
+  ++  mo-remote-blocked
+    |=  [=duct =ship dap=term]
+    ^-  ?
+    ::  extra safe checks so
+    ::
+    |^  ?~  waiting=(~(get by blocked.state) dap)
+          %.n
+        ?.  ?=(^ duct)
+          %.n
+        ?~  hen=(parse-bone-wire i.duct)
+          %.n
+        ?.  =(ship her.u.hen)
+          %.n
+        %+  lien  ~(tap to u.waiting)
+        ::  check if any of the blocked moves is attributed to .ship
+        ::
+        |=  =blocked-move
+        ?.  ?&  ?=(%& -.move.blocked-move)
+                =(ship ship.attributing.routes.blocked-move)
+                ?=([^ ^ *] duct.blocked-move)
+            ==
+          %.n
+        =/  req=(pole knot)  i.duct.blocked-move
+        ?.  ?&  ?=([%gall %sys %req ship=@ dap=@ ~] req)
+                =(`ship (slaw %p ship.req))
+                =(dap dap.req)
+            ==
+          %.n
+        ::  match the exact flow so we don't end up mixing
+        ::  different flows
+        ::
+        ?~  del=(parse-bone-wire i.t.duct.blocked-move)
+          %.n
+        ?&  =(ship her.u.del)
+            =(bone.u.del bone.u.hen)
+            ::  ?=(~ rift...) in unlikely but this would be a move
+            ::  enqueued before rifts were included in %ames bone wires;
+            ::
+            ::  if we do have rifts from old breached peers this flow
+            ::  has been corked/removed so we report it as not-blocked
+            ::  since the %done handling in %ames would no-op anyway
+            ::
+            ?|  ?=(~ rift.u.del)
+                ?=(~ rift.u.hen)
+                =(u.rift.u.del u.rift.u.hen)
+        ==  ==
+    ::  +parse-bone-wire: (see +parse-bone-wire in %ames)
+    ::
+    ++  parse-bone-wire
+      |=  =wire
+      ^-  (unit [her=@p rift=(unit @ud) =bone:ames])
+      =/  w=(pole knot)  wire
+      ?+    w  ~
+          [%ames %bone ship=@ bone=@ ~]
+        ?~  who=(slaw %p ship.w)   ~
+        ?~  bon=(slaw %ud bone.w)  ~
+        `[u.who ~ u.bon]
+      ::
+          [%ames %bone ship=@ rift=@ bone=@ ~]
+        ?~  who=(slaw %p ship.w)   ~
+        ?~  rif=(slaw %ud rift.w)  ~
+        ?~  bon=(slaw %ud bone.w)  ~
+        `[u.who `u.rif u.bon]
+      ==
+    --
   ::  +mo-do-flub: drop incoming pleas in %ames
   ::
   ::    (if the /gf system flow has been established, notify the other ship
@@ -1181,10 +1254,10 @@
     ::  currently we always halt it
     ::
     %^  mo-give  %flub
-    ::  if we have blocked moves, skip the %flub handling logic in %ames
+    ::  if we have remote blocked moves, skip the %flub handling logic in %ames
     ::  if /gf system flow is not established, skip sending the %flub $boon
     ::
-      maybe-blocked=?=(^ (~(get by blocked.state) agent-name))
+      maybe-blocked=(mo-remote-blocked hen ship agent-name)
     ?.((~(has by flub-ducts.state) ship) ~ `agent-name)
   ::
   ++  mo-handle-flub-plea
@@ -2462,11 +2535,19 @@
       %-  %^  trace:mo-core  &(?=([%gp @ ~] path) odd.veb.bug.state)  agent-name
           &+"on {<ship>} flubbing in-progress flow"
       (mo-do-flub:mo-core ship agent-name)
-    ?:  ?=([%gp @ ~] path)
+    ?:  ?=([%ge @ ~] path)
+      (mo-handle-ames-request:mo-core ship agent-name +.ames-request-all)
+    ::  the agent is running but the flow's %plea is still pending in
+    ::  %ames. if we don't have blocked remote moves tell %ames to delete
+    ::  its pending-ack
+    ::
+    ?:  (mo-remote-blocked:mo-core duct ship agent-name)
       %-  %^  trace:mo-core  odd.veb.bug.state  agent-name
-          &+"on {<ship>} weird in-progress flow; running agent; skip %flub"
+          &+"on {<ship>} in-progress flow; %plea enqueued; wait"
       mo-core
-    (mo-handle-ames-request:mo-core ship agent-name +.ames-request-all)
+    %-  %^  trace:mo-core  odd.veb.bug.state  agent-name
+        &+"on {<ship>} in-progress flow; running agent; redeliver"
+    (mo-give:mo-core %flub ~)
   ::
       %sear  mo-abet:(mo-filter-queue:mo-core ship.task)
       %jolt  mo-abet:(mo-jolt:mo-core dude.task our desk.task)

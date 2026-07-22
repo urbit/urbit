@@ -8176,7 +8176,24 @@
                   %drop  sink(nax.state (~(del in nax.state) message-num.task))
                   %done  (done ok.task)
                   %flub
-                ?:  ?=([%flub ~] task)  sink
+                ?:  ?=([%flub ~] task)
+                  ::  a running agent has received a /gp plea with no
+                  ::  blocked moves.
+                  ::  the trigger for the /gp plea in %ames is state in
+                  ::  pending-vane-ack.state which has not been acked
+                  ::  so we can attempt to redeliver the head of the pending
+                  ::  queue from the payload stored there.
+                  ::
+                  ::  note: we can't rely on the sender's pump, since we don't
+                  ::  know if the sender is/will be rewound via a $boon %spur
+                  ::
+                  ?~  next=~(top to pending-vane-ack.state)
+                    ::  XX if there is nothing in pending, rewind last-heard?
+                    ::
+                    sink
+                  %-  %+  pe-trace  odd.veb
+                      |.("redeliver pending {<message-num.u.next>} bone={<bone>}")
+                  (handle-sink message-num.u.next message.u.next ok=%.y)
                 =?  peer-core  ?=([%flub ? ^] task)
                   ::  /gf system flow established; halt the flow
                   ::
@@ -8187,7 +8204,6 @@
                   sink
                 %-  %+  pe-trace  odd.veb
                         |.("%flubbing: {<bone=bone>} last={<last-heard.state>}")
-                =+  left=q:~(get to pending-vane-ack.state)
                 %_  sink
                   pending-vane-ack.state  ~                :: drop all pending
                         last-heard.state  last-acked.state :: rewind last heard
@@ -8332,9 +8348,9 @@
                       |.  ^-  tape
                       "hear last in-progress; try to %flub {<[agent data]>}"
                   %^  pe-emit  duct  %pass
-                  :-  (make-bone-wire her rift.hers.channel bone.shut-packet)
-                  [%g %plea her u.m(path /gp/[agent])]
-                sink
+                    :-  (make-bone-wire her rift.hers.channel bone.shut-packet)
+                    [%g %plea her u.m(path /gp/[agent])]
+                  sink
               ::  last-heard<seq<10+last-heard; packet in a live message
               ::
               =/  =partial-rcv-message
@@ -8420,7 +8436,6 @@
             ++  done
               |=  ok=?
               ^+  sink
-              ::
               =^  pending  pending-vane-ack.state
                 ~(get to pending-vane-ack.state)
               =/  =message-num  message-num.p.pending
@@ -10895,17 +10910,22 @@
               :: ack from client vane
               ::
                   %done
-                ?>  =(%.y pending-ack.rcv)
-                (fo-take-done +.sign)
+                ?>(pending-ack.rcv (fo-take-done +.sign))
               ::  halt the flow
               ::
                   %flub
-                =?  halt.state   ?=([? ^] +.sign)  %.y
-                =?     fo-core   ?=([? ^] +.sign)
-                  (fo-emit hen %pass /halt %g %halt her u.dap.sign bone)
-                =?  pending-ack.rcv  &(?=([? *] +.sign) !blocked.sign)
-                  %.n  :: XX  tack.pending-ack.rcv
-                fo-core
+                ?~  +.sign
+                  ::  a running agent has received a /gp plea with
+                  ::  no blocked moves; remove pending
+                  ::
+                  =.  pending-ack.rcv  %.n
+                  fo-core
+                =?  pending-ack.rcv  !blocked.sign  %.n
+                ?~  dap.sign  fo-core
+                ::  if system-flow is established, halt flow and send %boon %flub
+                ::
+                =.  halt.state  %.y
+                (fo-emit hen %pass /halt %g %halt her u.dap.sign bone)
               ::  un-halt the flow
               ::
                   %spur
