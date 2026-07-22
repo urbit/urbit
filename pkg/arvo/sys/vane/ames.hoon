@@ -13933,9 +13933,10 @@
           ::  skip route in comparison; galaxies have it hardcoded
           ::
           ?.  =(+>:*fren-state +>.fren)
-            %-  %+  %*(ev-tace ev-core her sndr.shot)  odd.veb.bug.ames-state
-                |.("hear ames packet for migrated %known peer")
-            `vane-gate
+            ::  if we have flow state in %mesa state, check if this is a
+            ::  crossed first contact. if so, regress them to .peers
+            ::
+            (pe-rege dud lane blob shot fren)
           ::  if the peer sends us an %ames packets, but we have %known state in
           ::  .chums. this could be caused by:
           ::
@@ -13965,6 +13966,69 @@
           [(poke-send-ahoy hen our sndr.shot force=|)^moves vane-gate]
         [moves-peer vane-gate]
       ==
+    ::  +pe-can-rege: check if all %for flows are outstanding
+    ::
+    ::    (same checks as +moves-36-to-37)
+    ::
+    ::      - only %for flows
+    ::      - every message is outstanding
+    ::      - nothing has been received.
+    ::
+    ::    if this holds when we hear an %ames packets both peers
+    ::    have not ben able to communicate succesfully, so we can
+    ::    regress the peer back to %ames to establish communication
+    ::    and let the %ahoy flow do the %mesa migration
+    ::
+    ++  pe-can-rege
+      |=  fren=fren-state
+      ^-  ?
+      ?.  =(~ corked.fren)
+        %.n
+      =+  fo-mop=fo-mop:fo:ev:me-core
+      %-  ~(rep by flows.fren)
+      |=  [[=side sat=flow-state] all=?]
+      ?:  ?=(%bak dire.side)
+        %.n
+      ?&  all
+          ?|  =(sat *flow-state)
+              ?&  =((dec next.snd.sat) (wyt:fo-mop loads.snd.sat))
+                  =(rcv.sat rcv:*flow-state)
+      ==  ==  ==
+    ::
+    ++  pe-rege
+      |=  [dud=(unit goof) =lane =blob =shot fren=fren-state]
+      ^-  [(list move) _vane-gate]
+      =;  regress=?
+        ?.  regress
+          `vane-gate
+        =^  rege-moves  ames-state
+          sy-abet:(sy-rege:~(. sy:me-core hen) `sndr.shot dry=%.n)
+        =^  hear-moves  vane-gate
+          (call:am-core hen dud %soft %hear lane blob)
+        :_  vane-gate
+        ;:  weld
+          rege-moves
+          hear-moves
+          ~[(poke-send-ahoy hen our sndr.shot force=|)]
+        ==
+      ::
+      ?.  sam.shot  ::  XX skip %fine packets
+        %.n
+      ?~  (sift-shut-packet shot symmetric-key.fren life.fren life.ames-state)
+        %-  %+  %*(ev-tace ev-core her sndr.shot)  odd.veb.bug.ames-state
+            |.("weird shut-packet")
+        %.n
+      ?.  (pe-can-rege fren)
+        ::  this would be weird so print loud
+        ::
+        ~>  %slog.3^leaf/"ames: {(scow %p sndr.shot)} has acked %mesa state; skip %rege"
+        %.n
+      ::  dry run first to avoid any weird state
+      ::
+      ?:  (regression-test:me-core sndr.shot)
+        %.y
+      ~>  %slog.3^leaf/"ames: regression dry-run failed for {(scow %p sndr.shot)}"
+      %.n
     ::
     ++  pe-rate
       |=  [dud=(unit goof) =spar =rate]
