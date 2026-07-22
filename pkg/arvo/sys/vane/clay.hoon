@@ -3288,7 +3288,9 @@
     ?:  =(%kids syd)
       ..park(liv.dom %dead)
     ?.  ?=(%live liv)
-      ?.  ese:(~(got by dos.rom) syd)  ..park(liv.dom liv)
+      =/  doj=(unit dojo)  (~(get by dos.rom) syd)
+      ?~  doj        ..park(liv.dom liv)
+      ?.  ese.u.doj  ..park(liv.dom liv)
       =/  msg  "clay: can't set essential desk {<syd>} to {(scow %tas liv)}"
       ((slog leaf+msg ~) ..park)
     =/  kel=(set weft)
