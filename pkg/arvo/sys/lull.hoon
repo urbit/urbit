@@ -3324,6 +3324,7 @@
   ::  +action: the action to take when a binding matches an incoming request
   ::
   +$  action
+    $~  [%four-oh-four ~]
     $%  ::  dispatch to a generator
         ::
         [%gen =generator]
