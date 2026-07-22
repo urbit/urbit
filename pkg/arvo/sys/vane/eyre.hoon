@@ -915,6 +915,8 @@
     ::    desk's subdomain, and any requests for the endpoint outside of that
     ::    will be redirected to the appropriate subdomain.
     ::
+    =/  =action
+      (get-action-for-binding url.request)
     =/  pathowner=(unit desk)
       ::  /~ paths always owned by eyre
       ::
@@ -923,8 +925,6 @@
       ::  other paths owned by whatever their binding corresponds to
       ::  (could still be eyre!)
       ::
-      =/  =action
-        (get-action-for-binding url.request)
       ?+  -.action  ~
         %gen  `desk.generator.action
       ::
@@ -967,7 +967,7 @@
         ::      deletes the connection from state.
         %+  ~(put by connections.state)  duct
         ^-  outstanding-connection
-        [*action [| secure address request] [*@uv [[%fake *@p] ~]] ~ 0]
+        [*^action [| secure address request] [*@uv [[%fake *@p] ~]] ~ 0]
       =/  target-url=@t
         %+  rap  3
         :~  '//'  ?:(=(%base u.pathowner) '' (cat 3 u.pathowner '.'))
@@ -1075,7 +1075,7 @@
         ::      deletes the connection from state.
         %+  ~(put by connections.state)  duct
         ^-  outstanding-connection
-        [*action [| secure address request] [session [[%fake *@p] ~]] ~ 0]
+        [*^action [| secure address request] [session [[%fake *@p] ~]] ~ 0]
       ::  their cookie was invalid, make sure they expire it
       ::
       =/  bod=octs  (as-octs:mimes:html 'bad session auth')
@@ -1206,39 +1206,6 @@
       (~(get by cache.state) url.request)
     ?:  &(?=([~ @ ^] cached) ?=(%'GET' method.request))
       (handle-cache-req authenticated request u.val.u.cached)
-    ::
-    =/  =action
-      ::  in the ip case, always resolve the route
-      ::
-      ?:  ?=(%| -.target)
-        (get-action-for-binding url.request)
-      ::  if there is no pathowner (aka the pathowner is eyre)
-      ::  then we _always resolve the route_,
-      ::  because eyre handles the request itself.
-      ::
-      ?~  pathowner
-        ::NOTE  per .pathowner implementation, this will always be an
-        ::      "eyre endpoint", never %app or %gen
-        (get-action-for-binding url.request)
-      ::  if the request is for root domain, it should've been redirected
-      ::  to the path owner's subdomain, unless it's base (served on root)
-      ::
-      ?~  desk.p.target
-        ~|  %eyre-shouldve-redirected
-        ?>  =(%base u.pathowner)
-        (get-action-for-binding url.request)
-      ::  if the subdomain points to a desk that does not own the request path,
-      ::  (a desk that did not bind that path,) we cannot resolve the request.
-      ::
-      ?.  =(u.desk.p.target u.pathowner)
-        ::TODOxx  isn't this branch impossible? handled by redirect above
-        ::        should probably fold the above redirect into here
-        [%four-oh-four ~]
-      ::  finally, if we are serving under a known domain, whose subdomain
-      ::  maps to a desk that owns the request path, resolve to the configured
-      ::  binding.
-      ::
-      (get-action-for-binding url.request)
     ::
     ?-    -.action
         %holm
