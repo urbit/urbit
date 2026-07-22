@@ -1496,6 +1496,53 @@
                 sek=$@(~ [sed=@ cry=@ sgn=@])
             ==
         ==
+    ::                                                  ::  ++as:cric:crypto
+    ++  as                                              ::
+      |%
+      ::                                                ::  ++sign:as:cric:
+      ++  sign                                          ::
+        |=  msg=@
+        ^-  @ux
+        (jam [(sigh msg) msg])
+      ::                                                ::  ++sigh:as:cric:
+      ++  sigh                                          ::
+        |=  msg=@
+        ^-  @ux
+        ?~  sek  ~|  %pubkey-only  !!
+        (sign-raw:ed msg sgn:ex)
+      ::                                                ::  ++sure:as:cric:
+      ++  sure                                          ::
+        |=  txt=@
+        ^-  (unit @ux)
+        =+  ;;([sig=@ msg=@] (cue txt))
+        ?.  (safe sig msg)  ~
+        (some msg)
+      ::                                                ::  ++safe:as:cric:
+      ++  safe
+        |=  [sig=@ msg=@]
+        ^-  ?
+        (veri:ed sig msg sgn.pub)
+      ::                                                ::  ++seal:as:cric:
+      ++  seal                                          ::
+        |=  [bpk=pass msg=@]
+        ^-  @ux
+        ?~  sek  ~|  %pubkey-only  !!
+        =/  coc  (com:nu bpk)
+        =+  shar=(shax (slar:ed cry:ded:ex:coc cry.sek))
+        =+  smsg=(sign msg)
+        (jam (~(en siva:aes shar ~) smsg))
+      ::                                                ::  ++tear:as:cric:
+      ++  tear                                          ::
+        |=  [bpk=pass txt=@]
+        ^-  (unit @ux)
+        ?~  sek  ~|  %pubkey-only  !!
+        =/  coc  (com:nu bpk)
+        =+  shar=(shax (slar:ed cry:ded:ex:coc cry.sek))
+        =+  ;;([iv=@ len=@ cph=@] (cue txt))
+        =+  try=(~(de siva:aes shar ~) iv len cph)
+        ?~  try  ~
+        (sure:as:coc u.try)
+      --  ::as
     ::                                                  ::  ++ex:cric:crypto
     ++  ex                                              ::  extract
       |%
@@ -1554,6 +1601,16 @@
       ++  saf
         ^-  keypairs
         [ded ven]
+      ::
+      ++  cry
+        ^-  keypair
+        ?~  sek  ~|  %pubkey-only  !!
+        [cry.^pub cry.sek]
+      ::
+      ++  sgn
+        ^-  keypair
+        ?~  sek  ~|  %pubkey-only  !!
+        [sgn.^pub sgn.sek]
       ::
       ++  num
         ^-  @

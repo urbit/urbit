@@ -1041,6 +1041,7 @@
   +$  public-keys    [cry=@uxpoint sgn=@uxpoint]
   +$  private-keys   [cry=@uxscalar sgn=@uxscalar]
   +$  keypairs       [pub=public-keys sek=private-keys]
+  +$  keypair        [pub=@uxpoint sek=@uxscalar]
   +$  symmetric-key  @uwsymmetrickey
   ::
   ::  $hoot: request packet payload
@@ -3754,6 +3755,44 @@
             pen=(jug spar:ames wire)
             gem=(jug coop [path page])
     ==  ==
+  ::  +egg-aid: normalize a serialized agent state ($egg-any) to the latest $egg
+  ::
+  ++  egg-aid
+    |%
+    ++  latest
+      |=  e=egg-any
+      ^-  egg
+      ?-  -.e
+        %21  +.e
+        %20  (egg-20-to-21 +.e)
+        %16  (egg-20-to-21 (egg-16-to-20 +.e))
+        %15  ~|(%egg-15-unsupported !!)  ::  pre-%16; +of-farm lives in gall now
+      ==
+    ::  +egg-20-to-21: add per-agent zuse kelvin (.zus); defaults to 0 since
+    ::  lull can't see the live +zuse and all callers (negotiate) discard it.
+    ::
+    ++  egg-20-to-21
+      |=  e=egg-20
+      ^-  egg
+      ?:  ?=(%nuke -.e)  e
+      :*  %live
+          control-duct.e  run-nonce.e  sub-nonce.e  stats.e  bitt.e
+          boat.e  boar.e  resources.e  code.e  *@ud  old-state.e
+          beak.e  marks.e  sky.e  ken.e  pen.e  gem.e
+      ==
+    ::  +egg-16-to-20: migrate old-state's h136 vase to live h135, add .resources
+    ::
+    ++  egg-16-to-20
+      |=  e=egg-16
+      ^-  egg-20
+      ?:  ?=(%nuke -.e)  e
+      :*  %live
+          control-duct.e  run-nonce.e  sub-nonce.e  stats.e  bitt.e
+          boat.e  boar.e  *(set arvo-resource)  code.e
+          [%| (next-vase:h136 +.old-state.e)]  beak.e
+          marks.e  sky.e  ken.e  pen.e  gem.e
+      ==
+    --
   ::
   +$  bowl                                              ::  standard app state
     $+  gall-agent-bowl                                 ::
