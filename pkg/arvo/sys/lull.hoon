@@ -3433,7 +3433,7 @@
         ::
         [%cert =turf cert=(unit [key=wain cert=wain])]
         ::TODOxx  clear all certs task?
-        :: %turf: add remove or reset established dns binding
+        :: %turf: add remove or reset established dns binding ("root" domains only!)
         ::
         $:  %turf
             $=  action

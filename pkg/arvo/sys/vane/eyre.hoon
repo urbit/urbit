@@ -855,9 +855,7 @@
       !!
     ::  parse the hostname from the request, then
     ::  either it's a naked ip address, or we
-    ::  find the domain that we _know_ (.domains.state) that is the
-    ::  longest prefix for the requested hostname and take its last
-    ::  subdomain as the candidate request-target desk
+    ::  deduce the target scope from the known domain, based on known domains
     ::
     ::    example 1: request to mopfel.np.io:
     ::               `[domain=~['io' 'np' 'mopfel'] desk=~]
@@ -881,27 +879,20 @@
       ?:  ?=(%| -.doom.u.doom)
         ?.  risk.state  ~
         `[%| p.doom port]:u.doom
-      =-  ?:  =(hit *turf)  ~
-          %-  some
-          :-  %&
-          :-  [hit port.u.doom]
-          ?:  =(/ suffix)  ~
-          `(rear suffix)
-      %-  ~(rep in domains.state)
-      |=  [ours=turf [hit=turf suffix=path]]
-      =*  nop  [hit suffix]
-      ^+  nop
-      ::  find longest known prefix domain
+      ::  if requested domain is known, scope is root
       ::
-      ::  doom: might be /network/tlon/mopfel/rumors
-      ::  ours: might be /network/tlon/mopfel
-      ::              or /network/tlon
-      ::              or /network/tlon/mopfel/rumors
-      =+  res=(find-suffix ours p.doom.u.doom)  ::  `/rumors or `/mopfel/rumors or `/
-      ?~  res  nop
-      ?:  (gte (lent u.res) (lent suffix))
-        [ours u.res]
-      nop
+      ?:  (~(has in domains.state) p.doom.u.doom)
+        `[%& [p.doom port]:u.doom ~]
+      ::  if requested domain is direct subdomain of known domain,
+      ::  scope is that subdomain interpreted as desk name
+      ::
+      ?:  ?&  ?=([@ @ *] p.doom.u.doom)
+              (~(has in domains.state) (snip `turf`p.doom.u.doom))  ::NOTE  tmi
+          ==
+        `[%& [(snip `turf`p.doom.u.doom) port.u.doom] `(rear p.doom.u.doom)]
+      ::  else, there is no target scope
+      ::
+      ~
     ?~  proto-target
       ::NOTE  some code duplication with below, but request handling deserves
       ::      a refactor anyway
