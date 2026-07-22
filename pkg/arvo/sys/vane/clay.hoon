@@ -1584,7 +1584,20 @@
       ::  own type, so passing .v bare makes it check the payload's type
       ::  (e.g. a loob) against .tub's $vase sample and nest-fail.
       ::
-      (ntv +:(slum my-slam [tub !>(v)]))
+      ::  .tub is compiled in the desk universe, so +my-slam reads its sample's
+      ::  type with that universe's machinery.  for a foreign (h136) desk the
+      ::  live !>(v) carries an h135 $vase type h136 can't interpret.  we cannot
+      ::  just +prev-vase:h135 !>(v): the $vase wrapper embeds the $type mold,
+      ::  whose shape differs across the kelvin boundary, so migrating it
+      ::  nest-fails.  instead migrate only .v's own (ordinary) type into the
+      ::  desk universe, then stamp it with the desk's NATIVE $vase mold (built
+      ::  in that universe via +cor, never crossing the boundary).
+      ::
+      =/  sam
+        ?.  old  !>(v)
+        =/  vty  -:(slum my-slub [cor !,(*hoon *vase)])
+        [vty (prev-vase:h135 v)]
+      (ntv +:(slum my-slam [tub sam]))
     ::
     ++  validate-page
       |=  [=path =page]
