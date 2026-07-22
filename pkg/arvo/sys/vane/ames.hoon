@@ -8433,19 +8433,6 @@
             ++  done
               |=  ok=?
               ^+  sink
-              ?:  =(~ pending-vane-ack.state)
-                ::  a %done for no-pending ack means a wrongly handled %flub
-                ::  (%gall still held the $plea this %done belonged to, but
-                ::  told %ames to flub it, rewinding .last-heard and dropping
-                ::  acks) in that case we just wait for the sender to re-send
-                ::  the message
-                ::
-                ::  instead of crashing, no-op, since we would abort the
-                ::  unsuspension of the agent
-                ::
-                %-  %+  pe-trace  odd.veb
-                    |.("drop %done bone={<bone>}; missing pending")
-                sink
               =^  pending  pending-vane-ack.state
                 ~(get to pending-vane-ack.state)
               =/  =message-num  message-num.p.pending
@@ -10920,13 +10907,7 @@
               :: ack from client vane
               ::
                   %done
-                ?.  pending-ack.rcv
-                  ::  (see +done handling in %ames)
-                  ::
-                  %-  %+  ev-tace  odd.veb.bug.ames-state
-                      |.("drop %done bone={<bone>}; missing pending")
-                  fo-core
-                (fo-take-done +.sign)
+                ?>(pending-ack.rcv (fo-take-done +.sign))
               ::  halt the flow
               ::
                   %flub
