@@ -1613,17 +1613,17 @@
     ::
     ?.  &(?=(%live liv.dom.dojo) =(ese ese.dojo))
       des
+    ?~  t=(~(get by hit.dom.dojo) let.dom.dojo)
+      ::  desk never had a commit, no-op
+      des
+    =/  kel=(set weft)
+      (waft-to-wefts (get-kelvin %| (tako-to-yaki:ze u.t)))
+    ?:  (~(has in kel) sys-kel)
+      ::  desk alredy supports kel update case
+      des
     ?~  yok=(~(get by wic.dom.dojo) sys-kel)
       ::  has no pending commit for current kel update case
-      ?~  t=(~(get by hit.dom.dojo) let.dom.dojo)
-        ::  desk never had a commit, no-op
-        des
-      =/  kel=(set weft)
-        (waft-to-wefts (get-kelvin %| (tako-to-yaki:ze u.t)))
-      ?:  (~(has in kel) sys-kel)
-        ::  desk alredy supports kel update case
-        des
-      ::  desk doesn't support kel update
+      ::  and doesn't support kel update
       [desk des]
     =/  mis=(set perm:gall)
       %-  ~(gas in *(set perm:gall))
@@ -1952,8 +1952,13 @@
     ::  (we're ok with using .pew for both "blocking commit" and "blocking
     ::  liveness" because non-live desks can't block commits.)
     ::TODO  rewrite this for readability lol
+    :: REVIEW: yoki stored in pew.dom only for %live desks,
+    ::  staged commit in pew.dom should be applied on desk liveness change!
     ::
-    =?  pew.dom  ?~(pew.dom & =(+.u.pew.dom `yoki))
+    =?  pew.dom  ?|  ?=(~ pew.dom)
+                     ?=(~ +.u.pew.dom)
+                     =(+.u.pew.dom `yoki)  ::  REVIEW
+                 ==
       ?~(mis ~ `[mis ~])
     ::
     =.  wic.dom
