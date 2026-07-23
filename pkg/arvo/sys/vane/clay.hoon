@@ -676,7 +676,7 @@
           %-  malt
           %-  ~(rep by file-store.args)
           |=  [[k=lobe v=page] acc=(list [lobe page])]
-          ?.  (~(has in syd-lobes) k)  acc
+          ?.  (~(has in local-lobes) k)  acc
           [[k v] acc]
         ::
         ++  bush-to-vase
