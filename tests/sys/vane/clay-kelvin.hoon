@@ -1762,4 +1762,31 @@
     ==
   (do-wick ~)
 ::
+++  test-dead-desk-pew-after-commit
+  ::  since .pew represents both "blocking commit" _and_ "blocking liveness",
+  ::  for non-live desks without granted perms, it should always reflect
+  ::  ped.dom (contents of desk.seal)
+  ::
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  *                bind:m  (do-setup-desks [%foo |] ~)
+  ;<  *                bind:m  (do-zest %foo %dead)
+  ;<  mov=(list move)  bind:m  (do-park %foo 408 (desk-seal 2))
+  ;<  mov=(list move)  bind:m  (do-park %foo 408 (desk-seal 1))
+  ;<  =dojo:clay-gate  bind:m  (get-dojo %foo)
+  (ex-pew %foo ~ pers-1)
+::
+++  test-held-desk-pew-after-commit
+  ::  a non-live desk that's trying to become live but is blocked on
+  ::  permissions, should keep updating the pew to reflect what permissions
+  ::  it's missing for liveness
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  *                bind:m  (do-setup-desks [%foo |] ~)
+  ;<  *                bind:m  (do-zest %foo %dead)
+  ;<  mov=(list move)  bind:m  (do-park %foo 408 (desk-seal 2))
+  ;<  *                bind:m  (do-zest %foo %held)
+  ;<  mov=(list move)  bind:m  (do-park %foo 408 (desk-seal 1))
+  ;<  =dojo:clay-gate  bind:m  (get-dojo %foo)
+  (ex-pew %foo ~ pers-1)
 --
