@@ -1789,4 +1789,48 @@
   ;<  mov=(list move)  bind:m  (do-park %foo 408 (desk-seal 1))
   ;<  =dojo:clay-gate  bind:m  (get-dojo %foo)
   (ex-pew %foo ~ pers-1)
+::
+++  test-live-desk-pew-after-suspend
+  ::  live desk receives commit it cannot apply, missing permissions
+  ::  desk set to %dead and applies commit stored in pew.dom
+  ::  desk receives and applies new commit with new missing permissions
+  ::
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ;<  *                bind:m  (do-setup-desks [%foo |] ~)
+  ;<  mov=(list move)  bind:m  (do-park %foo 408 (desk-seal 2))
+  ;<  ~                bind:m
+    %+  expect-moves  mov
+    :~  (ex-ward-need %foo pers-2)
+    ==
+  ;<  =dojo:clay-gate  bind:m  (get-dojo %foo)
+  ?~  pew.dom.dojo      (fail (crip "expected pew {<pers-2>}, got ~") ~)
+  ?~  +.u.pew.dom.dojo  (fail 'expected yoke in pew, got ~' ~)
+  ;<  ~                bind:m  (ex-pew %foo ~ pers-2)
+  ::
+  ;<  mov=(list move)  bind:m  (call ~[/blah] [%zest %foo %dead])
+  ;<  ~                bind:m  (ex-zest %foo %dead)
+  ;<  ~                bind:m
+    %+  expect-moves  mov
+    :~  ex-wick  ::  from %zest
+        (ex-text "+ /~nul/foo/2/desk/seal")
+        (ex-ward-have %foo pers-2 perm-none)
+        (ex-gift [%tire %| [%zest %foo %dead]])
+        ex-wick  ::  from +park
+        ex-load
+    ==
+  ;<  ~                bind:m  (do-wick ~)
+  ::
+  ;<  mov=(list move)  bind:m  (do-park %foo 408 (desk-seal 1))
+  ;<  ~                bind:m
+    %+  expect-moves  mov
+    :~  ex-wick
+        (ex-text ": /~nul/foo/3/desk/seal")
+        (ex-ward-have %foo pers-1 perm-none)
+        (ex-ward-need %foo pers-1)
+    ==
+  ;<  =dojo:clay-gate  bind:m  (get-dojo %foo)
+  ?~  pew.dom.dojo      (fail (crip "expected pew {<pers-1>}, got ~") ~)
+  ?^  +.u.pew.dom.dojo  (fail 'expected yoke=~ in pew, got (unit yoke)' ~)
+  (ex-pew %foo ~ pers-1)
 --
