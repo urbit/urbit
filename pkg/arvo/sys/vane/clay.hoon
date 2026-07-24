@@ -671,7 +671,8 @@
           %-  ~(rep by files.args)
           |=  [[k=* v=(each page lobe)] acc=(list [lobe page])]
           ?:  ?=(%& -.v)  acc
-          [[p.v (~(got by file-store.args) p.v)] acc]
+          ?~  pag=(~(get by file-store.args) p.v)  acc
+          [[p.v u.pag] acc]
         ::
         ++  bush-to-vase
           =/  only-prelude=?  |
