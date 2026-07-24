@@ -11176,9 +11176,9 @@
                   ?=(~ loads.snd)  ::  nothing else is pending
                   ?=(^ m)  =([%plea %$ [%flow ~] %cork ~] u.m)
               ==
-            ::  send next messages
+            ::  send next messages if not halted
             ::
-            =.  fo-core  fo-send
+            =?  fo-core  !halt.state  fo-send
             ::  don't give %done for %boon and %cork; implicit %ack
             ::
             =?  fo-core  ?&  ?=(%for dire)
@@ -11256,7 +11256,9 @@
             ::  XX check path.spar
             ::  XX path.spar will be the full namespace path, peel off before?
             ::
-            =.  fo-core  fo-send  ::  send next messages
+            ::  send next messages if not halted
+            ::
+            =?  fo-core  !halt.state  fo-send
             ::  if the bone belongs to a closing flow and we got a
             ::  naxplanation, don't relay ack to the client vane
             ::
