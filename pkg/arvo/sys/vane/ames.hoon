@@ -10799,7 +10799,7 @@
               ?.  halt.state
                 fo-send
               %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("queue {<mess>}; flow is halted flow={<bone>}")
+                  |.("queue {<-.load>}; flow is halted flow={<bone>}")
               fo-core
             ::
             ++  sink
