@@ -10786,7 +10786,7 @@
             ::
             ++  pump
               |=  load=mesa-message
-              ?:  |((fo-to-close load) fo-corked halt.state)
+              ?:  |((fo-to-close load) fo-corked)
                 %-  %+  ev-tace  odd.veb.bug.ames-state
                     ?:  (fo-to-close load)
                       |.("skip $plea; flow {<bone>} is closing")
