@@ -10832,7 +10832,7 @@
                   ?:  ?|  is-cork-plea
                           is-leave-plea
                       ==
-                    %-  %+  ev-tace  snd.veb.bug.ames-state
+                    %-  %+  ev-tace  odd.veb.bug.ames-state
                         =+  load=?:(is-cork-plea "%cork" "%leave")
                         |.("ack {load} $plea for %corked flow {<data>}")
                     (fo-send-ack seq)
