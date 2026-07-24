@@ -10903,11 +10903,11 @@
                 =?  pending-ack.rcv  &(?=([? *] +.sign) !blocked.sign)
                   %.n  :: XX  tack.pending-ack.rcv
                 fo-core
-              ::  un-halt the flow
+              ::  un-halt the flow; try sending anything queued up
               ::
                   %spur
                 =.  halt.state  %.n
-                fo-core
+                fo-send
               ==
             ==
           ::
