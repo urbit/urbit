@@ -660,6 +660,20 @@
           ==
         --
     =>  |%
+        ::  in file-store leaves only pages reachable from files
+        ::
+        ++  launder-args
+          |=  =args
+          ^+  args
+          =-  [files.args - verb.args]
+          ^-  (map lobe page)
+          %-  malt
+          %-  ~(rep by files.args)
+          |=  [[k=* v=(each page lobe)] acc=(list [lobe page])]
+          ?:  ?=(%& -.v)  acc
+          ?~  pag=(~(get by file-store.args) p.v)  acc
+          [[p.v u.pag] acc]
+        ::
         ++  bush-to-vase
           =/  only-prelude=?  |
           =|  sut=vase
@@ -806,6 +820,7 @@
         --
     ~%  %ford-gate  ..ford  ~
     |=  args
+    =.  +<  (launder-args +<)
     ~%  %ford-core  ..$  ~
     |%
     ::  Chapter for constructing $bush (dependency graph of a file) given its
