@@ -260,6 +260,13 @@ class UrbitApi {
     );
   }
 
+  getConfig() {
+    this.getJson('/eyre/config',
+      this.wrapLocal('eyreConfig'),
+      this.showStatus('error fetching eyre config')
+    );
+  }
+
   getConnections() {
     this.getJson('/eyre/connections',
       this.wrapLocal('eyreConnections'),

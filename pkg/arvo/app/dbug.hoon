@@ -385,6 +385,37 @@
         'val'^?~(val ~ (render-cache-entry:v-eyre u.val))
     ==
   ::
+    ::  /eyre/config.json
+    ::
+      [%eyre %config ~]
+    %-  some
+    =+  config:v-eyre
+    =;  secure=(list [=turf key=wain cert=wain])
+      %-  pairs
+      :~  'secure'^a+(turn secure render-cert:v-eyre)
+          'proxy'^b+proxy
+          'log'^b+log
+          'redirect'^b+redirect
+      ==
+    ::TODO  copied from eyre, refactor!
+    %+  sort  ~(tap by secure)
+    |=  [[a=turf *] [b=turf *]]
+    =.  a  (flop a)
+    =.  b  (flop b)
+    ::  shorter before longer,
+    ::  specifics before wildcards
+    ::
+    =+  [la lb]=[(lent a) (lent b)]
+    ?:  (gth la lb)  |
+    ?:  (gth lb la)  &
+    |-  ^-  ?
+    ?:  =(a b)  &
+    ?~  a  |
+    ?~  b  &
+    ?:  =(%$ i.a)  |
+    ?:  =(%$ i.b)  &
+    $(a t.a, b t.b)
+  ::
     ::  /eyre/connections.json
     ::
       [%eyre %connections ~]
@@ -1422,6 +1453,9 @@
   ++  cache
     (scry ,(map url=@t [aeon=@ud (unit cache-entry)]) %e %cache ~)
   ::
+  ++  config
+    (scry http-config:eyre %e %config ~)
+  ::
   ++  connections
     (scry ,(map duct outstanding-connection) %e %connections ~)
   ::
@@ -1469,6 +1503,15 @@
         :+  'headers'  %a
         %+  turn  headers.response-header
         |=([k=@t v=@t] (pairs 'key'^s+k 'value'^s+v ~))
+    ==
+  ::
+  ++  render-cert
+    |=  [=turf key=wain cert=wain]
+    ^-  json
+    %-  pairs:enjs:format
+    :~  'turf'^s+(en-turf:html (turn turf |=(e=@t ?:(=(%$ e) '*' e))))
+        'key'^s+(of-wain:format key)
+        'cert'^s+(of-wain:format cert)
     ==
   --
 ::

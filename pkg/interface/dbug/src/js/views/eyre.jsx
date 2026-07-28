@@ -16,12 +16,15 @@ export class Eyre extends Component {
     this.loadConnections = this.loadConnections.bind(this);
     this.loadAuthenticationState = this.loadAuthenticationState.bind(this);
     this.loadChannels = this.loadChannels.bind(this);
+    this.loadConfig = this.loadConfig.bind(this);
   }
 
   componentDidMount() {
     const { props } = this;
+    //TODO  want a "first-mount" flag in state instead
     if (props.bindings.length === 0)      this.loadBindings();
     if (props.cache.length === 0)         this.loadCache();
+    if (props.config.secure.length === 0) this.loadConfig();
     if (props.connections.length == 0)    this.loadConnections();
     if (props.authentication.sessions.length == 0) this.loadAuthenticationState();
     if (props.channels.length == 0)       this.loadChannels();
@@ -38,6 +41,10 @@ export class Eyre extends Component {
 
   loadCache() {
     api.getCache();
+  }
+
+  loadConfig() {
+    api.getConfig();
   }
 
   clearCache(url) {
@@ -59,6 +66,14 @@ export class Eyre extends Component {
   //TODO use classes for styling?
   render() {
     const { props, state } = this;
+
+    const certItems = props.config.secure.map(cert => {
+      return {key: cert.turf, jsx: (<details>
+        <summary>{cert.turf}</summary>
+        <pre class="cert">{cert.cert}</pre>
+        <pre class="cert">{cert.key}</pre>
+      </details>)};
+    });
 
     const bindingItems = props.bindings.map(binding => {
       return {key: binding.location + ' ' + binding.action, jsx: (<div class="flex">
@@ -267,6 +282,11 @@ export class Eyre extends Component {
     });
 
     return (<>
+      <h4>Certificates</h4>
+      <SearchableList placeholder="domain" items={certItems} listStyle={{marginLeft: '1em'}}>
+        <button onClick={this.loadConfig}>refresh</button>
+      </SearchableList>
+
       <h4>Bindings</h4>
       <SearchableList placeholder="binding" items={bindingItems}>
         <button onClick={this.loadBindings}>refresh</button>

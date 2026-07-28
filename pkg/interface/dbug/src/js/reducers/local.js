@@ -27,6 +27,7 @@ export class LocalReducer {
     //
       this.eyreBindings(data, state);
       this.eyreCache(data, state);
+      this.eyreConfig(data, state);
       this.eyreConnections(data, state);
       this.eyreAuthentication(data, state);
       this.eyreChannels(data, state);
@@ -196,6 +197,13 @@ export class LocalReducer {
     const data = _.get(obj, 'eyreBindings', false);
     if (data) {
       state.bindings = data;
+    }
+  }
+
+  eyreConfig(obj, state) {
+    const data = _.get(obj, 'eyreConfig', false);
+    if (data) {
+      state.config = data;
     }
   }
 

@@ -5116,6 +5116,7 @@
     %channel-state         ``noun+!>(channel-state.server-state.ax)
     %domains               ``noun+!>(domains.server-state.ax)
     %ports                 ``noun+!>(ports.server-state.ax)
+    %config                ``noun+!>(http-config.server-state.ax)
     ::
       %host
     %-  (lift (lift |=(a=hart:eyre [%hart !>(a)])))
