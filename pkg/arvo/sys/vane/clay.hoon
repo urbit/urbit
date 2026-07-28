@@ -1954,17 +1954,13 @@
       =.  ..park  wick                                ::  [wick]
       =.  ..park  (send-ward syd)
       tare
+    ::  if we're not missing permissions, we're not blocked, so we can
+    ::  clear .pew. if we are missing permissions, we're not live (see above)
+    ::  so the commit will go through, but the missing perms will block liveness
     ::  (we're ok with using .pew for both "blocking commit" and "blocking
     ::  liveness" because non-live desks can't block commits.)
-    ::TODO  rewrite this for readability lol
-    :: REVIEW: yoki stored in pew.dom only for %live desks,
-    ::  staged commit in pew.dom should be applied on desk liveness change!
     ::
-    =?  pew.dom  ?|  ?=(~ pew.dom)
-                     ?=(~ +.u.pew.dom)
-                     =(+.u.pew.dom `yoki)  ::  REVIEW
-                 ==
-      ?~(mis ~ `[mis ~])
+    =.  pew.dom  ?~(mis ~ `[mis ~])
     ::
     =.  wic.dom
       %-  ~(gas by *(map weft ^yoki))
@@ -2311,12 +2307,13 @@
       ^+  ..park
       |^  ?>  =(%base syd)
       ::  check if system update is blocked due to other desks.
-      ::  for each desk: find if it's blocking on commit or on perms,
-      ::  then store those perms in state & notify about them
+      ::  for each desk: find if it's blocking on commit or on perms
       ::
       =/  deb=(list desk)  (find-blocked yoki %.y)
-      =.  ..park           update-pews
       ?.  =(~ deb)
+        ::  store missing perms in state & notify about them
+        ::
+        =.  ..park           update-pews
         ::  store blocked sys update commit as awaiting
         =.  wic.dom                                     ::  [tare] <
           %+  roll  ~(tap in (waft-to-wefts (get-kelvin yoki)))
@@ -2325,6 +2322,9 @@
         tare                                            ::  [tare] >
       ?>  =(~ pud)
       =.  pud  `[syd yoki]
+      ::  clean pew.dom for desks that aren't up to date with applying kelvin
+      ::
+      =.  ..park  clear-pews
       =.  ..park  suspend-non-essentials
       %.  [hen %slip %c %pork ~]
       emit:(pass-what files)
@@ -2358,6 +2358,31 @@
         :*  hen  %pass  /kiln/bump/zeal  %c  %zeal
             (turn (find-blocked yoki %.n) (late %held))
         ==
+      ::
+      ::  +clear-pews: drop .pew for other desks
+      ::
+      ::  if other desks %live, clear their pew.dom, preventing
+      ::  downgrade for those desks or being %held with pending
+      ::  commit in it's state
+      ::
+      ++  clear-pews
+        ^+  ..park
+        ?>  =(%base syd)
+        =/  sys-kel=weft
+          =/  w=waft  (get-kelvin yoki)
+          ?@  -.w  w  !!
+        =+  doz=~(tap by (~(del by dos.rom.ruf) %base))
+        |-
+        ?~  doz  ..park
+        =*  desk  p.i.doz
+        =*  dojo  q.i.doz
+        =*  next  $(doz t.doz)
+        ::
+        ?.  ?=(%live liv.dom.dojo)                next
+        =.  dos.rom.ruf  (~(put by dos.rom.ruf) desk dojo(pew.dom ~))
+        =.  ..park       (send-ward desk)
+        next
+      ::
       ::  +update-pews: fill .pew for other desks
       ::
       ::    if other desks were awaiting a kelvin, but now we have that kelvin,
