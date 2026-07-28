@@ -465,6 +465,18 @@
     %-  pairs
     :~  :-  'sessions'
         :-  %a
+        %+  weld
+          %+  turn  ~(tap by authlets.auth)
+          |=  [tmp=@uv ses=@uv]
+          =+  (~(got by sessions.auth) ses)
+          %-  pairs
+          :~  'cookie'^s+(cat 3 'tmp-' (scot %uv tmp))
+              'identity'^(render-identity-p:v-eyre identity)
+              'scope'^~
+              'parent'^s+(end 3^6 (scot %uv ses))
+              'expiry'^(time ~1111.11.11..11.11.11)
+              'channels'^(numb 0)
+          ==
         %+  turn
           %+  sort  ~(tap by sessions.auth)
           |=  [[@uv a=session:eyre] [@uv b=session:eyre]]
@@ -472,7 +484,9 @@
         |=  [cookie=@uv session:eyre]
         %-  pairs
         :~  'cookie'^s+(scot %uv cookie)
-            'identity'^(render-identity:v-eyre identity)
+            'identity'^(render-identity-p:v-eyre identity)
+            'scope'^?~(scope.identity ~ s+u.scope.identity)
+            'parent'^?:(?=(%& -.scopes) ~ s+(end 3^6 (scot %uv p.scopes)))
             'expiry'^(time expiry-time)
             'channels'^(numb ~(wyt in channels))
         ==
@@ -525,7 +539,7 @@
     |=  [key=@t channel:eyre]
     %-  pairs
     :~  'session'^s+key
-        'identity'^(render-identity:v-eyre identity)
+        'identity'^(render-identity-p:v-eyre identity)
         'connected'^b+!-.state
         'expiry'^?-(-.state %& (time date.p.state), %| ~)
         'next-id'^(numb next-id)
@@ -1465,14 +1479,14 @@
   ++  channel-state
     (scry ^channel-state %e %channel-state ~)
   ::
-  ++  render-identity
+  ++  render-identity-p
     |=  =identity
     ^-  json
-    %-  ship:enjs:format
+    :-  %s
     ?-  -.who.identity
-      %ours  our.bowl
-      %fake  who.who.identity
-      %real  who.who.identity
+      %ours  (scot %p our.bowl)
+      %fake  (scot %p who.who.identity)
+      %real  (scot %p who.who.identity)
     ==
   ::
   ++  render-action

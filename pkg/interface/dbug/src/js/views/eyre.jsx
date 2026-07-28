@@ -216,8 +216,14 @@ export class Eyre extends Component {
         <div class="flex-auto" style={{maxWidth: '5em'}}>
           {s.cookie.slice(0,6)}…
         </div>
-        <div class="flex-auto" style={{width: '40%'}}>
-          ~{s.identity}
+        <div class="flex-auto" style={{width: '30%'}}>
+          {s.identity}
+        </div>
+        <div class="flex-auto" style={{width: '10%'}}>
+          {s.scope ? '%'+s.scope : null}
+        </div>
+        <div class="flex-auto" style={{width: '10%'}}>
+          {s.parent ? '('+s.parent+'…)' : null}
         </div>
         <div class="flex-auto">
           {msToDa(s.expiry)}
