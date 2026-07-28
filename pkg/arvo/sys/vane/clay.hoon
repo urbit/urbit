@@ -1924,7 +1924,6 @@
       ::
       %-  (slog leaf+"clay: {<syd>} wait-for-kelvin, {<[compat=kel have=zuse+zuse]>}" ~)
       =.  ..park  wick                                ::  [wick]
-      =.  ..park  (send-ward syd)                     ::  [send-ward]
       tare                                            ::  [tare] >
     ::  prevent downgrading of base,
     ::  and prevent applying commits that will never become compatible
