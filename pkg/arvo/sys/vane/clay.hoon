@@ -1933,22 +1933,27 @@
     ?:  (~(all in kel) |=(=weft (gth num.weft zuse)))
       %-  (slog leaf+"clay: {<syd>} old-kelvin, {<[compat=kel have=zuse+zuse]>}" ~)
       ..park
-    ::  incoming commit permission check (for live non-base desks only)
-    ::
     =/  mis=(set perm:gall)
       %-  ~(gas in *(set perm:gall))
       %+  skip  ~(tap in per)
       (cury have:guard:gall peg.dom)
+    ::  incoming commit permission check (for live non-base desks only)
+    ::
     ?:  ?&  =(%live liv.dom)
             !?=(%base syd)
             !=(~ mis)
         ==
       =.  pew.dom  `[mis `yoki]
+      =.  wic.dom                                     ::  [tare] <
+        %+  roll  ~(tap in kel)
+        |:  [weft=*weft wic=wic.dom]
+        ?:  (gte num.weft zuse)
+          wic
+        (~(put by wic) weft yoki)
       %-  (slog leaf+"clay: {<syd>} wait-for-permissions, {<want=mis>}" ~)
-      (send-ward syd)
-    ::  we may or may not be missing permissions, which could keep us from
-    ::  becoming live. register that case without overwriting
-    ::  commit-awaiting-permissions, but overwrite it if it's the current commit.
+      =.  ..park  wick                                ::  [wick]
+      =.  ..park  (send-ward syd)
+      tare
     ::  (we're ok with using .pew for both "blocking commit" and "blocking
     ::  liveness" because non-live desks can't block commits.)
     ::TODO  rewrite this for readability lol
