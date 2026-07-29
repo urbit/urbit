@@ -4,6 +4,7 @@ import { msToDa, renderDuct } from '../lib/util';
 import urbitOb from 'urbit-ob';
 import { SearchableList } from '../components/searchable-list';
 import { Summary } from '../components/summary';
+import { parseCert } from '../lib/certs';
 
 export class Eyre extends Component {
 
@@ -68,8 +69,13 @@ export class Eyre extends Component {
     const { props, state } = this;
 
     const certItems = props.config.secure.map(cert => {
+      const deets = parseCert(cert.cert);
+      const domains = deets.domains.concat(deets.ips);
       return {key: cert.turf, jsx: (<details>
         <summary>{cert.turf}</summary>
+        <b>Domain(s):</b> {domains.length ===  0 ? 'none (self-signed?)' : domains.join(', ')}<br />
+        <b>Valid from:</b> {deets.validFrom.toString()}<br />
+        <b>Valid until:</b> {deets.validTo.toString()}<br />
         <pre class="cert">{cert.cert}</pre>
         <pre class="cert">{cert.key}</pre>
       </details>)};
