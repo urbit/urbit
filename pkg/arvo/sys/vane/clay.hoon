@@ -3325,16 +3325,12 @@
       =/  doj=(unit dojo)  (~(get by dos.rom) syd)
       ?~  doj        ..park(liv.dom liv)
       ?.  ese.u.doj
-        ?.  ?&  ?=(%dead liv)
-                ?=(%live liv.dom)
-                ?=(^ pew.dom)
+        ?.  ?&  ?=(^ pew.dom)
                 ?=(^ +.u.pew.dom)
             ==
           ..park(liv.dom liv)
         ::  a non-live desks pew.dom shouldn't carry commit data,
         ::  apply pending commit from pew.dom to the desk;
-        ::  %held desks in this case (%live -> %held) handled
-        ::  by +sys-update flow
         ::
         (park(liv.dom liv) | | u.+.u.pew.dom *rang)
       =/  msg  "clay: can't set essential desk {<syd>} to {(scow %tas liv)}"
