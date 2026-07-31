@@ -270,11 +270,6 @@
   ::
     ?.  prime  ~
     [(prep-ovum (turn dez tail))]~
-  ::
-    %+  turn  dez
-    |=  [dek=desk *]
-    ^-  unix-event
-    [/c/essential/[dek] %esse dek %.y]
   ==
 ::
 ++  brass
@@ -329,11 +324,6 @@
     ::
       ?.  prime  ~
       [(prep-ovum (turn dez tail))]~
-    ::
-      %+  turn  dez
-      |=  [dek=desk *]
-      ^-  unix-event
-      [/c/essential/[dek] %esse dek %.y]
     ==
   ::
   =/  =wynn  (get-wynn sys new-wynn)

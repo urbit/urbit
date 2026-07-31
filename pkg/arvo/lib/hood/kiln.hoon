@@ -367,6 +367,8 @@
   =.  ..on-init
     (emit %pass /kiln/init-zest %arvo %clay %zest i.dez %live)
   =.  ..on-init
+    (emit %pass /kiln/init-zest %arvo %clay %esse i.dez &)
+  =.  ..on-init
     %-  emit
     :*  %pass  /kiln/permission  %arvo  %clay  %perm
         i.dez  /  %r  `[%black ~]
