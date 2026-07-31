@@ -23,6 +23,11 @@
   .^((set desk) %cd /(scot %p our)//(scot %da now))
 =.  des  (~(del in des) %base)
 =.  des  (~(del in des) %kids)
+=.  des
+  %-  silt
+  %+  skim  ~(tap in des)
+  |=  =desk
+  .^(? %cu /(scot %p our)/[desk]/(scot %da now)/sys/kelvin)
 (perm-to-desk (sort ~(tap in des) aor))
 ::
 ++  perm-to-desk

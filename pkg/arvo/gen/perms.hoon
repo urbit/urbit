@@ -22,6 +22,7 @@
 %-  flop
 %+  roll  (sort ~(tap in des) aor)
 |=  [=desk =tang]
+?.  .^(? %cu /[ego]/[desk]/[wen]/sys/kelvin)     tang
 =+  .^(=bond:ward:clay %cx /[ego]//[wen]/bond/[desk])
 ?:  &(=(~ peg) =(~ ped) =(~ peq) =(~ pew)):bond  tang
 =/  in-peg
