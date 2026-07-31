@@ -46,10 +46,14 @@
         |=  [=desk =spur]
         (weld /(scot %p our.bowl)/[desk]/(scot %da now.bowl) spur)
     ::
+    =/  bad-method  [[405 ~] `(as-octs:mimes:html 'bad method')]
+    =/  bad-body    [[405 ~] `(as-octs:mimes:html 'bad body')]
+    =/  parse-fail  [[400 ~] `(as-octs:mimes:html 'fail to parse')]
+    ::
     ?+  site  [~ [404 ~] ~]
         [%page ~]
       :-  ~
-      ?.  ?=(%'GET' method.request)  [[405 ~] `(as-octs:mimes:html 'bad method')]
+      ?.  ?=(%'GET' method.request)  bad-method
       ::~>  %bout.[0 'scrying all desks']
       =/  build  ~(. build bowl)
       ::
@@ -59,30 +63,29 @@
       %-  en-xml:html
       page:build
     ::
-        [%desk @ @ ~]  ::  TODO : remove ship segment
+        [%desk @ ~]
       :-  ~
-      ?.  ?=(%'GET' method.request)  [[405 ~] `(as-octs:mimes:html 'bad method')]
+      ?.  ?=(%'GET' method.request)                 bad-method
       =/  target=desk      +<.site
       ?.  .^(? %cu (make-path target /sys/kelvin))  [[204 ~] ~]
       =/  build  ~(. build bowl)
       =+  .^(=cone:clay %cx (make-path %$ /domes))
-      =/  data=(unit [desk =mod-bond:build =zest:clay ship (set weft) ?])
+      =/  data=[desk =mod-bond:build =zest:clay ship (set weft) ese=? inst=?]
         (get-desk-data:build cone target)
-      ?~  data  ::  empty bond desk
-        :-  [200 ['content-type' 'text/html'] ['zest' %dead]~]
-        `(as-octt:mimes:html (en-xml:html ;div;))
+      ?.  inst.data                                 [[204 ~] ~]
+      ::  ??
       =/  status=zest:clay
-        ?:  &(?=(%held zest.u.data) !=(~ pew.mod-bond.u.data))  %dead
-        zest.u.data
+        ?:  &(?=(%held zest.data) !=(~ pew.mod-bond.data))  %dead
+        zest.data
       :-  [200 ['content-type' 'text/html'] ['zest' status]~]
-      `(as-octt:mimes:html (en-xml:html (display:build u.data)))
+      `(as-octt:mimes:html (en-xml:html (display:build data)))
     ::
         [%action @ ~]
-      ?.  ?=(%'POST' method.request)  [~ [405 ~] `(as-octs:mimes:html 'bad method')]
-      ?~  body.request                [~ [405 ~] `(as-octs:mimes:html 'bad body')]
+      ?.  ?=(%'POST' method.request)  [~ bad-method]
+      ?~  body.request                [~ bad-body]
       =;  [del-perms=(jug desk perm:gall) add-perms=(jug desk perm:gall)]
         =/  redirect
-          (crip "/perm-man/page#{(trip -.+.site)}")
+          (crip "/perm-man/page#{(trip +<.site)}")
         :_  :-  [303 'location'^redirect ~]
             `(as-octs:mimes:html '🔄 applying permission... will redirect when done...')
         %+  weld
@@ -97,7 +100,6 @@
       =/  args=(map @t @t)
         %-  ~(gas by *(map @t @t))
         (fall (rush q.u.body.request yquy:de-purl:html) ~)
-      ~&  >  args=args
       %+  roll  ~(tap by args)
       =/  key-type  $:(kind=?(%perm %grant) =desk =perm:gall)
       =/  parse-key
@@ -125,14 +127,14 @@
       [(~(put ju del-perms) +.u.kay) add-perms]
     ::
         ?([%submit-prompt ~] [%submit-prompt @ ~])
-      ?.  ?=(%'POST' method.request)  [~ [405 ~] `(as-octs:mimes:html 'bad method')]
-      ?~  body.request                [~ [405 ~] `(as-octs:mimes:html 'bad body')]
+      ?.  ?=(%'POST' method.request)  [~ bad-method]
+      ?~  body.request                [~ bad-body]
       =/  args=(map @t @t)
         %-  ~(gas by *(map @t @t))
         (fall (rush q.u.body.request yquy:de-purl:html) ~)
       ~&  >  args=args
       =/  redirect  ?.  ?=([%submit-prompt @ ~] site)  'page'
-                    (crip "/perm-man/page#{(trip -.+.site)}")
+                    (crip "/perm-man/page#{(trip +<.site)}")
       =;  add=(jug desk perm:gall)
         ~&  >>  add=add
         :_  :-  [303 'location'^redirect ~]
@@ -141,34 +143,56 @@
         |=  [=desk pez=(set perm:gall)]
         ^-  card:agent:gall
         [%pass /set-seal %arvo %clay %seal desk add=& pez]
-        %+  roll  ~(tap by args)
-        |=  [[key=@t value=@t] add=(jug desk perm:gall)]
-        ?.  =('decision-' (end 3^9 key))  add
-        ?.  =('allow' value)  add
-        =/  =desk  ;;(desk (rsh 3^9 key))
-        ?~  blob=(~(get by args) (cat 3 'perms-' desk))  add
-        =/  pez  ;;((set perm:gall) (cue (slav %uw u.blob)))
-        (~(gas ju add) (turn ~(tap in pez) |=(p=perm:gall [desk p])))
+      %+  roll  ~(tap by args)
+      |=  [[key=@t value=@t] add=(jug desk perm:gall)]
+      ?.  =('decision-' (end 3^9 key))  add
+      ?.  =('allow' value)  add
+      =/  =desk  ;;(desk (rsh 3^9 key))
+      ?~  blob=(~(get by args) (cat 3 'perms-' desk))  add
+      =/  pez  ;;((set perm:gall) (cue (slav %uw u.blob)))
+      (~(gas ju add) (turn ~(tap in pez) |=(p=perm:gall [desk p])))
     ::
         [%install ~]
-      ?.  ?=(%'POST' method.request)  [~ [405 ~] `(as-octs:mimes:html 'bad method')]
-      ?~  body.request                [~ [405 ~] `(as-octs:mimes:html 'bad body')]
+      ?.  ?=(%'POST' method.request)  [~ bad-method]
+      ?~  body.request                [~ bad-body]
       =/  args=(map @t @t)
         %-  ~(gas by *(map @t @t))
         (fall (rush q.u.body.request yquy:de-purl:html) ~)
       ~&  >  args=args
       =/  arg  (~(get by args) 'install-desk')
-      ?~  arg  [~ [405 ~] `(as-octs:mimes:html 'bad body')]  ::TODO
+      ?~  arg                         [~ parse-fail]
       =/  dat=(unit [ship desk])
         %+  rush  u.arg
         ;~(plug ;~(pfix sig fed:ag) ;~(pfix fas sym))
       ?~  dat  [~ [405 ~] `(as-octs:mimes:html 'fail to parse')]  ::TODO
       ~&  dat=u.dat
       =/  [her=ship =desk]  u.dat
-      =/  redirect  (crip "/perm-man/page#{(trip desk)}")
+      =/  redirect  (crip "page#{(trip desk)}")
       :_  :-  [303 'location'^redirect ~]
             `(as-octs:mimes:html (crip "🔄 beggining {<-.u.dat>} installation..redirect when started"))
       [%pass /install/[desk] %agent [our.bowl %hood] %poke %kiln-install !>([desk her desk])]~
+    ::
+        [%suspend ~]
+      ?.  ?=(%'POST' method.request)  [~ bad-method]
+      ?~  body.request                [~ bad-body]
+      =/  args=(map @t @t)
+        %-  ~(gas by *(map @t @t))
+        (fall (rush q.u.body.request yquy:de-purl:html) ~)
+      =/  des=(list desk)
+        ?:  (~(has by args) 'suspend')
+          [(~(got by args) 'suspend') ~]
+        %+  murn  ~(tap by (~(del by args) 'suspend-all'))
+        |=  [key=@t value=@t]
+        ^-  (unit desk)
+        ?.  =('allow' value)  ~
+        (rush key ;~(pfix (jest 'suspend-') sym))
+      :_  :-  [303 'location'^(crip "page#base") ~]
+            `(as-octs:mimes:html (crip "🔄 setting to non-essential {<des>}..redirect when started"))
+      ::  setting desks to non-essential when
+      %+  turn  des
+      |=  =desk
+      ^-  card
+      [%pass /non-esse/[desk] %arvo %clay %esse desk |]
     ==
   ::
   ++  on-watch
@@ -208,7 +232,15 @@
         ned=(list perm:gall)  ::  required not granted
     ==
   ::
-  +$  desk-data  [=desk mod-bond =zest:clay from=ship wic=(set weft) ese=?]
+  +$  desk-data
+    $:  =desk
+        mod-bond
+        =zest:clay
+        from=ship
+        wic=(set weft)
+        ese=?
+        inst=?           :: installed
+    ==
   ::
   ++  make-path
     |=  [=desk =spur]
@@ -216,8 +248,8 @@
   ::
   ++  get-desk-data
     |=  [con=cone:clay target=desk]
-    ^-  (unit desk-data)
-    =/  sor
+    ^-  desk-data
+    =/  sor  :: TODO: review
       .^((map desk [ship desk]) %gx (make-path %hood /kiln/sources/noun))
     ::  skip desks without sys.kelvin (happenes while installing)
     =/  from=[=ship =desk]
@@ -227,13 +259,11 @@
     =/  dom=dome:clay  (~(got by con) [our.bowl target])
     ::
     ?.  .^(? %cu (make-path target /sys/kelvin))
-      `[target *mod-bond %dead ship.from ~ |]
-    ::  skip desks without any perms at all
+      [target *mod-bond %dead ship.from ~ | |]
     ::
     =+  .^(=bond %cx (make-path %$ /bond/[target]))
-    ?:  &(!=(%base target) ?=([~ ~ ~ ~] bond))  ~
     =+  .^(ese=? %cx (make-path %$ /esse/[target]))
-    `[target (modify-bond bond) liv.dom ship.from ~(key by wic.dom) ese]
+    [target (modify-bond bond) liv.dom ship.from ~(key by wic.dom) ese &]
   ::
   ++  modify-bond
   |=  =bond
@@ -254,12 +284,11 @@
   ++  page
     =+  .^(=cone:clay %cx (make-path %$ /domes))
     =/  desks=(set desk)
-      .^((set desk) %cd (make-path %$ /))
+      (~(del in .^((set desk) %cd (make-path %$ /))) %kids)
     =/  des=(list desk-data)
-      %-  murn  :_  (cury get-desk-data cone)
+      %-  turn  :_  (cury get-desk-data cone)
       ~(tap in (~(del in desks) %base))
-    =/  base=(unit desk-data)  (get-desk-data cone %base)
-    ?~  base  ;h2:"err couldn't fetch %base"
+    =/  base=desk-data  (get-desk-data cone %base)
     ^-  manx
     ;html
       ;head
@@ -270,14 +299,14 @@
       ;body
         ;script: {script}
         ;div.flex.grow
-          ;+  (menu u.base des)
+          ;+  (menu base des)
           ;div.display
             ;div(class "flex-sb flex-col gap display-def")
               ;h2:"System Permissions"
               ;p:"Every app asks permission before it reads your files, talks to other agents, or sends traffic over the network. Pick an app on the left to review the decisions you've made or change your mind."
             ==
             ;*  (turn des display)
-            ;+  (display-base u.base des)
+            ;+  (display-base base des)
           ==
         ==
       ==
@@ -289,6 +318,12 @@
       %+  skid  des
       |=  [=desk mod-bond *]
       ?&(=(~ pew) =(~ ned))
+    =/  base=manx
+      ;div
+        ;a(href "#base", class "menu-item")
+          ;h3:"%base"
+        ==
+      ==
     ::
     ;div.menu
       ;input(type "checkbox", class "prompt-toggle", id "/prompt", form "prompt-form");
@@ -297,10 +332,10 @@
       ==
       ;form(method "post", action "install", class "menu-item gap-sm")
         ::  TODO: parse input value prior submitting
-        ;input(type "text", placeholder "e.g., ~paldev ~paldev/pals", name "install-desk");
+        ;input(type "text", placeholder "e.g. ~paldev/pals", name "install-desk");
         ;button(type "submit", class "btn-install"):">"
       ==
-      ;*  ?~  blocked  [;div; ~]
+      ;*  ?~  blocked  [base ~]
           :*
             ;div.pop-up.flex.flex-col
               ;div
@@ -311,6 +346,7 @@
                 ;label(for "/prompt", class "btn-sm"):"Review and respond"
               ==
             ==
+            base
             ;p.tiny.menu-item:"Needs Attention"
             %+  turn
               ::  sort to put blocking > requested > more perms > less perms
@@ -346,26 +382,21 @@
               ?:  ?=(^ peq.a)  &
               ?:  ?=(^ peq.b)  |
               (gth (lent peg.a) (lent peg.b))
-            |=  [=desk =mod-bond =zest:clay from=ship *]
+            |=  desk-data
             ^-  manx
             ;div
               ;a(href "#{(trip desk)}", class "menu-item")
                 ;h3:"{<desk>}"
-                ;+  ?:  ?=([~ ~ ~ ~ ~] mod-bond)
-                      ;icon(id "spinner/{(trip desk)}/{<from>}")
+                ;+  ?:  =(| inst)
+                      ;icon(id "spinner/{(trip desk)}")
                         ;span.spinner;
                       ==
-                    ?:  =(~ peq.mod-bond)  ;div;
+                    ?:  =(~ peq)  ;div;
                     ;icon
-                      ;span(class "icon-badge"):"{(scow %ud (lent peq.mod-bond))}"
+                      ;span(class "icon-badge"):"{(scow %ud (lent peq))}"
                     ==
               ==
             ==
-          ==
-      ;div
-        ;a(href "#base", class "menu-item")
-          ;h3:"%base"
-        ==
       ==
     ==
   ::
@@ -382,7 +413,7 @@
     =/  total  (lent des)
     =|  [marl-prompt=marl i=@ud]
     |-  ?~  des  marl-prompt
-    =/  [=desk mod-bond =zest:clay from=ship wic=(set weft) ?]  i.des
+    =/  [=desk mod-bond =zest:clay from=ship wic=(set weft) *]  i.des
     =/  status=tape
       ?-  zest  ::  TODO: proper check look at weft etc.
         %dead  "continue installing"
@@ -412,12 +443,12 @@
         ;*  ^-  marl
           =/  ned-all  (silt (welp ned pew))
           :~
-          ;div(class "perm-card")
-            ;*  ^-  marl
-            %+  turn  ~(tap in ned-all)
-            (curr perm-text `"Required")
-          ==
-          (perm-to-input desk ned-all)
+              ;div(class "perm-card")
+                ;*  ^-  marl
+                %+  turn  ~(tap in ned-all)
+                (curr perm-text `"Required")
+              ==
+              (perm-to-input desk ned-all)
           ==
         ;input(type "radio", name "decision-{(trip desk)}", value "allow", id "allow-{(trip desk)}", class "decision hidden");
         ;input(type "radio", name "decision-{(trip desk)}", value "deny", id "deny-{(trip desk)}", class "decision hidden");
@@ -447,33 +478,25 @@
     =/  status
       ?:  ?=(%live zest)
         ?~  pew  "live"
-        "pending update, missing permissions"
+        "Pending update, missing permissions"
       ?:  ?=(%held zest)
         ?~  pew  "suspended, awaiting update"
-        "suspended, missing permissions"
+        "Suspended, missing permissions"
       ?~  ned  "suspended"
-      "can't set live, missing permissions"
+      "Can't set live, missing permissions"
     ::
   ::
-    ?:  =([~ ~ ~ ~ ~] [ped peg peq pew ned])
-      ;div(id "installing/{(trip desk)}");
+    ?:  =(| inst)  ;div(id "installing/{(trip desk)}");
     ;div(class "display-panel gap", id "{(trip desk)}")
       ;div.display-item
-        ;div.flex.gap.align-c
-          ;h2:"{<desk>}"
-          ;+  ?.  ese  ;div;
-              ;div.ese
-                ;p:"essential"
-              ==
-        ==
-        ;p.tiny:"{<from>}"
+        ;+  (render-desk desk ese from &)
         ;p:"{status}"
         ;+  ?:  =(~ wic)  ;div;
             ;div.flex
               ;p:"Update avaliable:"
               ;*  %+  turn  ~(tap in wic)
                   |=  =weft
-                  ;p:"{<weft>}"
+                  ;p:"{<lal.weft>} {<num.weft>}"
             ==
       ==
       ;div.flex.flex-col.gap
@@ -504,53 +527,68 @@
   ::
   ++  display-base
     |=  [base=desk-data desks=(list desk-data)]
-    =/  latest-weft=(unit weft)
-      ?:  =(~ wic.base)  ~
-      %-  ~(rep in wic.base)
-      |=  [=weft out=(unit weft)]
-      ?~  out  `weft
-      ?:  (lth num.weft num.u.out)  out
-      `weft
-    =/  blocked=(list desk-data)
-      ?~  latest-weft  ~
-      %+  skim  desks
-      |=  =desk-data
-      ?&  =(& ese.desk-data)
-          !(~(has in wic.desk-data) u.latest-weft)
-      ==
+    =/  wic-l=(list weft)
+      (sort ~(tap in wic.base) |=([[@tas a=@ud] [@tas b=@ud]] (gth a b)))
+    =+  .^(=waft:clay %cx (make-path %base /sys/kelvin))
+    =+  .^(=vere %$ (make-path %$ /zen/ver))
+    ?>  ?=([%zuse @] waft)
+    ::
     ^-  manx
-    ;div(class "display-panel gap", id "base")
-      ;div.display-item
-        ;div.flex.gap.align-c
-          ;h2:"%base"
+    ;div(class "display-base gap", id "base")
+      ;div(class "display-elem gap")
+        ;h2:"About system:"
+        ;p:"Runtime version: {(trip (slav %ta (rear rev.vere)))}"
+        ;form(action "/~/logout", method "post", class "flex-sb margin-l")
+          ;button(type "submit", class "btn-sm"):"Log out"
         ==
-        ;p.tiny:"{<from.base>}"
-        ;+  ?~  latest-weft  ;p:"Up to date"
-            ;div.flex
-              ;p:"Update avaliable: "
-              ;p:"{<u.latest-weft>}"
-            ==
       ==
-      ;+  ?:  =(~ blocked)  ;div;
-          ;div.display-item.flex.flex-col.gap
-            ;p:"Update blocked on:"
-            ;*  %+  turn  blocked
-            |=  =desk-data
-            ;div.flex.flex-col.gap-sm
-              ;p:"{<desk.desk-data>}"
-              ::  TODO: maybe allow suspend for essential desks?
-              ::  TODO: form for blocked desks permissions
-              ;+  ?:  =(~ pew.desk-data)
-                    ;p.tiny:"Awaiting update: {<latest-weft>}"
-                  ;div
-                    ;*  (turn pew.desk-data (curr perm-text `"Reqired"))
-                  ==
-            ==
+      ;div(class "display-elem gap", style "flex: 1;")
+        ;div.display-item
+          ;div.flex.flex-sb
+            ;h2:"%base"
+            ;p:"{<lal.waft>} {<num.waft>}"
           ==
+          ;p.tiny:"{<from.base>}"
+        ==
+        ;div.display-item
+          ;*  ?~  wic-l  [;p:"Up to date" ~]
+              %+  turn  wic-l
+              |=   =weft
+              =/  blocked
+                %+  skim  desks
+                |=  =desk-data
+                ?&  =(& ese.desk-data)
+                    ?|  !(~(has in wic.desk-data) weft)
+                        !=(~ pew.desk-data)
+                    ==
+                ==
+              ::
+              ?~  blocked
+                =/  msg=tape
+                  ?:  .^(? %$ (make-path %$ /zen/lag))
+                    "Runtime doesn't support avaliable [{<lal.weft>} {<num.weft>}] update."
+                  "Missing blocked desks for [{<lal.weft>} {<num.weft>}]"
+                ;div
+                  ;p:"{msg}"
+                ==
+              ;details.flex.flex-col
+                ;summary:"Update avaliable: {<lal.weft>} {<num.weft>}"
+                ;div.flex.flex-col.gap
+                  ;+  (prompt-suspend-all blocked num.weft)
+                  ;div.flex.flex-sb
+                    ;p:"Update blocked on:"
+                    ;label(for "/prompt-suspend/{<num.weft>}", class "btn-sm"):"Suspend all"
+                  ==
+                  ;*  (turn blocked (curr render-desks weft))
+                ==
+              ==
+        ==
+      ==
     ==
   ::
   ++  prompt-grant-all
     |=  [=desk ned=(list perm:gall) peq=(list perm:gall)]
+    ^-  manx
     ;div
       ;input(type "checkbox", class "prompt-all-toggle", id "/prompt-all/{(trip desk)}");
       ;div(class "prompt prompt-all")
@@ -576,9 +614,71 @@
         ==
         ;form(method "post", action "submit-prompt/{(trip desk)}", class "flex-sb margin-l")
           ;+  (perm-to-input desk (silt (welp ned peq)))
-          ;button(type "submit", name "decision-{(trip desk)}", value "allow", class "btn"):"Allow all"
+          ;div.flex.flex-sb.margin-l
+            ;button(type "submit", name "decision-{(trip desk)}", value "allow", class "btn"):"Allow all"
+          ==
         ==
       ==
+    ==
+  ::
+  ++  prompt-suspend-all
+    |=  [blocked=(list desk-data) num=@ud]
+    ;div
+      ;input(type "checkbox", class "prompt-suspend-toggle hidden", id "/prompt-suspend/{<num>}");
+      ;form(method "post", action "suspend", class "prompt prompt-suspend")
+        ;div(class "prompt-top flex-sb margin-l")
+          ;label(for "/prompt-suspend/{<num>}", class "close"):"close"
+        ==
+        ;div
+          ;h3:"Suspend desks to proceed with system update"
+          ;p.tiny:"Essential desks will become non-essential, and will be suspended until it receives an update and required permissions"
+        ==
+        ;*  %+  turn  blocked
+            |=  desk-data
+            ;div.perm-data
+              ;input(type "hidden", name "suspend-{(trip desk)}", value "allow");
+              ;+  (render-desk desk ese from |)
+            ==
+        ;div.flex.flex-sb.margin-l
+          ;button(type "submit", name "suspend-all", value "allow", class "btn"): Suspend
+        ==
+      ==
+    ==
+  ::
+  ++  render-desks
+    |=  [desk-data =weft]
+    ^-  manx
+    ;div.flex.flex-col.gap-sm.desk-data
+      ;+  (render-desk desk ese from |)
+      ;+  ?.  ?&  (~(has in wic) weft)
+                  !=(~ pew)
+              ==
+            ;form(method "post", action "suspend", class "flex flex-sb")
+              ;p.tiny:"Awaiting compatible update with: {<lal.weft>} {<num.weft>}"
+              ::TODO: pop-up with explaning what it's going to do and confirm btn
+              ;button(type "submit", name "suspend", value "{(trip desk)}", class "btn-sm"):"Set to non essential"
+            ==
+          ;form(method "post", action "submit-prompt/base", class "flex flex-col gap")
+            ;+  (perm-to-input desk (silt pew))
+            ;*  (turn pew (curr perm-text `"Reqired"))
+            ;div.flex.flex-sb.margin-l
+              ;button(type "submit", name "decision-{(trip desk)}", value "allow", class "btn-sm"):"Allow all"
+            ==
+          ==
+    ==
+  ::
+  ++  render-desk
+    |=  [=desk ese=? from=ship main-view=?]
+    ;div.flex.flex-col
+      ;div.flex.flex-sb.gap.align-c
+        ;+  ?:  main-view  ;h3:"{<desk>}"
+        ;p:"{<desk>}"
+        ;+  ?.  ese  ;div;
+            ;div.ese
+              ;p:"essential"
+            ==
+      ==
+      ;p.tiny:"{<from>}"
     ==
   ::
   ++  render-perms
@@ -774,28 +874,28 @@
     function boot() {
       var seen = new Set();
       document.querySelectorAll("[id^='spinner/']").forEach(function (el) {
-        var parts = el.id.split("/");                     // ["spinner", desk, ~ship]
-        var desk = parts[1], ship = parts[2];
-        if (!seen.has(el.id)) { seen.add(el.id); poll(desk, ship); }
+        var parts = el.id.split("/");                     // ["spinner", desk]
+        var desk = parts[1];
+        if (!seen.has(el.id)) { seen.add(el.id); poll(desk); }
       });
     }
     if (document.readyState === "loading") window.addEventListener("DOMContentLoaded", boot);
     else boot();
-    function poll(desk, ship) {
+    function poll(desk) {
       var t = setInterval(function () {
-        fetch("desk/" + encodeURIComponent(desk) + "/" + encodeURIComponent(ship)).then(function (r) {
+        fetch("desk/" + encodeURIComponent(desk)).then(function (r) {
           if (r.status === 204) return;           // not ready → keep polling
           var zest = r.headers.get("zest");
           r.text().then(function (html) {
             clearInterval(t);
-            apply(desk, ship, html, zest);
+            apply(desk, html, zest);
           });
         });
       }, 20000);
     }
     var ZEST_COLOR = { live: "white", held: "#d29922", dead: "#e0392b" };
-    function apply(desk, ship, html, zest) {
-      var elIcon = document.getElementById("spinner/" + desk + "/" + ship);
+    function apply(desk, html, zest) {
+      var elIcon = document.getElementById("spinner/" + desk);
       if (elIcon) {
         var span = elIcon.querySelector("span.spinner");
         if (span) {
@@ -810,6 +910,50 @@
       var doc = new DOMParser().parseFromString(html, "text/html");
       el.replaceWith(...doc.body.childNodes);
     }
+    // submit the install; /install parses first and only acts when valid
+    function initInstall() {
+      var form = document.querySelector('form[action="install"]');
+      if (!form) return;
+      var input = form.querySelector('input[name="install-desk"]');
+      if (!input) return;
+
+      var msg = document.createElement("p");
+      msg.className = "tiny";
+      msg.style.color = "#e0392b";
+      msg.style.margin = "4px 0 0";
+      msg.style.display = "none";
+      form.parentNode.insertBefore(msg, form.nextSibling);
+
+      function clearError() {
+        input.style.borderColor = "";
+        msg.style.display = "none";
+      }
+      function showError(text) {
+        input.style.borderColor = "#e0392b";
+        msg.textContent = text;
+        msg.style.display = "block";
+      }
+      input.addEventListener("input", clearError);
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        clearError();
+        if (!input.value.trim()) { showError("Enter a publisher ship and desk to install"); return; }
+        fetch("install", {
+          method: "POST",
+          headers: { "content-type": "application/x-www-form-urlencoded" },
+          body: "install-desk=" + encodeURIComponent(input.value),
+          redirect: "manual"
+        }).then(function (r) {
+          if (r.type === "opaqueredirect" || r.ok) window.location.reload();
+          else showError("Not valid syntax, try e.g. ~paldev/pals");
+        }).catch(function () {
+          showError("Couldn't reach the ship, try again");
+        });
+      });
+    }
+    if (document.readyState === "loading") window.addEventListener("DOMContentLoaded", initInstall);
+    else initInstall();
     '''
   --
 ::
@@ -832,7 +976,8 @@
     font-family: sans-serif;
     font-weight: 400;
     margin: 0;
-    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     }
@@ -876,6 +1021,9 @@
     border: 1px solid #000;
     border-radius: 6px;
   }
+  details:not([open]) {
+    gap: 0;
+  }
   /*
     Universal styling classes
   */
@@ -901,6 +1049,7 @@
   }
   .grow {
     flex: 1;
+    min-height: 0;
     }
   .margin-l {
     margin-left: auto;
@@ -988,6 +1137,11 @@
     border-radius: 16px;
     padding: 12px;
     }
+  .desk-data {
+    border: 1px solid #000;
+    border-radius: 8px;
+    padding: 12px;
+  }
   /*
     Wrapper element styling
   */
@@ -1043,6 +1197,12 @@
     gap: 16px;
     border-right: 1px solid var(--grey-2);
     padding: 12px 6px 12px 12px;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: none;
+    }
+  .menu::-webkit-scrollbar {
+    display: none;
     }
   .menu-item {
     display: flex;
@@ -1056,9 +1216,25 @@
     flex-direction: column;
     padding: 24px;
     background: var(--grey-3);
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: none;
+    }
+  .display::-webkit-scrollbar {
+    display: none;
     }
   .display-item, .warning, .request {
     padding: 6px 8px;
+  }
+  .display-elem {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    box-sizing: border-box;
+    background: #fff;
+    border: 1px solid var(--grey-2);
+    border-radius: 12px;
+    padding: 12px;
   }
   .pop-up{
     color: var(--blue-1);
@@ -1108,14 +1284,24 @@
     flex-direction: column;
     width: 100%;
     flex: 1;
-    min-height: 0;
     box-sizing: border-box;
     background: #fff;
     border: 1px solid var(--grey-2);
     border-radius: 12px;
     padding: 12px;
     }
-  .display:has(.display-panel:target) .display-def {
+  .display-base {
+    display: none;
+    }
+  .display-base:target {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    flex: 1;
+    box-sizing: border-box;
+  }
+  .display:has(.display-panel:target) .display-def,
+  .display:has(.display-base:target) .display-def {
     display: none;
     }
   .prompt-toggle {
@@ -1152,6 +1338,12 @@
     display: none;
     }
   .prompt-all-toggle:checked ~ .prompt-all {
+    display: flex;
+    }
+  .prompt-suspend {
+    display: none;
+    }
+  .prompt-suspend-toggle:checked ~ .prompt-suspend {
     display: flex;
     }
   /*  */
