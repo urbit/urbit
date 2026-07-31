@@ -652,15 +652,8 @@
   ?~  wic
     %-  (slog 'kiln: %base already up-to-date' ~)
     ..abet
-  =/  kel  i.wic
   %-  emil
-  =/  desks=(list [=desk =zest])
-    %+  murn  ~(tap by rock)
-    |=  [=desk =zest wic=(set weft)]
-    ?:  |(=(%base desk) !?=(%live zest) (~(has in wic) kel))
-      ~
-    `u=[desk %held]
-  [%pass /kiln/bump/zeal %arvo %clay %zeal desks]~
+  [%pass /kiln/bump/wick %arvo %syscall %c %wick ~]~
 ::
 ++  poke-cancel
   |=  a=@tas
