@@ -5055,11 +5055,15 @@
     ?:  ?=(%base des.req)
       %-  (slog 'clay: base is always essential' ~)
       [~ ..^$]
+    =/  =dojo  (~(got by dos.rom.ruf) des.req)
+    ?:  &(ese.req !?=(%live liv.dom.dojo))
+      %-  %-  slog
+          :~  leaf+"clay: can't set {<des.req>} to essential"
+              leaf+"clay: {<des.req>} desk is {<liv.dom.dojo>}, not %live"
+          ==
+      [~ ..^$]
     =.  dos.rom.ruf
-      %+  ~(jab by dos.rom.ruf)
-        des.req
-      |=  =dojo
-      dojo(ese ese.req)
+      (~(put by dos.rom.ruf) des.req dojo(ese ese.req))
     =^  mos  ruf
       abet:wick:((de now rof hen ruf) our %base)
     [mos ..^$]
