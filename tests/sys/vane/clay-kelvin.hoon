@@ -303,15 +303,15 @@
     (pure:m ~)
   =,  i.desks
   ;<  *                bind:m  (do-new-desk desk)
-  ;<  *                bind:m
-    ?.  esse  (pure:m ~)
-    (call ~[/blah] [%esse desk %.y])
   ;<  mov=(list move)  bind:m  (call ~[/blah] [%zest desk `zest:clay`%live])
   ;<  ~                bind:m
     %+  expect-moves  mov
     :~  ex-wick
         ex-load
     ==
+  ;<  *                bind:m
+    ?.  esse  (pure:m ~)
+    (call ~[/blah] [%esse desk %.y])
   ;<  ~                bind:m  (do-wick ~)  ::  just a formality
   $(desks t.desks)
 ::
