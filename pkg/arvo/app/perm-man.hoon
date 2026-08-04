@@ -75,9 +75,12 @@
       ?.  inst.data                                 [[204 ~] ~]
       ::  ??
       =/  status=zest:clay
-        ?:  &(?=(%held zest.data) !=(~ pew.mod-bond.data))  %dead
+        ::  if held for pew reasons (not just wic reasons),
+        ::  mark status as "dead", action required
+        ::
+        ?:  &(?=(%held zest.data) ?=(^ pew.mod-bond.data))  %dead
         zest.data
-      :-  [200 ['content-type' 'text/html'] ['zest' status]~]
+      :-  [200 ['content-type' 'text/html'] ['install-status' status]~]
       `(as-octt:mimes:html (en-xml:html (display:build data)))
     ::
         [%action @ ~]
@@ -155,14 +158,8 @@
         [%install ~]
       ?.  ?=(%'POST' method.request)  [~ bad-method]
       ?~  body.request                [~ bad-body]
-      =/  args=(map @t @t)
-        %-  ~(gas by *(map @t @t))
-        (fall (rush q.u.body.request yquy:de-purl:html) ~)
-      ~&  >  args=args
-      =/  arg  (~(get by args) 'install-desk')
-      ?~  arg                         [~ parse-fail]
       =/  dat=(unit [ship desk])
-        %+  rush  u.arg
+        %+  rush  q.u.body.request
         ;~(plug ;~(pfix sig fed:ag) ;~(pfix fas sym))
       ?~  dat  [~ [405 ~] `(as-octs:mimes:html 'fail to parse')]  ::TODO
       ~&  dat=u.dat
@@ -297,7 +294,6 @@
         ;style: {style}
       ==
       ;body
-        ;script: {script}
         ;div.flex.grow
           ;+  (menu base des)
           ;div.display
@@ -309,6 +305,7 @@
             ;+  (display-base base des)
           ==
         ==
+        ;script: {script}
       ==
     ==
   ::
@@ -871,6 +868,12 @@
     ^~
     %-  trip
     '''
+    var STATUS_COLOR = {
+      live: "white",    //  live, nothing
+      held: "#d29922",  //  live, update blocked
+      dead: "#e0392b"   //  not-live, blocked
+    };
+
     function boot() {
       var seen = new Set();
       document.querySelectorAll("[id^='spinner/']").forEach(function (el) {
@@ -879,29 +882,26 @@
         if (!seen.has(el.id)) { seen.add(el.id); poll(desk); }
       });
     }
-    if (document.readyState === "loading") window.addEventListener("DOMContentLoaded", boot);
-    else boot();
     function poll(desk) {
       var t = setInterval(function () {
         fetch("desk/" + encodeURIComponent(desk)).then(function (r) {
           if (r.status === 204) return;           // not ready → keep polling
-          var zest = r.headers.get("zest");
+          var status = r.headers.get("install-status");
           r.text().then(function (html) {
             clearInterval(t);
-            apply(desk, html, zest);
+            apply(desk, html, status);
           });
         });
       }, 20000);
     }
-    var ZEST_COLOR = { live: "white", held: "#d29922", dead: "#e0392b" };
-    function apply(desk, html, zest) {
+    function apply(desk, html, status) {
       var elIcon = document.getElementById("spinner/" + desk);
       if (elIcon) {
         var span = elIcon.querySelector("span.spinner");
         if (span) {
           span.classList.remove("spinner");
           span.classList.add("icon-desk-status");
-          span.style.background = ZEST_COLOR[zest] || ZEST_COLOR.dead;
+          span.style.background = STATUS_COLOR[status] || STATUS_COLOR.dead;
         }
       }
 
@@ -910,7 +910,11 @@
       var doc = new DOMParser().parseFromString(html, "text/html");
       el.replaceWith(...doc.body.childNodes);
     }
-    // submit the install; /install parses first and only acts when valid
+
+    //  initInstall(): submit install request
+    //
+    //    parses input, only acts when valid
+    //
     function initInstall() {
       var form = document.querySelector('form[action="install"]');
       if (!form) return;
@@ -942,7 +946,7 @@
         fetch("install", {
           method: "POST",
           headers: { "content-type": "application/x-www-form-urlencoded" },
-          body: "install-desk=" + encodeURIComponent(input.value),
+          body: input.value,
           redirect: "manual"
         }).then(function (r) {
           if (r.type === "opaqueredirect" || r.ok) window.location.reload();
@@ -952,8 +956,9 @@
         });
       });
     }
-    if (document.readyState === "loading") window.addEventListener("DOMContentLoaded", initInstall);
-    else initInstall();
+
+    boot();
+    initInstall();
     '''
   --
 ::
