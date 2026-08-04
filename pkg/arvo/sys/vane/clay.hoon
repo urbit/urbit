@@ -3310,9 +3310,14 @@
       (emit hen %pass /park-held/[syd] %b %wait now)
     =/  ped=(set perm:gall)  get-seal
     =/  peg      (~(dif in peg.dom) pes)
-    =/  allowed  (levy ~(tap in ped) (cury have:guard:gall peg))
-    ?:  &(=(%live liv.dom) !allowed)
+    =/  pew
+      %-  ~(gas in *(set perm:gall))
+      %+  skip  ~(tap in ped)
+      (cury have:guard:gall peg)
+    ?:  &(=(%live liv.dom) ?=(^ pew))
       (mean leaf+"clay: can't remove required permissions: desk is %live, suspend first" ~)
+    ::  update pew.dom if revoked permissions blocking desk liveness
+    =?  pew.dom   ?=(^ pew)  `[pew ~]
     (send-ward(peg.dom peg) syd)
   ::
   ++  set-zest                                          ::  [goad] <
