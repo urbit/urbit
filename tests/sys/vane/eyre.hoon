@@ -202,7 +202,7 @@
     %:  gate.state
         now=now.state
         eny=`@uvJ`0xdead.beef
-        scry=scry-provides-code
+        scry=scry-mock
     ==
   =^  moves  gate.state
     (call:eyre-core duct ~ wrapped-task)
@@ -217,7 +217,7 @@
     %:  gate.state
         now=now.state
         eny=`@uvJ`0xdead.beef
-        scry=scry-provides-code
+        scry=scry-mock
     ==
   =^  moves  gate.state
     (take:eyre-core wire duct ~ sign)
@@ -237,6 +237,7 @@
           ?=(~ (get-header:http 'cookie' header-list))
       ==
     [['cookie' u.sesh.state] header-list]
+  =.  header-list  [['host' 'localhost'] header-list]  ::TODO  as argument
   =/  body  (bind body as-octs:mimes:html)
   %+  call  duct
   [%request %.n [%ipv4 .192.168.1.1] [method url header-list body]]
@@ -312,10 +313,10 @@
   [%| tang]
 ::
 ++  ex-set-config
-  |=  =http-config:eyre
+  |=  =vere-config:eyre
   |=  mov=move
   ^-  tang
-  (expect-eq !>([duct=~[/unix] %give %set-config http-config]) !>(mov))
+  (expect-eq !>([duct=~[/unix] %give %set-config vere-config]) !>(mov))
 ::
 ++  ex
   |=  mow=move
@@ -512,10 +513,10 @@
     %|  p.res
   ==
 ::
-++  scry-provides-code  ^-  roof
+++  scry-mock  ^-  roof
   |=  [gang pov=path =view =beam]
   ^-  (unit (unit cage))
-  ?:  =(%gd view)  ``noun+!>(%base)
+  ?:  =(%gd view)  ``desk+!>(%base)
   ?:  =(%gu view)  ``noun+!>(=(%app1 q.beam))
   ?:  &(=(%ca view) =(/gen/handler/hoon s.beam))
     :+  ~  ~
@@ -1415,7 +1416,7 @@
   =/  m  (mare ,~)
   ^-  form:m
   ;<  mos=(list move)  bind:m  (call ~[/unix] [%born ~])
-  (expect-moves mos (ex-set-config *http-config:eyre) (ex-sessions ~) ~)
+  (expect-moves mos (ex-set-config *vere-config:eyre) (ex-sessions ~) ~)
 ::
 ++  request-name
   =/  m  (mare ,@p)
