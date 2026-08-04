@@ -363,7 +363,7 @@
   =?  ..on-init
     .^(? %cu path)
     =+  .^([@ per=(list perm:gall)] %cx path)
-    (emit %pass /kiln/init-seal %arvo %syscall %c %seal i.dez & (silt per))
+    (emit %pass /kiln/init-seal %arvo %clay %seal i.dez & (silt per))
   =.  ..on-init
     (emit %pass /kiln/init-zest %arvo %clay %zest i.dez %live)
   =.  ..on-init
