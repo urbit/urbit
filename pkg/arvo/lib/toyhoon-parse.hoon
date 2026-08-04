@@ -34,7 +34,7 @@
       ==
   ==
 ::
-++  gate
+++  gate  ~+
   =+  [vec tagmap]=def
   :: ~>  %slog.[0 (machine:mump (vector-dfa vec))]
   =/  fol=nock
