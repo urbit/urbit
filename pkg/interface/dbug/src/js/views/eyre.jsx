@@ -48,8 +48,8 @@ export class Eyre extends Component {
     api.getConfig();
   }
 
-  clearCache(url) {
-    api.clearCache(url);
+  clearCache(desk, url) {
+    api.clearCache(desk, url);
   }
 
   loadConnections() {
@@ -102,8 +102,8 @@ export class Eyre extends Component {
         </div>
         { !entry.val ? 'cleared' :
           <div style={{ width: '50%', position: 'relative' }}>
-            <div style={{ display: 'inline-block', width: '10%' }}>
-              {entry.val.auth ? 'auth' : 'free'}
+            <div style={{ display: 'inline-block', width: '20%' }}>
+              {entry.val.auth ? 'auth' : 'free'} ({entry.val.desk})
             </div>
             <div style={{ display: 'inline-block', width: '10%' }}>
               {entry.val.payload.status}
@@ -111,11 +111,11 @@ export class Eyre extends Component {
             <div style={{ display: 'inline-block', width: '50%' }}>
               {entry.val.payload.headers.reduce((o, h) => (o ? o+'; ': '') + h.key + '=' + h.value, '')}
             </div>
-            <div style={{ display: 'inline-block', width: '25%' }}>
+            <div style={{ display: 'inline-block', width: '15%' }}>
               {entry.val.payload.data ? entry.val.payload.data.toLocaleString('de-DE')+' bytes' : 'no data'}
             </div>
             <div style={{ display: 'inline-block', width: '5%' }}>
-              <button onClick={() => { this.clearCache(entry.url) }}>clear</button>
+              <button onClick={() => { this.clearCache(entry.desk, entry.url) }}>clear</button>
             </div>
           </div>
         }

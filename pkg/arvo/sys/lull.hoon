@@ -3063,7 +3063,8 @@
         [%spew veb=@]
         ::  remember (or update) a cache mapping
         ::
-        [%set-response url=@t entry=(unit cache-entry)]
+        ::TODO  gall api remain old-style, gall fills in .desk component!
+        [%set-response =desk url=@t entry=(unit cache-entry)]
     ==
   ::  +origin: request origin as specified in an Origin header
   ::

@@ -61,10 +61,10 @@
       ?>  =(our src):bowl
       =/  jon=json  !<(json vase)
       =,  dejs:format
-      =/  cmd
-        ((of clear-eyre-cache+(ot url+so ~) ~) jon)
+      =/  cmd=[%clear-eyre-cache =desk url=@t]
+        ((of clear-eyre-cache+(ot desk+so url+so ~) ~) jon)
       ?>  ?=(%clear-eyre-cache -.cmd)
-      [[%pass /cmd %arvo %e %set-response +.cmd ~]~ this]
+      [[%pass /cmd %arvo %e %set-response desk.cmd url.cmd ~]~ this]
     ?.  ?=(%handle-http-request mark)
       (on-poke:def mark vase)
     =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
@@ -378,7 +378,7 @@
     %-  some
     :-  %a
     %+  turn  (sort ~(tap by cache:v-eyre) aor)
-    |=  [url=@t aeon=@ud val=(unit cache-entry:eyre)]
+    |=  [url=@t aeon=@ud val=(unit [=desk cache-entry:eyre])]
     %-  pairs
     :~  'url'^s+url
         'aeon'^(numb aeon)
@@ -1465,7 +1465,7 @@
     (scry ,(list [=binding =duct =action]) %e %bindings ~)
   ::
   ++  cache
-    (scry ,(map url=@t [aeon=@ud (unit cache-entry)]) %e %cache ~)
+    (scry ,(map url=@t [aeon=@ud (unit [=desk cache-entry])]) %e %cache ~)
   ::
   ++  config
     (scry http-config:eyre %e %config ~)
@@ -1499,10 +1499,11 @@
     ==
   ::
   ++  render-cache-entry
-    |=  cache-entry
+    |=  [=desk cache-entry]
     ^-  json
     %-  pairs:enjs:format
-    :~  'auth'^b+auth
+    :~  'desk'^s+desk
+        'auth'^b+auth
         'payload'^(render-simple-payload simple-payload.body)
     ==
   ::

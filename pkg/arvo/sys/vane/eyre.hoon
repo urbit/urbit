@@ -66,7 +66,7 @@
       bindings=(list [=binding =duct =action])
       ::  cache: mapping from url to versioned entry
       ::
-      cache=(map url=@t [aeon=@ud val=(unit cache-entry)])
+      cache=(map url=@t [aeon=@ud val=(unit [=desk cache-entry])])
       ::  cors-registry: state used and managed by the +cors core
       ::
       =cors-registry
@@ -1203,10 +1203,10 @@
       (handle-http-scry authenticated scope.identity request)
     ::  handle requests to the cache, if a non-empty entry exists
     ::
-    =/  cached=(unit [aeon=@ud val=(unit cache-entry)])
+    =/  cached=(unit [aeon=@ud val=(unit [=desk cache-entry])])
       (~(get by cache.state) url.request)
     ?:  &(?=([~ @ ^] cached) ?=(%'GET' method.request))
-      (handle-cache-req authenticated request u.val.u.cached)
+      (handle-cache-req authenticated request +.u.val.u.cached)
     ::
     ?-    -.action
         %holm
@@ -3809,10 +3809,17 @@
   ::  +set-response: remember (or update) a cache mapping
   ::
   ++  set-response
-    |=  [url=@t entry=(unit cache-entry)]
+    |=  [=desk url=@t entry=(unit cache-entry)]
     ^-  [(list move) server-state]
-    =/  aeon  ?^(prev=(~(get by cache.state) url) +(aeon.u.prev) 1)
-    =.  cache.state  (~(put by cache.state) url [aeon entry])
+    =/  prev  (~(get by cache.state) url)
+    ::  if a cache entry already exists, but a different desk want to touch it,
+    ::  prevent that: the original desk "owns" that part of cache namespace rn.
+    ::
+    ?:  &(?=([~ * ~ *] prev) !=(desk desk.u.val.u.prev))
+      ~|  [%eyre %set-response-clash url=url from=desk.u.val.u.prev next=desk]
+      !!  ::REVIEWxx, maybe notify called with equivalent of %bound instead
+    =/  aeon  ?^(prev +(aeon.u.prev) 1)
+    =.  cache.state  (~(put by cache.state) url [aeon (bind entry (lead desk))])
     :_  state
     ::NOTE  during boot, userspace might've sent us this before we received
     ::      our first %born, with which we initialize the outgoing-duct.
@@ -4257,7 +4264,7 @@
     ::
     =/  cache-moves=(list move)
       %+  turn  ~(tap by cache.server-state.ax)
-      |=  [url=@t cache-val=[aeon=@ud val=(unit cache-entry)]]
+      |=  [url=@t cache-val=[aeon=@ud val=*]]
       [duct %give %grow /cache/(scot %u aeon.cache-val)/(scot %t url)]
     ::
     :_  http-server-gate
