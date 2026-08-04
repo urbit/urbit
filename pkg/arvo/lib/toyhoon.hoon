@@ -285,6 +285,42 @@
   ^-  type
   (play +.sut)
 ::
+++  open
+  |=  sin=naty-sugar
+  ^-  naty
+  ?^  -.sin
+    [$(sin -.sin) $(sin +.sin)]
+  ?-  -.sin
+    %noun  sin
+    %dttr  [%dttr $(sin p.sin) $(sin q.sin)]
+    %dtwt  [%dtwt $(sin p.sin)]
+    %dtls  [%dtls $(sin p.sin)]
+    %dtts  [%dtts $(sin p.sin) $(sin q.sin)]
+    %wtcl  [%wtcl $(sin p.sin) $(sin q.sin) $(sin r.sin)]
+    %tsgr  [%tsgr $(sin p.sin) $(sin q.sin)]
+    %tsls  [%tsls $(sin p.sin) $(sin q.sin)]
+    %cnts  [%cnts wing.sin (turn diff.sin |=([w=wing n=naty-sugar] [w ^$(sin n)]))]
+    %sggr  [%sggr ?@(tag.sin tag.sin [p.tag.sin $(sin q.tag.sin)]) $(sin naty.sin)]
+  ::
+    %brcn  [%brcn var.sin lay.sin (~(run by bat.sin) ..$)]
+    %brpt  [%brpt lay.sin (~(run by bat.sin) ..$)]
+  ::
+    %ktls  [%ktls $(sin p.sin) $(sin q.sin)]
+    %wtpt  [%wtpt wing.sin $(sin y.sin) $(sin n.sin)]
+    %wtcn  [%wtcn wing.sin tom.sin $(sin y.sin) $(sin n.sin)]
+    %wtkt  [%wtkt wing.sin $(sin y.sin) $(sin n.sin)]
+  ::
+      %xtra
+    ?-  +<.sin
+      %pair  !!
+    ::
+        %gate
+      :+  %tsls
+        [%tsgr $(sin sam.sin) %cnts [%| 0 `%$]~ ~]
+      [%brcn %gold ~ [%$ $(sin bod.sin)] ~ ~]
+    ==
+  ==
+::
 ++  play
   |=  [sut=type =naty]
   ^-  type
@@ -423,6 +459,9 @@
            =+  n=$(naty n.naty, sut (take sut vein cell))
            :-  (make-union -.y -.n)
            [%6 [%3 %0 (peg (tend:ut vein) 2)] +.y +.n]
+  ::
+      %xtra
+    !!  ::TODO
   ==
 ::
 ++  slap

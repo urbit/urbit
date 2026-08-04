@@ -8,36 +8,47 @@
 ::    each of these represents a digraph followed by its "sub runes".
 ::    later, we will have a type that also has synthetic runes.
 ::
-+$  naty
++$  naty        (naty-xtra ~)
++$  naty-sugar  (naty-xtra sugar)
+::
++$  sugar
+  $~  [%gate [%noun %noun 0] [%noun %noun 0]]
+  $%  [%gate sam=naty-sugar bod=naty-sugar]
+  ==
+::
+++  naty-xtra
+  |$  [xtra]
   $~  [%noun %noun 0]  ::[%look [&+1]~]
-  $^  [naty naty]
+  $^  [$ $]
   $%  ::  nock operations
       ::
-      :: [%look =wing]                               ::  %0
-      [%noun =type =noun]                         ::  %1
-      [%dttr p=naty q=naty]                       ::  %2
-      [%dtwt p=naty]                              ::  %3
-      [%dtls p=naty]                              ::  %4
-      [%dtts p=naty q=naty]                       ::  %5
-      [%wtcl p=naty q=naty r=naty]                ::  %6
-      [%tsgr p=naty q=naty]                       ::  %7
-      [%tsls p=naty q=naty]                       ::  %8
-      :: [%pull =axis =naty]                         ::  %9
-      [%cnts =wing diff=(list (pair wing naty))]  ::  %10
-      [%sggr tag=$@(@ (pair @ naty)) =naty]       ::  %11
+      :: [%look =wing]                         ::  %0
+      [%noun =type =noun]                      ::  %1
+      [%dttr p=$ q=$]                          ::  %2
+      [%dtwt p=$]                              ::  %3
+      [%dtls p=$]                              ::  %4
+      [%dtts p=$ q=$]                          ::  %5
+      [%wtcl p=$ q=$ r=$]                      ::  %6
+      [%tsgr p=$ q=$]                          ::  %7
+      [%tsls p=$ q=$]                          ::  %8
+      :: [%pull =axis =$]                      ::  %9
+      [%cnts =wing diff=(list (pair wing $))]  ::  %10
+      [%sggr tag=$@(@ (pair @ $)) naty=$]      ::  %11
     ::
       ::  hoon constructs
       ::
-      [%brcn var=?(%gold %iron %lead) lay=(unit layout) bat=(map term naty)]
-      [%brpt lay=(unit layout) bat=(map term naty)]
+      [%brcn var=?(%gold %iron %lead) lay=(unit layout) bat=(map term $)]
+      [%brpt lay=(unit layout) bat=(map term $)]
     ::
       ::  type operations
       ::
-      [%ktls p=naty q=naty]
-      ::[%bccb =naty]
-      [%wtpt =wing y=naty n=naty]
-      [%wtcn =wing tom=@ y=naty n=naty]
-      [%wtkt =wing y=naty n=naty]
+      [%ktls p=$ q=$]
+      ::[%bccb =$]
+      [%wtpt =wing y=$ n=$]
+      [%wtcn =wing tom=@ y=$ n=$]
+      [%wtkt =wing y=$ n=$]
+    ::
+      [%xtra xtra]
   ==
 ::
 +$  type

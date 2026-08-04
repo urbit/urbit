@@ -201,6 +201,18 @@
     ==
   !>((scan "[[1 2] .+(3) 4 5]" apex:parse:th))
 ::
+++  make-open-test
+  |=  [input=naty-sugar:tp ex=naty:tp]
+  (expect-eq !>((open:th input)) !>(ex))
+::
+++  test-open
+  =/  tar  [%tsls [%noun %noun 0] [%brcn %gold ~ [%$ [%cnts [%& 6]~ ~]] ~ ~]]
+  ;:  weld
+     %+  make-open-test
+       [%xtra %gate tar [%noun %noun 1]]
+     [%tsls [%tsgr tar %cnts [%| 0 `%$]~ ~] [%brcn %gold ~ [%$ %noun %noun 1] ~ ~]]
+  ==
+::
 ++  make-primitive-test
   |=  [input=@t match=[tag=tag:tp i=@ud]]
   =+  res=(gate:tp (init-cord-cursor:tp input))
