@@ -2985,7 +2985,7 @@
         [%set-config =vere-config]
         ::  sessions: valid authentication cookie strings
         ::
-        [%sessions ses=(set @t)]
+        [%sessions ses=(map @t (unit desk))]
         ::  response: response to an event from earth
         ::
         [%response =http-event:http]

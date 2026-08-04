@@ -1058,7 +1058,8 @@
       =/  new-id=identity
         identity.u.parent-session(scope desk.p.target)
       =.  authlets.auth.state  (~(del by authlets.auth.state) tmp-token)
-      [[%made -] +]:(start-session:authentication new-id parent)
+      =^  o  state  (start-session:authentication new-id parent)
+      [=,(o [%made session identity [give-session-tokens moves]]) state]
     ::
     ?:  ?=(%invalid -.auth-state)
       =*  session  session.auth-state
@@ -3898,11 +3899,10 @@
     ^-  move
     :-  outgoing-duct.state
     :+  %give  %sessions
-    %-  sy
-    %+  murn  ~(tap by sessions.auth.state)
-    |=  [sid=@uv session]
-    ?.  ?=(%ours -.who.identity)  ~
-    (some (scot %uv sid))
+    %+  roll  ~(tap by sessions.auth.state)
+    |=  [[sid=@uv session] m=(map @t (unit desk))]
+    ?.  ?=(%ours -.who.identity)  m
+    (~(put by m) (scot %uv sid) scope.identity)
   ::  +new-session-key
   ::
   ++  new-session-key
