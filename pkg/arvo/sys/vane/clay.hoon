@@ -224,7 +224,6 @@
       tyr=(set duct)                                    ::  app subs
       tur=rock:tire                                     ::  last tire
       pud=(unit [=desk =yoki])                          ::  pending update
-      sad=(map ship @da)                                ::  scry known broken
       bug=[veb=@ mas=@]                                 ::  verbosity
   ==                                                    ::
 ::
@@ -287,7 +286,7 @@
       have=(map lobe fell)
       need=(list $@(lobe [=tako =path =lobe]))          ::  opt deets for scry
       nako=(qeu (unit nako))
-      busy=(unit $@(%ames [kind=@ta =time =path]))      ::  pending request
+      busy=(unit $@(%ames [kind=@ta =path]))            ::  pending request
   ==
 ::
 ::  Domestic ship.
@@ -366,6 +365,7 @@
           $>  $?  %deal
                   %jolt
                   %load
+                  %bump
               ==
           task:gall
       ==                                                ::
@@ -407,8 +407,6 @@
 ::  %utilities
 ::
 |%
-++  scry-timeout-time  ~m5
-++  scry-retry-time    ~h1
 ::  +sort-by-head: sorts alphabetically using the head of each element
 ::
 ++  sort-by-head
@@ -662,6 +660,20 @@
           ==
         --
     =>  |%
+        ::  in file-store leaves only pages reachable from files
+        ::
+        ++  launder-args
+          |=  =args
+          ^+  args
+          =-  [files.args - verb.args]
+          ^-  (map lobe page)
+          %-  malt
+          %-  ~(rep by files.args)
+          |=  [[k=* v=(each page lobe)] acc=(list [lobe page])]
+          ?:  ?=(%& -.v)  acc
+          ?~  pag=(~(get by file-store.args) p.v)  acc
+          [[p.v u.pag] acc]
+        ::
         ++  bush-to-vase
           =/  only-prelude=?  |
           =|  sut=vase
@@ -808,6 +820,7 @@
         --
     ~%  %ford-gate  ..ford  ~
     |=  args
+    =.  +<  (launder-args +<)
     ~%  %ford-core  ..$  ~
     |%
     ::  Chapter for constructing $bush (dependency graph of a file) given its
@@ -1456,26 +1469,12 @@
   ::
   ++  send-over-scry
     |=  [kind=@ta =duct =ship index=@ud =desk =mood]
-    ^-  [[timeout=@da =path] _..send-over-scry]
-    =/  =time  (add now scry-timeout-time)
+    ^-  [=path _..send-over-scry]
     =/  =wire  (request-wire kind ship desk index)
     =/  =path
       =,  mood
       [%c care (scot case) desk path]
-    :-  [time path]
-    %-  emil
-    :~  [hen %pass wire %a %keen ~ ship path]
-        [hen %pass wire %b %wait time]
-    ==
-  ::
-  ++  cancel-scry-timeout
-    |=  inx=@ud
-    ~|  [%strange-timeout-cancel-no-scry-request her syd inx]
-    ?>  ?=(^ ref)
-    =/  sat=update-state  (~(got by bom.u.ref) inx)
-    ?>  ?=([~ ^] busy.sat)
-    =/  =wire  (request-wire kind.u.busy.sat her syd inx)
-    (emit hen %pass wire %b %rest time.u.busy.sat)
+    [path (emit hen %pass wire %a %keen ~ ship path)]
   ::
   ++  foreign-capable
     |=  =rave
@@ -1501,9 +1500,10 @@
   ::  fully-consistent state (eg not in the middle of a kelvin upgrade).
   ::
   ++  goad
+    |=  syd=(unit desk)
     ^+  ..park
     =^  moves-1  ruf  abet
-    =^  moves-2  ruf  abet:goad:(lu now rof hen ruf)
+    =^  moves-2  ruf  abet:(goad:(lu now rof hen ruf) syd)
     =.  ..park  apex
     (emil (weld moves-1 moves-2))
   ::
@@ -1853,7 +1853,7 @@
       (turn ~(tap in deletes) |=(=path [path |+*lobe]))
     =/  =args:ford:fusion  [files lat.ran veb.bug]
     ::
-    =^  change-cages  args  (checkout-changes args changes)
+    =/  change-cages  (checkout-changes args changes)
     =/  sane-continuation  (sane-changes changes change-cages)
     =/  new-pages=(map lobe page)
       %-  malt
@@ -1892,7 +1892,7 @@
     =/  mem  (want-mime 0)
     =/  res=[mum=(map path (unit mime)) mim=_mim.dom args=_args]
       ?.  mem  [~ ~ args]
-      =^  mum  args  (checkout-mime args deletes ~(key by changes))
+      =/  mum  (checkout-mime args deletes ~(key by changes))
       [mum (apply-changes-to-mim mim.dom mum) args]
     =.  mim.dom  mim.res
     =.  args     args.res
@@ -1931,7 +1931,7 @@
       ?-  liv.dom
         %held  (emit hen %pass /park-held/[syd] %b %wait now)
         %dead  ..park
-        %live  ?:(goat goad ..park)
+        %live  ?:(goat (goad `syd) ..park)
       ==
     ::  notify unix and subscribers
     ::
@@ -2011,12 +2011,12 @@
     ::
     ++  checkout-changes
       |=  [=ford=args:ford:fusion changes=(map path (each page lobe))]
-      ^-  [(map path [=lobe =cage]) args:ford:fusion]
+      ^-  (map path [=lobe =cage])
       %+  roll  `(list [path (each page lobe)])`~(tap by changes)
       |=  $:  [=path change=(each page lobe)]
-              [built=(map path [lobe cage]) cache=_ford-args]
+              built=(map path [lobe cage])
           ==
-      ^+  [built ford-args]
+      ^+  built
       =/  =cage
         ::  ~>  %slog.[0 leaf/"clay: validating {(spud path)}"]
         (read-file:(ford:fusion ford-args) path)
@@ -2028,7 +2028,7 @@
           ::
           %&  (page-to-lobe [p q.q]:cage)
         ==
-      [(~(put by built) path [lobe cage]) ford-args]
+      (~(put by built) path [lobe cage])
     ::
     ::  Print notification to console
     ::
@@ -2102,7 +2102,7 @@
           (~(run by q.yaki) |=(=lobe |+lobe))
         (~(uni by original) changes)
       =/  =args:ford:fusion  [all-changes lat.ran veb.bug]
-      =^  all-change-cages  args  (checkout-changes args all-changes)
+      =/  all-change-cages  (checkout-changes args all-changes)
       =/  ccs=(list [=path =lobe =cage])  ~(tap by change-cages)
       |-  ^+  *sane-changes
       ?^  ccs
@@ -2177,7 +2177,7 @@
     ?^  err
       ((slog leaf+"clay: desk {<syd>} failed to unsuspend" u.err) ..park)
     =.  liv.dom  %live
-    goad
+    (goad `syd)
   ::
   ::  We always say we're merging from 'ali' to 'bob'.  The basic steps,
   ::  not all of which are always needed, are:
@@ -2879,7 +2879,7 @@
             deletes=(set path)
             changes=(set path)
         ==
-    ^-  [(map path (unit mime)) args:ford:fusion]
+    ^-  (map path (unit mime))
     =/  mim=(map path (unit mime))
       =/  dels=(list path)  ~(tap by deletes)
       |-  ^-  (map path (unit mime))
@@ -2887,14 +2887,13 @@
         ~
       (~(put by $(dels t.dels)) i.dels ~)
     =/  cans=(list path)  ~(tap by changes)
-    |-  ^-  [(map path (unit mime)) args:ford:fusion]
-    ?~  cans
-      [mim ford-args]
+    |-  ^-  (map path (unit mime))
+    ?~  cans  mim
     =/  =cage
       ~|  mime-cast-fail+i.cans
       (cast-path:(ford:fusion ford-args) i.cans %mime)
-    =^  mim  ford-args  $(cans t.cans)
-    [(~(put by mim) i.cans `!<(mime q.cage)) ford-args]
+    =/  mim  $(cans t.cans)
+    (~(put by mim) i.cans `!<(mime q.cage))
   ::
   ::  Add or remove entries to the mime cache
   ::
@@ -2963,8 +2962,7 @@
     =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) u.yon))
     =/  files  (~(run by q.yaki) |=(=lobe |+lobe))
     =/  =args:ford:fusion  [files lat.ran veb.bug]
-    =^  mim  args
-      (checkout-mime args ~ ~(key by files))
+    =/  mim  (checkout-mime args ~ ~(key by files))
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
     (ergo for-yon mim)
   ::
@@ -3137,13 +3135,9 @@
     ?.  ?=([~ ^] busy.sat)
       %.  [hen her u.nux [syd ~]]
       send-over-ames(ref `(unit rind)`ref)    ::  XX TMI
-    %-  emil
     =*  bus  u.busy.sat
     =/  =wire  (request-wire kind.bus her syd u.nux)
-    ~&  %cancel-request-yawn
-    :~  [hen %pass wire %a %yawn her path.bus]
-        [hen %pass wire %b %rest time.bus]
-    ==
+    (emit hen %pass wire %a %yawn her path.bus)
   ::
   ::  Handles a request.
   ::
@@ -3165,36 +3159,6 @@
     ?~  new-sub
       ..start-request
     (duce for u.new-sub)
-  ::
-  ::  +retry-with-ames: we tried scrying. now try with ames instead.
-  ::
-  ++  retry-with-ames
-    |=  [kind=@ta inx=@ud]
-    ^+  ..retry-with-ames
-    ~|  [%retry-with-ames kind]
-    ?>  ?=(%back-index kind)
-    ~|  [%strange-retry-no-request her syd inx]
-    ?>  ?=(^ ref)
-    =/  sat=update-state  (~(got by bom.u.ref) inx)
-    ::  mark her as having broken scry comms
-    ::
-    =.  sad  (~(put by sad) her now)
-    ::  clean up scry request & timer
-    ::
-    =.  ..retry-with-ames
-      =<  ?>(?=(^ ref) .)
-      ~|  [%strange-retry-not-scry her syd inx busy.sat -.rave.sat]
-      =/  bus  ?>(?=([~ ^] busy.sat) u.busy.sat)
-      =/  =wire  (request-wire kind her syd inx)
-      %-  emil
-      ~&  %retry-with-ames-yawn
-      :~  [hen %pass wire %b %rest time.bus]
-          [hen %pass wire %a %yawn her path.bus]
-      ==
-    ::  re-send over ames
-    ::
-    =.  bom.u.ref  (~(put by bom.u.ref) inx sat(busy ~))
-    abet:work:(foreign-update inx)
   ::
   ::  Called when a foreign ship answers one of our requests.
   ::
@@ -3440,18 +3404,12 @@
         $(need.sat t.need.sat)
       ::  otherwise, fetch the next blob (aka fell)
       ::
-      =^  scry=(unit [@ta @da path])  ..foreign-update
+      =^  scry=(unit [@ta path])  ..foreign-update
         =<  ?>(?=(^ ref) .)
         ::  if we know a revision & path for the blob,
-        ::  and :ship's remote scry isn't known to be broken,
-        ::  or we learned it was broken more than an hour ago,
+        ::  make the request over remote scry
         ::
-        ?:  ?&  ?=(^ i.need.sat)
-            ?|  !(~(has by sad) her)
-                (gth now (add scry-retry-time (~(got by sad) her)))
-            ==  ==
-          ::  make the request over remote scry
-          ::
+        ?:  ?=(^ i.need.sat)
           =/  =mood  [%q uv+tako path]:i.need.sat
           =<  [`[%back-index -] +]
           (send-over-scry %back-index hen her inx syd mood)
@@ -3911,10 +3869,12 @@
       |=  tak=tako
       ^-  aeon  ~+
       ?:  =(0v0 tak)  0
+      =|  s=(set tako)
       =/  a=aeon  1
       |-
       ?:  (gth a let.dom)  ~|([%tako-mia tak] !!)
-      ?:  (~(has in (reachable-takos (~(got by hit.dom) a))) tak)  a
+      =.  s  (reachable-takos-into s (~(got by hit.dom) a))
+      ?:  (~(has in s) tak)  a
       $(a +(a))
     ::
     ::  Creates a nako of all the changes between a and b.
@@ -3938,16 +3898,18 @@
           ::  a should be excluded, so wait until we're past it
           ?:  (gte lower +(a))
             acc
-          =/  res=(set tako)  (reachable-takos (~(got by hit.dom) lower))
-          $(acc (~(uni in acc) res), lower +(lower))
+          =.  acc  (reachable-takos-into acc (~(got by hit.dom) lower))
+          $(lower +(lower))
       =/  includes=(set tako)
-          =|  acc=(set tako)
+          ::  seed with excludes so we stop at already-known history;
+          ::  the +dif below removes them from the final set
+          =/  acc=(set tako)  excludes
           =/  upper=@ud  b
           |-
           ?:  (lte upper a)
             acc
-          =/  res=(set tako)  (reachable-takos (~(got by hit.dom) upper))
-          $(acc (~(uni in acc) res), upper (dec upper))
+          =.  acc  (reachable-takos-into acc (~(got by hit.dom) upper))
+          $(upper (dec upper))
       [(~(run in (~(dif in includes) excludes)) tako-to-yaki) ~]
     ::  Traverse parentage and find all ancestor hashes
     ::
@@ -3955,8 +3917,19 @@
       |=  p=tako
       ^-  (set tako)
       ~+
-      =|  s=(set tako)
+      (reachable-takos-into ~ p)
+    ::  Traverse parentage, stopping at takos already in the set
+    ::
+    ::    Since reachability sets are closed under ancestry, seeding
+    ::    with a previous result visits each tako at most once across
+    ::    repeated calls.
+    ::
+    ++  reachable-takos-into
+      |=  [s=(set tako) p=tako]
+      ^-  (set tako)
       |-  ^-  (set tako)
+      ?:  (~(has in s) p)
+        s
       =.  s  (~(put in s) p)
       =+  y=(tako-to-yaki p)
       |-  ^-  (set tako)
@@ -4174,12 +4147,11 @@
         :-  -:!>(*(map lobe page))
         ^-  (map lobe page)
         %-  %~  rep  in
+            =|  ts=(set tako)
             |-  ^-  (set tako)
-            =/  ts=(set tako)
-              %-  reachable-takos
-              (~(got by hit.dom) let.dom)
+            =.  ts  (reachable-takos-into ts (~(got by hit.dom) let.dom))
             ?:  (lte let.dom 1)  ts
-            (~(uni in ts) $(let.dom (dec let.dom)))
+            $(let.dom (dec let.dom))
         |=  [t=tako o=(map lobe page)]
         %-  ~(gas by o)
         %+  turn
@@ -4389,12 +4361,14 @@
       ?.  ?|  =(0v0 tak)
           ?&  (~(has by hut.ran) tak)
               ?|  (~(any by hit.dom) |=(=tako =(tak tako)))  ::  fast-path
+                  =|  s=(set tako)
                   |-  ^-  ?
                   ?:  (lte let.dom 1)
                     %.n
-                  ?|  (~(has in (reachable-takos (aeon-to-tako:ze let.dom))) tak)
-                      $(let.dom (dec let.dom))
-                  ==
+                  =.  s  (reachable-takos-into s (aeon-to-tako:ze let.dom))
+                  ?:  (~(has in s) tak)
+                    %.y
+                  $(let.dom (dec let.dom))
               ==
               |(?=(~ for) (may-read u.for care.mun tak path.mun))
           ==  ==
@@ -4473,9 +4447,19 @@
   ::  [tare] >
   ::
   ++  goad
+    |=  syd=(unit desk)
     ^+  ..abet
+    ::  Hack: if %base desk is involved, the change might have caused gall
+    ::  recompilation, making it suspend all agents. In that case we rebuild
+    ::  agents from all desks to make sure they are unsuspended
+    ::
+    =?  syd  =(syd `%base)  ~
+    ::
     =^  sat=(list [=desk =bill])  ..abet
-      =/  desks=(list desk)  ~(tap in ~(key by dos.rom))
+      =/  desks=(list desk)
+        ?^  syd  ~[u.syd]
+        ~(tap in ~(key by dos.rom))
+      ::
       |-  ^-  [(list [desk bill]) _..abet]
       ?~  desks
         [~ ..abet]
@@ -4507,7 +4491,12 @@
     =+  (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
     ::
     =.  ..abet  tare                                    ::  [tare] >
-    (emit hen %pass /lu/load %g %load agents)
+    =/  task
+      ?~  syd  [%load agents]
+      =/  g  |=([=dude:gall * =agent:gall] [dude agent])
+      [%bump [our u.syd da+now] (turn agents g)]
+    ::
+    (emit hen %pass /lu/load %g task)
   ::  +override: apply rein to bill
   ::
   ++  override
@@ -4665,7 +4654,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%16                                       ::  vane version
+    $:  ver=%17                                       ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
@@ -4882,7 +4871,7 @@
     =^  m1  ruf
       =/  den  ((de now rof hen ruf) our des.req)
       abet:(set-rein:den ren.req)
-    =^  m2  ruf  abet:goad:(lu now rof hen ruf)         ::  [goad] >
+    =^  m2  ruf  abet:(goad:(lu now rof hen ruf) `des.req)  ::  [goad] >
     [(weld m1 m2) ..^$]
   ::
       %stir
@@ -4890,14 +4879,14 @@
         [%verb @]  [~ ..^$(veb.bug.ruf +.arg.req)]
         [%mass @]  [~ ..^$(mas.bug.ruf +.arg.req)]
         [%goad ~]
-      =^  mos  ruf  abet:goad:(lu now rof hen ruf)
+      =^  mos  ruf  abet:(goad):(lu now rof hen ruf)
       [mos ..^$]
     ::
         [%rise =desk =dude:gall on=(unit ?)]
       =^  m1  ruf
         =/  den  ((de now rof hen ruf) our desk.arg.req)
         abet:(rise:den dude.arg.req on.arg.req)
-      =^  m2  ruf  abet:goad:(lu now rof hen ruf)       ::  [goad] <
+      =^  m2  ruf  abet:(goad:(lu now rof hen ruf) `desk.arg.req)       ::  [goad] <
       [(weld m1 m2) ..^$]
     ::
         [%stay =desk ver=(unit weft)]
@@ -4908,11 +4897,6 @@
     ::
         [%trim ~]
       [~ ..^$]
-    ::
-        [%fine ~]
-      ~&  "clay: resetting fine state.  old:"
-      ~&  sad.ruf
-      `..^$(sad.ruf ~)
     ==
   ::
       %tire
@@ -4984,7 +4968,7 @@
       $(mos (weld mos mos-new), lit.req t.lit.req)
     =^  m2  ruf
       abet:wick:((de now rof hen ruf) our %base)
-    =^  m3  ruf  abet:goad:(lu now rof hen ruf)
+    =^  m3  ruf  abet:(goad):(lu now rof hen ruf)
     [:(weld m1 m2 m3) ..^$]
   ::
       %zest
@@ -4993,7 +4977,7 @@
       ::  [wick] could be suspending the last blocking desk
       ::
       abet:wick:(set-zest:den liv.req)
-    =^  m2  ruf  abet:goad:(lu now rof hen ruf)
+    =^  m2  ruf  abet:(goad:(lu now rof hen ruf) `des.req)
     [(weld m1 m2) ..^$]
   ::
       %plea
@@ -5022,7 +5006,8 @@
   ::
   =>  |%
       +$  raft-any
-        $%  [%16 raft-16]
+        $%  [%17 raft-17]
+            [%16 raft-16]
             [%15 raft-15]
             [%14 raft-14]
             [%13 raft-13]
@@ -5034,7 +5019,48 @@
             [%7 raft-7]
             [%6 raft-6]
         ==
-      +$  raft-16  raft
+      +$  raft-17  raft
+      ::
+      +$  raft-16
+        $+  raft-16
+        $:  rom=room
+            hoy=(map ship rung-16)
+            ran=rang
+            mon=(map term beam)
+            hez=(unit duct)
+            cez=(map @ta crew)
+            tyr=(set duct)
+            tur=rock:tire
+            pud=(unit [=desk =yoki])
+            sad=(map ship @da)
+            bug=[veb=@ mas=@]
+        ==
+      +$  rung-16
+        $:  rus=(map desk rede-16)
+        ==
+      +$  rede-16
+        $:  lim=@da
+            ref=(unit rind-16)
+            qyx=cult
+            dom=dome
+            per=regs
+            pew=regs
+            fiz=melt
+        ==
+      +$  rind-16
+        $:  nix=@ud
+            bom=(map @ud update-state-16)
+            fod=(map duct @ud)
+            haw=(map mood (unit cage))
+        ==
+      +$  update-state-16
+        $:  =duct
+            =rave
+            have=(map lobe fell)
+            need=(list $@(lobe [=tako =path =lobe]))
+            nako=(qeu (unit nako))
+            busy=(unit $@(%ames [kind=@ta =time =path]))
+        ==
       ::
       +$  flow  (map leak [refs=@ud =soak])
       +$  leak
@@ -5100,7 +5126,7 @@
         ==
       +$  rind-15
         $:  nix=@ud
-            bom=(map @ud update-state)
+            bom=(map @ud update-state-16)
             fod=(map duct @ud)
             haw=(map mood (unit cage-15))
         ==
@@ -5149,7 +5175,7 @@
         ==
       +$  rind-14
         $:  nix=@ud
-            bom=(map @ud update-state)
+            bom=(map @ud update-state-16)
             fod=(map duct @ud)
             haw=(map mood (unit cage-15))
         ==
@@ -5507,7 +5533,8 @@
   =?  old  ?=(%13 -.old)  14+(raft-13-to-14 +.old)
   =?  old  ?=(%14 -.old)  15+(raft-14-to-15 +.old)
   =?  old  ?=(%15 -.old)  16+(raft-15-to-16 +.old)
-  ?>  ?=(%16 -.old)
+  =?  old  ?=(%16 -.old)  17+(raft-16-to-17 +.old)
+  ?>  ?=(%17 -.old)
   ..^^$(ruf +.old)
   ::
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
@@ -5789,7 +5816,7 @@
             bom.u
           %-  ~(run by bom.u.ref.rede-13)
           |=  update-state-11
-          ^-  update-state
+          ^-  update-state-16
           =/  busy  ?:(busy `%ames ~)
           [duct rave ~ need nako busy]
         ==
@@ -5857,13 +5884,55 @@
     ::
     ++  rind-15-to-rind
       |=  r=rind-15
-      ^-  rind
+      ^-  rind-16
       r(haw (~(run by haw.r) (curr bind next-cage:a235)))
     ::
     ++  cach-15-to-cach
       |=  c=cach-15
       ?.  ?=([~ ~ *] c)  c
       ``(next-cage:a235 u.u.c)
+    --
+  ::  +raft-16-to-17: remove sad, remove scry timeouts from busy
+  ::
+  ++  raft-16-to-17
+    |=  raf=raft-16
+    |^  ^-  raft-17
+        :*  rom.raf
+            (~(run by hoy.raf) rung-16-to-rung)
+            ran.raf
+            mon.raf
+            hez.raf
+            cez.raf
+            tyr.raf
+            tur.raf
+            pud.raf
+            bug.raf
+        ==
+    ::
+    ++  rung-16-to-rung
+      |=  r=rung-16
+      ^-  rung
+      [rus=(~(run by rus.r) rede-16-to-rede)]
+    ::
+    ++  rede-16-to-rede
+      |=  r=rede-16
+      ^-  rede
+      r(ref (bind ref.r rind-16-to-rind))
+    ::
+    ++  rind-16-to-rind
+      |=  r=rind-16
+      ^-  rind
+      r(bom (~(run by bom.r) update-state-16-to-update-state))
+    ::
+    ++  update-state-16-to-update-state
+      |=  u=update-state-16
+      ^-  update-state
+      %=    u
+          busy
+        ?~  busy.u    ~
+        ?@  u.busy.u  `%ames
+        `[kind.u.busy.u path.u.busy.u]
+      ==
     --
   --
 ::
@@ -6005,7 +6074,7 @@
 ++  stay
   ^-  raft-any:load
   :-  ver
-  ^-  raft-16:load
+  ^-  raft-17:load
   ruf
 ::
 ++  take                                              ::  accept response
@@ -6139,28 +6208,22 @@
         `[%1 `q.sage.hin]
       ::
       =^  mos  ruf
-        =/  den  ((de now rof hen ruf) her desk)
         ?~  fell
           ::  We shouldn't get back null on any of the fine requests we
           ::  make unless they're out of date
           ::
-          %-  (slog leaf+"clay: got null from {<her>}, falling back to ames" ~)
-          abet:(retry-with-ames:den %back-index index)
-        =?  den  ?=(%sage +<.hin)
-          (cancel-scry-timeout:den index)
+          %-  (slog leaf+"clay: got null backfill response from {<her>}" ~)
+          [~ ruf]
+        =/  den  ((de now rof hen ruf) her desk)
         abet:abet:(take-backfill:(foreign-update:den index) u.fell)
       [mos ..^$]
     ::
          %wake
       ?^  error.hin
         [[hen %slip %d %flog %crud %wake u.error.hin]~ ..^$]
-      =/  her=ship   (slav %p i.t.tea)
-      =/  =desk      (slav %tas i.t.t.tea)
-      =/  index=@ud  (slav %ud i.t.t.t.tea)
-      =^  mos  ruf
-        =/  den  ((de now rof hen ruf) her desk)
-        abet:(retry-with-ames:den %back-index index)
-      [mos ..^$]
+      ::  stale scry timeout timer, set before we stopped using them
+      ::
+      [~ ..^$]
     ==
   ::
   ?:  ?=([%seek @ @ ~] tea)

@@ -5817,10 +5817,13 @@
           =/  ship-state  (~(get by peers.ames-state) ship)
           ?>  ?=([~ %known *] ship-state)
           =+  peer-core=(abed-peer:pe ship +.u.ship-state)
-          =/  =bone
-            ~|  goad-flow-missing/duct
-            (~(got by by-duct.ossuary.peer-state.peer-core) duct)
-          abet:(on-goad-flow:peer-core bone)
+          ?~  bone=(~(get by by-duct.ossuary.peer-state.peer-core) duct)
+            ::  XX has this flow been corked?
+            ::
+            %-  %^  ev-trace  odd.veb  ship
+                |.("goad-flow-missing: {<duct>}")
+            event-core
+          abet:(on-goad-flow:peer-core u.bone)
         ::  +on-stun: poke %ping app when hearing a STUN response
         ::
         ++  on-stun
@@ -8331,7 +8334,7 @@
                   %^  pe-emit  duct  %pass
                   :-  (make-bone-wire her rift.hers.channel bone.shut-packet)
                   [%g %plea her u.m(path /gp/[agent])]
-                  sink
+                sink
               ::  last-heard<seq<10+last-heard; packet in a live message
               ::
               =/  =partial-rcv-message
@@ -10786,7 +10789,7 @@
             ::
             ++  pump
               |=  load=mesa-message
-              ?:  |((fo-to-close load) fo-corked halt.state)
+              ?:  |((fo-to-close load) fo-corked)
                 %-  %+  ev-tace  odd.veb.bug.ames-state
                     ?:  (fo-to-close load)
                       |.("skip $plea; flow {<bone>} is closing")
@@ -10799,7 +10802,7 @@
               ?.  halt.state
                 fo-send
               %-  %+  ev-tace  odd.veb.bug.ames-state
-                  |.("queue {<mess>}; flow is halted flow={<bone>}")
+                  |.("queue {<-.load>}; flow is halted flow={<bone>}")
               fo-core
             ::
             ++  sink
@@ -10819,17 +10822,22 @@
                   %-  %+  ev-tace  odd.veb.bug.ames-state
                       |.("skip {<mess>}; flow is halted flow={<bone>} ")
                   fo-core
-                =/  is-cork-plea=?
-                  ?:  ?=(%boon mess)  |
+                =/  [is-cork-plea=? is-leave-plea=?]
+                  ?:  ?=(%boon mess)  [| |]
                   =+  ;;  =plea  +>.gage
-                  &(?=([%cork ~] payload) ?=([%flow ~] path)):plea
+                  :-  &(?=([%cork ~] payload) ?=([%flow ~] path)):plea
+                  &(=(%g vane.plea) ?=([%ge *] path.plea) =([%0 %u ~] payload.plea))
                 ?.  closing.state
-                  ?:  is-cork-plea
-                    %-  %+  ev-tace  snd.veb.bug.ames-state
-                        |.("ack %cork $plea for %corked flow")
+                  =+  data=[bone=bone seq=seq]
+                  ?:  ?|  is-cork-plea
+                          is-leave-plea
+                      ==
+                    %-  %+  ev-tace  odd.veb.bug.ames-state
+                        =+  load=?:(is-cork-plea "%cork" "%leave")
+                        |.("ack {load} $plea for %corked flow {<data>}")
                     (fo-send-ack seq)
                   %-  %+  ev-tace  odd.veb.bug.ames-state
-                      |.("skip {<mess>}; flow is corked flow={<bone>} ")
+                      |.("skip {<mess>}; flow is corked {<data>}")
                   fo-core
                 ::  if the flow is in closing, ack a resend of the %cork $plea
                 ::
@@ -10903,11 +10911,11 @@
                 =?  pending-ack.rcv  &(?=([? *] +.sign) !blocked.sign)
                   %.n  :: XX  tack.pending-ack.rcv
                 fo-core
-              ::  un-halt the flow
+              ::  un-halt the flow; try sending anything queued up
               ::
                   %spur
                 =.  halt.state  %.n
-                fo-core
+                fo-send
               ==
             ==
           ::
@@ -11176,9 +11184,9 @@
                   ?=(~ loads.snd)  ::  nothing else is pending
                   ?=(^ m)  =([%plea %$ [%flow ~] %cork ~] u.m)
               ==
-            ::  send next messages
+            ::  send next messages if not halted
             ::
-            =.  fo-core  fo-send
+            =?  fo-core  !halt.state  fo-send
             ::  don't give %done for %boon and %cork; implicit %ack
             ::
             =?  fo-core  ?&  ?=(%for dire)
@@ -11256,7 +11264,9 @@
             ::  XX check path.spar
             ::  XX path.spar will be the full namespace path, peel off before?
             ::
-            =.  fo-core  fo-send  ::  send next messages
+            ::  send next messages if not halted
+            ::
+            =?  fo-core  !halt.state  fo-send
             ::  if the bone belongs to a closing flow and we got a
             ::  naxplanation, don't relay ack to the client vane
             ::

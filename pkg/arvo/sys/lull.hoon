@@ -3632,6 +3632,7 @@
         [%jolt =desk =dude]                             ::  (re)start agent
         [%idle =dude]                                   ::  suspend agent
         [%load =load]                                   ::  load agent
+        [%bump =beak bump=(list [=dude =agent])]        ::  load agent in a desk
         [%nuke =dude]                                   ::  delete agent
         [%doff dude=(unit dude) ship=(unit ship)]       ::  kill subscriptions
         [%rake dude=(unit dude) all=?]                  ::  reclaim old subs
@@ -4650,6 +4651,10 @@
       ++  validate-mark
         |=  [in=* =mark =bowl]
         ^-  cage
+        ?:  =(%noun mark)
+          ::  skip validating raw nouns
+          ::
+          [%noun %noun in]
         =+  .^  =dais:clay  %cb
                 /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[mark]
             ==
@@ -4674,6 +4679,13 @@
           ?.  ?=(%agent -.in)                  `in
           ?.  ?=(%fact -.sign.in)              `in
           ?:  ?=(%thread-done p.cage.sign.in)  `in
+          ::  if the fact has a %noun type, then it either has a %noun-like
+          ::  mark or it comes from raw-fact in Gall, whose validation got
+          ::  deferred to get the mark from the correct desk. In the former case
+          ::  the validation will no-op, and in the latter case it will fully
+          ::  validate the raw noun.
+          ::
+          ?.  ?=(%noun p.q.cage.sign.in)       `in
           ::
           :-  ~
           :^  %agent  wire.in  %fact
