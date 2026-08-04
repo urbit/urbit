@@ -324,6 +324,13 @@
     ::
       ?.  prime  ~
       [(prep-ovum (turn dez tail))]~
+    ::
+      %+  murn  dez
+      |=  [dek=desk bas=path]
+      ^-  (unit unix-event)
+      ?.  .^(? %cu (welp bas /desk/seal))  ~
+      =+  .^([@ per=(list perm:gall)] %cx (welp bas /desk/seal))
+      `[/c/init-seal %seal dek %.y (silt per)]
     ==
   ::
   =/  =wynn  (get-wynn sys new-wynn)

@@ -5754,6 +5754,9 @@
       ::  %eyre: starts handling an backdoor http request
       ::
       $>(%request-local task:eyre)
+      ::  %clay: grant or revoke permissions
+      ::
+      $>(%seal task:clay)
       ::  %dill: close session
       ::
       $>(%shut task:dill)
