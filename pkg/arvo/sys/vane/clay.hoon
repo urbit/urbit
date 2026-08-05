@@ -1439,8 +1439,7 @@
   ::    in the desk's own type universe.  for the native kelvin (wish=~)
   ::    the live slub/slym/slam/slop are used and results are live vases;
   ::    for a foreign kelvin the pill-derived tools are used.  outputs in
-  ::    the h136 universe are migrated to the live h135 universe via
-  ::    next-vase.
+  ::    the desk universe are migrated to the live universe via +next.
   ::
   ++  build-ford-api
     |=  [zud=* wish=(unit $-(@t *))]
@@ -1462,28 +1461,41 @@
       (slum builder ford-cord)
     =/  fuz  (slum my-slub [raw [%limb %fusion]])
     =/  ford-gate  (slum my-slub [fuz [%limb %ford]])
-    ::  the desk's hoon kelvin; h136 outputs must be migrated to live h135
+    ::  the desk's zuse kelvin
     ::
-    =/  hov=@ud  ?~(wish hoon-version ;;(@ud (wis 'hoon-version')))
     =/  zuv=@ud  ?~(wish zuse ;;(@ud (wis 'zuse')))
-    =/  old=?  =(136 hov)
-    ::  coerce raw (desk-universe) nouns to typed values; if the desk is in
-    ::  the h136 universe, migrate the type metadata via next-vase
+    ::  cross-kelvin migration for build products, keyed on the desk's zuse
+    ::  kelvin (mirrors +vez in gall).  +prev takes a live vase into the desk
+    ::  universe via +prev-vase (to feed a desk-universe gate, e.g. a foreign
+    ::  mark tube); +next brings a desk build product back to live via
+    ::  +next-vase.  the live kelvin is the identity; each supported previous
+    ::  kelvin names its one-step hoon-history converter.  add a case per
+    ::  kelvin we learn to build against.
+    ::
+    =/  prev
+      |=  v=vase  ^-  *
+      ?+  zuv  ~|(unsupported-kelvin+zuv !!)
+        %408  v
+        %409  (slum prev-vase:h135 v)
+      ==
+    =/  next
+      |=  n=*  ^-  *
+      ?+  zuv  ~|(unsupported-kelvin+zuv !!)
+        %408  n
+        %409  (slum next-vase:h136 n)
+      ==
+    ::  coerce raw (desk-universe) nouns to typed live values
     ::
     =/  ntv
       |=  n=*
       ^-  vase
-      =/  v  ?:(old (slum next-vase:h136 n) n)
-      !<(vase [-:!>(*vase) v])
-      :: ;;(vase v)
+      !<(vase [-:!>(*vase) (next n)])
     =/  ntc
       |=  n=*
       ^-  cage
       ?>  ?=(^ n)
       ::  TODO next-cage:a235
-      =/  vas  ?:(old (slum next-vase:h136 +.n) +.n)
-      !<(cage [-:!>(*cage) [;;(@tas -.n) vas]])
-      :: ;;(cage [;;(@tas -.n) vas])
+      !<(cage [-:!>(*cage) [;;(@tas -.n) (next +.n)]])
     |=  [files=(map path (each page lobe)) file-store=(map lobe page) verb=@]
     =/  cor  (slum my-slym [ford-gate [files file-store verb]])
     |%
@@ -1497,7 +1509,7 @@
       |=  =path
       ^-  vase
       =/  built  (slum +:(slum my-slub [cor [%limb %build-file]]) path)
-      ?.  old  (ntv built)
+      ?:  =(zuse zuv)  (ntv built)
       ::  value-mug is unchanged by next-vase (which only rewrites the type);
       ::  vase-mug differs because the type metadata is migrated h136 -> h135.
       ::
@@ -1594,9 +1606,9 @@
       ::  in that universe via +cor, never crossing the boundary).
       ::
       =/  sam
-        ?.  old  !>(v)
+        ?:  =(zuse zuv)  !>(v)
         =/  vty  -:(slum my-slub [cor !,(*hoon *vase)])
-        [vty (prev-vase:h135 v)]
+        [vty (prev v)]
       (ntv +:(slum my-slam [tub sam]))
     ::
     ++  validate-page

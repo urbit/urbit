@@ -480,28 +480,34 @@
     (^trace verb dude dudes.bug.state print)
   ::  +vez: cross-kelvin vase era conversion, shared by +ap and +op
   ::
-  ::    .old is set when the agent is a previous-kelvin (h136) agent.
-  ::    inputs go current(h135) -> agent(h136) with +prev; outputs go
-  ::    agent(h136) -> current(h135) with +next. type-agnostic; the
-  ::    model-typed card/note/sign walkers live in +ap and +op.
+  ::    keyed on the agent's zuse kelvin.  inputs go live -> agent kelvin
+  ::    via +prev; outputs go agent kelvin -> live via +next.  type-agnostic;
+  ::    the model-typed card/note/sign walkers live in +ap and +op.
   ::
   ::    note: this only re-encodes a vase's type representation; it cannot
-  ::    reconcile a mold that itself changed shape across the kelvins. the
-  ::    $type mold differs between h135 and h136, so a vase whose *value*
-  ::    embeds the type-system molds (a $type, $vase, $hoon, $dais, a whole
-  ::    agent, &c) will not nest under the target kelvin's mold after
-  ::    conversion. ordinary payloads, carrying concrete types, convert fine.
+  ::    reconcile a mold that itself changed shape across a kelvin boundary.
+  ::    the $type mold differs across kelvins, so a vase whose *value* embeds
+  ::    the type-system molds (a $type, $vase, $hoon, $dais, a whole agent,
+  ::    &c) will not nest under the target kelvin's mold after conversion.
+  ::    ordinary payloads, carrying concrete types, convert fine.
   ::
   ++  vez
-    |_  old=?
+    |_  kel=@ud   ::  the agent's zuse kelvin
+    ::  the live kelvin is the identity; each supported previous kelvin names
+    ::  its one-step hoon-history converter.  add a case per kelvin we run.
+    ::
     ++  prev
       |=  v=vase  ^-  vase
-      ?.  old  v
-      !<(vase [-:!>(*vase) (slum prev-vase:h135 v)])
+      ?+  kel  ~|(unsupported-kelvin+kel !!)
+        %408  v
+        %409  !<(vase [-:!>(*vase) (slum prev-vase:h135 v)])
+      ==
     ++  next
       |=  v=vase  ^-  vase
-      ?.  old  v
-      !<(vase [-:!>(*vase) (slum next-vase:h136 v)])
+      ?+  kel  ~|(unsupported-kelvin+kel !!)
+        %408  v
+        %409  !<(vase [-:!>(*vase) (slum next-vase:h136 v)])
+      ==
     ++  prev-cage  |=(=cage ^-(^cage cage(q (prev q.cage))))
     ++  next-cage  |=(=cage ^-(^cage cage(q (next q.cage))))
     --
@@ -2199,15 +2205,13 @@
     ::  cross-kelvin vase era conversion; see +vez for rationale and caveats.
     ::
     ::    the model tag (%new-agent) is orthogonal to kelvin: an agent of
-    ::    either model can be previous-kelvin, so we gate purely on .zus.
+    ::    either model can be previous-kelvin, so we key purely on .zus.
     ::    the type-agnostic vase/cage converters live in +vez (+ez here);
     ::    only the model-typed card/note/sign walkers are core-local.
     ::
-    ::  +ap-old: is this agent a previous-kelvin agent?
-    ::  +ez: vase converter bound to this agent's era
+    ::  +ez: vase converter bound to this agent's zuse kelvin
     ::
-    ++  ap-old  ^-  ?  !=(zuse zus.yoke)
-    ++  ez  ~(. vez ap-old)
+    ++  ez  ~(. vez zus.yoke)
     ::  +ap-prev-sign: convert input sign's embedded vase (on-agent)
     ::
     ++  ap-prev-sign
@@ -3729,15 +3733,13 @@
     ::  cross-kelvin vase era conversion; see +vez for rationale and caveats.
     ::
     ::    the model tag (%old-agent) is orthogonal to kelvin: an agent of
-    ::    either model can be previous-kelvin, so we gate purely on .zus.
+    ::    either model can be previous-kelvin, so we key purely on .zus.
     ::    the type-agnostic vase/cage converters live in +vez (+ez here);
     ::    only the model-typed card/note/sign walkers are core-local.
     ::
-    ::  +op-old: is this agent a previous-kelvin agent?
-    ::  +ez: vase converter bound to this agent's era
+    ::  +ez: vase converter bound to this agent's zuse kelvin
     ::
-    ++  op-old  ^-  ?  !=(zuse zus.yoke)
-    ++  ez  ~(. vez op-old)
+    ++  ez  ~(. vez zus.yoke)
     ::  +op-prev-sign: convert input sign's embedded vase (on-agent)
     ::
     ++  op-prev-sign
