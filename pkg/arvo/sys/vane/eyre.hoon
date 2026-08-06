@@ -197,6 +197,20 @@
   ?:  =(%$ i.a)  |
   ?:  =(%$ i.b)  &
   $(a t.a, b t.b)
+::  +parse-holm-url: the various /~/holm endpoints
+::
+++  parse-holm-url
+  ^-  $-  nail
+      %-  like
+      $%  [%jump url=tape]
+          [%sink =desk url=tape]
+          [%gain tok=@uv url=tape]
+      ==
+  ;~  pose
+    ;~(plug (cold %jump (jest '/~/holm/jump')) (star next))
+    ;~(plug (cold %sink (jest '/~/holm/sink/')) sym (star next))
+    ;~(plug (cold %gain (jest '/~/holm/gain/')) ;~(pfix (jest '0v') viz:ag) (star next))
+  ==
 ::  +prune-events: removes all items from the front of the queue up to :id
 ::
 ::    also produces, per request-id, the amount of events that have got acked,
@@ -682,7 +696,7 @@
     %+  rap  3
     :~  '//'
         (host-string top port)
-        '/~/holm/'  sub
+        '/~/holm/sink/'  sub
         target-path
     ==
   :+  %start
@@ -907,6 +921,8 @@
           complete=%.y
       ==
     =*  target  u.proto-target
+    =/  =action
+      (get-action-for-binding url.request)
     ::  .pathowner: desk that the target path is bound to (~ for eyre)
     ::
     ::    if pathowner is ~, the target endpoint is available across all
@@ -915,8 +931,6 @@
     ::    desk's subdomain, and any requests for the endpoint outside of that
     ::    will be redirected to the appropriate subdomain.
     ::
-    =/  =action
-      (get-action-for-binding url.request)
     =/  pathowner=(unit desk)
       ::  /~ paths always owned by eyre
       ::
@@ -985,7 +999,7 @@
     ::      eyre-handled requests are always synchronous, provides a fruitful
     ::      angle for refactoring...
     ::
-    ::    auth-state: authentication detail for the incoming request
+    ::  auth-state: authentication detail for the incoming request
     ::
     ::    %invalid:   an invalid session was provided, or the session's
     ::                scope doesn't match the request target.
@@ -1001,20 +1015,19 @@
       $%  [%invalid session=@uv]
           [%have session=@uv =identity ~]
           [%made session=@uv =identity moves=(list move)]
-          [%negotiate subdomain=turf old-session=(unit @uv)]
+          [%negotiate old-session=(unit @uv)]
       ==
     =^  auth-state=t  state
-      =*  full-turf  (snoc domain.p.target u.desk.p.target)
       ?~  sid=(session-id-from-request:authentication request)
-        ?:  ?=([%& * ^] target)  [[%negotiate full-turf ~] state]
+        ?:  ?=([%& * ^] target)  [[%negotiate ~] state]
         [[%made -] +]:(start-session:authentication %new-guest ~)
       ?~  ses=(~(get by sessions.auth.state) u.sid)
         ?:  ?=([%& * ^] target)
-          [[%negotiate full-turf `u.sid] state]
+          [[%negotiate `u.sid] state]
         [[%invalid u.sid] state]
       ?:  (gth now expiry-time.u.ses)
         ?:  ?=([%& * ^] target)
-          [[%negotiate full-turf `u.sid] state]
+          [[%negotiate `u.sid] state]
         [[%invalid u.sid] state]
       ::  provenance doesn't match request target,
       ::  they shouldn't pass this cookie!
@@ -1026,40 +1039,7 @@
         [[%have u.sid identity.u.ses ~] state]
       ::TODOxx  log? warn? weird case
       ?:  ?=(%| -.target)  [[%invalid u.sid] state]
-      [[%negotiate ?~(desk.p.target domain.p.target full-turf) ~] state]
-    ::  normally, %negotiate on a subdomain means that we _start_ auth
-    ::  negotiation. however, if the request binds to %holm, this means we're
-    ::  returning to the subdomain after having started negotiation through the
-    ::  top-level domain. in that case, we can turn auth-state into a %made
-    ::  instead by minting the cookie (xx invalid cases). the action handling
-    ::  further down will only have to serve the appropriate redirect.
-    ::  this is the %holm %gain case.
-    ::
-    =^  auth-state=t  state
-      ?.  ?&  ?=(%negotiate -.auth-state)
-              =('/~/holm' (end 3^7 url.request))
-              ?=([%& * ^] target)
-          ==
-        [auth-state state]
-      =/  [tmp-token=@uv target-url=tape]
-        %+  rash  url.request
-        ;~  pfix  (jest '/~/holm/')
-        ;~  plug
-          ;~(pfix (jest '0v') viz:ag)
-          (star next)
-        ==  ==
-      ?~  parent=(~(get by authlets.auth.state) tmp-token)
-        ::TODOxx  what to do about invalid tmp-token?
-        ::NOTE  this will serve 500, adding token url into browser history,
-        ::      but the token apparently isn't valid, so that's fine
-        ~|(%unknown-tmp-token !!)
-      ?~  parent-session=(~(get by sessions.auth.state) u.parent)
-        ~|(%unknown-parent-session !!)
-      =/  new-id=identity
-        identity.u.parent-session(scope desk.p.target)
-      =.  authlets.auth.state  (~(del by authlets.auth.state) tmp-token)
-      =^  o  state  (start-session:authentication new-id parent)
-      [=,(o [%made session identity [give-session-tokens moves]]) state]
+      [[%negotiate ~] state]
     ::
     ?:  ?=(%invalid -.auth-state)
       =*  session  session.auth-state
@@ -1089,19 +1069,125 @@
           `bod
           complete=%.y
       ==
+    ::  subdomain authentication flow (%holm)
     ::
-    ?:  ?=(%negotiate -.auth-state)
-      ?>  ?=(%& -.target)
-      ::TODOxx  this is the equivalent of doing a [%holm %jump],
-      ::        can imagine implementing it as such, =. action or w/e
-      :_  state
-      =;  =http-event:http
-        [duct %give %response http-event]~
-      %-  build-subdomain-negotiation
-      :+  [subdomain.auth-state port.p.target]
-        url.request
-      %+  bind  old-session.auth-state
-      (curr session-cookie-string:authentication ~)
+    ::    the %holm flow is used to obtain scoped cookies on subdomains
+    ::    through three sequential sub-endpoints:
+    ::      /jump: on subdomain, redirect to root (on root, to login)
+    ::      /sink: on root, redirect to subdomain with tmp-token
+    ::      /gain: on subdomain, consume tmp-token to mint cookie
+    ::
+    ::    auth check resulting in %negotiate (outside of holm flow) is
+    ::    equivalent to the %holm %jump endpoint.
+    ::
+    ::    %holm is handled before most other request processing branches,
+    ::    because it takes priority over them: once you're in the holm flow
+    ::    it must runs its course.
+    ::
+    =?  .  &(?=(%negotiate -.auth-state) !=(%holm -.action))  ::NOTE  tmi
+      =.  action       [%holm ~]
+      =.  url.request  (cat 3 '/~/holm/jump' url.request)
+      .
+    ?:  ?=(%holm -.action)
+      =/  session=(unit @uv)
+        ?-  -.auth-state
+          ?(%have %made)  (some session.auth-state)
+          %negotiate        old-session.auth-state
+        ==
+      ::
+      =*  save-connection
+        |=  [suv=@uv =identity]
+        %+  ~(put by connections.state)  duct
+        ^-  outstanding-connection
+        [action [| secure address request] [suv identity] ~ 0]
+      =*  save-dummy-connection
+        (save-connection (fall session 0v0) [[%fake *@p] ~])
+      ::
+      =/  msg=tape  "holm: fail"
+      =*  fail
+        =.  connections.state  save-dummy-connection
+        %^  return-static-data-on-duct  400  'text/html'
+        (error-page 400 & url.request msg)
+      ?:  ?=(%| -.target)
+        =.(msg "holm: no domain" fail)
+      ::
+      =/  stop  (rush url.request parse-holm-url)  ::TODOxx  serve 400, illegal url shape
+      ?~  stop  =.(msg "holm: bad request url" fail)
+      =*  step  u.stop
+      ::
+      ?-  -.step
+        ::  %jump: initiate auth negotiation from subdomain
+        ::
+        ::    redirects to the root domain/~/holm/sink/[subdomain](target-url)
+        ::    (or, if we're on root already, to the login page)
+        ::
+          %jump
+        =.  connections.state  save-dummy-connection
+        %-  handle-response
+        ?~  desk.p.target
+          [%start [307 ['location' (crip "/~/login?redirect={url.step}")]~] ~ &]
+        ::REVIEWxx  inline that logic?
+        %-  build-subdomain-negotiation
+        :+  [(snoc domain.p.target u.desk.p.target) port.p.target]
+          (crip url.step)
+        %+  bind  session
+        (curr session-cookie-string:authentication ~)
+      ::
+        ::  %sink: obtain tmp-token for authenticating into subdomain
+        ::
+        ::    mints a tmp-token for the subdomain specified in the url and
+        ::    redirects to the sub.domain/~/holm/gain/[tmp-token](target-url)
+        ::
+          %sink
+        ::  these checks always hold _together_,
+        ::  because we never negotiate on/from a root domain
+        ::
+        ?^  desk.p.target
+          =.(msg "holm: can't sink from subdomain" fail)
+        ?:  ?=(%negotiate -.auth-state)
+          =.(msg "holm: unexpected negotiation auth during sink" fail)
+        ::
+        =^  tmp-token=@uv  authlets.auth.state
+          =+  t=(end 3^8 (shas %holm eny))
+          :-  t
+          (~(put by authlets.auth.state) t session.auth-state)
+        =/  expire=move
+          [duct %pass /holm/(scot %uv tmp-token) %b %wait (add now tmp-token-timeout)]
+        =/  redirect-url=tape
+          "//{(trip desk.step)}.{(trip (host-string -.p.target))}/~/holm/gain/{(scow %uv tmp-token)}{url.step}"
+        =^  moz=(list move)  state
+          =.  connections.state  save-dummy-connection
+          %-  handle-response
+          [%start [307 ['location' (crip redirect-url)]~] ~ &]
+        [[expire moz] state]
+      ::
+        ::  %gain: validate tmp-token from url and mint new scoped session
+        ::
+        ::    mints a new session based on the provided tmp-token, gives that
+        ::    cookie in the response, and redirects to the target-url
+        ::
+          %gain
+        ?~  desk.p.target
+          =.(msg "holm: can't gain on root domain" fail)
+        ?<  ?=(%made -.auth-state)  ::NOTE  we only %made on root
+        ?~  parent=(~(get by authlets.auth.state) tok.step)
+          ::NOTE  this will serve 500, adding token url into browser history,
+          ::      but the token apparently isn't valid, so that's fine
+          =.(msg "holm: invalid gain token" fail)
+        ?~  parent-session=(~(get by sessions.auth.state) u.parent)
+          =.(msg "holm: invalid gain token parent" fail)
+        =/  new-id=identity
+          identity.u.parent-session(scope desk.p.target)
+        =.  authlets.auth.state  (~(del by authlets.auth.state) tok.step)
+        =^  o  state
+          (start-session:authentication new-id parent)
+        =^  moz=(list move)  state
+          =.  connections.state  (save-connection [session identity]:o)
+          %-  handle-response
+          [%start [307 ['location' (crip "//{(trip u.host)}{url.step}")]~] ~ &]
+        [[give-session-tokens (weld moz moves.o)] state]
+      ==
+    ?<  ?=(%negotiate -.auth-state)  ::NOTE  handled as %holm action above
     ::
     ?>  ?=(?(%made %have) -.auth-state)
     =*  suv       session.auth-state
@@ -1209,73 +1295,6 @@
       (handle-cache-req authenticated request +.u.val.u.cached)
     ::
     ?-    -.action
-        %holm
-      ::TODOxx  this factoring smh
-      ::NOTE  %jump case handled in %negotiate auth-state above
-      :: ?:  ?=([~ * ^] target)
-      ::   %^  return-static-data-on-duct  200  'text/html'
-      ::   (build-subdomain-negotiation domain.p.target suburl)
-      =/  msg=tape  "holm: fail"
-      =*  fail
-        %^  return-static-data-on-duct  400  'text/html'
-        (error-page 400 & url.request msg)
-      ?:  ?=(%| -.target)
-        ::  this binding is for cross-domain auth negotiation,
-        ::  doesn't make sense to hit in the ip address case
-        ::
-        =.(msg "holm: no domain" fail)
-      ::  top domain, %sink case
-      ::
-      ?~  desk.p.target
-        ::  at this point, we expect the url.request to be of the shape
-        ::  /~/holm/[scope]/[target-path]. get those values out.
-        ::
-        =/  res=(unit [scope=@t target-url=tape])
-          %+  rush  url.request
-          ;~  pfix  (jest '/~/holm/')
-          ;~  plug
-            sym
-            (star next)  ::REVIEWxx  doesn't enforce slash separator after sym
-          ==  ==
-        ?~  res  =.(msg "holm: bad request url (sink)" fail)
-        =,  u.res
-        ::
-        =^  tmp-token=@uv  authlets.auth.state
-          =+  t=(end 3^8 (shas %holm eny))
-          :-  t
-          (~(put by authlets.auth.state) t suv)
-        =/  expire=move
-          [duct %pass /holm/(scot %uv tmp-token) %b %wait (add now tmp-token-timeout)]
-        =/  redirect-url=tape
-          "//{(trip scope)}.{(trip (host-string -.p.target))}/~/holm/{(scow %uv tmp-token)}{target-url}"
-        =^  moz=(list move)  state
-          %-  handle-response
-          [%start [307 ['location' (crip redirect-url)]~] ~ &]
-        [[expire moz] state]
-      ::  subdomain, %gain case
-      ::
-      ::  at this point, we expect the url.request to be of the shape
-      ::  /~/holm/[tmp-token]/[target-path]. get those values out.
-      ::
-      ::NOTE  tmp-token was already checked and turned into a new session
-      ::      in the %negotiate %holm logic above. +handle-response will add
-      ::      the cookie for us
-      ::
-      =/  res=(unit [@uv target-url=tape])
-        %+  rush  url.request
-        ;~  pfix  (jest '/~/holm/')
-        ;~  plug
-          ;~(pfix (jest '0v') viz:ag)
-          (star next)
-        ==  ==
-      ?~  res  =.(msg "holm: bad request url (gain)" fail)
-      =,  u.res
-      ::
-      =/  redirect-url=tape
-        "//{(trip u.host)}{target-url}"
-      %-  handle-response
-      [%start [307 ['location' (crip redirect-url)]~] ~ &]
-    ::
         %gen
       =/  bek=beak  [our desk.generator.action da+now]
       =/  sup=spur  path.generator.action
