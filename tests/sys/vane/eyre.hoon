@@ -1881,9 +1881,7 @@
     :((cury cat 3) '//localhost/~/holm/sink/' target url)
   (expect-moves mos (ex-response 307 ~['location'^location] ~) ~)
 ::
-++  tmp-token
-  =/  eny  `@uvJ`0xdead.beef
-  (scot %uv (end 3^8 (shas %holm eny)))
+++  tmp-token  '0voo.a0p19.cjog9'
 ::
 ++  holm-sink
   |=  [target=@t url=@t]
@@ -1939,7 +1937,7 @@
   ::?^  app   (request url u.app)
   (get url ~['host'^(cat 3 target '.localhost')])
 ::
-::  tests for: holm flow, subdomain authentication
+::  tests: holm flow, subdomain authentication
 ::
 ::  +test-holm-no-auth: full holm flow w/o root auth
 ::
@@ -1955,6 +1953,29 @@
   ;<  ~  bind:m  (holm-jump 'desk' '/app1')
   ;<  ~  bind:m  (holm-sink 'desk' '/app1')
   (holm-gain 'desk' '/app1' |)
+::  +test-holm-jump: full holm flow w/o cookie starting
+::  from /~/holm/jump, authenticated on root
+::
+++  test-holm-jump
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ^-  form:m
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  perform-born
+  ;<  ~  bind:m  (connect %app1 /app1)
+  ;<  ~  bind:m  (set-desk %app1 %desk)
+  ;<  ~  bind:m  (wait ~d1)
+  ;<  ~  bind:m  perform-authentication-2
+  ;<  name=@p  bind:m  request-name
+  ?^  fail=(expect-eq !>(~nul) !>(name))  (fail:m fail)
+  ::
+  ;<  mos=(list move)  bind:m
+    (get '/~/holm/jump/app1' ~['host'^'desk.localhost'])
+  ;<  ~  bind:m
+    =/  location  '//localhost/~/holm/sink/desk/app1'
+  (expect-moves mos (ex-response 307 ~['location'^location] ~) ~)
+  ;<  ~  bind:m  (holm-sink 'desk' '/app1')
+  (holm-gain 'desk' '/app1' &)
 ::  +test-holm-missing-cookie: full holm flow w/o cookie
 ::  authenticated on root
 ::
@@ -2022,7 +2043,7 @@
     ==
   (expect-moves mos (ex-response 307 ex-headers ~) ~)
 ::
-::  tests for: general subdomain handling
+::  tests: subdomain handling
 ::
 ::  +test-unknown-domain: unknown domain must receive 421 response
 ::
@@ -2068,4 +2089,157 @@
   ::
   ;<  mos=(list move)  bind:m  (do-holm 'desk' '/~/name' |)
   (expect-moves mos ex-res ~)
+::  +test-desk-bindings: desk-backed bindings should be
+::  accessible only on the appropriate subdomain
+::
+++  test-desk-bindings
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ^-  form:m
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  perform-born
+  ;<  ~  bind:m  (connect %app /app)
+  ;<  ~  bind:m  (set-desk %app %desk)
+  ;<  ~  bind:m  (wait ~d1)
+  ::  request to a desk binding on a different desk subdomain
+  ::  redirected to the correct desk subdomain
+  ::
+  ;<  mos=(list move)  bind:m  (get '/app' 'host'^'foo.localhost' ~)
+  =/  ex-res  (ex-response 307 ~['location'^'//desk.localhost/app'] ~)
+  ;<  ~  bind:m  (expect-moves mos ex-res ~)
+  ::  request to a desk binding on a root
+  ::  redirected to the correct desk subdomain
+  ::
+  ;<   mos=(list move)  bind:m  (get '/app' 'host'^'localhost' ~)
+  (expect-moves mos ex-res ~)
+::  +test-base-bindings: %base desk bindings should be accessible
+::  only on root domain, base.domain/ must redirect to domain/
+::
+++  test-base-bindings
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ^-  form:m
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  perform-born
+  ;<  ~  bind:m  (connect %app /app)
+  ;<  ~  bind:m  (set-desk %app %base)
+  ;<  ~  bind:m  (wait ~d1)
+  ::
+  ;<  mos=(list move)  bind:m  (get '/app' 'host'^'foo.localhost' ~)
+  =/  ex-res  (ex-response 307 ~['location'^'//localhost/app'] ~)
+  ;<  ~  bind:m  (expect-moves mos ex-res ~)
+  ::
+  ;<  mos=(list move)  bind:m  (get '/app' 'host'^'base.localhost' ~)
+  (expect-moves mos ex-res ~)
+::
+::  test for: oauth-style auth at /~/auth
+::
+::  +test-oauth-not-authenticated: must redirect to login if not authed as self
+::
+++  test-oauth-not-authenticated
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ^-  form:m
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  perform-born
+  ::
+  =/  url  '/~/auth'
+  ;<  mos=(list move)  bind:m  (get url 'host'^'localhost' ~)
+  =/  location
+    (cat 3 '/~/login?redirect=' (crip (en-urlt:html (trip url))))
+  (expect-moves mos (make-ex-resp 303 ~['location'^location] ~) ~)
+::  +test-oauth-post-approve: POST request with 'approve' mints
+::  appropriately-scoped token, returns 303 with token
+::
+++  test-oauth-post-approve
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ^-  form:m
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  perform-born
+  ;<  ~  bind:m  perform-authentication-2
+  ;<  mos=(list move)  bind:m
+    =/  body  'scope=foo&approve&return=/foobar'
+    (post '/~/auth' ~['host'^'localhost'] body)
+  =/  location  '/foobar?token=0v2.v5g1m.rr6kg.bjj3k.59t1m.qp48h'
+  (expect-moves mos (make-ex-resp 303 ~['location'^location] ~) ~)
+::  +test-oauth-post-reject: POST request with 'reject'
+::  returns 303 with error=rejected
+::
+++  test-oauth-post-reject
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ^-  form:m
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  perform-born
+  ;<  ~  bind:m  perform-authentication-2
+  ;<  mos=(list move)  bind:m
+    =/  body  'scope=foo&reject&return=/foobar'
+    (post '/~/auth' ~['host'^'localhost'] body)
+  =/  location  '/foobar?error=rejected'
+  (expect-moves mos (make-ex-resp 303 ~['location'^location] ~) ~)
+::
+::  tests: bare ip address request handling
+::
+::  +test-disabled-risk: request must be rejected 421 if
+::  bare ip access not enabled
+::
+++  test-disabled-risk
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ^-  form:m
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  perform-born
+  ;<  ~  bind:m  (set-verify-headers |)
+  ;<  mos=(list move)  bind:m  (get '/foo' ~['host'^'192.168.1.1'])
+  (expect-moves mos (ex-response 421 ~ `(as-octs:mimes:html 'bad host')) ~)
+::  +test-ip-request-holm: request to /~/holm on bare ip must serve 400
+::
+++  test-ip-request-holm
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ^-  form:m
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  perform-born
+  ;<  *  bind:m  (call ~[/set-risk] [%rule %risk &])
+  ;<  mos=(list move)  bind:m  (get '/~/holm/jump' ~['host'^'192.168.1.1'])
+  =/  body  `(error-page:eyre-gate 400 & '/~/holm/jump' "holm: no domain")
+  (expect-moves mos (make-ex-resp 400 ['content-type' 'text/html']~ body) ~)
+::  +test-ip-eyre-bindings: requests on bare ip to eyre-backed "bindings"
+::  should resolve as intended
+::
+++  test-ip-eyre-bindings
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ^-  form:m
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  perform-born
+  ;<  *  bind:m  (call ~[/set-risk] [%rule %risk &])
+  ;<  mos=(list move)  bind:m  (get '/~/name' ~['host'^'192.168.1.1'])
+  =/  body   `(as-octs:mimes:html (scot %p g-name))
+  =/  ex-res  (make-ex-resp 200 ~['content-type'^'text/plain'] body)
+  (expect-moves mos ex-res ~)
+::  +test-ip-agent-binding: requests on bare ip to an agent-handled binding
+::  should resolve as intended
+::
+++  test-ip-agent-binding
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ^-  form:m
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  perform-born
+  ;<  *  bind:m  (call ~[/set-risk] [%rule %risk &])
+  ;<  ~  bind:m  (connect %app1 /app)
+  ;<  ~  bind:m  (set-desk %app1 %desk)
+  ;<  ~  bind:m  (wait ~d1)
+  =/  headers=header-list:http  ~['host'^'192.168.1.1']
+  ;<  mos=(list move)  bind:m  (get '/app' headers)
+  =/  mov-1
+    %^  ex-gall-deal  /watch-response/[eyre-id]  g-name
+    [%app1 %watch /http-response/[eyre-id]]
+  =/  mov-2
+    =/  response  !>([eyre-id %.n %.n [%ipv4 .192.168.1.1] [%'GET' '/app' headers ~]])
+    %^  ex-gall-deal  /run-app-request/[eyre-id]  g-name
+    [%app1 %poke %handle-http-request response]
+  (expect-moves mos mov-1 mov-2 ~)
 --
