@@ -144,12 +144,12 @@
   |=  =state
   [%& ~ state(guest guest)]
 ::
-++  set-req-headers
-  |=  req=?
+++  set-verify-headers
+  |=  verify=?
   =/  m  (mare ,~)
   ^-  form:m
   |=  =state
-  [%& ~ state(headers req)]
+  [%& ~ state(headers verify)]
 ::
 ++  set-desk
   |=  [app=term =desk]
@@ -321,7 +321,7 @@
   (expect-moves mos mov-1 mov-2 ~)
 ::
 ++  expect-moves
-  |=  [mos=(list move) exes=(list $-(move tang))]
+  |=  [mos=(list move) exes=(list $-(state $-(move tang)))]
   =/  m  (mare ,~)
   ^-  form:m
   |=  =state
@@ -334,7 +334,7 @@
     ?~  mos
       ['expected more moves than got' ~]
     %+  weld
-      (i.exes i.mos)
+      ((i.exes state) i.mos)
     $(exes t.exes, mos t.mos)
   ?~  tang
     [%& ~ state]
@@ -342,12 +342,14 @@
 ::
 ++  ex-set-config
   |=  =vere-config:eyre
+  |=  =state
   |=  mov=move
   ^-  tang
   (expect-eq !>([duct=~[/unix] %give %set-config vere-config]) !>(mov))
 ::
 ++  ex
   |=  mow=move
+  |=  =state
   |=  mov=move
   (expect-eq !>(mow) !>(mov))
 ::
@@ -361,6 +363,7 @@
 ::
 ++  ex-sessions
   |=  ses=(map @t (unit desk))
+  |=  =state
   |=  mov=move
   ^-  tang
   (expect-eq !>([duct=~[/unix] %give %sessions ses]) !>(mov))
@@ -368,20 +371,19 @@
 ++  make-ex-resp  ::  auto-fill 'set-cookie' header from observed value
   =/  =duct  [/http-blah ~]
   |=  [status=@ud headers=header-list:http body=(unit octs)]
-  %-  easy:(mare ,$-(move tang))
   |=  =state
   =?  headers  ?=(~ (get-header:http 'set-cookie' headers))
     :_  headers
     ['set-cookie' =<(?>(?=(%& -) out.p) ((expected-cookie &) state))]
-  (%*(. ex-response duct duct) status headers body headers.state)
+  ((%*(. ex-response duct duct) status headers body) state)
 ::
 ++  ex-headers
   |=  [headers=header-list:http body=(unit octs)]
   |=  ex=header-list:http
   =?  headers
-    ?&  ?=(^ body)
-        ?=(~ (get-header:http 'content-length' headers))
-        ==
+      ?&  ?=(^ body)
+          ?=(~ (get-header:http 'content-length' headers))
+          ==
     :_  headers
     ['content-length' (crip ((d-co:co 1) p.u.body))]
   %+  expect-eq  !>((header-sort headers))
@@ -389,8 +391,8 @@
 ::
 ++  ex-response
   =/  =duct  [/http-blah ~]
-  |=  [status=@ud headers=header-list:http body=(unit octs) req-headers=?]
-  ::  TODO: get req-headers from state
+  |=  [status=@ud headers=header-list:http body=(unit octs)]
+  |=  =state
   |=  mov=move
   ^-  tang
   ?.  ?=([* %give %response %start * * %.y] mov)
@@ -400,7 +402,7 @@
     (expect-eq !>(status) !>(status-code.response-header.http-event.p.card.mov))
     (expect-eq !>(body) !>(data.http-event.p.card.mov))
   ::
-    ?.  req-headers  ~
+    ?.  headers.state  ~
     %-  (ex-headers headers body)
     headers.response-header.http-event.p.card.mov
   ==
@@ -409,17 +411,17 @@
   =/  next=@t  g-cook
   =/  auto-cl=?  &
   |=  [status=@ud headers=header-list:http body=(unit octs)]
-  %-  easy:(mare ,$-(move tang))
   |=  =state
   =.  headers
     :_  headers
     ['set-cookie' =<(?>(?=(%& -) out.p) ((expected-cookie &) state))]
-  (%*(. ex-start-response auto-cl auto-cl) status headers body headers.state)
+  ((%*(. ex-start-response auto-cl auto-cl) status headers body) state)
 ::
 ++  ex-start-response
   =/  =duct  [/http-blah ~]
   =/  auto-cl=?  &
-  |=  [status=@ud headers=header-list:http body=(unit octs) req-headers=?]
+  |=  [status=@ud headers=header-list:http body=(unit octs)]
+  |=  =state
   |=  mov=move
   ^-  tang
   ?.  ?=([* %give %response %start * * %.n] mov)
@@ -429,12 +431,13 @@
     (expect-eq !>(status) !>(status-code.response-header.http-event.p.card.mov))
     (expect-eq !>(body) !>(data.http-event.p.card.mov))
   ::
-    ?.  req-headers  ~
+    ?.  headers.state  ~
     ((ex-headers headers body) headers.response-header.http-event.p.card.mov)
   ==
 ::
 ++  ex-continue-response
   |=  [body=(unit octs) complete=?]
+  |=  =state
   |=  mov=move
   ^-  tang
   ?.  ?=([[[%http-blah ~] ~] %give %response %continue * *] mov)
@@ -446,17 +449,17 @@
 ::
 ++  make-ex-channel-resp
   |=  body=(unit @t)
-  =/  m  (mare ,$-(move tang))
-  ^-  form:m
+  |=  =state
   =/  headers
     :~  ['content-type' 'text/event-stream']
         ['cache-control' 'no-cache']
         ['connection' 'keep-alive']
     ==
-  (%*(. make-ex-start-resp auto-cl |) 200 headers (bind body as-octs:mimes:html))
+  ((%*(. make-ex-start-resp auto-cl |) 200 headers (bind body as-octs:mimes:html)) state)
 ::
 ++  ex-gall-deal
   |=  [=wire our=@p app=term =deal:gall]
+  |=  =state
   |=  mov=move
   ^-  tang
   %+  weld  (expect-eq !>(~[/http-blah]) !>(duct.mov))
@@ -633,10 +636,10 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  ~  bind:m  perform-init-wo-timer
-  ;<  ex-rs=$-(move tang)  bind:m
-    =/  headers  ['content-type' 'text/html']~
-    =/  body  `(error-page:eyre-gate 404 %.n '/' ~)
-    (make-ex-resp 404 headers body)
+  =/  ex-rs
+    %^  make-ex-resp  404
+      ['content-type' 'text/html']~
+    `(error-page:eyre-gate 404 %.n '/' ~)
   ;<  mos=(list move)  bind:m  (get '/' ~)
   (expect-moves mos ex-rs ~)
 ::
@@ -655,11 +658,10 @@
   ;<  ~  bind:m  (wait ~d1)
   ::  theoretical outside response
   ::
-  ;<  ex-sr=$-(move tang)  bind:m
-    =/  headers  ['content-type' 'text/html']~
-    (make-ex-start-resp 200 headers ~)
+  =/  headers  ['content-type' 'text/html']~
+  =/  ex-sr    (make-ex-start-resp 200 headers ~)
   ;<  mos=(list move)  bind:m
-    =/  response  !>([200 ['content-type' 'text/html']~])
+    =/  response  !>([200 headers])
     =/  sign=sign:eyre-gate
       [%gall %unto %fact %http-response-header response]
     (take /watch-response/[eyre-id] ~[/http-blah] sign)
@@ -680,7 +682,7 @@
   ;<  ~  bind:m  (wait ~d1)
   ::  the poke fails. we should relay this to the client
   ::
-  ;<  mov-2=$-(move tang)  bind:m
+  =/  mov-2
     =/  response  `(internal-server-error:eyre-gate %.n '/' ~)
     (make-ex-resp 500 ['content-type' 'text/html']~ response)
   ;<  mos=(list move)  bind:m
@@ -705,7 +707,7 @@
   ;<  ~  bind:m  (wait ~d1)
   ::  theoretical outside response
   ::
-  ;<  ex-sr=$-(move tang)  bind:m
+  =/  ex-sr
     =/  headers  ['content-type' 'text/html']~
     (make-ex-start-resp 200 headers ~)
   ;<  mos=(list move)  bind:m
@@ -737,7 +739,7 @@
   ;<  ~  bind:m  (wait ~d1)
   ::  outside requests a path that dead-app has bound to
   ::
-  ;<  ex-rs=$-(move tang)  bind:m
+  =/  ex-rs
     =/  body  `(error-page:eyre-gate 503 %.n '/' "%dead-app not running")
     (make-ex-resp 503 ['content-type' 'text/html']~ body)
   ;<  mos=(list move)  bind:m  (get '/' ~)
@@ -762,8 +764,7 @@
   ::  app then gives a redirect to Eyre, which then includes a tmp guest cookie
   ::
   =/  headers  ['location' '/~/login?redirect=/~landscape/inner-path']~
-  ;<  ex-sr=$-(move tang)  bind:m
-    (make-ex-start-resp 303 headers ~)
+  =/  ex-sr    (make-ex-start-resp 303 headers ~)
   ;<  mos=(list move)  bind:m
     =/  sign=sign:eyre-gate
       [%gall %unto %fact %http-response-header !>([303 headers])]
@@ -797,7 +798,7 @@
   ::
   ;<  ~  bind:m  |=(=state [%& ~ state(sesh `'urbauth-~nul=0v0')])
   ;<  mos=(list move)  bind:m  (get '/' ~)
-  ;<  ex-rs=$-(move tang)  bind:m
+  =/  ex-rs
     %^  make-ex-resp  401
       ['set-cookie' 'urbauth-~nul=0v0; Path=/; Max-Age=0']~
     `(as-octs:mimes:html 'bad session auth')
@@ -816,7 +817,7 @@
   ;<  ~  bind:m  (wait ~d1)
   ::  outside requests a path that app1 has bound to
   ::
-  ;<  ex-rs=$-(move tang)  bind:m  (make-ex-resp 404 ~ ~)
+  =/  ex-rs  (make-ex-resp 404 ~ ~)
   ;<  mos=(list move)  bind:m  (get '/' ~)
   (expect-moves mos ex-rs ~)
 ::
@@ -940,10 +941,10 @@
   ;<  ~  bind:m  perform-init-wo-timer
   ;<  ~  bind:m  perform-born
   ;<  ~  bind:m  (wait ~d1)
-  ;<  ex-rs=$-(move tang)  bind:m
-    =/  headers  ['content-type' 'text/html']~
-    =/  body  `(error-page:eyre-gate 404 %.n '/~/channel/0123456789abcdef' ~)
-    (make-ex-resp 404 headers body)
+  =/  ex-rs
+    %^  make-ex-resp  404
+      ['content-type' 'text/html']~
+    `(error-page:eyre-gate 404 %.n '/~/channel/0123456789abcdef' ~)
   ;<  mos=(list move)  bind:m
     (get '/~/channel/0123456789abcdef' ~)
   ;<  now=@da  bind:m  get-now
@@ -956,7 +957,7 @@
   ;<  ~  bind:m  (wait ~m1)
   ;<  mos=(list move)  bind:m
     (put '/~/channel/0123456789abcdef' ~ '[]')
-  ;<  mov-1=$-(move tang)  bind:m  (make-ex-resp 204 ~ ~)
+  =/  mov-1  (make-ex-resp 204 ~ ~)
   =/  mov-2  (ex-rest /channel/timeout/'0123456789abcdef' ~1111.1.2..12.00.00)
   =/  mov-3  (ex-wait /channel/timeout/'0123456789abcdef' ~1111.1.2..12.01.00)
   (expect-moves mos mov-1 mov-2 mov-3 ~)
@@ -991,7 +992,7 @@
   ;<  ~  bind:m  (wait ~m1)
   ;<  now=@da  bind:m  get-now
   =/  mov-1  (ex-wait /channel/heartbeat/'0123456789abcdef' (add now ~s20))
-  ;<  mov-2=$-(move tang)  bind:m
+  =/  mov-2
     %+  make-ex-channel-resp  ~
     '''
     id: 0
@@ -1043,7 +1044,7 @@
     '''
   =/  wire  /channel/poke/'0123456789abcdef'/'2'
   =/  mov-1  (ex-gall-deal wire ~nul %eight %poke-as %a %json !>([%n '9']))
-  ;<  mov-2=$-(move tang)  bind:m  (make-ex-resp 204 ~ ~)
+  =/  mov-2  (make-ex-resp 204 ~ ~)
   =/  mov-3  (ex-rest /channel/timeout/'0123456789abcdef' ~1111.1.2..12.00.00)
   =/  mov-4  (ex-wait /channel/timeout/'0123456789abcdef' ~1111.1.2..12.01.00)
   (expect-moves mos mov-1 mov-2 mov-3 mov-4 ~)
@@ -1078,7 +1079,7 @@
     '''
   =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two/~nul
   =/  mov-1  (ex-gall-deal wire ~nul %two %leave ~)
-  ;<  mov-2=$-(move tang)  bind:m  (make-ex-resp 204 ~ ~)
+  =/  mov-2  (make-ex-resp 204 ~ ~)
   =/  mov-3  (ex-rest /channel/timeout/'0123456789abcdef' ~1111.1.2..12.00.00)
   =/  mov-4  (ex-wait /channel/timeout/'0123456789abcdef' ~1111.1.2..12.03.00)
   (expect-moves mos mov-1 mov-2 mov-3 mov-4 ~)
@@ -1115,7 +1116,7 @@
     '''
   =/  wire  /channel/subscription/'0123456789abcdef'/'2'/~nul/two/~nul
   =/  mov-1  (ex-gall-deal wire ~nul %two %watch /one/two/three)
-  ;<  mov-2=$-(move tang)  bind:m  (make-ex-resp 204 ~ ~)
+  =/  mov-2  (make-ex-resp 204 ~ ~)
   =/  mov-3  (ex-rest /channel/timeout/'0123456789abcdef' ~1111.1.2..12.00.00)
   =/  mov-4  (ex-wait /channel/timeout/'0123456789abcdef' ~1111.1.2..12.03.00)
   ::  subscription gets 2 results
@@ -1135,7 +1136,7 @@
   ::
   ;<  now=@da  bind:m  get-now
   =/  mov-1  (ex-wait /channel/heartbeat/'0123456789abcdef' (add now ~s20))
-  ;<  mov-2=$-(move tang)  bind:m
+  =/  mov-2
     %+  make-ex-channel-resp  ~
     '''
     id: 0
@@ -1170,7 +1171,7 @@
     '''
   =/  wire  /channel/subscription/'0123456789abcdef'/'1'/~nul/two/~nul
   =/  mov-1  (ex-gall-deal wire ~nul %two %leave ~)
-  ;<  mov-2=$-(move tang)  bind:m  (make-ex-resp 204 ~ ~)
+  =/  mov-2  (make-ex-resp 204 ~ ~)
   ;<  ~  bind:m  (expect-moves mos mov-1 mov-2 ~)
   ::  gall responds on the second subscription.
   ::
@@ -1237,7 +1238,7 @@
   ;<  now=@da  bind:m  get-now
   =/  heartbeat  (add now ~s20)
   =/  mov-1  (ex-wait /channel/heartbeat/'0123456789abcdef' heartbeat)
-  ;<  mov-2=$-(move tang)  bind:m
+  =/  mov-2
     %+  make-ex-channel-resp  ~
     '''
     id: 0
@@ -1281,7 +1282,7 @@
       "event-id": 1}
     ]
     '''
-  ;<  ex-rs=$-(move tang)  bind:m  (%*(. make-ex-resp duct [/http-put-request]~) 204 ~ ~)
+  =/  ex-rs  (%*(. make-ex-resp duct [/http-put-request]~) 204 ~ ~)
   ;<  ~  bind:m  (expect-moves mos ex-rs ~)
   ;<  ~  bind:m  (wait ~m1)
   ::  the client connection is detected to be broken
@@ -1308,7 +1309,7 @@
   ;<  now=@da  bind:m  get-now
   =/  heartbeat  (add now ~s20)
   =/  mov-1  (ex-wait /channel/heartbeat/'0123456789abcdef' heartbeat)
-  ;<  mov-2=$-(move tang)  bind:m
+  =/  mov-2
     %+  make-ex-channel-resp  ~
     '''
     id: 2
@@ -1407,8 +1408,9 @@
   ::  cancels on open connections.
   ::
   ;<  mos=(list move)  bind:m  (call ~[/born] [%born ~])
+  =/  mov-any    |=(=state _*tang)
   =/  mov-3  (ex-gall-deal /watch-response/[eyre-id] g-name %app1 [%leave ~])
-  (expect-moves mos _*tang _*tang mov-3 ~)
+  (expect-moves mos mov-any mov-any mov-3 ~)
 ::
 ::  +perform-init: %init a new eyre-gate
 ::
@@ -1522,7 +1524,7 @@
 ++  perform-authentication-2
   =/  m  (mare ,~)
   ^-  form:m
-  ;<  ex-rs=$-(move tang)  bind:m
+  =/  ex-rs
     =/  headers  ['content-type' 'text/html']~
     =/  body  `(login-page:eyre-gate [~ `'/~landscape/inner-path'] ~nul [fake+g-name ~] ~ %.n)
     (make-ex-resp 200 headers body)
@@ -1544,7 +1546,7 @@
           ['set-cookie' (bake-cookie | (cat 3 'urbauth-~nul=' t))]
       ==
     =/  ses  (~(put by *(map @t (unit desk))) t ~)
-    (expect-moves mos (ex-sessions ses) (ex-response 303 headers `(as-octs:mimes:html t) &) ~)
+    (expect-moves mos (ex-sessions ses) (ex-response 303 headers `(as-octs:mimes:html t)) ~)
   (pure:m ~)
 ::
 ++  eauth
@@ -1635,7 +1637,7 @@
     ==
   ::  ~sampel gets back to us with a url, we redirect the requester
   ::
-  ;<  ex-rs=$-(move tang)  bind:m
+  =/  ex-rs
     =/  loc=@t
       %^  cat  3
         'http://sampel.com/~/eauth?server=~nul&nonce='
@@ -1654,8 +1656,7 @@
     ==
   ::  requester returns for the final request
   ::
-  ;<  ex-rs=$-(move tang)  bind:m
-    (make-ex-resp 303 ['location' '/final']~ ~)
+  =/  ex-rs  (make-ex-resp 303 ['location' '/final']~ ~)
   ;<  mos=(list move)  bind:m  final
   ;<  ~  bind:m
     =/  nook
@@ -1668,7 +1669,7 @@
         'urbauth-~nul=0v5.gbhev.sbeh0.3rov1.o6ibh.a3t9r; Path=/; Max-Age='
       auth-time
     %+  expect-moves  mos
-    :~  (ex-response 303 ~['location'^'/final' 'set-cookie'^nook] ~ &)
+    :~  (ex-response 303 ~['location'^'/final' 'set-cookie'^nook] ~)
     ==
   (pure:m ~)
 ::
@@ -1683,7 +1684,7 @@
   ;<  *  bind:m  grant
   ::  requester GETs a url with a non-matching token
   ::
-  ;<  ex-rs=$-(move tang)  bind:m
+  =/  ex-rs
     =/  body  `(eauth-error-page:eyre-gate %server '/final')
     (make-ex-resp 400 ['content-type' 'text/html']~ body)
   ;<  mos=(list move)  bind:m
@@ -1704,7 +1705,7 @@
   ::  expiry timer fires, we serve a response and delete the attempt
   ::
   ;<  ~  bind:m  (wait eauth-timeout:eyre-gate)
-  ;<  ex-rs=$-(move tang)  bind:m
+  =/  ex-rs
     =/  body  `(eauth-error-page:eyre-gate %server '/final')
     (make-ex-resp 503 ['content-type' 'text/html']~ body)
   ;<  mos=(list move)  bind:m
@@ -1724,7 +1725,7 @@
   ;<  *  bind:m  sage
   ::  visitor returns, saying the attempt was aborted. we delete it
   ::
-  ;<  ex-rs=$-(move tang)  bind:m
+  =/  ex-rs
     (make-ex-resp 303 ['location' '/~/login?eauth&redirect=%2Ffinal']~ ~)
   ;<  mos=(list move)  bind:m
     =;  url=@t  (get url ~)
@@ -1744,7 +1745,7 @@
   ;<  *  bind:m  grant
   ::  visitor returns, saying the attempt was aborted. we delete it
   ::
-  ;<  ex-rs=$-(move tang)  bind:m
+  =/  ex-rs
     (make-ex-resp 303 ['location' '/~/login?eauth&redirect=%2Ffinal']~ ~)
   ;<  mos=(list move)  bind:m
     =;  url=@t  (get url ~)
@@ -1793,7 +1794,7 @@
     ==
   ::  upon receiving an %okay from ~hoster, redirect the user
   ::
-  ;<  ex-rs=$-(move tang)  bind:m
+  =/  ex-rs
     =/  loc=@t
       'http://hoster.com/~/eauth?nonce=0vnonce&token=0v4.qkgot.d07e3.pi1qd.m1bhj.ti8bo'
     (make-ex-resp 303 ['location' loc]~ ~)
@@ -1816,7 +1817,7 @@
     (post '/~/eauth' ~ body)
   ::  eyre must not comply, instead redirect to login page
   ::
-  ;<  ex-rs=$-(move tang)  bind:m
+  =/  ex-rs
     (make-ex-resp 303 ~['location'^'/~/login?redirect=%2F~%2Feauth'] ~)
   ;<  ~  bind:m
     %+  expect-moves  mos
@@ -1861,8 +1862,7 @@
     %^  ex-gall-deal  /channel/subscription/'0123456789abcdef'/'1'/~nul/two/~nul
       ~nul
     [%two %watch /one/two/three]
-  ;<  mov-3=$-(move tang)  bind:m
-    (make-ex-resp 204 ~ ~)
+  =/  mov-3  (make-ex-resp 204 ~ ~)
   =/  mov-4
     %+  ex  ~[/http-blah]
     [%pass /channel/timeout/'0123456789abcdef' %b %wait (add now ~h12)]
@@ -1879,7 +1879,7 @@
     (get url ~['host'^host])
   =/  location
     :((cury cat 3) '//localhost/~/holm/sink/' target url)
-  (expect-moves mos (ex-response 307 ~['location'^location] ~ &) ~)
+  (expect-moves mos (ex-response 307 ~['location'^location] ~) ~)
 ::
 ++  tmp-token
   =/  eny  `@uvJ`0xdead.beef
@@ -1901,7 +1901,7 @@
     ==
   %+  expect-moves  mos
   :~  (ex-wait /holm/[tmp-token] (add now ~s30))  :: expire token
-      (ex-response 307 ex-headers ~ &)
+      (ex-response 307 ex-headers ~)
   ==
 ::
 ++  holm-gain
@@ -1926,7 +1926,7 @@
     (~(put by ses) target-token `target)
   %+  expect-moves   mos
   :~  (ex-sessions ses)
-      (ex-response 307 ex-headers ~ &)
+      (ex-response 307 ex-headers ~)
   ==
 ::
 ++  do-holm
@@ -1982,10 +1982,13 @@
   ^-  form:m
   ;<  ~  bind:m  perform-init-wo-timer
   ;<  ~  bind:m  perform-born
+  =/  url  '/~/holm/sink/foobar'
   ;<  mos=(list move)  bind:m
-    (get '/~/holm/sink/foobar' ~['host'^'foo.localhost'])
-  =/  body  `(error-page:eyre-gate 400 & '/~/holm/sink/foobar' "holm: can't sink from subdomain")
-  (expect-moves mos (ex-response 400 ['content-type' 'text/html']~ body &) ~)
+    (get url ~['host'^'foo.localhost'])
+  =/  ex-res
+    =/  body  `(error-page:eyre-gate 400 & url "holm: can't sink from subdomain")
+    (ex-response 400 ['content-type' 'text/html']~ body)
+  (expect-moves mos ex-res ~)
 ::  +test-gain-invalid-tmp-token: fail when request /holm/gain
 ::  with incorrect/invalid/unknown tmp-token
 ::
@@ -1998,7 +2001,7 @@
   ;<  mos=(list move)  bind:m
     (get '/~/holm/gain/0v0/foobar' ~['host'^'foo.localhost'])
   =/  body  `(error-page:eyre-gate 400 & '/~/holm/gain/0v0/foobar' "holm: invalid gain token")
-  (expect-moves mos (ex-response 400 ['content-type' 'text/html']~ body &) ~)
+  (expect-moves mos (ex-response 400 ['content-type' 'text/html']~ body) ~)
 ::  +test-holm-jump-on-root: starting holm flow from /jump
 ::  on root domain, w/o root auth
 ::
@@ -2017,7 +2020,7 @@
     :~  'location'^location
         'set-cookie'^cookie
     ==
-  (expect-moves mos (ex-response 307 ex-headers ~ &) ~)
+  (expect-moves mos (ex-response 307 ex-headers ~) ~)
 ::
 ::  tests for: general subdomain handling
 ::
@@ -2029,10 +2032,11 @@
   ^-  form:m
   ;<  ~  bind:m  perform-init-wo-timer
   ;<  ~  bind:m  perform-born
+  ;<  ~  bind:m  (set-verify-headers |)
   ;<  mos=(list move)  bind:m
     (get '/~/name' ~['host'^'foo.bar'])
   =/  body  `(as-octs:mimes:html 'bad host')
-  ;<  ~  bind:m  (expect-moves mos (ex-response 421 ~ body |) ~)
+  ;<  ~  bind:m  (expect-moves mos (ex-response 421 ~ body) ~)
   ::
   ;<  mos=(list move)  bind:m
     (call ~[/set-turf] [%rule %turf %put ['bar' 'foo' ~]])
@@ -2040,7 +2044,7 @@
   ;<  mos=(list move)  bind:m
     (get '/~/name' ~['host'^'foo.bar'])
   =/  body  `(as-octs:mimes:html (scot %p g-name))
-  (expect-moves mos (ex-response 200 ~ body |) ~)
+  (expect-moves mos (ex-response 200 ~ body) ~)
 ::  +test-eyre-bindings: eyre-backed "bindings" should be
 ::  accessible on root and subdomains
 ::
@@ -2050,12 +2054,13 @@
   ^-  form:m
   ;<  ~  bind:m  perform-init-wo-timer
   ;<  ~  bind:m  perform-born
+  ;<  ~  bind:m  (set-verify-headers |)
   ;<  ~  bind:m  (connect %app1 /app1)
   ;<  ~  bind:m  (set-desk %app1 %desk)
   ;<  ~  bind:m  (wait ~d1)
   ;<  mos=(list move)  bind:m  (get '/~/name' ~)
   =/  body   `(as-octs:mimes:html (scot %p g-name))
-  =/  ex-res  (ex-response 200 ~ body |)
+  =/  ex-res  (ex-response 200 ~ body)
   ;<  ~  bind:m
     (expect-moves mos ex-res ~)
   ::  subdomain GET request goes through holm flow
