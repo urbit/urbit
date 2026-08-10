@@ -170,9 +170,9 @@
   (rsh 3^13 (need sesh.state))
 ::
 ++  get-cookie
-  %-  easy:(mare ,@t)
+  %-  easy:(mare ,(unit @t))
   |=  =state
-  (need sesh.state)
+  sesh.state
 ::
 ++  guest-time  '604800'
 ++  auth-time   '2592000'
@@ -307,14 +307,17 @@
   =/  target  (crip (spud pax))
   ::  TODO: holm flow ?
   ;<  desk=(unit desk)  bind:m  (get-desk app)
-  =/  headers
+  =/  headers=header-list:http
     ?~  desk  ~['host'^'localhost']
     ~['host'^(cat 3 u.desk '.localhost')]
   ;<  mos=(list move)  bind:m  (get target headers)
   =/  mov-1
     %^  ex-gall-deal  /watch-response/[eyre-id]  g-name
     [app %watch /http-response/[eyre-id]]
+  ;<  c=(unit @t)  bind:m  get-cookie
   =/  mov-2
+    =?  headers  ?=(^ c)
+                 ['cookie'^u.c headers]
     =/  response  !>([eyre-id %.n %.n [%ipv4 .192.168.1.1] [%'GET' target headers ~]])
     %^  ex-gall-deal  /run-app-request/[eyre-id]  g-name
     [app %poke %handle-http-request response]
@@ -462,8 +465,12 @@
   |=  =state
   |=  mov=move
   ^-  tang
+  =/  =path
+    :-  %eyre
+    ?.  (~(has by desks.state) app)  ~
+    [(~(got by desks.state) app) ~]
   %+  weld  (expect-eq !>(~[/http-blah]) !>(duct.mov))
-  (expect-gall-deal [wire [our ~nul /eyre] app deal] card.mov)
+  (expect-gall-deal [wire [our ~nul path] app deal] card.mov)
 ::
 ++  expect-gall-deal
   |=  $:  expected=[wire=path id=sack app=term =deal:gall]
@@ -647,13 +654,16 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  perform-born
   ;<  ~  bind:m  (wait ~d1)
   ::  app1 binds successfully
   ::
   ;<  ~  bind:m  (connect %app1 /)
+  ;<  ~  bind:m  (set-desk %app1 %desk)
   ;<  ~  bind:m  (wait ~d1)
   ::  outside requests a path that app1 has bound to
   ::
+  ;<  ~  bind:m  (do-holm 'desk' '/' |)
   ;<  ~  bind:m  (request %app1 /)
   ;<  ~  bind:m  (wait ~d1)
   ::  theoretical outside response
@@ -671,13 +681,16 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  perform-born
   ;<  ~  bind:m  (wait ~d1)
   ::  app1 binds successfully
   ::
   ;<  ~  bind:m  (connect %app1 /)
+  ;<  ~  bind:m  (set-desk %app1 %desk)
   ;<  ~  bind:m  (wait ~d1)
   ::  outside requests a path that app1 has bound to
   ::
+  ;<  ~  bind:m  (do-holm 'desk' '/' |)
   ;<  ~  bind:m  (request %app1 /)
   ;<  ~  bind:m  (wait ~d1)
   ::  the poke fails. we should relay this to the client
@@ -777,14 +790,18 @@
   ;<  ~  bind:m  (wait ~h1)
   ::  going back to the original url will acknowledge the authentication cookie
   ::
-  ;<  c=@t  bind:m  get-cookie
+  ;<  c=(unit @t)      bind:m  get-cookie
+  ?~  c  (fail:m 'missing cookie' ~)
   ;<  mos=(list move)  bind:m
     (get '/~landscape/inner-path' ~)
   =/  mov-1
     %^  ex-gall-deal  /watch-response/[eyre-id]  ~nul
     [%app1 %watch /http-response/[eyre-id]]
   =/  mov-2
-    =/  request  [%'GET' '/~landscape/inner-path' ['cookie' c]~ ~]
+    =/  headers   :~  'host'^'localhost'
+                      'cookie'^u.c
+                  ==
+    =/  request   [%'GET' '/~landscape/inner-path' headers ~]
     =/  response  !>([eyre-id %.y %.n [%ipv4 .192.168.1.1] request])
     %^  ex-gall-deal  /run-app-request/[eyre-id]  ~nul
     [%app1 %poke %handle-http-request response]
@@ -1395,13 +1412,16 @@
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  perform-born
   ;<  ~  bind:m  (wait ~d1)
   ::  app1 binds successfully
   ::
   ;<  ~  bind:m  (connect %app1 /)
+  ;<  ~  bind:m  (set-desk %app1 %desk)
   ;<  ~  bind:m  (wait ~d1)
   ::  outside requests a path that app1 has bound to
   ::
+  ;<  ~  bind:m  (do-holm 'desk' '/' |)
   ;<  ~  bind:m  (request %app1 /)
   ;<  ~  bind:m  (wait ~d1)
   ::  but app1 doesn't respond before our urbit gets shut down. ensure we send
@@ -1929,13 +1949,11 @@
 ::
 ++  do-holm
   |=  [target=@t url=@t auth=?]
-  =/  m  (mare ,(list move))
+  =/  m  (mare ,~)
   ^-  form:m
   ;<  ~  bind:m  (holm-jump target url)
   ;<  ~  bind:m  (holm-sink target url)
-  ;<  ~  bind:m  (holm-gain target url auth)
-  ::?^  app   (request url u.app)
-  (get url ~['host'^(cat 3 target '.localhost')])
+  (holm-gain target url auth)
 ::
 ::  tests: holm flow, subdomain authentication
 ::
@@ -2087,7 +2105,9 @@
   ::  subdomain GET request goes through holm flow
   ::  before it gets response from eyre binding
   ::
-  ;<  mos=(list move)  bind:m  (do-holm 'desk' '/~/name' |)
+  ;<  ~  bind:m  (do-holm 'desk' '/~/name' |)
+  ;<  mos=(list move)  bind:m
+    (get '/~/name' ~['host'^'desk.localhost'])
   (expect-moves mos ex-res ~)
 ::  +test-desk-bindings: desk-backed bindings should be
 ::  accessible only on the appropriate subdomain
@@ -2230,7 +2250,6 @@
   ;<  ~  bind:m  perform-born
   ;<  *  bind:m  (call ~[/set-risk] [%rule %risk &])
   ;<  ~  bind:m  (connect %app1 /app)
-  ;<  ~  bind:m  (set-desk %app1 %desk)
   ;<  ~  bind:m  (wait ~d1)
   =/  headers=header-list:http  ~['host'^'192.168.1.1']
   ;<  mos=(list move)  bind:m  (get '/app' headers)
