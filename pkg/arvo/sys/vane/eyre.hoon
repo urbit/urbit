@@ -1898,7 +1898,7 @@
               %&  (host-string -.p.target)
               %|  (ip-string p.target)
             ==
-            '/~/holm/'  u.actual-desk
+            '/~/holm/sink/'  u.actual-desk
             actual-redirect
         ==
       [%start 303^~['location'^actual-redirect col] `bod &]
