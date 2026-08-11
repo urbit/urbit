@@ -58,7 +58,7 @@
       now=@da
       guest=_&        ::  false if we intenionally authed as a real ship
       sesh=(unit @t)  ::  last-heard cookie string, as 'urbauth-~xxx=0vyyy'
-      desks=(map term desk)
+      desks=(map dude:gall desk)
   ==
 ::
 ++  output-raw
@@ -145,14 +145,14 @@
   [%& ~ state(guest guest)]
 ::
 ++  set-desk
-  |=  [app=term =desk]
+  |=  [app=dude:gall =desk]
   =/  m  (mare ,~)
   ^-  form:m
   |=  =state
   [%& ~ state(desks (~(put by desks.state) app desk))]
 ::
 ++  get-desk
-  |=  app=term
+  |=  app=dude:gall
   %-  easy:(mare ,(unit desk))
   |=  =state
   (~(get by desks.state) app)
@@ -453,7 +453,7 @@
   (%*(. make-ex-start-resp auto-cl |) 200 headers (bind body as-octs:mimes:html))
 ::
 ++  ex-gall-deal
-  |=  [=wire our=@p app=term =deal:gall]
+  |=  [=wire our=@p app=dude:gall =deal:gall]
   %-  easy:(mare ,$-(move tang))
   |=  =state
   |=  mov=move
@@ -466,7 +466,7 @@
   (expect-gall-deal [wire [our ~nul path] app deal] card.mov)
 ::
 ++  expect-gall-deal
-  |=  $:  expected=[wire=path id=sack app=term =deal:gall]
+  |=  $:  expected=[wire=path id=sack app=dude:gall =deal:gall]
           actual=(wind note:eyre-gate gift:eyre-gate)
       ==
   ^-  tang
@@ -550,7 +550,7 @@
   ==
 ::
 ++  scry-mock
-  |=  desks=(map term desk)
+  |=  desks=(map dude:gall desk)
   ^-  roof
   |=  [gang pov=path =view =beam]
   ^-  (unit (unit cage))
@@ -656,7 +656,7 @@
   ;<  ~  bind:m  (wait ~d1)
   ::  outside requests a path that app1 has bound to
   ::
-  ;<  ~  bind:m  (do-holm 'desk' '/' |)
+  ;<  ~  bind:m  (do-holm %desk '/' |)
   ;<  ~  bind:m  (request %app1 /)
   ;<  ~  bind:m  (wait ~d1)
   ::  theoretical outside response
@@ -684,7 +684,7 @@
   ;<  ~  bind:m  (wait ~d1)
   ::  outside requests a path that app1 has bound to
   ::
-  ;<  ~  bind:m  (do-holm 'desk' '/' |)
+  ;<  ~  bind:m  (do-holm %desk '/' |)
   ;<  ~  bind:m  (request %app1 /)
   ;<  ~  bind:m  (wait ~d1)
   ::  the poke fails. we should relay this to the client
@@ -1424,7 +1424,7 @@
   ;<  ~  bind:m  (wait ~d1)
   ::  outside requests a path that app1 has bound to
   ::
-  ;<  ~  bind:m  (do-holm 'desk' '/' |)
+  ;<  ~  bind:m  (do-holm %desk '/' |)
   ;<  ~  bind:m  (request %app1 /)
   ;<  ~  bind:m  (wait ~d1)
   ::  but app1 doesn't respond before our urbit gets shut down. ensure we send
@@ -1896,7 +1896,7 @@
 ::  holm authentication flow
 ::
 ++  holm-jump
-  |=  [target=@t url=@t]
+  |=  [target=desk url=@t]
   =/  m  (mare ,~)
   ^-  form:m
   =/  host=@t  (cat 3 target '.localhost')
@@ -1909,7 +1909,7 @@
 ++  tmp-token  '0voo.a0p19.cjog9'
 ::
 ++  holm-sink
-  |=  [target=@t url=@t]
+  |=  [target=desk url=@t]
   =/  m  (mare ,~)
   ^-  form:m
   ;<  mos=(list move)  bind:m
@@ -1928,7 +1928,7 @@
   ==
 ::
 ++  holm-gain
-  |=  [target=@t url=@t root-auth=?]
+  |=  [target=desk url=@t root-auth=?]
   =/  m  (mare ,~)
   ^-  form:m
   =/  host=@t  (cat 3 target '.localhost')
@@ -1953,7 +1953,7 @@
   ==
 ::
 ++  do-holm
-  |=  [target=@t url=@t auth=?]
+  |=  [target=desk url=@t auth=?]
   =/  m  (mare ,~)
   ^-  form:m
   ;<  ~  bind:m  (holm-jump target url)
@@ -2110,7 +2110,7 @@
   ::  subdomain GET request goes through holm flow
   ::  before it gets response from eyre binding
   ::
-  ;<  ~  bind:m  (do-holm 'desk' '/~/name' |)
+  ;<  ~  bind:m  (do-holm %desk '/~/name' |)
   ;<  mos=(list move)  bind:m
     (get '/~/name' ~['host'^'desk.localhost'])
   (expect-moves mos ex-res ~)
