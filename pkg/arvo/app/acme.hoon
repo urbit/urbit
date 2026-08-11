@@ -969,7 +969,7 @@
     =/  fig=config
       ::  XX expiration date
       ::
-      [dom.u.rod key.u.rod cer (add now.bow ~d90) ego.u.rod]
+      [dom.u.rod key.u.rod cer (add now.bow ~d30) ego.u.rod]
     ::  archive live config
     ::
     =?  fig.hit  ?=(^ liv)  [u.liv fig.hit]
@@ -987,11 +987,14 @@
         (emil (notify msg ~))
     ::  set renewal timer, install certificate in %eyre
     ::
-    ::    Certificates expire after ~d90. We want time for retries and
-    ::    to work around rate limits, so our renewal timer is for ~d60.
+    ::    Certificates expire after some amount of time determined by
+    ::    LetsEncrypt. Before ~2027.02, it was ~d90. After, it was ~d64.
+    ::    As of ~2028.02, it is ~d45.
+    ::    We want time for retries and to work around rate limits, so our
+    ::    renewal timer is for ~d30.
     ::    Renewals count towards weekly rate limits, but are allowed to
     ::    continue past rate limits, so fudge the timer towards the end
-    ::    of the week nearest ~d60.
+    ::    of the week nearest ~d30.
     ::
     =<  install:effect
     =;  lul=@dr
@@ -1000,8 +1003,8 @@
       (mul ~m1 (~(rad og eny.bow) (bex 8)))
     =/  weekday  (daws:chrono:userlib (yore now.bow))
     ?:  (gth weekday 4)
-      (sub ~d60 (mul ~d1 (sub weekday 4)))
-    (add ~d60 (mul ~d1 (sub 4 weekday)))
+      (sub ~d30 (mul ~d1 (sub weekday 4)))
+    (add ~d30 (mul ~d1 (sub 4 weekday)))
   ::  +get-authz: accept ACME service authorization object
   ::
   ++  get-authz
