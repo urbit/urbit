@@ -18,6 +18,8 @@
               %ktls
               %wtpt  %wtcn  %wtkt
               %cltr
+            ::
+              %mato
           ==
       $%  [%atom const=? =aura]
       ==
@@ -28,6 +30,7 @@
   $%  [%limb =limb]
     ::
       [%atom tol=? const=? =aura a=@]  ::  %atomw + %atomt
+      [%mato =aura]
     ::
       $:  ?(%dttr %dtwt %dtls %dtts %wtcl %tsgr %tsls %cnts %sggr %brcn %brpt %ktls %wtpt %wtcn %wtkt %cltr)
           tol=?
@@ -51,6 +54,7 @@
       :~  ace+|+%ace    gap+&+%gap    per+|+%per    dot+|+%dot  com+|+%com  sel+|+%sel  ser+|+%ser   tar+|+%tar  bar+|+%bar  wut+|+%wut
           coma+|+%coma  stis+&+%stis  slus+&+%slus  shep+|+%shep
           axis+|+%axis  lark+|+%lark  skip+|+%skip
+          mato+|+%mato
           ::  %sym
           c-tas+|+[%atom & %tas]
           c-ud-w+|+[%atom & %ud]  c-ud-t+&+[%atom & %ud]
@@ -114,6 +118,11 @@
     :-  %wut
     '''
     '?'
+    '''
+  ::
+    :-  %mato
+    '''
+    '@' [a-z]*
     '''
   ::
     :-  %coma
@@ -401,6 +410,8 @@
         (chunk i.cur.st len)
       ==
     ::
+      %mato   [%mato (chunk +(i.cur.st) (dec len))]
+    ::
       %com    [%limb %| 0 ~]
       %axis   :+  %limb  %&
               -:(fold-bytes [txt.cur.st +(beg) end] (fold:digits 10))
@@ -508,11 +519,11 @@
     ?.  (end t)                             ~      [[i l] move]
   ::
   ++  tall
-    ^-  (mandatory naty _st)
+    ^-  (mandatory naty-sugar _st)
     =+  peek  ?@  -  ~  =>  [t=u +(st s)]
     ?+  t  wide(tol |)
       [%atom %& *]  [%noun [%atom aura.t ?.(const.t ~ `a.t)] a.t]^move
-      [%cltr %&]    =+  %+  (autocons(st move) naty)
+      [%cltr %&]    =+  %+  (autocons(st move) naty-sugar)
                           |=(t=toke ?=(%gap t))
                         |=  s=_st
                         tall(st s)
@@ -529,7 +540,7 @@
       [%tsls %&]    =+  tall-2(st move)       ?@  -  ~  [[%tsls u] s]
       [%cnts %&]    =+  wing-full(st move)    ?@  -  ~  =>  [w=u +(st s)]
                     =+  (expect %gap)         ?@  -  ~  =>  +(st s)
-                    =+  %+  (most (pair wing naty))
+                    =+  %+  (most (pair wing naty-sugar))
                           |=(t=toke ?=(%gap t))
                         |=  s=_st
                         =+  wing-full(st s)       ?@  -  ~  =>  [v=u +(st s)]
@@ -549,7 +560,7 @@
       [%brcn %&]    =+  variance(st move)     ?@  -  ~  =>  [v=u +(st s)]
                     =+  any-layout            ?@  -  ~  =>  [l=n +(st s)]
                     =+  (expect %slus)        ?@  -  ~  =>  +(st s)
-                    =+  %+  (most (pair term naty))
+                    =+  %+  (most (pair term naty-sugar))
                           |=(t=toke ?=(%slus t))
                         |=  s=_st
                         =+  peek(st s)          ?@  -  ~  =>  [t=u +(st s)]
@@ -562,7 +573,7 @@
                     ?~  cor=(validate-layout l b)    ~  [[%brcn v u.cor] st]
       [%brpt %&]    =+  any-layout(st move)   ?@  -  ~  =>  [l=n +(st s)]
                     =+  (expect %slus)        ?@  -  ~  =>  +(st s)
-                    =+  %+  (most (pair term naty))
+                    =+  %+  (most (pair term naty-sugar))
                           |=(t=toke ?=(%slus t))
                         |=  s=_st
                         =+  peek(st s)          ?@  -  ~  =>  [t=u +(st s)]
@@ -584,9 +595,9 @@
     ==
   ::
   ++  validate-layout
-    |=  [lay=(unit layout) bat=(list (pair term naty))]
-    =|  bam=(map term naty)
-    |-  ^-  (unit [lay=(unit layout) bat=(map term naty)])
+    |=  [lay=(unit layout) bat=(list (pair term naty-sugar))]
+    =|  bam=(map term naty-sugar)
+    |-  ^-  (unit [lay=(unit layout) bat=(map term naty-sugar)])
     ?^  bat
       ?:  (~(has by bam) p.i.bat)
         ~&([%duplicate-arm p.i.bat] ~)
@@ -611,12 +622,13 @@
     $(u.lay +.u.lay)
   ::
   ++  wide
-    ^-  (mandatory naty _st)
+    ^-  (mandatory naty-sugar _st)
     =+  gulp  ?@  -  ~  =>  [t=u +(st s)]
     ?+  t  ~
       [%limb *]     =+  (wing-tail limb.t)  ?@  -  ~  [[%cnts u ~] s]
       ::TODO  handle %dot
       [%atom %| *]  [%noun [%atom aura.t ?.(const.t ~ `a.t)] a.t]^st
+      [%mato @]     [%xtra %atom aura.t]^st
       %sel          =+  wide-cell-bod  ?@  -  ~  =>  [n=u +(st s)]
                     =+  (expect %ser)  ?@  -  ~  [n s]
       [%cltr %|]    =+  wide-cell-bod  ?@  -  ~  =>  [n=u +(st s)]
@@ -632,7 +644,7 @@
       [%tsls %|]    =+  wide-2         ?@  -  ~  [[%tsls u] s]
       [%cnts %|]    =+  wing-full        ?@  -  ~  =>  [w=u +(st s)]
                     =+  (expect %ace)    ?@  -  ~  =>  +(st s)
-                    =+  %+  (most (pair wing naty))
+                    =+  %+  (most (pair wing naty-sugar))
                           |=(t=toke ?=(%coma t))
                         |=  s=_st
                         =+  wing-full(st s)  ?@  -  ~  =>  [v=u +(st s)]
@@ -691,22 +703,22 @@
     --
   ::
   ++  wide-1
-    ^-  (mandatory naty _st)
+    ^-  (mandatory naty-sugar _st)
     =+  wide           ?@  -  ~  =>  [one=u +(st s)]
     =+  (expect %per)  ?@  -  ~  [one s]
   ++  wide-2
-    ^-  (mandatory [naty naty] _st)
+    ^-  (mandatory [naty-sugar naty-sugar] _st)
     =+  wide           ?@  -  ~  =>  [one=u +(st s)]
     =+  (expect %ace)  ?@  -  ~  =>  +(st s)
     =+  wide-1         ?@  -  ~  [[one u] s]
   ++  wide-wing-2
-    ^-  (mandatory [wing naty naty] _st)
+    ^-  (mandatory [wing naty-sugar naty-sugar] _st)
     =+  wing-full      ?@  -  ~  =>  [w=u +(st s)]
     =+  (expect %ace)  ?@  -  ~  =>  +(st s)
     =+  wide-2         ?@  -  ~  [[w u] s]
   ++  wide-cell-bod
-    ^-  (mandatory naty _st)
-    %+  (autocons naty)
+    ^-  (mandatory naty-sugar _st)
+    %+  (autocons naty-sugar)
       |=(t=toke ?=(%ace t))
     |=(s=_st wide(st s))
   ++  autocons
@@ -751,12 +763,12 @@
     ==
   ::
   ++  tall-2
-    ^-  (mandatory [naty naty] _st)
+    ^-  (mandatory [naty-sugar naty-sugar] _st)
     =+  tall           ?@  -  ~  =>  [one=u +(st s)]
     =+  (expect %gap)  ?@  -  ~  =>  +(st s)
     =+  tall           ?@  -  ~  [[one u] s]
   ++  tall-wing-2
-    ^-  (mandatory [wing naty naty] _st)
+    ^-  (mandatory [wing naty-sugar naty-sugar] _st)
     =+  wing-full      ?@  -  ~  =>  [w=u +(st s)]
     =+  (expect %gap)  ?@  -  ~  =>  +(st s)
     =+  tall-2         ?@  -  ~  [[w u] s]

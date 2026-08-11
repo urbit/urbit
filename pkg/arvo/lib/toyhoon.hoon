@@ -318,6 +318,16 @@
       :+  %tsls
         [%tsgr $(sin sam.sin) %cnts [%| 0 `%$]~ ~]
       [%brcn %gold ~ [%$ $(sin bod.sin)] ~ ~]
+    ::
+        %atom
+      =-  $(sin -)
+      :+  %tsgr  [%noun %noun 0]               ::  =>  ~
+      :-  %xtra
+      :+  %gate  [%noun %noun 0]               ::  |=  *
+      :+  %ktls  [%noun [%atom aura.sin ~] 0]  ::  ^+  `@AURA.SIN`0
+      :^  %wtkt  [%& 6]~                       ::  ?^  +<
+        [%cnts [%& 0]~ ~]                      ::    !!
+      [%cnts [%& 6]~ ~]                        ::  +<
     ==
   ==
 ::
@@ -460,8 +470,7 @@
            :-  (make-union -.y -.n)
            [%6 [%3 %0 (tend:ut vein)] +.y +.n]
   ::
-      %xtra
-    !!  ::TODO
+    %xtra  !!
   ==
 ::
 ++  slap

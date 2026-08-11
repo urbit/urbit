@@ -14,6 +14,7 @@
 +$  sugar
   $~  [%gate [%noun %noun 0] [%noun %noun 0]]
   $%  [%gate sam=naty-sugar bod=naty-sugar]
+      [%atom aura=term]
   ==
 ::
 ++  naty-xtra

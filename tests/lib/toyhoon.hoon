@@ -202,15 +202,27 @@
   !>((scan "[[1 2] .+(3) 4 5]" apex:parse:th))
 ::
 ++  make-open-test
-  |=  [input=naty-sugar:tp ex=naty:tp]
+  |=  [input=naty-sugar:th ex=naty:th]
   (expect-eq !>((open:th input)) !>(ex))
 ::
 ++  test-open
   =/  tar  [%tsls [%noun %noun 0] [%brcn %gold ~ [%$ [%cnts [%& 6]~ ~]] ~ ~]]
   ;:  weld
-     %+  make-open-test
-       [%xtra %gate tar [%noun %noun 1]]
-     [%tsls [%tsgr tar %cnts [%| 0 `%$]~ ~] [%brcn %gold ~ [%$ %noun %noun 1] ~ ~]]
+    %+  make-open-test
+      [%xtra %gate tar [%noun %noun 1]]
+    [%tsls [%tsgr tar %cnts [%| 0 `%$]~ ~] [%brcn %gold ~ [%$ %noun %noun 1] ~ ~]]
+  ::
+    %+  make-open-test
+      [%xtra %atom %ud]
+    :+  %tsgr  [%noun %noun 0]
+    :+  %tsls  [%tsgr [%noun %noun 0] %cnts [%| 0 `%$]~ ~]
+    :^  %brcn  %gold  ~
+    :_  [~ ~]
+    :-  %$
+    :+  %ktls  [%noun [%atom %ud ~] 0]
+    :^  %wtkt  [%& 6]~
+      [%cnts [%& 0]~ ~]
+    [%cnts [%& 6]~ ~]
   ==
 ::
 ++  make-primitive-test
@@ -245,7 +257,7 @@
   !>(~(here parser:tp & s.res))
 ::
 ++  make-parser-test
-  |=  [input=@t =naty:th]
+  |=  [input=@t naty=naty-sugar:th]
   =+  res=~(tall p & (init-cord-cursor:tp input) [1 1] ~)
   ?~  res  ~['failed to parse' input]
   %+  weld
@@ -260,9 +272,9 @@
   ~
 ::
 ++  test-parser
-  =/  z=naty:th  [%noun [%atom %ud ~] 0]
-  =/  o=naty:th  [%noun [%atom %ud ~] 1]
-  =/  t=naty:th  [%noun [%atom %ud ~] 2]
+  =/  z=naty-sugar:th  [%noun [%atom %ud ~] 0]
+  =/  o=naty-sugar:th  [%noun [%atom %ud ~] 1]
+  =/  t=naty-sugar:th  [%noun [%atom %ud ~] 2]
   =/  w=wing:th  [%| 0 `%$]~
   ;:  weld
     (make-parser-test '123' [%noun [%atom %ud ~] 123])
@@ -343,5 +355,8 @@
     (make-parser-test '|%  :*  a  *  ==  ++  a  0  ++  b  1  --' [%brcn %gold `[%a `~] (my [%a z] [%b o] ~)])
     (make-parser-test '|%  [[a b] c]  ++  a  0  ++  b  1  ++  c  2  --' [%brcn %gold `[[%a %b] %c] (my [%a z] [%b o] [%c t] ~)])
     (make-parser-test '|%  :*  [a b]  c  ==  ++  a  0  ++  b  1  ++  c  2  --' [%brcn %gold `[[%a %b] %c] (my [%a z] [%b o] [%c t] ~)])
+  ::
+    (make-parser-test '@' [%xtra %atom %$])
+    (make-parser-test '@ud' [%xtra %atom %ud])
   ==
 --
