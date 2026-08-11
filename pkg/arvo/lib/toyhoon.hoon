@@ -458,7 +458,7 @@
            =+  y=$(naty y.naty, sut (take sut vein atom))
            =+  n=$(naty n.naty, sut (take sut vein cell))
            :-  (make-union -.y -.n)
-           [%6 [%3 %0 (peg (tend:ut vein) 2)] +.y +.n]
+           [%6 [%3 %0 (tend:ut vein)] +.y +.n]
   ::
       %xtra
     !!  ::TODO
