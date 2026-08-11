@@ -1930,8 +1930,14 @@
     =/  files  (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
     =/  wish=(unit $-(@t *))
       ?~  arv  ~
-      `|=(t=@t (wisher u.arv t))
-    ((build-ford-api:fusion [zud wish]) files lat.ran veb.bug)
+      =>  [wisher=wisher uarv=u.arv]
+      `|=(t=@t (wisher uarv t))
+    ::
+    =/  ford-api
+      =>  [build-ford-api=build-ford-api:fusion zud=zud wish=wish]
+      ~>  %memo./clay/ford
+      (build-ford-api [zud wish])
+    (ford-api files lat.ran veb.bug)
   ::  +live-ford: ford-api for the running kernel's own (native) universe
   ::
   ::    the live counterpart of +tako-ford for use during commits; uses the
