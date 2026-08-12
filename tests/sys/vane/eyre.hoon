@@ -1471,6 +1471,12 @@
   ;<  ~  bind:m  perform-init-wo-timer
   ;<  ~  bind:m  perform-born
   ;<  ~  bind:m  perform-authentication-2
+  =/  =turf
+    =/  =purl:eyre  (rash base auri:de-purl:html)
+    ?>  ?=(%& -.r.p.purl)
+    p.r.p.purl
+  ;<  *  bind:m
+    (call ~[/set-turf] [%rule %turf %put turf])
   ;<  ~  bind:m
     ::  make sure there is an eauth endpoint set
     ::
@@ -1588,7 +1594,8 @@
     ::
     ++  start
       =/  body  'eauth&name=~sampel&redirect=/final'
-      (post '/~/login' ~ body)
+      %+  call-request  ~[/http-blah]
+      [%'POST' '/~/login' ~['host'^'hoster.com'] `body]
     ::
     ++  sage
       %^  take  /eauth/keen/(scot %p ~sampel)/(scot %uv nonce)
@@ -2085,7 +2092,7 @@
   ?~  sesh-child  (fail:m 'missing seession' ~)
   ;<  ~  bind:m
     (try (expect-eq !>([%| token]) !>(scopes.u.sesh-child)))
-  (try (expect-eq !>(identity.u.sesh) !>(identity.u.sesh-child)))
+  (try (expect-eq !>(who.identity.u.sesh) !>(who.identity.u.sesh-child)))
 ::  +test-holm-jump-on-root: starting holm flow from /jump
 ::  on root domain, w/o root auth
 ::
