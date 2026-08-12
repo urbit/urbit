@@ -1891,13 +1891,12 @@
         ?~  target-desk  ~
         ?:  =('' u.target-desk)  ~
         `u.target-desk
-      =?  actual-redirect  ?=(^ actual-desk)
+      =?  actual-redirect  ?&  ?=(^ actual-desk)
+                               ?=([%& *] target)
+                           ==
         %+  rap  3
         :~  '//'
-            ?-  -.target
-              %&  (host-string -.p.target)
-              %|  (ip-string p.target)
-            ==
+            (host-string -.p.target)
             '/~/holm/sink/'  u.actual-desk
             actual-redirect
         ==

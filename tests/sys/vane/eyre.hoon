@@ -2333,13 +2333,16 @@
   ;<  ~  bind:m  perform-init-wo-timer
   ;<  ~  bind:m  perform-born
   ;<  *  bind:m  (call ~[/set-risk] [%rule %risk &])
-  =/  body  'desk=&redirect=/foo'
-  ;<  mos=(list move)  bind:m  (post '/~/login' ~ body)
+  =/  body  'password=lidlut-tabwed-pillex-ridrup&desk=bar&redirect=/foo'
+  ;<  mos=(list move)      bind:m
+    (post '/~/login' ~['host'^'192.168.1.1'] body)
+  ;<  ~                    bind:m  (set-guest |)
+  ;<  token=@t             bind:m  get-token
+  =/  ses  (~(put by *(map @t (unit desk))) token ~)
   ;<  ex-rs=$-(move tang)  bind:m
-    =/  body
-      `(login-page:eyre-gate [~ `'/foo'] ~nul [fake+g-name ~] ~ |)
-    (make-ex-resp 400 ['content-type' 'text/html']~ body)
-  (expect-moves mos ex-rs ~)
+    =/  body  `(as-octs:mimes:html token)
+    (make-ex-resp 303 ['location' '/foo']~ body)
+  (expect-moves mos (ex-sessions ses) ex-rs ~)
 ::  +test-ip-scoped-session: session created while using bare ip
 ::  must have a root scope
 ::
