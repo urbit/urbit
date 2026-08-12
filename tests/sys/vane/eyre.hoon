@@ -167,6 +167,12 @@
   |=  =state
   sesh.state
 ::
+++  get-session
+  |=  token=@uv
+  %-  easy:(mare ,(unit session:eyre))
+  |=  =state
+  (~(get by sessions.auth.server-state.ax.gate.state) token)
+::
 ++  guest-time  '604800'
 ++  auth-time   '2592000'
 ::
@@ -2046,6 +2052,40 @@
     (get '/~/holm/gain/0v0/foobar' ~['host'^'foo.localhost'])
   =/  body  `(error-page:eyre-gate 400 & '/~/holm/gain/0v0/foobar' "holm: invalid gain token")
   (expect-moves mos (ex-response 400 ['content-type' 'text/html']~ body) ~)
+::  +test-holm-update-parent-session:  newly-created scoped session
+::  has parent session, inherits identity
+::
+++  test-holm-update-parent-session
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ^-  form:m
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  perform-born
+  ;<  ~  bind:m  (connect %app1 /)
+  ;<  ~  bind:m  (set-desk %app1 %desk)
+  ;<  ~  bind:m  (wait ~d1)
+  ::
+  ;<  ~  bind:m  perform-authentication-2
+  ;<  tok=@t  bind:m  get-token
+  =/  token   (slav %uv tok)
+  ;<  sesh=(unit session:eyre)  bind:m  (get-session token)
+  ?~  sesh       (fail:m 'missing seession' ~)
+  ;<  ~  bind:m  (try (expect-eq !>([%& ~]) !>(scopes.u.sesh)))
+  ::
+  ;<  ~  bind:m  (do-holm %desk '/' &)
+  ;<  desk-tok=@t  bind:m  get-token
+  ?:  =(tok desk-tok)  (fail:m 'missing desk token' ~)
+  ;<  sesh=(unit session:eyre)  bind:m  (get-session token)
+  ?~  sesh        (fail:m 'missing seession' ~)
+  =/  desk-token  (slav %uv desk-tok)
+  ;<  ~  bind:m
+    (try (expect-eq !>([%& desk-token ~ ~]) !>(scopes.u.sesh)))
+  ;<  sesh-child=(unit session:eyre)  bind:m
+    (get-session desk-token)
+  ?~  sesh-child  (fail:m 'missing seession' ~)
+  ;<  ~  bind:m
+    (try (expect-eq !>([%| token]) !>(scopes.u.sesh-child)))
+  (try (expect-eq !>(identity.u.sesh) !>(identity.u.sesh-child)))
 ::  +test-holm-jump-on-root: starting holm flow from /jump
 ::  on root domain, w/o root auth
 ::
@@ -2275,4 +2315,39 @@
     %^  ex-gall-deal  /run-app-request/[eyre-id]  g-name
     [%app1 %poke %handle-http-request response]
   (expect-moves mos mov-1 mov-2 ~)
+::  +test-ip-login-redirect: POST request to /~/login
+::  should ignore 'desk' query param when constructing response
+::  and not redirect to /~/holm
+::
+++  test-ip-login-empty-desk-param
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ^-  form:m
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  perform-born
+  ;<  *  bind:m  (call ~[/set-risk] [%rule %risk &])
+  =/  body  'desk=&redirect=/foo'
+  ;<  mos=(list move)  bind:m  (post '/~/login' ~ body)
+  ;<  ex-rs=$-(move tang)  bind:m
+    =/  body
+      `(login-page:eyre-gate [~ `'/foo'] ~nul [fake+g-name ~] ~ |)
+    (make-ex-resp 400 ['content-type' 'text/html']~ body)
+  (expect-moves mos ex-rs ~)
+::  +test-ip-scoped-session: session created while using bare ip
+::  must have a root scope
+::
+++  test-ip-scoped-session
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ^-  form:m
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  perform-born
+  ;<  *  bind:m  (call ~[/set-risk] [%rule %risk &])
+  ::
+  ;<  ~  bind:m  perform-authentication-2
+  ;<  tok=@t  bind:m  get-token
+  ;<  sesh=(unit session:eyre)  bind:m
+    (get-session (slav %uv tok))
+  ?~  sesh    (fail:m 'missing seession' ~)
+  (try (expect-eq !>([%& ~]) !>(scopes.u.sesh)))
 --
