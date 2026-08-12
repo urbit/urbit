@@ -1214,7 +1214,7 @@
     ::  record that we started an asynchronous response
     ::
     =/  connection=outstanding-connection
-      [[%boot ~] [authenticated secure address request] [suv identity] ~ 0]
+      [action [authenticated secure address request] [suv identity] ~ 0]
     =.  connections.state
       ::  NB: required by +handle-response and +handle-request:authentication.
       ::  XX optimize, not all requests are asynchronous
