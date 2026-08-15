@@ -4134,7 +4134,7 @@
         ::    TODO: id is sort of wrong for this interface; the duct should
         ::    be enough to identify which request we're talking about?
         ::
-        [%request id=@ud request=request:http]
+        [%request id=@ud request=request:http stream=?]
         ::  %cancel-request: tell earth to cancel a previous %request
         ::
         [%cancel-request id=@ud]
@@ -4214,6 +4214,9 @@
         ::    'Accept-Range: bytes' in the original response.
         ::
         retries=_3
+        ::  stream: deliver %progress per chunk instead of buffering
+        ::
+        stream=_|
     ==
   ::  +to-httr: adapts to old eyre interface
   ::
