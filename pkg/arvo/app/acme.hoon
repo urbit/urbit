@@ -45,10 +45,14 @@
     $:  dom=turf
         sas=@t
         exp=@t
-        cal=challenge
+        cal=http-challenge
     ==
   ::
-  +$  challenge  [typ=@t sas=@t url=purl tok=@t err=(unit error)]
+  +$  challenge
+    $%  [%http-01 http-challenge]
+        [%unsupported typ=@t]
+    ==
+  +$  http-challenge  [sas=@t url=purl tok=@t err=(unit error)]
   ::
   +$  error  [type=@t detail=@t]
   --
@@ -108,9 +112,9 @@
         ::
         ++  trial
           |=  a=(list challenge:body)
-          ^-  challenge:body
-          =/  b  (skim a |=([typ=@t *] ?=(%http-01 typ)))
-          ?>(?=(^ b) i.b)
+          ^-  http-challenge:body
+          =/  b  (skim a |=(c=challenge:body ?=(%http-01 -.c)))
+          ?>(?=([[%http-01 *] *] b) +.i.b)
         --
     ^-  $-(json auth:body)
     %-  ot
@@ -123,9 +127,18 @@
   ::
   ++  challenge
     ^-  $-(json challenge:body)
+    |=  j=json
+    ^-  challenge:body
+    ?>  ?=([%o *] j)
+    =+  t=(~(got by p.j) 'type')
+    ?>  ?=([%s *] t)
+    ::NOTE  technically dns-01 and tls-alpn-01 have the same properties/shape
+    ::      as http-01, but we never use those, so can drop them here early.
+    ?.  =(%http-01 p.t)  [%unsupported p.t]
+    :-  %http-01
+    %.  j
     %-  ou
-    :~  'type'^(un so)
-        'status'^(un so)
+    :~  'status'^(un so)
         'url'^(un json-purl)
         'token'^(un so)
         'error'^(uf ~ (mu error))
@@ -1073,6 +1086,7 @@
       (emil (notify msg [(sell !>(rep)) ~]))
     =/  bod=challenge:body
       (challenge:grab (need (de:json:html q:(need r.rep))))
+    ?>  ?=(%http-01 -.bod)
     ::  XX check for other possible values in 200 response
     ::  note: may have already been validated
     ::
