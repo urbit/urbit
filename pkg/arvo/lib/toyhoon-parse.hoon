@@ -414,7 +414,9 @@
     ::
       %com    [%limb %| 0 ~]
       %axis   :+  %limb  %&
-              -:(fold-bytes [txt.cur.st +(beg) end] (fold:digits 10))
+              %+  big:digits  10
+              %-  decimal:digits
+              (trip (chunk +(i.cur.st) (dec len)))
     ::
         %lark
       :+  %limb  %&
