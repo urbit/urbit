@@ -520,6 +520,10 @@
     ::REVIEW  need another peek?
     ?.  (end t)                             ~      [[i l] move]
   ::
+  ++  finished
+    ^-  ?
+    =(i len):cur.st
+  ::
   ++  tall
     ^-  (mandatory naty-sugar _st)
     =+  peek  ?@  -  ~  =>  [t=u +(st s)]
