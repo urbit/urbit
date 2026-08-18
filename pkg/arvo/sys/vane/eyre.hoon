@@ -3205,7 +3205,7 @@
       ::  if the requester provided no auth, mint them a new session
       ::  so that their channel has an identity associated with it
       ::
-      =^  [sid=@uv =identity moves=(list move)]  state
+      =^  [sid=@uv =identity sesh-moves=(list move)]  state
         ?~  session.req  (start-session:authentication %new-guest ~)
         [[sid identity ~]:u.session.req state]
       =.  session.req  `[sid identity]
@@ -3239,7 +3239,7 @@
                 data=~
             ==
           ::
-          [:(weld (flop gall-moves) http-moves moves) state]
+          [:(weld (flop gall-moves) http-moves sesh-moves moves) state]
         ::  some things went wrong. revert all operations & give 400
         ::
         %-  (trace 1 |.("{<channel-id>} reverting due to errors"))
@@ -3252,7 +3252,7 @@
           %+  turn  (sort ~(tap by errors) dor)
           |=  [id=@ud er=@t]
           (rap 3 (crip (a-co:co id)) ': ' er '<br/>' ~)
-        [(weld http-moves moves) state]
+        [:(weld http-moves sesh-moves moves) state]
       ::
       ?-    -.i.requests
           %ack
