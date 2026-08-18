@@ -314,16 +314,15 @@
     ?-  +<.sin
       %pair  !!
     ::
-        %gate
-      :+  %tsls
-        [%tsgr $(sin sam.sin) %cnts [%| 0 `%$]~ ~]
+        %brcl
+      :+  %tsls  $(sin sam.sin)
       [%brcn %gold ~ [%$ $(sin bod.sin)] ~ ~]
     ::
         %atom
       =-  $(sin -)
       :+  %tsgr  [%noun %noun 0]               ::  =>  ~
       :-  %xtra
-      :+  %gate  [%noun %noun 0]               ::  |=  *
+      :+  %brcl  [%noun %noun 0]               ::  |:  `*`0
       :+  %ktls  [%noun [%atom aura.sin ~] 0]  ::  ^+  `@AURA.SIN`0
       :^  %wtkt  [%& 6]~                       ::  ?^  +<
         [%cnts [%& 0]~ ~]                      ::    !!

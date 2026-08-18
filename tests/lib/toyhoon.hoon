@@ -209,13 +209,13 @@
   =/  tar  [%tsls [%noun %noun 0] [%brcn %gold ~ [%$ [%cnts [%& 6]~ ~]] ~ ~]]
   ;:  weld
     %+  make-open-test
-      [%xtra %gate tar [%noun %noun 1]]
-    [%tsls [%tsgr tar %cnts [%| 0 `%$]~ ~] [%brcn %gold ~ [%$ %noun %noun 1] ~ ~]]
+      [%xtra %brcl tar [%noun %noun 1]]
+    [%tsls tar [%brcn %gold ~ [%$ %noun %noun 1] ~ ~]]
   ::
     %+  make-open-test
       [%xtra %atom %ud]
     :+  %tsgr  [%noun %noun 0]
-    :+  %tsls  [%tsgr [%noun %noun 0] %cnts [%| 0 `%$]~ ~]
+    :+  %tsls  [%noun %noun 0]
     :^  %brcn  %gold  ~
     :_  [~ ~]
     :-  %$
