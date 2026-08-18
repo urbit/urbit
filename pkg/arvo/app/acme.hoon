@@ -306,7 +306,7 @@
 ::  +acme: complete app state
 ::
 +$  acme
-  $:  %1
+  $:  %2
       ::  dir: ACME service directory
       ::
       dir=directory
@@ -327,7 +327,7 @@
       rod=(unit order)
       ::  next-order: queued domains
       ::
-      next-order=(unit [try=@ud dom=(set turf)])
+      next-order=(list [try=@ud dom=(set turf)])
       ::  cey: certificate key XX move?
       ::
       cey=key:rsa
@@ -361,11 +361,13 @@
     |^  ^-  (quip card _this)
     =+  !<(old=versioned vase)
     ?@  -.old
+      |-
       ?-  -.old
-        %1  `this(state old)
+        %1  $(-.old %2, next-order.old (drop next-order.old))
+        %2  `this(state old)
       ==
     =.  state
-      [%1 dir act liv hit nonces rod ~ cey challenges]:old
+      [%2 dir act liv hit nonces rod ~ cey challenges]:old
     ?~  next-order.old
       `this
     =/  next=(set turf)  ~(key by dom.u.next-order.old)
@@ -375,9 +377,22 @@
     ::
     +$  versioned
       $^  acme-0
-      $%  acme
+      $%  acme-1
+          acme
       ==
     ::
+    +$  acme-1
+      $:  %1
+          dir=directory
+          act=acct
+          liv=(unit config)
+          hit=history
+          nonces=(list @t)
+          rod=(unit order)
+          next-order=(unit [try=@ud dom=(set turf)])
+          cey=key:rsa
+          challenges=(set @t)
+      ==
     +$  acme-0
       $:  dir=directory
           act=acct
@@ -670,11 +685,11 @@
     ^+  this
     ~|  %new-order-effect-fail
     ?.  ?=(^ reg.act)  ~|(%no-account !!)
-    ?.  ?=([~ ^] next-order)  ~|(%no-domains !!)
+    ?~  next-order  ~|(%no-domains !!)
     =/  =json
       %+  frond:enjs:format  'identifiers'
       :-  %a
-      %+  turn  ~(tap in dom.u.next-order)
+      %+  turn  ~(tap in dom.i.next-order)
       |=(a=turf [%o (my type+s+'dns' value+s+(en-turf:html a) ~)])
     =/  wire-params  [try %new-order /(scot %da now.bow)]
     (stateful-request wire-params new-order.dir json)
@@ -884,10 +899,10 @@
       (order:grab (need (de:json:html q:(need r.rep))))
     ::  XX maybe generate key here?
     ::
-    =/  csr=@ux  +:(en:der:pkcs10 cey ~(tap in dom.u.next-order))
+    =/  csr=@ux  +:(en:der:pkcs10 cey ~(tap in dom.i.next-order))
     =/  dor=order
-      :*  dom.u.next-order
-          try.u.next-order
+      :*  dom.i.next-order
+          try.i.next-order
           sas=%wake
           exp.bod
           ego
@@ -896,7 +911,7 @@
           csr
           [aut.bod ~ ~]
       ==
-    get-authz:effect(rod `dor, next-order ~)
+    get-authz:effect(rod `dor, next-order t.next-order)
   ::  +finalize-order: order finalized, poll for certificate
   ::
   ++  finalize-order
@@ -990,6 +1005,10 @@
     ::
     =>  .(liv (some fig), rod ~)
     ?>  ?=(^ liv)
+    ::  at the end, if there are more orders to process, kick off the next one
+    ::
+    =<  ?~  next-order  this
+        new-order:effect
     ::  notify %dill
     ::
     =>  =/  msg=cord
@@ -1290,7 +1309,14 @@
 ++  queue-next-order
   |=  [try=@ud dom=(set turf)]
   ^+  this
-  this(next-order `[try dom])
+  ?~  next-order
+    this(next-order [try dom]~)
+  ::  if we're retrying _starting_ an order, take care not to put it into
+  ::  the queue twice
+  ::
+  ?:  =(dom dom.i.next-order)
+    this(try.i.next-order try)
+  this(next-order (snoc next-order [try dom]))
 ::  +cancel-current-order: and archive failure for future autopsy
 ::
 ::    XX we may have pending moves out for this order
