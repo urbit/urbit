@@ -2704,7 +2704,7 @@
       --
     ::
     ++  auth
-      |_  req=unpacked-request  ::TODOyy  move up into +authentication ?
+      |_  req=unpacked-request
       ++  instant-response  (cury instant:response req)
       ::
       ++  on-request
@@ -2869,13 +2869,13 @@
       ?:  =('PUT' method.request)
         ::  PUT methods starts/modifies a channel, and returns a result immediately
         ::
-        (on-put-request channel-id req)
+        (on-put-request req channel-id)
       ::
       ?:  =('GET' method.request)
-        (on-get-request channel-id req)
+        (on-get-request req channel-id)
       ?:  =('POST' method.request)
         ::  POST methods are used solely for deleting channels
-        (on-put-request channel-id req)
+        (on-put-request req channel-id)
       ::
       %-  (trace 0 |.("session not a put"))
       %+  instant-data  req
@@ -2996,7 +2996,7 @@
     ::    the client in text/event-stream format.
     ::
     ++  on-get-request
-      |=  [channel-id=@t req=unpacked-request]  ::TODOyy  swizzle
+      |=  [req=unpacked-request channel-id=@t]
       ^-  [(list move) server-state]
       =*  request  request.req
       ::  if the channel doesn't exist, we cannot serve it.
@@ -3172,7 +3172,7 @@
     ::    this request to contain an empty list of commands.
     ::
     ++  on-put-request
-      |=  [channel-id=@t req=unpacked-request]  ::TODOyy
+      |=  [req=unpacked-request channel-id=@t]
       ^-  [(list move) server-state]
       =*  request  request.req
       ::TODOyy  ?>  ?=(^ session.req)
@@ -3754,9 +3754,6 @@
       :: ++  start-async  ::TODOyy  possible
       ++  async  ::TODOyy  continue-async  ::NOTE  *must* have put connection into state prior
         |=  =http-event:http
-        ~?  >>>  !(~(has by connections.state) duct)  %booooo
-        ::TODOyy  (if %start) ensure entry exists in connections.state
-        ::        (probably not necessary due to control flow)
         (response-engine %async http-event)
       --
     |=  [request=$@(%async unpacked-request) =http-event:http]
@@ -3766,7 +3763,6 @@
     ?>  |(?=(%async request) ?=([%start * * %&] http-event))
     ::
     ?:  &(?=(%async request) !(~(has by connections.state) duct))
-      ~&  [async=?=(%async request) has=(~(has by connections.state) duct)]
       ((trace 0 |.("{<duct>} unknown outstanding connection")) `state)
     =/  [req=unpacked-request res=[h=(unit response-header:http) b=@ud]]
       ?^  request
@@ -3806,11 +3802,12 @@
           ::
           =.  connections.state
             ?:  complete.http-event
-              ?^  request  connections.state  ::REVIEWyy  needless?
-              ~&  %complete-del-by
+              ::NOTE  technically always safe to delete
+              ::      (and not necessary if ?=(^ request) aka "instant")
+              ::      but this reiterates semantics nicely
+              ?^  request  connections.state
               (~(del by connections.state) duct)
             ::
-            ~&  [%incomplete-jab-by duct=duct]
             ?>  ?=(%async request)  ::  see ?> above
             %-  (trace 2 |.("{<duct>} start"))
             %+  ~(jab by connections.state)  duct
