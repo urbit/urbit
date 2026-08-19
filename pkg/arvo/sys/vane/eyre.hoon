@@ -849,17 +849,11 @@
     |=  [secure=? =address =request:http]
     ^-  [(list move) server-state]
     ::
-    =/  act  [%app app=%lens]
+    =/  req=unpacked-request
+      [request & `[*@uv [[%ours ~] ~]]]
     ::
-    =/  connection=outstanding-connection
-      [act [& secure address request] [*@uv [[%ours ~] ~]] ~ 0]
-    ::
-    =.  connections.state
-      %.  (~(put by connections.state) duct connection)
-      (trace 2 |.("{<duct>} creating local"))
-    ::
-    :_  state
-    (request-to-app identity.connection app.act inbound-request.connection)
+    %-  (trace 2 |.("{<duct>} creating local"))
+    (request-to-app req %lens secure address)
   ::  +request: starts handling an inbound http request
   ::
   ++  request
@@ -1328,27 +1322,7 @@
           url.request
           "%{(trip app.action)} not running"
         ==
-      ::  requests into userspace must always have an associated identity.
-      ::  if the request provided no auth, mint a guest identity.
-      ::
-      ::TODOyy  move into +request-to-app, passing (unit identity) through req
-      =^  [suv=@uv =identity moves=(list move)]  state
-        ?-  -.auth-state
-          %have  [[session identity ~]:auth-state state]
-          %miss  (start-session:authentication %new-guest ~)
-        ==
-      =.  session.req  `[suv identity]
-      ::  the request will be handled outside of eyre ("asynchronously"),
-      ::  so store the connection in state before dispatching
-      ::
-      =/  =inbound-request
-        [authenticated.req secure address request.req]
-      =.  connections.state
-        %+  ~(put by connections.state)  duct
-        [action inbound-request [suv identity] ~ 0]
-      :_  state
-      %+  weld  moves
-      (request-to-app identity app.action inbound-request)
+      (request-to-app req app.action secure address)
     ::
         %authentication
       %+  handle-request:authentication
@@ -1646,10 +1620,27 @@
   ::  +request-to-app: subscribe to app and poke it with request data
   ::
   ++  request-to-app
-    |=  [=identity app=term =inbound-request:eyre]
-    ^-  (list move)
-    ::  otherwise, subscribe to the agent and poke it with the request
+    |=  [unpacked-request app=term secure=? =address]
+    ^-  [(list move) server-state]
+    ::  requests into userspace must always have an associated identity.
+    ::  if the request provided no auth, mint a guest identity.
     ::
+    =^  [suv=@uv =identity moves=(list move)]  state
+      ?^  session  [[sid identity ~]:u.session state]
+      (start-session:authentication %new-guest ~)
+    =.  session  `[suv identity]
+    ::  the request will be handled outside of eyre ("asynchronously"),
+    ::  so store the connection in state before dispatching
+    ::
+    =/  =inbound-request
+      [authenticated secure address request]
+    =.  connections.state
+      %+  ~(put by connections.state)  duct
+      [[%app app] inbound-request [suv identity] ~ 0]
+    ::  subscribe to the agent and poke it with the request
+    ::
+    :_  state
+    %+  weld  moves
     :~  %+  deal-as
           /watch-response/[eyre-id]
         [identity our app %watch /http-response/[eyre-id]]
