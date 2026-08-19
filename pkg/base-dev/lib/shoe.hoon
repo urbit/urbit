@@ -377,7 +377,15 @@
   ++  on-leave
     |=  =path
     ^-  (quip card:agent:gall agent:gall)
-    =^  cards  shoe  (on-leave:og path)
+    ::  mirror +on-watch: sole paths belong to us, everything else to the app.
+    ::  a sole-id is single-tenant (+on-watch resets its $sole-share, so a
+    ::  second subscriber would clobber the first), so the first leave reaps.
+    ::
+    ?~  sole-id=(path-to-id:sole path)
+      =^  cards  shoe  (on-leave:og path)
+      [(deal cards) this]
+    =.  soles  (~(del by soles) u.sole-id)
+    =^  cards  shoe  (on-disconnect:og u.sole-id)
     [(deal cards) this]
   ::
   ++  on-peek
