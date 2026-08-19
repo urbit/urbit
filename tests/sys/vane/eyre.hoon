@@ -1470,6 +1470,26 @@
   ::
   ;<  tt=@t  bind:m  get-token
   (try (expect-eq !>(t) !>(tt)))
+::  +test-header-auth-fallback-to-cookie: invalid auth header should not
+::  prevent cookie-based authentication
+::
+++  test-header-auth-fallback-to-cookie
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ^-  form:m
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  perform-born
+  ;<  ~  bind:m  perform-authentication-2
+  ::  request our name while passing an invalid authorization header.
+  ::  the valid session cookie should still be used for authentication.
+  ::
+  ;<  name=@p  bind:m
+    =/  m  (mare ,@p)
+    ^-  form:m
+    ;<  mos=(list move)  bind:m  (get '/~/name' ['authorization' 'Basic foo']~)
+    ?>  ?=([[* %give %response %start * * %.y] ~] mos)
+    (pure:m (slav %p q:(need data.http-event.p.card.i.mos)))
+  (try (expect-eq !>(~nul) !>(name)))
 ::  +perform-authentication: goes through the authentication flow
 ::
 ++  perform-authentication-2
@@ -1530,13 +1550,13 @@
       %+  ex  ~[/http-blah]
       ::TODO  want to access eauth-cache-rounding:eyre-gate here but can't..?
       =.  time  (sub time (mod time ~m5))
-      [%pass wire %a %keen ~ ~sampel /e/x/(scot %da time)//eauth/url]
+      [%pass wire %a %keen ~ ~sampel /e/x/(scot:h136 %da time)//eauth/url]
     ::
     ++  ex-yawn
       |=  =time
       %+  ex  ~[/http-blah]
       =.  time  (sub time (mod time ~h1))
-      [%pass wire %a %yawn ~sampel /e/x/(scot %da time)//eauth/url]
+      [%pass wire %a %yawn ~sampel /e/x/(scot:h136 %da time)//eauth/url]
     ::
     ++  ex-done
       (ex ~[/http-blah] %give %done ~)

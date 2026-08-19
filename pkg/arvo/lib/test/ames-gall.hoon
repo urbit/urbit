@@ -8,17 +8,16 @@
 ::
 |%
 ++  crypto-core
-  |%  ++  nec  (pit:nu:crub:crypto 512 (shaz 'nec'))
-      ++  bud  (pit:nu:crub:crypto 512 (shaz 'bud'))
-      ++  zod  (pit:nu:crub:crypto 512 (shaz 'zod'))
+  |%  ++  nec  (pit:nu:cric:crypto 512 (shaz 'nec') %b ~)
+      ++  bud  (pit:nu:cric:crypto 512 (shaz 'bud') %b ~)
+      ++  zod  (pit:nu:cric:crypto 512 (shaz 'zod') %b ~)
       ++  sign
         |=  [=ship data=@ux]
-        %.  data
         ?:  =(ship ~nec)
-          sigh:as:nec
+          (sign:ed:crypto data sgn:ven:ex:nec)
         ?:  =(ship ~zod)
-          sigh:as:zod
-        sigh:as:bud
+          (sign:ed:crypto data sgn:ven:ex:zod)
+        (sign:ed:crypto data sgn:ven:ex:bud)
   --
 ::
 ++  make-gall
@@ -32,41 +31,45 @@
   |=  [life=[nec=@ud bud=@ud zod=@ud] rift=[nec=@ud bud=@ud zod=@ud]]
   ::  create ~nec
   ::
-  =/  nec  (ames-raw ~nec)
+  =/  nec  ^$:(%*($ ames-raw ahoy-on %.n, +< ~nec))
   =.  now.nec  ~1111.1.1
   =.  eny.nec  0v3f.arfnf
   =.  life.ames-state.nec  nec.life
   =.  rift.ames-state.nec  nec.rift
   =.  rof.nec  |=(* ``[%noun !>(*(list turf))])
-  =/  nec-pub  pub:ex:nec:crypto-core
-  =.  priv.ames-state.nec  sec:ex:nec:crypto-core
+  =.  saf.ames-state.nec   saf:ex:nec:crypto-core
+  =.  ring.ames-state.nec  sec:ex:nec:crypto-core
+  =.  pass.ames-state.nec  pub:ex:nec:crypto-core
   ::  create ~bud
   ::
-  =/  bud  (ames-raw ~bud)
+  =/  bud  ^$:(%*($ ames-raw ahoy-on %.n, +< ~bud))
   =.  now.bud  ~1111.1.1
   =.  eny.bud  0v3f.arfnf
   =.  life.ames-state.bud  bud.life
   =.  rift.ames-state.bud  bud.rift
   =.  rof.bud  |=(* ``[%noun !>(*(list turf))])
-  =/  bud-pub  pub:ex:bud:crypto-core
-  =.  priv.ames-state.bud  sec:ex:bud:crypto-core
+  =.  saf.ames-state.bud   saf:ex:bud:crypto-core
+  =.  ring.ames-state.bud  sec:ex:bud:crypto-core
+  =.  pass.ames-state.bud  pub:ex:bud:crypto-core
   ::
-  =/  nec-sym  (derive-symmetric-key:ames-raw bud-pub priv.ames-state.nec)
-  =/  bud-sym  (derive-symmetric-key:ames-raw nec-pub priv.ames-state.bud)
+  =/  nec-sym
+    (derive-symmetric-key:ames-raw pub.saf.ames-state.bud sek.saf.ames-state.nec)
+  =/  bud-sym
+    (derive-symmetric-key:ames-raw pub.saf.ames-state.nec sek.saf.ames-state.bud)
   ~&  nec-sym/nec-sym
   ~&  bud-sym/bud-sym
   ?>  =(nec-sym bud-sym)
   ::  create ~zod
   ::
-  =/  zod  (ames-raw ~zod)
+  =/  zod  ^$:(%*($ ames-raw ahoy-on %.n, +< ~zod))
   =.  now.zod  ~1111.1.1
   =.  eny.zod  0v3f.arfnf
   =.  life.ames-state.zod  zod.life
   =.  rift.ames-state.zod  zod.rift
   =.  rof.zod  |=(* ``[%noun !>(*(list turf))])
-  =/  zod-pub  0w9M.E8uEq.bMUA6.w3JpW.1mp5L.Olult.RbUD8.zKS7S.6ULTf.2Vu1e.X82gL.sJpEJ.1laGg.OqNMv.Lczji.r12Pn.~Z7bb.GCvty
-  =/  zod-sec  0w84.0MwlQ.y2Ly9.6HVmH.8SYwo.EvuLC.f5YRw.T2NzD.EHtjZ.gpHZb.J0Pu5.aTGVL.UugSA.EZ~E9.~PODC.cohVD.B1zWj.ZWnJ2
-  =.  priv.ames-state.zod  zod-sec
+  =.  pass.ames-state.zod  0w9M.E8uEq.bMUA6.w3JpW.1mp5L.Olult.RbUD8.zKS7S.6ULTf.2Vu1e.X82gL.sJpEJ.1laGg.OqNMv.Lczji.r12Pn.~Z7bb.GCvty
+  =.  ring.ames-state.zod  0w84.0MwlQ.y2Ly9.6HVmH.8SYwo.EvuLC.f5YRw.T2NzD.EHtjZ.gpHZb.J0Pu5.aTGVL.UugSA.EZ~E9.~PODC.cohVD.B1zWj.ZWnJ2
+  =.  saf.ames-state.bud   saf:ex:(nol:nu:cric:crypto ring.ames-state.zod)
   ::
   :: =/  nec-sym  0wRP.97l8B.vvz64.3eFJz.lEp0u.8KKj-.0MiR6.8nbji.DBNki
   :: =/  zod-sym  0wRP.97l8B.vvz64.3eFJz.lEp0u.8KKj-.0MiR6.8nbji.DBNki
@@ -81,7 +84,7 @@
       :*  symmetric-key=bud-sym
           life=bud.life
           rift=bud.rift
-          public-key=bud-pub
+          [public-keys=pub.saf pass=pass]:ames-state.bud
           sponsor=~bud
       ==
     =.  route.peer-state  `[direct=%.y %& ~bud]
@@ -95,7 +98,7 @@
       :*  symmetric-key=nec-sym
           life=nec.life
           rift=nec.rift
-          public-key=nec-pub
+          [public-keys=pub.saf pass=pass]:ames-state.nec
           sponsor=~nec
       ==
     =.  route.peer-state  `[direct=%.y %& ~nec]
@@ -196,9 +199,10 @@
   ^-  @
   =/  sample     [now=~1111.1.1 eny=`@`0xdead.beef *roof]
   =/  ames-core  (ames-gate sample)
-  ?~  pact=(co-make-pact:co:mesa:ames-core spar `path per-rift)
+  ?~  pact=(ma-pact:ma:mesa:ames-core spar `path per-rift)
     !!
-  p:(fax:plot (en:pact:ames u.pact))
+  ?>  ?=([%| *] pact)
+  p:(fax:plot (en:pact:ames +.pact))
 ::
 ++  ames-scry-payload
   |=  [=ames-gate =ship =path]

@@ -189,7 +189,7 @@
     ::
     %+  expect-eq
       !>  ~
-      !>  (~(del in ~) 1)
+      !>  (~(del in *(set @)) 1)
     ::  Checks deleting non-existing element
     ::
     %+  expect-eq

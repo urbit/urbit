@@ -72,14 +72,13 @@
       =/  =cage       spider-start+!>(start-args)
       =/  spider      [our.bowl %spider]
       =/  =wire       /thread-result/[tid]
-      ~&  tid+tid
       :~  [%pass /the/[ta-now] %agent spider %watch wire]
           [%pass /the/[ta-now] %agent spider %poke cage]
           [%pass /the/diff/[ta-now] %agent spider %watch /the/[tid]/diff]
       ==
       ::
         %pok
-      [%pass /sub %agent [who.action whe.action] %poke %noun !>([%null ~])]~
+      [%pass /sub %agent [who.action whe.action] %poke %noun !>([%null (bex (bex 14))])]~
       ::
         %hi
       =/  tid         `@ta`(cat 3 'thread_' (scot %uv (sham eny.bowl)))

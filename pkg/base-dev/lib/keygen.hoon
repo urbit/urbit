@@ -94,7 +94,7 @@
     |=  seed=@
     ^-  edkeys
     =+  =<  [pub=pub:ex sec=sec:ex]
-        (pit:nu:crub:crypto 256 seed)
+        (pit:nu:cric:crypto 256 seed %b ~)
     :-  ^=  auth
         :-  (rsh 3 (end [3 33] pub))
             (rsh 3 (end [3 33] sec))

@@ -7,18 +7,37 @@
 ::  basic helpers
 ::
 |%
+++  comet-a-ring
+  0wfm.lBEWM.08gfy.AxYjy.8-tBQ.uq-aa.LZt9c.CVQqd.XBJIs.
+  CoG90.BNNGV.1ZmVi.ZbAhY.LuhwC.idNnU.lCVkt.Z4qug.7iY92
+::
+++  comet-b-ring
+  0w3-.kl6Hg.mLISf.pDTQQ.LymxF.q4Isr.AGUAv.uJvkf.DOjeU.
+  U8OPv.XO9T2.Hfhe~.zFwpO.Q1tn5.BeBSQ.o4MTS.lTWAh.TcOJ2
+::
+++  moon-a  ~mister-dister-norsyr-torryn
+++  moon-b  ~mister-roller-norsyr-torryn
+++  planet-a  ~norsyr-torryn
+++  planet-b  ~torryn-norsyr
+::
 ++  crypto-core
-  |%  ++  nec  (pit:nu:crub:crypto 512 (shaz 'nec'))
-      ++  bud  (pit:nu:crub:crypto 512 (shaz 'bud'))
-      ++  zod  (pit:nu:crub:crypto 512 (shaz 'zod'))
+  |%  ++  nec        (pit:nu:cric:crypto 512 (shaz 'nec') %b ~)
+      ++  bud        (pit:nu:cric:crypto 512 (shaz 'bud') %b ~)
+      ++  zod        (pit:nu:cric:crypto 512 (shaz 'zod') %b ~)
+      ++  comet-a    (nol:nu:cric:crypto comet-a-ring)
+      ++  comet-b    (nol:nu:cric:crypto comet-b-ring)
+      ++  moon-a     (pit:nu:cric:crypto 32 (shaz ^moon-a) %b ~)
+      ++  moon-b     (pit:nu:cric:crypto 32 (shaz ^moon-b) %b ~)
+      ++  planet-a   (pit:nu:cric:crypto 32 (shaz ^planet-a) %b ~)
+      ++  planet-b   (pit:nu:cric:crypto 32 (shaz ^planet-b) %b ~)
       ++  sign
         |=  [=ship data=@ux]
-        %.  data
         ?:  =(ship ~nec)
-          sigh:as:nec
+          (sign:ed:crypto data sgn:ven:ex:nec)
         ?:  =(ship ~zod)
-          sigh:as:zod
-        sigh:as:bud
+          (sign:ed:crypto data sgn:ven:ex:zod)
+        (sign:ed:crypto data sgn:ven:ex:bud)
+  ::
   --
 ::
 ++  make-gall
@@ -38,8 +57,9 @@
   =.  life.ames-state.nec  nec.life
   =.  rift.ames-state.nec  nec.rift
   =.  rof.nec  |=(* ``[%noun !>(*(list turf))])
-  =/  nec-pub  pub:ex:nec:crypto-core
-  =.  priv.ames-state.nec  sec:ex:nec:crypto-core
+  =.  ring.ames-state.nec  sec:ex:nec:crypto-core
+  =.  pass.ames-state.nec  pub:ex:nec:crypto-core
+  =.  saf.ames-state.nec   saf:ex:nec:crypto-core
   ::  create ~bud
   ::
   =/  bud  (ames-raw ~bud)
@@ -48,11 +68,14 @@
   =.  life.ames-state.bud  bud.life
   =.  rift.ames-state.bud  bud.rift
   =.  rof.bud  |=(* ``[%noun !>(*(list turf))])
-  =/  bud-pub  pub:ex:bud:crypto-core
-  =.  priv.ames-state.bud  sec:ex:bud:crypto-core
+  =.  ring.ames-state.bud  sec:ex:bud:crypto-core
+  =.  pass.ames-state.bud  pub:ex:bud:crypto-core
+  =.  saf.ames-state.bud   saf:ex:bud:crypto-core
   ::
-  =/  nec-sym  (derive-symmetric-key:ames-raw bud-pub priv.ames-state.nec)
-  =/  bud-sym  (derive-symmetric-key:ames-raw nec-pub priv.ames-state.bud)
+  =/  nec-sym
+    (derive-symmetric-key:ames-raw pub.saf.ames-state.bud sek.saf.ames-state.nec)
+  =/  bud-sym
+    (derive-symmetric-key:ames-raw pub.saf.ames-state.nec sek.saf.ames-state.bud)
   ?>  =(nec-sym bud-sym)
   ::  tell ~nec about ~bud
   ::
@@ -63,7 +86,7 @@
       :*  symmetric-key=bud-sym
           life=bud.life
           rift=bud.rift
-          public-key=bud-pub
+          [public-keys=pub.saf pass=pass]:ames-state.bud
           sponsor=~bud
       ==
     =.  lane.fren-state  `[0 *lane:pact:ames]
@@ -77,7 +100,7 @@
       :*  symmetric-key=nec-sym
           life=nec.life
           rift=nec.rift
-          public-key=nec-pub
+          [public-keys=pub.saf pass=pass]:ames-state.nec
           sponsor=~nec
       ==
     =.  lane.fren-state  `[0 *lane:pact:ames]
@@ -88,6 +111,165 @@
   =>  .(bud +:(call:(bud) ~[//unix] ~ %born ~))
   ::
   [nec=nec bud=bud]
+::
+++  ames-comets-moons-planets-galaxies
+  |=  $:  life=[comet-a=@ud comet-b=@ud moon-a=@ud moon-b=@ud planet-a=@ud planet-b=@ud galaxy-a=@ud galaxy-b=@ud]
+          rift=[comet-a=@ud comet-b=@ud moon-a=@ud moon-b=@ud planet-a=@ud planet-b=@ud galaxy-a=@ud galaxy-b=@ud]
+      ==
+  ::  create each ship: set now, eny, life, rift, rof, and crypto keys
+  ::
+  =/  comet-a  (ames-raw ~dacrum-tordyt-dassel-mogred--sabnyx-malbes-mogdef-litzod)
+  =.  now.comet-a   ~1111.1.1
+  =.  eny.comet-a   0v3f.arfnf
+  =.  life.ames-state.comet-a  comet-a.life
+  =.  rift.ames-state.comet-a  comet-a.rift
+  =.  rof.comet-a   |=(* ``[%noun !>(*(list turf))])
+  =.  ring.ames-state.comet-a  sec:ex:comet-a:crypto-core
+  =.  pass.ames-state.comet-a  pub:ex:comet-a:crypto-core
+  =.  saf.ames-state.comet-a   saf:ex:comet-a:crypto-core
+  ::
+  =/  comet-b  (ames-raw ~lopdur-lopsyl-tagted-lidbet--podlud-sicnux-tidlev-marzod)
+  =.  now.comet-b   ~1111.1.1
+  =.  eny.comet-b   0v3f.arfnf
+  =.  life.ames-state.comet-b  comet-b.life
+  =.  rift.ames-state.comet-b  comet-b.rift
+  =.  rof.comet-b   |=(* ``[%noun !>(*(list turf))])
+  =.  ring.ames-state.comet-b  sec:ex:comet-b:crypto-core
+  =.  pass.ames-state.comet-b  pub:ex:comet-b:crypto-core
+  =.  saf.ames-state.comet-b   saf:ex:comet-b:crypto-core
+  ::
+  =/  moon-a  (ames-raw moon-a)
+  =.  now.moon-a   ~1111.1.1
+  =.  eny.moon-a   0v3f.arfnf
+  =.  life.ames-state.moon-a  moon-a.life
+  =.  rift.ames-state.moon-a  moon-a.rift
+  =.  rof.moon-a   |=(* ``[%noun !>(*(list turf))])
+  =.  ring.ames-state.moon-a  sec:ex:moon-a:crypto-core
+  =.  pass.ames-state.moon-a  pub:ex:moon-a:crypto-core
+  =.  saf.ames-state.moon-a   saf:ex:moon-a:crypto-core
+  ::
+  =/  moon-b  (ames-raw moon-b)
+  =.  now.moon-b   ~1111.1.1
+  =.  eny.moon-b   0v3f.arfnf
+  =.  life.ames-state.moon-b  moon-b.life
+  =.  rift.ames-state.moon-b  moon-b.rift
+  =.  rof.moon-b   |=(* ``[%noun !>(*(list turf))])
+  =.  ring.ames-state.moon-b  sec:ex:moon-b:crypto-core
+  =.  pass.ames-state.moon-b  pub:ex:moon-b:crypto-core
+  =.  saf.ames-state.moon-b   saf:ex:moon-b:crypto-core
+  ::
+  =/  planet-a  (ames-raw planet-a)
+  =.  now.planet-a   ~1111.1.1
+  =.  eny.planet-a   0v3f.arfnf
+  =.  life.ames-state.planet-a  planet-a.life
+  =.  rift.ames-state.planet-a  planet-a.rift
+  =.  rof.planet-a   |=(* ``[%noun !>(*(list turf))])
+  =.  ring.ames-state.planet-a  sec:ex:planet-a:crypto-core
+  =.  pass.ames-state.planet-a  pub:ex:planet-a:crypto-core
+  =.  saf.ames-state.planet-a   saf:ex:planet-a:crypto-core
+  ::
+  =/  planet-b  (ames-raw planet-b)
+  =.  now.planet-b   ~1111.1.1
+  =.  eny.planet-b   0v3f.arfnf
+  =.  life.ames-state.planet-b  planet-b.life
+  =.  rift.ames-state.planet-b  planet-b.rift
+  =.  rof.planet-b   |=(* ``[%noun !>(*(list turf))])
+  =.  ring.ames-state.planet-b  sec:ex:planet-b:crypto-core
+  =.  pass.ames-state.planet-b  pub:ex:planet-b:crypto-core
+  =.  saf.ames-state.planet-b   saf:ex:planet-b:crypto-core
+  ::
+  =/  galaxy-a  (ames-raw ~nec)
+  =.  now.galaxy-a   ~1111.1.1
+  =.  eny.galaxy-a   0v3f.arfnf
+  =.  life.ames-state.galaxy-a  galaxy-a.life
+  =.  rift.ames-state.galaxy-a  galaxy-a.rift
+  =.  rof.galaxy-a   |=(* ``[%noun !>(*(list turf))])
+  =.  ring.ames-state.galaxy-a  sec:ex:nec:crypto-core
+  =.  pass.ames-state.galaxy-a  pub:ex:nec:crypto-core
+  =.  saf.ames-state.galaxy-a   saf:ex:nec:crypto-core
+  ::
+  =/  galaxy-b  (ames-raw ~bud)
+  =.  now.galaxy-b   ~1111.1.1
+  =.  eny.galaxy-b   0v3f.arfnf
+  =.  life.ames-state.galaxy-b  galaxy-b.life
+  =.  rift.ames-state.galaxy-b  galaxy-b.rift
+  =.  rof.galaxy-b   |=(* ``[%noun !>(*(list turf))])
+  =.  ring.ames-state.galaxy-b  sec:ex:bud:crypto-core
+  =.  pass.ames-state.galaxy-b  pub:ex:bud:crypto-core
+  =.  saf.ames-state.galaxy-b   saf:ex:bud:crypto-core
+  ::
+  ::  connect-all: for each ship A, register every other ship B in A's chums.
+  ::  iterates all ordered pairs (A,B) with A≠B; derives shared key from
+  ::  A's sek and B's pub (ECDH), then writes B into A's chums map.
+  ::
+  =/  connect-all
+    |=  ss=(list [g=_ames-bunt lif=@ud rif=@ud])
+    ^+  ss
+    %+  turn  ss
+    |=  a=[g=_ames-bunt lif=@ud rif=@ud]
+    ^+  a
+    =/  others  ss
+    |-  ^+  a
+    ?~  others
+      a
+    =/  b  i.others
+    ?:  =(our.g.b our.g.a)
+      $(others t.others)
+    =/  sym
+      (derive-symmetric-key:ames-raw pub.saf.ames-state.g.b sek.saf.ames-state.g.a)
+    =.  g.a
+      =.  chums.ames-state.g.a
+        %+  ~(put by chums.ames-state.g.a)  our.g.b
+        =|  =fren-state:ames
+        =.  -.fren-state
+          :*  symmetric-key=sym
+              lif.b
+              rif.b
+              [public-keys=pub.saf pass=pass]:ames-state.g.b
+              sponsor=~bud
+          ==
+        =.  lane.fren-state  `[0 *lane:pact:ames]
+        [%known fren-state]
+      g.a
+    $(others t.others)
+  ::
+  =/  ships
+    %:  connect-all
+        :~  [comet-a comet-a.life comet-a.rift]
+            [comet-b comet-b.life comet-b.rift]
+            [moon-a moon-a.life moon-a.rift]
+            [moon-b moon-b.life moon-b.rift]
+            [planet-a planet-a.life planet-a.rift]
+            [planet-b planet-b.life planet-b.rift]
+            [galaxy-a galaxy-a.life galaxy-a.rift]
+            [galaxy-b galaxy-b.life galaxy-b.rift]
+    ==  ==
+  ::
+  =/  comet-a   g:(snag 0 ships)
+  =/  comet-b   g:(snag 1 ships)
+  =/  moon-a    g:(snag 2 ships)
+  =/  moon-b    g:(snag 3 ships)
+  =/  planet-a  g:(snag 4 ships)
+  =/  planet-b  g:(snag 5 ships)
+  =/  galaxy-a  g:(snag 6 ships)
+  =/  galaxy-b  g:(snag 7 ships)
+  ::  metamorphose
+  ::
+  =>  .(comet-a +:(call:(comet-a) ~[//unix] ~ %born ~))
+  =>  .(comet-b +:(call:(comet-b) ~[//unix] ~ %born ~))
+  =>  .(moon-a +:(call:(moon-a) ~[//unix] ~ %born ~))
+  =>  .(moon-b +:(call:(moon-b) ~[//unix] ~ %born ~))
+  =>  .(planet-a +:(call:(planet-a) ~[//unix] ~ %born ~))
+  =>  .(planet-b +:(call:(planet-b) ~[//unix] ~ %born ~))
+  =>  .(galaxy-a +:(call:(galaxy-a) ~[//unix] ~ %born ~))
+  =>  .(galaxy-b +:(call:(galaxy-b) ~[//unix] ~ %born ~))
+  ::
+  :*  comet-a=comet-a    comet-b=comet-b
+      moon-a=moon-a      moon-b=moon-b
+      planet-a=planet-a  planet-b=planet-b
+      galaxy-a=galaxy-a  galaxy-b=galaxy-b
+  ==
+::
 --
 ::  forward-declare to avoid repeated metamorphoses
 ::
@@ -176,9 +358,10 @@
   ^-  @
   =/  sample     [now=~1111.1.1 eny=`@`0xdead.beef poke-roof]
   =/  ames-core  (ames-gate sample)
-  ?~  pact=(co-make-pact:co:mesa:ames-core spar `path per-rift)
+  ?~  pact=(ma-pact:ma:mesa:ames-core spar `path per-rift)
     !!
-  p:(fax:plot (en:pact:ames u.pact))
+  ?>  ?=([%| *] pact)
+  p:(fax:plot (en:pact:ames +.pact))
 ::
 ++  ames-scry-payload
   |=  [=ames-gate her=ship our=ship =path]

@@ -1240,7 +1240,7 @@
         (rsh 3 (spat p.mime))  q.mime
     ::  attempt to find conversion gate to mime
     ::
-    =/  tub=(unit [tub=tube:clay mov=move])
+    =/  tub=(unit tub=tube:clay)
       (find-tube i.site.req mark %mime)
     ?~  tub  (error-response 500 "no tube from {(trip mark)} to mime")
     ::  attempt conversion, then send results
@@ -1253,11 +1253,11 @@
         %&  %+  return-static-data-on-duct  200
             [(rsh 3 (spat p.p.mym)) q.p.mym]
       ==
-    [[mov.u.tub cards] state]
+    [cards state]
     ::
     ++  find-tube
       |=  [dap=term from=mark to=mark]
-      ^-  (unit [tube:clay move])
+      ^-  (unit tube:clay)
       =/  des=(unit (unit cage))
         (do-scry %gd dap /$)
       ?.  ?=([~ ~ *] des)  ~
@@ -1266,9 +1266,7 @@
         (do-scry %cc desk /[from]/[to])
       ?.  ?=([~ ~ %tube *] tub)  ~
       :-  ~
-      :-  !<(tube:clay q.u.u.tub)
-      :^  duct  %pass  /conversion-cache/[from]
-      [%c %warp our desk `[%sing %c da+now /[from]/[to]]]
+      !<(tube:clay q.u.u.tub)
     ::
     ++  do-scry
       |=  [care=term =desk =path]
@@ -1442,13 +1440,18 @@
         o(session-id session.fex)
       ::  store the hostname used for this login, later reuse it for eauth
       ::
-      =?  endpoint.auth.state
-          ::  avoid overwriting public domains with localhost
-          ::
-          ?&  ?=(^ host)
-          ?|  ?=(~ auth.endpoint.auth.state)
-              !=('localhost' (fall (rush u.host host-sans-port) ''))
-          ==  ==
+      =.  endpoint.auth.state
+        ?~  host  endpoint.auth.state
+        =/  parsed-host=(unit ^host)
+          (rush u.host (cook tail thor:de-purl:html))
+        ::  avoid overwriting public domains with localhost or .local
+        ::
+        ?:  ?&  ?=(^ auth.endpoint.auth.state)
+                ?|  =([~ %& 'localhost' ~] parsed-host)
+                    =([~ %| .127.0.0.1] parsed-host)
+                    ?=([~ %& %local *] parsed-host)
+            ==  ==
+          endpoint.auth.state
         %-  (trace 2 |.("eauth: storing endpoint at {(trip u.host)}"))
         =/  new-auth=(unit @t)
           `(cat 3 ?:(secure 'https://' 'http://') u.host)
@@ -1542,10 +1545,13 @@
     ++  session-id-from-request
       |=  =request:http
       ^-  (unit @uv)
-      ::  is there an authorization header?
+      ::  is there an authorization header with a legible session token?
       ::
-      ?^  auth=(get-header:http 'authorization' header-list.request)
+      =/  from-header=(unit @uv)
+        ?~  auth=(get-header:http 'authorization' header-list.request)
+          ~
         (rush u.auth ;~(pfix (jest 'Bearer 0v') viz:ag))
+      ?^  from-header  from-header
       ::  are there cookies passed with this request?
       ::
       =/  cookie-header=@t
@@ -1921,7 +1927,7 @@
           ::
           =/  =wire       /eauth/keen/(scot %p ship)/(scot %uv nonce)
           =.   time       (sub time (mod time eauth-cache-rounding))
-          =/  =spar:ames  [ship /e/x/(scot %da time)//eauth/url]
+          =/  =spar:ames  [ship /e/x/(scot:h136 %da time)//eauth/url]
           [duct %pass wire %a ?-(kind %keen keen+[~ spar], %yawn yawn+spar)]
         ::
         ++  send-boon
@@ -2478,7 +2484,7 @@
         =/  said
           (channel-event-to-cord channel request-id channel-event)
         ?~  said  $
-        $(events [(event-cord-to-event-stream id +.u.said) events])
+        $(events [(event-cord-to-event-stream id u.said) events])
       ?:  exit  [moves state]
       ::  send the start event to the client
       ::
@@ -2803,10 +2809,8 @@
         (sign-to-channel-event sign u.channel request-id)
       ?~  maybe-channel-event  [~ state]
       =/  =channel-event  u.maybe-channel-event
-      =/  said=(unit (quip move cord))
+      =/  said=(unit cord)
         (channel-event-to-cord u.channel request-id channel-event)
-      =?  moves  ?=(^ said)
-        (weld moves -.u.said)
       =*  sending  &(?=([%| *] state.u.channel) ?=(^ said))
       ::
       =/  next-id  next-id.u.channel
@@ -2829,7 +2833,7 @@
             ^=  data
             :-  ~
             %-  as-octs:mimes:html
-            (event-cord-to-event-stream next-id +:(need said))
+            (event-cord-to-event-stream next-id (need said))
         ::
             complete=%.n
         ==
@@ -2893,7 +2897,7 @@
             :-  ~
             %-  as-octs:mimes:html
             %+  event-cord-to-event-stream  next-id
-            +:(need (channel-event-to-cord u.channel request-id %kick ~))
+            (need (channel-event-to-cord u.channel request-id %kick ~))
         ::
             complete=%.n
         ==
@@ -2931,11 +2935,11 @@
     ::
     ++  channel-event-to-cord
       |=  [=channel request-id=@ud =channel-event]
-      ^-  (unit (quip move cord))
+      ^-  (unit cord)
       ?-  mode.channel
         %json  %+  bind  (channel-event-to-json channel request-id channel-event)
-               |=((quip move json) [+<- (en:json:html +<+)])
-        %jam   =-  `[~ (scot %uw (jam -))]
+               |=(j=json (en:json:html j))
+        %jam   =-  `(scot %uw (jam -))
                [request-id channel-event]
       ==
     ::  +channel-event-to-json: render channel event as json channel event
@@ -2943,7 +2947,7 @@
     ++  channel-event-to-json
       ~%  %eyre-channel-event-to-json  ..part  ~
       |=  [=channel request-id=@ud event=channel-event]
-      ^-  (unit (quip move json))
+      ^-  (unit json)
       ::  for facts, we try to convert the result to json
       ::
       =/  [from=(unit [=desk =mark]) jsyn=(unit sign:agent:gall)]
@@ -2968,10 +2972,6 @@
         [`[desk.event have] `[%fact %json (slym u.convert noun.event)]]
       ?~  jsyn  ~
       %-  some
-      :-  ?~  from  ~
-          :_  ~
-          :^  duct  %pass  /conversion-cache/[mark.u.from]
-          [%c %warp our desk.u.from `[%sing %f da+now /[mark.u.from]/json]]
       =*  sign  u.jsyn
       =,  enjs:format
       %-  pairs
@@ -4436,7 +4436,8 @@
     =/  end=(unit @ud)  (slaw %ud i.t.t.tyl)
     =*  vew   i.t.t.t.tyl
     =*  rest  t.t.t.t.tyl
-    =/  mym  (scry-mime now rof lyc ~ [%$ vew (en-beam -.bem rest)])
+    =/  =pork  (deft:de-purl:html rest)
+    =/  mym  (scry-mime now rof lyc p.pork [%$ vew (en-beam -.bem q.pork)])
     ?:  ?=(%| -.mym)  ~
     =*  mime  p.mym
     ?~  range=(get-range [beg end] p.q.mime)
@@ -4448,9 +4449,9 @@
         ['content-range' (cat 3 'bytes */' (crip (a-co:co p.q.mime)))]^~
       `(as-octs:mimes:html 'requested range not satisfiable')
     ::
+    =/  len  +((sub q.u.range p.u.range))
     =/  =octs
-      %-  as-octs:mimes:html
-      (cut 3 [p.u.range +((sub q.u.range p.u.range))] q.q.mime)
+      [len (cut 3 [p.u.range len] q.q.mime)]
     :^  ~  ~  %noun
     !>  ^-  cache-entry
     :-  ?=(^ lyc)
