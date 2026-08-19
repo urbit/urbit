@@ -24,7 +24,7 @@
     %+  turn  ~(tap in sessions)
     |=  id=sole-id
     %-  pairs
-    :~  ship+(ship who.id)
+    :~  ship+s+(scot %p who.id)
         session+s+ses.id
     ==
   --
