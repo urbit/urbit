@@ -102,27 +102,6 @@
       ::
       check-session-timer=_|
   ==
-::  $unpacked-request: a request and inferred details
-::
-::    .request:       the request from which the other details were inferred
-::    .authenticated: whether the request is authenticated as the local host
-::    .session:       the auth session provided by the request & its identity
-::
-::    two important details to know about this data structure's lifecycle:
-::    - the details are inferred from the .request _during initial creation_,
-::      but may be updated after the fact. this means that they don't always
-::      reflect the _contents_ of the request, but do reflect the _ownership_
-::      of the request.
-::      if during the handling of a unpacked-request, you mint a new session
-::      for it, you MUST update the .authenticated and  .session accordingly.
-::    - if .authenticated is true, then a .session MUST be present and point
-::      to a session whose identity is [%ours ~].
-::
-+$  unpacked-request
-  $:  =request:http
-      authenticated=?
-      session=(unit [sid=@uv =identity])
-  ==
 ::  channel-request: an action requested on a channel
 ::
 +$  channel-request
@@ -1622,6 +1601,7 @@
   ++  request-to-app
     |=  [unpacked-request app=term secure=? =address]
     ^-  [(list move) server-state]
+    =*  req  +<-
     ::  requests into userspace must always have an associated identity.
     ::  if the request provided no auth, mint a guest identity.
     ::
@@ -1632,11 +1612,8 @@
     ::  the request will be handled outside of eyre ("asynchronously"),
     ::  so store the connection in state before dispatching
     ::
-    =/  =inbound-request
-      [authenticated secure address request]
     =.  connections.state
-      %+  ~(put by connections.state)  duct
-      [[%app app] inbound-request [suv identity] ~ 0]
+      (~(put by connections.state) duct [req [%app app] ~ 0])
     ::  subscribe to the agent and poke it with the request
     ::
     :_  state
@@ -1649,7 +1626,8 @@
           /run-app-request/[eyre-id]
         :^  identity  our  app
         :+  %poke  %handle-http-request
-        !>(`[@ta inbound-request:eyre]`[eyre-id inbound-request])
+        !>  ^-  [@ta inbound-request:eyre]
+        [eyre-id authenticated secure address request]
     ==
   ::  +cancel-request: handles a request being externally aborted
   ::
@@ -1670,7 +1648,10 @@
       :_  ~
       =,  u.connection
       %-  (trace 1 |.("leaving subscription to {<app.action>}"))
-      (deal-as /watch-response/[eyre-id] identity our app.action %leave ~)
+      ::  requests to userspace are guaranteed to have an identity/session
+      ::
+      ?>  ?=(^ session.u.connection)
+      (deal-as /watch-response/[eyre-id] identity.u.session our app.action %leave ~)
     ::
         ?(%authentication %eauth %auth %logout)
       ::NOTE  expiry timer will clean up cancelled eauth attempts
@@ -2181,14 +2162,7 @@
           =.  visitors.auth  (~(put by visitors.auth) nonce visit)
           =.  connections.state
             %+  ~(put by connections.state)  duct
-            ::TODOyy  FAUX!!! etc
-            :+  [%eauth ~]
-              [authenticated.req secure=| *address:eyre request.req]
-            ::TODOyy  session info to become optional
-            =-  [(fall session.req [0v0 [%fake -] ~]) ~ 0]
-            %^  cat  3
-              (end 3^8 (fein:ob our))
-            ~fipfes-fipfes-fipfes-fipfes--fipfes-fipfes-fipfes-fipfes
+            [req [%eauth ~] ~ 0]
           :_  state
           ::  we delay serving an http response until we receive a scry %tune
           ::
@@ -2403,8 +2377,7 @@
             (~(put by map.book) nonce [`duct ?:(grant `token ~)])
           =.  connections.state
             %+  ~(put by connections.state)  duct
-            ::TODOyy  FAUX!!! etc
-            [[%eauth ~] [authenticated.req secure=| *address:eyre request.req] (need session.req) ~ 0]
+            [req [%eauth ~] ~ 0]
           state
         ::  +on-done: receive n/ack for plea we sent
         ::
@@ -2630,8 +2603,7 @@
             =.  visiting.auth  (~(put by visiting.auth) u.server book)
             =.  connections.state
               %+  ~(put by connections.state)  duct
-              ::TODOyy  FAUX!!!! don't need secure and address????
-              [[%eauth ~] [authenticated.req secure=| *address request.req] u.session.req ~ 0]
+              [req [%eauth ~] ~ 0]
             ::  resolve the previous request gracefully
             ::
             %-  async-data(duct u.pend.u.door)
@@ -3089,11 +3061,8 @@
         ::  so do the necessary bookkeeping
         ::
         =.  connections.state
-          ::NOTE  session.req guaranteed to exist & match identity.channel
-          ::      due to the .exit condition implemented above
           %+  ~(put by connections.state)  duct
-          ::TODOyy  FAUX!!! CAREFUL!!! but do we really need secure & address in connection state?
-          [[%channel ~] [authenticated.req secure=| *address request.req] (need session.req) ~ 0]
+          [req [%channel ~] ~ 0]
         %-  async:response
         :*  %start
             :-  200
@@ -3715,15 +3684,18 @@
       :_  ~
       =,  connection
       %-  (trace 1 |.("leaving subscription to {<app.action>}"))
-      (deal-as /watch-response/[eyre-id] identity our app.action %leave ~)
+      ::  requests to userspace are guaranteed to have an identity/session
+      ::
+      ?>  ?=(^ session.connection)
+      (deal-as /watch-response/[eyre-id] identity.u.session our app.action %leave ~)
     ::
     =^  moves-2  state
       %-  async-data
       :+  500  'text/html'
       ::
       %-  internal-server-error  :*
-          authenticated.inbound-request.connection
-          url.request.inbound-request.connection
+          authenticated.connection
+          url.request.connection
           tang
       ==
     [(weld moves-1 moves-2) state]
@@ -3756,13 +3728,11 @@
     ?:  &(?=(%async request) !(~(has by connections.state) duct))
       ((trace 0 |.("{<duct>} unknown outstanding connection")) `state)
     =/  [req=unpacked-request res=[h=(unit response-header:http) b=@ud]]
-      ?^  request
-        ~|  %sync-start-bookkept-connection
-        ?<  (~(has by connections.state) duct)
-        [request ~ 0]
-      =+  (~(got by connections.state) duct)
-      :-  [request.inbound-request authenticated.inbound-request `[session-id identity]]
-      [response-header bytes-sent]
+      ?:  ?=(%async request)
+        [- +>]:(~(got by connections.state) duct)
+      ~|  %sync-start-bookkept-connection
+      ?<  (~(has by connections.state) duct)
+      [request ~ 0]
     ::
     |^  ^-  [(list move) server-state]
         ::
@@ -3819,7 +3789,6 @@
           =.  connections.state
             ?:  complete.http-event
               %-  (trace 2 |.("{<duct>} completed"))
-              ~&  %other-complete-del-by
               (~(del by connections.state) duct)
             ::
             %-  (trace 2 |.("{<duct>} continuing"))
@@ -3864,7 +3833,10 @@
       =,  u.con
       %-  %+  trace  1
           |.("leaving subscription to {<app.action>}")
-      (deal-as /watch-response/[eyre-id] identity our app.action %leave ~)
+      ::  requests to userspace are guaranteed to have an identity/session
+      ::
+      ?>  ?=(^ session.u.con)
+      (deal-as /watch-response/[eyre-id] identity.u.session our app.action %leave ~)
     --
   ::  +fill-headers: xx
   ::
@@ -3888,7 +3860,7 @@
     ::
     :: =/  origin=(unit origin)
     ::   %+  get-header:http  'origin'
-    ::   header-list.request.inbound-request.connection
+    ::   header-list.request.connection
     =?  headers
         ?&  ?=(^ origin)
             (~(has in approved.cors-registry.state) u.origin)

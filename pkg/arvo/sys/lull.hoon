@@ -3076,6 +3076,27 @@
         approved=(set origin)
         rejected=(set origin)
     ==
+  ::  $unpacked-request: a request and inferred details
+  ::
+  ::    .request:       the request from which the other details were inferred
+  ::    .authenticated: whether the request is authenticated as the local host
+  ::    .session:       the auth session provided by the request & its identity
+  ::
+  ::    two important details to know about this data structure's lifecycle:
+  ::    - the details are inferred from the .request _during initial creation_,
+  ::      but may be updated after the fact. this means that they don't always
+  ::      reflect the _contents_ of the request, but do reflect the _ownership_
+  ::      of the request.
+  ::      if during the handling of a unpacked-request, you mint a new session
+  ::      for it, you MUST update the .authenticated and  .session accordingly.
+  ::    - if .authenticated is true, then a .session MUST be present and point
+  ::      to a session whose identity is [%ours ~].
+  ::
+  +$  unpacked-request
+    $:  =request:http
+        authenticated=?
+        session=(unit [sid=@uv =identity])
+    ==
   ::  +outstanding-connection: open http connections not fully complete:
   ::
   ::    This refers to outstanding connections where the connection to
@@ -3083,20 +3104,12 @@
   ::    produce the results.
   ::
   +$  outstanding-connection
-    $:  ::  action: the action that had matched
+    $:  ::  the original request which caused this connection (and its deets)
+        ::
+        unpacked-request
+        ::  action: the action that had matched
         ::
         =action
-        ::  inbound-request: the original request which caused this connection
-        ::
-        =inbound-request
-        ::  session-id: the session associated with this connection
-        ::  identity:   the identity associated with this connection
-        ::
-        ::NOTE  technically the identity is associated with the session (id),
-        ::      but we may still need to know the identity that was used
-        ::      after the session proper expires.
-        ::
-        [session-id=@uv =identity]
         ::  response-header: set when we get our first %start
         ::
         response-header=(unit response-header:http)

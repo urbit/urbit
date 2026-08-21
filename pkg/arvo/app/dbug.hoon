@@ -429,14 +429,16 @@
       ::
         :-  'request'
         %-  pairs
-        =,  inbound-request
-        :~  'authenticated'^b+authenticated
-            'secure'^b+secure
-            'source'^s+(scot %if +.address)
-            :: ?-  -.address
-            ::   %ipv4  %if
-            ::   %ipv6  %is
-            :: ==
+        =/  ses=json
+          ?~  session  ~
+          %-  pairs
+          :~  'cookie'^s+(scot %uv sid.u.session)
+              'identity'^(render-identity-p:v-eyre identity.u.session)
+          ==
+        :~  'session'^ses  ::TODO  use in client code
+            'authenticated'^b+?=([~ @ [%ours ~] ~] session)  ::TODO  remove usage from client code
+            'secure'^b+|  ::TODO  remove usage from client code
+            'source'^s+'0.0.0.0'  ::TODO  remove usage from client code
         ==
       ::
         :-  'response'
