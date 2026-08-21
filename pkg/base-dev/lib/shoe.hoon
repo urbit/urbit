@@ -317,7 +317,12 @@
       ::  clear buffer
       ::
       =^  clear  cli-state  (~(transmit sole cli-state) [%set ~])
-      =-  [[[- cards] cli-state] shoe]
+      ::  send the prompt after the app's cards, mirroring +on-watch.
+      ::  clients may treat %pro as a completion signal: once it arrives,
+      ::  all effects from this command have been sent.
+      ::
+      =/  pro=card  (effect %pro & dap.bowl "> ")
+      =-  [[[- (snoc cards pro)] cli-state] shoe]
       %+  effect  %mor
       :~  [%nex ~]
           [%det clear]
