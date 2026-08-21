@@ -547,9 +547,12 @@
       ;div#local
         ;p:"Urbit ID"
         ;input(value "{(scow %p our)}", disabled "true", class "mono");
-        ;+  ?:  ?=([~ [%ours ~] *] identity)  ::TODO  "already authenticated as eauth"
+        ;+  ?:  ?=(?([~ [%ours ~] *] [~ [%real @] *]) identity)
+            =/  name=tape
+              ?.  ?=([~ [%real @] *] identity)  (scow %p our)
+              (scow %p who.who.u.identity)
               ;div
-                ;p:"Already authenticated"
+                ;p:"Already authenticated as {name}"
                 ;a.button/"{(trip (fall redirect-url '/'))}":"Continue"
               ==
         ;form(action "/~/login", method "post", enctype "application/x-www-form-urlencoded")
@@ -597,7 +600,7 @@
           ;button(name "eauth", type "submit"):"Continue"
         ==
       ==
-      ;*  ?:  ?=([~ [%ours ~] *] identity)  ~  ::TODO  or eauth? see also above
+      ;*  ?:  ?=(?([~ [%ours ~] *] [~ [%real @] *]) identity)  ~
           =+  as="proceed as{?:(?=(?(~ [~ [%fake *] *]) identity) " guest" "")}"
           ;+  ;span.guest.mono
                 ; Or try to
@@ -854,12 +857,13 @@
     ::  pseudo-header). if they don't, we'll send a 400.
     ::
     ?.  ?=(^ host)
-      ::TODO  should send a 400, but don't want to go through the song & dance
-      ::      of putting connection into state. should revisit this once
-      ::      request handling has been refactored.
       ::TODO  should also make all other logic that has host=(unit @t) just be
       ::      host=@t, or better yet, host=turf
-      !!
+      ::
+      =/  req=unpacked-request  [request | ~]
+      %+  instant-data  req
+      :+  400  'text/html'
+      (error-page 400 authenticated.req url.request ~)
     ::  parse the hostname from the request, then
     ::  either it's a naked ip address, or we
     ::  deduce the target scope from the known domain, based on known domains
@@ -1057,8 +1061,8 @@
       ?:  ?=(%| -.target)
         =.(msg "holm: no domain" fail)
       ::
-      =/  stop  (rush url.request parse-holm-url)  ::TODOxx  serve 400, illegal url shape
-      ?~  stop  =.(msg "holm: bad request url" fail)
+      =/  stop  (rush url.request parse-holm-url)
+      ?~  stop  =.(msg "holm: illegal url shape" fail)
       =*  step  u.stop
       ::
       ?-  -.step
@@ -1653,16 +1657,14 @@
       ?>  ?=(^ session.u.connection)
       (deal-as /watch-response/[eyre-id] identity.u.session our app.action %leave ~)
     ::
-        ?(%authentication %eauth %auth %logout)
+        %eauth
       ::NOTE  expiry timer will clean up cancelled eauth attempts
-      ::TODOxx  investigate if we need to clean up tmp-tokens or w/e
-      ::        answer: probably yes
       [~ state]
     ::
         %channel
       on-cancel-request:by-channel
     ::
-        ?(%scry %four-oh-four %name %host %ip %boot %sponsor %holm)
+        ?(%scry %four-oh-four %name %host %ip %boot %sponsor %holm %authentication %auth %logout)
       ::  it should be impossible for these to be asynchronous,
       ::  but also no clean-up needed, so don't crash just in case.
       ::  (crashing during %born handling is Very Bad.)
@@ -1850,17 +1852,14 @@
       ?~  redirect
         [200^~[col] `bod]
       =/  actual-redirect=@t  ?:(=(u.redirect '') '/' u.redirect)
-      =/  actual-desk=(unit @t)
-        ?~  target-desk  ~
-        ?:  =('' u.target-desk)  ~
-        `u.target-desk
-      =?  actual-redirect  ?&  ?=(^ actual-desk)
-                               ?=([%& *] target)
-                           ==
+      =?  actual-redirect   ?&  ?=(^ target-desk)
+                                !=('' u.target-desk)
+                                ?=([%& *] target)
+                            ==
         %+  rap  3
         :~  '//'
             (host-string -.p.target)
-            '/~/holm/sink/'  u.actual-desk
+            '/~/holm/sink/'  u.target-desk
             actual-redirect
         ==
       [303^~['location'^actual-redirect col] `bod]
@@ -3880,7 +3879,6 @@
     ?~  ses=(~(get by sessions) sid)
       ::  if the session has expired since the request was opened,
       ::  tough luck, we don't create/revive sessions here
-      ::TODOxx  should this serve cookie expiry header?
       ::
       [headers sessions]
     =/  kind  ?:(?=(%fake -.who.identity.u.ses) %guest %auth)
@@ -5097,8 +5095,8 @@
     ?.  ?=([%token @ *] tyl)  [~ tyl]
     :_  t.t.tyl
     ?:  =(%$ i.t.tyl)  ~
-    =+  sid=(slav %uv i.t.tyl)  ::TODO  may crash
-    ?~  ses=(~(get by sessions.auth.server-state.ax) sid)
+    ?~  sid=(slaw %uv i.t.tyl)  ~
+    ?~  ses=(~(get by sessions.auth.server-state.ax) u.sid)
       ~
     `scope.identity.u.ses
   ::
@@ -5163,7 +5161,6 @@
   ::
   ?.  ?=([~ ~] lyc)  ~
   ::
-  ::TODOxx  scry for getting certs?
   ?:  &(?=(%x ren) ?=(%$ syd))
     =,  server-state.ax
     ?+  tyl  ~
