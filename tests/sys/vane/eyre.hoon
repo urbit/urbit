@@ -1701,6 +1701,11 @@
     ++  ex-boon
       |=  boon=eauth-boon:eyre
       (ex ~[/http-blah] %give %boon boon)
+    ::
+    ++  has-visitor
+      %-  easy:(mare ,?)
+      |=  =state
+      (~(has by visitors.auth.server-state.ax.gate.state) nonce)
     --
   ::
   ++  client
@@ -1723,6 +1728,13 @@
     ++  ex-plea
       |=  [=ship plea=eauth-plea:eyre]
       (ex duct %pass wire %a %plea ship %e /eauth/(scot %ud %0) plea)
+    ::
+    ++  has-book
+      %-  easy:(mare ,?)
+      |=  =state
+      =/  host  ~hoster
+      ?~  logbook=(~(get by visiting.auth.server-state.ax.gate.state) host)  |
+      (~(has by map.u.logbook) 0vnonce)
     --
   --
 ::
@@ -1823,6 +1835,35 @@
   ;<  ~  bind:m
     (expect-moves mos (ex-yawn time) ex-rs ~)
   (pure:m ~)
+::  +test-eauth-incoming-canceled-got-sage: incoming eauth request
+::  got canceled bookkeeping on expire proceeds as intended
+::  without response
+::
+++  test-eauth-incoming-canceled-got-sage
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ^-  form:m
+  =,  server:eauth
+  ;<  ~  bind:m  (setup-for-eauth 'http://hoster.com')
+  ;<  *  bind:m  start
+  ::  cancel eauth request
+  ::
+  ;<  mos=(list move)  bind:m  (call ~[/http-blah] %cancel-request ~)
+  ;<  ~  bind:m  (expect-moves mos ~)
+  ::  received client-url remote scry result, connection removed
+  ::  expect no response
+  ::
+  ;<  mos=(list move)  bind:m  sage
+  ;<  ~  bind:m  (expect-moves mos ~)
+  ::  got eauth timer, doing cleanup
+  ::
+  ;<  ~  bind:m  (wait eauth-timeout:eyre-gate)
+  ;<  mos=(list move)  bind:m
+    =/  =^wire  /eauth/expire/visitors/(scot %uv nonce)
+    (take wire ~[/http-blah] %behn %wake ~)
+  ;<  ~              bind:m  (expect-moves mos ~)
+  ;<  in-visitors=?  bind:m  has-visitor
+  (try (expect-eq !>(%.n) !>(in-visitors)))
 ::
 ++  test-eauth-incoming-aborted
   %-  eval-mare
@@ -1911,6 +1952,38 @@
   ;<  ~  bind:m
     (expect-moves mos ex-rs ~)
   (pure:m ~)
+::  +test-eauth-outgoing-canceled: request to eauth got canceled,
+::  expire timer bookkeeping proceeds as intended without response
+::
+++  test-eauth-outgoing-canceled
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ^-  form:m
+  =,  client:eauth
+  ;<  ~  bind:m  (setup-for-eauth 'http://client.com')
+  ;<  mos=(list move)  bind:m  grant
+  ;<  now=@da          bind:m  get-now
+  =/  wir  /eauth/expire/visiting/~hoster/0vnonce
+  ;<  ~  bind:m
+    %+  expect-moves  mos
+    :~  (ex-plea ~hoster %0 %open 0vnonce `0v4.qkgot.d07e3.pi1qd.m1bhj.ti8bo)
+        (ex-wait wir (add now eauth-timeout:eyre-gate))
+    ==
+  ;<  in-book=?        bind:m  has-book
+  ;<  ~  bind:m  (try (expect-eq !>(%.y) !>(in-book)))
+  ::  cancel eauth request, connection removed
+  ::
+  ;<  mos=(list move)  bind:m  (call ~[/http-blah] %cancel-request ~)
+  ;<  ~                bind:m  (expect-moves mos ~)
+  ::  got eauth timer, entry removed from visiting logbook
+  ::  expecting no moves
+  ::
+  ;<  ~  bind:m  (wait eauth-timeout:eyre-gate)
+  ;<  mos=(list move)  bind:m
+    (take wir ~[/http-blah] %behn %wake ~)
+  ;<  ~          bind:m  (expect-moves mos ~)
+  ;<  in-book=?  bind:m  has-book
+  (try (expect-eq !>(%.n) !>(in-book)))
 ::
 ++  test-eauth-unauthenticated-approval
   %-  eval-mare

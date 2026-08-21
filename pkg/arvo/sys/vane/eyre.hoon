@@ -2264,6 +2264,7 @@
           %-  (trace 2 |.("eauth: expiring"))
           =^  moz  state
             ?~  pend.u.visa  [~ state]
+            ?.  (~(has by connections.state) http.u.pend.u.visa)  [~ state]
             %-  async-data(duct http.u.pend.u.visa)
             [503 'text/html' (eauth-error-page %server last.u.visa)]
           =?  moz  ?=(^ pend.u.visa)
@@ -2488,6 +2489,7 @@
             (~(put by visiting.auth) host book)
           ::
           ?~  pend.u.port  [~ state]
+          ?.  (~(has by connections.state) u.pend.u.port)  [~ state]
           %-  async-data(duct u.pend.u.port)
           [503 'text/html' (eauth-error-page ~)]
         ::
