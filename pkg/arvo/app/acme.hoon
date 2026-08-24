@@ -315,7 +315,7 @@
       act=acct
       ::  liv: active, live configuration
       ::
-      liv=(unit config)
+      liv=(map (set turf) config)
       ::  hit: ACME account history
       ::
       hit=history
@@ -363,11 +363,14 @@
     ?@  -.old
       |-
       ?-  -.old
-        %1  $(-.old %2, next-order.old (drop next-order.old))
+        %1  =+  ?~(liv.old ~ [[dom.u.liv.old u.liv.old] ~ ~])
+            $(-.old %2, next-order.old (drop next-order.old), liv.old -)
         %2  `this(state old)
       ==
     =.  state
-      [%2 dir act liv hit nonces rod ~ cey challenges]:old
+      =,  old
+      =+  luv=?~(liv.old ~ [[dom.u.liv.old u.liv.old] ~ ~])
+      [%2 dir act luv hit nonces rod ~ cey challenges]
     ?~  next-order.old
       `this
     =/  next=(set turf)  ~(key by dom.u.next-order.old)
@@ -676,9 +679,10 @@
     ^+  this
     ~|  %renew-effect-fail
     ?.  ?=(^ reg.act)  ~|(%no-account !!)
-    ?.  ?=(^ liv)      ~|(%no-live-config !!)
-    =<  new-order:effect
-    (queue-next-order 1 dom.u.liv)
+    ::TODO  renew which ones?
+    this
+    :: =<  new-order:effect
+    :: (queue-next-order 1 dom)
   ::  +new-order: create a new certificate order
   ::
   ++  new-order
@@ -755,17 +759,18 @@
     =/  =wire
        (acme-wire try %certificate /(scot %da now.bow))
     (emit (request wire url %get hed ~))
-  ::  +install: tell %eyre about our certificate
+  ::  +install: tell %eyre about some certificate
   ::
   ++  install
+    |=  dom=(set turf)
     ^+  this
     ~|  %install-effect-fail
-    ?>  ?=(^ liv)
-    =/  key=wain  (ring:en:pem:pkcs8 key.u.liv)
+    =+  (~(got by liv) dom)
+    =/  key=wain  (ring:en:pem:pkcs8 key)
     %-  emil
-    %+  turn  ~(tap in dom.u.liv)
+    %+  turn  ~(tap in dom)
     |=  =turf
-    [%pass /install %arvo %e %rule %cert turf `[key `wain`cer.u.liv]]
+    [%pass /install %arvo %e %rule %cert turf `[key `wain`cer]]
   ::  +get-authz: get next ACME service domain authorization object
   ::
   ++  get-authz
@@ -979,7 +984,8 @@
     |=  [wir=wire rep=httr]
     ^+  this
     ~|  [%strange-certificate-response wir]
-    ?>  ?=(^ rod)
+    =+  rud=(need rod)  ::NOTE  no ?= assert due to tmi
+    =/  dom=(set turf)  dom.rud
     ?.  =(200 p.rep)
       ::  will re-attempt certificate download per order status
       ::
@@ -997,27 +1003,29 @@
     =/  fig=config
       ::  XX expiration date
       ::
-      [dom.u.rod key.u.rod cer (add now.bow ~d30) ego.u.rod]
+      [dom key.rud cer (add now.bow ~d30) ego.rud]
     ::  archive live config
     ::
-    =?  fig.hit  ?=(^ liv)  [u.liv fig.hit]
+    =?  fig.hit  (~(has by liv) dom)
+      [(~(got by liv) dom) fig.hit]
     ::  save new live config, clear active order
     ::
-    =>  .(liv (some fig), rod ~)
-    ?>  ?=(^ liv)
+    =.  liv  (~(put by liv) dom fig)
+    =.  rod  ~
     ::  at the end, if there are more orders to process, kick off the next one
     ::
     =<  ?~  next-order  this
         new-order:effect
     ::  notify %dill
     ::
-    =>  =/  msg=cord
-          %+  rap  3
-          :~  'received https certificate for '
-              (join-turf ~(tap in dom.u.liv))
-          ==
-        (emil (notify msg ~))
-    ::  set renewal timer, install certificate in %eyre
+    =.  this
+      =/  msg=cord
+        %+  rap  3
+        :~  'received https certificate for '
+            (join-turf ~(tap in dom))
+        ==
+      (emil (notify msg ~))
+    ::  install certificate in %eyre, set renewal timer
     ::
     ::    Certificates expire after some amount of time determined by
     ::    LetsEncrypt. Before ~2027.02, it was ~d90. After, it was ~d64.
@@ -1028,7 +1036,7 @@
     ::    continue past rate limits, so fudge the timer towards the end
     ::    of the week nearest ~d30.
     ::
-    =<  install:effect
+    =.  this  (install:effect dom)
     =;  lul=@dr
       (retry:effect 0 %renew / lul)
     %+  add
@@ -1221,28 +1229,6 @@
   ?+  a
     this
   ::
-      %dbug-account
-    ~&  registered=reg.act
-    ~&  [%public (pass:en:pem:pkcs1 key.act)]
-    ~?  !=(~ sek.key.act)
-      [%private (ring:en:pem:pkcs1 key.act)]
-    this
-  ::
-      %dbug-certificate
-    ?~  liv  ~&(~ this)
-    ~&  [%key (ring:en:pem:pkcs8 key.u.liv)]
-    ~&  [%cert `wain`cer.u.liv]
-    ~&  [%expires exp.u.liv]
-    ~&  :-  %domains
-        (join-turf ~(tap in dom.u.liv))
-    this
-  ::
-      %dbug-history
-    ~&  [%account-history act.hit]
-    ~&  [%config-history fig.hit]
-    ~&  [%failed-order-history fal.hit]
-    this
-  ::
     ::  install privkey and cert .pem from /=base=/acme, ignores app state
     ::TODO  refactor this out of %acme, see also arvo#1151
     ::
@@ -1263,6 +1249,58 @@
   ::
       %retry
     (add-order (sy /network/arvo/(crip +:(scow %p our.bow)) ~))
+  ::
+      [%set-known turfs=*]
+    ::TODO  clear pending orders?
+    =+  ;;(tes=(set (set turf)) turfs.a)
+    ::  for turf-sets that are no longer known,
+    ::  clear their cert and known-ness from state and eyre
+    ::
+    =.  this
+      =+  lis=~(tap in ~(key by liv))
+      |-
+      ?~  lis  this
+      ?:  (~(has in tes) i.lis)  this
+      ::TODO  factor out?
+      =.  liv  (~(del by liv) i.lis)
+      =.  this
+        %+  roll  ~(tap in i.lis)
+        |=  [=turf =_this]
+        =.  this  (emit:this %pass /tmp %arvo %e %rule %cert turf ~)
+        ::NOTE  may get re-added by the logic below, but that's fine
+        (emit:this %pass /tmp %arvo %e %rule %turf %del turf)
+      $(lis t.lis)
+    ::  skip turf-sets that already have an active configuration
+    ::TODO  what about the ones in .rod or .next-order?
+    ::
+    =.  tes  (sy (skip ~(tap in tes) ~(has by liv)))
+    ::  make sure eyre knows about all the turfs that we know
+    ::
+    =.  this
+      %+  roll
+        %~  tap  in
+        (roll ~(tap in tes) |=([a=(set turf) b=(set turf)] (~(uni in a) b)))
+      |=  [=turf =_this]
+      (emit:this %pass /tmp %arvo %e %rule %turf %put turf)
+    ::  put new turf-set orders into the queue,
+    ::  clear whatever we were currently doing,
+    ::  and kick the queue off
+    ::
+    =.  next-order
+      (turn ~(tap in tes) |=(s=(set turf) [0 s]))
+    =.  this  cancel-current-order
+    ::  if there's nothing to do, do nothing
+    ::
+    ?~  next-order
+      ~&  %acme-no-new-orders
+      this
+    ::  if registered, create order
+    ::
+    ?^  reg.act
+      new-order:effect
+    ::  if initialized, defer
+    ::
+    ?.(=(act *acct) this init)
   ==
 ::  +poke-path: for debugging
 ::
