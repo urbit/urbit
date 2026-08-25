@@ -450,12 +450,16 @@
   ==
 ::
 ++  ex-continue-response
+  =/  =duct
+    ?:  =(0 req-id)  [/http-blah ~]
+    [/http-blah/[(scot %ud req-id)] ~]
   |=  [body=(unit octs) complete=?]
   |=  mov=move
   ^-  tang
-  ?.  ?=([* %give %response %continue * *] mov)  ::  TODO: duct
+  ?.  ?=([* %give %response %continue * *] mov)
     [leaf+"expected continue %response, got: {<mov>}" ~]
   ;:  weld
+    (expect-eq !>(duct) !>(duct.mov))
     (expect-eq !>(body) !>(data.http-event.p.card.mov))
     (expect-eq !>(complete) !>(complete.http-event.p.card.mov))
   ==
@@ -1701,6 +1705,11 @@
     ++  ex-boon
       |=  boon=eauth-boon:eyre
       (ex ~[/http-blah] %give %boon boon)
+    ::
+    ++  has-visitor
+      %-  easy:(mare ,?)
+      |=  =state
+      (~(has by visitors.auth.server-state.ax.gate.state) nonce)
     --
   ::
   ++  client
@@ -1723,6 +1732,13 @@
     ++  ex-plea
       |=  [=ship plea=eauth-plea:eyre]
       (ex duct %pass wire %a %plea ship %e /eauth/(scot %ud %0) plea)
+    ::
+    ++  has-book
+      %-  easy:(mare ,?)
+      |=  =state
+      =/  host  ~hoster
+      ?~  logbook=(~(get by visiting.auth.server-state.ax.gate.state) host)  |
+      (~(has by map.u.logbook) 0vnonce)
     --
   --
 ::
@@ -1823,6 +1839,35 @@
   ;<  ~  bind:m
     (expect-moves mos (ex-yawn time) ex-rs ~)
   (pure:m ~)
+::  +test-eauth-incoming-canceled-got-sage: incoming eauth request
+::  got canceled bookkeeping on expire proceeds as intended
+::  without response
+::
+++  test-eauth-incoming-canceled-got-sage
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ^-  form:m
+  =,  server:eauth
+  ;<  ~  bind:m  (setup-for-eauth 'http://hoster.com')
+  ;<  *  bind:m  start
+  ::  cancel eauth request
+  ::
+  ;<  mos=(list move)  bind:m  (call ~[/http-blah] %cancel-request ~)
+  ;<  ~  bind:m  (expect-moves mos ~)
+  ::  received client-url remote scry result, connection removed
+  ::  expect no response
+  ::
+  ;<  mos=(list move)  bind:m  sage
+  ;<  ~  bind:m  (expect-moves mos ~)
+  ::  got eauth timer, doing cleanup
+  ::
+  ;<  ~  bind:m  (wait eauth-timeout:eyre-gate)
+  ;<  mos=(list move)  bind:m
+    =/  =^wire  /eauth/expire/visitors/(scot %uv nonce)
+    (take wire ~[/http-blah] %behn %wake ~)
+  ;<  ~              bind:m  (expect-moves mos ~)
+  ;<  in-visitors=?  bind:m  has-visitor
+  (try (expect-eq !>(%.n) !>(in-visitors)))
 ::
 ++  test-eauth-incoming-aborted
   %-  eval-mare
@@ -1911,6 +1956,38 @@
   ;<  ~  bind:m
     (expect-moves mos ex-rs ~)
   (pure:m ~)
+::  +test-eauth-outgoing-canceled: request to eauth got canceled,
+::  expire timer bookkeeping proceeds as intended without response
+::
+++  test-eauth-outgoing-canceled
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ^-  form:m
+  =,  client:eauth
+  ;<  ~  bind:m  (setup-for-eauth 'http://client.com')
+  ;<  mos=(list move)  bind:m  grant
+  ;<  now=@da          bind:m  get-now
+  =/  wir  /eauth/expire/visiting/~hoster/0vnonce
+  ;<  ~  bind:m
+    %+  expect-moves  mos
+    :~  (ex-plea ~hoster %0 %open 0vnonce `0v4.qkgot.d07e3.pi1qd.m1bhj.ti8bo)
+        (ex-wait wir (add now eauth-timeout:eyre-gate))
+    ==
+  ;<  in-book=?        bind:m  has-book
+  ;<  ~  bind:m  (try (expect-eq !>(%.y) !>(in-book)))
+  ::  cancel eauth request, connection removed
+  ::
+  ;<  mos=(list move)  bind:m  (call ~[/http-blah] %cancel-request ~)
+  ;<  ~                bind:m  (expect-moves mos ~)
+  ::  got eauth timer, entry removed from visiting logbook
+  ::  expecting no moves
+  ::
+  ;<  ~  bind:m  (wait eauth-timeout:eyre-gate)
+  ;<  mos=(list move)  bind:m
+    (take wir ~[/http-blah] %behn %wake ~)
+  ;<  ~          bind:m  (expect-moves mos ~)
+  ;<  in-book=?  bind:m  has-book
+  (try (expect-eq !>(%.n) !>(in-book)))
 ::
 ++  test-eauth-unauthenticated-approval
   %-  eval-mare
@@ -2145,20 +2222,20 @@
   ;<  tok=@t  bind:m  get-token
   =/  token   (slav %uv tok)
   ;<  sesh=(unit session:eyre)  bind:m  (get-session token)
-  ?~  sesh       (fail:m 'missing seession' ~)
+  ?~  sesh       (fail:m 'missing session' ~)
   ;<  ~  bind:m  (try (expect-eq !>([%& ~]) !>(scopes.u.sesh)))
   ::
   ;<  ~  bind:m  (do-holm %desk '/' &)
   ;<  desk-tok=@t  bind:m  get-token
   ?:  =(tok desk-tok)  (fail:m 'missing desk token' ~)
   ;<  sesh=(unit session:eyre)  bind:m  (get-session token)
-  ?~  sesh        (fail:m 'missing seession' ~)
+  ?~  sesh        (fail:m 'missing session' ~)
   =/  desk-token  (slav %uv desk-tok)
   ;<  ~  bind:m
     (try (expect-eq !>([%& desk-token ~ ~]) !>(scopes.u.sesh)))
   ;<  sesh-child=(unit session:eyre)  bind:m
     (get-session desk-token)
-  ?~  sesh-child  (fail:m 'missing seession' ~)
+  ?~  sesh-child  (fail:m 'missing session' ~)
   ;<  ~  bind:m
     (try (expect-eq !>([%| token]) !>(scopes.u.sesh-child)))
   (try (expect-eq !>(who.identity.u.sesh) !>(who.identity.u.sesh-child)))
@@ -2426,6 +2503,51 @@
   ;<  tok=@t  bind:m  get-token
   ;<  sesh=(unit session:eyre)  bind:m
     (get-session (slav %uv tok))
-  ?~  sesh    (fail:m 'missing seession' ~)
+  ?~  sesh    (fail:m 'missing session' ~)
   (try (expect-eq !>([%& ~]) !>(scopes.u.sesh)))
+::
+::  +test-holm-redirect-bug: testing for a bug case were
+::  upon request to cache entry subdomain cookie being
+::  overwritten by guest cookie from borowser request
+++  test-holm-redirect-bug
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ^-  form:m
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  perform-born
+  ::  authenticate on root
+  ;<  ~  bind:m  perform-authentication-2
+  ;<  root-cookie=(unit @t)  bind:m  get-cookie
+  ::  create cache entry on subdomain
+  ;<  mos=(list move)  bind:m
+    (call ~[/cache/foo] [%set-response %desk '/foo/bar' `[& %payload [200 ['content-type' 'text/html']~] `(as-octs:mimes:html 'hi')]])
+  ;<  ~  bind:m
+    %-  try
+    %+  expect-eq
+      !>([[duct=~[/unix] %give %grow /cache/1/~~~2f.foo~2f.bar] ~])
+    !>(mos)
+  ::  send request to cache entry
+  ;<  mos=(list move)  bind:m
+    (get '/foo/bar' ~['host'^'desk.localhost'])
+  ;<  ~  bind:m
+    %+  expect-moves  mos
+    :_  ~
+    (ex-response 307 ['location' '//localhost/~/holm/sink/desk/foo/bar']~ ~)
+  ::  fetch icon
+  ::
+  ;<  mos=(list move)  bind:m
+    (get '/favicon.ico' ~['host'^'desk.localhost'])
+  ::  proceed with redirect to holm flow
+  ::
+  ;<  ~  bind:m  (holm-sink %desk '/foo/bar')
+  ;<  ~  bind:m  (holm-gain %desk '/foo/bar' &)
+  ::  redirect back to cache entry
+  ::
+  ;<  mos=(list move)  bind:m
+    (get '/foo/bar' ~['host'^'desk.localhost'])
+  ::  REVIEW: cache entry does not append 'content-length' headers
+  =.  verify-headers  |
+  ;<  ex-rs=$-(move tang)  bind:m
+    (make-ex-resp 200 ['content-type' 'text/html']~ `(as-octs:mimes:html 'hi'))
+  (expect-moves mos ex-rs ~)
 --
