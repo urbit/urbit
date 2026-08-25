@@ -79,7 +79,7 @@
       ::  channel-state: state managed by the +channel core
       ::
       =channel-state
-      ::  domains: domain-names that resolve to us
+      ::  domains: domain-names (without desk subdomain) that resolve to us
       ::
       domains=(set turf)
       ::  risk: true if access through bare ip address is allowed
@@ -4442,19 +4442,13 @@
         ::
         %turf
       =*  domains  domains.server-state.ax
-      =/  mod=(set turf)
+      =.  domains
         ?-  -.action.http-rule.task
           %put  (~(put in domains) turf.action.http-rule.task)
           %del  (~(del in domains) turf.action.http-rule.task)
           %new  turfs.action.http-rule.task
         ==
-      ?:  &(!?=(%new -.action.http-rule.task) =(domains mod))
-        [~ http-server-gate]
-      =.  domains  mod
-      :_  http-server-gate
-      =/  cmd
-        [%acme %poke `cage`[%acme-order !>(mod)]]
-      [duct %pass /acme/order %g %deal [our our /eyre] cmd]~
+      [~ http-server-gate]
     ::
         ::  %risk: turn bare ip access on or off
         ::

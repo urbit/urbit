@@ -1261,27 +1261,13 @@
       |-
       ?~  lis  this
       ?:  (~(has in tes) i.lis)  this
-      ::TODO  factor out?
       =.  liv  (~(del by liv) i.lis)
-      =.  this
-        %+  roll  ~(tap in i.lis)
-        |=  [=turf =_this]
-        =.  this  (emit:this %pass /tmp %arvo %e %rule %cert turf ~)
-        ::NOTE  may get re-added by the logic below, but that's fine
-        (emit:this %pass /tmp %arvo %e %rule %turf %del turf)
       $(lis t.lis)
     ::  skip turf-sets that already have an active configuration
     ::TODO  what about the ones in .rod or .next-order?
     ::
     =.  tes  (sy (skip ~(tap in tes) ~(has by liv)))
-    ::  make sure eyre knows about all the turfs that we know
-    ::
-    =.  this
-      %+  roll
-        %~  tap  in
-        (roll ~(tap in tes) |=([a=(set turf) b=(set turf)] (~(uni in a) b)))
-      |=  [=turf =_this]
-      (emit:this %pass /tmp %arvo %e %rule %turf %put turf)
+    ::NOTE  caller responsible for making sure the relevant domains are in eyre
     ::  put new turf-set orders into the queue,
     ::  clear whatever we were currently doing,
     ::  and kick the queue off
