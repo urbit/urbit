@@ -450,12 +450,16 @@
   ==
 ::
 ++  ex-continue-response
+  =/  =duct
+    ?:  =(0 req-id)  [/http-blah ~]
+    [/http-blah/[(scot %ud req-id)] ~]
   |=  [body=(unit octs) complete=?]
   |=  mov=move
   ^-  tang
-  ?.  ?=([* %give %response %continue * *] mov)  ::  TODO: duct
+  ?.  ?=([* %give %response %continue * *] mov)
     [leaf+"expected continue %response, got: {<mov>}" ~]
   ;:  weld
+    (expect-eq !>(duct) !>(duct.mov))
     (expect-eq !>(body) !>(data.http-event.p.card.mov))
     (expect-eq !>(complete) !>(complete.http-event.p.card.mov))
   ==
@@ -2218,20 +2222,20 @@
   ;<  tok=@t  bind:m  get-token
   =/  token   (slav %uv tok)
   ;<  sesh=(unit session:eyre)  bind:m  (get-session token)
-  ?~  sesh       (fail:m 'missing seession' ~)
+  ?~  sesh       (fail:m 'missing session' ~)
   ;<  ~  bind:m  (try (expect-eq !>([%& ~]) !>(scopes.u.sesh)))
   ::
   ;<  ~  bind:m  (do-holm %desk '/' &)
   ;<  desk-tok=@t  bind:m  get-token
   ?:  =(tok desk-tok)  (fail:m 'missing desk token' ~)
   ;<  sesh=(unit session:eyre)  bind:m  (get-session token)
-  ?~  sesh        (fail:m 'missing seession' ~)
+  ?~  sesh        (fail:m 'missing session' ~)
   =/  desk-token  (slav %uv desk-tok)
   ;<  ~  bind:m
     (try (expect-eq !>([%& desk-token ~ ~]) !>(scopes.u.sesh)))
   ;<  sesh-child=(unit session:eyre)  bind:m
     (get-session desk-token)
-  ?~  sesh-child  (fail:m 'missing seession' ~)
+  ?~  sesh-child  (fail:m 'missing session' ~)
   ;<  ~  bind:m
     (try (expect-eq !>([%| token]) !>(scopes.u.sesh-child)))
   (try (expect-eq !>(who.identity.u.sesh) !>(who.identity.u.sesh-child)))
@@ -2499,6 +2503,51 @@
   ;<  tok=@t  bind:m  get-token
   ;<  sesh=(unit session:eyre)  bind:m
     (get-session (slav %uv tok))
-  ?~  sesh    (fail:m 'missing seession' ~)
+  ?~  sesh    (fail:m 'missing session' ~)
   (try (expect-eq !>([%& ~]) !>(scopes.u.sesh)))
+::
+::  +test-holm-redirect-bug: testing for a bug case were
+::  upon request to cache entry subdomain cookie being
+::  overwritten by guest cookie from borowser request
+++  test-holm-redirect-bug
+  %-  eval-mare
+  =/  m  (mare ,~)
+  ^-  form:m
+  ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  perform-born
+  ::  authenticate on root
+  ;<  ~  bind:m  perform-authentication-2
+  ;<  root-cookie=(unit @t)  bind:m  get-cookie
+  ::  create cache entry on subdomain
+  ;<  mos=(list move)  bind:m
+    (call ~[/cache/foo] [%set-response %desk '/foo/bar' `[& %payload [200 ['content-type' 'text/html']~] `(as-octs:mimes:html 'hi')]])
+  ;<  ~  bind:m
+    %-  try
+    %+  expect-eq
+      !>([[duct=~[/unix] %give %grow /cache/1/~~~2f.foo~2f.bar] ~])
+    !>(mos)
+  ::  send request to cache entry
+  ;<  mos=(list move)  bind:m
+    (get '/foo/bar' ~['host'^'desk.localhost'])
+  ;<  ~  bind:m
+    %+  expect-moves  mos
+    :_  ~
+    (ex-response 307 ['location' '//localhost/~/holm/sink/desk/foo/bar']~ ~)
+  ::  fetch icon
+  ::
+  ;<  mos=(list move)  bind:m
+    (get '/favicon.ico' ~['host'^'desk.localhost'])
+  ::  proceed with redirect to holm flow
+  ::
+  ;<  ~  bind:m  (holm-sink %desk '/foo/bar')
+  ;<  ~  bind:m  (holm-gain %desk '/foo/bar' &)
+  ::  redirect back to cache entry
+  ::
+  ;<  mos=(list move)  bind:m
+    (get '/foo/bar' ~['host'^'desk.localhost'])
+  ::  REVIEW: cache entry does not append 'content-length' headers
+  =.  verify-headers  |
+  ;<  ex-rs=$-(move tang)  bind:m
+    (make-ex-resp 200 ['content-type' 'text/html']~ `(as-octs:mimes:html 'hi'))
+  (expect-moves mos ex-rs ~)
 --
