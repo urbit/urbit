@@ -8,7 +8,6 @@
     =/  bud
       ^~
       =/  zuse  !>(..zuse)
-      ~&  >  [%virt-mug `@ux`(mug zuse)]
       :*  zuse=zuse
           nave=(slap zuse !,(*hoon nave:clay))
           cork=(slap zuse !,(*hoon cork))
@@ -1508,21 +1507,7 @@
     ++  build-file
       |=  =path
       ^-  vase
-      =/  built  (slum +:(slum my-slub [cor [%limb %build-file]]) path)
-      ?:  =(zuse zuv)  (ntv built)
-      ::  value-mug is unchanged by next-vase (which only rewrites the type);
-      ::  vase-mug differs because the type metadata is migrated h136 -> h135.
-      ::
-      ~&  >  :*  %agent-before-next-vase
-                 value-mug=`@ux`(mug +:built)
-                 vase-mug=`@ux`(mug built)
-             ==
-      =/  mig  (ntv built)
-      ~&  >  :*  %agent-after-next-vase
-                 value-mug=`@ux`(mug +:mig)
-                 vase-mug=`@ux`(mug mig)
-             ==
-      mig
+      (ntv (slum +:(slum my-slub [cor [%limb %build-file]]) path))
     ::
     ++  build-nave
       |=  mak=mark
