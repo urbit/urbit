@@ -2932,23 +2932,23 @@
         :-  [cad out]
         =/  =wire  p.card
         =/  =dock  [ship name]:q.card
-        ?:  (~(has by boat.yoke) wire dock)
-          (~(del by boat.yoke) [wire dock])
-        %.  boat.yoke
+        ?:  (~(has by boat) wire dock)
+          (~(del by boat) [wire dock])
+        %.  boat
         %+  trace  odd.veb.bug.state
         |+['missing subscription, got leave']~
       ::
           [%agent * ?(%watch %watch-as) *]
         =/  =wire  p.card
         =/  [=dock =task:agent:gall]  [[ship name] task]:q.card
-        ?:  (~(has by boat.yoke) wire dock)
+        ?:  (~(has by boat) wire dock)
           %.  [out boat]
           %-  slog
           :~  leaf+"gall: {<agent-name>}: subscribe wire not unique"
               leaf+"      {<wire>} -> {<dock>}"
           ==
         :-  [cad out]
-        %+  ~(put by boat.yoke)  [wire dock]
+        %+  ~(put by boat)  [wire dock]
         :-  acked=|
         path=?+(-.task !! %watch path.task, %watch-as path.task)
       ==
