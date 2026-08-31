@@ -487,7 +487,7 @@
     =/  m  (strand:rand ,@if)
     ^-  form:m
     ;<  our=@p  bind:m  get-our:strandio
-    ?.  ?=(?(%king %duke) (clan:title our))
+    ?.  ?=(?(%king %duke %earl) (clan:title our))
       (strand-fail:rand %dns-rank-error ~)
     ?:  ?=(%& -.addr)
       ?:  (reserved:eyre if.p.addr)
