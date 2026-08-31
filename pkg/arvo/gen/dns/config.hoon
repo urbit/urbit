@@ -7,8 +7,8 @@
 :-  %ask
 |=  [[now=@da eny=@uvJ bec=beak] ~ ~]
 |^  ^-  (sole-result (cask [(each address:dns @t) dock ? ?]))
-?.  ?=(?(%king %duke) (clan:title p.bec))
-  (print leaf+"dns: only planets and stars may use this service" no-product)
+?.  ?=(?(%king %duke %earl) (clan:title p.bec))
+  (print leaf+"dns: only planets and stars (and temporarily, moons) may use this service" no-product)
 =/  msg1  "dns: This tool will configure a domain for your urbit."
 =/  msg2  "dns: Your urbit's HTTP interface must be accessible on port 80"
 =/  msg3  "dns: from the public internet. This tool has the option of skipping"
