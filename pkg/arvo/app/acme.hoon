@@ -45,10 +45,14 @@
     $:  dom=turf
         sas=@t
         exp=@t
-        cal=challenge
+        cal=http-challenge
     ==
   ::
-  +$  challenge  [typ=@t sas=@t url=purl tok=@t err=(unit error)]
+  +$  challenge
+    $%  [%http-01 http-challenge]
+        [%unsupported typ=@t]
+    ==
+  +$  http-challenge  [sas=@t url=purl tok=@t err=(unit error)]
   ::
   +$  error  [type=@t detail=@t]
   --
@@ -108,9 +112,9 @@
         ::
         ++  trial
           |=  a=(list challenge:body)
-          ^-  challenge:body
-          =/  b  (skim a |=([typ=@t *] ?=(%http-01 typ)))
-          ?>(?=(^ b) i.b)
+          ^-  http-challenge:body
+          =/  b  (skim a |=(c=challenge:body ?=(%http-01 -.c)))
+          ?>(?=([[%http-01 *] *] b) +.i.b)
         --
     ^-  $-(json auth:body)
     %-  ot
@@ -123,9 +127,18 @@
   ::
   ++  challenge
     ^-  $-(json challenge:body)
+    |=  j=json
+    ^-  challenge:body
+    ?>  ?=([%o *] j)
+    =+  t=(~(got by p.j) 'type')
+    ?>  ?=([%s *] t)
+    ::NOTE  technically dns-01 and tls-alpn-01 have the same properties/shape
+    ::      as http-01, but we never use those, so can drop them here early.
+    ?.  =(%http-01 p.t)  [%unsupported p.t]
+    :-  %http-01
+    %.  j
     %-  ou
-    :~  'type'^(un so)
-        'status'^(un so)
+    :~  'status'^(un so)
         'url'^(un json-purl)
         'token'^(un so)
         'error'^(uf ~ (mu error))
@@ -293,7 +306,7 @@
 ::  +acme: complete app state
 ::
 +$  acme
-  $:  %1
+  $:  %2
       ::  dir: ACME service directory
       ::
       dir=directory
@@ -302,7 +315,7 @@
       act=acct
       ::  liv: active, live configuration
       ::
-      liv=(unit config)
+      liv=(map (set turf) config)
       ::  hit: ACME account history
       ::
       hit=history
@@ -314,7 +327,7 @@
       rod=(unit order)
       ::  next-order: queued domains
       ::
-      next-order=(unit [try=@ud dom=(set turf)])
+      next-order=(list [try=@ud dom=(set turf)])
       ::  cey: certificate key XX move?
       ::
       cey=key:rsa
@@ -335,7 +348,7 @@
   ::
   ++  on-init
     =/  =binding:eyre
-      [~ /'.well-known'/acme-challenge]
+      /'.well-known'/acme-challenge
     =/  =generator:eyre
       [q.byk.bowl /gen/acme/domain-validation/hoon ~]
     =/  =card
@@ -348,11 +361,16 @@
     |^  ^-  (quip card _this)
     =+  !<(old=versioned vase)
     ?@  -.old
+      |-
       ?-  -.old
-        %1  `this(state old)
+        %1  =+  ?~(liv.old ~ [[dom.u.liv.old u.liv.old] ~ ~])
+            $(-.old %2, next-order.old (drop next-order.old), liv.old -)
+        %2  `this(state old)
       ==
     =.  state
-      [%1 dir act liv hit nonces rod ~ cey challenges]:old
+      =,  old
+      =+  luv=?~(liv.old ~ [[dom.u.liv.old u.liv.old] ~ ~])
+      [%2 dir act luv hit nonces rod ~ cey challenges]
     ?~  next-order.old
       `this
     =/  next=(set turf)  ~(key by dom.u.next-order.old)
@@ -362,9 +380,22 @@
     ::
     +$  versioned
       $^  acme-0
-      $%  acme
+      $%  acme-1
+          acme
       ==
     ::
+    +$  acme-1
+      $:  %1
+          dir=directory
+          act=acct
+          liv=(unit config)
+          hit=history
+          nonces=(list @t)
+          rod=(unit order)
+          next-order=(unit [try=@ud dom=(set turf)])
+          cey=key:rsa
+          challenges=(set @t)
+      ==
     +$  acme-0
       $:  dir=directory
           act=acct
@@ -655,20 +686,21 @@
     ^+  this
     ~|  %renew-effect-fail
     ?.  ?=(^ reg.act)  ~|(%no-account !!)
-    ?.  ?=(^ liv)      ~|(%no-live-config !!)
-    =<  new-order:effect
-    (queue-next-order 1 dom.u.liv)
+    ::TODO  renew which ones?
+    this
+    :: =<  new-order:effect
+    :: (queue-next-order 1 dom)
   ::  +new-order: create a new certificate order
   ::
   ++  new-order
     ^+  this
     ~|  %new-order-effect-fail
     ?.  ?=(^ reg.act)  ~|(%no-account !!)
-    ?.  ?=([~ ^] next-order)  ~|(%no-domains !!)
+    ?~  next-order  ~|(%no-domains !!)
     =/  =json
       %+  frond:enjs:format  'identifiers'
       :-  %a
-      %+  turn  ~(tap in dom.u.next-order)
+      %+  turn  ~(tap in dom.i.next-order)
       |=(a=turf [%o (my type+s+'dns' value+s+(en-turf:html a) ~)])
     =/  wire-params  [try %new-order /(scot %da now.bow)]
     (stateful-request wire-params new-order.dir json)
@@ -734,14 +766,18 @@
     =/  =wire
        (acme-wire try %certificate /(scot %da now.bow))
     (emit (request wire url %get hed ~))
-  ::  +install: tell %eyre about our certificate
+  ::  +install: tell %eyre about some certificate
   ::
   ++  install
+    |=  dom=(set turf)
     ^+  this
     ~|  %install-effect-fail
-    ?>  ?=(^ liv)
-    =/  key=wain  (ring:en:pem:pkcs8 key.u.liv)
-    (emit %pass /install %arvo %eyre %rule %cert `[key `wain`cer.u.liv])
+    =+  (~(got by liv) dom)
+    =/  key=wain  (ring:en:pem:pkcs8 key)
+    %-  emil
+    %+  turn  ~(tap in dom)
+    |=  =turf
+    [%pass /install %arvo %eyre %rule %cert turf `[key `wain`cer]]
   ::  +get-authz: get next ACME service domain authorization object
   ::
   ++  get-authz
@@ -875,10 +911,10 @@
       (order:grab (need (de:json:html q:(need r.rep))))
     ::  XX maybe generate key here?
     ::
-    =/  csr=@ux  +:(en:der:pkcs10 cey ~(tap in dom.u.next-order))
+    =/  csr=@ux  +:(en:der:pkcs10 cey ~(tap in dom.i.next-order))
     =/  dor=order
-      :*  dom.u.next-order
-          try.u.next-order
+      :*  dom.i.next-order
+          try.i.next-order
           sas=%wake
           exp.bod
           ego
@@ -887,7 +923,7 @@
           csr
           [aut.bod ~ ~]
       ==
-    get-authz:effect(rod `dor, next-order ~)
+    get-authz:effect(rod `dor, next-order t.next-order)
   ::  +finalize-order: order finalized, poll for certificate
   ::
   ++  finalize-order
@@ -955,7 +991,8 @@
     |=  [wir=wire rep=httr]
     ^+  this
     ~|  [%strange-certificate-response wir]
-    ?>  ?=(^ rod)
+    =+  rud=(need rod)  ::NOTE  no ?= assert due to tmi
+    =/  dom=(set turf)  dom.rud
     ?.  =(200 p.rep)
       ::  will re-attempt certificate download per order status
       ::
@@ -973,39 +1010,48 @@
     =/  fig=config
       ::  XX expiration date
       ::
-      [dom.u.rod key.u.rod cer (add now.bow ~d90) ego.u.rod]
+      [dom key.rud cer (add now.bow ~d30) ego.rud]
     ::  archive live config
     ::
-    =?  fig.hit  ?=(^ liv)  [u.liv fig.hit]
+    =?  fig.hit  (~(has by liv) dom)
+      [(~(got by liv) dom) fig.hit]
     ::  save new live config, clear active order
     ::
-    =>  .(liv (some fig), rod ~)
-    ?>  ?=(^ liv)
+    =.  liv  (~(put by liv) dom fig)
+    =.  rod  ~
+    ::  at the end, if there are more orders to process, kick off the next one
+    ::
+    =<  ?~  next-order  this
+        new-order:effect
     ::  notify %dill
     ::
-    =>  =/  msg=cord
-          %+  rap  3
-          :~  'received https certificate for '
-              (join-turf ~(tap in dom.u.liv))
-          ==
-        (emil (notify msg ~))
-    ::  set renewal timer, install certificate in %eyre
+    =.  this
+      =/  msg=cord
+        %+  rap  3
+        :~  'received https certificate for '
+            (join-turf ~(tap in dom))
+        ==
+      (emil (notify msg ~))
+    ::  install certificate in %eyre, set renewal timer
     ::
-    ::    Certificates expire after ~d90. We want time for retries and
-    ::    to work around rate limits, so our renewal timer is for ~d60.
+    ::    Certificates expire after some amount of time determined by
+    ::    LetsEncrypt. Before ~2027.02, it was ~d90. After, it was ~d64.
+    ::    As of ~2028.02, it is ~d45.
+    ::    We want time for retries and to work around rate limits, so our
+    ::    renewal timer is for ~d30.
     ::    Renewals count towards weekly rate limits, but are allowed to
     ::    continue past rate limits, so fudge the timer towards the end
-    ::    of the week nearest ~d60.
+    ::    of the week nearest ~d30.
     ::
-    =<  install:effect
+    =.  this  (install:effect dom)
     =;  lul=@dr
       (retry:effect 0 %renew / lul)
     %+  add
       (mul ~m1 (~(rad og eny.bow) (bex 8)))
     =/  weekday  (daws:chrono:userlib (yore now.bow))
     ?:  (gth weekday 4)
-      (sub ~d60 (mul ~d1 (sub weekday 4)))
-    (add ~d60 (mul ~d1 (sub 4 weekday)))
+      (sub ~d30 (mul ~d1 (sub weekday 4)))
+    (add ~d30 (mul ~d1 (sub 4 weekday)))
   ::  +get-authz: accept ACME service authorization object
   ::
   ++  get-authz
@@ -1074,6 +1120,7 @@
       (emil (notify msg [(sell !>(rep)) ~]))
     =/  bod=challenge:body
       (challenge:grab (need (de:json:html q:(need r.rep))))
+    ?>  ?=(%http-01 -.bod)
     ::  XX check for other possible values in 200 response
     ::  note: may have already been validated
     ::
@@ -1186,36 +1233,14 @@
   ?+  a
     this
   ::
-      %dbug-account
-    ~&  registered=reg.act
-    ~&  [%public (pass:en:pem:pkcs1 key.act)]
-    ~?  !=(~ sek.key.act)
-      [%private (ring:en:pem:pkcs1 key.act)]
-    this
-  ::
-      %dbug-certificate
-    ?~  liv  ~&(~ this)
-    ~&  [%key (ring:en:pem:pkcs8 key.u.liv)]
-    ~&  [%cert `wain`cer.u.liv]
-    ~&  [%expires exp.u.liv]
-    ~&  :-  %domains
-        (join-turf ~(tap in dom.u.liv))
-    this
-  ::
-      %dbug-history
-    ~&  [%account-history act.hit]
-    ~&  [%config-history fig.hit]
-    ~&  [%failed-order-history fal.hit]
-    this
-  ::
     ::  install privkey and cert .pem from /=base=/acme, ignores app state
     ::TODO  refactor this out of %acme, see also arvo#1151
     ::
-      %install-from-clay
+      [%install-from-clay turf=*]
     =/  bas=path  /(scot %p our.bow)/base/(scot %da now.bow)/acme
     =/  key=wain  .^(wain %cx (weld bas /privkey/pem))
     =/  cer=wain  .^(wain %cx (weld bas /cert/pem))
-    (emit %pass /install %arvo %eyre %rule %cert `[key cer])
+    (emit %pass /install %arvo %eyre %rule %cert ;;(turf turf.a) `[key cer])
   ::
       %init
     init
@@ -1228,6 +1253,44 @@
   ::
       %retry
     (add-order (sy /network/arvo/(crip +:(scow %p our.bow)) ~))
+  ::
+      [%set-known turfs=*]
+    ::TODO  clear pending orders?
+    =+  ;;(tes=(set (set turf)) turfs.a)
+    ::  for turf-sets that are no longer known,
+    ::  clear their cert and known-ness from state and eyre
+    ::
+    =.  this
+      =+  lis=~(tap in ~(key by liv))
+      |-
+      ?~  lis  this
+      ?:  (~(has in tes) i.lis)  this
+      =.  liv  (~(del by liv) i.lis)
+      $(lis t.lis)
+    ::  skip turf-sets that already have an active configuration
+    ::TODO  what about the ones in .rod or .next-order?
+    ::
+    =.  tes  (sy (skip ~(tap in tes) ~(has by liv)))
+    ::NOTE  caller responsible for making sure the relevant domains are in eyre
+    ::  put new turf-set orders into the queue,
+    ::  clear whatever we were currently doing,
+    ::  and kick the queue off
+    ::
+    =.  next-order
+      (turn ~(tap in tes) |=(s=(set turf) [0 s]))
+    =.  this  cancel-current-order
+    ::  if there's nothing to do, do nothing
+    ::
+    ?~  next-order
+      ~&  %acme-no-new-orders
+      this
+    ::  if registered, create order
+    ::
+    ?^  reg.act
+      new-order:effect
+    ::  if initialized, defer
+    ::
+    ?.(=(act *acct) this init)
   ==
 ::  +poke-path: for debugging
 ::
@@ -1274,7 +1337,14 @@
 ++  queue-next-order
   |=  [try=@ud dom=(set turf)]
   ^+  this
-  this(next-order `[try dom])
+  ?~  next-order
+    this(next-order [try dom]~)
+  ::  if we're retrying _starting_ an order, take care not to put it into
+  ::  the queue twice
+  ::
+  ?:  =(dom dom.i.next-order)
+    this(try.i.next-order try)
+  this(next-order (snoc next-order [try dom]))
 ::  +cancel-current-order: and archive failure for future autopsy
 ::
 ::    XX we may have pending moves out for this order

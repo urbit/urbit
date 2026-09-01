@@ -25,7 +25,7 @@
   ++  on-init
     ^-  (quip card _this)
     :_  this
-    [%pass /connect %arvo %eyre %connect [~ /'~debug'] dap.bowl]~
+    [%pass /connect %arvo %eyre %connect /'~debug' dap.bowl]~
   ::
   ++  on-save  !>(state)
   ::
@@ -61,10 +61,10 @@
       ?>  =(our src):bowl
       =/  jon=json  !<(json vase)
       =,  dejs:format
-      =/  cmd
-        ((of clear-eyre-cache+(ot url+so ~) ~) jon)
+      =/  cmd=[%clear-eyre-cache =desk url=@t]
+        ((of clear-eyre-cache+(ot desk+so url+so ~) ~) jon)
       ?>  ?=(%clear-eyre-cache -.cmd)
-      [[%pass /cmd %arvo %eyre %set-response +.cmd ~]~ this]
+      [[%pass /cmd %arvo %eyre %set-response url.cmd ~]~ this]
     ?.  ?=(%handle-http-request mark)
       (on-poke:def mark vase)
     =+  !<([eyre-id=@ta =inbound-request:eyre] vase)
@@ -368,7 +368,7 @@
     =,  eyre
     |=  [binding =duct =action]
     %-  pairs
-    :~  'location'^s+(cat 3 (fall site '*') (spat path))
+    :~  'location'^s+(spat path)
         'action'^(render-action:v-eyre action)
     ==
   ::
@@ -378,12 +378,43 @@
     %-  some
     :-  %a
     %+  turn  (sort ~(tap by cache:v-eyre) aor)
-    |=  [url=@t aeon=@ud val=(unit cache-entry:eyre)]
+    |=  [url=@t aeon=@ud val=(unit [=desk cache-entry:eyre])]
     %-  pairs
     :~  'url'^s+url
         'aeon'^(numb aeon)
         'val'^?~(val ~ (render-cache-entry:v-eyre u.val))
     ==
+  ::
+    ::  /eyre/config.json
+    ::
+      [%eyre %config ~]
+    %-  some
+    =+  config:v-eyre
+    =;  secure=(list [=turf key=wain cert=wain])
+      %-  pairs
+      :~  'secure'^a+(turn secure render-cert:v-eyre)
+          'proxy'^b+proxy
+          'log'^b+log
+          'redirect'^b+redirect
+      ==
+    ::TODO  copied from eyre, refactor!
+    %+  sort  ~(tap by secure)
+    |=  [[a=turf *] [b=turf *]]
+    =.  a  (flop a)
+    =.  b  (flop b)
+    ::  shorter before longer,
+    ::  specifics before wildcards
+    ::
+    =+  [la lb]=[(lent a) (lent b)]
+    ?:  (gth la lb)  |
+    ?:  (gth lb la)  &
+    |-  ^-  ?
+    ?:  =(a b)  &
+    ?~  a  |
+    ?~  b  &
+    ?:  =(%$ i.a)  |
+    ?:  =(%$ i.b)  &
+    $(a t.a, b t.b)
   ::
     ::  /eyre/connections.json
     ::
@@ -398,14 +429,16 @@
       ::
         :-  'request'
         %-  pairs
-        =,  inbound-request
-        :~  'authenticated'^b+authenticated
-            'secure'^b+secure
-            'source'^s+(scot %if +.address)
-            :: ?-  -.address
-            ::   %ipv4  %if
-            ::   %ipv6  %is
-            :: ==
+        =/  ses=json
+          ?~  session  ~
+          %-  pairs
+          :~  'cookie'^s+(scot %uv sid.u.session)
+              'identity'^(render-identity-p:v-eyre identity.u.session)
+          ==
+        :~  'session'^ses  ::TODO  use in client code
+            'authenticated'^b+?=([~ @ [%ours ~] ~] session)  ::TODO  remove usage from client code
+            'secure'^b+|  ::TODO  remove usage from client code
+            'source'^s+'0.0.0.0'  ::TODO  remove usage from client code
         ==
       ::
         :-  'response'
@@ -434,6 +467,18 @@
     %-  pairs
     :~  :-  'sessions'
         :-  %a
+        %+  weld
+          %+  turn  ~(tap by authlets.auth)
+          |=  [tmp=@uv ses=@uv]
+          =+  (~(got by sessions.auth) ses)
+          %-  pairs
+          :~  'cookie'^s+(cat 3 'tmp-' (scot %uv tmp))
+              'identity'^(render-identity-p:v-eyre identity)
+              'scope'^~
+              'parent'^s+(end 3^6 (scot %uv ses))
+              'expiry'^(time ~1111.11.11..11.11.11)
+              'channels'^(numb 0)
+          ==
         %+  turn
           %+  sort  ~(tap by sessions.auth)
           |=  [[@uv a=session:eyre] [@uv b=session:eyre]]
@@ -441,7 +486,9 @@
         |=  [cookie=@uv session:eyre]
         %-  pairs
         :~  'cookie'^s+(scot %uv cookie)
-            'identity'^(render-identity:v-eyre identity)
+            'identity'^(render-identity-p:v-eyre identity)
+            'scope'^?~(scope.identity ~ s+u.scope.identity)
+            'parent'^?:(?=(%& -.scopes) ~ s+(end 3^6 (scot %uv p.scopes)))
             'expiry'^(time expiry-time)
             'channels'^(numb ~(wyt in channels))
         ==
@@ -494,7 +541,7 @@
     |=  [key=@t channel:eyre]
     %-  pairs
     :~  'session'^s+key
-        'identity'^(render-identity:v-eyre identity)
+        'identity'^(render-identity-p:v-eyre identity)
         'connected'^b+!-.state
         'expiry'^?-(-.state %& (time date.p.state), %| ~)
         'next-id'^(numb next-id)
@@ -1420,7 +1467,10 @@
     (scry ,(list [=binding =duct =action]) %e %bindings ~)
   ::
   ++  cache
-    (scry ,(map url=@t [aeon=@ud (unit cache-entry)]) %e %cache ~)
+    (scry ,(map url=@t [aeon=@ud (unit [=desk cache-entry])]) %e %cache ~)
+  ::
+  ++  config
+    (scry http-config:eyre %e %config ~)
   ::
   ++  connections
     (scry ,(map duct outstanding-connection) %e %connections ~)
@@ -1431,14 +1481,14 @@
   ++  channel-state
     (scry ^channel-state %e %channel-state ~)
   ::
-  ++  render-identity
+  ++  render-identity-p
     |=  =identity
     ^-  json
-    %-  ship:enjs:format
-    ?-  -.identity
-      %ours  our.bowl
-      %fake  who.identity
-      %real  who.identity
+    :-  %s
+    ?-  -.who.identity
+      %ours  (scot %p our.bowl)
+      %fake  (scot %p who.who.identity)
+      %real  (scot %p who.who.identity)
     ==
   ::
   ++  render-action
@@ -1451,10 +1501,11 @@
     ==
   ::
   ++  render-cache-entry
-    |=  cache-entry
+    |=  [=desk cache-entry]
     ^-  json
     %-  pairs:enjs:format
-    :~  'auth'^b+auth
+    :~  'desk'^s+desk
+        'auth'^b+auth
         'payload'^(render-simple-payload simple-payload.body)
     ==
   ::
@@ -1469,6 +1520,15 @@
         :+  'headers'  %a
         %+  turn  headers.response-header
         |=([k=@t v=@t] (pairs 'key'^s+k 'value'^s+v ~))
+    ==
+  ::
+  ++  render-cert
+    |=  [=turf key=wain cert=wain]
+    ^-  json
+    %-  pairs:enjs:format
+    :~  'turf'^s+(en-turf:html (turn turf |=(e=@t ?:(=(%$ e) '*' e))))
+        'key'^s+(of-wain:format key)
+        'cert'^s+(of-wain:format cert)
     ==
   --
 ::

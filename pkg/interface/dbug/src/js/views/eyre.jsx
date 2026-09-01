@@ -4,6 +4,7 @@ import { msToDa, renderDuct } from '../lib/util';
 import urbitOb from 'urbit-ob';
 import { SearchableList } from '../components/searchable-list';
 import { Summary } from '../components/summary';
+import { parseCert } from '../lib/certs';
 
 export class Eyre extends Component {
 
@@ -16,12 +17,15 @@ export class Eyre extends Component {
     this.loadConnections = this.loadConnections.bind(this);
     this.loadAuthenticationState = this.loadAuthenticationState.bind(this);
     this.loadChannels = this.loadChannels.bind(this);
+    this.loadConfig = this.loadConfig.bind(this);
   }
 
   componentDidMount() {
     const { props } = this;
+    //TODO  want a "first-mount" flag in state instead
     if (props.bindings.length === 0)      this.loadBindings();
     if (props.cache.length === 0)         this.loadCache();
+    if (props.config.secure.length === 0) this.loadConfig();
     if (props.connections.length == 0)    this.loadConnections();
     if (props.authentication.sessions.length == 0) this.loadAuthenticationState();
     if (props.channels.length == 0)       this.loadChannels();
@@ -40,8 +44,12 @@ export class Eyre extends Component {
     api.getCache();
   }
 
-  clearCache(url) {
-    api.clearCache(url);
+  loadConfig() {
+    api.getConfig();
+  }
+
+  clearCache(desk, url) {
+    api.clearCache(desk, url);
   }
 
   loadConnections() {
@@ -59,6 +67,19 @@ export class Eyre extends Component {
   //TODO use classes for styling?
   render() {
     const { props, state } = this;
+
+    const certItems = props.config.secure.map(cert => {
+      const deets = parseCert(cert.cert);
+      const domains = deets.domains.concat(deets.ips);
+      return {key: cert.turf, jsx: (<details>
+        <summary>{cert.turf}</summary>
+        <b>Domain(s):</b> {domains.length ===  0 ? 'none (self-signed?)' : domains.join(', ')}<br />
+        <b>Valid from:</b> {deets.validFrom.toString()}<br />
+        <b>Valid until:</b> {deets.validTo.toString()}<br />
+        <pre class="cert">{cert.cert}</pre>
+        <pre class="cert">{cert.key}</pre>
+      </details>)};
+    });
 
     const bindingItems = props.bindings.map(binding => {
       return {key: binding.location + ' ' + binding.action, jsx: (<div class="flex">
@@ -81,8 +102,8 @@ export class Eyre extends Component {
         </div>
         { !entry.val ? 'cleared' :
           <div style={{ width: '50%', position: 'relative' }}>
-            <div style={{ display: 'inline-block', width: '10%' }}>
-              {entry.val.auth ? 'auth' : 'free'}
+            <div style={{ display: 'inline-block', width: '20%' }}>
+              {entry.val.auth ? 'auth' : 'free'} ({entry.val.desk})
             </div>
             <div style={{ display: 'inline-block', width: '10%' }}>
               {entry.val.payload.status}
@@ -90,11 +111,11 @@ export class Eyre extends Component {
             <div style={{ display: 'inline-block', width: '50%' }}>
               {entry.val.payload.headers.reduce((o, h) => (o ? o+'; ': '') + h.key + '=' + h.value, '')}
             </div>
-            <div style={{ display: 'inline-block', width: '25%' }}>
+            <div style={{ display: 'inline-block', width: '15%' }}>
               {entry.val.payload.data ? entry.val.payload.data.toLocaleString('de-DE')+' bytes' : 'no data'}
             </div>
             <div style={{ display: 'inline-block', width: '5%' }}>
-              <button onClick={() => { this.clearCache(entry.url) }}>clear</button>
+              <button onClick={() => { this.clearCache(entry.desk, entry.url) }}>clear</button>
             </div>
           </div>
         }
@@ -201,8 +222,14 @@ export class Eyre extends Component {
         <div class="flex-auto" style={{maxWidth: '5em'}}>
           {s.cookie.slice(0,6)}…
         </div>
-        <div class="flex-auto" style={{width: '40%'}}>
-          ~{s.identity}
+        <div class="flex-auto" style={{width: '30%'}}>
+          {s.identity}
+        </div>
+        <div class="flex-auto" style={{width: '10%'}}>
+          {s.scope ? '%'+s.scope : null}
+        </div>
+        <div class="flex-auto" style={{width: '10%'}}>
+          {s.parent ? '('+s.parent+'…)' : null}
         </div>
         <div class="flex-auto">
           {msToDa(s.expiry)}
@@ -267,6 +294,11 @@ export class Eyre extends Component {
     });
 
     return (<>
+      <h4>Certificates</h4>
+      <SearchableList placeholder="domain" items={certItems} listStyle={{marginLeft: '1em'}}>
+        <button onClick={this.loadConfig}>refresh</button>
+      </SearchableList>
+
       <h4>Bindings</h4>
       <SearchableList placeholder="binding" items={bindingItems}>
         <button onClick={this.loadBindings}>refresh</button>

@@ -50,14 +50,14 @@
   ?~(caz this $(caz t.caz, this (emit i.caz)))
 ::
 ++  on-init
-  (poke-serve [~ /who] %base /gen/who/hoon ~)
+  (poke-serve /who %base /gen/who/hoon ~)
 ::
 ++  on-load
   |=  [hood-version=@ud old=any-state]
   =<  abet
   =?  old   ?=(%0 -.old)  (state-0-to-1 old)
   =?  this  ?=(%1 -.old)
-    (emil -:(poke-serve [~ /who] %base /gen/who/hoon ~))
+    (emil -:(poke-serve /who %base /gen/who/hoon ~))
   =?  old   ?=(%1 -.old)  (state-1-to-2 old)
   ?>  ?=(%2 -.old)
   this(sat old)
@@ -485,7 +485,7 @@
     =/  m  (strand:rand ,@if)
     ^-  form:m
     ;<  our=@p  bind:m  get-our:strandio
-    ?.  ?=(?(%king %duke) (clan:title our))
+    ?.  ?=(?(%king %duke %earl) (clan:title our))
       (strand-fail:rand %dns-rank-error ~)
     ?:  ?=(%& -.addr)
       ?:  (reserved:eyre if.p.addr)

@@ -23,8 +23,6 @@ api.setAuthTokens({
   ship: window.ship
 });
 
-console.log('new world!');
-
 //@ts-ignore //TODO
 window.urb = new window.channel();
 subscription.start();

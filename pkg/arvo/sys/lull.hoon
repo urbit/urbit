@@ -3035,13 +3035,10 @@
         $>(?(%boon %done) gift:ames)
         ::  set-config: configures the external http server
         ::
-        ::    TODO: We need to actually return a (map (unit @t) http-config)
-        ::    so we can apply configurations on a per-site basis
-        ::
-        [%set-config =http-config]
+        [%set-config =vere-config]
         ::  sessions: valid authentication cookie strings
         ::
-        [%sessions ses=(set @t)]
+        [%sessions ses=(map @t (unit desk))]
         ::  response: response to an event from earth
         ::
         [%response =http-event:http]
@@ -3119,7 +3116,7 @@
         [%spew veb=@]
         ::  remember (or update) a cache mapping
         ::
-        [%set-response url=@t entry=(unit cache-entry)]
+        [%set-response =desk url=@t entry=(unit cache-entry)]
     ==
   ::  +origin: request origin as specified in an Origin header
   ::
@@ -3131,6 +3128,27 @@
         approved=(set origin)
         rejected=(set origin)
     ==
+  ::  $unpacked-request: a request and inferred details
+  ::
+  ::    .request:       the request from which the other details were inferred
+  ::    .authenticated: whether the request is authenticated as the local host
+  ::    .session:       the auth session provided by the request & its identity
+  ::
+  ::    two important details to know about this data structure's lifecycle:
+  ::    - the details are inferred from the .request _during initial creation_,
+  ::      but may be updated after the fact. this means that they don't always
+  ::      reflect the _contents_ of the request, but do reflect the _ownership_
+  ::      of the request.
+  ::      if during the handling of a unpacked-request, you mint a new session
+  ::      for it, you MUST update the .authenticated and  .session accordingly.
+  ::    - if .authenticated is true, then a .session MUST be present and point
+  ::      to a session whose identity is [%ours ~].
+  ::
+  +$  unpacked-request
+    $:  =request:http
+        authenticated=?
+        session=(unit [sid=@uv =identity])
+    ==
   ::  +outstanding-connection: open http connections not fully complete:
   ::
   ::    This refers to outstanding connections where the connection to
@@ -3138,20 +3156,12 @@
   ::    produce the results.
   ::
   +$  outstanding-connection
-    $:  ::  action: the action that had matched
+    $:  ::  the original request which caused this connection (and its deets)
+        ::
+        unpacked-request
+        ::  action: the action that had matched
         ::
         =action
-        ::  inbound-request: the original request which caused this connection
-        ::
-        =inbound-request
-        ::  session-id: the session associated with this connection
-        ::  identity:   the identity associated with this connection
-        ::
-        ::NOTE  technically the identity is associated with the session (id),
-        ::      but we may still need to know the identity that was used
-        ::      after the session proper expires.
-        ::
-        [session-id=@uv =identity]
         ::  response-header: set when we get our first %start
         ::
         response-header=(unit response-header:http)
@@ -3165,6 +3175,9 @@
     $:  ::  sessions: a mapping of session cookies to session information
         ::
         sessions=(map @uv session)
+        ::  authlets: temporary tokens for authenticating into scopes
+        ::
+        authlets=(map @uv session=@uv)
         ::  visitors: in-progress incoming eauth flows
         ::
         visitors=(map @uv visitor)
@@ -3184,6 +3197,13 @@
     $:  ::  identity: authentication level & id of this session
         ::
         =identity
+        ::  scopes:
+        ::    %&  this is a root session, and these are its child tokens
+        ::    %|  this is a child token, this is its parent
+        ::
+        ::NOTE  ?=(~ scope.identity) should be %& here, and the inverse.
+        ::      if that's not the case, that's a bug!
+        scopes=(each (set @uv) @uv)
         ::  expiry-time: when this session expires
         ::
         ::    We check this server side, too, so we aren't relying on the browser
@@ -3216,7 +3236,7 @@
     $:  pend=(unit [http=duct keen=time])
         ship=ship
         base=(unit @t)
-        last=@t
+        last=@t  ::TODOxx  optional subdomain
         toke=(unit @uv)
     ==  ==
   ::  +logbook: record of outgoing eauth comms & state
@@ -3257,13 +3277,17 @@
         [%okay nonce=@uv url=@t]
         [%shut nonce=@uv]
     ==  ==
-  ::  $identity: authentication method & @p
+  ::  $identity: authentication method & @p, w/ desk
   ::
   +$  identity
-    $~  [%ours ~]
-    $%  [%ours ~]                                       ::  local, root
-        [%fake who=@p]                                  ::  guest id
-        [%real who=@p]                                  ::  authed cross-ship
+    $:  $=  who
+        $~  [%ours ~]
+        $%  [%ours ~]                                   ::  local, root
+            [%fake who=@p]                              ::  guest id
+            [%real who=@p]                              ::  authed cross-ship
+        ==
+      ::
+        scope=(unit desk)
     ==
   ::  channel-state: state used in the channel system
   ::
@@ -3357,13 +3381,7 @@
   ::    what happens if there are two different actions for [~ /]?
   ::
   +$  binding
-    $:  ::  site: the site to match.
-        ::
-        ::    A ~ will match the Urbit's identity site (your.urbit.org). Any
-        ::    other value will match a domain literal.
-        ::
-        site=(unit @t)
-        ::  path: matches this prefix path
+    $:  ::  path: matches this prefix path
         ::
         ::    /~myapp will match /~myapp or /~myapp/longer/path
         ::
@@ -3372,6 +3390,7 @@
   ::  +action: the action to take when a binding matches an incoming request
   ::
   +$  action
+    $~  [%four-oh-four ~]
     $%  ::  dispatch to a generator
         ::
         [%gen =generator]
@@ -3384,6 +3403,9 @@
         ::  cross-ship authentication handling
         ::
         [%eauth ~]
+        ::  oauth-esque authentication handling
+        ::
+        [%auth ~]
         ::  internal logout page
         ::
         [%logout ~]
@@ -3412,6 +3434,9 @@
         ::  respond with the default file not found page
         ::
         [%four-oh-four ~]
+        ::  subdomain auth; %jump to top, %sink to sub, %gain the cookie
+        ::
+        [%holm ~]
     ==
   ::  +generator: a generator on the local ship that handles requests
   ::
@@ -3430,12 +3455,30 @@
         ::
         args=*
     ==
-  :: +http-config: full http-server configuration
+  :: +http-config: full http-server configuration in eyre state
   ::
   +$  http-config
-    $:  :: secure: PEM-encoded RSA private key and cert or cert chain
+    $:  :: secure: per-domain PEM-encoded RSA private key and cert (or chain)
         ::
-        secure=(unit [key=wain cert=wain])
+        secure=(map turf [key=wain cert=wain])
+        :: proxy: reverse TCP proxy HTTP(s)
+        ::
+        proxy=_|
+        :: log: keep HTTP(s) access logs
+        ::
+        log=?
+        :: redirect: send 301 redirects to upgrade HTTP to HTTPS
+        ::
+        ::   Note: requires certificate.
+        ::
+        redirect=?
+    ==
+  :: +vere-config: full http-server configuration for vere's consumption
+  ::
+  +$  vere-config
+    $:  :: secure: priority-ordered per-domain keys & certs
+        ::
+        secure=(list [=turf key=wain cert=wain])
         :: proxy: reverse TCP proxy HTTP(s)
         ::
         proxy=_|
@@ -3451,17 +3494,24 @@
   :: +http-rule: update configuration
   ::
   +$  http-rule
-    $%  :: %cert: set or clear certificate and keypair
+    $%  ::  %cert: set or clear certificate and keypair for specific turf
         ::
-        [%cert cert=(unit [key=wain cert=wain])]
-        :: %turf: add remove or reset established dns binding
+        ::   empty segment indicates * wildcard
+        ::
+        [%cert =turf cert=(unit [key=wain cert=wain])]
+        ::TODOxx  clear all certs task?
+        :: %turf: add remove or reset established dns binding ("root" domains only!)
         ::
         $:  %turf
             $=  action
             $%  [%put =turf]
                 [%del =turf]
                 [%new turfs=(set turf)]
-    ==  ==  ==
+        ==  ==
+        ::  risk: turn on to access via bare ip address at cost of security
+        ::
+        [%risk on=?]
+    ==
   ::  +address: client IP address
   ::
   +$  address

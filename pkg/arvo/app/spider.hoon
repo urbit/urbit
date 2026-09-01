@@ -361,7 +361,7 @@
 ++  bec  `beak`byk.bowl(r da+now.bowl)
 ++  bind-eyre
   ^-  card
-  [%pass /bind %arvo %eyre %connect [~ /spider] %spider]
+  [%pass /bind %arvo %eyre %connect /spider %spider]
 ::
 ++  new-thread-id
   |=  file=term

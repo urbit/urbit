@@ -1823,6 +1823,9 @@
                   %connect
                 ?^  wat.neet  [%e %serve binding.neet wat.neet]
                 [%e %connect binding.neet wat.neet]
+              ::
+                  %set-response
+                [%e %set-response from +>+.neet]
               ==
             ::
               [%gall *]        [%g +>.neet]
