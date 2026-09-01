@@ -3685,6 +3685,8 @@
         [%jolt =desk =dude]                             ::  deprecated
         [%idle =dude]                                   ::  suspend agent
         [%load =load]                                   ::  load agent
+        ::TODO  reformat
+        [%bump =beak per=[peg=(set perm) peq=(set perm)] bump=(list [=dude =agent])]        ::  load agent in a desk
         [%nuke =dude]                                   ::  delete agent
         [%name =dude task=task-namespace-v1]            ::  agent namespace mgmt
         [%doff dude=(unit dude) ship=(unit ship)]       ::  kill subscriptions
@@ -5595,6 +5597,10 @@
       ++  validate-mark
         |=  [in=* =mark =bowl]
         ^-  cage
+        ?:  =(%noun mark)
+          ::  skip validating raw nouns
+          ::
+          [%noun %noun in]
         =+  .^  =dais:clay  %cb
                 /(scot %p our.bowl)/[q.byk.bowl]/(scot %da now.bowl)/[mark]
             ==
@@ -5613,6 +5619,23 @@
         |=  [=eval-form =strand-input]
         ^-  [[(list card) =eval-result] _eval-form]
         =*  take-loop  $
+        =.  in.strand-input
+          ?~  in.strand-input  ~
+          =/  in  u.in.strand-input
+          ?.  ?=(%agent -.in)                  `in
+          ?.  ?=(%fact -.sign.in)              `in
+          ?:  ?=(%thread-done p.cage.sign.in)  `in
+          ::  if the fact has a %noun type, then it either has a %noun-like
+          ::  mark or it comes from raw-fact in Gall, whose validation got
+          ::  deferred to get the mark from the correct desk. In the former case
+          ::  the validation will no-op, and in the latter case it will fully
+          ::  validate the raw noun.
+          ::
+          ?.  ?=(%noun p.q.cage.sign.in)       `in
+          ::
+          :-  ~
+          :^  %agent  wire.in  %fact
+          (validate-mark q.q.cage.sign.in p.cage.sign.in bowl.strand-input)
         ::  run the strand callback
         ::
         =/  =output  (form.eval-form strand-input)

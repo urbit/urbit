@@ -1927,7 +1927,7 @@
           ::
           =/  =wire       /eauth/keen/(scot %p ship)/(scot %uv nonce)
           =.   time       (sub time (mod time eauth-cache-rounding))
-          =/  =spar:ames  [ship /e/x/(scot %da time)//eauth/url]
+          =/  =spar:ames  [ship /e/x/(scot:h136 %da time)//eauth/url]
           [duct %pass wire %a ?-(kind %keen keen+[~ spar], %yawn yawn+spar)]
         ::
         ++  send-boon
@@ -4443,7 +4443,8 @@
     =/  end=(unit @ud)  (slaw %ud i.t.t.tyl)
     =*  vew   i.t.t.t.tyl
     =*  rest  t.t.t.t.tyl
-    =/  mym  (scry-mime now rof lyc ~ [%$ vew (en-beam -.bem rest)])
+    =/  =pork  (deft:de-purl:html rest)
+    =/  mym  (scry-mime now rof lyc p.pork [%$ vew (en-beam -.bem q.pork)])
     ?:  ?=(%| -.mym)  ~
     =*  mime  p.mym
     ?~  range=(get-range [beg end] p.q.mime)
