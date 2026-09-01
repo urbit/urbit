@@ -657,7 +657,7 @@
                         =+  (expect %ace)    ?@  -  ~  =>  +(st s)
                         =+  wide             ?@  -  ~      [[v u] s]
                                          ?@  -  ~  =>  [l=u +(st s)]
-                    =+  (expect %per)    ?@  -  ~      [[%cnts w l] st]
+                    =+  (expect %per)    ?@  -  ~      [[%cnts w l] s]
       [%sggr %|]    =+  peek           ?@  -  ~  =>  [t=u +(st s)]
                     ?.  ?=([%atom %| %& %tas @] t)  ~
                     =+  peek(st move)  ?@  -  ~  =>  [tt=u +(st s)]

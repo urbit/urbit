@@ -260,9 +260,11 @@
   |=  [input=@t naty=naty-sugar:th]
   =+  res=~(tall p & (init-cord-cursor:tp input) [1 1] ~)
   ?~  res  ~['failed to parse' input]
-  %+  weld
+  ;:  weld
     (expect-eq !>(naty) !>(u.res))
-  (expect-eq !>(i.cur.s.res) !>(len.cur.s.res))  ::  fully parsed
+    (expect-eq !>(i.cur.s.res) !>(len.cur.s.res))  ::  fully tokenized
+    (expect-eq !>(~) !>(buf.s.res))                ::  fully parsed
+  ==
 ::
 ++  make-parser-fail-test
   |=  input=@t
