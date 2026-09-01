@@ -361,6 +361,19 @@
   |=  =card:agent:gall
   (do-deal %mock %poke %test-card !>(card))
 ::
+++  mock-tn
+  |=  task=task-namespace-v1:agent:gall
+  =/  m  (mare (list move:gall))
+  ;<  moz=(list move:gall)  bind:m
+    (mock-card %pass /agent/wire %arvo %ames task)
+  ;<  wir=wire  bind:m  (a2k-wire %mock /agent/wire ~)
+  ;<  ~  bind:m
+    %+  ex-moves  moz
+    :~  (ex-move default-duct %give %unto %poke-ack ~)
+        (ex-move ~[/sysduct] %pass wir %g %name %mock task)
+    ==
+  (do-call [wir /sysduct ~] %name %mock task)
+::
 ++  a2k-wire
   |=  [=dude:gall =wire deet=(unit *)]
   =/  m  (mare ,^wire)
@@ -380,13 +393,14 @@
   =/  coop  /foo
   ;<  *  bind:m  (do-load %mock easy:mock)
   ;<  moz-germ=(list move:gall)  bind:m
-    (mock-card %pass /agent/wire %arvo %ames %germ coop)
+    (mock-tn %germ coop)
   ::
   =/  plug-wire  [%key %mock '0w3.lBw1H' %pug coop]
+  ;<  gall-wire=wire  bind:m  (a2k-wire %mock /agent/wire ~)
+  =/  gall-duct=duct  [gall-wire /sysduct ~]
   ;<  ~  bind:m
     %+  ex-moves  moz-germ
-    :~  (ex-move default-duct %pass plug-wire [%a %plug [%g %x %mock %$ '1' coop]])
-        (ex-move default-duct %give %unto %poke-ack ~)
+    :~  (ex-move gall-duct %pass plug-wire [%a %plug [%g %x %mock %$ '1' coop]])
     ==
   ;<  ~  bind:m  (ex-gem %mock coop ~)
   ::  sends %pass to %ames %plug to handle key reservation
@@ -394,18 +408,15 @@
   =/  kid=@ud  1
   =/  key=@   (shaz 1)
   ;<  moz-plug=(list move:gall)  bind:m
-    (do-take [plug-wire ~[/sysduct]] %ames %stub kid key)
+    (do-take [plug-wire gall-duct] %ames %stub kid key)
   ;<  ~  bind:m  (ex-moves moz-plug ~)
   ::
   ;<  ~  bind:m  (ex-sky %mock (malt (limo [/foo [0 ~]]~)))
   ;<  ~  bind:m  (ex-gem %mock coop ~)
   ::
   ;<  moz-tend=(list move:gall)  bind:m
-    (mock-card %pass /agent/wire %arvo %ames %tend coop /bar [%txt 'foo'])
-  ;<  ~  bind:m
-    %+  ex-moves  moz-tend
-    :~  (ex-move default-duct %give %unto %poke-ack ~)
-    ==
+    (mock-tn %tend coop /bar [%txt 'foo'])
+  ;<  ~  bind:m  (ex-moves moz-tend ~)
   ;<  ~  bind:m  (ex-sky %mock (malt (limo [/foo/bar [1 `~]]~)))
   ;<  ~  bind:m  (ex-gem %mock coop ~)
   ::  nuking and reviving agent
@@ -415,25 +426,21 @@
   ::  rebind on the same path
   ::
   ;<  moz-germ=(list move:gall)  bind:m
-    (mock-card %pass /agent/wire %arvo %ames %germ coop)
+    (mock-tn %germ coop)
   ::
   ;<  ~  bind:m
     %+  ex-moves  moz-germ
-    :~  (ex-move default-duct %pass plug-wire [%a %plug [%g %x %mock %$ '1' coop]])
-        (ex-move default-duct %give %unto %poke-ack ~)
+    :~  (ex-move gall-duct %pass plug-wire [%a %plug [%g %x %mock %$ '1' coop]])
     ==
   ;<  moz-plug=(list move:gall)  bind:m
-    (do-take [plug-wire ~[/sysduct]] %ames %stub kid key)
+    (do-take [plug-wire gall-duct] %ames %stub kid key)
   ::
   ;<  ~  bind:m  (ex-moves moz-plug ~)
   ;<  ~  bind:m  (ex-sky %mock (malt (limo [/foo/bar [1 ~]]~)))
   ::
   ;<  moz-tend=(list move:gall)  bind:m
-    (mock-card %pass /agent/wire %arvo %ames %tend coop /bar [%txt 'foo new'])
-  ;<  ~  bind:m
-    %+  ex-moves  moz-tend
-    :~  (ex-move default-duct %give %unto %poke-ack ~)
-    ==
+    (mock-tn %tend coop /bar [%txt 'foo new'])
+  ;<  ~  bind:m  (ex-moves moz-tend ~)
   (ex-sky %mock (malt (limo [/foo/bar [2 `~]]~)))
 ::
 ++  test-make-brood
@@ -441,39 +448,25 @@
   =/  coop  /foo/bar
   ;<  *  bind:m  (do-load %mock easy:mock)
   ;<  moz-germ=(list move:gall)  bind:m
-    (mock-card %pass /agent/wire %arvo %ames %germ coop)
+    (mock-tn %germ coop)
   ::
   ;<  gall-wire=wire  bind:m  (a2k-wire %mock /agent/wire ~)
+  =/  gall-duct=duct  [gall-wire /sysduct ~]
   =/  plug-wire  [%key %mock '0w3.lBw1H' %pug coop]
   ;<  ~  bind:m
     %+  ex-moves  moz-germ
-    :~  (ex-move default-duct %give %unto %poke-ack ~)
-        (ex-move ~[/sysduct] %pass gall-wire [%g %name %mock %germ coop])
-    ==
-  =/  name-duct=duct  [gall-wire ~[/sysduct]]
-  ;<  moz-name=(list move:gall)  bind:m
-    (do-call name-duct [%name %mock %germ coop])
-  ;<  ~  bind:m
-    %+  ex-moves  moz-name
-    :~  (ex-move [gall-wire ~[/sysduct]] %pass plug-wire [%a %plug [%g %x %mock %$ '1' coop]])
+    :~  (ex-move gall-duct %pass plug-wire [%a %plug [%g %x %mock %$ '1' coop]])
     ==
   ::  sends %pass to %ames %plug to handle key reservation
   ::
   =/  kid=@ud  1
   =/  key=@   (shaz 1)
   ;<  moz-plug=(list move:gall)  bind:m
-    (do-take [plug-wire ~[/sysduct]] %ames %stub kid key)
+    (do-take [plug-wire gall-duct] %ames %stub kid key)
   ;<  ~  bind:m  (ex-moves moz-plug ~)
   ::
-  ;<  moz-tend=(list move:gall)  bind:m
-    (mock-card %pass /agent/wire %arvo %ames %tend coop /some/path [%txt 'foo'])
-  ;<  ~  bind:m
-    %+  ex-moves  moz-tend
-    :~  (ex-move default-duct %give %unto %poke-ack ~)
-        (ex-move ~[/sysduct] %pass gall-wire [%g %name %mock %tend coop /some/path [%txt 'foo']])
-    ==
   ;<  tend-moz=(list move:gall)  bind:m
-    (do-call name-duct [%name %mock %tend coop /some/path [%txt 'foo']])
+    (mock-tn %tend coop /some/path [%txt 'foo'])
   ;<  ~  bind:m  (ex-moves tend-moz ~)
   ::
   ;<  moz=(list move:gall)  bind:m
@@ -490,13 +483,13 @@
   =/  gall-wire  (a2k-wire %mock /agent/wire `~2026.2.2)
   ;<  *  bind:m  (do-load %mock easy:mock)
   ;<  *  bind:m
-    (mock-card %pass /agent/wire %arvo %ames %grow /foo/bus [%txt 'foo'])
+    (mock-tn %grow /foo/bus [%txt 'foo'])
   ;<  *  bind:m
-    (mock-card %pass /agent/wire %arvo %ames %grow /bar [%txt 'bar'])
+    (mock-tn %grow /bar [%txt 'bar'])
   ;<  ~  bind:m  (ex-sky %mock (malt (limo [[/foo/bus 1 `~] [/bar 1 `~]~])))
   ::
   ;<  moz=(list move:gall)  bind:m
-    (mock-card %pass /agent/wire %arvo %ames %grow /foo/bus [%txt 'new-foo-bus'])
+    (mock-tn %grow /foo/bus [%txt 'new-foo-bus'])
   ;<  ~  bind:m  (ex-sky %mock (malt (limo [[/foo/bus 2 `~] [/bar 1 `~]~])))
   ::  nuke and revive the agent,
   ::  expect sky.yoke to persist with namespace case
@@ -508,24 +501,23 @@
   ::  expect case to increase
   ::
   ;<  *  bind:m
-    (mock-card %pass /agent/wire %arvo %ames %grow /foo/bus [%txt 'new-foo-bus'])
+    (mock-tn %grow /foo/bus [%txt 'new-foo-bus'])
   (ex-sky %mock (malt (limo [[/foo/bus 3 `~] [/bar 1 ~]~])))
 ::
 ++  test-cull
   %-  eval-mare
-  =/  gall-wire  (a2k-wire %mock /agent/wire `~2026.2.2)
   ;<  *  bind:m  (do-load %mock easy:mock)
   ;<  *  bind:m
-    (mock-card %pass /agent/wire %arvo %ames %grow /foo/bus [%txt 'foo'])
+    (mock-tn %grow /foo/bus [%txt 'foo'])
   ;<  *  bind:m
-    (mock-card %pass /agent/wire %arvo %ames %grow /foo/bus [%txt 'new foo'])
+    (mock-tn %grow /foo/bus [%txt 'new foo'])
   ;<  ~  bind:m
     %+  ex-sky  %mock
     (malt (limo [/foo/bus [2 `~]]~))
   %-  branch
   :~  :-  '%cull at latest'
       ;<  *  bind:m
-        (mock-card %pass /agent/wire %arvo %ames %cull [%ud 2] /foo/bus)
+        (mock-tn %cull [%ud 2] /foo/bus)
       ;<  ~  bind:m  (ex-file-at %mock 1 /foo/bus %null)
       ;<  ~  bind:m  (ex-sky %mock (malt (limo [/foo/bus [2 ~]]~)))
       ::  nuke and revive the agent,
@@ -535,29 +527,28 @@
       ;<  *  bind:m  (do-load %mock easy:mock)
       ;<  ~  bind:m  (ex-sky %mock (malt (limo [/foo/bus [2 ~]]~)))
       ;<  *  bind:m
-        (mock-card %pass /agent/wire %arvo %ames %grow /foo/bus [%txt 'new foo'])
+        (mock-tn %grow /foo/bus [%txt 'new foo'])
       (ex-sky %mock (malt (limo [/foo/bus [3 `~]]~)))
     ::
       :-  '%cull at 1'
       ;<  *  bind:m
-        (mock-card %pass /agent/wire %arvo %ames %cull [%ud 1] /foo/bus)
+        (mock-tn %cull [%ud 1] /foo/bus)
       ;<  ~  bind:m  (ex-file-at %mock 1 /foo/bus %null)
       (ex-sky %mock (malt (limo [/foo/bus [2 `~]]~)))
   ==
 ::
-  ++  test-tomb
+++  test-tomb
   %-  eval-mare
-  =/  gall-wire  (a2k-wire %mock /agent/wire `~2026.2.2)
   ;<  *  bind:m  (do-load %mock easy:mock)
   ;<  *  bind:m
-    (mock-card %pass /agent/wire %arvo %ames %grow /foo/bus [%txt 'foo'])
+    (mock-tn %grow /foo/bus [%txt 'foo'])
   ;<  *  bind:m
-    (mock-card %pass /agent/wire %arvo %ames %grow /foo/bus [%txt 'new foo'])
+    (mock-tn %grow /foo/bus [%txt 'new foo'])
   ;<  ~  bind:m  (ex-sky %mock (malt (limo [/foo/bus [2 `~]]~)))
   %-  branch
   :~  :-  '%tomb at latest'
       ;<  *  bind:m
-        (mock-card %pass /agent/wire %arvo %ames %tomb [%ud 2] /foo/bus)
+        (mock-tn %tomb [%ud 2] /foo/bus)
       ;<  ~  bind:m  (ex-sky %mock (malt (limo [/foo/bus [2 ~]]~)))
       ::  nuke and revive the agent,
       ::  expect to persist with namespace case
@@ -566,12 +557,12 @@
       ;<  *  bind:m  (do-load %mock easy:mock)
       ;<  ~  bind:m  (ex-sky %mock (malt (limo [/foo/bus [2 ~]]~)))
       ;<  *  bind:m
-        (mock-card %pass /agent/wire %arvo %ames %grow /foo/bus [%txt 'new foo'])
+        (mock-tn %grow /foo/bus [%txt 'new foo'])
       (ex-sky %mock (malt (limo [/foo/bus [3 `~]]~)))
     ::
       :-  '%tomb at 1'
       ;<  *  bind:m
-        (mock-card %pass /agent/wire %arvo %ames %tomb [%ud 1] /foo/bus)
+        (mock-tn %tomb [%ud 1] /foo/bus)
       ;<  ~  bind:m  (ex-file-at %mock 1 /foo/bus %hash)
     ::
       (ex-sky %mock (malt (limo [/foo/bus [2 `~]]~)))
