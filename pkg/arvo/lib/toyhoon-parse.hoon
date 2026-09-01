@@ -14,7 +14,7 @@
               %tsgr  %tsls
               %cnts
               %sggr
-              %brcn  %brpt
+              %brcn  %brpt  %brcl
               %ktls
               %wtpt  %wtcn  %wtkt
               %cltr
@@ -32,7 +32,7 @@
       [%atom tol=? const=? =aura a=@]  ::  %atomw + %atomt
       [%mato =aura]
     ::
-      $:  ?(%dttr %dtwt %dtls %dtts %wtcl %tsgr %tsls %cnts %sggr %brcn %brpt %ktls %wtpt %wtcn %wtkt %cltr)
+      $:  ?(%dttr %dtwt %dtls %dtts %wtcl %tsgr %tsls %cnts %sggr %brcn %brpt %brcl %ktls %wtpt %wtcn %wtkt %cltr)
           tol=?
       ==
   ==
@@ -64,7 +64,7 @@
           tsgrw+|+%tsgr  tsgrt+&+%tsgr    tslsw+|+%tsls  tslst+&+%tsls
           cntsw+|+%cnts  cntst+&+%cnts
           sggrw+|+%sggr  sggrt+&+%sggr
-          brcnw+|+%brcn  brcnt+&+%brcn    brptw+|+%brpt  brptt+&+%brpt
+          brcnw+|+%brcn  brcnt+&+%brcn    brptw+|+%brpt  brptt+&+%brpt    brclw+|+%brcl  brclt+&+%brcl
           ktlsw+|+%ktls  ktlst+&+%ktls
           wtptw+|+%wtpt  wtptt+&+%wtpt    wtcnw+|+%wtcn  wtcnt+&+%wtcn    wtktw+|+%wtkt  wtktt+&+%wtkt
           cltrw+|+%cltr  cltrt+&+%cltr
@@ -282,6 +282,15 @@
     :-  %brptt
     '''
     '|@' gap
+    '''
+  ::
+    :-  %brclw
+    '''
+    '|:('
+    '''
+    :-  %brclt
+    '''
+    '|:' gap
     '''
   ::
     :-  %ktlsw
@@ -590,6 +599,7 @@
                                               ?@  -  ~  =>  [b=u +(st s)]
                     =+  (expect %shep)        ?@  -  ~  =>  +(st s)
                     ?~  cor=(validate-layout l b)    ~  [[%brpt u.cor] st]
+      [%brcl %&]    =+  tall-2(st move)       ?@  -  ~  [[%xtra %brcl u] s]
       [%ktls %&]    =+  tall-2(st move)       ?@  -  ~  [[%ktls u] s]
       [%wtpt %&]    =+  tall-wing-2(st move)  ?@  -  ~  [[%wtpt u] s]
       [%wtcn %&]    =+  wing-full(st move)    ?@  -  ~  =>  [w=u +(st s)]
@@ -667,6 +677,7 @@
                     =+  wide(st move)  ?@  -  ~  =>  [clu=u +(st s)]
                     =+  (expect %ace)  ?@  -  ~  =>  +(st s)
                     =+  wide-1         ?@  -  ~  [[%sggr [a.t clu] u] s]
+      [%brcl %|]    =+  wide-2         ?@  -  ~  [[%xtra %brcl u] s]
       [%ktls %|]    =+  wide-2         ?@  -  ~  [[%ktls u] s]
       [%wtpt %|]    =+  wide-wing-2    ?@  -  ~  [[%wtpt u] s]
       [%wtcn %|]    =+  wing-full      ?@  -  ~  =>  [w=u +(st s)]
