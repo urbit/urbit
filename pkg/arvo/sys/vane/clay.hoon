@@ -5210,7 +5210,7 @@
     =^  mos  ruf
       =/  den  ((de now rof hen ruf) our des.req)
       abet:(set-seal:den add.req pes.req)
-    =^  mos2  ruf  abet:goad:(lu now rof hen ruf)
+    =^  mos2  ruf  abet:(goad:(lu now rof hen ruf) `des.req)
     [(weld mos mos2) ..^$]
     ::
   ::
