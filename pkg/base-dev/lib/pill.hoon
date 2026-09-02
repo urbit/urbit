@@ -321,7 +321,10 @@
     ==
   ::
   =/  userspace-ova
-    =.  dez  (snoc dez [%base bas])
+    ::  base must be parked first: every other desk compiles against base's
+    ::  /lib/ford/hoon, so it has to be committed before they are.
+    ::
+    =.  dez  [[%base bas] dez]
     ;:  weld
       %+  turn  dez
       |=  [dek=desk bas=path]
