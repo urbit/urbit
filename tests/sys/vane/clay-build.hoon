@@ -191,9 +191,15 @@
   |=  =desk
   (do-park desk zuse ~)
 ::
++$  bump-data
+  $:  =beak
+      per=[peg=(set perm:gall) peq=(set perm:gall)]
+      bump=(list [dude:gall agent:gall])
+  ==
+::
 ++  do-setup
   |=  =desk
-  =/  m  (mare load:gall)
+  =/  m  (mare bump-data)
   ::  set up the base desk unconditionally
   ::
   ;<  *                 bind:m  (do-new-desk %base)
@@ -209,15 +215,20 @@
   ;<  ~                 bind:m
     %+  expect-moves  mov
     :~  ex-wick
-        ex-load
+        ex-bump
     ==
   ;<  ~                 bind:m  (do-wick ~)  ::  just a formality
-  (pure:m (extract-load (snag 1 mov)))
+  (pure:m (extract-bump (snag 1 mov)))
 ::
 ++  extract-load
   |=  mov=move
   ^-  load:gall
   ?>(?=([* %pass * %g %load *] mov) load.q.q.mov)
+::
+++  extract-bump
+  |=  mov=move
+  ^-  bump-data
+  ?>(?=([* %pass * %g %bump *] mov) [beak per bump]:q.q.mov)
 ::
 ::  expectation checkers
 ::
@@ -267,6 +278,15 @@
   |=  mov=move
   ?:  ?=([* %pass * [%g [%load *]]] mov)  ~
   :~  'expected %pass %g %load'
+      %^  rap  3  'got      %'
+      ?.  ?=(%pass -.q.mov)  [-.q.mov ~]
+      [- ' %' +< ~]:q.q.mov
+  ==
+::
+++  ex-bump
+  |=  mov=move
+  ?:  ?=([%pass * [%g [%bump *]]] q.mov)  ~
+  :~  'expected %pass %g %bump'
       %^  rap  3  'got      %'
       ?.  ?=(%pass -.q.mov)  [-.q.mov ~]
       [- ' %' +< ~]:q.q.mov
@@ -332,7 +352,7 @@
   =/  m  (mare ,~)
   ::  general setup, install desk & run the agent
   ::
-  ;<  =load:gall       bind:m  (do-setup %foo)
+  ;<  bump=bump-data  bind:m  (do-setup %foo)
   ::  changing a random file should not rebuild the agent
   ::
   ;<  mov=(list move)  bind:m
@@ -342,12 +362,12 @@
     %+  expect-moves  mov
     :~  ex-wick
         (ex-text ": /~nul/foo/2/non/hoon")
-        ex-load
+        ex-bump
     ==
-  =/  load-2=load:gall  (extract-load (snag 2 mov))
+  =/  bump-2=bump-data  (extract-bump (snag 2 mov))
   ::  loadout must not have changed, agents must not have been rebuild
   ::
-  ?.  =(load load-2)
+  ?.  =(bump bump-2)
     (fail:m 'rebuilt/changed agent(s) unexpectedly' ~)
   ::  changing dep.hoon should rebuild the agent
   ::
@@ -358,10 +378,10 @@
     %+  expect-moves  mov
     :~  ex-wick
         (ex-text ": /~nul/foo/3/dep/hoon")
-        ex-load
+        ex-bump
     ==
-  =/  load-3=load:gall  (extract-load (snag 2 mov))
-  ?:  =(load load-3)
+  =/  bump-3=bump-data  (extract-bump (snag 2 mov))
+  ?:  =(bump bump-3)
     (fail:m 'agent(s) not rebuilt/changed when expected' ~)
   (pure:m ~)
 ::
@@ -373,7 +393,7 @@
   =/  m  (mare ,~)
   ::  general setup, install desk & run the agent
   ::
-  ;<  =load:gall       bind:m  (do-setup %foo)
+  ;<  bump=bump-data       bind:m  (do-setup %foo)
   ::  changing /mar/noun on base should rebuild the agent
   ::
   ;<  mov=(list move)  bind:m
@@ -392,8 +412,18 @@
         (ex-text ": /~nul/base/2/mar/noun/hoon")
         ex-load
     ==
-  =/  load-2=load:gall  (extract-load (snag 2 mov))
-  ?:  =(load load-2)
+  =/  =load:gall  (extract-load (snag 2 mov))
+  =/  load-map
+    %+  roll  load
+    |=  $:  l=[=dude:gall =beak per=[peg=(set perm:gall) peq=(set perm:gall)] =agent:gall]
+            load-map=(map beak [per=[(set perm:gall) (set perm:gall)] (list [dude:gall agent:gall])])
+        ==
+    ^-  (map beak [per=[(set perm:gall) (set perm:gall)] (list [dude:gall agent:gall])])
+    =/  entry=(unit [per=[(set perm:gall) (set perm:gall)] (list [dude:gall agent:gall])])
+      (~(get by load-map) beak.l)
+    ?~  entry   (~(put by load-map) beak.l [per [[dude agent] ~]]:l)
+    (~(put by load-map) beak.l [per.u.entry [[dude agent]:l +.u.entry]])
+  ?:  =((~(got by load-map) beak.bump) +.bump)
     (fail:m 'agent(s) not rebuilt/changed when expected' ~)
   (pure:m ~)
 ::
@@ -405,7 +435,7 @@
   =/  m  (mare ,~)
   ::  general setup, install desk & run the agent
   ::
-  ;<  =load:gall       bind:m  (do-setup %foo)
+  ;<  bump=bump-data    bind:m  (do-setup %foo)
   ::  adding /mar/noun.hoon to %foo desk should rebuild the agent
   ::
   ;<  mov=(list move)  bind:m
@@ -415,10 +445,10 @@
     %+  expect-moves  mov
     :~  ex-wick
         (ex-text "+ /~nul/foo/2/mar/noun/hoon")
-        ex-load
+        ex-bump
     ==
-  =/  load-3=load:gall  (extract-load (snag 2 mov))
-  ?:  =(load load-3)
+  =/  bump-2=bump-data  (extract-bump (snag 2 mov))
+  ?:  =(bump bump-2)
     (fail:m 'agent(s) not rebuilt/changed when expected' ~)
   (pure:m ~)
 --
