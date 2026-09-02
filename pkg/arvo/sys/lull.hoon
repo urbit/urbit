@@ -3734,9 +3734,7 @@
         [%sear =ship]                                   ::  clear pending queues
         [%jolt =desk =dude]                             ::  deprecated
         [%idle =dude]                                   ::  suspend agent
-        [%load =load]                                   ::  load agent
-        ::TODO  reformat
-        [%bump =beak per=[peg=(set perm) peq=(set perm)] bump=(list [=dude =agent])]        ::  load agent in a desk
+        [%load =load]                                   ::  load agents
         [%nuke =dude]                                   ::  delete agent
         [%name =dude task=task-namespace-v1]            ::  agent namespace mgmt
         [%doff dude=(unit dude) ship=(unit ship)]       ::  kill subscriptions
@@ -4115,7 +4113,12 @@
         ==  ==
     ==
   ::
-  +$  load  (list [=dude =beak per=[peg=(set perm) peq=(set perm)] =agent])  ::  loadout
+  +$  load  (map desk pack)                             ::  loadout
+  +$  pack                                              ::
+    $:  byk=beak                                        ::  origin desk
+        per=[peg=(set perm) peq=(set perm)]             ::  permissions
+        duz=(map dude agent)                            ::  live agents
+    ==
   +$  scar                                              ::  opaque duct
     $:  p=@ud                                           ::  bone sequence
         q=(map duct bone)                               ::  by duct

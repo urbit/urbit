@@ -1017,49 +1017,35 @@
   ::  +mo-load: install agents
   ::
   ++  mo-load
-    |=  [prov=path agents=(list [=dude =beak per=[peg=(set perm) peq=(set perm)] =agent])]
-    =.  mo-core
-      |-  ^+  mo-core
-      ?~  agents  mo-core
-      =/  [=dude =desk]  [dude q.beak]:i.agents
-      ::  ~>  %slog.0^leaf/"gall: starting {<dude>} on {<desk>}"
-      $(agents t.agents, mo-core (mo-receive-core prov i.agents))
-    ::
-    =/  kil
-      =/  lol
-        (skim ~(tap by yokes.state) |=([* y=yoke] &(?=(%live -.y) -.agent.y)))
-      =/  mol  (~(gas by *(map term yoke)) lol)
-      =/  sol  ~(key by mol)
-      =/  new  (silt (turn agents head))
-      ~(tap in (~(dif in sol) new))
-    |-  ^+  mo-core
-    ?~  kil  mo-core
-    ~>  %slog.0^leaf/"gall: stopping {<i.kil>}"
-    $(kil t.kil, mo-core (mo-idle prov i.kil))
+    |=  [prov=path =load:gall]
+    =/  dez  ~(tap by load)
+    |-
+    ?~  dez  mo-core
+    =.  mo-core  (mo-bump prov i.dez)
+    $(dez t.dez)
+  ::  +mo-bump: install agents for desk
   ::
-  ++  mo-bump  ::TODO  try to de-dupe with +mo-load (and accept perms)
-    |=  [prov=path =beak per=[peg=(set perm) peq=(set perm)] agents=(list [=dude =agent])]
+  ++  mo-bump
+    |=  [prov=path =desk pack]
+    ?>  =(desk q.byk)
+    =/  agents  ~(tap by duz)
     =.  mo-core
       |-  ^+  mo-core
       ?~  agents  mo-core
       =*  rc  mo-receive-core
-      $(agents t.agents, mo-core (rc prov dude.i.agents beak per agent.i.agents))
+      $(agents t.agents, mo-core (rc prov p.i.agents byk per q.i.agents))
+    ::  suspend agents that are running off this desk but not included
+    ::  in this latest $pack
     ::
-    =/  kil
-      =/  lol
-        %+  skim  ~(tap by yokes.state)
-        |=  [* y=yoke]
-        &(?=(%live -.y) -.agent.y =(q.beak.y q.beak))
-      ::
-      =/  mol  (~(gas by *(map term yoke)) lol)
-      =/  sol  ~(key by mol)
-      =/  new  (silt (turn agents head))
-      ~(tap in (~(dif in sol) new))
+    =/  kil=(list [=dude yoke])
+      %+  skim  ~(tap by yokes.state)
+      |=  [=dude y=yoke]
+      &(?=(%live -.y) -.agent.y =(q.beak.y desk) !(~(has by duz) dude))
     ::
     |-  ^+  mo-core
     ?~  kil  mo-core
-    ~>  %slog.0^leaf/"gall: stopping {<i.kil>}"
-    $(kil t.kil, mo-core (mo-idle prov i.kil))
+    ~>  %slog.0^leaf/"gall: stopping {<dude.i.kil>}"
+    $(kil t.kil, mo-core (mo-idle prov dude.i.kil))
   ::
   ++  mo-authorized-coop
     |=  [lyc=(set ship) =farm dap=term =path =coop]
@@ -3103,7 +3089,6 @@
       %jolt  mo-abet:(mo-jolt:mo-core dude.task our desk.task)
       %idle  mo-abet:(mo-idle:mo-core prov dude.task)
       %load  mo-abet:(mo-load:mo-core prov +.task)
-      %bump  mo-abet:(mo-bump:mo-core prov +.task)
       %nuke  mo-abet:(mo-nuke:mo-core prov dude.task)
       %name  mo-abet:(mo-name:mo-core prov +.task)
       %doff  mo-abet:(mo-doff:mo-core prov +.task)

@@ -4752,7 +4752,7 @@
     ?:  (lth veb.bug pri)
       same
     (slog leaf+"goad: {(print)}" ~)
-  ::  +goad: emit %load move for all desks, applying $rein's
+  ::  +goad: emit %load move for all or specified desk, applying $rein's
   ::
   ::  [goad] Must be called any time the set of running agents changes.
   ::  This is whenever an agent is started, stopped, or updated.
@@ -4807,13 +4807,7 @@
     =+  (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
     ::
     =.  ..abet  tare                                    ::  [tare] >
-    =/  task
-      ?~  syd  [%load agents]
-      =/  g  |=([=dude:gall * * =agent:gall] [dude agent])
-      =+  per=[peg peq]:dom:((de now rof hen ruf) our u.syd)
-      [%bump [our u.syd da+now] per (turn agents g)]
-    ::
-    (emit hen %pass /lu/load %g task)
+    (emit hen %pass /lu/load %g %load agents)
   ::  +override: apply rein to bill
   ::
   ++  override
@@ -4869,21 +4863,23 @@
     ?~  sat
       lad
     =/  f  (ford our desk.i.sat ~)
-    =/  new=load:gall
-      |-  ^-  load:gall
-      ?~  bill.i.sat
-        ~
+    =;  new=pack:gall
+      $(sat t.sat, lad (~(put by lad) desk.i.sat new))
+    =|  duz=(map dude:gall agent:gall)
+    |-  ^-  pack:gall
+    ?~  bill.i.sat
       =/  den  ((de now rof hen ruf) our desk.i.sat)
-      =/  =vase
-        ~|  /app/[i.bill.i.sat]/hoon
-        %-  road  |.
-        ~|  /app/[i.bill.i.sat]/hoon
-        (build-file:f /app/[i.bill.i.sat]/hoon)
-      =/  agent  ~|  [%building-app bill.i.sat]  !<(agent:gall vase)
-      :_  $(bill.i.sat t.bill.i.sat)
-      [i.bill.i.sat [our desk.i.sat da+now] [peg peq]:dom.den agent]
-    =.  lad  (weld lad new)
-    $(sat t.sat)
+      [[our desk.i.sat da+now] [peg peq]:dom.den duz]
+    =/  =vase
+      ~|  /app/[i.bill.i.sat]/hoon
+      %-  road  |.
+      ~|  /app/[i.bill.i.sat]/hoon
+      (build-file:f /app/[i.bill.i.sat]/hoon)
+    =/  agent  ~|  [%building-app bill.i.sat]  !<(agent:gall vase)
+    %_  $
+      duz         (~(put by duz) i.bill.i.sat agent)
+      bill.i.sat  t.bill.i.sat
+    ==
   ::  build-dais for each mark
   ::
   ++  build-marks
@@ -5319,6 +5315,7 @@
       $(mos (weld mos mos-new), lit.req t.lit.req)
     =^  m2  ruf
       abet:wick:((de now rof hen ruf) our %base)
+    ::TODO  call +goad in loop above instead?
     =^  m3  ruf  abet:(goad):(lu now rof hen ruf)
     [:(weld m1 m2 m3) ..^$]
   ::
