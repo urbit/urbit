@@ -338,6 +338,11 @@
 ++  on-init
   =<  abet
   ~>  %slog.(fmt "boot")
+  (emit %pass /kiln/boot %arvo %syscall %b [%wait now])
+::
+++  boot-setup
+  =<  abet
+  ~>  %slog.(fmt "boot-setup")
   ::
   =+  .^(desks=(set desk) %cd /(scot %p our)//(scot %da now))
   =.  desks  (~(del in desks) %base)
@@ -1079,6 +1084,7 @@
   |=  [=wire =sign-arvo]
   ^+  abet
   ?-    wire
+      [%boot *]         boot-setup
       [%sync %merg *]   abet
       [%find-ship *]    abet
       [%sync *]         abet
