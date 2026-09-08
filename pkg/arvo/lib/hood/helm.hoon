@@ -155,8 +155,8 @@
   abet:(emit %pass way.mass-timer.sat %arvo %syscall %b %rest nex.mass-timer.sat)
 ::
 ++  poke-meld
-  |=  ~  =<  abet
-  (emit %pass /pack %arvo %syscall %d %flog %meld ~)
+  |=  [memo=? ford=?]  =<  abet
+  (emit %pass /pack %arvo %syscall %d %flog %meld memo ford)
 ::
 ++  poke-pack
   |=  ~  =<  abet
