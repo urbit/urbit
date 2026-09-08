@@ -1236,7 +1236,6 @@
       (handle-cache-req req +.u.val.u.cached)
     ::
     ?-    -.action
-      %auth     ~(on-request auth:authentication req)
       %logout   (handle-logout:authentication req)
       %eauth    (on-request:eauth:authentication req)
       %channel  (handle-request:by-channel req)
@@ -1665,7 +1664,7 @@
         %channel
       on-cancel-request:by-channel
     ::
-        ?(%scry %four-oh-four %name %host %ip %boot %sponsor %holm %authentication %auth %logout)
+        ?(%scry %four-oh-four %name %host %ip %boot %sponsor %holm %authentication %logout)
       ::  it should be impossible for these to be asynchronous,
       ::  but also no clean-up needed, so don't crash just in case.
       ::  (crashing during %born handling is Very Bad.)
@@ -2666,139 +2665,6 @@
         |=  =path
         ^-  move
         [duct %pass [%eauth %expire path] %b %wait (add now eauth-timeout)]
-      --
-    ::
-    ++  auth
-      |_  req=unpacked-request
-      ++  instant-response  (cury instant:response req)
-      ::
-      ++  on-request
-        ^-  [(list move) server-state]
-        =*  request  request.req
-        ::  only root login is allowed to do this
-        ::
-        ?.  authenticated.req
-          =;  url=@t  (instant-response 303^['location' url]~ ~)
-          %^  cat  3  '/~/login?redirect='
-          (crip (en-urlt:html (trip url.request.req)))
-        ::
-        ?:  ?=(%'POST' method.request.req)  on-post
-        ?.  ?=(%'GET' method.request.req)   (instant-response 405^~ ~)
-        ::  parse the arguments out of request uri
-        ::
-        =+  request-line=(parse-request-line url.request.req)
-        =/  scope   (get-header:http 'scope' args.request-line)
-        =/  return  (get-header:http 'return' args.request-line)
-        =/  client  (fall (get-header:http 'client' args.request-line) 'unknown')
-        ::
-        ?~  scope   (error-page 'no scope specified')
-        ::
-        (dialog-page u.scope client return)
-      ::
-      ++  dialog-page
-        |=  [scope=desk client=@t return=(unit @t)]
-        %-  instant-response
-        :-  200^['content-type' 'text/html']~
-        %-  some
-        %-  as-octs:mimes:html
-        %-  crip
-        %-  en-xml:html
-        ;html
-          ;head
-            ;meta(charset "utf-8");
-            ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
-            :: ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
-            ;title:"Urbit: External Authentication"
-            ;style:"{(trip auth-styling)}"
-          ==
-          ;body
-            ;div
-              ;p:"Let {(trip client)} log in to {(trip scope)} on {(scow %p our)}?"
-              ;form(action "/~/auth", method "post")
-                ;input(type "hidden", name "scope", value (trip scope));
-                ;*  ?~  return  ~  :_  ~
-                    ;input(type "hidden", name "return", value (trip u.return));
-                ;button(type "submit", name "deny"):"Deny"
-                ;button(type "submit", name "approve"):"Approve"
-              ==
-            ==
-          ==
-        ==
-      ::
-      ++  on-post
-        ^-  [(list move) server-state]
-        ?~  body.request.req  (error-page 'no body')
-        =/  parsed=(unit (list [key=@t value=@t]))
-          (rush q.u.body.request.req yquy:de-purl:html)
-        ?~  parsed   (error-page 'bad body')
-        ::
-        =/  scope    (get-header:http 'scope' u.parsed)
-        =/  approve  (get-header:http 'approve' u.parsed)
-        =/  return   (get-header:http 'return' u.parsed)
-        ::
-        ?~  approve  (serve-return return |+'rejected')
-        ?~  scope    (serve-return return |+'noscope')
-        ::
-        =^  [sid=@uv identity moz1=(list move)]  state
-          =+  (need session.req)
-          (start-session identity(scope `u.scope) `sid)
-        ::NOTE  don't associate new session with the request,
-        ::      the session is for the .return target
-        ::
-        ::  if no return address was provided, burden the user with
-        ::  manually copy-pasting the session token
-        ::
-        =^  moz2=(list move)  state
-          (serve-return return &+sid)
-        [(weld moz1 moz2) state]
-      ::
-      ++  error-page
-        |=  msg=@t
-        (instant-response 400^~ `(as-octs:mimes:html msg))
-      ::
-      ++  serve-return
-        |=  [return=(unit @t) arg=(each @uv @t)]
-        ?~  return  (serve-copy-page arg)
-        =/  append=@t
-          ?-  -.arg
-            %&  (cat 3 '?token=' (scot %uv p.arg))
-            %|  (cat 3 '?error=' p.arg)
-          ==
-        %-  instant-response
-        [303^['location' (cat 3 u.return append)]~ ~]
-      ::
-      ++  serve-copy-page
-        |=  arg=(each @uv @t)
-        %-  instant-response
-        :-  200^['content-type' 'text/html']~
-        %-  some
-        %-  as-octs:mimes:html
-        %-  crip
-        %-  en-xml:html
-        ;html
-          ;head
-            ;meta(charset "utf-8");
-            ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
-            :: ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
-            ;title:"Urbit: External Authentication"
-            ;style:"{(trip auth-styling)}"
-          ==
-          ;body
-            ;+  ?-  -.arg
-                  %&
-                =/  ses=tape  (scow %uv p.arg)
-                ;div
-                  ;input(type "text", readonly "", value ses);
-                  ;button(onclick "navigator.clipboard.writeText('{ses}');"):"copy"
-                ==
-              ::
-                  %|
-                ;div
-                  ;p:"No auth happened: {(trip p.arg)}"
-                ==
-              ==
-          ==
-        ==
       --
     --
   ::  +channel: per-event handling of requests to the channel system
@@ -3977,7 +3843,6 @@
       ?+  t.parsed-url  [%four-oh-four ~]
         [%login ~]      [%authentication ~]
         [%eauth ~]      [%eauth ~]
-        [%auth ~]       [%auth ~]
         [%holm *]       [%holm ~]
         [%logout ~]     [%logout ~]
         [%channel *]    [%channel ~]
