@@ -8176,7 +8176,18 @@
                   %drop  sink(nax.state (~(del in nax.state) message-num.task))
                   %done  (done ok.task)
                   %flub
-                ?:  ?=([%flub ~] task)  sink
+                ?:  ?=([%flub ~] task)
+                  ::  Gall found a running agent with no matching blocked move.
+                  ::  Redeliver the head of the pending queue from the payload
+                  ::  saved in pending-vane-ack.state.
+                  ::
+                  ?~  next=~(top to pending-vane-ack.state)
+                    ::  XX if there is nothing pending, rewind last-heard?
+                    ::
+                    sink
+                  %-  %+  pe-trace  odd.veb
+                      |.("redeliver pending {<message-num.u.next>} bone={<bone>}")
+                  (handle-sink message-num.u.next message.u.next ok=%.y)
                 =?  peer-core  ?=([%flub ? ^] task)
                   ::  /gf system flow established; halt the flow
                   ::
@@ -8187,7 +8198,6 @@
                   sink
                 %-  %+  pe-trace  odd.veb
                         |.("%flubbing: {<bone=bone>} last={<last-heard.state>}")
-                =+  left=q:~(get to pending-vane-ack.state)
                 %_  sink
                   pending-vane-ack.state  ~                :: drop all pending
                         last-heard.state  last-acked.state :: rewind last heard
@@ -10900,17 +10910,22 @@
               :: ack from client vane
               ::
                   %done
-                ?>  =(%.y pending-ack.rcv)
-                (fo-take-done +.sign)
+                ?>(pending-ack.rcv (fo-take-done +.sign))
               ::  halt the flow
               ::
                   %flub
-                =?  halt.state   ?=([? ^] +.sign)  %.y
-                =?     fo-core   ?=([? ^] +.sign)
-                  (fo-emit hen %pass /halt %g %halt her u.dap.sign bone)
-                =?  pending-ack.rcv  &(?=([? *] +.sign) !blocked.sign)
-                  %.n  :: XX  tack.pending-ack.rcv
-                fo-core
+                ?~  +.sign
+                  ::  Gall found a running agent with no blocked move.
+                  ::  Remove pending so the redelivered plea can be accepted.
+                  ::
+                  =.  pending-ack.rcv  %.n
+                  fo-core
+                =?  pending-ack.rcv  !blocked.sign  %.n
+                ?~  dap.sign  fo-core
+                ::  if the system flow exists, halt it and send %boon %flub
+                ::
+                =.  halt.state  %.y
+                (fo-emit hen %pass /halt %g %halt her u.dap.sign bone)
               ::  un-halt the flow; try sending anything queued up
               ::
                   %spur
