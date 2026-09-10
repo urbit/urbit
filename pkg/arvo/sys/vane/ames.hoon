@@ -13807,8 +13807,42 @@
         todos(pokes [[hen^plea/plea] pokes.todos])
       moves^vane-gate
     ::
+    ::  +pe-self-peek: answer a remote scry request aimed at ourselves
+    ::
+    ::    resolve the path against the local namespace with local privilege
+    ::    and give a %sage on the requesting duct. for local scries, a blocked
+    ::    scry (~) is reported as "no value" immediately rather than retried
+    ::
+    ++  pe-self-peek
+      |=  =path
+      ^-  [(list move) _vane-gate]
+      :_  vane-gate
+      :~  :*  hen
+              %give
+              %sage
+              [our path]
+              ^-  gage:mess
+              ?~  inn=(inner-path-to-beam our path)
+                ~
+              =/  res
+                %:  rof
+                    [~ ~]
+                    /ames/self
+                    ?@  vew.u.inn
+                      vew.u.inn
+                    (cat 3 [way car]:vew.u.inn)
+                    bem.u.inn
+                ==
+              ?.  ?=([~ ~ ^] res)
+                ~
+              [p q.q]:u.u.res
+          ==
+      ==
+    ::
     ++  pe-keen
       |=  [sec=(unit [idx=@ key=@]) spar:^ames]
+      ?:  =(our ship)
+        (pe-self-peek path)
       =/  ship-state  (find-peer ship)
       ?:  ?=(%ames -.ship-state)
         (call:am-core hen ~ soft+keen/sec^ship^path)
@@ -13831,6 +13865,8 @@
     ::
     ++  pe-chum
       |=  spar:^ames
+      ?:  =(our ship)
+        (pe-self-peek path)
       =/  ship-state  (find-peer ship)
       ?:  ?=(%ames -.ship-state)
         (call:am-core hen ~ soft+chum/ship^path)
@@ -13848,6 +13884,11 @@
     ::
     ++  pe-cancel
       |=  [all=? =spar]
+      ::  requests to ourselves were answered
+      ::  synchronously; nothing is pending
+      ::
+      ?:  =(our ship.spar)
+        `vane-gate
       =/  ship-state  (find-peer ship.spar)
       ::
       ?:  ?=(%ames -.ship-state)
@@ -14021,7 +14062,7 @@
     ++  pe-whey
       |=  [dud=(unit goof) spar:^ames boq=@ud]
       =/  ship-state  (find-peer ship)
-      ?:  ?=(%mesa -.ship-state)
+      ?:  |(=(our ship) ?=(%mesa -.ship-state))
         (pe-chum ship %a %x '1' %$ %whey (scot %ud boq) (scot %p our) path)
       (call:am-core hen dud %soft %whey ship^path boq)
     ::
