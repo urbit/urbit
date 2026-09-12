@@ -146,6 +146,16 @@
 ::    common case far fewer than this expire at once and we finish in one.
 ::
 ++  session-expiry-batch  100.000
+::  session-expiry-interval: minimum delay between expiry passes
+::
+::    each pass walks the whole session map, so arming for the exact next
+::    expiry costs a full traversal per expiring session: a ship holding
+::    many sessions ends up doing that continuously. sessions past their
+::    expiry are already refused by +request-is-authenticated, so letting
+::    a few minutes' worth accumulate costs only the memory they occupy
+::    until the next pass.
+::
+++  session-expiry-interval  ~m5
 ::  eauth-timeout: max time we wait for remote scry response before serving 504
 ::  eauth-cache-rounding: scry case rounding for cache hits & clock skew aid
 ::
@@ -4071,7 +4081,8 @@
     ?:  =(~ sessions)  ~
     ?:  =(count session-expiry-batch)
       [duct %pass /sessions/expire %b %wait now]~
-    [duct %pass /sessions/expire %b %wait next-expiry]~
+    =/  when=@da  (max next-expiry (add now session-expiry-interval))
+    [duct %pass /sessions/expire %b %wait when]~
   ::
   ++  eauth
     =*  auth  auth.server-state.ax
