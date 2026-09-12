@@ -136,11 +136,16 @@
   --
 ::  session-expiry-batch: max sessions to expire in a single pass
 ::
-::    bounds the work, and the transient memory, of one expiry event, so
-::    that an unusually large session map gets drained incrementally
-::    instead of crashing the event every time it fires.
+::    bounds the transient memory of one expiry event, so that an unusually
+::    large session map gets drained incrementally instead of crashing the
+::    event every time it fires.
 ::
-++  session-expiry-batch  10.000
+::    each pass walks the whole map, so a backlog costs one traversal per
+::    batch: too small a batch makes draining a large backlog needlessly
+::    slow, while the batch itself only costs us a list of keys. in the
+::    common case far fewer than this expire at once and we finish in one.
+::
+++  session-expiry-batch  100.000
 ::  eauth-timeout: max time we wait for remote scry response before serving 504
 ::  eauth-cache-rounding: scry case rounding for cache hits & clock skew aid
 ::
