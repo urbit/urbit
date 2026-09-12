@@ -134,6 +134,28 @@
   ++  auth   ~d30
   ++  guest  ~d7
   --
+::  session-expiry-batch: max sessions to expire in a single pass
+::
+::    bounds the transient memory of one expiry event, so that an unusually
+::    large session map gets drained incrementally instead of crashing the
+::    event every time it fires.
+::
+::    each pass walks the whole map, so a backlog costs one traversal per
+::    batch: too small a batch makes draining a large backlog needlessly
+::    slow, while the batch itself only costs us a list of keys. in the
+::    common case far fewer than this expire at once and we finish in one.
+::
+++  session-expiry-batch  100.000
+::  session-expiry-interval: minimum delay between expiry passes
+::
+::    each pass walks the whole session map, so arming for the exact next
+::    expiry costs a full traversal per expiring session: a ship holding
+::    many sessions ends up doing that continuously. sessions past their
+::    expiry are already refused by +request-is-authenticated, so letting
+::    a few minutes' worth accumulate costs only the memory they occupy
+::    until the next pass.
+::
+++  session-expiry-interval  ~m5
 ::  eauth-timeout: max time we wait for remote scry response before serving 504
 ::  eauth-cache-rounding: scry case rounding for cache hits & clock skew aid
 ::
@@ -4018,25 +4040,49 @@
     ::      timer. channels have their own expiry timer, too.
     ::  remove cookies that have expired
     ::
+    ::    we fold over the session map instead of tapping it into a list and
+    ::    rebuilding it wholesale. the latter needs a transient copy of the
+    ::    whole map, and on a ship with a very large number of sessions that
+    ::    copy may not fit, crashing this event. every retry then does the
+    ::    same amount of work and crashes the same way, so sessions can never
+    ::    be pruned again. here we delete at most .session-expiry-batch of
+    ::    them per pass, and come straight back for more if we hit that cap.
+    ::
     =*  sessions  sessions.auth.server-state.ax
+    =/  [dead=(list @uv) count=@ud next-expiry=@da]
+      %-  ~(rep by sessions)
+      |=  $:  [cookie=@uv session]
+              [dead=(list @uv) count=@ud next=@da]
+          ==
+      ^-  [(list @uv) @ud @da]
+      ::  keep it, and track the soonest expiry among the ones we keep
+      ::
+      ?.  (lth expiry-time now)
+        :+  dead  count
+        ?:(=(*@da next) expiry-time (min next expiry-time))
+      ::  expired, but we've taken our batch already; a later pass gets it
+      ::
+      ?:  =(count session-expiry-batch)  [dead count next]
+      [[cookie dead] +(count) next]
     =.  sessions.auth.server-state.ax
-      %-  ~(gas by *(map @uv session))
-      %+  skip  ~(tap by sessions)
-      |=  [cookie=@uv session]
-      (lth expiry-time now)
+      =/  sez  sessions
+      |-  ^+  sez
+      ?~  dead  sez
+      $(dead t.dead, sez (~(del by sez) i.dead))
     ::  if there's any cookies left, set a timer for the next expected expiry
+    ::
+    ::    unless we filled our batch, in which case there may be more expired
+    ::    sessions waiting, and we come back for them immediately.
     ::
     ^-  [(list move) _http-server-gate]
     :_  http-server-gate
     :-  =<  give-session-tokens
         (per-server-event [eny duct now rof] server-state.ax)
     ?:  =(~ sessions)  ~
-    =;  next-expiry=@da
-      [duct %pass /sessions/expire %b %wait next-expiry]~
-    %+  roll  ~(tap by sessions)
-    |=  [[@uv session] next=@da]
-    ?:  =(*@da next)  expiry-time
-    (min next expiry-time)
+    ?:  =(count session-expiry-batch)
+      [duct %pass /sessions/expire %b %wait now]~
+    =/  when=@da  (max next-expiry (add now session-expiry-interval))
+    [duct %pass /sessions/expire %b %wait when]~
   ::
   ++  eauth
     =*  auth  auth.server-state.ax
