@@ -5,7 +5,7 @@
 +$  tag
   $:  tol=?
       $=  dat
-      $@  $?  %ace   %gap   %per   %dot   %com   %sel   %ser   %tar  %bar  %wut
+      $@  $?  %ace   %gap   %per   %dot   %com   %sel   %ser   %tar  %bar  %wut  %ket  %sig
               %coma  %stis  %slus  %shep
               %axis  %lark  %skip
               ::TODO  %sym
@@ -26,7 +26,7 @@
   ==
 ::
 +$  toke
-  $@  ?(%ace %gap %dot %per %sel %ser %tar %bar %wut %coma %stis %slus %shep)
+  $@  ?(%ace %gap %dot %per %sel %ser %tar %bar %wut %ket %sig %coma %stis %slus %shep)
   $%  [%limb =limb]
     ::
       [%atom tol=? const=? =aura a=@]  ::  %atomw + %atomt
@@ -51,7 +51,7 @@
   ::NOTE  important that %atomw is before %atomt,
   ::      if ambiguous we prefer the former
   %.  ^-  (list $@(term (pair term tag)))
-      :~  ace+|+%ace    gap+&+%gap    per+|+%per    dot+|+%dot  com+|+%com  sel+|+%sel  ser+|+%ser   tar+|+%tar  bar+|+%bar  wut+|+%wut
+      :~  ace+|+%ace    gap+&+%gap    per+|+%per    dot+|+%dot  com+|+%com  sel+|+%sel  ser+|+%ser   tar+|+%tar  bar+|+%bar  wut+|+%wut  sig+|+%sig  ket+|+%ket
           coma+|+%coma  stis+&+%stis  slus+&+%slus  shep+|+%shep
           axis+|+%axis  lark+|+%lark  skip+|+%skip
           mato+|+%mato
@@ -118,6 +118,14 @@
     :-  %wut
     '''
     '?'
+    '''
+    :-  %sig
+    '''
+    '~'
+    '''
+    :-  %ket
+    '''
+    '^'
     '''
   ::
     :-  %mato
@@ -403,7 +411,7 @@
     ::
     ^-  toke
     ?+  dat.tag  [dat.tag tol.tag]
-      ?(%ace %gap %dot %per %sel %ser %tar %bar %wut %coma %stis %slus %shep)  dat.tag
+      ?(%ace %gap %dot %per %sel %ser %tar %bar %wut %sig %ket %coma %stis %slus %shep)  dat.tag
     ::
         [%atom *]
       :-  %atom
@@ -645,6 +653,9 @@
       ::TODO  handle %dot
       [%atom %| *]  [%noun [%atom aura.t ?.(const.t ~ `a.t)] a.t]^st
       [%mato @]     [%xtra %atom aura.t]^st
+      %tar          [%xtra %noun]^st
+      %ket          [%xtra %cell]^st
+      %sig          [%xtra %null]^st
       %sel          =+  wide-cell-bod  ?@  -  ~  =>  [n=u +(st s)]
                     =+  (expect %ser)  ?@  -  ~  [n s]
       [%cltr %|]    =+  wide-cell-bod  ?@  -  ~  =>  [n=u +(st s)]

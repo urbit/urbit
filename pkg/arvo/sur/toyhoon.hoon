@@ -13,6 +13,7 @@
 ::
 +$  sugar
   $~  [%brcl [%noun %noun 0] [%noun %noun 0]]
+  $@  ?(%noun %cell %null)
   $%  [%brcl sam=naty-sugar bod=naty-sugar]
       [%atom aura=term]
   ==

@@ -311,6 +311,35 @@
     %wtkt  [%wtkt wing.sin $(sin y.sin) $(sin n.sin)]
   ::
       %xtra
+    ?@  +.sin
+      ?-  +.sin
+          %noun
+        =-  $(sin -)
+        :+  %tsgr  [%noun %noun 0]               ::  =>  ~
+        :-  %xtra
+        :+  %brcl  [%noun %noun 0]               ::  |:  `*`0
+        [%cnts [%& 6]~ ~]                        ::  +<
+      ::
+          %cell
+        =-  $(sin -)
+        :+  %tsgr  [%noun %noun 0]               ::  =>  ~
+        :-  %xtra
+        :+  %brcl  [%noun %noun 0 0]             ::  |:  `*`[0 0]
+        :^  %wtpt  [%& 6]~                       ::  ?@  +<
+          [%cnts [%& 0]~ ~]                      ::    !!
+        [%cnts [%& 6]~ ~]                        ::  +<
+      ::
+          %null
+        =-  $(sin -)
+        ::TODO  or depending on mode? [%noun [%atom %n `0] 0]
+        :+  %tsgr  [%noun %noun 0]               ::  =>  ~
+        :-  %xtra
+        :+  %brcl  [%noun %noun 0]               ::  |:  `*`0
+        :^  %wtcl                                ::  ?:
+            [%dtts [%noun %noun 0] [%cnts [%& 6]~ ~]]  ::  .=(`*`0 +<)
+          [%noun [%atom %n `0] 0]                ::    `~`0
+        [%cnts [%& 0]~ ~]                        ::  !!
+      ==
     ?-  +<.sin
       %pair  !!
     ::

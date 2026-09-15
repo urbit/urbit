@@ -358,7 +358,14 @@
     (make-parser-test '|%  [[a b] c]  ++  a  0  ++  b  1  ++  c  2  --' [%brcn %gold `[[%a %b] %c] (my [%a z] [%b o] [%c t] ~)])
     (make-parser-test '|%  :*  [a b]  c  ==  ++  a  0  ++  b  1  ++  c  2  --' [%brcn %gold `[[%a %b] %c] (my [%a z] [%b o] [%c t] ~)])
   ::
+    (make-parser-test '|:(0 $)' [%xtra %brcl z [%cnts w ~]])
+    (make-parser-test '|:  0  $' [%xtra %brcl z [%cnts w ~]])
+  ::
     (make-parser-test '@' [%xtra %atom %$])
     (make-parser-test '@ud' [%xtra %atom %ud])
+  ::
+    (make-parser-test '*' [%xtra %noun])
+    (make-parser-test '^' [%xtra %cell])
+    (make-parser-test '~' [%xtra %null])
   ==
 --
