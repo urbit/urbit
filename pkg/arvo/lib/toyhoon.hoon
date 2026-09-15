@@ -273,10 +273,10 @@
       %bckt  %noun
       %bcwt  %void
       %hold  $(sut (drop sut))
-      %core  ?.  =(2 now)  %noun
+      %core  ?:  =(2 now)  %noun
              ?.  |(?=(%gold var.sut) ?=(%wet var.sut) ?=(%free way))
                %noun
-             ^$(axe lat, sut pay.sut)
+             ^$(axe lat, sut p.sut)
   ==
 ++  drop
   |=  $=  sut
@@ -353,9 +353,9 @@
       :-  %xtra
       :+  %brcl  [%noun %noun 0]               ::  |:  `*`0
       :+  %ktls  [%noun [%atom aura.sin ~] 0]  ::  ^+  `@AURA.SIN`0
-      :^  %wtkt  [%& 6]~                       ::  ?^  +<
-        [%cnts [%& 0]~ ~]                      ::    !!
-      [%cnts [%& 6]~ ~]                        ::  +<
+      :^  %wtpt  [%& 6]~                       ::  ?@  +<
+        [%cnts [%& 6]~ ~]                      ::    +<
+      [%cnts [%& 0]~ ~]                        ::  !!
     ==
   ==
 ::
@@ -398,7 +398,7 @@
              [%4 +:$(naty p.naty)]
   ::
       %dtts  :-  (nice gol [%bcwt (my [%& %f] [%| %f] ~)])
-             [%5 +:$(naty p.naty) +:$(naty q.naty)]
+             [%5 +:$(gol %noun, naty p.naty) +:$(gol %noun, naty q.naty)]
   ::
       %wtcl  =+  p=$(naty p.naty, gol [%bcwt (my [%& %f] [%| %f] ~)])
              =+  q=$(naty q.naty)
@@ -422,6 +422,8 @@
     :: !!
   ::
       %cnts
+    ?:  (lien wing.naty |=(l=limb =([%& 0] l)))
+      [%void [%0 0]]
     =/  [=vein =opal]  (find sut %read wing.naty)
     =/  =axis  (tend:ut vein)
     =|  hej=(list (pair ^axis nock))
@@ -452,7 +454,10 @@
     :-  -.pro
     ?@  tag.naty
       [%11 tag.naty +.pro]
-    [%11 [p.tag.naty +:$(naty q.tag.naty)] +.pro]
+    =+  pog=$(naty q.tag.naty)
+    =>  ?:  =(%type p.tag.naty)  ~&([%type-hint p.pog] .)
+        .
+    [%11 [p.tag.naty +:pog] +.pro]
   ::
     %brcn  =/  [nam=(map term axis) bat=^naty]  (make-cone-battery [lay bat]:naty)
            =/  typ  (nice gol [%core sut var.naty sut bat nam])
@@ -488,10 +493,9 @@
            :-  (make-union -.y -.n)
            [%6 [%5 [%1 tom.naty] %0 (peg (tend:ut vein) 2)] +.y +.n]
     %wtkt  =/  [=vein =type]
-             =/  [=vein =opal]  (find sut %read wing.naty)
+             =/  [=vein =opal]  (find sut %read [[%& 2] wing.naty])
              ?>  ?=(%leg -.opal)
              [vein type.opal]
-           =.  type  (peek type %read 2)
            =/  [atom=^type cell=^type]  (split-union type)
            =+  y=$(naty y.naty, sut (take sut vein atom))
            =+  n=$(naty n.naty, sut (take sut vein cell))

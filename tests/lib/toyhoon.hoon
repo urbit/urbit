@@ -220,9 +220,9 @@
     :_  [~ ~]
     :-  %$
     :+  %ktls  [%noun [%atom %ud ~] 0]
-    :^  %wtkt  [%& 6]~
-      [%cnts [%& 0]~ ~]
-    [%cnts [%& 6]~ ~]
+    :^  %wtpt  [%& 6]~
+      [%cnts [%& 6]~ ~]
+    [%cnts [%& 0]~ ~]
   ==
 ::
 ++  make-primitive-test
