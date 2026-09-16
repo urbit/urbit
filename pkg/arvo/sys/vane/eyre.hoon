@@ -2124,6 +2124,8 @@
         [~ ~]
       ?~  ses=(~(get by sessions.auth.state) u.from-header)
         [~ ~]
+      ?:  (gth now expiry-time.u.ses)
+        [~ ~]
       ?:  ?=(~ scope.identity.u.ses)
         ~&  %eyre-unexpected-root-auth-header
         [~ ~]
