@@ -212,6 +212,30 @@
     ;~(plug (cold %sink (jest '/~/holm/sink/')) sym (star next))
     ;~(plug (cold %gain (jest '/~/holm/gain/')) ;~(pfix (jest '0v') viz:ag) (star next))
   ==
+::
+++  cors
+  |_  hez=header-list:http
+  ++  method   (get-header:http 'access-control-request-method' hez)
+  ++  headers  (get-header:http 'access-control-request-headers' hez)
+  --
+::
+++  scope-from-turf
+  |=  [domains=(set turf) =turf]
+  ^-  (unit (unit desk))
+  ::  if .turf is a known domain, it's root
+  ::
+  ?:  (~(has in domains) turf)  `~
+  ::  if .turf is a direct subdomain of a known domain,
+  ::  scope is that subdomain interpreted as a desk name
+  ::
+  ?:  ?&  ?=([@ @ *] turf)
+          (~(has in domains) (snip `^turf`turf))  ::NOTE  tmi
+      ==
+    ``(rear turf)
+  ::  else, there is no target scope
+  ::
+  ~
+::
 ::  +prune-events: removes all items from the front of the queue up to :id
 ::
 ::    also produces, per request-id, the amount of events that have got acked,
@@ -833,10 +857,11 @@
     ^-  [(list move) server-state]
     ::
     =/  req=unpacked-request
+      ::TODOzz  this will put *@uv session into state in +refresh-session! bad!
       [request & `[*@uv [[%ours ~] ~]]]
     ::
     %-  (trace 2 |.("{<duct>} creating local"))
-    (request-to-app req %lens secure address)
+    (request-to-app [req %respect] %lens secure address)
   ::  +request: starts handling an inbound http request
   ::
   ++  request
@@ -847,12 +872,14 @@
       =/  host=(unit @t)  (get-header:http 'host' headers)
       =*  same  [secure host address]
       ?.  =([%ipv4 .127.0.0.1] address)        same
-      ::  for requests from localhost, respect the "forwarded" header
-      ::
-      ?~  forwards=(forwarded-params headers)  same
-      :+  (fall (forwarded-secure u.forwards) secure)
-        (clap (forwarded-host u.forwards) host head)
-      (fall (forwarded-for u.forwards) address)
+      same
+      ::TODOzz  find out how to deal with proxies safely. Via or Proxy- headers mb?
+      :: ::  for requests from localhost, respect the "forwarded" header
+      :: ::
+      :: ?~  forwards=(forwarded-params headers)  same
+      :: :+  (fall (forwarded-secure u.forwards) secure)
+      ::   (clap (forwarded-host u.forwards) host head)
+      :: (fall (forwarded-for u.forwards) address)
     ::  according to spec, all http 1.1 connections must include a host header
     ::  (and for http 2 and 3, the same info should be in the ":authority"
     ::  pseudo-header). if they don't, we'll send a 400.
@@ -891,6 +918,7 @@
       ?:  ?=(%| -.doom.u.doom)
         ?.  risk.state  ~
         `[%| p.doom port]:u.doom
+      ::TODOxx  use +scope-from-turf
       ::  if requested domain is known, scope is root
       ::
       ?:  (~(has in domains.state) p.doom.u.doom)
@@ -909,6 +937,122 @@
       %+  instant:response  [request | ~]
       [[421 ~] `(as-octs:mimes:html 'bad host')]
     =*  target  u.proto-target
+    ::  to prevent abuse, eyre MUST ignore auth provided by requests from
+    ::  domains other than the one being targetted.
+    ::  note that %drop results in %miss auth-state below.
+    ::
+    ::REVIEWzz
+    =/  auth-level=?(%respect %drop %reject)
+      ^-  $?  %respect  ::  use whatever auth is in request
+              %drop     ::  ignore request auth, mb mint guest, but _don't serve set-cookie_
+              %reject   ::  serve 403
+          ==
+      ::  non-cookie auth is always respected
+      ::
+      ?:  ?=(^ (get-header:http 'authorization' headers))  ::  see also +session-from-header
+        %respect
+      ::
+      =/  safe=?
+        ?=(?(%'GET' %'HEAD') method.request)
+      =/  origin=(unit @t)
+        (get-header:http 'origin' headers)
+      =?  origin  ?=(^ origin)
+        ?:  =('http://' (end 3^7 u.origin))
+          `(rsh 3^7 u.origin)
+        ?:  =('https://' (end 3^8 u.origin))
+          `(rsh 3^8 u.origin)
+        origin  ::TODO  protocol-agnostic
+      =/  exact-origin=?
+        &(?=(^ origin) =(u.origin u.host))
+      ::  in insecure contexts, do best-effort
+      ::
+      ?.  secure
+        ?.  safe
+          ?:  exact-origin  %respect
+          ~&  %reject-1  %reject
+        ?:  &(?=(^ origin) !exact-origin)
+          %drop
+        :: ~?  ?=(~ origin)  %eyre-dangerously-respect-cookie  ::NOTE  can't do better here...
+        %respect
+      ::  in secure contexts, we can look at sec- headers
+      ::
+      =/  site=(unit @t)
+        (get-header:http 'sec-fetch-site' headers)
+      ?:  =(`'same-origin' site)
+        ?:  safe
+          ?:  |(?=(~ origin) exact-origin)  %respect
+          ~&  %reject-2  %reject  ::NOTE  contradictory to %same-origin
+        ?:  exact-origin  %respect
+        ~&  %reject-3  %reject
+      ?.  safe
+        ~&  %reject-4  %reject
+      ?:  ?&  ?=([~ ?(%'none' %'same-site' %'cross-site')] site)
+              =(`'navigate' (get-header:http 'sec-fetch-mode' headers))
+              =(`'document' (get-header:http 'sec-fetch-dest' headers))
+              ?=(~ origin)  ::  reasoning: no origin because it's user action
+          ==
+        %respect
+      %drop
+    ?:  ?=(%reject auth-level)
+      %+  instant:response  [request | ~]
+      [[403 ~] `(as-octs:mimes:html 'bad auth origin')]
+    ::
+    =/  origin=(unit turf)  ::TODO  proto-target type?
+      =/  og  (get-header:http 'origin' headers)
+      ?~  og  ~
+      ?:  =('null' u.og)  ~
+      =/  or=(unit [sec=? port=(unit @ud) doom=(each turf @if)])
+        (rush u.og =>(de-purl:html ;~(plug htts thor)))
+      ?:(?=([~ * * %& *] or) `p.doom.u.or ~)
+    ::  respond to OPTIONS requests automatically: allow cross-origin GETs,
+    ::  but only allow cross-origin unsafe methods if the two origins actually
+    ::  point to the same desk on this ship
+    ::
+    ?:  ?=(%'OPTIONS' method.request)
+      =*  reject  (instant:response [request | ~] [403 ~] ~)
+      ::  options request without origin header is malformed, reject always
+      ::
+      ?~  origin  reject
+      ::  in ip mode, never cross-origin with ourselves, so the origin is
+      ::  surely foreign, so we reject.
+      ::REVIEWzz  what if it's on the cors-registery?
+      ::
+      ?:  ?=(%| -.target)  reject
+      =/  method=(unit @t)         ~(method cors headers)
+      ::  if request doesn't specify a method, it's malformed, reject always
+      ::
+      ?~  method  reject
+      ::  if the request they want to do is safe, always allow it
+      ::  (but don't allow credentials to be used)
+      ::
+      ?:  ?=(?(%'GET' %'HEAD') u.method)
+        =-  (instant:response [request | ~] [204 -] ~)
+        :*  'access-control-allow-origin'^(en-turf:html u.origin)
+            'access-control-allow-methods'^'GET, HEAD'
+            %-  drop  %+  bind  ~(headers cors headers)
+            (lead 'access-control-allow-headers')
+            ::NOTE  access-control-allow-credentials omitted intentionally
+        ==
+      ::  if the request they want to do is unsafe, only allow it if the target
+      ::  is the same desk (which is a silly edge-case, wouldn't ordinarily be
+      ::  cross-origin)
+      ::
+      =/  origin-desk=(unit (unit desk))  (scope-from-turf domains.state u.origin)
+      ?~  origin-desk                     reject
+      ?.  =(u.origin-desk desk.p.target)  reject
+      ::  since it's the same desk, allow credentials
+      ::TODOzz  also hit this branch for safe requests, if they're the same desk?
+      ::
+      =-  (instant:response [request | ~] [204 -] ~)
+      :*  'access-control-allow-origin'^(en-turf:html u.origin)
+          'access-control-allow-methods'^u.method
+          'access-control-allow-credentials'^'true'
+          %-  drop  %+  bind  ~(headers cors headers)
+          (lead 'access-control-allow-headers')
+      ==
+    ::
+    ::TODOzz  ?:  (is-public url-request) ... ?
+    ::
     =/  =action
       (get-action-for-binding url.request)
     ::  .pathowner: desk that the target path is bound to (~ for eyre)
@@ -946,6 +1090,31 @@
         ?>  ?=([~ ~ %desk *] res)
         `!<(desk q.u.u.res)
       ==
+    ::  if authentication is provided in the headers (not cookies) then look
+    ::  exclusively at those, ignoring all cookies, and handle the request as
+    ::  coming from a not-browser source.
+    ::
+    =/  head-auth=(unit (unit [session=@uv =identity]))
+      =/  head-auth=(unit (unit [=desk @uv identity]))
+        (session-from-header:authentication headers)
+      ?~  head-auth  ~
+      ::  provided but invalid/unknown
+      ::
+      ?~  u.head-auth  [~ ~]
+      ::  if provided it must match the target scope
+      ::
+      ?:  ?=(%& -.target)
+        ?.  =(desk.p.target u.u.head-auth)  [~ ~]
+        ``+.u.u.head-auth
+      ?:  ?|  ?=(~ pathowner)
+              =(u.pathowner desk.u.u.head-auth)
+          ==
+        ``+.u.u.head-auth
+      [~ ~]
+    ::  if invalid auth was provided, always reject the request
+    ::
+    ?:  ?=([~ ~] head-auth)
+      (instant:response [request | ~] [401 ~] `8^'bad auth')
     ::  when dealing with requests to domains on paths with non-eyre owners,
     ::  if the request targets the base subdomain, redirect to root. or:
     ::  if the domain is known, but doesn't match the pathowner (either because
@@ -986,6 +1155,9 @@
           [%negotiate old-session=(unit @uv)]
       ==
     =^  auth-state=t  state
+      ?:  ?=(%drop auth-level)  [[%miss ~] state]
+      ?^  head-auth
+        [[%have u.u.head-auth] state]
       ?~  sid=(session-id-from-request:authentication request)
         ?:  ?=([%& * ^] target)  [[%negotiate ~] state]
         [[%miss ~] state]
@@ -997,16 +1169,24 @@
         ?:  ?=([%& * ^] target)
           [[%negotiate `u.sid] state]
         [[%invalid u.sid] state]
+      ::  in the bare ip access case cookies will always be root scope,
+      ::  but clients may still have scoped auth tokens (x-urb-auth).
+      ::  in those cases, we want to take the session identity as-is generally,
+      ::  but also want to catch & disallow fetching of other desks' endpoints.
+      ::REVIEWzz  redundant with ?^ head-auth case above?
+      ::
+      ?:  ?=(%| -.target)
+        ?:  ?|  ?=(~ pathowner)
+                ?=(~ scope.identity.u.ses)
+                =(u.pathowner u.scope.identity.u.ses)
+            ==
+          [[%have u.sid identity.u.ses] state]
+        [[%invalid u.sid] state]
       ::  provenance doesn't match request target,
       ::  they shouldn't pass this cookie!
-      ::  (bare ip access always treated as root scope)
       ::
-      =/  desk=(unit desk)
-        ?:(?=(%| -.target) ~ desk.p.target)
-      ?:  =(desk scope.identity.u.ses)
+      ?:  =(desk.p.target scope.identity.u.ses)
         [[%have u.sid identity.u.ses] state]
-      ::TODOxx  log? warn? weird case
-      ?:  ?=(%| -.target)  [[%invalid u.sid] state]
       [[%negotiate ~] state]
     ::
     =/  req=unpacked-request
@@ -1186,38 +1366,39 @@
           headers=['location' location]~
           data=~
       ==
-    ::  figure out whether this is a cors request,
-    ::  whether the origin is approved or not,
-    ::  and maybe add it to the "pending approval" set
-    ::
-    =/  origin=(unit origin)
-      (get-header:http 'origin' headers)
-    =^  cors-approved  requests.cors-registry.state
-      =,  cors-registry.state
-      ?~  origin                         [| requests]
-      ?:  (~(has in approved) u.origin)  [& requests]
-      ?:  (~(has in rejected) u.origin)  [| requests]
-      [| (~(put in requests) u.origin)]
-    ::  if this is a cors preflight request from an approved origin
-    ::  handle it synchronously
-    ::
-    ?:  &(?=(^ origin) cors-approved ?=(%'OPTIONS' method.request))
-      %-  send-instant-response
-      =;  =header-list:http
-        [[204 header-list] ~]
-      ::  allow the method and headers that were asked for,
-      ::  falling back to wildcard if none specified
-      ::
-      ::NOTE  +response will add the rest of the headers
-      ::
-      :~  :-  'Access-Control-Allow-Methods'
-          =-  (fall - '*')
-          (get-header:http 'access-control-request-method' headers)
-        ::
-          :-  'Access-Control-Allow-Headers'
-          =-  (fall - '*')
-          (get-header:http 'access-control-request-headers' headers)
-      ==
+    ::TODOzz  revisit
+    :: ::  figure out whether this is a cors request,
+    :: ::  whether the origin is approved or not,
+    :: ::  and maybe add it to the "pending approval" set
+    :: ::
+    :: =/  origin=(unit origin)
+    ::   (get-header:http 'origin' headers)
+    :: =^  cors-approved  requests.cors-registry.state
+    ::   =,  cors-registry.state
+    ::   ?~  origin                         [| requests]
+    ::   ?:  (~(has in approved) u.origin)  [& requests]
+    ::   ?:  (~(has in rejected) u.origin)  [| requests]
+    ::   [| (~(put in requests) u.origin)]
+    :: ::  if this is a cors preflight request from an approved origin
+    :: ::  handle it synchronously
+    :: ::
+    :: ?:  &(?=(^ origin) cors-approved ?=(%'OPTIONS' method.request))
+    ::   %-  send-instant-response
+    ::   =;  =header-list:http
+    ::     [[204 header-list] ~]
+    ::   ::  allow the method and headers that were asked for,
+    ::   ::  falling back to wildcard if none specified
+    ::   ::
+    ::   ::NOTE  +response will add the rest of the headers
+    ::   ::
+    ::   :~  :-  'Access-Control-Allow-Methods'
+    ::       =-  (fall - '*')
+    ::       (get-header:http 'access-control-request-method' headers)
+    ::     ::
+    ::       :-  'Access-Control-Allow-Headers'
+    ::       =-  (fall - '*')
+    ::       (get-header:http 'access-control-request-headers' headers)
+    ::   ==
     ::  handle HTTP scries
     ::
     ::  TODO: ideally this would look more like:
@@ -1240,7 +1421,7 @@
       %eauth    (on-request:eauth:authentication req)
       %channel  (handle-request:by-channel req)
       %scry     (handle-scry req)
-      %name     (handle-name req)
+      %name     (handle-name req auth-level)
       %ip       (handle-ip req address)
       %boot     (handle-boot req)
       %sponsor  (handle-sponsor req)
@@ -1305,7 +1486,7 @@
           url.request
           "%{(trip app.action)} not running"
         ==
-      (request-to-app req app.action secure address)
+      (request-to-app [req auth-level] app.action secure address)
     ::
         %authentication
       %+  handle-request:authentication
@@ -1457,7 +1638,7 @@
   ::  +handle-name: respond with the requester's @p
   ::
   ++  handle-name
-    |=  req=unpacked-request
+    |=  [req=unpacked-request auth-state=?(%respect %drop)]
     ^-  (quip move server-state)
     ?.  =(%'GET' method.request.req)
       %+  instant-data  req
@@ -1469,7 +1650,11 @@
     =^  [sid=@uv =identity moves1=(list move)]  state
       ?~  session.req  (start-session:authentication %new-guest ~)
       [[sid identity ~]:u.session.req state]
-    =.  session.req  `[sid identity]
+    ::  only associate the session with the request (and serve the matching
+    ::  set-cookie header) if auth was respected in the first place. in %drop
+    ::  cases we don't want to send cookies.
+    ::
+    =?  session.req  ?=(%respect auth-state)  `[sid identity]
     ::
     =^  moves2  state
       %+  instant-data  req
@@ -1603,16 +1788,22 @@
   ::  +request-to-app: subscribe to app and poke it with request data
   ::
   ++  request-to-app
-    |=  [unpacked-request app=term secure=? =address]
+    |=  [[unpacked-request auth-level=?(%respect %drop)] app=term secure=? =address]
     ^-  [(list move) server-state]
-    =*  req  +<-
+    =*  req  +<-<
+    ::TODOzz  strip eyre-consumed cookie and author headers from request,
+    ::        here or earlier
     ::  requests into userspace must always have an associated identity.
     ::  if the request provided no auth, mint a guest identity.
     ::
     =^  [suv=@uv =identity moves=(list move)]  state
       ?^  session  [[sid identity ~]:u.session state]
       (start-session:authentication %new-guest ~)
-    =.  session  `[suv identity]
+    ::  only associate the session with the request (and serve the matching
+    ::  set-cookie header) if auth was respected in the first place. in %drop
+    ::  cases we don't want to send cookies.
+    ::
+    =?  session  ?=(%respect auth-level)  `[suv identity]
     ::  the request will be handled outside of eyre ("asynchronously"),
     ::  so store the connection in state before dispatching
     ::
@@ -1920,6 +2111,23 @@
       =^  moz1  state  (close-session u.sid all)
       =^  moz2  state  (instant:response req payload)
       [[give-session-tokens (weld moz1 moz2)] state]
+    ::  +session-id-from-header
+    ::
+    ++  session-from-header
+      |=  =header-list:http
+      ^-  (unit (unit [=desk session=@uv =identity]))  ::  not supplied or invalid or valid
+      ::  is there an authorization header with a legible session token?
+      ::
+      ?~  auth=(get-header:http 'authorization' header-list)
+        ~
+      ?~  from-header=(rush u.auth ;~(pfix (jest 'Bearer 0v') viz:ag))
+        [~ ~]
+      ?~  ses=(~(get by sessions.auth.state) u.from-header)
+        [~ ~]
+      ?:  ?=(~ scope.identity.u.ses)
+        ~&  %eyre-unexpected-root-auth-header
+        [~ ~]
+      ``[u.scope.identity.u.ses u.from-header identity.u.ses]
     ::  +session-id-from-request: attempt to find a session token
     ::
     ::    looks in the authorization header first. if there is no such header,
@@ -1928,13 +2136,6 @@
     ++  session-id-from-request
       |=  =request:http
       ^-  (unit @uv)
-      ::  is there an authorization header with a legible session token?
-      ::
-      =/  from-header=(unit @uv)
-        ?~  auth=(get-header:http 'authorization' header-list.request)
-          ~
-        (rush u.auth ;~(pfix (jest 'Bearer 0v') viz:ag))
-      ?^  from-header  from-header
       ::  are there cookies passed with this request?
       ::
       =/  cookie-header=@t
@@ -3036,6 +3237,8 @@
       =^  [sid=@uv =identity sesh-moves=(list move)]  state
         ?~  session.req  (start-session:authentication %new-guest ~)
         [[sid identity ~]:u.session.req state]
+      ::NOTE  no need to worry about sending cookie to "%drop status" request,
+      ::      because PUT requests never get %drop
       =.  session.req  `[sid identity]
       ::  check for the existence of the channel-id
       ::
