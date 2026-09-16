@@ -937,6 +937,60 @@
       %+  instant:response  [request | ~]
       [[421 ~] `(as-octs:mimes:html 'bad host')]
     =*  target  u.proto-target
+    ::
+    =/  origin=(unit turf)  ::TODO  proto-target type?
+      =/  og  (get-header:http 'origin' headers)
+      ?~  og  ~
+      ?:  =('null' u.og)  ~
+      =/  or=(unit [sec=? port=(unit @ud) doom=(each turf @if)])
+        (rush u.og =>(de-purl:html ;~(plug htts thor)))
+      ?:(?=([~ * * %& *] or) `p.doom.u.or ~)
+    ::  respond to CORS preeflight requests automatically: allow cross-origin
+    ::  GETs, but only allow cross-origin unsafe methods if the two origins
+    ::  actually point to the same desk on this ship
+    ::
+    ?:  ?&  ?=(%'OPTIONS' method.request)
+            ?=(^ (get-header:http 'origin' headers))
+            ?=(^ ~(method cors headers))
+        ==
+      =*  reject  (instant:response [request | ~] [403 ~] ~)
+      ::  options request without origin header is malformed, reject always
+      ::
+      ?~  origin  reject
+      ::  in ip mode, never cross-origin with ourselves, so the origin is
+      ::  surely foreign, so we reject.
+      ::REVIEWzz  what if it's on the cors-registery?
+      ::
+      ?:  ?=(%| -.target)  reject
+      =/  method  (need ~(method cors headers))
+      ::  if the request they want to do is safe, always allow it
+      ::  (but don't allow credentials to be used)
+      ::
+      ?:  ?=(?(%'GET' %'HEAD') method)
+        =-  (instant:response [request | ~] [204 -] ~)
+        :*  'access-control-allow-origin'^(en-turf:html u.origin)
+            'access-control-allow-methods'^'GET, HEAD'
+            %-  drop  %+  bind  ~(headers cors headers)
+            (lead 'access-control-allow-headers')
+            ::NOTE  access-control-allow-credentials omitted intentionally
+        ==
+      ::  if the request they want to do is unsafe, only allow it if the target
+      ::  is the same desk (which is a silly edge-case, wouldn't ordinarily be
+      ::  cross-origin)
+      ::
+      =/  origin-desk=(unit (unit desk))  (scope-from-turf domains.state u.origin)
+      ?~  origin-desk                     reject
+      ?.  =(u.origin-desk desk.p.target)  reject
+      ::  since it's the same desk, allow credentials
+      ::TODOzz  also hit this branch for safe requests, if they're the same desk?
+      ::
+      =-  (instant:response [request | ~] [204 -] ~)
+      :*  'access-control-allow-origin'^(en-turf:html u.origin)
+          'access-control-allow-methods'^method
+          'access-control-allow-credentials'^'true'
+          %-  drop  %+  bind  ~(headers cors headers)
+          (lead 'access-control-allow-headers')
+      ==
     ::  to prevent abuse, eyre MUST ignore auth provided by requests from
     ::  domains other than the one being targetted.
     ::  note that %drop results in %miss auth-state below.
@@ -996,60 +1050,6 @@
     ?:  ?=(%reject auth-level)
       %+  instant:response  [request | ~]
       [[403 ~] `(as-octs:mimes:html 'bad auth origin')]
-    ::
-    =/  origin=(unit turf)  ::TODO  proto-target type?
-      =/  og  (get-header:http 'origin' headers)
-      ?~  og  ~
-      ?:  =('null' u.og)  ~
-      =/  or=(unit [sec=? port=(unit @ud) doom=(each turf @if)])
-        (rush u.og =>(de-purl:html ;~(plug htts thor)))
-      ?:(?=([~ * * %& *] or) `p.doom.u.or ~)
-    ::  respond to OPTIONS requests automatically: allow cross-origin GETs,
-    ::  but only allow cross-origin unsafe methods if the two origins actually
-    ::  point to the same desk on this ship
-    ::
-    ?:  ?=(%'OPTIONS' method.request)
-      =*  reject  (instant:response [request | ~] [403 ~] ~)
-      ::  options request without origin header is malformed, reject always
-      ::
-      ?~  origin  reject
-      ::  in ip mode, never cross-origin with ourselves, so the origin is
-      ::  surely foreign, so we reject.
-      ::REVIEWzz  what if it's on the cors-registery?
-      ::
-      ?:  ?=(%| -.target)  reject
-      =/  method=(unit @t)         ~(method cors headers)
-      ::  if request doesn't specify a method, it's malformed, reject always
-      ::
-      ?~  method  reject
-      ::  if the request they want to do is safe, always allow it
-      ::  (but don't allow credentials to be used)
-      ::
-      ?:  ?=(?(%'GET' %'HEAD') u.method)
-        =-  (instant:response [request | ~] [204 -] ~)
-        :*  'access-control-allow-origin'^(en-turf:html u.origin)
-            'access-control-allow-methods'^'GET, HEAD'
-            %-  drop  %+  bind  ~(headers cors headers)
-            (lead 'access-control-allow-headers')
-            ::NOTE  access-control-allow-credentials omitted intentionally
-        ==
-      ::  if the request they want to do is unsafe, only allow it if the target
-      ::  is the same desk (which is a silly edge-case, wouldn't ordinarily be
-      ::  cross-origin)
-      ::
-      =/  origin-desk=(unit (unit desk))  (scope-from-turf domains.state u.origin)
-      ?~  origin-desk                     reject
-      ?.  =(u.origin-desk desk.p.target)  reject
-      ::  since it's the same desk, allow credentials
-      ::TODOzz  also hit this branch for safe requests, if they're the same desk?
-      ::
-      =-  (instant:response [request | ~] [204 -] ~)
-      :*  'access-control-allow-origin'^(en-turf:html u.origin)
-          'access-control-allow-methods'^u.method
-          'access-control-allow-credentials'^'true'
-          %-  drop  %+  bind  ~(headers cors headers)
-          (lead 'access-control-allow-headers')
-      ==
     ::
     ::TODOzz  ?:  (is-public url-request) ... ?
     ::
