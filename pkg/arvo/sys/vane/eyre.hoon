@@ -968,7 +968,7 @@
       ::
       ?:  ?=(?(%'GET' %'HEAD') method)
         =-  (instant:response [request | ~] [204 -] ~)
-        :*  'access-control-allow-origin'^(en-turf:html u.origin)
+        :*  'access-control-allow-origin'^(need (get-header:http 'origin' headers))
             'access-control-allow-methods'^'GET, HEAD'
             %-  drop  %+  bind  ~(headers cors headers)
             (lead 'access-control-allow-headers')
@@ -985,7 +985,7 @@
       ::TODOzz  also hit this branch for safe requests, if they're the same desk?
       ::
       =-  (instant:response [request | ~] [204 -] ~)
-      :*  'access-control-allow-origin'^(en-turf:html u.origin)
+      :*  'access-control-allow-origin'^(need (get-header:http 'origin' headers))
           'access-control-allow-methods'^method
           'access-control-allow-credentials'^'true'
           %-  drop  %+  bind  ~(headers cors headers)
