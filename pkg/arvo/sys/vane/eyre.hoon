@@ -1010,6 +1010,9 @@
         ?=(?(%'GET' %'HEAD') method.request)
       =/  origin=(unit @t)
         (get-header:http 'origin' headers)
+      ::  even though browsers treat protocol as part of the origin,
+      ::  for our purposes we can ignore it
+      ::
       =?  origin  ?=(^ origin)
         ?:  =('http://' (end 3^7 u.origin))
           `(rsh 3^7 u.origin)
@@ -3928,12 +3931,20 @@
     ::     (crip (a-co:co p.u.data.http-event))
     ::   headers
     ::
+    ::  if no cross-origin-resource-policy was specified,
+    ::  default to strict same-origin
+    ::
+    ::TODO  should +get-header be case-insensitive?
+    =?  headers
+        ?&  ?=(~ (get-header:http 'cross-origin-resource-policy' headers))
+            ?=(~ (get-header:http 'Cross-Origin-Resource-Policy' headers))
+        ==
+      (set-header:http 'cross-origin-resource-policy' 'same-origin' headers)
+    ::
     ::  if the request was a simple cors request from an approved origin
     ::  append the necessary cors headers to the response
     ::
-    :: =/  origin=(unit origin)
-    ::   %+  get-header:http  'origin'
-    ::   header-list.request.connection
+    ::REVIEWzz
     =?  headers
         ?&  ?=(^ origin)
             (~(has in approved.cors-registry.state) u.origin)
