@@ -1815,7 +1815,7 @@
       =>  [ken=ken.yoke (ap-ingest ~ |.([ap-yawn-all fom.p.agent.yoke]))]
       ::  arvo-resources -> generate appropriate cleanup card
       ::
-      %-  ap-move(ken.yoke ken, agent.yoke |+(next:ez on-save:ap-agent-core))
+      %-  ap-move(ken.yoke ken, agent.yoke |+on-save:ap-agent-core)
       ;:  weld
         ::  close outgoing subscriptions
         ::
@@ -2390,7 +2390,7 @@
       ~>  %spin.[(crip "on-save/{<agent-name>}")]
       =/  old-state=vase
         ?:  ?=(%& -.agent.yoke)
-          (next:ez on-save:ap-agent-core)
+          on-save:ap-agent-core
         p.agent.yoke
       ?.  =(%| -.agent.yoke)
         ::  load the agent back up
@@ -2735,7 +2735,7 @@
         %+  ap-ingest  ~
         ?~  maybe-vase
           |.  on-init:ap-agent-core
-        |.  (on-load:ap-agent-core (prev:ez u.maybe-vase))
+        |.  (on-load:ap-agent-core u.maybe-vase)
       [maybe-tang ap-core]
     ::  +ap-silent-delete: silent delete.
     ::
@@ -3323,7 +3323,7 @@
       =>  [ken=ken.yoke (op-ingest ~ |.([op-yawn-all fom.p.agent.yoke]))]
       ::  arvo-resources -> generate appropriate cleanup card
       ::
-      %-  op-move(ken.yoke ken, agent.yoke |+(next:ez on-save:op-agent-core))
+      %-  op-move(ken.yoke ken, agent.yoke |+on-save:op-agent-core)
       ;:  weld
         ::  close outgoing subscriptions
         ::
@@ -3914,7 +3914,7 @@
       ~>  %spin.[(crip "on-save/{<agent-name>}")]
       =/  old-state=vase
         ?:  ?=(%& -.agent.yoke)
-          (next:ez on-save:op-agent-core)
+          on-save:op-agent-core
         p.agent.yoke
       ?.  =(%| -.agent.yoke)
         ::  load the agent back up
@@ -4261,7 +4261,7 @@
         %+  op-ingest  ~
         ?~  maybe-vase
           |.  on-init:op-agent-core
-        |.  (on-load:op-agent-core (prev:ez u.maybe-vase))
+        |.  (on-load:op-agent-core u.maybe-vase)
       [maybe-tang op-core]
     ::  +op-silent-delete: silent delete.
     ::
