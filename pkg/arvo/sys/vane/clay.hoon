@@ -1234,7 +1234,7 @@
       ?:  =(%base syd)  ~
       =/  pil=(unit pill)  (get-pill tak)
       =>  [make-arvo=make-arvo pil=pil]
-      ~>  %memo./clay/ford
+      ~>  %memo./clay/arvo
       (make-arvo pil)
     =/  zud
       =>  [make-zuse=make-zuse arv=arv]
@@ -1976,14 +1976,26 @@
         %+  roll  ~(tap by dos.rom.ruf)
         |=  [[=desk =dojo] l=(list [desk zest])]
         ?:  ese.dojo  l
+        =/  t=(unit tako)  (~(get by hit.dom.dojo) let.dom.dojo)
         =/  kel=(set weft)
           ?:  (~(has by wic.dom.dojo) sys-kel)
             [sys-kel ~ ~]
-          =/  t=(unit tako)  (~(get by hit.dom.dojo) let.dom.dojo)
           ?~  t  [sys-kel ~ ~]
           %-  waft-to-wefts
           (get-kelvin %| (tako-to-yaki:ze u.t))
-        ?:  (~(has in kel) sys-kel)  l
+        ::  keep desks that declare compatibility with the new sys kelvin, and
+        ::  older-kelvin desks that ship their own kernel (/brass/pill).
+        ::
+        =/  has-pill=?
+          ?~  t  |
+          (~(has by q:(tako-to-yaki:ze u.t)) /brass/pill)
+        ?:  ?|  (~(has in kel) sys-kel)
+                ?&  has-pill
+                    %-  ~(any in kel)
+                    |=(=weft &(=(%zuse lal.weft) (gth num.weft num.sys-kel)))
+                ==
+            ==
+          l
         [[desk %held] l]
         ==
       --
