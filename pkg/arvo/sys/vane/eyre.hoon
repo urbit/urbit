@@ -858,10 +858,10 @@
     ::
     =/  req=unpacked-request
       ::TODOzz  this will put *@uv session into state in +refresh-session! bad!
-      [request & `[*@uv [[%ours ~] ~]]]
+      [secure request & `[*@uv [[%ours ~] ~]]]
     ::
     %-  (trace 2 |.("{<duct>} creating local"))
-    (request-to-app [req %respect] %lens secure address)
+    (request-to-app [req %respect] %lens address)
   ::  +request: starts handling an inbound http request
   ::
   ++  request
@@ -888,7 +888,7 @@
       ::TODO  should also make all other logic that has host=(unit @t) just be
       ::      host=@t, or better yet, host=turf
       ::
-      =/  req=unpacked-request  [request | ~]
+      =/  req=unpacked-request  [secure request | ~]
       %+  instant-data  req
       :+  400  'text/html'
       (error-page 400 authenticated.req url.request ~)
@@ -933,8 +933,9 @@
       ::  else, there is no target scope
       ::
       ~
+    =*  proto-req  `unpacked-request`[secure request | ~]
     ?~  proto-target
-      %+  instant:response  [request | ~]
+      %+  instant:response  proto-req
       [[421 ~] `(as-octs:mimes:html 'bad host')]
     =*  target  u.proto-target
     ::
@@ -953,7 +954,7 @@
             ?=(^ (get-header:http 'origin' headers))
             ?=(^ ~(method cors headers))
         ==
-      =*  reject  (instant:response [request | ~] [403 ~] ~)
+      =*  reject  (instant:response proto-req [403 ~] ~)
       ::  options request without origin header is malformed, reject always
       ::
       ?~  origin  reject
@@ -967,7 +968,7 @@
       ::  (but don't allow credentials to be used)
       ::
       ?:  ?=(?(%'GET' %'HEAD') method)
-        =-  (instant:response [request | ~] [204 -] ~)
+        =-  (instant:response proto-req [204 -] ~)
         :*  'access-control-allow-origin'^(need (get-header:http 'origin' headers))
             'access-control-allow-methods'^'GET, HEAD'
             %-  drop  %+  bind  ~(headers cors headers)
@@ -984,7 +985,7 @@
       ::  since it's the same desk, allow credentials
       ::TODOzz  also hit this branch for safe requests, if they're the same desk?
       ::
-      =-  (instant:response [request | ~] [204 -] ~)
+      =-  (instant:response proto-req [204 -] ~)
       :*  'access-control-allow-origin'^(need (get-header:http 'origin' headers))
           'access-control-allow-methods'^method
           'access-control-allow-credentials'^'true'
@@ -1051,7 +1052,7 @@
         %respect
       %drop
     ?:  ?=(%reject auth-level)
-      %+  instant:response  [request | ~]
+      %+  instant:response  proto-req
       [[403 ~] `(as-octs:mimes:html 'bad auth origin')]
     ::
     ::TODOzz  ?:  (is-public url-request) ... ?
@@ -1117,7 +1118,7 @@
     ::  if invalid auth was provided, always reject the request
     ::
     ?:  ?=([~ ~] head-auth)
-      (instant:response [request | ~] [401 ~] `8^'bad auth')
+      (instant:response proto-req [401 ~] `8^'bad auth')
     ::  when dealing with requests to domains on paths with non-eyre owners,
     ::  if the request targets the base subdomain, redirect to root. or:
     ::  if the domain is known, but doesn't match the pathowner (either because
@@ -1136,7 +1137,7 @@
         :~  '//'  ?:(=(%base u.pathowner) '' (cat 3 u.pathowner '.'))
             (host-string -.p.target)  url.request
         ==
-      %+  instant:response  [request | ~]
+      %+  instant:response  proto-req
       ::NOTE  307 to retain req method+body
       [[307 ['location' target-url]~] ~]
     ::  auth-state: authentication detail for the incoming request
@@ -1193,7 +1194,7 @@
       [[%negotiate ~] state]
     ::
     =/  req=unpacked-request
-      :+  request
+      :^  secure  request
         ?=([%have @ [%ours ~] *] auth-state)
       ?:(?=(%have -.auth-state) `[session identity]:auth-state ~)
     =*  send-instant-data      (cury instant-data req)
@@ -1489,12 +1490,10 @@
           url.request
           "%{(trip app.action)} not running"
         ==
-      (request-to-app [req auth-level] app.action secure address)
+      (request-to-app [req auth-level] app.action address)
     ::
         %authentication
-      %+  handle-request:authentication
-        req
-      [secure target address]
+      (handle-request:authentication req target address)
     ::
         %host
       %+  instant-data  req
@@ -1791,7 +1790,7 @@
   ::  +request-to-app: subscribe to app and poke it with request data
   ::
   ++  request-to-app
-    |=  [[unpacked-request auth-level=?(%respect %drop)] app=term secure=? =address]
+    |=  [[unpacked-request auth-level=?(%respect %drop)] app=term =address]
     ^-  [(list move) server-state]
     =*  req  +<-<
     ::TODOzz  strip eyre-consumed cookie and author headers from request,
@@ -1904,7 +1903,6 @@
     ::
     ++  handle-request
       |=  $:  req=unpacked-request
-              secure=?
               target=(each [[domain=turf port=(unit @ud)] desk=(unit desk)] [ip=@if port=(unit @ud)])
               =address
           ==
@@ -1977,7 +1975,7 @@
         =/  redirect  (fall redirect '')
         =/  base=@t
           %^  cat  3
-            ?:(secure 'https://' 'http://')
+            ?:(secure.req 'https://' 'http://')
           ?-  -.target
             %&  (host-string -.p.target)
             %|  (ip-string p.target)
@@ -2018,7 +2016,7 @@
               !?=([%| %.127.0.0.1 *] target)
           ==
         =/  new-auth=@t
-          %^  cat  3  ?:(secure 'https://' 'http://')
+          %^  cat  3  ?:(secure.req 'https://' 'http://')
           ?-  -.target
             %&  (en-turf:html domain.p.target)
             %|  (rsh 3^1 (scot %if ip.p.target))
@@ -3829,10 +3827,7 @@
           ::  auto-fill basic & important headers (content-length, cors...)
           ::
           =.  headers.response-header.http-event
-            =/  origin=(unit origin)
-              %+  get-header:http  'origin'
-              header-list.request.req
-            (fill-headers http-event origin)
+            (fill-headers http-event req)
           ::  book-keep the connection's state:
           ::  if we're done responding, clear it from state if it was there,
           ::  if we may still continue, update the existing entry.
@@ -3918,9 +3913,12 @@
   ::
   ++  fill-headers
     ::REVIEWyy  pass in whole request instead of just extracted origin?
-    |=  [http-event=$~([%start [500 ~] ~ &] $>(%start http-event:http)) origin=(unit origin)]
+    |=  $:  http-event=$~([%start [500 ~] ~ &] $>(%start http-event:http))
+            unpacked-request
+        ==
     ^-  header-list:http
-    =*  headers  headers.response-header.http-event
+    =*  headers               headers.response-header.http-event
+    =/  origin=(unit origin)  (get-header:http 'origin' header-list.request)
     ::REVIEWyy  content-length headers behavior
     ::  ensure we have a matching content-length header
     ::
@@ -3930,6 +3928,13 @@
     ::   %^  set-header:http  'content-length'
     ::     (crip (a-co:co p.u.data.http-event))
     ::   headers
+    ::
+    ::  if we're responding to a secure request, ensure that the client knows
+    ::  to stick to the secure
+    ::
+    =?  headers  secure
+      ::TODO  if use cases arise, consider omitting if x-eyre-no-uir is present
+      (set-header:http 'content-security-policy' 'upgrade-insecure-requests' headers)
     ::
     ::  if no cross-origin-resource-policy was specified,
     ::  default to strict same-origin

@@ -3130,6 +3130,7 @@
     ==
   ::  $unpacked-request: a request and inferred details
   ::
+  ::    .secure:        whether the request came in over a secure connection
   ::    .request:       the request from which the other details were inferred
   ::    .authenticated: whether the request is authenticated as the local host
   ::    .session:       the auth session provided by the request & its identity
@@ -3145,7 +3146,8 @@
   ::      to a session whose identity is [%ours ~].
   ::
   +$  unpacked-request
-    $:  =request:http
+    $:  secure=?
+        =request:http
         authenticated=?
         session=(unit [sid=@uv =identity])
     ==
