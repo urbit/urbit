@@ -353,7 +353,7 @@
   ^-  simple-payload:http
   :-  :-  code
       :~  'content-type'^'text/html; charset=utf-8'
-          'x-content-type-option'^'nosniff'
+          'x-content-type-options'^'nosniff'
           'content-security-policy'^'frame-ancestors \'none\''
           'cache-control'^'no-store'  ::NOTE  slightly stronger than necessary
           'cross-origin-opener-policy'^'same-origin'  ::NOTE  only works on https
@@ -3978,6 +3978,7 @@
       =*  headers  headers.response-header.simple-payload.body.u.entry
       ::REVIEWyy  content-length headers behavior
       ::TODO  should +get-header be case-insensitive?
+      ::TODOzz  since this is new behavior, consider applying during migration
       =?  headers
           ?&  ?=(~ (get-header:http 'cross-origin-resource-policy' headers))
               ?=(~ (get-header:http 'Cross-Origin-Resource-Policy' headers))
