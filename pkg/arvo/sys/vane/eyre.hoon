@@ -1714,7 +1714,12 @@
     =*  body  body.entry
     ?-    -.body
         %payload
-      (instant:response req simple-payload.body)
+      ::  we don't fill headers for responses from the cache, because they
+      ::  should've gotten their headers filled when the entry was added,
+      ::  and we want to stay consistent with that exact response.
+      ::
+      %-  =>(response instant(fill-heads |))
+      [req simple-payload.body]
     ==
   ::  +handle-scry: respond with scry result, 404 or 500
   ::
@@ -3781,8 +3786,8 @@
   ::    done with.
   ::
   ++  response
+    =/  fill-heads=?  &
     =;  response-engine
-      ^?
       |%
       ++  instant
         |=  [request=unpacked-request simple-payload:http]
@@ -3826,7 +3831,7 @@
           =.  headers.response-header.http-event  nuh
           ::  auto-fill basic & important headers (content-length, cors...)
           ::
-          =.  headers.response-header.http-event
+          =?  headers.response-header.http-event  fill-heads
             (fill-headers http-event req)
           ::  book-keep the connection's state:
           ::  if we're done responding, clear it from state if it was there,
@@ -3997,7 +4002,22 @@
     ::
     ?:  &(?=([~ * ~ *] prev) !=(desk desk.u.val.u.prev))
       ~|  [%eyre %set-response-clash url=url from=desk.u.val.u.prev next=desk]
-      !!  ::REVIEWxx, maybe notify called with equivalent of %bound instead
+      !!  ::REVIEWxx, maybe notify caller with equivalent of %bound instead
+    ::  similar to +fill-headers, we want to ensure the presence of some
+    ::  response headers. we can't guarantee a secure connection, so csp: uir
+    ::  is off the table, but we do set a default cross-origin-resource-policy
+    ::
+    =?  entry  ?=([~ ? %payload *] entry)
+      =*  headers  headers.response-header.simple-payload.body.u.entry
+      ::REVIEWyy  content-length headers behavior
+      ::TODO  should +get-header be case-insensitive?
+      =?  headers
+          ?&  ?=(~ (get-header:http 'cross-origin-resource-policy' headers))
+              ?=(~ (get-header:http 'Cross-Origin-Resource-Policy' headers))
+          ==
+        (set-header:http 'cross-origin-resource-policy' 'same-origin' headers)
+      entry
+    ::
     =/  aeon  ?^(prev +(aeon.u.prev) 1)
     =.  cache.state  (~(put by cache.state) url [aeon (bind entry (lead desk))])
     :_  state
