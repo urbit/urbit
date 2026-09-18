@@ -346,9 +346,41 @@
   ::  if we reached this, we have an invalid action key. fail parsing.
   ::
   ~
+::  +eyre-html: html page response w/ security headers and standard head
+::
+++  eyre-html
+  |=  [code=@ head=marl body=manx]
+  ^-  simple-payload:http
+  :-  :-  code
+      :~  'content-type'^'text/html; charset=utf-8'
+          'x-content-type-option'^'nosniff'
+          'content-security-policy'^'frame-ancestors \'none\''
+          'cache-control'^'no-store'  ::NOTE  slightly stronger than necessary
+          'cross-origin-opener-policy'^'same-origin'  ::NOTE  only works on https
+          ::NOTE  +fill-headers sets:
+          ::      - cross-origin-resource-policy: same-origin
+          ::      - content-security-policy: upgrade-insecure-requests (mb)
+      ==
+  %-  some
+  %-  as-octt:mimes:html
+  %+  weld  "<!DOCTYPE html>\0a"
+  %-  en-xml:html
+  =/  favicon  %+
+    weld  "<svg width='10' height='10' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'>"
+          "<circle r='3.09' cx='5' cy='5' /></svg>"
+  ;html
+    ;head
+      ;meta(charset "utf-8");
+      ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
+      ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
+      ;*  head
+    ==
+    ;+  body
+  ==
 ::  +auth-styling: css for login and eauth pages
 ::
 ++  auth-styling
+  ::TODO  self-host styles & fonts
   '''
   @import url("https://rsms.me/inter/inter.css");
   @font-face {
@@ -522,23 +554,15 @@
 ::  +login-page: internal page to login to an Urbit
 ::
 ++  login-page
-  |=  $:  [target-desk=(unit @t) redirect-url=(unit @t)]
+  |=  $:  code=@ud
+          [target-desk=(unit @t) redirect-url=(unit @t)]
           [our=@p identity=(unit identity) eauth=(unit ?) failed=?]
       ==
-  ^-  octs
+  ^-  simple-payload:http
   =+  redirect-str=?~(redirect-url "" (trip u.redirect-url))
   =+  desk-str=?~(target-desk "" (trip u.target-desk))
-  %-  as-octs:mimes:html
-  %-  crip
-  %-  en-xml:html
-  =/  favicon  %+
-    weld  "<svg width='10' height='10' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'>"
-          "<circle r='3.09' cx='5' cy='5' /></svg>"
-  ;html
-    ;head
-      ;meta(charset "utf-8");
-      ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
-      ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
+  %^  eyre-html  code
+    :~
       ;title:"Urbit"
       ;style:"{(trip auth-styling)}"
       ;style:"{?^(eauth "" "nav \{ display: none; }")}"
@@ -566,73 +590,72 @@
               }
               '''
     ==
-    ;body
-      =class   "{?:(=(`& eauth) "eauth" "local")}"
-      =onload  "setup({?:(=(`& eauth) "true" "false")})"
-      ;div#local
-        ;p:"Urbit ID"
-        ;input(value "{(scow %p our)}", disabled "true", class "mono");
-        ;+  ?:  ?=(?([~ [%ours ~] *] [~ [%real @] *]) identity)
-            =/  name=tape
-              ?.  ?=([~ [%real @] *] identity)  (scow %p our)
-              (scow %p who.who.u.identity)
-              ;div
-                ;p:"Already authenticated as {name}"
-                ;a.button/"{(trip (fall redirect-url '/'))}":"Continue"
-              ==
-        ;form(action "/~/login", method "post", enctype "application/x-www-form-urlencoded")
-          ;p:"Access Key"
-          ;input
-            =type  "password"
-            =name  "password"
-            =id    "pass"
-            =placeholder  "sampel-ticlyt-migfun-falmel"
-            =class  "mono"
-            =required  "true"
-            =minlength  "27"
-            =maxlength  "27"
-            =pattern  "((?:[a-z]\{6}-)\{3}(?:[a-z]\{6}))";
-          ;input(type "hidden", name "redirect", value redirect-str);
-          ;input(type "hidden", name "desk", value desk-str);
-          ;+  ?.  failed  ;span;
-            ;span.failed
-              ;svg(xmlns "http://www.w3.org/2000/svg", viewBox "0 0 16 16")
-                ;path(d "m8 8 4-4M8 8 4 4m4 4-4 4m4-4 4 4");
-              ==
-              Key is incorrect
+  ;body
+    =class   "{?:(=(`& eauth) "eauth" "local")}"
+    =onload  "setup({?:(=(`& eauth) "true" "false")})"
+    ;div#local
+      ;p:"Urbit ID"
+      ;input(value "{(scow %p our)}", disabled "true", class "mono");
+      ;+  ?:  ?=(?([~ [%ours ~] *] [~ [%real @] *]) identity)
+          =/  name=tape
+            ?.  ?=([~ [%real @] *] identity)  (scow %p our)
+            (scow %p who.who.u.identity)
+            ;div
+              ;p:"Already authenticated as {name}"
+              ;a.button/"{(trip (fall redirect-url '/'))}":"Continue"
             ==
-          ;button(type "submit"):"Continue"
-        ==
-      ==
-      ;div#eauth
-        ;form(action "/~/login", method "post", onsubmit "return doEauth()")
-          ;p:"Urbit ID"
-          ;input.mono
-            =name  "name"
-            =id    "name"
-            =placeholder  "{(scow %p our)}"
-            =required   "true"
-            =minlength  "4"
-            =maxlength  "57"
-            =pattern    "~((([a-z]\{6})\{1,2}-\{0,2})+|[a-z]\{3})";
-          ;p
-            ; You will be redirected to your own web interface to authorize
-            ; logging in to
-            ;span.mono:"{(scow %p our)}"
-            ; .
+      ;form(action "/~/login", method "post", enctype "application/x-www-form-urlencoded")
+        ;p:"Access Key"
+        ;input
+          =type  "password"
+          =name  "password"
+          =id    "pass"
+          =placeholder  "sampel-ticlyt-migfun-falmel"
+          =class  "mono"
+          =required  "true"
+          =minlength  "27"
+          =maxlength  "27"
+          =pattern  "((?:[a-z]\{6}-)\{3}(?:[a-z]\{6}))";
+        ;input(type "hidden", name "redirect", value redirect-str);
+        ;input(type "hidden", name "desk", value desk-str);
+        ;+  ?.  failed  ;span;
+          ;span.failed
+            ;svg(xmlns "http://www.w3.org/2000/svg", viewBox "0 0 16 16")
+              ;path(d "m8 8 4-4M8 8 4 4m4 4-4 4m4-4 4 4");
+            ==
+            Key is incorrect
           ==
-          ;input(type "hidden", name "redirect", value redirect-str);
-          ;button(name "eauth", type "submit"):"Continue"
-        ==
+        ;button(type "submit"):"Continue"
       ==
-      ;*  ?:  ?=(?([~ [%ours ~] *] [~ [%real @] *]) identity)  ~
-          =+  as="proceed as{?:(?=(?(~ [~ [%fake *] *]) identity) " guest" "")}"
-          ;+  ;span.guest.mono
-                ; Or try to
-                ;a/"{(trip (fall redirect-url '/'))}":"{as}"
-                ; .
-              ==
     ==
+    ;div#eauth
+      ;form(action "/~/login", method "post", onsubmit "return doEauth()")
+        ;p:"Urbit ID"
+        ;input.mono
+          =name  "name"
+          =id    "name"
+          =placeholder  "{(scow %p our)}"
+          =required   "true"
+          =minlength  "4"
+          =maxlength  "57"
+          =pattern    "~((([a-z]\{6})\{1,2}-\{0,2})+|[a-z]\{3})";
+        ;p
+          ; You will be redirected to your own web interface to authorize
+          ; logging in to
+          ;span.mono:"{(scow %p our)}"
+          ; .
+        ==
+        ;input(type "hidden", name "redirect", value redirect-str);
+        ;button(name "eauth", type "submit"):"Continue"
+      ==
+    ==
+    ;*  ?:  ?=(?([~ [%ours ~] *] [~ [%real @] *]) identity)  ~
+        =+  as="proceed as{?:(?=(?(~ [~ [%fake *] *]) identity) " guest" "")}"
+        ;+  ;span.guest.mono
+              ; Or try to
+              ;a/"{(trip (fall redirect-url '/'))}":"{as}"
+              ; .
+            ==
     ;script:'''
             var failSpan = document.querySelector('.failed');
             if (failSpan) {
@@ -649,15 +672,13 @@
 ::    acting as server, or the host if we're the client.
 ::
 ++  eauth-error-page
-  |=  $=  return
-      $?  ~                  ::  no known return target
-          [%server last=@t]  ::  we are the host, return to login
-          [%client goal=@t]  ::  we are the client, return to host
-      ==
-  ^-  octs
-  %-  as-octs:mimes:html
-  %-  crip
-  %-  en-xml:html
+  |=  $:  code=@ud
+          $=  return
+          $?  ~                  ::  no known return target
+              [%server last=@t]  ::  we are the host, return to login
+              [%client goal=@t]  ::  we are the client, return to host
+      ==  ==
+  ^-  simple-payload:http
   =/  return=(unit @t)
     ?-  return
       ~            ~
@@ -666,20 +687,12 @@
                    (crip (en-urlt:html (trip last.return)))
       [%client *]  `goal.return  ::TODO  plus nonce? or abort?
     ==
-  =/  favicon  %+
-    weld  "<svg width='10' height='10' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'>"
-          "<circle r='3.09' cx='5' cy='5' /></svg>"
   =/  msg=tape
     ?~  return  "Something went wrong!"
     "Something went wrong! You will be redirected back..."
-  ;html
-    ;head
-      ;*  ?~  return  ~
-          :_  ~
-          ;meta(http-equiv "Refresh", content "5; url={(trip u.return)}");
-      ;meta(charset "utf-8");
-      ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
-      ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
+  %^  eyre-html  code
+    ^-  marl
+    :*
       ;title:"Urbit"
       ;style:'''
              @import url("https://rsms.me/inter/inter.css");
@@ -710,9 +723,11 @@
                width: 100%;
              }
              '''
+      ?~  return  ~
+      :_  ~
+      ;meta(http-equiv "Refresh", content "5; url={(trip u.return)}");
     ==
-    ;body:"{msg}"
-  ==
+  ;body:"{msg}"
 ::  +build-subdomain-negotiation: generate %holm redirect response
 ::
 ++  build-subdomain-negotiation
@@ -751,29 +766,24 @@
 ::
 ++  internal-server-error
   |=  [authorized=? url=@t t=tang]
-  ^-  octs
-  %-  as-octs:mimes:html
-  %-  crip
-  %-  en-xml:html
-  ;html
-    ;head
-      ;title:"500 Internal Server Error"
+  ^-  simple-payload:http
+  %^  eyre-html  500
+    :~  ;title:"500 Internal Server Error"
     ==
-    ;body
-      ;h1:"Internal Server Error"
-      ;p:"There was an error while handling the request for {(trip url)}."
-      ;*  ?:  authorized
-            ;=
-              ;code:"*{(render-tang-to-marl 80 t)}"
-            ==
-          ~
-    ==
+  ;body
+    ;h1:"Internal Server Error"
+    ;p:"There was an error while handling the request for {(trip url)}."
+    ;*  ?:  authorized
+          ;=
+            ;code:"*{(render-tang-to-marl 80 t)}"
+          ==
+        ~
   ==
 ::  +error-page: error page, with an error string if logged in
 ::
 ++  error-page
   |=  [code=@ud authorized=? url=@t t=tape]
-  ^-  octs
+  ^-  simple-payload:http
   =/  message=tape
     ?+  code  "{(scow %ud code)} Error"
       %400  "Bad Request"
@@ -783,22 +793,17 @@
       %500  "Internal Server Error"
     ==
   ::
-  %-  as-octs:mimes:html
-  %-  crip
-  %-  en-xml:html
-  ;html
-    ;head
-      ;title:"{(a-co:co code)} {message}"
+  %^  eyre-html  code
+    :~  ;title:"{(a-co:co code)} {message}"
     ==
-    ;body
-      ;h1:"{message}"
-      ;p:"There was an error while handling the request for {(trip url)}."
-      ;*  ?:  authorized
-            ;=
-              ;code:"{t}"
-            ==
-          ~
-    ==
+  ;body
+    ;h1:"{message}"
+    ;p:"There was an error while handling the request for {(trip url)}."
+    ;*  ?:  authorized
+          ;=
+            ;code:"{t}"
+          ==
+        ~
   ==
 ::  +find-suffix: returns [~ /tail] if :full is (weld :prefix /tail)
 ::
@@ -889,8 +894,7 @@
       ::      host=@t, or better yet, host=turf
       ::
       =/  req=unpacked-request  [secure request | ~]
-      %+  instant-data  req
-      :+  400  'text/html'
+      %+  instant:response  req
       (error-page 400 authenticated.req url.request ~)
     ::  parse the hostname from the request, then
     ::  either it's a naked ip address, or we
@@ -1205,7 +1209,7 @@
       ::  the request provided a session cookie that's not (or no longer)
       ::  valid. to make sure they're aware, tell them 401
       ::
-      %+  instant:response  req
+      %-  send-instant-response
       =+  bod=(as-octs:mimes:html 'bad session auth')
       :_  `bod
       :-  401
@@ -1241,7 +1245,7 @@
       ::
       =/  msg=tape  "holm: fail"
       =*  fail
-        %^  send-instant-data  400  'text/html'
+        %-  send-instant-response
         (error-page 400 & url.request msg)
       ?:  ?=(%| -.target)
         =.(msg "holm: no domain" fail)
@@ -1446,7 +1450,7 @@
         ::TODO  should get passed the requester's identity
         !>([authenticated request]:req)
       ?:  ?=(%2 -.res)
-        %^  send-instant-data  500  'text/html'
+        %-  send-instant-response
         %:  internal-server-error
             authenticated.req
             url.request
@@ -1454,7 +1458,7 @@
             p.res
         ==
       ?:  ?=(%1 -.res)
-        %^  send-instant-data  500  'text/html'
+        %-  send-instant-response
         %:  internal-server-error
             authenticated.req
             url.request
@@ -1483,7 +1487,7 @@
       ::  if the agent isn't running, we synchronously serve a 503
       ::
       ?.  !<(? q:(need (need (rof [~ ~] /eyre %gu [our app.action da+now] /$))))
-        %^  send-instant-data  503  'text/html'
+        %-  send-instant-response
         %:  error-page
           503
           authenticated.req
@@ -1502,8 +1506,7 @@
     ::
         %four-oh-four
       =/  status=@ud  ?:(authenticated.req 404 403)
-      %+  instant-data  req
-      :+  status  'text/html'
+      %+  instant:response  req
       (error-page status authenticated.req url.request ~)
     ==
   ::  +handle-ip: respond with the requester's ip
@@ -1512,8 +1515,7 @@
     |=  [req=unpacked-request =address]
     ^-  (quip move server-state)
     ?.  =(%'GET' method.request.req)
-      %+  instant-data  req
-      :+  405  'text/html'
+      %+  instant:response  req
       (error-page 405 & url.request.req "may only GET ip")
     %+  instant-data  req
     :+  200  'text/plain'
@@ -1544,8 +1546,7 @@
     =*  url  url.request.req
     =/  crumbs  q:(rash url apat:de-purl:html)
     ?.  ?=([@t @t @t ~] crumbs)
-      %+  instant-data  req
-      :+  400  'text/html'
+      %+  instant:response  req
       %:  error-page
         400
         &
@@ -1557,8 +1558,7 @@
         %p
       i.t.t.crumbs
     ?~  ship
-      %+  instant-data  req
-      :+  400  'text/html'
+      %+  instant:response  req
       %:  error-page
         400
         &
@@ -1587,14 +1587,12 @@
     ^-  (quip move server-state)
     =*  url  url.request.req
     ?.  =(%'GET' method.request.req)
-      %+  instant-data  req
-      :+  405  'text/html'
+      %+  instant:response  req
       (error-page 405 & url "may only GET boot data")
     =/  crumbs  q:(rash url apat:de-purl:html)
     =>  .(crumbs `(pole knot)`crumbs)
     ?.  ?=([%'~' %boot ship=@t req=*] crumbs)
-      %+  instant-data  req
-      :+  400  'text/html'
+      %+  instant:response  req
       %:  error-page
         400
         &
@@ -1608,8 +1606,7 @@
     ?:  ?|  ?=(~ ship)
             &(?=([bone=@ ~] req.crumbs) ?=(~ bone))
         ==
-      %+  instant-data  req
-      :+  400  'text/html'
+      %+  instant:response  req
       %:  error-page
         400
         &
@@ -1627,8 +1624,7 @@
         ?~(bone ~ [(scot %ud u.bone) ~])  :: XX
       ==
     ?.  ?=([~ ~ %noun *] des)
-      %+  instant-data  req
-      :+  404  'text/html'
+      %+  instant:response  req
       (error-page 404 & url "Peer {(scow %p u.ship)} not found.")
     =+  !<  [rift=@ud life=@ud bone=(unit @ud) last-acked=(unit @ud)]  q.u.u.des
     %+  instant-data  req
@@ -1643,8 +1639,7 @@
     |=  [req=unpacked-request auth-state=?(%respect %drop)]
     ^-  (quip move server-state)
     ?.  =(%'GET' method.request.req)
-      %+  instant-data  req
-      :+  405  'text/html'
+      %+  instant:response  req
       (error-page 405 & url.request.req "may only GET name")
     ::  requests for /~/name must always resolve to an identity.
     ::  if the request provided no auth, mint a guest identity.
@@ -1698,8 +1693,7 @@
     ++  error-response
       |=  [status=@ud =tape]
       ^-  (quip move server-state)
-      %+  instant-data  req
-      :+  status  'text/html'
+      %+  instant:response  req
       (error-page status authenticated.req url.request.req tape)
     --
   ::  +handle-cache-req: respond with cached value, 404 or 500
@@ -1708,8 +1702,7 @@
     |=  [req=unpacked-request entry=cache-entry]
     ^-  (quip move server-state)
     ?:  &(auth.entry !authenticated.req)
-      %+  instant-data  req
-      :+  403  'text/html'
+      %+  instant:response  req
       (error-page 403 [authenticated url.request ~]:req)
     =*  body  body.entry
     ?-    -.body
@@ -1788,8 +1781,7 @@
     ++  error-response
       |=  [status=@ud =tape]
       ^-  (quip move server-state)
-      %+  instant-data  ruq
-      :+  status  'text/html'
+      %+  instant:response  ruq
       (error-page status authenticated.ruq url.request.ruq tape)
     --
   ::  +request-to-app: subscribe to app and poke it with request data
@@ -1886,15 +1878,11 @@
   ++  async-data  ::TODOyy  caller must bookkeep!!!!!!!
     |=  [code=@ content-type=@t data=octs]
     ^-  [(list move) server-state]
-    %-  async:response
-    :*  %start
-        :-  status-code=code
-        ^=  headers
-          :~  ['content-type' content-type]
-              ['content-length' (crip (a-co:co p.data))]
-          ==
-        data=[~ data]
-        complete=%.y
+    %-  async-easy:response
+    :_  `data
+    :-  code
+    :~  ['content-type' content-type]
+        ['content-length' (crip (a-co:co p.data))]
     ==
   ::  +authentication: per-event authentication as this Urbit's owner
   ::
@@ -1946,36 +1934,31 @@
       ::      send unprivileged users to the login screen
       ::
       ?:  =('GET' method.request)
-        %+  instant-data  req
-        :+  200  'text/html'
-        (login-page [target-desk redirect] our identity with-eauth %.n)
+        %+  instant:response  req
+        (login-page 200 [target-desk redirect] our identity with-eauth %.n)
       ::  if we are not a post, return an error
       ::
       ?.  =('POST' method.request)
-        %+  instant-data  req
-        :+  405  'text/html'
-        (login-page [~ ~] our identity with-eauth %.n)
+        %+  instant:response  req
+        (login-page 405 [~ ~] our identity with-eauth %.n)
       ::  we are a post, and must process the body type as form data
       ::
       ?~  body.request
-        %+  instant-data  req
-        :+  400  'text/html'
-        (login-page [~ ~] our identity with-eauth %.n)
+        %+  instant:response  req
+        (login-page 400 [~ ~] our identity with-eauth %.n)
       ::
       =/  parsed=(unit (list [key=@t value=@t]))
         (rush q.u.body.request yquy:de-purl:html)
       ?~  parsed
-        %+  instant-data  req
-        :+  400  'text/html'
-        (login-page [~ ~] our identity with-eauth %.n)
+        %+  instant:response  req
+        (login-page 400 [~ ~] our identity with-eauth %.n)
       ::
       =/  target-desk=(unit @t)  (get-header:http 'desk' u.parsed)
       =/  redirect=(unit @t)     (get-header:http 'redirect' u.parsed)
       ?^  (get-header:http 'eauth' u.parsed)
         ?~  ship=(biff (get-header:http 'name' u.parsed) (cury slaw %p))
-          %+  instant-data  req
-          :+  400  'text/html'
-          (login-page [target-desk redirect] our identity `& %.n)
+          %+  instant:response  req
+          (login-page 400 [target-desk redirect] our identity `& %.n)
         ::TODO  redirect logic here and elsewhere is ugly
         =/  redirect  (fall redirect '')
         =/  base=@t
@@ -1989,15 +1972,13 @@
       ::
       =.  with-eauth  (bind with-eauth |=(? |))
       ?~  password=(get-header:http 'password' u.parsed)
-        %+  instant-data  req
-        :+  400  'text/html'
-        (login-page [target-desk redirect] our identity with-eauth %.n)
+        %+  instant:response  req
+        (login-page 400 [target-desk redirect] our identity with-eauth %.n)
       ::  check that the password is correct
       ::
       ?.  =(u.password code)
-        %+  instant-data  req
-        :+  400  'text/html'
-        (login-page [target-desk redirect] our identity with-eauth %.y)
+        %+  instant:response  req
+        (login-page 400 [target-desk redirect] our identity with-eauth %.y)
       ::  clean up the session they're changing out from
       ::
       =^  moz  state
@@ -2390,8 +2371,8 @@
           ::  redirect the visitor to their own confirmation page
           ::
           =.  visitors.auth  (~(put by visitors.auth) nonce visa(pend ~))
-          %-  async:response(duct http:(need pend.visa))
-          =;  url=@t  [%start 303^['location' url]~ ~ &]
+          %-  async-easy:response(duct http:(need pend.visa))
+          =;  url=@t  [303^['location' url]~ ~]
           %+  rap  3
           :~  url
               '?server='  (scot %p our)
@@ -2474,8 +2455,8 @@
           =^  moz  state
             ?~  pend.u.visa  [~ state]
             ?.  (~(has by connections.state) http.u.pend.u.visa)  [~ state]
-            %-  async-data(duct http.u.pend.u.visa)
-            [503 'text/html' (eauth-error-page %server last.u.visa)]
+            %-  async-easy:response(duct http.u.pend.u.visa)
+            (eauth-error-page 503 %server last.u.visa)
           =?  moz  ?=(^ pend.u.visa)
             [(send-keen %yawn ship.u.visa nonce keen.u.pend.u.visa) moz]
           =.  visitors.auth  (~(del by visitors.auth) nonce)
@@ -2529,8 +2510,8 @@
           =.  visitors.auth  (~(del by visitors.auth) nonce)
           =^  moz  state
             ?~  pend.u.visa  [~ state]
-            %-  async-data(duct http.u.pend.u.visa)
-            [503 'text/html' (eauth-error-page %server last.u.visa)]
+            %-  async-easy:response(duct http.u.pend.u.visa)
+            (eauth-error-page 503 %server last.u.visa)
           :_  state
           %+  weld  moz
           ?~  duct.u.visa  ~
@@ -2621,8 +2602,8 @@
           ::
           ?@  u.port       [~ state]
           ?~  pend.u.port  [~ state]
-          %-  async-data(duct u.pend.u.port)
-          [503 'text/html' (eauth-error-page ~)]
+          %-  async-easy:response(duct u.pend.u.port)
+          (eauth-error-page 503 ~)
         ::  +on-boon: receive an eauth network response from a host
         ::
         ::    crashes on unexpected circumstances, in response to which we
@@ -2654,8 +2635,8 @@
             ::  always serve a redirect, with either the token, or abort signal
             ::
             =;  url=@t
-              %-  async:response(duct u.pend.port)
-              [%start 303^['location' url]~ ~ &]
+              %-  async-easy:response(duct u.pend.port)
+              [303^['location' url]~ ~]
             %+  rap  3
             :*  url.boon
                 '?nonce='  (scot %uv nonce.boon)
@@ -2699,8 +2680,8 @@
           ::
           ?~  pend.u.port  [~ state]
           ?.  (~(has by connections.state) u.pend.u.port)  [~ state]
-          %-  async-data(duct u.pend.u.port)
-          [503 'text/html' (eauth-error-page ~)]
+          %-  async-easy:response(duct u.pend.u.port)
+          (eauth-error-page 503 ~)
         ::
         ++  send-plea
           |=  [=ship plea=eauth-plea]
@@ -2712,18 +2693,8 @@
         ::
         ++  confirmation-page
           |=  [server=ship nonce=@uv]
-          ^-  octs
-          %-  as-octs:mimes:html
-          %-  crip
-          %-  en-xml:html
-          =/  favicon  %+
-            weld  "<svg width='10' height='10' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'>"
-                  "<circle r='3.09' cx='5' cy='5' /></svg>"
-          ;html
-            ;head
-              ;meta(charset "utf-8");
-              ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
-              ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
+          %^  eyre-html  200
+            :~
               ;title:"Urbit"
               ;style:"{(trip auth-styling)}"
               ;style:'''
@@ -2748,16 +2719,15 @@
                      }
                      '''
             ==
-            ;body
-              ;form(action "/~/eauth", method "post")
-                ; Hello, {(scow %p our)}.
-                ; You are trying to log in to:
-                ;code:"{(scow %p server)}"
-                ;input(type "hidden", name "server", value (scow %p server));
-                ;input(type "hidden", name "nonce", value (scow %uv nonce));
-                ;button(type "submit", name "grant", value "grant"):"approve"
-                ;button(type "submit", name "reject", class "red"):"reject"
-              ==
+          ;body
+            ;form(action "/~/eauth", method "post")
+              ; Hello, {(scow %p our)}.
+              ; You are trying to log in to:
+              ;code:"{(scow %p server)}"
+              ;input(type "hidden", name "server", value (scow %p server));
+              ;input(type "hidden", name "nonce", value (scow %uv nonce));
+              ;button(type "submit", name "grant", value "grant"):"approve"
+              ;button(type "submit", name "reject", class "red"):"reject"
             ==
           ==
         --
@@ -2776,8 +2746,8 @@
         ::  or give them a generic, static error page in unexpected cases
         ::
         =*  error
-          %+  instant-data  req
-          [400 'text/html' (eauth-error-page ~)]
+          %+  instant:response  req
+          (eauth-error-page 400 ~)
         ::  GET requests either render the confirmation page,
         ::  or finalize an eauth flow
         ::
@@ -2800,8 +2770,8 @@
             ?~  door
               ::  nonce not yet used, render the confirmation page as normal
               ::
-              %+  instant-data  req
-              [200 'text/html' (confirmation-page:client u.server u.nonce)]
+              %+  instant:response  req
+              (confirmation-page:client u.server u.nonce)
             ::  if we're still awaiting a redirect target, we choose to serve
             ::  this latest request instead
             ::
@@ -2823,8 +2793,8 @@
           =/  visa=(unit visitor)  (~(get by visitors.auth) u.nonce)
           ?~  visa         error
           ?@  +.u.visa     error
-          =*  error  %+  instant-data  req
-                     [400 'text/html' (eauth-error-page %server last.u.visa)]
+          =*  error  %+  instant:response  req
+                     (eauth-error-page 400 %server last.u.visa)
           ::  request for finalization, must either abort or provide a token
           ::
           ::NOTE  yes, this means that unauthenticated clients can abort
@@ -2844,8 +2814,8 @@
           (finalize:^server req u.duct.u.visa u.nonce ship.u.visa last.u.visa)
         ::
         ?.  ?=(%'POST' method.request)
-          %+  instant-data  req
-          [405 'text/html' (eauth-error-page ~)]
+          %+  instant:response  req
+          (eauth-error-page 405 ~)
         ?.  authenticated.req  login
         ?>  ?=(^ session.req)
         ::  POST requests are always submissions of the confirmation page
@@ -2856,8 +2826,8 @@
         =/  nonce=(unit @uv)  (biff (~(get by args) 'nonce') (cury slaw %uv))
         =/  grant=?           =(`'grant' (~(get by args) 'grant'))
         ::
-        =*  error   %+  instant-data  req
-                    [400 'text/html' (eauth-error-page ~)]
+        =*  error   %+  instant:response  req
+                    (eauth-error-page 400 ~)
         ?~  server  error
         ?~  nonce   error
         =/  book    (~(gut by visiting.auth) u.server *logbook)
@@ -2899,8 +2869,7 @@
       ?.  ?=([@t @t @t ~] site.request-line)
         ::  url is not of the form '/~/channel/'
         ::
-        %+  instant-data  req
-        :+  400  'text/html'
+        %+  instant:response  req
         (error-page 400 & url.request "malformed channel url")
       ::  channel-id: unique channel id parsed out of url
       ::
@@ -2918,8 +2887,7 @@
         (on-put-request req channel-id)
       ::
       %-  (trace 0 |.("session not a put"))
-      %+  instant-data  req
-      :+  405  'text/html'
+      %+  instant:response  req
       (error-page 405 & url.request "bad method for session endpoint")
     ::  +on-cancel-request: cancels an ongoing subscription
     ::
@@ -3044,8 +3012,7 @@
       ::  they last connected to it.
       ::
       ?.  (~(has by session.channel-state.state) channel-id)
-        %+  instant-data  req
-        :+  404  'text/html'
+        %+  instant:response  req
         (error-page 404 | url.request ~)
       ::
       =/  mode=?(%json %jam)
@@ -3068,8 +3035,7 @@
                 =(identity.channel identity.u.session.req)
             ==
           =^  mos  state
-            %+  instant-data  req
-            :+  403  'text/html'
+            %+  instant:response  req
             (error-page 403 | url.request ~)
           [[& '' mos] state]
         ::  make sure the request "mode" doesn't conflict with a prior request
@@ -3078,8 +3044,7 @@
         ::      request will ever be listening to this channel?
         ?.  =(mode mode.channel)
           =^  mos  state
-            %+  instant-data  req
-            :+  406  'text/html'
+            %+  instant:response  req
             =;  msg=tape  (error-page 406 %.y url.request msg)
             "channel already established in {(trip mode.channel)} mode"
           [[& '' mos] state]
@@ -3219,14 +3184,12 @@
       ::
       ?:  ?~  c=(~(get by session.channel-state.state) channel-id)  |
           !=((bind session.req tail) `identity.u.c)
-        %+  instant-data  req
-        :+  403  'text/html'
+        %+  instant:response  req
         (error-page 403 | url.request ~)
       ::  error when there's no body
       ::
       ?~  body.request
-        %+  instant-data  req
-        :+  400  'text/html'
+        %+  instant:response  req
         (error-page 400 %.y url.request "no put body")
       ::
       =/  mode=?(%json %jam)
@@ -3236,8 +3199,7 @@
       =/  maybe-requests=(each (list channel-request) @t)
         (parse-channel-request mode u.body.request)
       ?:  ?=(%| -.maybe-requests)
-        %+  instant-data  req
-        :+  400  'text/html'
+        %+  instant:response  req
         (error-page 400 & url.request (trip p.maybe-requests))
       ::  if the requester provided no auth, mint them a new session
       ::  so that their channel has an identity associated with it
@@ -3769,10 +3731,8 @@
       (deal-as /watch-response/[eyre-id] identity.u.session our app.action %leave ~)
     ::
     =^  moves-2  state
-      %-  async-data
-      :+  500  'text/html'
-      ::
-      %-  internal-server-error  :*
+      %-  async-easy:response
+      %:  internal-server-error
           authenticated.connection
           url.request.connection
           tang
@@ -3789,12 +3749,18 @@
     =/  fill-heads=?  &
     =;  response-engine
       |%
+      ::  +instant:    fully respond to .request
+      ::  +async-easy: fully respond to duct's request (MUST be in state)
+      ::  +async:      potentially partial response to duct's request (ditto)
+      ::
       ++  instant
         |=  [request=unpacked-request simple-payload:http]
         ^-  [(list move) server-state]
         (response-engine request %start response-header data complete=&)
-      :: ++  start-async  ::TODOyy  possible
-      ++  async  ::TODOyy  continue-async  ::NOTE  *must* have put connection into state prior
+      ++  async-easy
+        |=  simple-payload:http
+        (async %start response-header data &)
+      ++  async  ::NOTE  *must* have put connection into state prior
         |=  =http-event:http
         (response-engine %async http-event)
       --
@@ -3982,6 +3948,7 @@
       ?:(?=(%guest kind) guest auth)
     :_  %+  ~(put by sessions)  sid
         u.ses(expiry-time (add now timeout))
+    ::TODO  don't add set-cookie header if cache-control allows public caching
     =/  cookie=(pair @t @t)
       ['set-cookie' (session-cookie-string sid `kind)]
     |-
