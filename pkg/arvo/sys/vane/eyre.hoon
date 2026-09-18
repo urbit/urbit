@@ -3905,7 +3905,7 @@
     ::
     =?  headers  secure
       ::TODO  if use cases arise, consider omitting if x-eyre-no-uir is present
-      (set-header:http 'content-security-policy' 'upgrade-insecure-requests' headers)
+      ['content-security-policy'^'upgrade-insecure-requests' headers]
     ::
     ::  if no cross-origin-resource-policy was specified,
     ::  default to strict same-origin
@@ -3915,7 +3915,7 @@
         ?&  ?=(~ (get-header:http 'cross-origin-resource-policy' headers))
             ?=(~ (get-header:http 'Cross-Origin-Resource-Policy' headers))
         ==
-      (set-header:http 'cross-origin-resource-policy' 'same-origin' headers)
+      ['cross-origin-resource-policy'^'same-origin' headers]
     ::
     ::  if the request was a simple cors request from an approved origin
     ::  append the necessary cors headers to the response
@@ -3982,7 +3982,7 @@
           ?&  ?=(~ (get-header:http 'cross-origin-resource-policy' headers))
               ?=(~ (get-header:http 'Cross-Origin-Resource-Policy' headers))
           ==
-        (set-header:http 'cross-origin-resource-policy' 'same-origin' headers)
+        ['cross-origin-resource-policy'^'same-origin' headers]
       entry
     ::
     =/  aeon  ?^(prev +(aeon.u.prev) 1)
