@@ -862,8 +862,7 @@
     ^-  [(list move) server-state]
     ::
     =/  req=unpacked-request
-      ::TODOzz  this will put *@uv session into state in +refresh-session! bad!
-      [secure request & `[*@uv [[%ours ~] ~]]]
+      [secure request & `[| *@uv [[%ours ~] ~]]]
     ::
     %-  (trace 2 |.("{<duct>} creating local"))
     (request-to-app [req %respect] %lens address)
@@ -1201,7 +1200,7 @@
     =/  req=unpacked-request
       :^  secure  request
         ?=([%have @ [%ours ~] *] auth-state)
-      ?:(?=(%have -.auth-state) `[session identity]:auth-state ~)
+      ?:(?=(%have -.auth-state) `[| session identity]:auth-state ~)
     =*  send-instant-data      (cury instant-data req)
     =*  send-instant-response  (cury instant:response req)
     ::
@@ -1294,7 +1293,7 @@
           ?~  session.req                                ::  ?-  -.auth-state
             (start-session:authentication %new-guest ~)  ::  %miss
           [[sid identity ~]:u.session.req state]         ::  %have
-        =.  session.req  `[sid identity]
+        =.  session.req  `[?=(~ session.req) sid identity]
         =.  auth-state  [%have sid identity]
         ::
         =/  expiry=@da  (add now tmp-token-timeout)
@@ -1337,9 +1336,9 @@
         =.  authlets.auth.state  (~(del by authlets.auth.state) tok.step)
         =^  o  state
           (start-session:authentication new-id `parent.u.authlet)
+        =.  session.req        `[& session identity]:o
+        =.  authenticated.req  ?=(%ours -.identity.o)
         =^  moz=(list move)  state
-          =.  session.req        `[session identity]:o
-          =.  authenticated.req  ?=(%ours -.identity.o)
           %-  send-instant-response
           [[307 ['location' (rap 3 '//' u.host url.target.u.authlet ~)]~] ~]
         [[give-session-tokens (weld moz moves.o)] state]
@@ -1660,7 +1659,8 @@
     ::  set-cookie header) if auth was respected in the first place. in %drop
     ::  cases we don't want to send cookies.
     ::
-    =?  session.req  ?=(%respect auth-state)  `[sid identity]
+    =?  session.req  ?=(%respect auth-state)
+      `[?=(~ session.req) sid identity]
     ::
     =^  moves2  state
       %+  instant-data  req
@@ -1811,7 +1811,8 @@
     ::  set-cookie header) if auth was respected in the first place. in %drop
     ::  cases we don't want to send cookies.
     ::
-    =?  session  ?=(%respect auth-level)  `[suv identity]
+    =?  session  ?=(%respect auth-level)
+      `[?=(~ session) suv identity]
     ::  the request will be handled outside of eyre ("asynchronously"),
     ::  so store the connection in state before dispatching
     ::
@@ -1996,7 +1997,7 @@
       ::  initialize the new session
       ::
       =^  fex  state  (start-session [[%ours ~] ~] ~)
-      =.  session.req        `[session identity]:fex
+      =.  session.req        `[& session identity]:fex
       =.  authenticated.req  &
       =.  identity           `identity.fex  ::NOTE  doesn't matter but good form
       ::  store the hostname used for this login, later reuse it for eauth.
@@ -2075,8 +2076,9 @@
       =/  all=?
         ?=(^ (get-header:http 'all' arg))
       =/  sid=(unit @uv)
-        ?.  authenticated.req                (bind session.req head)
-        ?~  sid=(get-header:http 'sid' arg)  (bind session.req head)
+        =*  siq  ?~(session.req ~ `sid.u.session.req)
+        ?.  authenticated.req                siq
+        ?~  sid=(get-header:http 'sid' arg)  siq
         ::  if you provided the parameter, but it doesn't parse, we just
         ::  no-op. otherwise, a poorly-implemented frontend might result in
         ::  accidental log-outs, which would be very annoying.
@@ -2219,8 +2221,7 @@
           ?>  ?=(%& -.scopes.s)
           s(p.scopes (~(put in p.scopes.s) key))
         %+  ~(put by sessions.auth.state)  key
-        ::NOTE  we bunt expiry time so that +refresh-session will set it
-        [sid ?~(parent &+~ |+u.parent) *@da ~]
+        [sid ?~(parent &+~ |+u.parent) (add now timeout) ~]
       ::  create a new session with a fake identity
       ::
       =/  sik=@uv  new-session-key
@@ -2496,7 +2497,7 @@
           =.  visitors.auth
             %+  ~(jab by visitors.auth)  nonce
             |=(v=visitor v(+ sid))
-          =.  session.req  `[sid identity]
+          =.  session.req  `[& sid identity]
           ::
           =^  moz3  state
             =;  hed  (instant:response req 303^hed ~)
@@ -3220,7 +3221,7 @@
         [[sid identity ~]:u.session.req state]
       ::NOTE  no need to worry about sending cookie to "%drop status" request,
       ::      because PUT requests never get %drop
-      =.  session.req  `[sid identity]
+      =.  session.req  `[?=(~ session.req) sid identity]
       ::  check for the existence of the channel-id
       ::
       ::    if we have no session, create a new one set to expire in
@@ -3810,7 +3811,7 @@
               [headers.response-header.http-event sessions.auth.state]
             %+  refresh-session
               headers.response-header.http-event
-            sid.u.session.req
+            [new sid]:u.session.req
           =.  headers.response-header.http-event  nuh
           ::  book-keep the connection's state:
           ::  if we're done responding, clear it from state if it was there,
@@ -3950,23 +3951,26 @@
   ::    uncacheable for security reasons.
   ::
   ++  refresh-session
-    |=  [headers=header-list:http sid=@uv]
+    |=  [headers=header-list:http new=? sid=@uv]
     ^-  [header-list:http _sessions.auth.state]
     =,  authentication
     =*  sessions    sessions.auth.state
+    ::  if the session has expired since the request was opened,
+    ::  tough luck, we don't create/revive sessions here
+    ::
     ?~  ses=(~(get by sessions) sid)
-      ::  if the session has expired since the request was opened,
-      ::  tough luck, we don't create/revive sessions here
-      ::
       [headers sessions]
+    ?:  (gth now expiry-time.u.ses)
+      [headers sessions]
+    ::
     =/  kind  ?:(?=(%fake -.who.identity.u.ses) %guest %auth)
     =/  timeout
       =,  session-timeout
       ?:(?=(%guest kind) guest auth)
-    ::  if the session isn't close to expiring yet, no-op
+    ::  if the session existed and isn't close to expiring yet, no-op
     ::
-    ?.  ?|  (lth expiry-time.u.ses now)  ::NOTE  +start-session bunts expiry
-            (lth (sub expiry-time.u.ses now) (div timeout 2))
+    ?:  ?&  !new
+            (gth (sub expiry-time.u.ses now) (div timeout 2))
         ==
       [headers sessions]
     ::  if we're refreshing the session and sending a set-cookie header,

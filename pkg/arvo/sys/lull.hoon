@@ -3149,7 +3149,7 @@
     $:  secure=?
         =request:http
         authenticated=?
-        session=(unit [sid=@uv =identity])
+        session=(unit [new=? sid=@uv =identity])
     ==
   ::  +outstanding-connection: open http connections not fully complete:
   ::
