@@ -2104,7 +2104,7 @@
         state
       ::  if the requester is logging themselves out, make them drop the cookie
       ::
-      =?  headers.response-header.payload  =(sid (bind session.req head))
+      =?  headers.response-header.payload  =(sid ?~(session.req ~ `sid.u.session.req))
         :+  ['set-cookie' (session-cookie-string u.sid ~)]
           ['cache-control' 'no-store']
         headers.response-header.payload
@@ -3195,7 +3195,7 @@
       ::    the creation case happens in the +update-timeout-timer-for below
       ::
       ?:  ?~  c=(~(get by session.channel-state.state) channel-id)  |
-          !=((bind session.req tail) `identity.u.c)
+          ?~(session.req & !=(identity.u.session.req identity.u.c))
         %+  instant:response  req
         (error-page 403 | url.request ~)
       ::  error when there's no body
