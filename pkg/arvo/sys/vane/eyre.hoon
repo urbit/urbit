@@ -1266,6 +1266,7 @@
         ?~  desk.p.target
           [[307 ['location' (crip "/~/login?redirect={url.step}")]~] ~]
         ::REVIEWxx  inline that logic?
+        ::REVIEWzz  session not removed from state, so +refresh-session might refresh?
         :_  ~
         %-  build-subdomain-negotiation
         :+  [(snoc domain.p.target u.desk.p.target) port.p.target]
@@ -2218,7 +2219,8 @@
           ?>  ?=(%& -.scopes.s)
           s(p.scopes (~(put in p.scopes.s) key))
         %+  ~(put by sessions.auth.state)  key
-        [sid ?~(parent &+~ |+u.parent) (add now timeout) ~]
+        ::NOTE  we bunt expiry time so that +refresh-session will set it
+        [sid ?~(parent &+~ |+u.parent) *@da ~]
       ::  create a new session with a fake identity
       ::
       =/  sik=@uv  new-session-key
@@ -2499,6 +2501,7 @@
           =^  moz3  state
             =;  hed  (instant:response req 303^hed ~)
             :~  ['location' last]
+                ::REVIEWzz  redundant with +refresh-session?
                 ['set-cookie' (session-cookie-string sid `%auth)]
             ==
           [:(weld moz1 moz2 moz3) state]
@@ -3794,7 +3797,13 @@
             %start
           ?^  h.res
             ((trace 0 |.("{<duct>} error multiple start")) cancel-response)
-          ::  extend the request's session's + cookie's life
+          ::  auto-fill basic & important headers (content-length, cors...)
+          ::
+          =?  headers.response-header.http-event  fill-heads
+            (fill-headers http-event req)
+          ::  if at this point there's still a session associated with the
+          ::  request, consider it live and, as necessary, extend that
+          ::  session's + cookie's life if they were close to expiring.
           ::
           =^  nuh  sessions.auth.state
             ?~  session.req
@@ -3803,10 +3812,6 @@
               headers.response-header.http-event
             sid.u.session.req
           =.  headers.response-header.http-event  nuh
-          ::  auto-fill basic & important headers (content-length, cors...)
-          ::
-          =?  headers.response-header.http-event  fill-heads
-            (fill-headers http-event req)
           ::  book-keep the connection's state:
           ::  if we're done responding, clear it from state if it was there,
           ::  if we may still continue, update the existing entry.
@@ -3937,14 +3942,18 @@
       %^  set-header:http  'Access-Control-Allow-Credentials'  'true'
       headers
     headers
-  ::  +refresh-session: xx
+  ::  +refresh-session: if .sid is live but old, refresh it & add set-cookie
+  ::
+  ::    if .sid points to a session that still exists, and that session is
+  ::    not super fresh anymore, refresh it and send the appropriate set-cookie
+  ::    header. note that if we add set-cookie, we must also make the response
+  ::    uncacheable for security reasons.
   ::
   ++  refresh-session
     |=  [headers=header-list:http sid=@uv]
     ^-  [header-list:http _sessions.auth.state]
     =,  authentication
     =*  sessions    sessions.auth.state
-    ::
     ?~  ses=(~(get by sessions) sid)
       ::  if the session has expired since the request was opened,
       ::  tough luck, we don't create/revive sessions here
@@ -3954,18 +3963,21 @@
     =/  timeout
       =,  session-timeout
       ?:(?=(%guest kind) guest auth)
+    ::  if the session isn't close to expiring yet, no-op
+    ::
+    ?.  ?|  (lth expiry-time.u.ses now)  ::NOTE  +start-session bunts expiry
+            (lth (sub expiry-time.u.ses now) (div timeout 2))
+        ==
+      [headers sessions]
+    ::  if we're refreshing the session and sending a set-cookie header,
+    ::  we must signal that the response isn't cacheable.
+    ::  note that we overwrite existing cache-control headers, but leave
+    ::  existing set-cookie headers in place.
+    ::
     :_  %+  ~(put by sessions)  sid
         u.ses(expiry-time (add now timeout))
-    ::TODO  don't add set-cookie header if cache-control allows public caching
-    =/  cookie=(pair @t @t)
-      ['set-cookie' (session-cookie-string sid `kind)]
-    |-
-    ?~  headers
-      [cookie ~]
-    ::REVIEWxx
-    ?:  &(=(key.i.headers p.cookie) =(value.i.headers q.cookie))
-      headers
-    [i.headers $(headers t.headers)]
+    =.  headers  (set-header:http 'cache-control' 'no-store' headers)
+    [['set-cookie' (session-cookie-string sid `kind)] headers]
   ::  +set-response: remember (or update) a cache mapping
   ::
   ++  set-response
