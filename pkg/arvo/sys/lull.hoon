@@ -3179,7 +3179,7 @@
         sessions=(map @uv session)
         ::  authlets: temporary tokens for authenticating into scopes
         ::
-        authlets=(map @uv session=@uv)
+        authlets=(map @uv authlet)
         ::  visitors: in-progress incoming eauth flows
         ::
         visitors=(map @uv visitor)
@@ -3219,6 +3219,17 @@
         ::  TODO: We should add a system for individual capabilities; we should
         ::  mint some sort of long lived cookie for mobile apps which only has
         ::  access to a single application path.
+    ==
+  ::  $authlet: temporary token for authenticating into a scope
+  ::
+  +$  authlet
+    ::  .parent: corresponding root session
+    ::  .target: intended consumption scope & return url
+    ::  .expiry: redeem before
+    ::
+    $:  parent=@uv
+        target=[=desk url=@t]
+        expiry=@da
     ==
   ::  +visitor: completed or in-progress incoming eauth flow
   ::

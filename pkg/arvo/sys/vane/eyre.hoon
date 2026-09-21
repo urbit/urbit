@@ -205,12 +205,12 @@
       %-  like
       $%  [%jump url=tape]
           [%sink =desk url=tape]
-          [%gain tok=@uv url=tape]
+          [%gain tok=@uv]
       ==
   ;~  pose
     ;~(plug (cold %jump (jest '/~/holm/jump')) (star next))
     ;~(plug (cold %sink (jest '/~/holm/sink/')) sym (star next))
-    ;~(plug (cold %gain (jest '/~/holm/gain/')) ;~(pfix (jest '0v') viz:ag) (star next))
+    ;~(plug (cold %gain (jest '/~/holm/gain/')) ;~(pfix (jest '0v') viz:ag))
   ==
 ::
 ++  cors
@@ -1143,6 +1143,7 @@
         ==
       %+  instant:response  proto-req
       ::NOTE  307 to retain req method+body
+      ::TODOzz  don't?
       [[307 ['location' target-url]~] ~]
     ::  auth-state: authentication detail for the incoming request
     ::
@@ -1295,14 +1296,16 @@
         =.  session.req  `[sid identity]
         =.  auth-state  [%have sid identity]
         ::
+        =/  expiry=@da  (add now tmp-token-timeout)
         =^  tmp-token=@uv  authlets.auth.state
-          =+  t=(end 3^8 (shas %holm eny))
+          =+  t=(end 3^16 (shas %holm eny))
           :-  t
-          (~(put by authlets.auth.state) t sid)
+          %+  ~(put by authlets.auth.state)  t
+          [sid [desk.step (crip url.step)] expiry]
         =/  expire=move
-          [duct %pass /holm/(scot %uv tmp-token) %b %wait (add now tmp-token-timeout)]
+          [duct %pass /holm/(scot %uv tmp-token) %b %wait expiry]
         =/  redirect-url=tape
-          "//{(trip desk.step)}.{(trip (host-string -.p.target))}/~/holm/gain/{(scow %uv tmp-token)}{url.step}"
+          "//{(trip desk.step)}.{(trip (host-string -.p.target))}/~/holm/gain/{(scow %uv tmp-token)}"
         =^  moz=(list move)  state
           %-  send-instant-response
           [[307 ['location' (crip redirect-url)]~] ~]
@@ -1317,22 +1320,29 @@
         ?~  desk.p.target
           =.(msg "holm: can't gain on root domain" fail)
         ?<  ?=(%miss -.auth-state)  ::NOTE  we only %miss on root
-        ?~  parent=(~(get by authlets.auth.state) tok.step)
+        ?~  authlet=(~(get by authlets.auth.state) tok.step)
           ::NOTE  this will serve 500, adding token url into browser history,
           ::      but the token apparently isn't valid, so that's fine
           =.(msg "holm: invalid gain token" fail)
-        ?~  parent-session=(~(get by sessions.auth.state) u.parent)
-          =.(msg "holm: invalid gain token parent" fail)
+        ?:  (gth now expiry.u.authlet)
+          =.  authlets.auth.state  (~(del by authlets.auth.state) tok.step)
+          =.(msg "holm: expired gain token" fail)
+        ?.  =(u.desk.p.target desk.target.u.authlet)
+          =.(msg "holm: invalid gain scope" fail)
+        ?~  parent-session=(~(get by sessions.auth.state) parent.u.authlet)
+          =.(msg "holm: invalid gain parent" fail)
+        ?^  scope.identity.u.parent-session
+          =.(msg "holm: invalid gain parent scope" fail)
         =/  new-id=identity
           identity.u.parent-session(scope desk.p.target)
         =.  authlets.auth.state  (~(del by authlets.auth.state) tok.step)
         =^  o  state
-          (start-session:authentication new-id parent)
+          (start-session:authentication new-id `parent.u.authlet)
         =^  moz=(list move)  state
           =.  session.req        `[session identity]:o
           =.  authenticated.req  ?=(%ours -.identity.o)
           %-  send-instant-response
-          [[307 ['location' (crip "//{(trip u.host)}{url.step}")]~] ~]
+          [[307 ['location' (rap 3 '//' u.host url.target.u.authlet ~)]~] ~]
         [[give-session-tokens (weld moz moves.o)] state]
       ==
     ?<  ?=(%negotiate -.auth-state)  ::NOTE  handled as %holm action above

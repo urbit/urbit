@@ -469,14 +469,14 @@
         :-  %a
         %+  weld
           %+  turn  ~(tap by authlets.auth)
-          |=  [tmp=@uv ses=@uv]
-          =+  (~(got by sessions.auth) ses)
+          |=  [tmp=@uv authlet:eyre]
+          =+  (~(got by sessions.auth) parent)
           %-  pairs
           :~  'cookie'^s+(cat 3 'tmp-' (scot %uv tmp))
               'identity'^(render-identity-p:v-eyre identity)
-              'scope'^~
-              'parent'^s+(end 3^6 (scot %uv ses))
-              'expiry'^(time ~1111.11.11..11.11.11)
+              'scope'^s+desk.target
+              'parent'^s+(end 3^6 (scot %uv parent))
+              'expiry'^(time expiry)
               'channels'^(numb 0)
           ==
         %+  turn
