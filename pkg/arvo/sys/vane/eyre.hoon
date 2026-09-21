@@ -745,7 +745,9 @@
   :-  307
   :-  ['location' target]
   ?~  expire  ~
-  ['set-cookie' u.expire]~
+  :~  ['set-cookie' u.expire]
+      ['cache-control' 'no-store']
+  ==
 ::  +render-tang-to-marl: renders a tang and adds <br/> tags between each line
 ::
 ++  render-tang-to-marl
@@ -1214,6 +1216,7 @@
       :_  `bod
       :-  401
       :~  ['set-cookie' (session-cookie-string:authentication session ~)]
+          ['cache-control' 'no-store']
           ['content-length' (crip (a-co:co p.bod))]
       ==
     ::  subdomain authentication flow (%holm)
@@ -1687,7 +1690,7 @@
         ^=  headers
           :~  ['content-type' (rsh 3 (spat p.mime))]
               ['content-length' (crip (a-co:co p.q.mime))]
-              ['cache-control' ?:(fqp 'max-age=31536000' 'no-cache')]
+              ['cache-control' ?:(fqp 'private, max-age=31536000' 'no-cache')]
           ==
         data=[~ q.mime]
     ==
@@ -2102,8 +2105,9 @@
       ::  if the requester is logging themselves out, make them drop the cookie
       ::
       =?  headers.response-header.payload  =(sid (bind session.req head))
-        :_  headers.response-header.payload
-        ['set-cookie' (session-cookie-string u.sid ~)]
+        :+  ['set-cookie' (session-cookie-string u.sid ~)]
+          ['cache-control' 'no-store']
+        headers.response-header.payload
       ::  close the session as requested, then send the response
       ::
       =^  moz1  state  (close-session u.sid all)
@@ -2498,13 +2502,9 @@
             %+  ~(jab by visitors.auth)  nonce
             |=(v=visitor v(+ sid))
           =.  session.req  `[& sid identity]
-          ::
           =^  moz3  state
-            =;  hed  (instant:response req 303^hed ~)
-            :~  ['location' last]
-                ::REVIEWzz  redundant with +refresh-session?
-                ['set-cookie' (session-cookie-string sid `%auth)]
-            ==
+            ::NOTE  the cookie will be set for us based on session.req
+            (instant:response req 303^['location' last]~ ~)
           [:(weld moz1 moz2 moz3) state]
         ::  +on-fail: we crashed or received an empty %tune, clean up
         ::
@@ -3980,6 +3980,8 @@
     ::
     :_  %+  ~(put by sessions)  sid
         u.ses(expiry-time (add now timeout))
+    ::TODOxx  this could be cleaner if +set-header were case-insensitive
+    =.  headers  (delete-header:http 'Cache-Control' headers)
     =.  headers  (set-header:http 'cache-control' 'no-store' headers)
     [['set-cookie' (session-cookie-string sid `kind)] headers]
   ::  +set-response: remember (or update) a cache mapping
