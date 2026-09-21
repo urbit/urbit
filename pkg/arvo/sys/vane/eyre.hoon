@@ -209,7 +209,7 @@
       ==
   ;~  pose
     ;~(plug (cold %jump (jest '/~/holm/jump')) (star next))
-    ;~(plug (cold %sink (jest '/~/holm/sink/')) sym (star next))
+    ;~(plug (cold %sink (jest '/~/holm/sink/')) sym fas (star next))
     ;~(plug (cold %gain (jest '/~/holm/gain/')) ;~(pfix (jest '0v') viz:ag))
   ==
 ::
@@ -740,7 +740,7 @@
     :~  '//'
         (host-string top port)
         '/~/holm/sink/'  sub
-        target-path
+        ?:(=('' target-path) '/' target-path)
     ==
   :-  307
   :-  ['location' target]
@@ -1276,7 +1276,7 @@
         ::  %sink: obtain tmp-token for authenticating into subdomain
         ::
         ::    mints a tmp-token for the subdomain specified in the url and
-        ::    redirects to the sub.domain/~/holm/gain/[tmp-token](target-url)
+        ::    redirects to the sub.domain/~/holm/gain/[tmp-token]
         ::
           %sink
         ::  these checks always hold _together_,
@@ -1314,15 +1314,13 @@
         ::  %gain: validate tmp-token from url and mint new scoped session
         ::
         ::    mints a new session based on the provided tmp-token, gives that
-        ::    cookie in the response, and redirects to the target-url
+        ::    cookie in the response, and redirects to the stored target url
         ::
           %gain
         ?~  desk.p.target
           =.(msg "holm: can't gain on root domain" fail)
         ?<  ?=(%miss -.auth-state)  ::NOTE  we only %miss on root
         ?~  authlet=(~(get by authlets.auth.state) tok.step)
-          ::NOTE  this will serve 500, adding token url into browser history,
-          ::      but the token apparently isn't valid, so that's fine
           =.(msg "holm: invalid gain token" fail)
         ?:  (gth now expiry.u.authlet)
           =.  authlets.auth.state  (~(del by authlets.auth.state) tok.step)
