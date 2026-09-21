@@ -101,10 +101,10 @@
     %+  expect-eq  !>(`@`0x4000.0000)  !>((from-rd:rps:unum `@rd`0x3ff0.0000.0000.0000))
   ==
 ::
-::  Transcendentals (naive Taylor series, /lib/math style).  These posit8
-::  values are the series outputs, which match the SoftPosit correctly-rounded
-::  result (verified offline by a Python port of the same series).  pow-n is
-::  exact integer power.
+::  Transcendentals: Chebyshev-minimax kernels with exact range reduction
+::  (see libmath/tools/unum_cheb_check.py, numerics NEXT-STEPS.md item #4).
+::  These posit8 values are correctly rounded vs mpmath.  pow-n is exact
+::  integer power.
 ::
 ++  test-transcendental-rpb  ^-  tang
   =/  u  rpb:unum
@@ -137,9 +137,11 @@
     %+  expect-eq  !>(`@`0x80)  !>((pow:u 0x0 (sun:u 2)))  ::  pow(0,2)=NaR
     %+  expect-eq  !>(`@`0x80)  !>((pow:u 0xc0 (sun:u 2))) ::  pow(-1,2)=NaR
   ==
-::  New transcendentals (factorial, cbrt, atan, asin, acos) at posit8.  Expected
-::  values from tools/posit_check.py's series replica; all correctly rounded vs
-::  mpmath at posit8.  Inputs: 0x38 = .5, (sun 1) = 1, (sun 3/4) = 3/4.
+::  New transcendentals (factorial, cbrt, atan, asin, acos) at posit8.  atan is
+::  correctly rounded vs mpmath (Chebyshev-basis, see unum_cheb_check.py);
+::  asin/acos compose it with the existing +sqt/+div (faithful, a few ULP near
+::  |x|~1 -- not a dedicated rational kernel, see unum_cheb_check.py).
+::  Inputs: 0x38 = .5, (sun 1) = 1, (sun 3/4) = 3/4.
 ++  test-transcendental-new-rpb  ^-  tang
   =/  u  rpb:unum
   ;:  weld
@@ -147,9 +149,9 @@
     %+  expect-eq  !>(`@`0x62)  !>((factorial:u (sun:u 4)))   ::  4! = 24
     %+  expect-eq  !>(`@`0x40)  !>((cbrt:u (sun:u 1)))        ::  cbrt 1 = 1
     %+  expect-eq  !>(`@`0x3d)  !>((atan:u (sun:u 1)))        ::  atan 1 = pi/4
-    %+  expect-eq  !>(`@`0x38)  !>((atan:u 0x38))             ::  atan .5
-    %+  expect-eq  !>(`@`0x39)  !>((asin:u 0x38))             ::  asin .5
-    %+  expect-eq  !>(`@`0x41)  !>((acos:u 0x38))             ::  acos .5
+    %+  expect-eq  !>(`@`0x37)  !>((atan:u 0x38))             ::  atan .5
+    %+  expect-eq  !>(`@`0x38)  !>((asin:u 0x38))             ::  asin .5
+    %+  expect-eq  !>(`@`0x40)  !>((acos:u 0x38))             ::  acos .5
     %+  expect-eq  !>(`@`0x45)  !>((acos:u 0x0))              ::  acos 0 = pi/2
   ==
 ::  Domain guards for the new arms: out-of-range -> NaR (unum nar convention),
@@ -166,41 +168,41 @@
     %+  expect-eq  !>(`@`0x0)   !>((acos:u (sun:u 1)))        ::  acos(1)=0
   ==
 ::  Full transcendental set at posit16 (rph) and posit32 (rps).  Expected values
-::  from the series replica; the naive Taylor/AGM series is correctly rounded
-::  near the expansion point and within ~1 ULP elsewhere (see tools/posit_check).
+::  from libmath/tools/unum_cheb_check.py: exp/log/sin/cos/atan correctly
+::  rounded; tan/asin/acos faithful (composed from correctly-rounded pieces).
 ++  test-transcendental-rph  ^-  tang
   =/  u  rph:unum
   ;:  weld
     %+  expect-eq  !>(`@`0x4531)  !>((exp:u 0x3800))          ::  exp .5
     %+  expect-eq  !>(`@`0x3757)  !>((sin:u 0x3800))          ::  sin .5
     %+  expect-eq  !>(`@`0x3e0b)  !>((cos:u 0x3800))          ::  cos .5
-    %+  expect-eq  !>(`@`0x38bd)  !>((tan:u 0x3800))          ::  tan .5
-    %+  expect-eq  !>(`@`0x3b18)  !>((log:u (sun:u 2)))       ::  log 2
+    %+  expect-eq  !>(`@`0x38be)  !>((tan:u 0x3800))          ::  tan .5
+    %+  expect-eq  !>(`@`0x3b17)  !>((log:u (sun:u 2)))       ::  log 2
     %+  expect-eq  !>(`@`0x5400)  !>((factorial:u (sun:u 3))) ::  3!
     %+  expect-eq  !>(`@`0x6200)  !>((factorial:u (sun:u 4))) ::  4!
     %+  expect-eq  !>(`@`0x4000)  !>((cbrt:u (sun:u 1)))      ::  cbrt 1
-    %+  expect-eq  !>(`@`0x3c90)  !>((atan:u (sun:u 1)))      ::  atan 1
-    %+  expect-eq  !>(`@`0x36d5)  !>((atan:u 0x3800))         ::  atan .5
+    %+  expect-eq  !>(`@`0x3c91)  !>((atan:u (sun:u 1)))      ::  atan 1
+    %+  expect-eq  !>(`@`0x36d6)  !>((atan:u 0x3800))         ::  atan .5
     %+  expect-eq  !>(`@`0x3861)  !>((asin:u 0x3800))         ::  asin .5
-    %+  expect-eq  !>(`@`0x4060)  !>((acos:u 0x3800))         ::  acos .5
+    %+  expect-eq  !>(`@`0x4061)  !>((acos:u 0x3800))         ::  acos .5
     %+  expect-eq  !>(`@`0x4491)  !>((acos:u 0x0))            ::  acos 0
     %+  expect-eq  !>(`@`0x5800)  !>((pow-n:u (sun:u 2) 3))   ::  2^3
   ==
 ++  test-transcendental-rps  ^-  tang
   =/  u  rps:unum
   ;:  weld
-    %+  expect-eq  !>(`@`0x4530.94c8)  !>((exp:u 0x3800.0000))  ::  exp .5
+    %+  expect-eq  !>(`@`0x4530.94c7)  !>((exp:u 0x3800.0000))  ::  exp .5
     %+  expect-eq  !>(`@`0x3757.743a)  !>((sin:u 0x3800.0000))  ::  sin .5
-    %+  expect-eq  !>(`@`0x3e0a.9404)  !>((cos:u 0x3800.0000))  ::  cos .5
-    %+  expect-eq  !>(`@`0x38bd.a7ad)  !>((tan:u 0x3800.0000))  ::  tan .5
-    %+  expect-eq  !>(`@`0x3b17.2180)  !>((log:u (sun:u 2)))   ::  log 2
+    %+  expect-eq  !>(`@`0x3e0a.9403)  !>((cos:u 0x3800.0000))  ::  cos .5
+    %+  expect-eq  !>(`@`0x38bd.a7ae)  !>((tan:u 0x3800.0000))  ::  tan .5
+    %+  expect-eq  !>(`@`0x3b17.217f)  !>((log:u (sun:u 2)))   ::  log 2
     %+  expect-eq  !>(`@`0x5400.0000)  !>((factorial:u (sun:u 3)))
     %+  expect-eq  !>(`@`0x6200.0000)  !>((factorial:u (sun:u 4)))
     %+  expect-eq  !>(`@`0x4000.0000)  !>((cbrt:u (sun:u 1)))  ::  cbrt 1
-    %+  expect-eq  !>(`@`0x3c90.fdab)  !>((atan:u (sun:u 1)))  ::  atan 1
-    %+  expect-eq  !>(`@`0x36d6.3381)  !>((atan:u 0x3800.0000)) ::  atan .5
+    %+  expect-eq  !>(`@`0x3c90.fdaa)  !>((atan:u (sun:u 1)))  ::  atan 1
+    %+  expect-eq  !>(`@`0x36d6.3383)  !>((atan:u 0x3800.0000)) ::  atan .5
     %+  expect-eq  !>(`@`0x3860.a91c)  !>((asin:u 0x3800.0000)) ::  asin .5
-    %+  expect-eq  !>(`@`0x4060.a91d)  !>((acos:u 0x3800.0000)) ::  acos .5
+    %+  expect-eq  !>(`@`0x4060.a91c)  !>((acos:u 0x3800.0000)) ::  acos .5
     %+  expect-eq  !>(`@`0x4490.fdaa)  !>((acos:u 0x0))        ::  acos 0
     %+  expect-eq  !>(`@`0x5800.0000)  !>((pow-n:u (sun:u 2) 3))
   ==

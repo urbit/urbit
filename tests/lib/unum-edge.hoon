@@ -1,9 +1,9 @@
 ::  /tests/lib/unum-edge -- posit (%unum) transcendental edge cases.
 ::
-::  Exact identities, sign, NaR propagation, domain -> NaR, and the naive-series
-::  breakdown / saturation at large arguments.  Mostly at posit32 (rps), with a
-::  posit8 (rpb) cross-width spot.  Posits round-to-nearest-even, so there is no
-::  rounding-mode variation to sweep.
+::  Exact identities, sign, NaR propagation, domain -> NaR, and correctness at
+::  large arguments (range-reduced exp/sin/log, see unum_cheb_check.py).
+::  Mostly at posit32 (rps), with a posit8 (rpb) cross-width spot.  Posits
+::  round-to-nearest-even, so there is no rounding-mode variation to sweep.
 ::
 /+  *test, unum
 |%
@@ -32,8 +32,8 @@
 ++  test-asin0   (expect-eq !>(`@`0x0) !>((asin:u 0x0)))
 ++  test-acos1   (expect-eq !>(`@`0x0) !>((acos:u s1)))                 ::  acos 1 = 0
 ::  sign
-++  test-exp-n1   (expect-eq !>(`@`0x33c5.ab1c) !>((exp:u n1)))         ::  1/e
-++  test-atan-n1  (expect-eq !>(`@`0xc36f.0255) !>((atan:u n1)))        ::  -pi/4 (atan is odd)
+++  test-exp-n1   (expect-eq !>(`@`0x33c5.ab1b) !>((exp:u n1)))         ::  1/e
+++  test-atan-n1  (expect-eq !>(`@`0xc36f.0256) !>((atan:u n1)))        ::  -pi/4 (atan is odd)
 ::  NaR propagation
 ++  test-exp-nar   (expect-eq !>(`@`0x8000.0000) !>((exp:u nar)))
 ++  test-sin-nar   (expect-eq !>(`@`0x8000.0000) !>((sin:u nar)))
@@ -45,15 +45,17 @@
 ++  test-rpb-exp0     (expect-eq !>(`@`0x40) !>((exp:b 0x0)))           ::  exp 0 = 1
 ++  test-rpb-exp-nar  (expect-eq !>(`@`0x80) !>((exp:b 0x80)))
 ++  test-rpb-sqt-neg  (expect-eq !>(`@`0x80) !>((sqt:b 0xc0)))          ::  sqrt(-1) = NaR
-::  KNOWN LIMITATION: the naive Taylor series diverges far from the origin.
-::  exp(10) ~ 21991 vs true 22026; exp(50)/exp(100) saturate near maxpos rather
-::  than tracking the true value; sin(10) blows up to a huge magnitude instead
-::  of staying in [-1, 1] (no range reduction).  log (atanh form) holds up
-::  better -- log(100) ~ 4.605.  Locked as regression, NOT correctness; #18's
-::  Chebyshev rewrite (range reduction) would fix these.
-++  test-exp10   (expect-eq !>(`@`0x7a57.9ded) !>((exp:u sa)))
-++  test-exp50   (expect-eq !>(`@`0x7ffe.1b02) !>((exp:u sb)))
-++  test-exp100  (expect-eq !>(`@`0x7fff.f02b) !>((exp:u sc)))
-++  test-sin10   (expect-eq !>(`@`0xc74b.a64a) !>((sin:u sa)))
-++  test-log100  (expect-eq !>(`@`0x50e9.b7f7) !>((log:u sc)))
+::  FIXED (numerics NEXT-STEPS.md item #4, the Chebyshev-basis rewrite): these
+::  used to be a documented limitation -- the naive Taylor series diverges far
+::  from the origin (exp(10) ~ 21991 vs true ~22026, exp(50)/exp(100) saturated
+::  near maxpos instead of tracking the true value, sin(10) left [-1,1] with no
+::  range reduction).  Range-reduced +exp/+sin are now correctly rounded at
+::  posit32 across this whole range (verified vs mpmath, see
+::  libmath/tools/unum_cheb_check.py) -- these are genuine correctness asserts
+::  now, not regression locks on known-wrong output.
+++  test-exp10   (expect-eq !>(`@`0x7a58.29dd) !>((exp:u sa)))          ::  e^10 ~ 22026.47
+++  test-exp50   (expect-eq !>(`@`0x7fff.f032) !>((exp:u sb)))          ::  e^50, near maxpos
+++  test-exp100  (expect-eq !>(`@`0x7fff.ffff) !>((exp:u sc)))          ::  e^100, saturates (correctly)
+++  test-sin10   (expect-eq !>(`@`0xc74b.b085) !>((sin:u sa)))          ::  sin(10) ~ -0.5440
+++  test-log100  (expect-eq !>(`@`0x5135.d8de) !>((log:u sc)))          ::  ln(100) ~ 4.6052
 --
