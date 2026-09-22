@@ -1215,14 +1215,9 @@
       =+  bod=(as-octs:mimes:html 'bad session auth')
       :_  `bod
       :-  401
-      :*  ['cache-control' 'no-store']
+      :~  ['set-cookie' (session-cookie-string:authentication session secure ~)]
+          ['cache-control' 'no-store']
           ['content-length' (crip (a-co:co p.bod))]
-          ['set-cookie' (session-cookie-string:authentication session secure ~)]
-          ::  when rejecting a cookie on https connection, we want to make sure
-          ::  we also clear the "legacy"/http version of that cookie
-          ::
-          ?.  secure  ~
-          ['set-cookie' (session-cookie-string:authentication session | ~)]~
       ==
     ::  subdomain authentication flow (%holm)
     ::
