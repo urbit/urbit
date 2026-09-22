@@ -189,6 +189,23 @@
       (~(sun rs %n) (abs:si s))
     (~(mul rs %n) .-1 (~(sun rs %n) (abs:si s)))
   (~(div rs %n) fs (~(sun rs %n) (bex b.prec)))
+::    +from-rd: [@rd prec] -> @
+::
+::  Quantize a double-precision IEEE float to fixed-point, rounding the
+::  scaled value f * 2^b to the nearest integer (ties to even).
+::  Out-of-range results wrap (s-to-twoc).  Mirrors +from-rs at double
+::  precision -- added for /lib/i754rand's distribution-to-fixed-point
+::  composition (librand's rand-spec.md section 12.1: "sample at @rd,
+::  quantize round-to-nearest").
+::    Examples
+::      > (from-rd .~1.5 [8 8])
+::      0x180
+::  Source
+++  from-rd
+  |=  [f=@rd =prec]
+  ^-  @
+  =/  i=@s  (need (~(toi rd %n) (~(mul rd %n) f (~(sun rd %n) (bex b.prec)))))
+  (s-to-twoc:(ng prec) i)
 ::    +neg: [@ prec] -> @
 ::
 ::  Two's-complement negation of a fixed-point number at its own width.

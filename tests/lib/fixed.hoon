@@ -106,4 +106,13 @@
     %+  expect-eq  !>(`@rs`.-1.5)   !>((to-rs:fixed n1-5 q88))      ::  -1.5
     %+  expect-eq  !>(`@`0x180)     !>((from-rs:fixed (to-rs:fixed 0x180 q88) q88))  ::  round-trip
   ==
+::
+::  +from-rd: mirrors +from-rs at double precision (added for librand's
+::  /lib/i754rand-to-fixed-point composition, rand-spec.md section 12.1).
+::  No +to-rd counterpart exists (not asked for), so no round-trip check.
+++  test-rd-bridge  ^-  tang
+  ;:  weld
+    %+  expect-eq  !>(`@`0x180)     !>((from-rd:fixed .~1.5 q88))    ::  1.5
+    %+  expect-eq  !>(`@`0x1.fdc0)  !>((from-rd:fixed .~-2.25 q88))  ::  -2.25
+  ==
 --
