@@ -653,9 +653,9 @@
       ::TODO  handle %dot
       [%atom %| *]  [%noun [%atom aura.t ?.(const.t ~ `a.t)] a.t]^st
       [%mato @]     [%xtra %mold %atom aura.t]^st
-      %tar          [%xtra %mold %noun]^st
-      %ket          [%xtra %mold %cell]^st
-      %sig          [%xtra %mold %null]^st
+      %tar          [%xtra %mold %base %noun]^st
+      %ket          [%xtra %mold %base %cell]^st
+      %sig          [%noun [%atom %n `~] ~]^st
       %sel          =+  wide-cell-bod  ?@  -  ~  =>  [n=u +(st s)]
                     =+  (expect %ser)  ?@  -  ~  [n s]
       [%cltr %|]    =+  wide-cell-bod  ?@  -  ~  =>  [n=u +(st s)]
@@ -744,6 +744,22 @@
     =+  wing-full      ?@  -  ~  =>  [w=u +(st s)]
     =+  (expect %ace)  ?@  -  ~  =>  +(st s)
     =+  wide-2         ?@  -  ~  [[w u] s]
+  ++  wide-mold
+    ^-  (mandatory mold:..sugar _st)
+    =+  gulp  ?@  -  ~  =>  [t=u +(st s)]
+    ?+  t  ~
+      [%mato @]     [%atom aura.t]^st
+      %tar          [%base %noun]^st
+      %ket          [%base %cell]^st
+      %sig          [%base %null]^st
+      %sel          =+  wide-cell-mold-bod  ?@  -  ~  =>  [n=u +(st s)]
+                    =+  (expect %ser)       ?@  -  ~  [n s]
+    ==
+  ++  wide-cell-mold-bod
+    ^-  (mandatory mold:..sugar _st)
+    %+  (autocons mold:..sugar)
+      |=(t=toke ?=(%ace t))
+    |=(s=_st wide-mold(st s))
   ++  wide-cell-bod
     ^-  (mandatory naty-sugar _st)
     %+  (autocons naty-sugar)

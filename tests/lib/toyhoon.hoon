@@ -364,8 +364,9 @@
     (make-parser-test '@' [%xtra %mold %atom %$])
     (make-parser-test '@ud' [%xtra %mold %atom %ud])
   ::
-    (make-parser-test '*' [%xtra %mold %noun])
-    (make-parser-test '^' [%xtra %mold %cell])
-    (make-parser-test '~' [%xtra %mold %null])
+    (make-parser-test '*' [%xtra %mold %base %noun])
+    (make-parser-test '^' [%xtra %mold %base %cell])
+    (make-parser-test '~' [%noun [%atom %n `~] ~])
+    :: (make-parser-test ',~' [%xtra %mold %base %null])  ::TODO
   ==
 --

@@ -320,8 +320,18 @@
         %mold
       =-  $(sin -)
       |-  ^-  naty-sugar
-      ?@  mold.sin
-        ?-  mold.sin
+      ?^  -.mold.sin
+        :+  %tsls                              ::  =+  [P Q]:MOLD.SIN
+          [$(mold.sin p.mold.sin) $(mold.sin q.mold.sin)]
+        :-  %xtra
+        :+  %brcl                              ::  |:  [$:-< $:->]
+          [(kick 4) (kick 5)]
+        ::NOTE  intentional implicit crash on non-cells
+        :-  (slam (peg 7 4) (waxs 2 6 ~))
+        (slam (peg 7 5) (waxs 3 6 ~))
+      ?-  -.mold.sin
+          %base
+        ?-  +.mold.sin
             %noun
           :+  %tsgr  [%noun %noun 0]               ::  =>  ~
           :-  %xtra
@@ -329,7 +339,7 @@
           [%cnts [%& 6]~ ~]                        ::  +<
         ::
             %cell
-          $(mold.sin [%cell %noun %noun])
+          $(mold.sin [[%base %noun] [%base %noun]])
         ::
             %null
           ::TODO  or depending on mode? [%noun [%atom %n `0] 0]
@@ -341,7 +351,7 @@
             [%noun [%atom %n `0] 0]                ::    `~`0
           [%cnts [%& 0]~ ~]                        ::  !!
         ==
-      ?-  -.mold.sin
+      ::
           %atom
         :+  %tsgr  [%noun %noun 0]               ::  =>  ~
         :-  %xtra
@@ -350,16 +360,6 @@
         :^  %wtpt  [%& 6]~                       ::  ?@  +<
           [%cnts [%& 6]~ ~]                      ::    +<
         [%cnts [%& 0]~ ~]                        ::  !!
-      ::
-          %cell
-        :+  %tsls                              ::  =+  [P Q]:MOLD.SIN
-          [$(mold.sin p.mold.sin) $(mold.sin q.mold.sin)]
-        :-  %xtra
-        :+  %brcl                              ::  |:  [$:-< $:->]
-          [(kick 4) (kick 5)]
-        ::NOTE  intentional implicit crash on non-cells
-        :-  (slam (peg 7 4) (waxs 2 6 ~))
-        (slam (peg 7 5) (waxs 3 6 ~))
       ==
     ==
   ==

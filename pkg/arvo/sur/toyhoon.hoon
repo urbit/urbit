@@ -17,9 +17,9 @@
       [%mold =mold]
   ==
 +$  mold
-  $@  ?(%noun %cell %null)
-  $%  [%atom aura=term]
-      [%cell p=mold q=mold]
+  $^  [p=mold q=mold]
+  $%  [%base ?(%noun %cell %null)]
+      [%atom aura=term]
   ==
 ::
 ++  naty-xtra
