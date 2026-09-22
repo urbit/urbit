@@ -13,9 +13,13 @@
 ::
 +$  sugar
   $~  [%brcl [%noun %noun 0] [%noun %noun 0]]
-  $@  ?(%noun %cell %null)
   $%  [%brcl sam=naty-sugar bod=naty-sugar]
-      [%atom aura=term]
+      [%mold =mold]
+  ==
++$  mold
+  $@  ?(%noun %cell %null)
+  $%  [%atom aura=term]
+      [%cell p=mold q=mold]
   ==
 ::
 ++  naty-xtra

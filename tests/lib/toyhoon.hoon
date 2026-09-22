@@ -213,7 +213,7 @@
     [%tsls tar [%brcn %gold ~ [%$ %noun %noun 1] ~ ~]]
   ::
     %+  make-open-test
-      [%xtra %atom %ud]
+      [%xtra %mold %atom %ud]
     :+  %tsgr  [%noun %noun 0]
     :+  %tsls  [%noun %noun 0]
     :^  %brcn  %gold  ~
@@ -361,11 +361,11 @@
     (make-parser-test '|:(0 $)' [%xtra %brcl z [%cnts w ~]])
     (make-parser-test '|:  0  $' [%xtra %brcl z [%cnts w ~]])
   ::
-    (make-parser-test '@' [%xtra %atom %$])
-    (make-parser-test '@ud' [%xtra %atom %ud])
+    (make-parser-test '@' [%xtra %mold %atom %$])
+    (make-parser-test '@ud' [%xtra %mold %atom %ud])
   ::
-    (make-parser-test '*' [%xtra %noun])
-    (make-parser-test '^' [%xtra %cell])
-    (make-parser-test '~' [%xtra %null])
+    (make-parser-test '*' [%xtra %mold %noun])
+    (make-parser-test '^' [%xtra %mold %cell])
+    (make-parser-test '~' [%xtra %mold %null])
   ==
 --

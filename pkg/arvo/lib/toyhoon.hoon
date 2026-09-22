@@ -311,53 +311,71 @@
     %wtkt  [%wtkt wing.sin $(sin y.sin) $(sin n.sin)]
   ::
       %xtra
-    ?@  +.sin
-      ?-  +.sin
-          %noun
-        =-  $(sin -)
-        :+  %tsgr  [%noun %noun 0]               ::  =>  ~
-        :-  %xtra
-        :+  %brcl  [%noun %noun 0]               ::  |:  `*`0
-        [%cnts [%& 6]~ ~]                        ::  +<
-      ::
-          %cell
-        =-  $(sin -)
-        :+  %tsgr  [%noun %noun 0]               ::  =>  ~
-        :-  %xtra
-        :+  %brcl  [%noun %noun 0 0]             ::  |:  `*`[0 0]
-        :^  %wtpt  [%& 6]~                       ::  ?@  +<
-          [%cnts [%& 0]~ ~]                      ::    !!
-        [%cnts [%& 6]~ ~]                        ::  +<
-      ::
-          %null
-        =-  $(sin -)
-        ::TODO  or depending on mode? [%noun [%atom %n `0] 0]
-        :+  %tsgr  [%noun %noun 0]               ::  =>  ~
-        :-  %xtra
-        :+  %brcl  [%noun %noun 0]               ::  |:  `*`0
-        :^  %wtcl                                ::  ?:
-            [%dtts [%noun %noun 0] [%cnts [%& 6]~ ~]]  ::  .=(`*`0 +<)
-          [%noun [%atom %n `0] 0]                ::    `~`0
-        [%cnts [%& 0]~ ~]                        ::  !!
-      ==
     ?-  +<.sin
-      %pair  !!
     ::
         %brcl
       :+  %tsls  $(sin sam.sin)
       [%brcn %gold ~ [%$ $(sin bod.sin)] ~ ~]
     ::
-        %atom
+        %mold
       =-  $(sin -)
-      :+  %tsgr  [%noun %noun 0]               ::  =>  ~
-      :-  %xtra
-      :+  %brcl  [%noun %noun 0]               ::  |:  `*`0
-      :+  %ktls  [%noun [%atom aura.sin ~] 0]  ::  ^+  `@AURA.SIN`0
-      :^  %wtpt  [%& 6]~                       ::  ?@  +<
-        [%cnts [%& 6]~ ~]                      ::    +<
-      [%cnts [%& 0]~ ~]                        ::  !!
+      |-  ^-  naty-sugar
+      ?@  mold.sin
+        ?-  mold.sin
+            %noun
+          :+  %tsgr  [%noun %noun 0]               ::  =>  ~
+          :-  %xtra
+          :+  %brcl  [%noun %noun 0]               ::  |:  `*`0
+          [%cnts [%& 6]~ ~]                        ::  +<
+        ::
+            %cell
+          $(mold.sin [%cell %noun %noun])
+        ::
+            %null
+          ::TODO  or depending on mode? [%noun [%atom %n `0] 0]
+          :+  %tsgr  [%noun %noun 0]               ::  =>  ~
+          :-  %xtra
+          :+  %brcl  [%noun %noun 0]               ::  |:  `*`0
+          :^  %wtcl                                ::  ?:
+              [%dtts [%noun %noun 0] [%cnts [%& 6]~ ~]]  ::  .=(`*`0 +<)
+            [%noun [%atom %n `0] 0]                ::    `~`0
+          [%cnts [%& 0]~ ~]                        ::  !!
+        ==
+      ?-  -.mold.sin
+          %atom
+        :+  %tsgr  [%noun %noun 0]               ::  =>  ~
+        :-  %xtra
+        :+  %brcl  [%noun %noun 0]               ::  |:  `*`0
+        :+  %ktls  [%noun [%atom aura.mold.sin ~] 0]  ::  ^+  `@AURA.SIN`0
+        :^  %wtpt  [%& 6]~                       ::  ?@  +<
+          [%cnts [%& 6]~ ~]                      ::    +<
+        [%cnts [%& 0]~ ~]                        ::  !!
+      ::
+          %cell
+        :+  %tsls                              ::  =+  [P Q]:MOLD.SIN
+          [$(mold.sin p.mold.sin) $(mold.sin q.mold.sin)]
+        :-  %xtra
+        :+  %brcl                              ::  |:  [$:-< $:->]
+          [(kick 4) (kick 5)]
+        ::NOTE  intentional implicit crash on non-cells
+        :-  (slam (peg 7 4) (waxs 2 6 ~))
+        (slam (peg 7 5) (waxs 3 6 ~))
+      ==
     ==
   ==
+::
+++  kick
+  |=  =axis
+  ^-  naty-sugar
+  [%cnts [%$ [%& axis] ~] ~]
+++  slam
+  |=  [=axis sam=naty-sugar]
+  ^-  naty-sugar
+  [%cnts [%$ [%& axis] ~] [%& 6]~^sam ~]
+++  waxs
+  |=  axes=(list axis)
+  ^-  naty-sugar
+  [%cnts (turn axes |=(a=@ [%& a])) ~]
 ::
 ++  play
   |=  [sut=type =naty]

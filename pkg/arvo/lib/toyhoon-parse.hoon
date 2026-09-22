@@ -652,10 +652,10 @@
       [%limb *]     =+  (wing-tail limb.t)  ?@  -  ~  [[%cnts u ~] s]
       ::TODO  handle %dot
       [%atom %| *]  [%noun [%atom aura.t ?.(const.t ~ `a.t)] a.t]^st
-      [%mato @]     [%xtra %atom aura.t]^st
-      %tar          [%xtra %noun]^st
-      %ket          [%xtra %cell]^st
-      %sig          [%xtra %null]^st
+      [%mato @]     [%xtra %mold %atom aura.t]^st
+      %tar          [%xtra %mold %noun]^st
+      %ket          [%xtra %mold %cell]^st
+      %sig          [%xtra %mold %null]^st
       %sel          =+  wide-cell-bod  ?@  -  ~  =>  [n=u +(st s)]
                     =+  (expect %ser)  ?@  -  ~  [n s]
       [%cltr %|]    =+  wide-cell-bod  ?@  -  ~  =>  [n=u +(st s)]
