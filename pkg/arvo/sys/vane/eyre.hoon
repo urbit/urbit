@@ -1168,7 +1168,7 @@
       ?:  ?=(%drop auth-level)  [[%miss ~] state]
       ?^  head-auth
         [[%have u.u.head-auth] state]
-      ?~  sid=(session-id-from-request:authentication request)
+      ?~  sid=(session-id-from-request:authentication secure request)
         ?:  ?=([%& * ^] target)  [[%negotiate ~] state]
         [[%miss ~] state]
       ?~  ses=(~(get by sessions.auth.state) u.sid)
@@ -1215,9 +1215,14 @@
       =+  bod=(as-octs:mimes:html 'bad session auth')
       :_  `bod
       :-  401
-      :~  ['set-cookie' (session-cookie-string:authentication session ~)]
-          ['cache-control' 'no-store']
+      :*  ['cache-control' 'no-store']
           ['content-length' (crip (a-co:co p.bod))]
+          ['set-cookie' (session-cookie-string:authentication session secure ~)]
+          ::  when rejecting a cookie on https connection, we want to make sure
+          ::  we also clear the "legacy"/http version of that cookie
+          ::
+          ?.  secure  ~
+          ['set-cookie' (session-cookie-string:authentication session | ~)]~
       ==
     ::  subdomain authentication flow (%holm)
     ::
@@ -1274,7 +1279,7 @@
         :+  [(snoc domain.p.target u.desk.p.target) port.p.target]
           (crip url.step)
         %+  bind  session
-        (curr session-cookie-string:authentication ~)
+        (curr session-cookie-string:authentication secure ~)
       ::
         ::  %sink: obtain tmp-token for authenticating into subdomain
         ::
@@ -2105,7 +2110,7 @@
       ::  if the requester is logging themselves out, make them drop the cookie
       ::
       =?  headers.response-header.payload  =(sid ?~(session.req ~ `sid.u.session.req))
-        :+  ['set-cookie' (session-cookie-string u.sid ~)]
+        :+  ['set-cookie' (session-cookie-string u.sid secure.req ~)]
           ['cache-control' 'no-store']
         headers.response-header.payload
       ::  close the session as requested, then send the response
@@ -2138,7 +2143,7 @@
     ::    looks in the cookie header(s) instead.
     ::
     ++  session-id-from-request
-      |=  =request:http
+      |=  [secure=? =request:http]
       ^-  (unit @uv)
       ::  are there cookies passed with this request?
       ::
@@ -2152,36 +2157,31 @@
       ::
       ?~  cookies=(rush cookie-header cock:de-purl:html)
         ~
-      ::  is there an urbauth cookie?
+      ::  is there a connection-appropriate urbauth cookie?
       ::
-      ?~  urbauth=(get-header:http (crip "urbauth-{(scow %p our)}") u.cookies)
+      =/  key=@t
+        %+  rap  3
+        :~  ?:(secure '__Host-' '')
+            'urbauth-'  (scot %p our)
+        ==
+      ?~  urbauth=(get-header:http key u.cookies)
         ~
       ::TODO  consider returning a (list @uv) mb, there could be multiple
       ::      relevant cookies in urbauth
       ::  if it's formatted like a valid session cookie, produce it
       ::
       `(unit @)`(rush u.urbauth ;~(pfix (jest '0v') viz:ag))
-    ::  +request-is-logged-in: checks to see if the request has non-guest id
-    ::
-    ++  request-is-logged-in
-      |=  =request:http
-      ^-  ?
-      ?~  session-id=(session-id-from-request request)
-        |
-      ?~  session=(~(get by sessions.auth.state) u.session-id)
-        |
-      &(!?=(%fake -.who.identity.u.session) (lte now expiry-time.u.session))
     ::  +request-is-authenticated: checks to see if the request is "us"
     ::
     ::    We are considered authenticated if this request has an urbauth
     ::    Cookie for the local identity that is not expired.
     ::
     ++  request-is-authenticated
-      |=  =request:http
+      |=  [secure=? =request:http]
       ^-  ?
       ::  does the request pass a session cookie?
       ::
-      ?~  session-id=(session-id-from-request request)
+      ?~  session-id=(session-id-from-request secure request)
         %.n
       ::  is this a session that we know about?
       ::
@@ -2334,15 +2334,22 @@
     ::  +session-cookie-string: compose session cookie
     ::
     ++  session-cookie-string
-      |=  [session=@uv extend=(unit ?(%auth %guest))]
+      |=  [sid=@uv secure=? extend=(unit ?(%auth %guest))]
       ^-  @t
       %-  crip
-      =;  max-age=tape
-        "urbauth-{(scow %p our)}={(scow %uv session)}; Path=/; Max-Age={max-age}"
-      %-  a-co:co
-      ?~  extend  0
-      =,  session-timeout
-      (div (msec:milly ?-(u.extend %auth auth, %guest guest)) 1.000)
+      =/  max-age=tape
+        %-  a-co:co
+        ?~  extend  0
+        =,  session-timeout
+        (div (msec:milly ?-(u.extend %auth auth, %guest guest)) 1.000)
+      ;:  weld
+        ?:(secure "__Host-" "")                       ::  on https, host-only
+        "urbauth-{(scow %p our)}={(scow %uv sid)}; "  ::  local key, value
+        "Path=/; "                                    ::  required by __Host-
+        ?:(secure "Secure; " "")                      ::  required by __Host-
+        "SameSite=Lax; "                              ::  defense-in-depth
+        "Max-Age={max-age}; "                         ::  lifetime
+      ==
     ::
     ::
     ++  eauth
@@ -3811,7 +3818,7 @@
               [headers.response-header.http-event sessions.auth.state]
             %+  refresh-session
               headers.response-header.http-event
-            [new sid]:u.session.req
+            [secure [new sid]:u.session]:req
           =.  headers.response-header.http-event  nuh
           ::  book-keep the connection's state:
           ::  if we're done responding, clear it from state if it was there,
@@ -3951,7 +3958,7 @@
   ::    uncacheable for security reasons.
   ::
   ++  refresh-session
-    |=  [headers=header-list:http new=? sid=@uv]
+    |=  [headers=header-list:http secure=? new=? sid=@uv]
     ^-  [header-list:http _sessions.auth.state]
     =,  authentication
     =*  sessions    sessions.auth.state
@@ -3983,7 +3990,7 @@
     ::TODOxx  this could be cleaner if +set-header were case-insensitive
     =.  headers  (delete-header:http 'Cache-Control' headers)
     =.  headers  (set-header:http 'cache-control' 'no-store' headers)
-    [['set-cookie' (session-cookie-string sid `kind)] headers]
+    [['set-cookie' (session-cookie-string sid secure `kind)] headers]
   ::  +set-response: remember (or update) a cache mapping
   ::
   ++  set-response
@@ -5296,9 +5303,17 @@
       ?~  cookies=(slaw %t i.t.t.tyl)  [~ ~]
       :^  ~  ~  %noun
       !>  ^-  ?
-      %-  =<  request-is-authenticated:authentication
-          (per-server-event [eny *duct now rof] server-state.ax)
-      %*(. *request:http header-list ['cookie' u.cookies]~)
+      ::TODOxx  take secure flag in scry path?
+      ?|  %+  =<  request-is-authenticated:authentication
+              (per-server-event [eny *duct now rof] server-state.ax)
+            secure=&
+          %*(. *request:http header-list ['cookie' u.cookies]~)
+        ::
+          %+  =<  request-is-authenticated:authentication
+              (per-server-event [eny *duct now rof] server-state.ax)
+            secure=|
+          %*(. *request:http header-list ['cookie' u.cookies]~)
+      ==
     ::
         [%'_~_' *]
       ::TODOxx  who would .^ this??
