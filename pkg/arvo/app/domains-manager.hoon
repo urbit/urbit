@@ -32,7 +32,7 @@
 ++  tell-eyre
   |=  =action
   ^-  card
-  [%pass /eyre/turf %arvo %e %rule %turf action]
+  [%pass /eyre/turf %arvo %eyre %rule %turf action]
 ::
 ++  debounce-time  ~m5  ::REVIEW
 +$  card  card:agent:gall
@@ -51,7 +51,7 @@
 ++  on-init
   ^-  (quip card _this)
   :_  this
-  [%pass /clay/tire %arvo %c %tire `~]~
+  [%pass /clay/tire %arvo %clay %tire `~]~
 ::
 ++  on-save  !>(state)
 ++  on-load
@@ -77,18 +77,18 @@
   ==
 ::
 ++  on-arvo
-  |=  [=wire sign=sign-arvo]
+  |=  [=wire gift=gift-user-v1:gall]
   ^-  (quip card _this)
   ~|  wire=wire
   ?+  wire  ~|(%bad-wide !!)
       [%clay %tire ~]
-    ~|  [- +<]:sign
-    ?>  ?=([%clay %tire *] sign)
+    ~|  [- +<]:gift
+    ?>  ?=([%clay %tire *] gift)
     ::  %tire is a notification and may only have a diff.
     ::  for convenience, we always scry for the full rock instead
     ::
     =/  =rock:tire:clay
-      ?:  ?=(%& -.p.sign)  p.p.sign
+      ?:  ?=(%& -.p.gift)  p.p.gift
       .^(rock:tire:clay %cx /(scot %p our.bowl)//(scot %da now.bowl)/tire)
     =/  suz=(set desk)
       %+  roll  ~(tap by rock)
@@ -109,10 +109,10 @@
     ::
     =/  until=@da  (add now.bowl debounce-time)
     =.  next  `[until suz]
-    [[%pass /debounce %arvo %b %wait until]~ this]
+    [[%pass /debounce %arvo %behn %wait until]~ this]
   ::
       [%debounce ~]
-    ?>  ?=([%behn %wake *] sign)
+    ?>  ?=([%behn %wake *] gift)
     ?~  next  [~ this]
     ?:  (gth wen.u.next now.bowl)  [~ this]
     =+  del=(~(dif in subs) wat.u.next)
@@ -125,7 +125,7 @@
     %+  turn  ~(tap in tops)
     |=  =turf
     ^-  card
-    [%pass /eyre/cert %arvo %e %rule %cert (snoc turf desk) ~]
+    [%pass /eyre/cert %arvo %eyre %rule %cert (snoc turf desk) ~]
   ==
 ::
 ++  on-peek
@@ -138,8 +138,8 @@
 ++  on-agent  |=(* [~ this])
 ::
 ++  on-fail
-  |=  [=term =tang]
+  |=  [frag:agent:gall =call:agent:gall]
   ^-  (quip card _this)
-  %-  (slog (rap 3 dap.bowl ': +on-fail: ' term ~) tang)
+  %-  (slog (rap 3 dap.bowl ': +on-fail: ' from ~) tang)
   [~ this]
 --
