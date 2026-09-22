@@ -1,3 +1,4 @@
+~%  %non  ..part  ~  :: jet registration; nest non in hex (cf /lib/unum, /lib/math)
 |%
 ::  Two's-complement signed integers, MODULAR (operations wrap mod 2^width
 ::  rather than crashing on overflow -- a deliberate divergence from a
@@ -11,6 +12,7 @@
 ::    width (bex bloq), so the logic is defined once in +twid.
 ::
 ++  twid
+  ~/  %twid
   |_  wid=@
   ::  +len: bit width.  +len-mod: the modulus 2^width.
   ++  len  wid
@@ -42,15 +44,15 @@
   ::  Arithmetic.  Because the low `len` bits of a sum/product are independent
   ::  of sign, the same bit-level add and multiply serve signed and unsigned.
   ::
-  ++  add  |=([a=@ b=@] ^-(@ (mod (^add a b) len-mod)))
+  ++  add  ~/  %add  |=([a=@ b=@] ^-(@ (mod (^add a b) len-mod)))
   ::  +neg: two's-complement negation, ~a + 1 (flip the len bits, add one).
   ::  neg(min) = min (wraps).
-  ++  neg  |=(a=@ ^-(@ (mod +((not 0 len (mod a len-mod))) len-mod)))
-  ++  sub  |=([a=@ b=@] ^-(@ (add a (neg b))))
+  ++  neg  ~/  %neg  |=(a=@ ^-(@ (mod +((not 0 len (mod a len-mod))) len-mod)))
+  ++  sub  ~/  %sub  |=([a=@ b=@] ^-(@ (add a (neg b))))
   ::  low-order bits of a product are sign-independent, so modular unsigned mul is also correct signed mul
-  ++  mul  |=([a=@ b=@] ^-(@ (mod (^mul (mod a len-mod) (mod b len-mod)) len-mod)))
+  ++  mul  ~/  %mul  |=([a=@ b=@] ^-(@ (mod (^mul (mod a len-mod) (mod b len-mod)) len-mod)))
   ::  +abs: |a| as a two's-complement value (abs(min) wraps back to min).
-  ++  abs  |=(a=@ ^-(@ ?:(=(1 (msb a)) (neg a) (mod a len-mod))))
+  ++  abs  ~/  %abs  |=(a=@ ^-(@ ?:(=(1 (msb a)) (neg a) (mod a len-mod))))
   ::  +overflow: would a + b overflow a CHECKED signed add?  Retained for
   ::  callers that want to detect rather than wrap; +add no longer uses it.
   ++  overflow
@@ -61,6 +63,7 @@
   ::  +div: signed division, truncating toward zero (C / Hoon `div` style).
   ::  Division by zero crashes (as `div` does).  div(min, -1) wraps to min.
   ++  div
+    ~/  %div
     |=  [a=@ b=@]
     ^-  @
     =/  sa  (msb a)
@@ -71,6 +74,7 @@
   ::  +rem: signed remainder, sign follows the DIVIDEND (C `%` / truncated).
   ::  a == (add (mul (div a b) b) (rem a b)).
   ++  rem
+    ~/  %rem
     |=  [a=@ b=@]
     ^-  @
     =/  r  (mod (abs a) (abs b))
@@ -78,6 +82,7 @@
     (neg r)
   ::  +pow: a to a NON-NEGATIVE integer power n (raw @), by modular squaring.
   ++  pow
+    ~/  %pow
     |=  [a=@ n=@]
     ^-  @
     =/  base  (mod a len-mod)
@@ -95,13 +100,14 @@
     (dec (bex len))
   ::  Comparisons, by two's-complement order (negatives below non-negatives).
   ++  gth
+    ~/  %gth
     |=  [a=@ b=@]
     ?:  =(1 (mix (msb a) (msb b)))
       =(0 (msb a))
     (^gth a b)
-  ++  lth  |=([a=@ b=@] (gth b a))
-  ++  lte  |=([a=@ b=@] !(gth a b))
-  ++  gte  |=([a=@ b=@] !(gth b a))
+  ++  lth  ~/  %lth  |=([a=@ b=@] (gth b a))
+  ++  lte  ~/  %lte  |=([a=@ b=@] !(gth a b))
+  ++  gte  ~/  %gte  |=([a=@ b=@] !(gth b a))
   --
 ::
 ::  +twoc: bloq-keyed facade over +twid (width = 2^bloq).  Logic lives in
