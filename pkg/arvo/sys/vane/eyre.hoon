@@ -175,6 +175,13 @@
       |=  [=octs sum=@ud]
       (add sum p.octs)
   (can 3 a)
+::  +normalize-turf: ensure lowercase
+::
+++  normalize-turf
+  |=  =turf
+  ^+  turf
+  %+  turn  turf
+  |=(b=@ (run 3 b |=(a=@ ?.(&((gte a 'A') (lte a 'Z')) a (add 32 a)))))
 ::  +http-to-vere-config: prepare for runtime consumption
 ::
 ++  http-to-vere-config
@@ -4533,6 +4540,7 @@
       =*  config  http-config.server-state.ax
       =^  changed=?  secure.config
         =*  turf  turf.http-rule.task
+        =.  turf  (normalize-turf turf)
         ?~  cert.http-rule.task
           :-  (~(has by secure.config) turf)
           (~(del by secure.config) turf)
@@ -4552,6 +4560,14 @@
         ::
         %turf
       =*  domains  domains.server-state.ax
+      ::  ensure the provided turfs are all lowercased/normalized
+      ::
+      =.  action.http-rule.task
+        ?-  -.action.http-rule.task
+          %put  [%put (normalize-turf turf.action.http-rule.task)]
+          %del  [%del (normalize-turf turf.action.http-rule.task)]
+          %new  [%new (~(run in turfs.action.http-rule.task) normalize-turf)]
+        ==
       =.  domains
         ?-  -.action.http-rule.task
           %put  (~(put in domains) turf.action.http-rule.task)
