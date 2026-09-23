@@ -97,6 +97,25 @@ a {
   height: 100%;
 }
 
+/* flow states */
+.flow-closing {
+  background-color: #fffde0;
+}
+.flow-corked {
+  background-color: #ffe0e0;
+}
+.flow-halt {
+  background-color: #fff0d0;
+}
+.nax-trace {
+  margin: 4px 0;
+  padding: 4px;
+  background: #fee;
+  font-size: 12px;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
 /* spinner */
 
 .spin-active {
@@ -215,5 +234,17 @@ a {
   }
   .hover-bg-gray1-d:hover {
     background-color: #4d4d4d;
+  }
+  .flow-closing {
+    background-color: #4a4520;
+  }
+  .flow-corked {
+    background-color: #4a2020;
+  }
+  .flow-halt {
+    background-color: #4a3510;
+  }
+  .nax-trace {
+    background: #4a2020;
   }
 }

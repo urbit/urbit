@@ -4,7 +4,8 @@
 ::
 |%
 +$  poke
-  $%  [%bowl ~]
+  $%  [%skip depth=@ud =poke]
+      [%bowl ~]
       [%state grab=cord]
       [%incoming =about]
       [%outgoing =about]
@@ -19,21 +20,26 @@
   ==
 ::
 ++  agent
-  |=  agent=form:agent:gall
-  ^-  form:agent:gall
-  :: !.
+  |=  =agent:gall
+  ^-  agent:gall
+  !.
   |_  =bowl:gall
   +*  this  .
       ag    ~(. agent bowl)
   ::
   ++  on-poke
     |=  [=mark =vase]
-    ^-  (quip card:agent:gall _this)
+    ^-  (quip card:agent:gall agent:gall)
     ?.  ?=(%dbug mark)
       =^  cards  agent  (on-poke:ag mark vase)
       [cards this]
-    =/  dbug
-      !<(poke vase)
+    =/  dbug  !<(poke vase)
+    =?  dbug  ?=([%skip %0 *] dbug)  poke.dbug
+    ?:  ?=(%skip -.dbug)
+      =^  cards  agent
+        %+  on-poke:ag  %dbug
+        !>(`poke`dbug(depth (dec depth.dbug)))
+      [cards this]
     =;  =tang
       ((%*(. slog pri 1) tang) [~ this])
     ?-  -.dbug
@@ -110,7 +116,7 @@
     ==
   ::
   ++  on-init
-    ^-  (quip card:agent:gall _this)
+    ^-  (quip card:agent:gall agent:gall)
     =^  cards  agent  on-init:ag
     [cards this]
   ::
@@ -118,38 +124,38 @@
   ::
   ++  on-load
     |=  old-state=vase
-    ^-  (quip card:agent:gall _this)
+    ^-  (quip card:agent:gall agent:gall)
     =^  cards  agent  (on-load:ag old-state)
     [cards this]
   ::
   ++  on-watch
     |=  =path
-    ^-  (quip card:agent:gall _this)
+    ^-  (quip card:agent:gall agent:gall)
     =^  cards  agent  (on-watch:ag path)
     [cards this]
   ::
   ++  on-leave
     |=  =path
-    ^-  (quip card:agent:gall _this)
+    ^-  (quip card:agent:gall agent:gall)
     =^  cards  agent  (on-leave:ag path)
     [cards this]
   ::
   ++  on-agent
     |=  [=wire =sign:agent:gall]
-    ^-  (quip card:agent:gall _this)
+    ^-  (quip card:agent:gall agent:gall)
     =^  cards  agent  (on-agent:ag wire sign)
     [cards this]
   ::
   ++  on-arvo
     |=  [=wire gift=gift-user-v1:gall]
-    ^-  (quip card:agent:gall _this)
+    ^-  (quip card:agent:gall agent:gall)
     =^  cards  agent  (on-arvo:ag wire gift)
     [cards this]
   ::
   ++  on-fail
-    |=  [=term =tang]
-    ^-  (quip card:agent:gall _this)
-    =^  cards  agent  (on-fail:ag term tang)
+    |=  [=frag:agent:gall =call:agent:gall]
+    ^-  (quip card:agent:gall agent:gall)
+    =^  cards  agent  (on-fail:ag frag call)
     [cards this]
   --
 --

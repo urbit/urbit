@@ -147,10 +147,10 @@ export class Ames extends Component {
                      snd['packet-pump-state'].live.length > 0 )
       ? 'active, '
       : '';
-    const color = snd['closing'] ? 'lightyellow': snd['corked'] ? 'lightred' : 'transparent';
+    const cls = snd['closing'] ? 'flow-closing' : snd['corked'] ? 'flow-corked' : '';
 
     return {key: 'snd ' + active + snd.bone + ', ' + renderDuct(snd.duct), jsx: (
-      <div style={{backgroundColor: color}}>
+      <div className={cls}>
         <Summary summary={summary} details={details} />
        </div>
     )};
@@ -196,10 +196,10 @@ export class Ames extends Component {
       {nax}<br/>
       {liveMessages}
     </>);
-    const color =  rcv['closing'] ? 'ligthyellow': rcv['corked'] ? 'lightred' : 'transparent';
+    const cls = rcv['closing'] ? 'flow-closing' : rcv['corked'] ? 'flow-corked' : '';
 
     return {key: 'rcv ' + rcv.bone + ', ' + renderDuct(rcv.duct), jsx: (
-      <div style={{backgroundColor: color}}>
+      <div className={cls}>
         <Summary summary={summary} details={details} />
       </div>
     )};
@@ -221,38 +221,62 @@ export class Ames extends Component {
       <table><tbody>
         <tr class="inter">
           <td>bone</td>
-          <td>line</td>
           <td>next</td>
           <td>window (max)</td>
           <td>total unsent</td>
+          {(flow.acks || []).length > 0 && <td>queued-acks</td>}
         </tr>
         <tr>
           <td>{flow.bone}</td>
-          <td>{flow.line}</td>
           <td>{flow.next}</td>
           <td>{`${flow['send-window']}-${flow['send-window-max']}`}</td>
           <td>
-            {flow['unsent-messages'].reduce((a,b) => a+b, 0)} bytes
+            {flow['unsent-messages'].reduce((a,b) => a+b.size, 0)} bytes
             ({flow['unsent-messages'].length} messages)
           </td>
+          {(flow.acks || []).length > 0 && <td>
+            <details>
+              <summary>{(flow.acks || []).length}</summary>
+              {(flow.acks || []).map((ack, i) => (
+                <div key={i} style={{fontSize: '0.85em', marginTop: '2px'}}>
+                  {JSON.stringify(ack)}
+                </div>
+              ))}
+            </details>
+          </td>}
         </tr>
       </tbody></table>
     </>);
 
+    const naxList = flow.nax || [];
+    const naxDetails = naxList.length === 0 ? null : (<>
+      {naxList.map((nax, i) => (
+        <div key={i} style={{marginTop: '4px', padding: '4px', border: '1px solid #c66'}}>
+          <b>nack seq {nax.seq}</b> — {nax.error.tag}
+          <pre className="nax-trace">
+            {nax.error.trace}
+          </pre>
+        </div>
+      ))}
+    </>);
+
+    const isSinkBoon = flow.side === "for";
     const summaryBack = (<>
-      <b>{(flow.side === "for") ? "sink boon" : "sink plea"}</b><br/>
+      <b>{isSinkBoon ? "sink boon" : "sink plea"}</b><br/>
       <table><tbody>
         <tr class="inter">
           <td>bone</td>
+          <td>line</td>
           <td>last acked</td>
           <td>pending?</td>
-          <td>naxplanations</td>
+          {naxList.length > 0 && <td>naxplanations</td>}
         </tr>
         <tr>
           <td>{flow.bone}</td>
+          <td>{flow.line}</td>
           <td>{flow['last-acked']}</td>
           <td>{(flow['pending-acked'] ? 'yes' : 'no')}</td>
-          <td>XX</td>
+          {naxList.length > 0 && <td>{naxList.length}</td>}
         </tr>
       </tbody></table>
     </>);
@@ -260,24 +284,47 @@ export class Ames extends Component {
     const active = ( flow['unsent-messages'].length > 0 )
       ? 'active, '
       : '';
-    const color = flow['closing'] ? 'lightyellow': flow['corked'] ? 'lightred' : 'transparent';
+    const cls = flow['closing'] ? 'flow-closing' : flow['corked'] ? 'flow-corked' : flow.halt ? 'flow-halt' : '';
 
-    const key = (flow.side === "for") ? "plea" : "boon" +
-                + active + flow.bone + ', ' + '';
-               //(flow.duct !== null) ? renderDuct(flow.duct) : '';
+    const side = (flow.side === "for") ? "plea" : "boon";
+    const duct = flow.duct !== null ? renderDuct(flow.duct) : '';
+    const key = side + ' ' + active + flow.bone + ', ' + duct;
+
+    const renderMsgInfo = (info) => {
+      if (!info) return '';
+      if (typeof info === 'string') return info;
+      if (info.type === 'plea') {
+        const detail = info.detail;
+        const action = detail && detail.action ? detail.action : '';
+        const mark = detail && detail.mark ? ` (%${detail.mark})` : '';
+        const path = detail && detail.path ? ` ${detail.path}` : '';
+        const vane = info.vane == '' ? '' : `%${info.vane}`;
+        return `${vane} ${action}${mark}${path}`;
+      }
+      if (info.type === 'fact') return `fact (%${info.mark})`;
+      return info.type || JSON.stringify(info);
+    };
+
+    const unsentDetails = flow['unsent-messages'].length === 0 ? null : (<>
+      {flow['unsent-messages'].map((m, i) => (
+        <div key={i} style={{fontSize: '0.85em'}}>
+          {m.seq}: {renderMsgInfo(m.info)} - {m.size} bytes
+        </div>
+      ))}
+    </>);
 
     const incoming = (flow['last-acked'] > 0) ?
-          <Summary summary={summaryBack} /> :
+          <Summary summary={summaryBack} details={naxDetails} /> :
           <></>;
     const  outgoing= (flow.next > 1) ?
-          <Summary summary={summary} /> :
+          <Summary summary={summary} details={unsentDetails} /> :
           <></>;
 
     const sides = (flow.side === 'for') ?
                   <>{outgoing}{incoming}</> :
                   <>{incoming}{outgoing}</>
     return {key: key, jsx: (
-      <div style={{backgroundColor: color}}>
+      <div className={cls}>
         {sides}
        </div>
     )};
@@ -443,10 +490,57 @@ export class Ames extends Component {
           </tbody></table>
         </>);
 
-        const scryItems = p.scries.map(this.renderPeek);
-        const scry = (<>
-          <h4 style={{marginTop: '1em'}}>scries</h4>
-          <SearchableList placeholder="path" items={scryItems} />
+        const renderAmesPath = (amesPath) => {
+          const parts = amesPath.replace(/^\//, '').split('/');
+          const kind = parts[0];
+          if (kind === 'chum' && parts.length >= 4) {
+            // [%chum our-life her her-life encrypted-path ~]
+            const [, ourLife, her, herLife] = parts;
+            const full = amesPath;
+            return (<span>
+              <b>chum</b> our-life={ourLife} {her} her-life={herLife}{' '}
+              <Summary summary="[path]" details={full} />
+            </span>);
+          } else if (kind === 'shut' && parts.length >= 2) {
+            // [%shut key-id encrypted-path ~]
+            const keyId = parts[1];
+            const full = amesPath;
+            return (<span>
+              <b>shut</b> key={keyId}{' '}
+              <Summary summary="[path]" details={full} />
+            </span>);
+          } else if (kind === 'publ' && parts.length >= 2) {
+            // [%publ our-life =path]
+            const ourLife = parts[1];
+            const path = '/' + parts.slice(2).join('/');
+            return (<span>
+              <b>publ</b> life={ourLife}
+            </span>);
+          }
+          return amesPath;
+        };
+
+        const tipItems = (p.tip || []).map(t => {
+          return {key: t['user-path'], jsx: (<>
+            <b>{t['user-path']}</b>
+            {t.listeners.map((l, i) => (
+              <div key={i} style={{marginLeft: '1em', marginTop: '4px', borderLeft: '2px solid #888', paddingLeft: '6px'}}>
+                <div style={{fontSize: '0.85em'}}>{renderAmesPath(l['ames-path'])}</div>
+                <div style={{marginTop: '2px', fontSize: '0.85em'}}>
+                  {l.duct.map((wire, j) => (
+                    <div key={j} style={{paddingLeft: `${j * 12}px`}}>
+                      {j > 0 && <span style={{color: '#888'}}>{'← '}</span>}
+                      {wire}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </>)};
+        });
+        const tip = (<>
+          <h4 style={{marginTop: '1em'}}>tip</h4>
+          <SearchableList placeholder="path" items={tipItems} />
         </>);
 
         const forwardItems = p.flows.forward.map(this.renderMesaFlow);
@@ -471,7 +565,7 @@ export class Ames extends Component {
           {status}
           {forward}
           {backward}
-          {scry}
+          {tip}
         </>);
       } else {
         console.log('weird peer', peer);

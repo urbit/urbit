@@ -67,7 +67,6 @@
   :-  %azimuth-snapshot
   !>  ^-  snap-state
   [%0 id nas owners sponsors]
-=/  =task  [%info %base %& [path %ins cage]~]
-=/  =card  [%pass /next %arvo %c task]
+=/  =card  [%pass /next %arvo %clay %rite %base [path %ins cage]~]
 ;<  ~  bind:m  (send-raw-card:strandio card)
 (pure:m !>('azimuth logs processed'))

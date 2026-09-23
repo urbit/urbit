@@ -58,7 +58,7 @@
 =/  desks  .^((set ^desk) %cd /(scot %p our.bowl)//(scot %da now.bowl))
 ?.  (~(has in desks) desk)
   ~&  >  "Desk {<desk>} does not exist yet; creating."
-  ;<  ~  bind:m  (send-raw-card:strandio [%pass /new-app %arvo %c %merg desk our.bowl %base da+now.bowl %init])
+  ;<  ~  bind:m  (send-raw-card:strandio [%pass /new-app %arvo %clay %merg desk our.bowl %base da+now.bowl %init])
   ~&  >  "Desk {<desk>} created."
   ::  Don't forget to clear out carryover from the source desk %base.
   ;<  ps=(list path)  bind:m  (scry:strandio (list path) /ct/base)
@@ -67,7 +67,7 @@
   =/  sob  (weld (turn ~(tap by dif) |=(p=path [p %del ~])) sob)
   ;<  now=@da  bind:m  get-time:strandio
   ;<  =ship    bind:m  get-our:strandio
-  ;<  ~  bind:m  (send-raw-card:strandio [%pass /new-app %arvo %c %info desk %& sob])
+  ;<  ~  bind:m  (send-raw-card:strandio [%pass /new-app %arvo %clay %rite desk sob])
   ;<  ~  bind:m  (sleep:strandio ~s0)  ::  wait for merge to complete
   ~&  >  "Desk {<desk>} populated."
   (pure:m !>(desk))
@@ -78,7 +78,7 @@
 =/  sob  (weld (turn ~(tap by dif) |=(p=path [p %del ~])) sob)
 ;<  now=@da  bind:m  get-time:strandio
 ;<  =ship    bind:m  get-our:strandio
-;<  ~  bind:m  (send-raw-card:strandio [%pass /new-app %arvo %c %info desk %& sob])
+;<  ~  bind:m  (send-raw-card:strandio [%pass /new-app %arvo %clay %rite desk sob])
 ;<  ~  bind:m  (sleep:strandio ~s0)  ::  wait for merge to complete
 ~&  >  "Desk {<desk>} updated."
 (pure:m !>(desk))

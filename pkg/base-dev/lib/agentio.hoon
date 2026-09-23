@@ -27,9 +27,9 @@
     (poke-our dap.bowl cage)
   ::
   ++  arvo
-    |=  =note-arvo
+    |=  task=task-user-v1:gall
     ^-  card
-    [%pass wire %arvo note-arvo]
+    [%pass wire %arvo task]
   ::
   ++  watch
     |=  [=dock =path]
@@ -62,35 +62,35 @@
   ::
   ++  wait
     |=  p=@da
-    (arvo %b %wait p)
+    (arvo %behn %wait p)
   ::
   ++  rest
     |=  p=@da
-    (arvo %b %rest p)
+    (arvo %behn %rest p)
   ::
   ++  warp
-    |=  [wer=ship =riff:clay]
-    (arvo %c %warp wer riff)
+    |=  [id=* wer=ship =desk =rave:clay]
+    (arvo %clay %read id wer desk rave)
   ::
   ++  warp-our
-    |=  =riff:clay
-    (warp our.bowl riff)
+    |=  [id=* =desk =rave:clay]
+    (warp id our.bowl desk rave)
   ::
   ::  right here, right now
   ++  warp-slim
-    |=  [genre=?(%sing %next) =care:clay =path]
+    |=  [genre=?(%sing %next) =care:clay =path id=*]
     =/  =mood:clay
       [care r.byk.bowl path]
     =/  =rave:clay
       ?:(?=(%sing genre) [genre mood] [genre mood])
-    (warp-our q.byk.bowl `rave)
+    (warp-our id q.byk.bowl rave)
   ::
   ++  tire
-    (arvo %c %tire `~)
+    (arvo %clay %tire `~)
   ::
   ++  connect
     |=  [=binding:eyre app=term]
-    (arvo %e %connect binding app)
+    (arvo %eyre %connect binding app)
   --
 ::
 ++  fact-kick

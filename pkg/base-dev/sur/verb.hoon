@@ -7,7 +7,7 @@
       [%on-leave =path]
       [%on-agent =wire sign=term]
       [%on-arvo =wire vane=term sign=term]
-      [%on-fail =term]
+      [%on-fail =term]  ::TODO  update
   ==
 ::
 +$  event-plus
@@ -27,7 +27,7 @@
       [%on-leave =path]
       [%on-agent =wire =sign]
       [%on-arvo =wire vane=term sign=term]
-      [%on-fail =term]
+      [%on-fail =term]  ::TODO  update
   ==
 ::
 +$  sign

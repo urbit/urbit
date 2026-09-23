@@ -58,13 +58,13 @@
     |=  tim=@da
     ~?  debug=|  [who=who %setting-timer tim]
     =.  next-timer  `tim
-    =.  this  (emit-cards [%pass /(scot %p who) %arvo %b %wait tim]~)
+    =.  this  (emit-cards [%pass /(scot %p who) %arvo %behn %wait tim]~)
     ..abet-pe
   ::
   ++  cancel-timer
     ~?  debug=|  [who=who %cancell-timer (need next-timer)]
     =.  this
-      (emit-cards [%pass /(scot %p who) %arvo %b %rest (need next-timer)]~)
+      (emit-cards [%pass /(scot %p who) %arvo %behn %rest (need next-timer)]~)
     =.  next-timer  ~
     ..abet-pe
   ::

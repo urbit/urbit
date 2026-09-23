@@ -27,9 +27,12 @@
         args=?(~ [what=?(%bowl %state) ~] [=poke ~])
         ::  named arguments
         ::
-        ~
+        depth=@ud
     ==
 :-  %dbug
+=;  =poke
+  ?:  =(0 depth)  poke
+  [%skip depth poke]
 ?-  args
   ~          [%state '']
   [@ ~]      ?-(what.args %bowl [%bowl ~], %state [%state ''])

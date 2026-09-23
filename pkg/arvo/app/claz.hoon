@@ -164,9 +164,9 @@
   |=  [=path tox=(list transaction:rpc)]
   ^-  card
   ?>  ?=([@ desk @ *] path)
-  =-  [%pass [%write path] %arvo %c %info -]
+  =-  [%pass [%write path] %arvo %clay %rite -]
   :-  `desk`i.t.path
-  =-  &+[t.t.t.path -]~
+  =-  [t.t.t.path -]~
   =/  y  .^(arch %cy path)
   ?~  fil.y
     ins+eth-txs+!>(tox)

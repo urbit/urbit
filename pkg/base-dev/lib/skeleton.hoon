@@ -1,9 +1,8 @@
 ::  Similar to default-agent except crashes everywhere
 ^-  agent:gall
-:-  %new-agent
 |_  bowl:gall
 ++  on-init
-  ^-  (quip card:agent:gall form:agent:gall)
+  ^-  (quip card:agent:gall agent:gall)
   !!
 ::
 ++  on-save
@@ -12,22 +11,22 @@
 ::
 ++  on-load
   |~  old-state=vase
-  ^-  (quip card:agent:gall form:agent:gall)
+  ^-  (quip card:agent:gall agent:gall)
   !!
 ::
 ++  on-poke
   |~  in-poke-data=cage
-  ^-  (quip card:agent:gall form:agent:gall)
+  ^-  (quip card:agent:gall agent:gall)
   !!
 ::
 ++  on-watch
   |~  path
-  ^-  (quip card:agent:gall form:agent:gall)
+  ^-  (quip card:agent:gall agent:gall)
   !!
 ::
 ++  on-leave
   |~  path
-  ^-  (quip card:agent:gall form:agent:gall)
+  ^-  (quip card:agent:gall agent:gall)
   !!
 ::
 ++  on-peek
@@ -37,16 +36,16 @@
 ::
 ++  on-agent
   |~  [wire sign:agent:gall]
-  ^-  (quip card:agent:gall form:agent:gall)
+  ^-  (quip card:agent:gall agent:gall)
   !!
 ::
 ++  on-arvo
   |~  [wire gift-user-v1:gall]
-  ^-  (quip card:agent:gall form:agent:gall)
+  ^-  (quip card:agent:gall agent:gall)
   !!
 ::
 ++  on-fail
-  |~  [term tang]
-  ^-  (quip card:agent:gall form:agent:gall)
+  |~  [frag:agent:gall call:agent:gall]
+  ^-  (quip card:agent:gall agent:gall)
   !!
 --

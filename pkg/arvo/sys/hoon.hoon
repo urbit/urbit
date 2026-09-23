@@ -1251,9 +1251,10 @@
     ?>  ?=(^ c)
     c(l a(r l.c))
   ::
-  ++  del                                               ::  b without any a
+  ++  del                                               ::  a without any b
     ~/  %del
     |*  b=*
+    =>  .(b `_?>(?=(^ a) n.a)`b)
     |-  ^+  a
     ?~  a
       ~
@@ -1460,6 +1461,7 @@
   ++  del                                               ::  delete at key b
     ~/  %del
     |*  b=*
+    =>  .(b `_?>(?=(^ a) p.n.a)`b)
     |-  ^+  a
     ?~  a
       ~
@@ -8307,7 +8309,7 @@
   ++  feck
     |-  ^-  (unit term)
     ?-  gen
-      [%sand %tas @]  [~ q.gen]
+      [%rock %tas @]  [~ q.gen]
       [%dbug *]       $(gen q.gen)
       *               ~
     ==

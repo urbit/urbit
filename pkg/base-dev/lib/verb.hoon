@@ -2,16 +2,16 @@
 ::
 /-  *verb
 ::
-|=  [loud=? agent=form:agent:gall]
+|=  [loud=? =agent:gall]
 =|  bowl-print=_|
-^-  form:agent:gall
-|^
+^-  agent:gall
+|^  !.
 |_  =bowl:gall
 +*  this  .
     ag    ~(. agent bowl)
 ::
 ++  on-init
-  ^-  (quip card:agent:gall _this)
+  ^-  (quip card:agent:gall agent:gall)
   %-  (print bowl |.("{<dap.bowl>}: on-init"))
   =^  cards  agent  on-init:ag
   :_  this
@@ -26,7 +26,7 @@
 ::
 ++  on-load
   |=  old-state=vase
-  ^-  (quip card:agent:gall _this)
+  ^-  (quip card:agent:gall agent:gall)
   %-  (print bowl |.("{<dap.bowl>}: on-load"))
   =^  cards  agent  (on-load:ag old-state)
   :_  this
@@ -36,7 +36,7 @@
 ::
 ++  on-poke
   |=  [=mark =vase]
-  ^-  (quip card:agent:gall _this)
+  ^-  (quip card:agent:gall agent:gall)
   %-  (print bowl |.("{<dap.bowl>}: on-poke with mark {<mark>}"))
   ?:  ?=(%verb mark)
     ?-  !<(?(%loud %bowl) vase)
@@ -51,7 +51,7 @@
 ::
 ++  on-watch
   |=  =path
-  ^-  (quip card:agent:gall _this)
+  ^-  (quip card:agent:gall agent:gall)
   %-  (print bowl |.("{<dap.bowl>}: on-watch on path {<path>}"))
   =^  cards  agent
     ?:  ?=([%verb ?(%events %events-plus) ~] path)
@@ -64,7 +64,7 @@
 ::
 ++  on-leave
   |=  =path
-  ^-  (quip card:agent:gall _this)
+  ^-  (quip card:agent:gall agent:gall)
   %-  (print bowl |.("{<dap.bowl>}: on-leave on path {<path>}"))
   ?:  ?=([%verb %event ~] path)
     [~ this]
@@ -82,7 +82,7 @@
 ::
 ++  on-agent
   |=  [=wire =sign:agent:gall]
-  ^-  (quip card:agent:gall _this)
+  ^-  (quip card:agent:gall agent:gall)
   %-  (print bowl |.("{<dap.bowl>}: on-agent on wire {<wire>}, {<-.sign>}"))
   =^  cards  agent  (on-agent:ag wire sign)
   :_  this
@@ -99,30 +99,30 @@
 ::
 ++  on-arvo
   |=  [=wire gift=gift-user-v1:gall]
-  ^-  (quip card:agent:gall _this)
+  ^-  (quip card:agent:gall agent:gall)
   %-  %+  print  bowl  |.
-      ?:  ?=(%unsupported -.gift)
-        "{<dap.bowl>}: on-arvo on wire {<wire>}, %unsupported"
+      ?:  ?=(?(%unsupported %revoked) -.gift)
+        "{<dap.bowl>}: on-arvo on wire {<wire>}, {<-.gift>}"
       "{<dap.bowl>}: on-arvo on wire {<wire>}, {<[- +<]:gift>}"
   =^  cards  agent  (on-arvo:ag wire gift)
   :_  this
-  ?:  ?=(%unsupported -.gift)
+  ?:  ?=(?(%unsupported %revoked) -.gift)
     :_  :_  cards
-      (emit-event %on-arvo wire %$ %unsupported)
-    (emit-event-plus bowl [%on-arvo wire %$ %unsupported] cards)
+      (emit-event %on-arvo wire %$ -.gift)
+    (emit-event-plus bowl [%on-arvo wire %$ -.gift] cards)
   :_  :_  cards
     (emit-event %on-arvo wire [- +<]:gift)
   (emit-event-plus bowl [%on-arvo wire [- +<]:gift] cards)
 ::
 ++  on-fail
-  |=  [=term =tang]
-  ^-  (quip card:agent:gall _this)
-  %-  (print bowl |.("{<dap.bowl>}: on-fail with term {<term>}"))
-  =^  cards  agent  (on-fail:ag term tang)
+  |=  [frag:agent:gall =call:agent:gall]
+  ^-  (quip card:agent:gall agent:gall)
+  %-  (print bowl |.("{<dap.bowl>}: on-fail due to {<from>} during {<-.call>}"))
+  =^  cards  agent  (on-fail:ag [from tang] call)
   :_  this
   :_  :_  cards
-    (emit-event %on-fail term)
-  (emit-event-plus bowl [%on-fail term] cards)
+    (emit-event %on-fail from)
+  (emit-event-plus bowl [%on-fail from] cards)
 --
 ::
 ++  print
@@ -184,5 +184,8 @@
   ::
       [%slip *]
     $(card [%pass //slip p.card])
+  ::
+      [%pass * %dole *]
+    $(q.card rote.q.card)
   ==
 --

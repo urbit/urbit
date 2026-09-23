@@ -20,7 +20,7 @@
 ::
 ++  nat-timeout  ~s25
 ::
-+$  card  card:agent-old:gall
++$  card  card:agent:gall
 ::
 +$  state-3
   $:  %3
@@ -31,7 +31,7 @@
   ==
 --
 ::
-:: %-  agent:dbug
+%-  agent:dbug
 ::
 =|  state=state-3
 =>  |%
@@ -46,7 +46,7 @@
   ++  wait-card
     |=  [=wire now=@da]
     ^-  card
-    [%pass wire %arvo %b %wait (add nat-timeout now)]
+    [%pass wire %arvo %behn %wait (add nat-timeout now)]
   ::
   ++  ping
     |=  [=ship force=?]
@@ -56,12 +56,11 @@
     :_  state(pokes +(pokes.state), galaxy ship)
     [%pass /ping %agent [ship %ping] %poke %noun !>(~)]~
 --
-:: %+  verb  |
-^-  agent-old:gall
-:-  %old-agent
+%+  verb  |
+^-  agent:gall
 |_  =bowl:gall
 +*  this  .
-    :: def  ~(. (default-agent this %|) bowl)
+    def  ~(. (default-agent this %|) bowl)
 ::
 ::  +on-init: initializing on startup
 ::
@@ -139,7 +138,6 @@
 ::
 ++  on-poke
   |=  [=mark =vase]
-  ~&  >  %made-it
   ?.  =(our src):bowl    :: don't crash, this is where pings are handled
     `this
   ::
@@ -183,18 +181,19 @@
 ::  +on-arvo: handle timer firing
 ::
 ++  on-arvo
-  |=  [=wire =sign-arvo]
+  |=  [=wire gift=gift-user-v1:gall]
   ^-  [(list card) _this]
+  =?  gift  ?=(%syscall -.gift)
+    =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
+    ?.  ?=([%behn %wake *] sign-arvo)  gift
+    [%behn %wake now.bowl]
   =^  cards  state
     ?+    wire  `state
         [%wait *]
       ?:  ?=(%czar (clan:title our.bowl))
         `state
       ?.  ?=(%formal mode.state)  `state
-      ?>  ?=(%wake +<.sign-arvo)
-      ?^  error.sign-arvo
-        %-  (slog 'ping: strange wake fail!' u.error.sign-arvo)
-        `state
+      ?>  ?=([%behn %wake *] gift)
       =.  timer.state  ~
       (ping (galaxy-for our.bowl bowl) %.n)
     ::
@@ -202,7 +201,7 @@
   [cards this]
 ::
 ++  on-save   !>(state)
-++  on-fail   |=(* `this)  ::  on-fail:def
-++  on-watch  |=(* `this)  ::  on-watch:def
-++  on-leave  |=(* `this)  ::  on-leave:def
+++  on-fail   on-fail:def
+++  on-watch  on-watch:def
+++  on-leave  on-leave:def
 --

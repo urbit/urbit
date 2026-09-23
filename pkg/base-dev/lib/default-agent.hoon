@@ -63,7 +63,7 @@
   !!
 ::
 ++  on-fail
-  |=  [=term =tang]
-  %-  (slog leaf+"error in {<dap.bowl>}" >term< tang)
+  |=  [frag:agent:gall =call:agent:gall]
+  %-  (slog leaf+"{<from>} in {<dap.bowl>} during {<-.call>}" tang)
   `agent
 --

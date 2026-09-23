@@ -43,10 +43,13 @@ export class SearchableList extends Component {
     return (<div style={{position: 'relative', border: '1px solid grey', padding: '4px'}}>
       {props.children}
       <div>{searchBar} ({items.length})</div>
-      <details open={(props.open === undefined) ? true : props.open}>
-        <summary>{items.length} items</summary>
-        <div>{items.length === 0 ? 'none' : items}</div>
-      </details>
+      {items.length === 0
+        ? <div>none</div>
+        : <details open={(props.open === undefined) ? true : props.open}>
+            <summary>{items.length} items</summary>
+            <div>{items}</div>
+          </details>
+      }
     </div>);
   }
 }

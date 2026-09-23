@@ -351,8 +351,7 @@
       (need (ax hen ses))
     ::NOTE  we do deletion from state outside of the core,
     ::      because +abet would re-insert.
-    ::TODO  send a %bye blit? xx
-    =^  moz  all  abet:pull:nus
+    =^  moz  all  abet:(from %bye ~):pull:nus
     =.  dug.all   (~(del by dug.all) ses)
     =.  eye.all   (~(del by eye.all) ses)
     [moz ..^$]

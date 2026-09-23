@@ -946,6 +946,32 @@
     ==
   ::
   ::::                                                  ::  (1a2)
+    ::
+  ++  acru  $_  ^?                                      ::  asym cryptosuite
+    |%                                                  ::  opaque object
+    ++  as  ^?                                          ::  asym ops
+      |%  ++  seal  |~([a=pass b=@] *@)                 ::  encrypt to a
+          ++  sign  |~(a=@ *@)                          ::  certify as us
+          ++  sigh  |~(a=@ *@)                          ::  certification only
+          ++  sure  |~(a=@ *(unit @))                   ::  authenticate from us
+          ++  safe  |~([a=@ b=@] *?)                    ::  authentication only
+          ++  tear  |~([a=pass b=@] *(unit @))          ::  accept from a
+      --  ::as                                          ::
+    ++  de  |~([a=@ b=@] *(unit @))                     ::  symmetric de, soft
+    ++  dy  |~([a=@ b=@] *@)                            ::  symmetric de, hard
+    ++  en  |~([a=@ b=@] *@)                            ::  symmetric en
+    ++  ex  ^?                                          ::  export
+      |%  ++  fig  *@uvH                                ::  fingerprint
+          ++  pac  *@uvG                                ::  default passcode
+          ++  pub  *pass                                ::  public key
+          ++  sec  *ring                                ::  private key
+      --  ::ex                                          ::
+    ++  nu  ^?                                          ::  reconstructors
+      |%  ++  pit  |~([a=@ b=@] ^?(..nu))               ::  from [width seed]
+          ++  nol  |~(a=ring ^?(..nu))                  ::  from ring
+          ++  com  |~(a=pass ^?(..nu))                  ::  from pass
+      --  ::nu                                          ::
+    --  ::acru                                          :::::                                                  ::  (1a2)
   ::  +protocol-version: current version of the ames wire protocol
   ::
   ++  protocol-version  `?(%0 %1 %2 %3 %4 %5 %6 %7)`%0
@@ -1094,7 +1120,7 @@
   ::    %known: we know their life and public keys, so we have a channel
   ::
   +$  ship-state
-    $+  ship-state
+    $+  ship-state-31
     $%  [%alien alien-agenda]
         [%known peer-state]
     ==
@@ -1104,7 +1130,7 @@
   ::    packets: packets we've tried to send
   ::
   +$  alien-agenda
-    $+  alien-agenda
+    $+  alien-agenda-31
     $:  messages=(list [=duct =plea])
         packets=(set =blob)
         keens=(jug [path ints] duct)
@@ -1132,7 +1158,7 @@
   ::    corked:  bones closed on both sender and receiver
   ::
   +$  peer-state
-    $+  peer-state
+    $+  peer-state-31
     $:  azimuth-state
         route=(unit [direct=? =lane])  ::  XX (list)
         =qos
@@ -1573,7 +1599,8 @@
   ::    dead:        dead flow consolidation timer and recork timer, if set
   ::
   +$  axle
-    $:  peers=(map ship ship-state)
+    $+  axle-31
+    $:  peers=(map ship ship-state)         ::  %ames protocol peers
         =unix=duct  ::  [//ames/0v0 ~]
         =life
         =rift
@@ -1589,8 +1616,10 @@
         ::
         =server=chain                       ::  for serving %shut requests
         [saf=keypairs =ring =pass]
-        chums=(map ship chum-state)         ::  XX migrated peers
-        core=_`?(%ames %mesa)`%ames         ::  XX use |mesa core by default
+        chums=(map ship chum-state)         ::  migrated peers
+        core=_`?(%ames %mesa)`%ames         ::  default network core protocol
+                                            ::  (always %ames so we can guarantee
+                                            ::   communication with past peers)
         ::  TODOs
         :: XX tmp=(map @ux page)            :: temporary hash-addressed bindings
     ==
@@ -1615,6 +1644,7 @@
   +$  dire           ?(%bak %for)
   +$  side           [=bone =dire]
   +$  azimuth-state
+    $+  azimuth-state-31
     $:  =symmetric-key
         =life
         =rift
@@ -1623,19 +1653,20 @@
     ==
   ::
   +$  chum-state
-    $+  chum-state
+    $+  chum-state-31
     $%  [%known fren-state]
         [%alien ovni-state]
     ==
   ::
   +$  ovni-state
-    $+  ovni-state
+    $+  ovni-state-31
     $:  pokes=(list [=duct message=mesa-message])
         peeks=(jug [path ints] duct)
         chums=(jug [path ints] duct)
     ==
   ::
   +$  fren-state
+    $+  fren-state-31
     $:  azimuth-state
         lane=(unit [hop=@ =lane:pact])  :: XX (list)
         =qos
@@ -1646,9 +1677,6 @@
         pit=(map path request-state)           :: active +peek namespace paths
         =client=chain                          :: stores keys for %shut requests
         tip=(jug =user=path [duct =ames=path]) :: reverse .pit lookup map
-        ::  a migrated flow in a weird state is tagged with a $term, and data
-        ::
-        weir=(jug side [tag=term data=*])
     ==
   ::
   ::  interest gifts per path in the pith
@@ -2408,6 +2436,7 @@
         [%ogre p=@tas]                                  ::  delete mount point
         [%rule red=dict wit=dict]                       ::  node r+w permissions
         [%tire p=(each rock:tire wave:tire)]            ::  app state
+        [%ward =cast:ward]                              ::  permission state
         [%writ p=riot]                                  ::  response
         [%wris p=[%da p=@da] q=(set (pair care path))]  ::  many changes
     ==                                                  ::
@@ -2415,7 +2444,7 @@
     $~  [%vega ~]                                       ::
     $%  [%boat ~]                                       ::  pier rebooted
         [%cred nom=@ta cew=crew]                        ::  set permission group
-        [%crew ~]                                       ::  permission groups
+        [%crew ~]  ::TODO  remove, add scry endpoint    ::  permission groups
         [%crow nom=@ta]                                 ::  group usage
         [%drop des=desk]                                ::  cancel pending merge
         [%esse des=desk ese=?]                          ::  edit essential desk
@@ -2437,17 +2466,21 @@
         [%ogre pot=$@(term beam)]                       ::  delete mount point
         [%park des=desk yok=yoki ran=rang]              ::  synchronous commit
         [%perm des=desk pax=path rit=rite]              ::  change permissions
+        [%pine des=desk add=? pes=(set perm:gall)]      ::  requesting permissions
         [%pork ~]                                       ::  resume commit
         [%prep lat=(map lobe page)]                     ::  prime clay store
         [%rein des=desk ren=rein]                       ::  extra apps
+        [%seal des=desk add=? pes=(set perm:gall)]      ::  granting or revoking permissions
         [%stir arg=*]                                   ::  debug
         [%tire p=(unit ~)]                              ::  app state subscribe
         [%tomb =clue]                                   ::  tombstone specific
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
+        [%ward ~]                                       ::  permission update
         [%warp wer=ship rif=riff]                       ::  internal file req
         [%werp who=ship wer=ship rif=riff-any]          ::  external file req
         [%wick ~]                                       ::  try upgrade
+        [%wink ~]                                       ::  close subscription to permissions
         [%zeal lit=(list [=desk =zest])]                ::  batch zest
         [%zest des=desk liv=zest]                       ::  live
         $>(%plea vane-task)                             ::  ames request
@@ -2493,7 +2526,7 @@
   ::  having changed; this lets us short-circuit that in some cases.
   ::  Whenever you give an `%ergo`, you must update this.
   ::
-  +$  dome
+  +$  dome  $+  dome
     $:  let=aeon                                        ::  top id
         hit=(map aeon tako)                             ::  versions by id
         lab=(map @tas aeon)                             ::  labels
@@ -2503,6 +2536,9 @@
         wic=(map weft yoki)                             ::  commit-in-waiting
         liv=zest                                        ::  running agents
         ren=rein                                        ::  force agents on/off
+        peg=(set perm:gall) ::xx                            ::  granted perms
+        peq=(set perm:gall) ::xx                            ::  requested opt perms
+        pew=(unit [(set perm:gall) (unit yoki)]) ::xx       ::  awaiting req perms
     ==                                                  ::
   +$  crew  (set ship)                                  ::  permissions group
   +$  dict  [src=path rul=real]                         ::  effective permission
@@ -2614,7 +2650,51 @@
         t=@da                                           ::  date
     ==                                                  ::
   +$  zest  $~(%dead ?(%dead %live %held))              ::  how live
-  ::                                                    ::
+  ::
+  ++  ward                                              ::  permission state
+    |%
+    +$  bond
+      $:  ped=(set perm:gall)  ::  required perms (desk.seal)
+          peg=(set perm:gall)  ::  granted perms
+          peq=(set perm:gall)  ::  requested opt perms
+          pew=(set perm:gall)  ::  awaiting req perms
+      ==
+    ::
+    +$  writ  (map desk bond)
+    ::
+    +$  cast
+      $%  ::  %have: got permissions for a desk  ::TODO  mb split?
+          ::  %need: permissions missing on commit
+          ::
+          [%have =desk ped=(set perm:gall) peg=(set perm:gall) peq=(set perm:gall)]
+          [%need =desk pew=(set perm:gall)]
+      ==
+    ::
+    ++  tell
+    |=  [new=writ old=writ]
+    ^-  (list cast)
+    %-  ~(rep by new)
+    |=  [[=desk bond] acc=(list cast)]
+    ^-  (list cast)
+    =/  has-perms  |(!=(~ ped) !=(~ peg) !=(~ peq))
+    %+  welp  acc
+    ?~  bond=(~(get by old) desk)
+      %+  welp
+        ?:(has-perms [%have desk ped peg peq]~ ~)
+      ?~(pew ~ [%need desk pew]~)
+    ::  if any permissions changed and all of them not null send have
+    %+  welp
+      ?.  ?&  ?|  !=(ped ped.u.bond)
+                  !=(peg peg.u.bond)
+                  !=(peq peq.u.bond)
+              ==
+              has-perms
+          ==
+        ~
+      [%have desk ped peg peq]~
+    ?:(=(pew pew.u.bond) ~ [[%need desk pew] ~])
+  --
+  ::                                             ::
   ++  tire                                              ::  app state
     |%                                                  ::
     +$  rock  (map desk [=zest wic=(set weft)])         ::
@@ -2683,12 +2763,12 @@
             ~
           [%zest desk zest.bb]~
         ::
-          %+  turn  ~(tap by wadds)
+          %+  turn  ~(tap by wadds)  ::TODO  consider sorting
           |=  =weft
           ^-  wave
           [%wait desk weft]
         ::
-          %+  turn  ~(tap by wdels)
+          %+  turn  ~(tap by wdels)  ::TODO  consider sorting
           |=  =weft
           ^-  wave
           [%warp desk weft]
@@ -2785,32 +2865,6 @@
     ++  pact  |~(diff=vase sam)
     ++  vale  |~(noun sam)
     --
-  ::  $ford-api: typed ford build interface
-  ::
-  ::    wraps a ford core compiled against a foreign zuse,
-  ::    providing typed access to build arms. vase/cage outputs
-  ::    are in the foreign type universe; callers next-vase as needed.
-  ::
-  +$  ford-api
-    $_  ^|
-    |_  $:  files=(map path (each page lobe))
-            file-store=(map lobe page)
-            verb=@
-        ==
-    ++  read-file     |~(pax=path *cage)
-    ++  build-file    |~(pax=path *vase)
-    ++  build-nave    |~(mak=mark *vase)
-    ++  build-dais    |~(mak=mark *dais)
-    ++  build-cast    |~([a=mark b=mark] *vase)
-    ++  build-tube    |~([a=mark b=mark] *tube)
-    ++  validate-page
-      |~([pax=path pag=^page] *cage)
-    ++  page-to-cage
-      |~(pag=^page *cage)
-    ++  cast-path     |~([pax=path mak=mark] *cage)
-    ++  prelude       |~(pax=path *vase)
-    ++  build-fit     |~([pre=@tas pax=@tas] *vase)
-    --
   ::
   ++  get-fit
     |=  [bek=beak pre=@tas pax=@tas]
@@ -2859,7 +2913,7 @@
   +$  gift                                              ::  out result <-$
     $%  [%blit p=(list blit)]                           ::  terminal output
         [%logo ~]                                       ::  logout
-        [%meld ~]                                       ::  unify memory
+        [%meld $@(~ [memo=? ford=?])]                   ::  unify memory
         [%pack ~]                                       ::  compact memory
         [%trim p=@ud]                                   ::  trim kernel state
         [%logs =told]                                   ::  system output
@@ -2877,7 +2931,7 @@
         [%logs p=(unit ~)]                              ::  watch system output
         [%mass ~]                                       ::  run memory report
         [%quac p=(list quac)]                           ::  memory runtime
-        [%meld ~]                                       ::  unify memory
+        [%meld $@(~ [memo=? ford=?])]                   ::  unify memory
         [%pack ~]                                       ::  compact memory
         [%seat =desk]                                   ::  install desk
         [%shot ses=@tas task=session-task]              ::  task for session
@@ -2924,6 +2978,7 @@
     ==                                                  ::
   +$  blit                                              ::  client output
     $%  [%bel ~]                                        ::  make a noise
+        [%bye ~]                                        ::  session ended
         [%clr ~]                                        ::  clear the screen
         [%hop p=$@(@ud [x=@ud y=@ud])]                  ::  set cursor col/pos
         [%klr p=stub]                                   ::  put styled
@@ -2950,7 +3005,7 @@
     $%  [%crop p=@ud]                                   ::  trim kernel state
         $>(%crud told)                                  ::
         [%heft ~]                                       ::
-        [%meld ~]                                       ::  unify memory
+        [%meld $@(~ [memo=? ford=?])]                   ::  unify memory
         [%pack ~]                                       ::  compact memory
         $>(%text told)                                  ::
         [%verb ~]                                       ::  verbose mode
@@ -3627,10 +3682,11 @@
     $%  [%clog id=*]                                    ::  clog notification
         [%deal p=sack q=term r=deal]                    ::  full transmission
         [%sear =ship]                                   ::  clear pending queues
-        [%jolt =desk =dude]                             ::  (re)start agent
+        [%jolt =desk =dude]                             ::  deprecated
         [%idle =dude]                                   ::  suspend agent
         [%load =load]                                   ::  load agent
         [%nuke =dude]                                   ::  delete agent
+        [%name =dude task=task-namespace-v1]            ::  agent namespace mgmt
         [%doff dude=(unit dude) ship=(unit ship)]       ::  kill subscriptions
         [%rake dude=(unit dude) all=?]                  ::  reclaim old subs
         [%lave subs=(list [?(%g %a) ship dude duct])]   ::  delete stale bitt(s)
@@ -3667,15 +3723,163 @@
   ::
   +$  arvo-resource
     $:  =wire
-    $%  ::REVIEW  what if this in place of .ken? [%ames %keen =spar:ames]
+    $%
+        [%ames %keen =spar:ames]
         [%behn %wait =time]
-        :: [%clay %warp =ship =desk]
-        [%eyre %binding =binding:eyre wat=$@(term generator:eyre)]
+        [%clay %warp id=*]
+        [%clay %tire]
+        [%clay %ward]
+        [%dill %logs]
+        [%dill %mass]
+        [%dill %view ses=@tas]
+        [%eyre %binding =binding:eyre]
         [%eyre %cache url=@t]  ::TODO  if we had the data we could reinflate...
         [%iris %request]
-        :: [%khan ?(%fard %fyrd %lard)]
+        [%jael %keys]
         [%lick %spin =name:lick]
+        [%khan %thread =bear:khan name=(unit term)]
     ==  ==
+  ::
+  +$  resource-deet
+    $~  [%jael %keys %private]
+    $%  [%ames %keen sec=(unit resolved=(unit key=(unit [idx=@ key=@])))]
+        [%eyre %binding wat=$@(term generator:eyre)]
+        [%eyre %cache entry=cache-entry:eyre]
+        [%clay %warp =ship =desk =rave:clay]
+        [%jael %keys wat=?(%private %public (set ship))]
+        [%khan %thread result=(avow:khan cage)]  ::REVIEW  or unitize?
+    ==
+  ::
+  ++  track  ::  resource tracking utils
+    |%
+    +$  resource-deets  (map arvo-resource resource-deet)
+    ++  card-resource
+      |=  =card:agent
+      ^-  $@(~ [add=$@(? resource-deet) res=_+:*arvo-resource])
+      ?.  ?=([%pass * %arvo *] card)  ~
+      =*  task  +.q.card
+      ?+  task  ~
+        [%ames %keen *]                 :-  [%ames %keen ?:(secret.task `~ ~)]
+                                        [%ames %keen spar.task]
+        [%ames %yawn *]                 [| %ames %keen spar.task]
+        [%behn %wait *]                 [& %behn %wait time.task]
+        [%behn %rest *]                 [| %behn %wait time.task]
+        [%clay %read *]                 :-  [%clay %warp ship desk rave]:task
+                                        [%clay %warp id.task]
+        [%clay %rest *]                 [| %clay %warp id.task]
+        [%clay %tire *]                 [?~(p.task | &) %clay %tire]
+        [%clay %ward *]                 [?~(p.task | &) %clay %ward]
+        [%dill %logs *]                 [?~(p.task | &) %dill %logs]
+        [%dill %mass *]                 [& %dill %mass]
+        [%dill %shot @ %view *]         [& %dill %view ses.task]
+        [%dill %shot @ %flee *]         [| %dill %view ses.task]
+        [%eyre %connect *]              :-  [%eyre %binding wat.task]
+                                        [%eyre %binding binding.task]
+        [%eyre %disconnect *]           [| %eyre %binding binding.task]
+        [%eyre %set-response * ^]       :-  [%eyre %cache u.entry.task]
+                                        [%eyre %cache url.task]
+        [%eyre %set-response * ~]       [| %eyre %cache url.task]
+        [%iris %request *]              [& %iris %request]
+        [%iris %cancel-request ~]       [| %iris %request]
+        [%jael %public-keys ^]          :_  [%jael %keys]
+                                        ?:  =(~ u.sub.task)
+                                          [%jael %keys %public]
+                                        [%jael %keys u.sub.task]
+        [%jael %public-keys ~]          [| %jael %keys]
+        [%jael %private-keys ^]         :_  [%jael %keys]
+                                        [%jael %keys %private]
+        [%jael %private-keys ~]         [| %jael %keys]
+        [%khan %fard *]                 [& %khan %thread bear.p.task `name.p.task]
+        [%khan %lard *]                 [& %khan %thread bear.task ~]
+        [%lick %spin *]                 [& %lick %spin name.task]
+        [%lick %shut *]                 [| %lick %spin name.task]
+      ==
+    ::  +apply-gift: affect resources for live agent
+    ::
+    ++  apply-gift
+      |=  [=wire gift=gift-user-v1 res=(set arvo-resource) dets=resource-deets]
+      ^-  [res=(set arvo-resource) dets=resource-deets]
+      =;  upd=(unit (each [_+:*arvo-resource resource-deet] _+:*arvo-resource))
+        ?-  upd
+          ~         [res dets]
+          [~ %& *]  :-  res
+                    (~(put by dets) [wire -.p.u.upd] +.p.u.upd)
+          [~ %| *]  :-  (~(del in res) wire p.u.upd)
+                    (~(del by dets) wire p.u.upd)
+        ==
+      ?+  gift  ~
+        [%ames %sage *]  `|+[%ames %keen p.sage.gift]
+        [%behn *]        `|+[%behn %wait time.gift]
+      ::
+          [%clay %read *]
+        =*  rid  [%clay %warp id.gift]
+        =+  det=(~(got by dets) wire rid)
+        ?>  ?=([%clay %warp *] det)
+        ::  %sing is always single-shot,
+        ::  %many gives a range of responses and has explicit "end" signal
+        ::
+        ?.  ?=(%many -.rave.det)  `|+[%clay %warp id.gift]
+        ?~  riot.gift             `|+[%clay %warp id.gift]
+        ::NOTE  %many requests always get %ud case in the response
+        ::NOTE  we don't care about resolving the original case, just increment
+        ::      past what we've received
+        ?>  ?=(%ud -.q.p.u.riot.gift)
+        =/  nex=@ud  +(p.q.p.u.riot.gift)
+        `&+[rid det(from.moat.rave ud+nex)]
+      ::
+          [%clay %reds *]
+        ::  %mult is always single shot
+        ::
+        =+  det=(~(got by dets) wire [%clay %warp id.gift])
+        ?>  ?=([%clay %warp *] det)
+        ?>  ?=(%mult -.rave.det)
+        `|+[%clay %warp id.gift]
+      ::
+        [%dill %meme *]  `|+[%dill %mass]
+      ::
+          [%dill %blit *]
+        =;  bye=?  ?:(bye `|+[%dill %view ses.gift] ~)
+        |-
+        ?&  ?=(^ biz.gift)
+        ?|  ?+(-.i.biz.gift | %bye &, %mor $(biz.gift p.i.biz.gift))
+            $(biz.gift t.biz.gift)
+        ==  ==
+      ::
+        [%eyre *]     ?:  bound.gift  ~
+                      `|+[%eyre %binding binding.gift]
+        [%iris *]     `|+[%iris %request]
+        [%lick *]     ~
+        [%khan *]     `|+[%khan %thread bear name]:gift
+        [%revoked *]  `|++>.gift
+      ==
+    ::
+    ++  drop-resource
+      |=  [res=arvo-resource dets=resource-deets]
+      ^-  (unit task-user-v1)
+      ?-  +.res
+        [%ames %keen *]     =+  d=(~(got by dets) res)
+                            ?>  ?=([%ames %keen *] d)
+                            ?.  |(=(~ sec.d) ?=([~ ~ ~ *] sec.d))  ~
+                            `[%ames %yawn spar.res]
+        [%behn %wait *]     `[%behn %rest time.res]
+        [%clay %warp *]     `[%clay %rest id.res]
+        [%clay %tire]       `[%clay %tire ~]
+        [%clay %ward]       `[%clay %ward ~]
+        [%dill %logs]       `[%dill %logs ~]
+        [%dill %mass]       ~
+        [%dill %view *]     `[%dill %shot ses.res %flee ~]
+        [%eyre %binding *]  `[%eyre %disconnect binding.res]
+        [%eyre %cache *]    `[%eyre %set-response url.res ~]
+        [%iris %request]    `[%iris %cancel-request ~]
+        [%jael %keys]       =+  d=(~(got by dets) res)
+                            ?>  ?=([%jael %keys *] d)
+                            ?:  ?=(%private wat.d)
+                              `[%jael %private-keys ~]
+                            `[%jael %public-keys ~]
+        [%khan %thread *]   ~
+        [%lick %spin *]     `[%lick %shut name.res]
+      ==
+    --
   ::
   +$  egg                                               ::  migratory agent
     $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)] ::  state; see /sys/gall
@@ -3688,34 +3892,12 @@
             =boat
             =boar
             resources=(set arvo-resource)
+            resource-deets=(map arvo-resource resource-deet)
             code=~
-            zus=@ud
-            old-state=[%| vase]
+            old-state=[%| clean=? state=vase]
             =beak
             marks=(map duct mark)
             sky=farm
-            ken=(jug spar:ames wire)
-            pen=(jug spar:ames wire)
-            gem=(jug coop [path page])
-    ==  ==
-  +$  egg-20                                            ::  pre-zus migratory agent
-    $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)]
-        $:  %live
-            control-duct=duct
-            run-nonce=@t
-            sub-nonce=@
-            =stats
-            =bitt
-            =boat
-            =boar
-            resources=(set arvo-resource)
-            code=~
-            old-state=[%| vase]
-            =beak
-            marks=(map duct mark)
-            sky=farm
-            ken=(jug spar:ames wire)
-            pen=(jug spar:ames wire)
             gem=(jug coop [path page])
     ==  ==
   +$  egg-any  $%([%15 egg-15] [%16 egg-16] [%20 egg-20] [%21 egg])
@@ -3755,44 +3937,25 @@
             pen=(jug spar:ames wire)
             gem=(jug coop [path page])
     ==  ==
-  ::  +egg-aid: normalize a serialized agent state ($egg-any) to the latest $egg
-  ::
-  ++  egg-aid
-    |%
-    ++  latest
-      |=  e=egg-any
-      ^-  egg
-      ?-  -.e
-        %21  +.e
-        %20  (egg-20-to-21 +.e)
-        %16  (egg-20-to-21 (egg-16-to-20 +.e))
-        %15  ~|(%egg-15-unsupported !!)  ::  pre-%16; +of-farm lives in gall now
-      ==
-    ::  +egg-20-to-21: add per-agent zuse kelvin (.zus); defaults to 0 since
-    ::  lull can't see the live +zuse and all callers (negotiate) discard it.
-    ::
-    ++  egg-20-to-21
-      |=  e=egg-20
-      ^-  egg
-      ?:  ?=(%nuke -.e)  e
-      :*  %live
-          control-duct.e  run-nonce.e  sub-nonce.e  stats.e  bitt.e
-          boat.e  boar.e  resources.e  code.e  *@ud  old-state.e
-          beak.e  marks.e  sky.e  ken.e  pen.e  gem.e
-      ==
-    ::  +egg-16-to-20: migrate old-state's h136 vase to live h135, add .resources
-    ::
-    ++  egg-16-to-20
-      |=  e=egg-16
-      ^-  egg-20
-      ?:  ?=(%nuke -.e)  e
-      :*  %live
-          control-duct.e  run-nonce.e  sub-nonce.e  stats.e  bitt.e
-          boat.e  boar.e  *(set arvo-resource)  code.e
-          [%| (next-vase:h136 +.old-state.e)]  beak.e
-          marks.e  sky.e  ken.e  pen.e  gem.e
-      ==
-    --
+  +$  egg-20
+    $%  [%nuke sky=(map spur @ud) cop=(map coop hutch)]
+        $:  %live
+            control-duct=duct
+            run-nonce=@t
+            sub-nonce=@
+            =stats
+            =bitt
+            =boat
+            =boar
+            code=~
+            old-state=[%| vase]
+            =beak
+            marks=(map duct mark)
+            sky=farm
+            ken=(jug spar:ames wire)
+            pen=(jug spar:ames wire)
+            gem=(jug coop [path page])
+    ==  ==
   ::
   +$  bowl                                              ::  standard app state
     $+  gall-agent-bowl                                 ::
@@ -3804,15 +3967,103 @@
         $:  wex=boat                                    ::  outgoing subs
             sup=bitt                                    ::  incoming subs
             sky=(map path fans)                         ::  scry bindings
+            ras=(set arvo-resource)                     ::  agent resources
+            rad=(map arvo-resource resource-deet)       ::  resource details
         ==                                              ::
         $:  act=@ud                                     ::  change number
             eny=@uvJ                                    ::  entropy
             now=@da                                     ::  current time
             byk=beak                                    ::  load source
+            peg=(set perm)                              ::  granted permissions
     ==  ==                                              ::                                                  ::
   +$  dude  term                                        ::  server identity
   +$  gill  (pair ship term)                            ::  general contact
-  +$  load  (list [=dude =beak zus=@ud =vase])          ::  loadout
+  ::
+  +$  dash  [desk=(unit desk) =spur]
+  +$  cash  [care=(unit) dash]
+  ::
+  +$  perm
+    $%  perm-arvo
+        perm-gall
+        [%super ~]  ::  anything, required for syscalls
+    ==
+  +$  perm-gall
+    $%  [%write dude=(unit dude)]        ::  local pokes
+        [%watch dude=(unit dude) =path]  ::  local watches
+        [%reads vane=term cash]          ::  local scries
+        [%fling ~]                       ::  anything over the network
+    ==
+  +$  perm-arvo
+    $%  $:  %ames
+        $%  [%block ~]                                  ::  %snub
+            [%reads dash]                               ::  local %keen
+            [%keens ~]                                  ::  remote %keen
+            [%write ~]  ::NOTE  agent-namespaced        ::  %grow %tomb %cull %tend %germ %snip
+            [%debug ~]                                  ::  %sift %spew
+        ==  ==
+      ::
+        $:  %behn
+        $%  [%timer ~]                                  ::  %wait
+        ==  ==
+      ::
+        $:  %clay
+        $%  [%local cash]                               ::  %read for local
+            [%peers ~]                                  ::  %read for remote
+            [%write dash]                               ::  %rite %name %merg %fuse %drop
+            [%crews ~]                                  ::  %cred %crow
+            [%rules des=(unit desk)]                    ::  %perm
+            [%stone des=(unit desk)]                    ::  %tomb
+            [%mount ~]                                  ::  %mont %ogre %dirk
+          ::
+            [%desks des=(unit desk)]                    ::  %esse %rein %zeal %zest
+            [%pulse ~]                                  ::  %tire
+            [%perms ~]                                  ::  %seal
+            [%guard ~]                                  ::  %ward
+        ==  ==
+      ::
+        $:  %dill
+        $%  [%terms ~]                                  ::  %shot
+            [%print ~]                                  ::  %crud %talk %text
+            [%sylog ~]  ::TODO  name                    ::  %logs
+            [%weigh ~]                                  ::  %mass
+            [%press ~]                                  ::  %meld %pack
+        ==  ==
+      ::
+        $:  %eyre
+        $%  [%setup ~]                                  ::  %eauth-host %rule
+            [%serve =path]                              ::  %connect %set-response
+            [%cross ~]                                  ::  %approve-origin %reject-origin
+            [%debug ~]                                  ::  %spew
+        ==  ==
+      ::
+        $:  %gall
+        $%  [%clear dude=(unit dude)]                   ::  %nuke
+            [%debug ~]                                  ::  %spew %sift
+        ==  ==
+      ::
+        $:  %iris
+        $%  [%fetch ~]                                  ::  %request
+        ==  ==
+      ::
+        $:  %jael
+        $%  [%privy ~]                                  ::  %private-keys
+            [%watch ~]                                  ::  %listen
+            [%moons ~]                                  ::  %moon
+            [%rekey ~]                                  ::  %rekey
+            [%login ~]                                  ::  %step
+            [%blast ~]                                  ::  %ruin
+        ==  ==
+      ::
+        $:  %khan
+        $%  [%twine ~]                                  ::  %fard %lard
+        ==  ==
+      ::
+        $:  %lick
+        $%  [%ports ~]                                  ::  %spin %shut %spit
+        ==  ==
+    ==
+  ::
+  +$  load  (list [=dude =beak per=[peg=(set perm) peq=(set perm)] =agent])  ::  loadout
   +$  scar                                              ::  opaque duct
     $:  p=@ud                                           ::  bone sequence
         q=(map duct bone)                               ::  by duct
@@ -3835,71 +4086,190 @@
   ::
   ::  userspace api
   ::
+  ::REVIEW  dangerous to rely on vane cores for type definitions here!
   +$  task-user-v1
-    $%  [%ames %keen secret=? =spar:ames]
-        [%ames %yawn =spar:ames]
+    $%  $:  %ames
+        $%  [%prod ships=(list ship)]
+            [%sift ships=(list ship)]
+            [%snub form=?(%allow %deny) ships=(list ship)]
+            [%spew veb=(list verb:ames)]
+            [%cong msg=@ud mem=@ud]
+            [%stir arg=@t]
+          ::
+            ::NOTE  not actually into %ames, just gall-side namespace management
+            ::      (per-agent namespace)
+            :: review: [%keen secret=(each [cas=@ app=@tas spar:ames] spar:ames)]
+            [%keen secret=? =spar:ames]
+            [%yawn =spar:ames]
+          ::
+            task-namespace-v1
+          ::
+            [%trim p=@ud]
+        ==  ==
       ::
-        ::NOTE  not actually into %ames, just gall-side namespace management
-        [%ames %grow =spur =page]
-        [%ames %tomb =case =spur]
-        [%ames %cull =case =spur]
-        [%ames %tend =coop =path =page]
-        [%ames %germ =coop]
-        [%ames %snip =coop]
+        $:  %behn
+        $%  [%wait =time]
+            [%rest =time]
+            [%trim p=@ud]
+        ==  ==
       ::
-        [%behn %wait =time]
-        [%behn %rest =time]
+        $:  %clay
+        $%  [%read id=* =ship =desk =rave:clay]  ::  %warp
+            [%rest id=*]  ::  %warp cancel
+            :: [%nuke ~]  ::TODO  support dropping all from wire?
+          ::
+            [%rite des=desk sob=soba:clay]  ::  %info %&
+            [%name des=desk lab=@tas yon=(unit aeon:clay)]  ::  %info %|
+          ::
+            [%cred nom=@ta cew=crew:clay]
+            [%crow nom=@ta]
+            [%perm des=desk pax=path rit=rite:clay]
+          ::
+            [%esse des=desk ese=?]
+            [%rein des=desk ren=rein:clay]
+            [%zeal lit=(list [=desk =$~(%dead zest:clay)])]  ::TODO  unify?
+            [%zest des=desk liv=zest:clay]         ::TODO  unify?
+            [%tire p=(unit ~)]  ::NOTE  sub
+          ::
+            [%pine des=desk add=? pes=(set perm)]
+            [%seal des=desk add=? pes=(set perm)]
+            [%ward p=(unit ~)]
+          ::
+            [%merg des=desk her=@p dem=desk cas=case how=germ:clay]
+            [%fuse des=desk bas=beak con=(list [beak $~(%init germ:clay)])]
+            [%drop des=desk]
+          ::
+            [%mont pot=term bem=beam]
+            [%ogre pot=$@(term beam)]
+            [%dirk pot=term]
+          ::
+            [%tomb =clue:clay]
+            [%trim p=@ud]
+        ==  ==
       ::
-        :: [%clay %read id=@ =ship =desk read=(unit $<(%many rave:clay))]
+        $:  %dill
+        $%  [%shot ses=@tas task=session-task:dill]
+            ::TODO  consider [session-task:dill] for easier default session
+          ::
+            [%logs p=(unit ~)]
+            [%crud p=@tas q=tang]
+            [%talk p=(list tank)]
+            [%text p=tape]
+          ::
+            [%mass ~]
+            [%meld ~]
+            [%pack ~]
+            [%trim p=@ud]
+        ==  ==
       ::
-        [%eyre %rule =http-rule:eyre]
-        [%eyre %eauth-host host=(unit @t)]
-        [%eyre %connect =binding:eyre wat=$@(term generator:eyre)]
-        [%eyre %disconnect =binding:eyre wat=$@(term generator:eyre)]
-        [%eyre %approve-origin =origin:eyre]
-        [%eyre %reject-origin =origin:eyre]
-        [%eyre %spew veb=@]
-        [%eyre %set-response url=@t entry=(unit cache-entry:eyre)]
+        $:  %eyre
+        $%  [%rule =http-rule:eyre]
+            [%eauth-host host=(unit @t)]
+            [%connect =binding:eyre wat=$@(term generator:eyre)]
+            [%disconnect =binding:eyre]
+            [%approve-origin =origin:eyre]
+            [%reject-origin =origin:eyre]
+            [%spew veb=@]
+            [%set-response url=@t entry=(unit cache-entry:eyre)]
+            [%trim p=@ud]
+        ==  ==
       ::
-        [%iris %request =request:http =outbound-config:iris]
-        [%iris %cancel-request ~]
+        $:  %gall
+        $%  [%nuke =dude]
+          ::
+            [%spew veb=(list verb:gall)]
+            [%sift dudes=(list dude)]
+            [%sear =ship]
+            [%trim p=@ud]
+        ==  ==
       ::
-        [%lick %spin =name:lick]
-        [%lick %shut =name:lick]
-        [%lick %spit =name:lick =mark =noun]
+        $:  %iris
+        $%  [%request =request:http =outbound-config:iris]
+            [%cancel-request ~]
+            [%trim p=@ud]
+        ==  ==
+      ::
+        $:  %jael
+        $%  [%private-keys sub=(unit ~)]
+            [%public-keys sub=(unit (set ship))]
+          ::
+            [%listen whos=(set ship) =source:jael]
+            [%turf ~]
+          ::
+            [%moon =ship =udiff:point:jael]
+            [%rekey =life =ring]
+            [%step ~]
+            [%ruin ships=(set ship)]
+          ::
+            [%trim p=@ud]
+        ==  ==
+      ::
+        $:  %khan
+        $%  [%fard p=(fyrd:khan cage)]
+            [%lard =bear:khan =shed:khan]
+            [%trim p=@ud]
+        ==  ==
+      ::
+        $:  %lick
+        $%  [%spin =name:lick]
+            [%shut =name:lick]
+            [%spit =name:lick =mark =noun]
+            [%trim p=@ud]
+        ==  ==
       ::
         [%syscall note-arvo=*]  ::NOTE  secretly $note-arvo, DO NOT DOCUMENT (;
     ==
   ::
+  +$  task-namespace-v1
+    $%  [%grow =spur =page]
+        [%tomb =case =spur]
+        [%cull =case =spur]
+        [%tend =coop =path =page]
+        [%germ =coop]
+        [%snip =coop]
+    ==
+  ::
   +$  gift-user-v1
     $%  [%ames %sage =sage:mess:ames]
-        [%behn %wake =time]  ::REVIEW
-        :: [%clay %read =riot:clay]
+        [%behn %wake =time]
+        [%clay %read id=* =riot:clay]
+        [%clay %tire p=(each rock:tire:clay wave:tire:clay)]
+        [%clay %reds id=* p=[%da p=@da] q=(set (pair care:clay path))]
+        [%clay %mere p=(each (set path) (pair term tang))]
+        [%clay %ward =cast:ward:clay]
+        [%dill %blit ses=@tas biz=(list blit:dill)]
+        [%dill %logs =told:dill]
+        [%dill %meme p=(list quac:dill)]
         [%eyre %bound bound=? =binding:eyre wat=$@(term generator:eyre)]  ::NOTE  could become unbound _after_ binding!
         [%iris %http-response =client-response:iris]
+        [%jael %private-keys =life vein=(map life ring)]
+        [%jael %public-keys =public-keys-result:jael]
+        [%jael %turf turf=(list turf)]
+        [%khan %arow =bear:khan name=(unit term) res=(avow:khan cage)]
         [%lick %soak =name:lick =mark =noun]
       ::
         [%syscall actual-kelvin=@ sign-arvo=*]  ::NOTE  secretly $sign-arvo, DO NOT DOCUMENT (;
         [%unsupported ~]
+        [%revoked =arvo-resource]
     ==
   ::
-  +$  agent-any
-    $%  agent
-        agent-old
-    ==
   ::  +agent: app core
   ::
   ++  agent
-    =<  ,[mod=%new-agent fom=form]
+    =<  form
     |%
     +$  step  (quip card form)
     +$  card
       $+  gall-agent-card
       (wind note gift)
-    +$  note
-      $+  gall-agent-note
+    +$  rote
       $%  [%agent [=ship name=term] =task]
           [%arvo task-user-v1]
+      ==
+    +$  note
+      $+  gall-agent-note
+      $%  rote
+          [%dole from=desk =rote]
       ==
     +$  task
       $+  gall-agent-task
@@ -3922,6 +4292,12 @@
           [%watch-ack p=(unit tang)]
           [%fact =cage]
           [%kick ~]
+      ==
+    +$  frag  [from=?(%crash %perms) =tang]
+    +$  call
+      $%  [%on-agent =wire =sign]
+          [%on-leave =path]
+          [%on-arvo =wire gift=gift-user-v1]
       ==
     ++  form
       $_  ^|
@@ -3961,98 +4337,714 @@
         *(quip card _^|(..on-init))
       ::
       ++  on-fail
-        |~  [term tang]
+        |~  [frag call]
         *(quip card _^|(..on-init))
       --
     --
   ::
-  ++  agent-old
-    =<  ,[mod=%old-agent fom=form]
+  ++  guard  ::  perm check utils
     |%
-    +$  step  (quip card form)
-    +$  card
-      $+  old-gall-agent-card
-      (wind note gift)
-    +$  note
-      $+  old-gall-agent-note
-      $%  [%agent [=ship name=term] =task]
-          [%arvo note-arvo]
-          [%pyre =tang]
+    ++  rite  ::  namespace permission check
+      |=  [our=ship pes=(set perm) [=view =beam]]
+      ^-  ?
+      ?.  =(our p.beam)  |
+      =/  [vane=term care=(unit term)]
+        ?^  view  [way.view `car.view]
+        ?.  =(2 (met 3 view))
+          [view ~]
+        [(end 3 view) `(rsh 3 view)]
+      (have pes [%reads vane care `q.beam s.beam])
+    ::
+    ++  cres
+      |=  [our=ship pes=(set perm) caz=(list card:agent)]
+      ^-  ?
+      (levy caz (cury (cury cred our) pes))
+    ::
+    ++  cres-tang  ::  +cres with trace
+      |=  [our=ship pes=(set perm) caz=(list card:agent)]
+      ^-  (each ~ tang)
+      =;  trace=tang
+        ?~  trace  [%.y ~]
+        [%.n trace]
+      %+  roll  caz
+      |=  [=card:agent trace=tang]
+      =/  per=$^((each ~ tank) (lest perm))  (must our card)
+      ?@  -.per
+        ?:  ?=([%.n %leaf *] per)  [p.per trace]
+        trace
+      %-  welp  :_  trace
+      %+  murn  `(list perm)`per
+      |=  =perm
+      ?:  (have pes perm)  ~
+      `leaf+"guard: missing permission: {<perm>}"
+    ::
+    ++  cred  ::  userspace permission check
+      |=  [our=ship pes=(set perm) =card:agent]
+      ^-  ?
+      =/  per  (must our card)
+      ?@  -.per  -.per
+      (levy `(list perm)`per (cury have pes))
+    ::
+    ++  over  ::  find .pes that .mus nests under
+      |=  [pes=(set perm) mus=perm]
+      ^-  (list perm)
+      %+  roll  ~(tap in pes)
+      |=  [per=perm ped=(list perm)]
+      ?:((have (silt ~[per]) mus) [per ped] ped)
+    ::
+    ++  have  ::  .pes has .mus or broader
+      |=  [pes=(set perm) mus=perm]
+      ^-  ?
+      ?:  (~(has in pes) %super ~)  &
+      %+  lien  ~(tap in pes)
+      |=  per=perm
+      ?:  =(mus per)       &
+      ?.  =(-.mus -.per)   |
+      ?:  ?=(?(%write %watch %reads %fling) -.mus)
+        ?+  -.per  |
+            %write
+          ?>  ?=([%write *] mus)
+          (have-unit dude.mus dude.per)
+        ::
+            %watch
+          ?>  ?=([%watch *] mus)
+          ?&  (have-unit dude.mus dude.per)
+              (have-path path.mus path.per)
+          ==
+        ::
+            %reads
+          ?>  ?=([%reads *] mus)
+          ?&  =(vane.mus vane.per)
+              (have-unit care.mus care.per)
+              (have-unit desk.mus desk.per)
+              (have-path spur.mus spur.per)
+          ==
+        ::
+          %fling  ?>(?=(%fling -.mus) &)
+        ==
+      ?.  =(+<.mus +<.per)  |
+      ?+  per  |
+          [%clay %local *]  ::  cash
+        ?>  ?=([%clay %local *] mus)
+        ?&  (have-unit care.mus care.per)
+            (have-unit desk.mus desk.per)
+            (have-path spur.mus spur.per)
+        ==
       ::
-          [%grow =spur =page]
-          [%tomb =case =spur]
-          [%cull =case =spur]
+          ?([%ames %reads *] [%clay %write *])  ::  dash
+        ?>  ?=(?([%ames %reads *] [%clay %write *]) mus)
+        ?&  (have-unit desk.mus desk.per)
+            (have-path spur.mus spur.per)
+        ==
       ::
-          [%tend =coop =path =page]
-          [%germ =coop]
-          [%snip =coop]
+          [%clay ?(%rules %stone %desks) *]  :: (unit desk)
+        ?>  ?=([%clay ?(%rules %stone %desks) *] mus)
+        (have-unit des.mus des.per)
       ::
-          [%keen secret=? spar:ames]
+          [%eyre %serve *]  ::  path
+        ?>  ?=([%eyre %serve *] mus)
+        (have-path path.mus path.per)
+      ::
+          [%gall %clear *]  :: (unit dude)
+        ?>  ?=([%gall %clear *] mus)
+        (have-unit dude.mus dude.per)
       ==
-    +$  task
-      $+  old-gall-agent-task
-      $%  [%watch =path]
-          [%watch-as =mark =path]
-          [%leave ~]
-          [%poke =cage]
-          [%poke-as =mark =cage]
+    ::
+    ++  have-unit
+      |=  [mus=(unit) per=(unit)]
+      ?|  =(~ per)
+          =(mus per)
       ==
-    +$  gift
-      $+  old-gall-agent-gift
-      $%  [%fact paths=(list path) =cage]
-          [%kick paths=(list path) ship=(unit ship)]
-          [%watch-ack p=(unit tang)]
-          [%poke-ack p=(unit tang)]
+    ::
+    ++  have-path  ::  check if req path nested within per
+      |=  [req=path per=path]
+      =|  p=path
+      |-
+      ?:  =(p per)  &
+      ?~  req       |
+      $(p (welp p [i.req ~]), req t.req)
+    ::
+    ++  must  ::  perm required for card
+      |=  [our=ship =card:agent]
+      ^-  $^((each ~ tank) (lest perm))  ::  always/never allowed with trace, or lest perm
+      ::TODO  do not require any perms for resource cleanup tasks
+      =/  trace
+        |=  [task=task-user-v1 =tape]
+        :-  %leaf
+        "guard: can't resolve {<-.task>} {<;;(@tas -.+.task)>} to permission {tape}"
+      ::
+      ?-  -.card
+          %give  [%.y ~]
+          %slip  $(card [%pass / p.card])
+          %pass
+        =/  =note:agent  q.card
+        ?-  -.note
+            %agent
+          ?.  =(our ship.note)  [%fling ~]~
+          ?-  -.task.note
+            %watch             [%watch `name.note path.task.note]~
+            %watch-as          [%watch `name.note path.task.note]~
+            %leave             [%.y ~]
+            ?(%poke %poke-as)  [%write `name.note]~
+          ==
+            %arvo
+          =/  task=task-user-v1  +.note
+          ?-  -.task
+              %ames
+            ^-  $^((each ~ tank) (lest perm))
+            ?-  +<.task
+              ?(%prod %cong %stir)  [%super ~]~
+              ?(%sift %spew)        [%ames %debug ~]~
+              %snub                 [%ames %block ~]~
+              %keen                 ?.  =(our ship.spar.task)  [%ames %keens ~]~
+                                    ?.  ?=([@ @ @ @ *] path.spar.task)
+                                      [%.n (trace task "malformed: path={(spud path.spar.task)}")]
+                                    =/  =spur  t.t.t.t:path.spar.task
+                                    [[%ames %reads `i.t.t.t:path.spar.task spur] ~]
+              %yawn                 [%.y ~]
+              ?(%grow %tomb %cull %tend %germ %snip)
+                                    [%ames %write ~]~
+              %trim                 [%super ~]~
+            ==
+          ::
+              %behn
+            ?-  +<.task
+              %wait                 [%behn %timer ~]~
+              %rest                 [%.y ~]
+              %trim                 [%super ~]~
+            ==
+          ::
+              %clay
+            ^-  $^((each ~ tank) (lest perm))
+            ?-  +<.task
+                %read
+              ?.  =(our ship.task)  [%clay %peers ~]~
+              =/  to-per  |=  [care=(unit) =path]
+                          ^-  perm
+                          [%clay %local care `desk.task path]
+              ?-  -.rave.task
+                %sing  [(to-per [`care path]:mood.rave.task) ~]
+                %next  [(to-per [`care path]:mood.rave.task) ~]
+                %mult
+                  =/  paths=(list [care:clay path])  ~(tap in paths.mool.rave.task)
+                  =/  per  (turn paths |=([c=@ =path] (to-per [`c path])))
+                  ?~(per [%.y ~] per)
+                %many  [(to-per [~ path.moat.rave.task]) ~]
+              ==
+            ::
+              ?(%rest %pine)        [%.y ~]
+            ::
+                %rite
+              =/  per
+                %+  turn  sob.task
+                |=([=path *] [%clay %write `des.task path])
+              ?~(per [%.y ~] per)
+            ::
+              %name                 [%clay %write `des.task /]~
+              %merg                 [%clay %write `des.task /]~
+              %drop                 [%clay %write `des.task /]~
+              %fuse                 [%clay %write `des.task /]~
+              ?(%cred %crow)        [%clay %crews ~]~
+              %perm                 [%clay %rules `des.task]~
+              ?(%esse %rein %zest)  [%clay %desks `des.task]~
+            ::
+                %zeal
+              =/  per  (turn lit.task |=([=desk *] [%clay %desks `desk]))
+              ?~(per [%.y ~] per)
+            ::
+              %tire                 [%clay %pulse ~]~
+              %seal                 [%clay %perms ~]~
+              %ward                 [%clay %guard ~]~
+              ?(%mont %ogre %dirk)  [%clay %mount ~]~
+            ::
+                %tomb
+              ?+  -.clue.task       [%clay %stone ~]~
+                %pick               [%.y ~]
+                %norm               [%clay %stone `desk.clue.task]~
+                %worn               [%clay %stone `desk.clue.task]~
+                %seek               [%clay %stone `desk.clue.task]~
+              ==
+            ::
+              %trim                 [%super ~]~
+            ==
+          ::
+              %dill
+            ?-  +<.task
+              %shot                 [%dill %terms ~]~
+              %logs                 [%dill %sylog ~]~
+              ?(%crud %talk %text)  [%dill %print ~]~
+              %mass                 [%dill %weigh ~]~
+              ?(%meld %pack)        [%dill %press ~]~
+              %trim                 [%super ~]~
+            ==
+          ::
+              %eyre
+            ?-  +<.task
+              ?(%rule %eauth-host)  [%eyre %setup ~]~
+              %connect              [%eyre %serve path.binding.task]~
+            ::
+                %set-response
+              =/  pars  ;~(pfix fas (more fas smeg))
+              =/  segs  (pars [1 1] (trip url.task))
+              ?~  q.segs  [%.n (trace task "malformed: url={<url.task>}")]
+              [%eyre %serve p.u.q.segs]~
+            ::
+              %disconnect           [%.y ~]
+              ?(%approve-origin %reject-origin)
+                                    [%eyre %cross ~]~
+              %spew                 [%eyre %debug ~]~
+              %trim                 [%super ~]~
+            ==
+          ::
+              %gall
+            ?-  +<.task
+              %nuke                 [%gall %clear `dude.task]~
+              ?(%spew %sift)        [%gall %debug ~]~
+              ?(%sear %trim)        [%super ~]~
+            ==
+          ::
+              %iris
+            ?-  +<.task
+              %request              [%iris %fetch ~]~
+              %cancel-request       [%.y ~]
+              %trim                 [%super ~]~
+            ==
+          ::
+              %jael
+            ?-  +<.task
+              %private-keys         [%jael %privy ~]~
+              ?(%public-keys %turf)  [%.y ~]
+              %listen               [%jael %watch ~]~
+              %moon                 [%jael %moons ~]~
+              %rekey                [%jael %rekey ~]~
+              %step                 [%jael %login ~]~
+              %ruin                 [%jael %blast ~]~
+              %trim                 [%super ~]~
+            ==
+          ::
+              %khan
+            ?-  +<.task
+              ?(%fard %lard)        [%khan %twine ~]~
+              %trim                 [%super ~]~
+            ==
+          ::
+              %lick
+            ?-  +<.task
+              ?(%spin %shut %spit)  [%lick %ports ~]~
+              %trim                 [%super ~]~
+            ==
+          ::
+            %syscall  [%super ~]~
+          ==
+          %dole  [%super ~]~
+        ==
       ==
-    +$  sign
-      $+  old-gall-agent-sign
-      $%  [%poke-ack p=(unit tang)]
-          [%watch-ack p=(unit tang)]
-          [%fact =cage]
-          [%kick ~]
+    ::  TODO:  copied from zuse
+    ::
+    ++  smeg                                            ::  ++smeg:de-purl:html
+      (cook crip (star pcar))
+    ++  pcar                                            ::  ++pcar:de-purl:html
+      ;~(pose pure pesc psub col pat)
+    ++  pure                                            ::  ++pure:de-purl:html
+      ;~(pose aln hep cab dot zap sig tar soq pal par)
+    ++  pesc                                            ::  ++pesc:de-purl:html
+      ;~(pfix cen mes)
+    ++  psub                                            ::  ++psub:de-purl:html
+      ;~  pose
+        zap  buc  pam  soq  pal  par
+        tar  lus  com  mic  tis
       ==
-    ++  form
-      $_  ^|
-      |_  bowl
-      ++  on-init
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-save
-        *vase
-      ::
-      ++  on-load
-        |~  old-state=vase
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-poke
-        |~  [mark vase]
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-watch
-        |~  path
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-leave
-        |~  path
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-peek
-        |~  path
-        *(unit (unit cage))
-      ::
-      ++  on-agent
-        |~  [wire sign]
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-arvo
-        |~  [wire sign-arvo]
-        *(quip card _^|(..on-init))
-      ::
-      ++  on-fail
-        |~  [term tang]
-        *(quip card _^|(..on-init))
-      --
     --
+  ::
+  ++  prune
+    |%
+    ++  deps  ::  .res-deets mapped to .pes they depend on
+      |=  $:  our=ship
+              pes=(set perm)
+              resources=(list arvo-resource)
+              dets=(map arvo-resource resource-deet)
+          ==
+      ^-  (jar arvo-resource perm)
+      %+  roll  resources
+      |=  $:  res=arvo-resource
+              dep=(jar arvo-resource perm)
+          ==
+      =/  res-per  (reqs our res dets)
+      ?~  res-per  (~(put by dep) res ~)
+      =;  ped=(list perm)
+        ?~  ped  dep  (~(put by dep) res ped)
+      ::  check if required permission for task nests under granted perm
+      %-  zing
+      (turn res-per (cury over:guard pes))
+  ::
+    ++  reqs  ::  permissions required for a .res
+      |=  [our=ship res=arvo-resource dets=(map arvo-resource resource-deet)]
+      ^-  (list perm)
+      ?-  +.res
+        [%ames %keen *]     ~  ::  keep existing %keen resources
+        [%behn %wait *]     ~  ::  keep existing %behn resources
+      ::
+          [%clay %warp *]
+        =+  det=(~(got by dets) res)
+        ?>  ?=([%clay %warp *] det)
+        ?.  =(our ship.det)  [%clay %peers ~]~
+        =/  to-per  |=  [care=(unit) =path]
+                    ^-  perm
+                    [%clay %local care `desk.det path]
+        ?-  -.rave.det
+          %sing  [(to-per [`care path]:mood.rave.det) ~]
+          %next  [(to-per [`care path]:mood.rave.det) ~]
+          %mult
+            =/  paths=(list [care:clay path])  ~(tap in paths.mool.rave.det)
+            =/  per  (turn paths |=([c=@ =path] (to-per [`c path])))
+            ?~(per !! per)
+          %many  [(to-per [~ path.moat.rave.det]) ~]
+        ==
+      ::
+        [%clay %tire]       [%clay %pulse ~]~
+        [%clay %ward]       [%clay %guard ~]~
+        [%dill %logs]       [%dill %sylog ~]~
+        [%dill %mass]       [%dill %weigh ~]~
+        [%dill %view *]     [%dill %terms ~]~
+        [%eyre %binding *]  [%eyre %serve path.binding.res]~
+      ::
+          [%eyre %cache *]
+        =/  pars  ;~(pfix fas (more fas smeg:guard))
+        =/  segs  (pars [1 1] (trip url.res))
+        ::NOTE  technically not possible to hit the "failed to parse" case here,
+        ::      because we previously parsed in +must:guard. so doesn't matter
+        ::      what we return here; perm for root is safest.
+        ?~  q.segs  [%eyre %serve /]~
+        [%eyre %serve p.u.q.segs]~
+      ::
+        [%iris %request]    [%iris %fetch ~]~
+      ::
+          [%jael %keys]
+        =+  det=(~(got by dets) res)
+        ?>  ?=([%jael %keys *] det)
+        ?.  ?=([%jael %keys %private] det)  ~
+        [%jael %privy ~]~
+      ::
+        [%lick %spin *]     [%lick %ports ~]~
+      ::
+        ::  khan thread resource is never deflated,
+        ::  keep resource to deliver gift
+        ::
+        [%khan %thread *]   ~
+      ==
+    --
+  ::
+  ++  egg-aid
+    |%
+    ++  latest
+      |=  e=egg-any
+      ^-  egg
+      ?-  -.e
+        %21  +.e
+        %20  $(e [%21 (egg-20-to-21 +.e)])
+        %16  $(e [%20 (egg-16-to-20 +.e)])
+        %15  $(e [%16 (egg-15-to-16 +.e)])
+      ==
+    ::
+    ++  egg-20-to-21
+      |=  e=egg-20
+      ^-  egg
+      ?.  ?=(%live -.e)  e
+      =/  ken-res=[res=(set arvo-resource) dets=(map arvo-resource resource-deet)]
+        (keen-to-resource ken.e &)
+      =/  pen-res=[res=(set arvo-resource) dets=(map arvo-resource resource-deet)]
+        (keen-to-resource pen.e |)
+      =,  e
+      :*  %live
+          control-duct
+          run-nonce
+          sub-nonce
+          stats
+          bitt
+          boat
+          boar
+          resources=(~(uni in res.ken-res) res.pen-res)
+          resource-deets=(~(uni by dets.ken-res) dets.pen-res)
+          code
+          [%| clean=| +.old-state]  ::REVIEW  clean
+          beak
+          marks
+          sky
+          gem
+      ==
+    ::
+    ++  egg-16-to-20
+      |=  e=egg-16
+      ^-  egg-20
+      ?.  ?=(%live -.e)  e
+      e(+.old-state (next-vase:h136 +.old-state.e))
+    ::
+    ++  egg-15-to-16
+      |=  e=egg-15
+      ^-  egg-16
+      ?:  ?=(%nuke -.e)  [%nuke ~ ~]
+      %=    e
+          ken  [ken.e ~ ~]
+      ::
+          sky
+        =|  =farm
+        =/  ski  ~(tap by sky.e)
+        |-  ^+  farm
+        ?~  ski
+          farm
+        =/  [=spur p=plot]  i.ski
+        =;  new
+          ?~  nex=(~(put-grow of-farm farm) spur new)
+            ~&  %weird
+            !!  :: shouldn't continue else loss of ref integrity
+            :: $(ski t.ski)
+          $(farm u.nex, ski t.ski)
+        :-  ~
+        =/  m  ~(val by fan.p)
+        %+  gas:on-path  *_fan.p
+        %+  turn
+          ^-  (list @)
+          =/  wit  ~(wyt by fan.p)
+          ?:  =(0 wit)  ~
+          (gulf 1 wit)
+        |=  a=@ud
+        [a (snag (dec a) m)]
+      ==
+    --
+  ::
+  ++  on-path  ((on @ud (pair @da (each page @uvI))) lte)
+  ++  of-farm
+    |_  =farm
+    ++  key-coops
+      |=  pos=path
+      ^-  (list coop)
+      =/  frm  (get-farm pos)
+      ?~  frm  ~
+      =.  farm  u.frm
+      |-
+      ?:  ?=(%coop -.farm)
+        ~[pos]
+      %-  zing
+      %+  turn  ~(tap by q.farm)
+      |=  [seg=@ta f=^farm]
+      ^-  (list coop)
+      ^$(pos (snoc pos seg), farm f)
+    ::
+    ++  match-coop
+      =|  wer=path
+      |=  =path
+      ^-  (unit coop)
+      ?:  ?=(%coop -.farm)
+        `(flop wer)
+      ?~  path
+        ~
+      ?~  nex=(~(get by q.farm) i.path)
+        ~
+      $(wer [i.path wer], path t.path, farm u.nex)
+    ::
+    ++  put
+      |=  [=path =plot]
+      ^-  _farm
+      ?:  ?=(%coop -.farm)
+        farm(q (~(put by q.farm) path plot))
+      ?~  path
+        farm(p `plot)
+      =/  nex  (~(get by q.farm) i.path)
+      =/  res  $(path t.path, farm ?~(nex *^farm u.nex))
+      farm(q (~(put by q.farm) i.path res))
+    ::
+    ++  put-grow
+      |=  [=path =plot]
+      ^-  (unit _farm)
+      ?:  ?=(%coop -.farm)
+        ~
+      ?~  path
+        `farm(p `plot)
+      =/  nex  (~(get by q.farm) i.path)
+      =/  res
+        $(path t.path, farm ?~(nex *^farm u.nex))
+      ?~  res  ~
+      `farm(q (~(put by q.farm) i.path u.res))
+    ::
+    ++  put-tend
+      |=  [=path =plot]
+      ^-  (unit _farm)
+      ?:  ?=(%coop -.farm)
+        `farm(q (~(put by q.farm) path plot))
+      ?~  path
+        `farm(p `plot)
+      ?~  nex=(~(get by q.farm) i.path)
+        ~
+      =/  res
+        $(path t.path, farm u.nex)
+      ?~  res  ~
+      `farm(q (~(put by q.farm) i.path u.res))
+    ::
+    ++  grow
+      |=  [=spur now=@da =page]
+      =/  ski  (gut spur)
+      %+  put  spur
+      =-  ski(fan (put:on-path fan.ski -< -> &/page))
+      ?~  las=(ram:on-path fan.ski)
+        [?~(bob.ski 1 +(u.bob.ski)) now]
+      :_  (max now +(p.val.u.las))
+      ?~(bob.ski +(key.u.las) +((max key.u.las u.bob.ski)))
+    ::
+    ++  germ
+      |=  [=coop =hutch]
+      ^-  (unit _farm)
+      ?~  coop
+        ?.  |(=(%coop -.farm) =([%page ~ ~] farm))
+          ~
+        `[%coop hutch ~]
+      ?:  ?=(%coop -.farm)
+        ~
+      ?~  nex=(~(get by q.farm) i.coop)
+        ~
+      $(coop t.coop, farm u.nex)
+    ::
+    ++  tend
+      |=  [=coop =path =plot]
+      ^-  (unit _farm)
+      ?~  coop
+        ?.  ?=(%coop -.farm)
+          ~
+        `farm(q (~(put by q.farm) path plot))
+      ?.  ?=(%plot -.farm)
+        ~
+      ?~  nex=(~(get by q.farm) i.coop)
+        ~
+      $(coop t.coop, farm u.nex)
+    ::
+    ++  del
+      |=  =path
+      ^+  farm
+      ?:  ?=(%coop -.farm)
+        farm(q (~(del by q.farm) path))
+      ?~  path
+        farm(p ~)
+      ?~  nex=(~(get by q.farm) i.path)
+        farm
+      $(path t.path, farm u.nex)
+    ::
+    ++  gut
+      |=  =path
+      ^-  plot
+      (fall (get path) *plot)
+    ::
+    ++  put-hutch
+      |=  [=path =hutch]
+      ^-  (unit _farm)
+      ?~  path
+        ?:  ?=(%coop -.farm)
+          `farm(p hutch)
+        ?.  =([%plot ~ ~] farm)
+          ~
+        `[%coop hutch ~]
+      ?:  ?=(%coop -.farm)
+        ~
+      =/  nex  (~(gut by q.farm) i.path *^farm)
+      =/  res  $(path t.path, farm nex)
+      ?~  res  ~
+      `farm(q (~(put by q.farm) i.path u.res))
+    ::
+    ++  get-hutch
+      |=  =path
+      ^-  (unit hutch)
+      ?~  path
+        ?.  ?=(%coop -.farm)
+          ~
+        `p.farm
+      ?:  ?=(%coop -.farm)
+        ~
+      ?~  nex=(~(get by q.farm) i.path)
+        ~
+      $(path t.path, farm u.nex)
+    ::
+    ++  get-farm
+      |=  =path
+      ^-  (unit ^farm)
+      ?:  ?=(%coop -.farm)
+        ?~  (~(get by q.farm) path)
+          ~
+        `farm
+      ?~  path  ~
+      ?~  nex=(~(get by q.farm) i.path)
+        ~
+      $(path t.path, farm u.nex)
+    ::
+    ++  get
+      |=  =path
+      ^-  (unit plot)
+      ?:  ?=(%coop -.farm)
+        (~(get by q.farm) path)
+      ?~  path
+        p.farm
+      ?~  nex=(~(get by q.farm) i.path)
+        ~
+      $(path t.path, farm u.nex)
+    ::
+    ++  tap-plot
+      =|  wer=path
+      |-  ^-  (list [path plot])
+      =*  tap-plot  $
+      ?:  ?=(%coop -.farm)
+        %+  turn  ~(tap by q.farm)
+        |=  [=path =plot]
+        [(welp wer path) plot]
+      %+  welp  ?~(p.farm ~ [wer u.p.farm]~)
+      %-  zing
+      %+  turn  ~(tap by q.farm)
+      |=  [seg=@ta f=^farm]
+      ^-  (list [path plot])
+      tap-plot(wer (snoc wer seg), farm f)
+    ::
+    ++  run-plot
+      |*  fun=gate
+      %-  ~(gas by *(map path _(fun)))
+      %+  turn  tap-plot
+      |=  [=path =plot]
+      [path (fun plot)]
+    ::
+    ++  gas-hutch
+      |=  =(list [=coop =hutch])
+      ^-  (unit _farm)
+      ?~  list
+        `farm
+      =/  nex
+        (put-hutch i.list)
+      ?~  nex  ~
+      $(farm u.nex, list t.list)
+    ::
+    ++  tap-hutch
+      =|  wer=path
+      %-  ~(gas in *(set [=coop =hutch]))
+      |-  ^-  (list [=coop =hutch])
+      =*  loop  $
+      ?:  ?=(%coop -.farm)
+        [wer p.farm]~
+      %-  zing
+      %+  turn  ~(tap by q.farm)
+      |=  [seg=@ta f=^farm]
+      ^-  (list [=coop =hutch])
+      loop(wer (snoc wer seg), farm f)
+    --
+    ++  keen-to-resource
+      |=  [reqs=(jug spar:ames wire) ken=?]
+      ^-  [(set arvo-resource) (map arvo-resource resource-deet)]
+      %+  roll  ~(tap by reqs)
+      |=  $:  [=spar:ames wis=(set wire)]
+              $:  resources=(set arvo-resource)
+                  deets=(map arvo-resource resource-deet)
+              ==
+          ==
+      =/  res
+        %+  turn  ~(tap by wis)
+        |=(wir=wire [wir %ames %keen spar])
+      :-  (silt res)
+      %-  ~(gas by deets)
+      %+  turn  res
+      |=(r=arvo-resource [r [%ames %keen ?:(ken ~ `~)]])
   --  ::gall
 ::  %iris http-client interface
 ::
@@ -4403,9 +5395,9 @@
         [%done ~]                                       ::  socket closed
         ::  TODO  mark ignored                          ::
         ::                                              ::
-        [%fard p=(fyrd cage)]                           ::  in-arvo thread
-        [%fyrd p=(fyrd cast)]                           ::  external thread
-        [%lard =bear =shed]                             ::  inline thread
+        [%fard =desk p=(fyrd cage)]                     ::  in-arvo thread
+        [%fyrd =desk p=(fyrd cast)]                     ::  external thread
+        [%lard =desk =bear =shed]                       ::  inline thread
         $>(%trim vane-task)                             ::  trim state
         $>(%vega vane-task)                             ::  report upgrade
     ==                                                  ::
@@ -4444,11 +5436,30 @@
 ::
 ++  rand                                                ::  computation
   |%
-  +$  card  card:agent:gall
+  +$  card
+    $+  rand-gall-agent-card
+    (wind note gift:agent:gall)
+  +$  task-user-v1
+    $~  [%syscall 0]
+    $%  $<(?(%eyre %lick) task-user-v1:gall)
+        $:  %eyre
+            $<  $?(%connect %disconnect %set-response)
+            _+:*$>(%eyre task-user-v1:gall)
+        ==
+      ::
+        $:  %lick
+            $<  $?(%spin %shut)
+            _+:*$>(%lick task-user-v1:gall)
+    ==  ==
+  +$  note
+    $+  rand-gall-agent-note
+    $%  [%agent [=ship name=term] =task:agent:gall]
+        [%arvo task-user-v1]
+    ==
   +$  input
     $+  input
     $%  [%poke =cage]
-        [%sign =wire =sign-arvo]
+        [%gift =wire gift=gift-user-v1:gall]
         [%agent =wire =sign:agent:gall]
         [%watch =path]
     ==
@@ -4468,6 +5479,7 @@
         eny=@uvJ
         now=@da
         byk=beak
+        peg=(set perm:gall)
     ==
   ::
   ::  cards:  cards to send immediately.  These will go out even if a
@@ -4601,16 +5613,6 @@
         |=  [=eval-form =strand-input]
         ^-  [[(list card) =eval-result] _eval-form]
         =*  take-loop  $
-        =.  in.strand-input
-          ?~  in.strand-input  ~
-          =/  in  u.in.strand-input
-          ?.  ?=(%agent -.in)                  `in
-          ?.  ?=(%fact -.sign.in)              `in
-          ?:  ?=(%thread-done p.cage.sign.in)  `in
-          ::
-          :-  ~
-          :^  %agent  wire.in  %fact
-          (validate-mark q.q.cage.sign.in p.cage.sign.in bowl.strand-input)
         ::  run the strand callback
         ::
         =/  =output  (form.eval-form strand-input)
@@ -4752,6 +5754,9 @@
       ::  %eyre: starts handling an backdoor http request
       ::
       $>(%request-local task:eyre)
+      ::  %clay: grant or revoke permissions
+      ::
+      $>(%seal task:clay)
       ::  %dill: close session
       ::
       $>(%shut task:dill)

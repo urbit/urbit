@@ -28,16 +28,14 @@
   ^-  card:agent:gall
   =/  url  (cat 3 (cat 3 (crip "https://api.github.com/repos{<repo>}/git/trees/") commit) '?recursive=true')
   =/  =request:http  ~[%'GET' url ~[['User-Agent' 'vere-v1.20'] ['Accept' 'application/vnd.github.v3+json']]]
-  =/  =task:iris  [%request request *outbound-config:iris]
-  [%pass /http-req %arvo %i task]
+  [%pass /http-req %arvo %iris %request request *outbound-config:iris]
 ::
 ++  build-file-request
   |=  [repo=path commit=cord path=cord]
   ^-  card:agent:gall
   =/  url  (cat 3 (cat 3 (crip "https://raw.githubusercontent.com{<repo>}/") commit) (cat 3 '/' path))
   =/  =request:http  ~[%'GET' url ~[['User-Agent' 'vere-v1.20']]]
-  =/  =task:iris  [%request request *outbound-config:iris]
-  [%pass /http-req %arvo %i task]
+  [%pass /http-req %arvo %iris %request request *outbound-config:iris]
 --
 =,  strand=strand:spider
 ^-  thread:spider
@@ -79,7 +77,7 @@
 ::
 ~&  >  "Retrieving file list in /{(trip dir)}."
 ;<  ~  bind:m  (send-raw-card:strandio (build-tree-request repo commit))
-;<  res=(pair wire sign-arvo)  bind:m  take-sign-arvo:strandio
+;<  res=(pair wire gift-user-v1:gall)  bind:m  take-gift-user:strandio
 ?.  ?=([%iris %http-response %finished *] q.res)
   (strand-fail:strand %bad-sign ~)
 ?~  full-file.client-response.q.res
@@ -104,7 +102,7 @@
 ?~  res  (pure:m !>(`(list (pair path (pair @ud @)))`sob))
 ~&  >>  path.i.res
 ;<  ~  bind:m  (send-raw-card:strandio (build-file-request repo commit path.i.res))
-;<  new=(pair wire sign-arvo)  bind:m  take-sign-arvo:strandio
+;<  new=(pair wire gift-user-v1:gall)  bind:m  take-gift-user:strandio
 ?.  ?=([%iris %http-response %finished *] q.new)
   (strand-fail:strand %bad-sign ~)
 ?~  full-file.client-response.q.new

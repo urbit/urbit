@@ -33,7 +33,7 @@
     ^-  (quip card _this)
     ~&  >  'init'
     :_  this
-    [%pass /bind %arvo %e %connect [~ /v1/roller] dap.bowl]~
+    [%pass /bind %arvo %eyre %connect [~ /v1/roller] dap.bowl]~
   ::
   ++  on-save  !>(state)
   ++  on-load
@@ -56,7 +56,7 @@
       =+  !<([%disconnect bind=binding:eyre] vase)
       ~&  >>>  "disconnecting at {<bind>}"
       :_  this
-      [%pass /bind %arvo %e %disconnect bind]~
+      [%pass /bind %arvo %eyre %disconnect bind]~
     ==
     ::
     ++  handle-http-request
@@ -94,12 +94,12 @@
     ==
   ::
   ++  on-arvo
-    |=  [=wire =sign-arvo]
+    |=  [=wire gift=gift-user-v1:gall]
     ^-  (quip card _this)
-    ?+  sign-arvo  (on-arvo:def wire sign-arvo)
+    ?+  gift  (on-arvo:def wire gift)
         [%eyre %bound *]
-      ~?  !accepted.sign-arvo
-        [dap.bowl 'bind rejected!' binding.sign-arvo]
+      ~?  !bound.gift
+        [dap.bowl 'bind rejected!' binding.gift]
       [~ this]
     ==
   ::

@@ -76,7 +76,7 @@
 ++  on-init
   ^-  (quip card _this)
   :_  this(vers rev)
-  [%pass /vers %arvo %b %wait (add now.bowl ~m5)]~
+  [%pass /vers %arvo %behn %wait (add now.bowl ~m5)]~
 ::
 ++  on-save   !>(state)
 ++  on-load
@@ -133,11 +133,13 @@
     =/  news  (~(dif in targ) hear)
     =.  hear  (~(uni in hear) targ)
     =.  make  (~(put by make) name.command `now.bowl task.command)
+    ::  TODO:  make compile ????
     :_  this
     %+  turn  ~(tap in news)
     |=  =desk
+    ^-  card:agent:gall
     :+  %pass  /desk/[desk]
-    [%arvo %c %warp our.bowl desk `[%next %z da+now.bowl /]]
+    [%arvo %clay %read ~ our.bowl desk %next %z da+now.bowl /]
   ::
       %del
     ::NOTE  deletion from hear, if necessary, handled in +on-arvo
@@ -207,7 +209,7 @@
             |=(d=desk [d (bek d)])
           ?-  -.task
             %solid  (solid:libpill (sys base) dez | now.bowl & ~)
-            %brass  (brass:libpill (sys base) dez & ~)
+            %brass  (brass:libpill (sys base) dez & & | ~)
           ==
         ::
             %desk
@@ -230,19 +232,23 @@
   ==
 ::
 ++  on-arvo
-  |=  [=wire sign=sign-arvo]
+  |=  [=wire gift=gift-user-v1:gall]
   ^-  (quip card _this)
+  =?  gift  ?=([%syscall *] gift)
+    =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
+    ?+  sign-arvo  gift
+      [%behn %wake *]  [%behn %wake now.bowl]
+      [%clay %writ *]  [- %read ~ +>]:sign-arvo
+    ==
   ?:  ?=([%build ~] wire)
     ::  on-wake, build all tasks whose time has come
     ::
-    ?>  ?=(%wake +<.sign)
+    ?>  ?=(%wake +<.gift)
     =/  tasks=(list @ta)
       %+  murn  ~(tap by make)
       |=  [name=@ta next=(unit @da) task]
       ?~  next  ~
       ?:((lte u.next now.bowl) (some name) ~)
-    ?^  error.sign
-      ((slog 'on-wake build failed' >tasks< u.error.sign) ~ this)
     ::
     =|  cards=(list card)
     |-
@@ -253,12 +259,9 @@
   ?:  ?=([%vers ~] wire)
     ::  on-wake, republish props if we're on a new runtime
     ::
-    ?>  ?=(%wake +<.sign)
+    ?>  ?=(%wake +<.gift)
     =/  next=card
-      [%pass /vers %arvo %b %wait (add now.bowl ~m5)]
-    ?^  error.sign
-      %-  (slog 'on-wake vers failed' u.error.sign)
-      [[next]~ this]
+      [%pass /vers %arvo %behn %wait (add now.bowl ~m5)]
     ?:  =(rev vers)  [[next]~ this]
     =.  vers  rev
     =/  tasks=(list @ta)  ~(tap in ~(key by make))
@@ -270,8 +273,9 @@
   ::
   ?>  ?=([%desk @ ~] wire)
   =*  desk  i.t.wire
-  ?.  ?=(%writ +<.sign)
-    ~&  [dap.bowl %unexpected-sign +<.sign]
+  ?.  ?=(%read +<.gift)
+    ~&  :+  dap.bowl  %unexpected-gift
+        ?:(?=(%unsupported -.gift) gift +<.gift)
     [~ this]
   ::  on-writ, bump build timers for all affected tasks
   ::
@@ -298,11 +302,11 @@
   :~  ::  watch for the next change on this desk
       ::
       :+  %pass  /desk/[desk]
-      [%arvo %c %warp our.bowl desk `[%next %z da+now.bowl /]]
+      [%arvo %clay %read ~ our.bowl desk %next %z da+now.bowl /]
     ::
       ::  set a timer for building affected tasks
       ::
-      [%pass /build %arvo %b %wait next]
+      [%pass /build %arvo %behn %wait next]
   ==
 ::
 ++  on-connect

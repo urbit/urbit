@@ -294,13 +294,21 @@
   (se-drop %| gyl)
 ::
 ++  hear-logs
-  `card:agent:gall`[%pass /drum/dill/logs %arvo %syscall %d %logs [~ ~]]
+  `card:agent:gall`[%pass /drum/dill/logs %arvo %dill %logs [~ ~]]
 ::
 ++  take-arvo
-  |=  [way=wire syn=sign-arvo]
+  |=  [way=wire gift=gift-user-v1:gall]
   ?>  =(/dill/logs way)
-  ?>  ?=(%logs +<.syn)
-  se-abet:(se-told:(prep %$) told.syn)
+  ?:  ?=(%syscall -.gift)
+    =+  !<(syn=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
+    ?>  ?=([%dill %logs *] syn)
+    =.  moz
+      :~  [%pass /drum/dill/logs %arvo %syscall %d %logs ~]
+          hear-logs
+      ==
+    se-abet:(se-told:(prep %$) told.syn)
+  ?>  ?=([%dill %logs *] gift)
+  se-abet:(se-told:(prep %$) told.gift)
 ::                                                    ::  ::
 ::::                                                  ::  ::
   ::                                                  ::  ::

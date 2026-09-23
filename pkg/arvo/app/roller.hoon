@@ -123,7 +123,7 @@
         ++  wait
           |=  [=wire =time]
           ^-  card
-          [%pass wire %arvo %b %wait time]
+          [%pass wire %arvo %behn %wait time]
         --
       --
     ::  TODO  /lib/spider.hoon?
@@ -587,21 +587,25 @@
     ==
   ::
   ++  on-arvo
-    |=  [=wire =sign-arvo]
+    |=  [=wire gift=gift-user-v1:gall]
     ^-  (quip card _this)
-    ?+    wire  (on-arvo:def wire sign-arvo)
+    =?  gift  ?=(%syscall -.gift)
+      =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
+      ?.  ?=([%behn %wake *] sign-arvo)  gift
+      [%behn %wake now.bowl]
+    ?+    wire  (on-arvo:def wire gift)
         [%timer ~]
-      ?+  +<.sign-arvo  (on-arvo:def wire sign-arvo)
-        %wake  =^(cards state (on-timer:do &) [cards this])
+      ?+  gift  (on-arvo:def wire gift)
+        [%behn %wake *]  =^(cards state (on-timer:do &) [cards this])
       ==
         [%quota-timer ~]
-      ?+  +<.sign-arvo  (on-arvo:def wire sign-arvo)
-        %wake  =^(cards state on-quota-timer:do [cards this])
+      ?+  gift  (on-arvo:def wire gift)
+        [%behn %wake *]  =^(cards state on-quota-timer:do [cards this])
       ==
     ::
         [%predict ~]
-      ?+    +<.sign-arvo  (on-arvo:def wire sign-arvo)
-          %wake
+      ?+  gift  (on-arvo:def wire gift)
+          [%behn %wake *]
         =^  effects  state
           (predicted-state canonical):do
         [(emit effects) this(derive &)]
@@ -610,8 +614,8 @@
         [%resend @ @ ~]
       =/  [address=@ux nonce=@ud]
         [(slav %ux i.t.wire) (slav %ud i.t.t.wire)]
-      ?+    +<.sign-arvo  (on-arvo:def wire sign-arvo)
-          %wake
+      ?+  gift  (on-arvo:def wire gift)
+          [%behn %wake *]
         =/  cards=(list card)  (send-roll:do address nonce)
         =?  sending
           ?&  ?=(~ cards)

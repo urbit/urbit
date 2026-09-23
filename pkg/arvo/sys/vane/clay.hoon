@@ -85,6 +85,8 @@
 ::  defined in lull.
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::  Rebuilding Clay for any reason discards build caches
+::
 ~>  %drop
 =/  bud
   ^~
@@ -159,7 +161,7 @@
 ::  Includes subscriber list, dome (desk content), possible commit state (for
 ::  local changes), possible merge state (for incoming merges), and permissions.
 ::
-+$  dojo
++$  dojo  $+  dojo
   $:  qyx=cult                                          ::  subscribers
       dom=dome                                          ::  desk state
       per=regs                                          ::  read perms per path
@@ -212,7 +214,7 @@
 ::  --  `cez` is a collection of named permission groups.
 ::  --  `pud` is an update that's waiting on a kernel upgrade
 ::
-+$  raft                                                ::  filesystem
++$  raft  $+  raft                                      ::  filesystem
   $:  rom=room                                          ::  domestic
       hoy=(map ship rung)                               ::  foreign
       ran=rang                                          ::  hashes
@@ -224,6 +226,8 @@
       pud=(unit [=desk =yoki])                          ::  pending update
       sad=(map ship @da)                                ::  scry known broken
       bug=[veb=@ mas=@]                                 ::  verbosity
+      pes=(set duct)                                    ::  perm subs
+      waw=writ:ward                                     ::  last ward
   ==                                                    ::
 ::
 ::  Unvalidated response to a request.
@@ -276,6 +280,7 @@
   ==                                                    ::
 ::
 +$  bill  (list dude:gall)
++$  seal  [%0 (list perm:gall)]
 ::
 ::  Active downloads
 ::
@@ -292,7 +297,7 @@
 ::
 ::  `hun` is the duct to dill, and `dos` is a collection of our desks.
 ::
-+$  room                                                ::  fs per ship
++$  room  $+  room                                      ::  fs per ship
           $:  hun=duct                                  ::  terminal duct
               dos=(map desk dojo)                       ::  native desk
           ==                                            ::
@@ -320,7 +325,7 @@
 ::
 ::  Foreign desk data.
 ::
-+$  rung
++$  rung  $+  rung
           $:  rus=(map desk rede)                       ::  neighbor desks
           ==
 ::
@@ -459,14 +464,6 @@
   ::
   [deletes changes]
 ::
-++  page-to-cord
-  |=  =page
-  ^-  @t
-  ?+  p.page  ~|([%sys-bad-mark p.page] !!)
-    %hoon  ;;(@t q.page)
-    %mime  q.q:;;(mime q.page)
-  ==
-::
 ++  fell-to-page
   |=  =fell
   ^-  (unit page)
@@ -480,11 +477,9 @@
 ++  has-arm
   |=  [arm=@tas =mark core=vase]
   ^-  ?
-  =/  rib  (mule |.((slub core [%wing ~[arm]])))
-  ?:  ?=(%| -.rib)  %.n
-  =/  lab  (mule |.((slob mark p.p.rib)))
-  ?:  ?=(%| -.lab)  %.n
-  p.lab
+  ?.  (slob arm p.core)  |
+  ?~  rib=(mole |.((slub core [%wing ~[arm]])))  |
+  (slob mark p.u.rib)
 ::
 ++  rave-to-rove
   |=  rav=rave
@@ -604,109 +599,6 @@
     %+  stag  %tssg
     (most gap tall:(vang & pax))
   ==
-::
-+$  pill
-  $%  [%ivory p=(list)]
-      $:  %pill
-          nam=term
-          boot-ova=(list)
-          kernel-ova=(list unix-event)
-          userspace-ova=(list unix-event)
-      ==
-      $:  %cash
-          $:  nam=term
-              boot-ova=(list)
-              kernel-ova=(list unix-event)
-              userspace-ova=(list unix-event)
-          ==
-          cache=(list)
-  ==  ==
-::
-+$  unix-event
-  %+  pair  wire
-  $%  [%wack p=@]
-      [%what p=(list (pair path (cask)))]
-      [%whom p=ship]
-      [%boot ? $%($>(%fake task:jael) $>(%dawn task:jael))]
-      [%wyrd p=vere]
-      [%verb p=(unit ?)]
-      unix-task
-  ==
-::
-++  make-arvo
-  |=  pil=(unit pill)
-  ^-  (unit *)
-  ?~  pil  ~
-  =/  pil=$>(%pill pill)
-    ?+    -.u.pil  !!
-        %cash
-      ^-  $>(%pill pill)
-      [%pill +<.u.pil]
-    ::
-        %pill  u.pil
-    ==
-  ::
-  =.  kernel-ova.pil                            ::  filter to /sys
-    %+  turn  kernel-ova.pil
-    |=  =unix-event:pill
-    ^-  unix-event:pill
-    ?.  ?=([%what *] q.unix-event)  unix-event
-    =/  files=(list (pair path (cask)))
-      %+  skim  p.q.unix-event
-      |=  [=path *]
-      ?=([%sys *] path)
-    unix-event(q [%what files])
-  ::
-  =/  =wynn        ::  XX this is wrong, if we care, double bootstrap it?
-    :~  zuse+zuse
-        lull+lull
-        arvo+arvo
-        hoon+hoon-version
-        nock+4
-    ==
-  ::
-  =/  res=toon
-    %-  mock
-    :_  ~
-    :_  [%2 [%0 3] %0 2]
-    ;:  weld
-      boot-ova.pil
-      ^-  (list)
-      :~  [*@da //arvo %wack *@uvJ]
-          [*@da //arvo %whom *@p]
-          [*@da //arvo %wyrd [~.nonce /] wynn]
-      ==
-      `(list)`(turn kernel-ova.pil (lead *@da))
-      `(list)`[*@da [/d/term/1 %boot & %fake *@p]]^~
-    ==
-  ::
-  ?-  -.res
-    %0  `+7.p.res                       ::  success
-  ::
-    %1  ~&  [%vere-blocked p.res]  !!
-    %2  ~&  %vere-fail  (mean p.res)
-  ==
-::  +make-zuse: produce the desk's zuse vase, in the desk's own universe
-::
-::    for the native kelvin (no arvo) this is the live !>(..zuse); for a
-::    foreign kelvin it's the raw old vase, evaluated in the desk's arvo.
-::    no migration: callers build with the matching slub/slym.
-::
-++  make-zuse
-  |=  arv=(unit *)
-  ~>  %bout.[1 %make-zuse]
-  ?~  arv  !>(..zuse)
-  ((cury wisher u.arv) '!>(..zuse)')
-::
-++  wisher
-  |=  [arv=* txt=@t]
-  ?>  ?=(^ arv)
-  =/  res  (mock [arv +10.arv] ~)
-  =/  wish  ?>(?=(%0 -.res) p.res)
-  =/  res  (mule |.((slum wish txt)))
-  ?>  ?=(%& -.res)
-  p.res
-::
 --  =>
 ~%  %clay  +  ~
 |%
@@ -733,200 +625,554 @@
 ++  fusion
   ~%  %fusion  ..fusion  ~
   |%
-  +$  args
-    $:  files=(map path (each page lobe))
-        file-store=(map lobe page)
-        verb=@
-    ==
-  ::  +build-ford-api: construct ford-api from a desk's zuse + vase tools.
+  ++  with-face  |=([face=@tas =vase] vase(p [%face face p.vase]))
+  ++  with-faces
+    =|  res=(unit vase)
+    |=  vaz=(list [face=@tas =vase])
+    ^-  vase
+    ?~  vaz  (need res)
+    =/  faz  (with-face i.vaz)
+    =.  res  `?~(res faz (slop faz u.res))
+    $(vaz t.vaz)
   ::
-  ::    compiles ford-cord against the desk's zuse and runs every build
-  ::    in the desk's own type universe.  for the native kelvin (wish=~)
-  ::    the live slub/slym/slam/slop are used and results are live vases;
-  ::    for a foreign kelvin the pill-derived tools are used.  outputs in
-  ::    the desk universe are migrated to the live universe via +next.
-  ::
-  ++  build-ford-api
-    |=  [zud=* wish=(unit $-(@t *)) ford-cord=@t]
-    =/  wis=$-(@t *)  ?~(wish |=(@ !!) u.wish)
-    =/  my-slam=*  ?~(wish slam (wis 'slam'))
-    =/  my-slub=*  ?~(wish slub (wis 'slub'))
-    =/  my-slop=*  ?~(wish slop (wis 'slop'))
-    =/  my-slym=*  ?~(wish slym (wis 'slym'))
-    ::  compile ford-cord against the desk's zuse.  for a foreign kelvin we must
-    ::  +rain it *inside* that arvo, against that kelvin's +hoon AST.  +rain (not
-    ::  +ream) stamps a real path, so traces read /lib/ford/hoon:[line col].
+  ++  ford
+    !:
+    =>  |%
+        +$  args
+          $+  args
+          $:  files=(map path (each page lobe))
+              file-store=(map lobe page)
+              verb=@
+          ==
+        ::
+        +$  bush
+          $%  [%file =cage]
+              [%hoon text=@t deps=(list (pair (unit term) bush)) =path]
+              [%arch =spec files=(map @ta bush) =path]
+              [%mark grad=(unit (trel bush bush bush)) cor=vase =mark]
+              $:  %tube
+                  $=  p
+                  $@  ?(%same %mime)  ::  identity / (mime -> hoon)
+                  [a=[=mark bush=(unit bush)] b=[=mark bush=(unit bush)]]
+          ==  ==
+        ::
+        +$  bush-node
+          $%  [%hoon =path]
+              [%file =mark =path]  :: leaf
+              [%mark =mark]
+              [%tube =mars]
+              [%arch =spec =path]
+          ==
+        --
+    =>  |%
+        ++  bush-to-vase
+          =/  only-prelude=?  |
+          =|  sut=vase
+          |=  =bush
+          ^-  vase
+          =*  b2v-buc  $
+          ?-    -.bush
+              %file
+            q.cage.bush
+          ::
+              %hoon
+            =.  sut  zuse.bud
+            =;  tus=vase
+              ?:  only-prelude  tus
+              ~>  %memo./clay/ford
+              :: %-  (trace 1 |.("make: hoon: {(spud path.bush)}"))
+              (slub tus hoon:(parse-pile path.bush text.bush))
+            =.  only-prelude  |
+            ~>  %memo./clay/ford
+            |-  ^-  vase
+            ?~  deps.bush  sut
+            =/  dep=vase  b2v-buc(bush q.i.deps.bush, only-prelude |)
+            =?  p.dep  ?=(^ p.i.deps.bush)  [%face u.p.i.deps.bush p.dep]
+            $(deps.bush t.deps.bush, sut (slop dep sut))
+          ::
+              %arch
+            ~>  %memo./clay/ford
+            :: %-  (trace 1 |.("make: arch: {(spud path.bush)}"))
+            =/  [type-val=type type-map=type]
+              =>  [sut=sut spec=spec.bush ..ut]
+              ~>  %memo./clay/ford
+              :-  (~(play ut p.sut) [%kttr spec])
+              %-  ~(play ut p.sut)
+              [%kttr %make [%wing ~[%map]] ~[[%base %atom %ta] spec]]
+            ::
+            =.  sut  *vase
+            ~>  %memo./clay/ford
+            =/  res=(map @ta vase)
+              (~(run by files.bush) bush-to-vase)
+            ::
+            :-  type-map
+            |-
+            ?~  res  ~
+            ?.  (~(nest ut type-val) | p.q.n.res)
+              ~|  [%nest-fail path.bush p.n.res]
+              !!
+            :-  [p.n.res q.q.n.res]
+            [$(res l.res) $(res r.res)]
+          ::
+              %mark
+            =.  sut  *vase
+            ~>  %memo./clay/ford
+            :: %-  (trace 1 |.("make: mark: %{(trip mark.bush)}"))
+            =*  cor  cor.bush
+            ?~  grad.bush
+              %+  slub  (slop (with-face cor+cor) zuse.bud)
+              !,  *hoon
+              =/  typ  _+<.cor
+              =/  dif  _*diff:grad:cor
+              ^-  (nave:clay typ dif)
+              |%
+              ++  diff  |=([old=typ new=typ] (diff:~(grad cor old) new))
+              ++  form  form:grad:cor
+              ++  join
+                |=  [a=dif b=dif]
+                ^-  (unit (unit dif))
+                ?:  =(a b)
+                  ~
+                `(join:grad:cor a b)
+              ++  mash
+                |=  [a=[=ship =desk =dif] b=[=ship =desk =dif]]
+                ^-  (unit dif)
+                ?:  =(dif.a dif.b)
+                  ~
+                `(mash:grad:cor a b)
+              ++  pact  |=([v=typ d=dif] (pact:~(grad cor v) d))
+              ++  vale  noun:grab:cor
+              --
+            =/  deg=vase  (bush-to-vase p.u.grad.bush)
+            =/  tub=vase  (bush-to-vase q.u.grad.bush)
+            =/  but=vase  (bush-to-vase r.u.grad.bush)
+            %+  slub
+              (with-faces deg+deg tub+tub but+but cor+cor nave+nave.bud ~)
+            !,  *hoon
+            =/  typ  _+<.cor
+            =/  dif  _*diff:deg
+            ^-  (nave typ dif)
+            |%
+            ++  diff
+              |=  [old=typ new=typ]
+              ^-  dif
+              (diff:deg (tub old) (tub new))
+            ++  form  form:deg
+            ++  join  join:deg
+            ++  mash  mash:deg
+            ++  pact
+              |=  [v=typ d=dif]
+              ^-  typ
+              (but (pact:deg (tub v) d))
+            ++  vale  noun:grab:cor
+            --
+          ::
+              %tube
+            =.  sut  *vase
+            ~>  %memo./clay/ford
+            ?@  p.bush
+              ?-    p.bush
+                  %same
+                :: %-  (trace 4 |.("make: tube: identity shortcircuit"))
+                same.bud
+              ::
+                  %mime
+                :: %-  (trace 4 |.("make: tube: hoon -> mime"))
+                =>(..zuse !>(|=(m=mime q.q.m)))
+              ==
+            =/  a  a.p.bush
+            =/  b  b.p.bush
+            :: %-  (trace 1 |.("make: tube: %{(trip mark.a)} -> %{(trip mark.b)}"))
+            =/  old=(unit vase)  (bind bush.a bush-to-vase)
+            ?:  &(?=(^ old) (has-arm %grow mark.b u.old))
+              :: %-  (trace 4 |.("+grow:{(trip mark.a)}"))
+              %+  slub  (with-faces cor+u.old ~)
+              :+  %brcl  !,(*hoon v=+<.cor)
+              :+  %sggr
+                [%spin %cltr [%sand %t (crip "grow-{<mark.a>}->{<mark.b>}")] ~]
+              :+  %tsgl  limb/mark.b
+              !,(*hoon ~(grow cor v))
+            =/  new=(unit vase)  (bind bush.b bush-to-vase)
+            ?:  &(?=(^ new) (has-arm %grab mark.a u.new))
+              :: %-  (trace 4 |.("+grab:{(trip mark.b)}"))
+              =;  v=vase
+                ?^  q.v  v
+                ~_('clay: @ product of +grab not supported' !!)
+              %+  slub  u.new
+              :+  %sggr
+                [%spin %cltr [%sand %t (crip "grab-{<mark.a>}->{<mark.b>}")] ~]
+              tsgl/[limb/mark.a limb/%grab]
+            ?:  ?=(%noun mark.b)
+              :: %-  (trace 4 |.("default"))
+              same.bud
+            ~|(no-cast-between+[mark.a mark.b] !!)  ::  XX +jump arm
+          ::
+          ==
+        --
+    ~%  %ford-gate  ..ford  ~
+    |=  args
     ::
-    =/  raw
-      ?~  wish
-        (slum my-slub [zud (rain /lib/ford/hoon ford-cord)])
-      =/  builder
-        %-  wis
-        '|=(fc=@t =+(x=(~(mint ut -:!>(..zuse)) %noun (rain /lib/ford/hoon fc)) [p.x .*(..zuse q.x)]))'
-      (slum builder ford-cord)
-    =/  fuz  (slum my-slub [raw [%limb %fusion]])
-    =/  ford-gate  (slum my-slub [fuz [%limb %ford]])
-    ::  the desk's zuse kelvin
-    ::
-    =/  zuv=@ud  ?~(wish zuse ;;(@ud (wis 'zuse')))
-    ::  cross-kelvin migration for build products, keyed on the desk's zuse
-    ::  kelvin (mirrors +vez in gall).  +prev takes a live vase into the desk
-    ::  universe via +prev-vase (to feed a desk-universe gate, e.g. a foreign
-    ::  mark tube); +next brings a desk build product back to live via
-    ::  +next-vase.  the live kelvin is the identity; each supported previous
-    ::  kelvin names its one-step hoon-history converter.  add a case per
-    ::  kelvin we learn to build against.
-    ::
-    =/  prev
-      |=  v=vase  ^-  *
-      ?+  zuv  ~|(unsupported-kelvin+zuv !!)
-        %408  v
-        %409  (slum prev-vase:h135 v)
-      ==
-    =/  next
-      |=  n=*  ^-  *
-      ?+  zuv  ~|(unsupported-kelvin+zuv !!)
-        %408  n
-        %409  (slum next-vase:h136 n)
-      ==
-    ::  coerce raw (desk-universe) nouns to typed live values
-    ::
-    =/  ntv
-      |=  n=*
-      ^-  vase
-      !<(vase [-:!>(*vase) (next n)])
-    =/  ntc
-      |=  n=*
-      ^-  cage
-      ?>  ?=(^ n)
-      ::  TODO next-cage:a235
-      !<(cage [-:!>(*cage) [;;(@tas -.n) (next +.n)]])
-    |=  [files=(map path (each page lobe)) file-store=(map lobe page) verb=@]
-    =/  cor  (slum my-slym [ford-gate [files file-store verb]])
+    ~%  %ford-core  ..$  ~
     |%
-    ++  zuse-version  zuv
+    ::  Chapter for constructing $bush (dependency graph of a file) given its
+    ::  desk-wide identifier
+    ::
+    +|  %bush-construction
+    ::
+    ++  parse-header
+      |=  [pax=path txt=@t]
+      ^-  (list (pair (unit term) bush-node))
+      ~>  %memo./clay/ford
+      =*  out  (list (pair (unit term) bush-node))
+      =/  [=hair res=(unit [=out =nail])]
+        (header-rule [1 1] (trip txt))
+      ?^  res  out.u.res
+      (report-error pax txt hair)
+    ::
+    ++  header-rule
+      |^
+      =,  parsing-rules
+      %+  cook  pile-header-to-bush
+      %+  ifix
+        :_  gay
+        ::  parse optional /? and ignore
+        ::
+        ;~(plug gay (punt ;~(plug fas wut gap dem gap)))
+      ;~  plug
+        %+  cook  (bake zing (list (list taut)))
+        %+  rune  hep
+        (most ;~(plug com gaw) taut-rule)
+      ::
+        %+  cook  (bake zing (list (list taut)))
+        %+  rune  lus
+        (most ;~(plug com gaw) taut-rule)
+      ::
+        %+  rune  tis
+        ;~(plug sym ;~(pfix gap stap))
+      ::
+        %+  rune  sig
+        ;~((glue gap) sym wyde:vast stap)
+      ::
+        %+  rune  cen
+        ;~(plug sym ;~(pfix gap ;~(pfix cen sym)))
+      ::
+        %+  rune  buc
+        ;~  (glue gap)
+          sym
+          ;~(pfix cen sym)
+          ;~(pfix cen sym)
+        ==
+      ::
+        %+  rune  tar
+        ;~  (glue gap)
+          sym
+          ;~(pfix cen sym)
+          ;~(pfix stap)
+        ==
+      ==
+      ::
+      ++  pile-header-to-bush
+        |=  $:  sur=(list taut)
+                lib=(list taut)
+                raw=(list [face=term =path])
+                raz=(list [face=term =spec =path])
+                maz=(list [face=term =mark])
+                caz=(list [face=term =mars])
+                bar=(list [face=term =mark =path])
+            ==
+        ^-  (list (pair (unit term) bush-node))
+        %-  zing
+        ^-  (list (list (pair (unit term) bush-node)))
+        :~
+          (turn sur (taut-to-bush-node %sur))
+          (turn lib (taut-to-bush-node %lib))
+          (turn raw |=([face=term =path] [`face hoon+(snoc path %hoon)]))
+          (turn raz |=([face=term =spec =path] [`face arch+[spec path]]))
+          (turn maz |=([face=term =mark] [`face mark+mark]))
+          (turn caz |=([face=term =mars] [`face tube+mars]))
+          (turn bar |=([face=term =mark =path] [`face file+[mark path]]))
+        ==
+      ::
+      ++  taut-to-bush-node
+        |=  prefix=term
+        |=  =taut
+        ^-  (pair (unit term) bush-node)
+        :-  face.taut
+        [%hoon (fit-path prefix pax.taut)]
+      --
+    ::
+    ++  build-bush
+      |=  nod=bush-node
+      ^-  bush
+      ::  the cycle set below catches dependency cycles in the bush,
+      ::  but it can't catch cycles which are reentrant through read-file
+      ::  or cast-path. for those cases, we use loop detection
+      ::  as implemented in the runtime.
+      ::  example:
+      ::  1. copy a mark (e.g. noun.hoon) as foo.hoon
+      ::  2. commit a %foo page directly to clay: *%/foo/foo &foo 42
+      ::  3. add a /* import to the mark definition: /*  foo  %foo  /foo/foo
+      ::  4. try scrying for that file: .^(* %cx %/foo/foo)
+      ::
+      ~>  %loop.'clay: loop detected'
+      ~>  %memo./clay/ford
+      %-  %+  trace  1  |.
+          ?-  -.nod
+            %hoon  "bush: hoon: {(spud path.nod)}"
+            %file  "bush: file: mar=%{(trip mark.nod)} {(spud path.nod)}"
+            %mark  "bush: mark: %{(trip mark.nod)}"
+            %tube  "bush: tube: %{(trip a.mars.nod)} -> %{(trip b.mars.nod)}"
+            %arch  "bush: arch: {(spud path.nod)}"
+          ==
+      =|  cycle=(set bush-node)
+      |-  ^-  bush
+      =*  bush-loop  $
+      ?:  (~(has in cycle) nod)  ~|  [cycle+nod cycle]  !!
+      =.  cycle  (~(put in cycle) nod)
+      ?-    -.nod
+          %file
+        =/  file=cage  (cast-path path.nod mark.nod)
+        [%file file]
+      ::
+          %hoon
+        =/  file=cage  (read-file path.nod)
+        ?>  =(%hoon p.file)
+        =+  !<(src=@t q.file)
+        =/  deps=(list (pair (unit term) bush-node))
+          (parse-header path.nod src)
+        ::
+        :^  %hoon  src
+          %+  turn  deps
+          |=  [u=(unit term) don=bush-node]
+          [u bush-loop(nod don)]
+        path.nod
+      ::
+          %mark
+        =/  cor=vase  (build-fit %mar mark.nod)
+        =/  gad=vase  (slap cor limb/%grad)
+        ?^  q.gad  [%mark ~ cor mark.nod]
+        =/  deg  bush-loop(nod mark+q.gad)
+        =/  tub  bush-loop(nod tube+[mark.nod q.gad])
+        =/  but  bush-loop(nod tube+[q.gad mark.nod])
+        [%mark `[deg tub but] cor mark.nod]
+      ::
+          %tube
+        ?:  =(a.mars.nod b.mars.nod)  tube+%same
+        ?:  =([%mime %hoon] [a.mars.nod b.mars.nod])  tube+%mime
+        :+  %tube
+          =/  pax=(unit path)  (try-fit-path %mar a.mars.nod)
+          [a.mars.nod ?~(pax ~ `bush-loop(nod hoon+u.pax))]
+        =/  pax=(unit path)  (try-fit-path %mar b.mars.nod)
+        [b.mars.nod ?~(pax ~ `bush-loop(nod hoon+u.pax))]
+      ::
+          %arch
+        =/  fiz=(list @ta)
+          =/  len  (lent path.nod)
+          %+  murn  ~(tap by files)
+          |=  [pax=path *]
+          ^-  (unit @ta)
+          ?.  =(path.nod (scag len pax))
+            ~
+          =/  pat  (slag len pax)
+          ?:  ?=([@ %hoon ~] pat)
+            `i.pat
+          ~
+        ::
+        =|  rez=(map @ta bush)
+        |-
+        ?~  fiz
+          [%arch spec.nod rez path.nod]
+        =*  nom=@ta   i.fiz
+        =/  pax=path  (weld path.nod nom %hoon ~)
+        =/  res=bush  bush-loop(nod hoon+pax)
+        $(fiz t.fiz, rez (~(put by rez) nom res))
+      ==
+    ::
+    +|  %external-interface
+    ::
+    ::  +read-file: retrieve marked, validated file contents at path
+    ::
     ++  read-file
+      ~/  %read-file
       |=  =path
       ^-  cage
-      (ntc (slum +:(slum my-slub [cor [%limb %read-file]]) path))
+      ~>  %memo./clay/ford
+      ~|  %error-validating^path
+      %-  (trace 1 |.("read file {(spud path)}"))
+      =/  file
+        ~|  %file-not-found^path
+        (~(got by files) path)
+      =/  page
+        ?:  ?=(%& -.file)
+          p.file
+        ~|  %tombstoned-file^path^p.file
+        (~(got by file-store) p.file)
+      (validate-page path page)
     ::
-    ++  build-file
-      |=  =path
-      ^-  vase
-      (ntv (slum +:(slum my-slub [cor [%limb %build-file]]) path))
+    ::  +build-nave: build a statically typed mark core
     ::
     ++  build-nave
+      ~/  %build-nave
       |=  mak=mark
       ^-  vase
-      (ntv (slum +:(slum my-slub [cor [%limb %build-nave]]) mak))
+      ~>  %memo./clay/ford
+      ~|  %error-building-mark^mak
+      (bush-to-vase (build-bush %mark mak))
+    ::  +build-dais: build a dynamically typed mark definition
     ::
     ++  build-dais
+      ~/  %build-dais
       |=  mak=mark
       ^-  dais
-      ::  +:  unwraps the vase-of-vase +slam produces (build-nave returns a
-      ::  vase), so .nav is the nave itself and its arms (%vale/%diff/&c) are
-      ::  reachable by the +slub limbs below.
-      ::
-      =/  nav  +:(slum my-slam [(slum my-slub [cor [%limb %build-nave]]) !>(mak)])
+      ~>  %memo./clay/ford
+      ~|  %error-building-dais^mak
+      =/  nav=vase  (build-nave mak)
+      %-  (trace 1 |.("make dais {<mak>}"))
       ^-  dais
+      =>  [nav=nav ..zuse]
+      ~>  %memo./clay/ford
       |_  sam=vase
       ++  diff
         |=  new=vase
-        ^-  vase
-        (ntv (slum my-slam [(slum my-slub [nav limb/%diff]) (slum my-slop [sam new])]))
-      ++  form  ;;(mark +:(slum my-slub [nav limb/%form]))
+        (slam (slub nav limb/%diff) (slop sam new))
+      ++  form  !<(mark (slub nav limb/%form))
       ++  join
         |=  [a=vase b=vase]
         ^-  (unit (unit vase))
-        =/  res  (ntv (slum my-slam [(slum my-slub [nav limb/%join]) (slum my-slop [a b])]))
+        =/  res=vase  (slam (slub nav limb/%join) (slop a b))
         ?~  q.res    ~
         ?~  +.q.res  [~ ~]
         ``(slub res !,(*hoon ?>(?=([~ ~ *] .) u.u)))
       ++  mash
         |=  [a=[=ship =desk diff=vase] b=[=ship =desk diff=vase]]
         ^-  (unit vase)
-        =/  res
-          %-  ntv
-          %+  slum  my-slam
-          :-  (slum my-slub [nav limb/%mash])
-          %+  slum  my-slop
-          :-  %+  slum  my-slop
-              :-  [[%atom %p ~] ship.a]
-              (slum my-slop [[[%atom %tas ~] desk.a] diff.a])
-          %+  slum  my-slop
-          :-  [[%atom %p ~] ship.b]
-          (slum my-slop [[[%atom %tas ~] desk.b] diff.b])
-        ?~  q.res  ~
+        =/  res=vase
+          %+  slam  (slub nav limb/%mash)
+          %+  slop
+            :(slop [[%atom %p ~] ship.a] [[%atom %tas ~] desk.a] diff.a)
+          :(slop [[%atom %p ~] ship.b] [[%atom %tas ~] desk.b] diff.b)
+        ?~  q.res
+          ~
         `(slub res !,(*hoon ?>((^ .) u)))
       ++  pact
         |=  diff=vase
-        ^-  vase
-        (ntv (slum my-slam [(slum my-slub [nav limb/%pact]) (slum my-slop [sam diff])]))
+        (slam (slub nav limb/%pact) (slop sam diff))
       ++  vale
-        |=  noun=*
-        ^-  vase
-        ::  no +:  the nave arms (vale=noun:grab, diff, pact, &c) return the
-        ::  marked VALUE, so +slam already yields the value-as-vase [type val];
-        ::  +: would strip the type and +ntv would then mis-wrap the raw atom.
-        ::
-        (ntv (slum my-slam [(slum my-slub [nav limb/%vale]) noun/noun]))
+        |:  noun=q:(slub nav !,(*hoon *vale))
+        (slam (slub nav limb/%vale) noun/noun)
       --
+    ::  +build-cast: produce gate to convert mark .a to, statically typed
     ::
     ++  build-cast
+      ~/  %build-cast
       |=  [a=mark b=mark]
       ^-  vase
-      (ntv (slum +:(slum my-slub [cor [%limb %build-cast]]) [a b]))
+      ~>  %memo./clay/ford
+      ~|  error-building-cast+[a b]
+      (bush-to-vase (build-bush %tube a b))
+    ::  +build-tube: produce a $tube mark conversion gate from .a to .b
     ::
     ++  build-tube
       |=  [a=mark b=mark]
       ^-  tube
-      =/  tub  (slum my-slam [(slum my-slub [cor [%limb %build-tube]]) (slum my-slop [!>(a) !>(b)])])
-      |=  v=vase
-      ^-  vase
-      ::  wrap .v as a vase-typed value: the raw +slam reads its sample's
-      ::  own type, so passing .v bare makes it check the payload's type
-      ::  (e.g. a loob) against .tub's $vase sample and nest-fail.
-      ::
-      ::  .tub is compiled in the desk universe, so +my-slam reads its sample's
-      ::  type with that universe's machinery.  for a foreign (h136) desk the
-      ::  live !>(v) carries an h135 $vase type h136 can't interpret.  we cannot
-      ::  just +prev-vase:h135 !>(v): the $vase wrapper embeds the $type mold,
-      ::  whose shape differs across the kelvin boundary, so migrating it
-      ::  nest-fails.  instead migrate only .v's own (ordinary) type into the
-      ::  desk universe, then stamp it with the desk's NATIVE $vase mold (built
-      ::  in that universe via +cor, never crossing the boundary).
-      ::
-      =/  sam
-        ?:  =(zuse zuv)  !>(v)
-        =/  vty  -:(slum my-slub [cor !,(*hoon *vase)])
-        [vty (prev v)]
-      (ntv +:(slum my-slam [tub sam]))
+      ~>  %spin.[%build-tube]  ~>  %spin.[a]  ~>  %spin.[b]
+      ~>  %memo./clay/ford
+      ~|  error-building-tube+[a b]
+      =/  gat=vase  (build-cast a b)
+      %-  (trace 1 |.("make tube {<a>} -> {<b>}"))
+      =>  [gat=gat ..zuse]
+      ~>  %memo./clay/ford
+      |=(v=vase (slam gat v))
     ::
     ++  validate-page
       |=  [=path =page]
       ^-  cage
-      (ntc (slum +:(slum my-slub [cor [%limb %validate-page]]) [path page]))
+      ~|  validate-page-fail+path^from+p.page
+      =/  mak=mark  (head (flop path))
+      ?:  =(mak p.page)
+        (page-to-cage page)
+      =/  [mark vax=vase]  (page-to-cage page)
+      =/  =tube  (build-tube p.page mak)
+      [mak (tube vax)]
     ::
     ++  page-to-cage
       |=  =page
       ^-  cage
-      (ntc (slum +:(slum my-slub [cor [%limb %page-to-cage]]) page))
+      ?:  =(%hoon p.page)
+        [%hoon [%atom %t ~] ;;(@ q.page)]
+      ?:  =(%mime p.page)
+        [%mime =>([;;(mime q.page) ..zuse] !>(-))]
+      =/  =dais  (build-dais p.page)
+      :-  p.page
+      =>  [dais=dais dat=q.page]
+      ~>  %memo./clay/ford
+      (vale:dais dat)
     ::
     ++  cast-path
       |=  [=path mak=mark]
       ^-  cage
-      (ntc (slum +:(slum my-slub [cor [%limb %cast-path]]) [path mak]))
+      ~>  %memo./clay/ford
+      =/  mok  (head (flop path))
+      ~|  error-casting-path+[path mok mak]
+      =/  cag=cage  (read-file path)
+      ?:  =(mok mak)
+        cag
+      =/  =tube  (build-tube mok mak)
+      ~|  error-running-cast+[path mok mak]
+      [mak (tube q.cag)]
     ::
     ++  prelude
       |=  =path
       ^-  vase
-      (ntv (slum +:(slum my-slub [cor [%limb %prelude]]) path))
+      %*($ bush-to-vase +< (build-bush %hoon path), only-prelude &)
+    ::
+    ++  build-file
+      |=  =path
+      ^-  vase
+      ~>  %memo./clay/ford
+      (bush-to-vase (build-bush %hoon path))
+    ::  +build-fit: build file at path, maybe converting '-'s to '/'s in path
     ::
     ++  build-fit
       |=  [pre=@tas pax=@tas]
       ^-  vase
-      (ntv (slum +:(slum my-slub [cor [%limb %build-fit]]) [pre pax]))
+      (build-file (fit-path pre pax))
+    ::
+    +|  %helpers
+    ::
+    ::  +fit-path: find path, maybe converting '-'s to '/'s
+    ::
+    ::    Try '-' before '/', applied left-to-right through the path,
+    ::    e.g. 'a-foo/bar' takes precedence over 'a/foo-bar'.
+    ::
+    ++  fit-path
+      |=  [pre=@tas pax=@tas]
+      ^-  path
+      ~_  leaf/"clay: no files match /{(trip pre)}/{(trip pax)}/hoon"
+      (need (try-fit-path pre pax))
+    ::
+    ::
+    ++  try-fit-path
+      |=  [pre=@tas pax=@tas]
+      ^-  (unit path)
+      =/  paz  (segments pax)
+      |-  ^-  (unit path)
+      ?~  paz  ~
+      =/  pux=path  pre^(snoc i.paz %hoon)
+      ?:  (~(has by files) pux)
+        `pux
+      $(paz t.paz)
+    ::
+    ++  trace
+      |=  [pri=@ print=(trap tape)]
+      (^trace verb pri print)
     --
+  ::
+  ++  trace
+    |=  [verb=@ pri=@ print=(trap tape)]
+    ?:  (lth verb pri)
+      same
+    (slog leaf+"ford: {(print)}" ~)
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::  section 4cA, filesystem logic
@@ -1139,6 +1385,70 @@
       ==
     --
   ::
+  ::  +get-seal: read the desk's current required permissions from /seal/desk
+  ::  +seal-at-commit: read required permissions from target commit
+  ::
+  ++  get-seal  (seal-at-commit [%| (aeon-to-yaki:ze let.dom)])
+  ++  seal-at-commit
+    |=  =yoki
+    ^-  (set perm:gall)
+    |^  ?-  -.yoki
+        %|
+      ?~  per=(~(get by q.p.yoki) /desk/seal)
+        *(set perm:gall)
+      %-  silt
+      +:(lobe-to-seal (~(got by q.p.yoki) /desk/seal))  ::  return lobe
+        %&
+      ?~  lob=(~(get by q.p.yoki) /desk/seal)
+        *(set perm:gall)
+      %-  silt
+      ?-  -.u.lob
+        %|  +:(lobe-to-seal p.u.lob)
+        %&  +:(page-to-seal p.u.lob)
+      ==
+    ==
+    ::
+      ++  lobe-to-seal
+        |=  =lobe
+        ^-  seal
+        ?~  peg=(~(get by lat.ran) lobe)
+          ~|([%desk-seal-tombstoned syd] !!)
+        (page-to-seal u.peg)
+      ::
+      ++  page-to-seal
+        |=  =page
+        ^-  seal
+        ?+  p.page  ~|(clay-bad-seal-mark+p.page !!)
+          %seal  ;;(seal q.page)
+          %mime  !<(seal (slap !>([%0 ~]) (ream q.q:;;(mime q.page))))
+        ==
+    --
+  ::
+  ++  send-ward
+    |=  =desk
+    =/  dom=dome
+      ?:  =(desk syd)  dom
+      dom:(~(got by dos.rom) desk)
+    =/  writ
+      %-  ~(put by *writ:ward)
+      :-  desk
+      :*  ?:(=(desk syd) get-seal get-seal:^$(syd desk))
+          peg.dom  peq.dom
+          ?~(pew.dom ~ -.u.pew.dom)
+      ==
+    ?:  =(~ pes)
+      =.  waw  (~(uni by waw) writ)
+      ..abet  ::  no subs, can no-op
+    =/  casts=(list cast:ward)  (tell:ward writ waw)
+    =.  waw  (~(uni by waw) writ)
+    %-  emil
+    %-  zing
+    %+  turn  ~(tap in pes)
+    |=  =duct
+    %+  turn  casts
+    |=  =cast:ward
+    [duct %give %ward cast]
+  ::
   ++  case-to-date
     |=  =case
     ^-  @da
@@ -1189,81 +1499,42 @@
       ?:((~(has by hut.ran) p.lok) `p.lok ~)
     (bind (case-to-aeon-before lim lok) aeon-to-tako:ze)
   ::
-  ++  get-pill
-    |=  tak=tako
-    ^-  (unit pill)
-    =/  fiz=(map path lobe)  q:(tako-to-yaki:ze tak)
-    =/  pil=(unit lobe)  (~(get by fiz) /brass/pill)
-    ?~  pil  ~
-    =/  foo=(unit page)  (~(get by lat.ran) u.pil)
-    ?~  foo  ~
-    =+  ;;(pil=pill q.u.foo)
-    =?  pil  ?=(%cash -.pil)
-      ^-  $>(%pill pill)
-      [%pill +<.pil]
-    ?>  ?=(%pill -.pil)
-    `[%pill [nam boot-ova kernel-ova userspace-ova]:pil]
-  ::
-  ::  +get-ford: resolve +ford's source (base's /lib/ford/hoon) for a build
-  ::
-  ::    base uses its own copy (from the build's .files, so it bootstraps); every
-  ::    other desk uses base's committed copy.
-  ::
-  ++  get-ford
-    |=  files=(map path (each page lobe))
-    ^-  @t
-    =/  ep=(each page lobe)
-      ?:  =(%base syd)
-        ~|  %base-desk-missing-ford
-        (~(got by files) /lib/ford/hoon)
-      =/  base-dome  dom:(~(got by dos.rom) %base)
-      =/  base-tako  (~(got by hit.base-dome) let.base-dome)
-      ~|  %base-missing-ford
-      [%| (~(got by q:(tako-to-yaki:ze base-tako)) /lib/ford/hoon)]
-    =/  =page
-      ?-  -.ep
-        %&  p.ep
-        %|  (~(got by lat.ran) p.ep)
-      ==
-    (page-to-cord page)
   ::  Create a ford appropriate for the aeon
   ::
   ++  tako-ford
     |=  tak=tako
-    =/  arv=(unit *)
-      ?:  =(%base syd)  ~
-      =/  pil=(unit pill)  (get-pill tak)
-      =>  [make-arvo=make-arvo pil=pil]
-      ~>  %memo./clay/arvo
-      (make-arvo pil)
-    =/  zud
-      =>  [make-zuse=make-zuse arv=arv]
-      ~>  %memo./clay/ford
-      (make-zuse arv)
-    =/  files  (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
-    =/  wish=(unit $-(@t *))
-      ?~  arv  ~
-      =>  [wisher=wisher uarv=u.arv]
-      `|=(t=@t (wisher uarv t))
+    %-  ford:fusion
+    :_  [lat.ran veb.bug]
+    %-  apply-built-ins
+    (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
+  ::
+  ++  apply-built-ins
+    |=  files=(map path (each page lobe))
+    ^+  files
+    ::  built-ins come from clay, so never apply there
+    ::REVIEW  feels weird because .files decoupled from .syd,
+    ::        but in practice they're always "our"/"local" files...
     ::
-    =/  ford-cord=@t  (get-ford files)
-    =/  ford-api
-      =>  :*  build-ford-api=build-ford-api:fusion
-              zud=zud
-              wish=wish
-              ford-cord=ford-cord
-          ==
-      ~>  %memo./clay/ford
-      (build-ford-api [zud wish ford-cord])
-    (ford-api files lat.ran veb.bug)
-  ::  +live-ford: ford-api for the running kernel's own (native) universe
-  ::
-  ::    the live counterpart of +tako-ford for use during commits; uses the
-  ::    live slub/slym/slam/slop (wish=~) and the live zuse, with no pill.
-  ::
-  ++  live-ford
-    |=  =args:fusion
-    ((build-ford-api:fusion [!>(..zuse) ~ (get-ford files.args)]) args)
+    ?:  =(%base syd)  files
+    %-  ~(gas by files)
+    %+  murn
+      ^-  (list path)
+      :~  /mar/noun/hoon
+          /mar/hoon/hoon
+          /mar/mime/hoon
+          /mar/bill/hoon
+          /mar/seal/hoon
+          /mar/kelvin/hoon
+      ==
+    =/  =dojo  (~(got by dos.rom) %base)
+    =/  =yaki  (~(got by hut.ran) (~(got by hit.dom.dojo) let.dom.dojo))
+    |=  =path
+    ?:  (~(has by files) path)  ~
+    ~|  %missing-built-in^path
+    =/  lob  (~(got by q.yaki) path)
+    ~|  %built-in-not-page
+    =/  pag  (~(got by lat.ran) lob)
+    `[path &+pag]
   ::
   ++  request-wire
     |=  [kind=@ta =ship =desk index=@ud]
@@ -1320,6 +1591,48 @@
       |=  =care
       (~(has in ^~((silt `(list ^care)`~[%q %u %w %x %y %z]))) care)
     --
+  ::  +find-blocked: find blocked on sys-update desks:
+  ::
+  ::    .yoki is the sys commit we want to find blockers for
+  ::
+  ::    blocked on kelvin: no pending commit and
+  ::                       current version doesn't support kel update,
+  ::    blocked on perms:  has pending commit, missing required permissions
+  ::
+  ++  find-blocked
+    |=  [=yoki ese=?]
+    ^-  (list desk)
+    ?>  =(%base syd)
+    =/  sys-kel=weft
+      =/  w=waft  (get-kelvin yoki)
+      ?@  -.w  w  !!
+    %-  ~(rep by (~(del by dos.rom.ruf) %base))
+    |=  [[=desk =dojo] des=(list desk)]
+    ::  non-live desks are never blocking/relevant,
+    ::  only live .ese desks are relevant
+    ::
+    ?.  &(?=(%live liv.dom.dojo) =(ese ese.dojo))
+      des
+    ?~  t=(~(get by hit.dom.dojo) let.dom.dojo)
+      ::  desk never had a commit, no-op
+      des
+    =/  kel=(set weft)
+      (waft-to-wefts (get-kelvin %| (tako-to-yaki:ze u.t)))
+    ?:  (~(has in kel) sys-kel)
+      ::  desk alredy supports kel update case
+      des
+    ?~  yok=(~(get by wic.dom.dojo) sys-kel)
+      ::  has no pending commit for current kel update case
+      ::  and doesn't support kel update
+      [desk des]
+    =/  mis=(set perm:gall)
+      %-  ~(gas in *(set perm:gall))
+      %+  skip  ~(tap in (seal-at-commit u.yok))
+      (cury have:guard:gall peg.dom.dojo)
+    ::  desk is ready to be updated
+    ?:  =(~ mis)  des
+    ::  desk missing permissions
+    [desk des]
   ::
   ::  Build and send agents to gall
   ::
@@ -1580,33 +1893,74 @@
       !!
     ::  find desk kelvin
     ::
-    =/  kel=(set weft)  (waft-to-wefts (get-kelvin yoki))
+    =/  kel=(set weft)       (waft-to-wefts (get-kelvin yoki))
+    ::  base may only contain one compatible kelvin
+    ::  (and it must be a zuse kelvin)
+    ::
+    ?>  |(!?=(%base syd) ?=([[%zuse @] ~ ~] kel))
+    ::  find desk seal
+    ::
+    =/  per=(set perm:gall)  (seal-at-commit yoki)
+    ::
     ?.  ?|  (~(has in kel) zuse+zuse)                   ::  kelvin match
-            ?&  !=(%base syd)                           ::  best-effort compat
-                %-  ~(any in kel)
+            =(%base syd)
+            ?&  %-  ~(any in kel)                       ::  best-effort compat
                 |=  =weft
                 &(=(%zuse lal.weft) (gth num.weft zuse))
             ==
-            ?&  =(%base syd)                            ::  ready to upgrade
-                %+  levy  ~(tap by tore:(lu now rof hen ruf))
-                |=  [=desk =zest wic=(set weft)]
-                ?|  =(%base desk)
-                    !ese:(~(got by dos.rom.ruf) desk)
-                    !?=(%live zest)
-                    !=(~ (~(int in wic) kel))
-                ==
-            ==
         ==
-      ?:  (~(all in kel) |=(=weft (gth num.weft zuse)))
-        %-  (slog leaf+"clay: old-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
-        ..park
+      ::  not ready for any of the above reasons.
+      ::  commit not compatible with +zuse.
+      ::
+      ::  store this blocked commit as awaiting, could come in handy later
+      ::
       =.  wic.dom                                       ::  [tare] <
         %+  roll  ~(tap in kel)
         |:  [weft=*weft wic=wic.dom]
         (~(put by wic) weft yoki)
-      =?  ..park  !?=(%base syd)  wick                  ::  [wick]
-      %-  (slog leaf+"clay: wait-for-kelvin, {<[need=zuse/zuse have=kel]>}" ~)
-      tare                                              ::  [tare] >
+      ::  we're waiting on kelvin, cannot do anything else
+      ::  (kelvin blockage takes prio over perm blockage, we don't store perms
+      ::  until unblocked on kelvin)
+      ::
+      %-  (slog leaf+"clay: {<syd>} wait-for-kelvin, {<[compat=kel have=zuse+zuse]>}" ~)
+      =.  ..park  wick                                ::  [wick]
+      tare                                            ::  [tare] >
+    ::  prevent downgrading of base,
+    ::  and prevent applying commits that will never become compatible
+    ::  (because they're only compat with old, and base never downgrades)
+    ::
+    ?:  (~(all in kel) |=(=weft (gth num.weft zuse)))
+      %-  (slog leaf+"clay: {<syd>} old-kelvin, {<[compat=kel have=zuse+zuse]>}" ~)
+      ..park
+    =/  mis=(set perm:gall)
+      %-  ~(gas in *(set perm:gall))
+      %+  skip  ~(tap in per)
+      (cury have:guard:gall peg.dom)
+    ::  incoming commit permission check (for live non-base desks only)
+    ::
+    ?:  ?&  =(%live liv.dom)
+            !?=(%base syd)
+            !=(~ mis)
+        ==
+      =.  pew.dom  `[mis `yoki]
+      =.  wic.dom                                     ::  [tare] <
+        %+  roll  ~(tap in kel)
+        |:  [weft=*weft wic=wic.dom]
+        ?:  (gte num.weft zuse)
+          wic
+        (~(put by wic) weft yoki)
+      %-  (slog leaf+"clay: {<syd>} wait-for-permissions, {<want=mis>}" ~)
+      =.  ..park  wick                                ::  [wick]
+      =.  ..park  (send-ward syd)
+      tare
+    ::  if we're not missing permissions, we're not blocked, so we can
+    ::  clear .pew. if we are missing permissions, we're not live (see above)
+    ::  so the commit will go through, but the missing perms will block liveness
+    ::  (we're ok with using .pew for both "blocking commit" and "blocking
+    ::  liveness" because non-live desks can't block commits.)
+    ::
+    =.  pew.dom  ?~(mis ~ `[mis ~])
+    ::
     =.  wic.dom
       %-  ~(gas by *(map weft ^yoki))
       %+  skip  ~(tap by wic.dom)
@@ -1672,12 +2026,13 @@
     =?  changes  updated  (changes-for-upgrade q.old-yaki deletes changes)
     ::
     =/  files
+      %-  apply-built-ins
       =/  original=(map path (each page lobe))
         (~(run by q.old-yaki) |=(=lobe |+lobe))
       %-  ~(dif by (~(uni by original) changes))
       %-  ~(gas by *(map path (each page lobe)))
       (turn ~(tap in deletes) |=(=path [path |+*lobe]))
-    =/  =args:fusion  [files lat.ran veb.bug]
+    =/  =args:ford:fusion  [files lat.ran veb.bug]
     ::
     =^  change-cages  args  (checkout-changes args changes)
     =/  sane-continuation  (sane-changes changes change-cages)
@@ -1734,12 +2089,12 @@
       ?~  desks
         =.  ..park  apex
         (emil (weld moves-1 moves-2))
-      ?.  ?=(%live liv.dom.dojo.i.desks)
-        $(desks t.desks)
       ?:  ?=(%base desk.i.desks)
         $(desks t.desks)
       ?~  wat=(~(get by wic.dom.dojo.i.desks) zuse+zuse)
-        (mean (cat 3 'clay: missing commit-in-waiting on ' desk.i.desks) ~)
+        ?:  ?=(%live liv.dom.dojo.i.desks)
+          (mean (cat 3 'clay: missing commit-in-waiting on ' desk.i.desks) ~)
+        $(desks t.desks)
       =/  den  ((de now rof hen ruf) our desk.i.desks)
       ::  [goad] < call without goading so that we apply all the commits
       ::  before trying to compile all desks to send to gall.
@@ -1747,6 +2102,9 @@
       =^  moves-3  ruf  abet:(park:den | | u.wat *^rang)
       =.  moves-2  (weld moves-2 moves-3)
       $(desks t.desks)
+    ::  send-ward if desk.seal been updated
+    ::
+    =.  ..park  (send-ward syd)                           ::  [send-ward] >
     ::  tell gall to try to run agents if %held
     ::
     ::  [goad] > if goat or desk not running.  %held uses park-held to
@@ -1817,6 +2175,14 @@
       =/  pre=_changes  (~(run by old) |=(lob=lobe |+lob))
       (~(uni by pre) changes)
     ::
+    ++  page-to-cord
+      |=  =page
+      ^-  @t
+      ?+  p.page  ~|([%sys-bad-mark p.page] !!)
+        %hoon  ;;(@t q.page)
+        %mime  q.q:;;(mime q.page)
+      ==
+    ::
     ++  lobe-to-cord
       |=  =lobe
       ^-  @t
@@ -1828,18 +2194,16 @@
     ::  Updated q.yaki
     ::
     ++  checkout-changes
-      |=  [ford-args=args:fusion changes=(map path (each page lobe))]
-      ^-  [(map path [=lobe =cage]) args:fusion]
-      =/  fod  (live-ford ford-args)
-      :_  ford-args
+      |=  [=ford=args:ford:fusion changes=(map path (each page lobe))]
+      ^-  [(map path [=lobe =cage]) args:ford:fusion]
       %+  roll  `(list [path (each page lobe)])`~(tap by changes)
       |=  $:  [=path change=(each page lobe)]
-              built=(map path [lobe cage])
+              [built=(map path [lobe cage]) cache=_ford-args]
           ==
-      ^+  built
+      ^+  [built ford-args]
       =/  =cage
         ::  ~>  %slog.[0 leaf/"clay: validating {(spud path)}"]
-        (read-file:fod path)
+        (read-file:(ford:fusion ford-args) path)
       =/  =lobe
         ?-  -.change
           %|  p.change
@@ -1848,7 +2212,7 @@
           ::
           %&  (page-to-lobe [p q.q]:cage)
         ==
-      (~(put by built) path [lobe cage])
+      [(~(put by built) path [lobe cage]) ford-args]
     ::
     ::  Print notification to console
     ::
@@ -1897,7 +2261,7 @@
       |=  $:  changes=(map path (each page lobe))
               change-cages=(map path [lobe cage])
           ==
-      ^-  (unit [(map path [lobe cage]) args:fusion])
+      ^-  (unit [(map path [lobe cage]) args:ford:fusion])
       ?.  check-sane
         ~
       =/  tak=(unit tako)  (~(get by hit.dom) let.dom)
@@ -1918,10 +2282,11 @@
       ::  ? remove deletes
       ::
       =/  all-changes=(map path (each page lobe))
+        %-  apply-built-ins
         =/  original=(map path (each page lobe))
           (~(run by q.yaki) |=(=lobe |+lobe))
         (~(uni by original) changes)
-      =/  =args:fusion  [all-changes lat.ran veb.bug]
+      =/  =args:ford:fusion  [all-changes lat.ran veb.bug]
       =^  all-change-cages  args  (checkout-changes args all-changes)
       =/  ccs=(list [=path =lobe =cage])  ~(tap by change-cages)
       |-  ^+  *sane-changes
@@ -1939,11 +2304,27 @@
               data=(map path (each page lobe))
           ==
       ^+  ..park
+      |^  ?>  =(%base syd)
+      ::  check if system update is blocked due to other desks.
+      ::  for each desk: find if it's blocking on commit or on perms
+      ::
+      =/  deb=(list desk)  (find-blocked yoki %.y)
+      ?.  =(~ deb)
+        ::  store missing perms in state & notify about them
+        ::
+        =.  ..park           update-pews
+        ::  store blocked sys update commit as awaiting
+        =.  wic.dom                                     ::  [tare] <
+          %+  roll  ~(tap in (waft-to-wefts (get-kelvin yoki)))
+          |:  [weft=*weft wic=wic.dom]
+          (~(put by wic) weft yoki)
+        tare                                            ::  [tare] >
       ?>  =(~ pud)
       =.  pud  `[syd yoki]
-      |^
-      =.  ..park
-        %-  emit  suspend-non-essentials
+      ::  clean pew.dom for desks that aren't up to date with applying kelvin
+      ::
+      =.  ..park  clear-pews
+      =.  ..park  suspend-non-essentials
       %.  [hen %slip %c %pork ~]
       emit:(pass-what files)
       ::
@@ -1969,35 +2350,69 @@
         (emit hen %pass /what %$ what/fil)
       ::
       ++  suspend-non-essentials
+        ::  suspend all blocked on update desks
+        ::
+        ^+  ..park
+        %-  emit
+        :*  hen  %pass  /kiln/bump/zeal  %c  %zeal
+            (turn (find-blocked yoki %.n) (late %held))
+        ==
+      ::
+      ::  +clear-pews: drop .pew for other desks
+      ::
+      ::  if other desks %live, clear their pew.dom, preventing
+      ::  downgrade for those desks or being %held with pending
+      ::  commit in it's state
+      ::
+      ++  clear-pews
+        ^+  ..park
+        ?>  =(%base syd)
         =/  sys-kel=weft
           =/  w=waft  (get-kelvin yoki)
           ?@  -.w  w  !!
-        :*  hen  %pass  /kiln/bump/zeal  %c  %zeal
-        %+  roll  ~(tap by dos.rom.ruf)
-        |=  [[=desk =dojo] l=(list [desk zest])]
-        ?:  ese.dojo  l
-        =/  t=(unit tako)  (~(get by hit.dom.dojo) let.dom.dojo)
-        =/  kel=(set weft)
-          ?:  (~(has by wic.dom.dojo) sys-kel)
-            [sys-kel ~ ~]
-          ?~  t  [sys-kel ~ ~]
-          %-  waft-to-wefts
-          (get-kelvin %| (tako-to-yaki:ze u.t))
-        ::  keep desks that declare compatibility with the new sys kelvin, and
-        ::  older-kelvin desks that ship their own kernel (/brass/pill).
+        =+  doz=~(tap by (~(del by dos.rom.ruf) %base))
+        |-
+        ?~  doz  ..park
+        =*  desk  p.i.doz
+        =*  dojo  q.i.doz
+        =*  next  $(doz t.doz)
         ::
-        =/  has-pill=?
-          ?~  t  |
-          (~(has by q:(tako-to-yaki:ze u.t)) /brass/pill)
-        ?:  ?|  (~(has in kel) sys-kel)
-                ?&  has-pill
-                    %-  ~(any in kel)
-                    |=(=weft &(=(%zuse lal.weft) (gth num.weft num.sys-kel)))
-                ==
-            ==
-          l
-        [[desk %held] l]
-        ==
+        ?.  ?=(%live liv.dom.dojo)                next
+        =.  dos.rom.ruf  (~(put by dos.rom.ruf) desk dojo(pew.dom ~))
+        =.  ..park       (send-ward desk)
+        next
+      ::
+      ::  +update-pews: fill .pew for other desks
+      ::
+      ::    if other desks were awaiting a kelvin, but now we have that kelvin,
+      ::    they may now be awaiting permissions instead. update their .pew
+      ::    and notify about the change, if that's the case.
+      ::
+      ++  update-pews
+        ^+  ..park
+        ?>  =(%base syd)
+        =/  sys-kel=weft
+          =/  w=waft  (get-kelvin yoki)
+          ?@  -.w  w  !!
+        =+  doz=~(tap by (~(del by dos.rom.ruf) %base))
+        |-
+        ?~  doz  ..park
+        =*  desk  p.i.doz
+        =*  dojo  q.i.doz
+        =*  next  $(doz t.doz)
+        ::  only live desks can be blocking on perms,
+        ::  and we only block on perms _after_ we're unblocked on kelvin
+        ::
+        ?.  ?=(%live liv.dom.dojo)                next
+        ?~  yok=(~(get by wic.dom.dojo) sys-kel)  next
+        =/  mis=(set perm:gall)
+          %-  ~(gas in *(set perm:gall))
+          %+  skip  ~(tap in (seal-at-commit u.yok))
+          (cury have:guard:gall peg.dom.dojo)
+        ?:  =(~ mis)  next
+        =.  dos.rom.ruf  (~(put by dos.rom.ruf) desk dojo(pew.dom `[mis `u.yok]))
+        =.  ..park       (send-ward desk)
+        next
       --
     --
   ::
@@ -2008,7 +2423,7 @@
     ^+  ..park
     ?^  err
       ((slog leaf+"clay: desk {<syd>} failed to unsuspend" u.err) ..park)
-    =.  liv.dom  %live
+    =.  ..park  (set-zest %live)
     goad
   ::
   ::  We always say we're merging from 'ali' to 'bob'.  The basic steps,
@@ -2707,12 +3122,11 @@
   ::  Update mime cache
   ::
   ++  checkout-mime
-    |=  $:  ford-args=args:fusion
+    |=  $:  =ford=args:ford:fusion
             deletes=(set path)
             changes=(set path)
         ==
-    ^-  [(map path (unit mime)) args:fusion]
-    =/  fod  (live-ford ford-args)
+    ^-  [(map path (unit mime)) args:ford:fusion]
     =/  mim=(map path (unit mime))
       =/  dels=(list path)  ~(tap by deletes)
       |-  ^-  (map path (unit mime))
@@ -2720,12 +3134,12 @@
         ~
       (~(put by $(dels t.dels)) i.dels ~)
     =/  cans=(list path)  ~(tap by changes)
-    |-  ^-  [(map path (unit mime)) args:fusion]
+    |-  ^-  [(map path (unit mime)) args:ford:fusion]
     ?~  cans
       [mim ford-args]
     =/  =cage
       ~|  mime-cast-fail+i.cans
-      (cast-path:fod i.cans %mime)
+      (cast-path:(ford:fusion ford-args) i.cans %mime)
     =^  mim  ford-args  $(cans t.cans)
     [(~(put by mim) i.cans `!<(mime q.cage)) ford-args]
   ::
@@ -2795,7 +3209,7 @@
       (~(put by mon) pot [her syd ud+for-yon] spur)
     =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) u.yon))
     =/  files  (~(run by q.yaki) |=(=lobe |+lobe))
-    =/  =args:fusion  [files lat.ran veb.bug]
+    =/  =args:ford:fusion  [(apply-built-ins files) lat.ran veb.bug]
     =^  mim  args
       (checkout-mime args ~ ~(key by files))
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
@@ -2871,10 +3285,40 @@
     |=  r=rule
     r(who (~(del in who.r) |+nom))
   ::
+  ++  set-pine
+    |=  [add=? pes=(set perm:gall)]
+    ^+  ..park
+    ?:  add  ..park(peq.dom (~(uni in peq.dom) pes))
+    ..park(peq.dom (~(dif in peq.dom) pes))
+  ::
   ++  set-rein                                          ::  [goad] <
     |=  [ren=(map dude:gall ?)]
     ^+  ..park
     ..park(ren.dom ren)
+  ::
+  ++  set-seal                                          ::  [goad] <
+    |=  [add=? pes=(set perm:gall)]
+    ^+  ..park
+    ?:  add
+      =.  peg.dom  (~(uni in peg.dom) pes)
+      =.  ..park   (send-ward syd)
+      ::  we are relying on +park and +set-zest (through /park-held)
+      ::  to update missing permissions
+      ::
+      ?:  ?=([~ * ^] pew.dom)  (park | | u.+.u.pew.dom *rang)
+      ?.  =(%held liv.dom)  ..park
+      (emit hen %pass /park-held/[syd] %b %wait now)
+    =/  ped=(set perm:gall)  get-seal
+    =/  peg      (~(dif in peg.dom) pes)
+    =/  pew
+      %-  ~(gas in *(set perm:gall))
+      %+  skip  ~(tap in ped)
+      (cury have:guard:gall peg)
+    ?:  &(=(%live liv.dom) ?=(^ pew))
+      (mean leaf+"clay: can't remove required permissions: desk is %live, suspend first" ~)
+    ::  update pew.dom if revoked permissions blocking desk liveness
+    =?  pew.dom   ?=(^ pew)  `[pew ~]
+    (send-ward(peg.dom peg) syd)
   ::
   ++  set-zest                                          ::  [goad] <
     |=  liv=zest
@@ -2883,17 +3327,50 @@
     ?:  =(%kids syd)
       ..park(liv.dom %dead)
     ?.  ?=(%live liv)
-      ..park(liv.dom liv)
+      =/  doj=(unit dojo)  (~(get by dos.rom) syd)
+      ?~  doj        ..park(liv.dom liv)
+      ?.  ese.u.doj
+        ?.  ?&  ?=(^ pew.dom)
+                ?=(^ +.u.pew.dom)
+            ==
+          ..park(liv.dom liv)
+        ::  a non-live desks pew.dom shouldn't carry commit data,
+        ::  apply pending commit from pew.dom to the desk;
+        ::
+        (park(liv.dom liv) | | u.+.u.pew.dom *rang)
+      =/  msg  "clay: can't set essential desk {<syd>} to {(scow %tas liv)}"
+      ((slog leaf+msg ~) ..park)
     =/  kel=(set weft)
       %-  waft-to-wefts
       %+  fall
         (mole |.((get-kelvin %| (aeon-to-yaki:ze let.dom))))
       [[%1 ~] ~]
     ?.  (~(has in kel) zuse+zuse)
-      :: =/  msg  "clay: can't set {<syd>} live, it doesn't support zuse {<zuse>}"
-      :: ((slog leaf+msg ~) ..park)
-      ..park(liv.dom liv)
-    ..park(liv.dom liv)
+      %.  ..park(liv.dom %held)
+      %-  slog
+      :~  leaf+"clay: can't set {<syd>} live, it doesn't support zuse {<zuse>}"
+          leaf+"clay: {<syd>} set to held, waiting for {<zuse>} support"
+      ==
+    =/  per=(set perm:gall)
+      %+  fall
+        (mole |.(get-seal))
+      ~
+    =/  mis=(set perm:gall)
+      %-  ~(gas in *(set perm:gall))
+      %+  skip  ~(tap in per)
+      (cury have:guard:gall peg.dom)
+    ::  whatever we do, take care not to forget commit-awaiting-permissions
+    ::
+    ?:  =(~ mis)
+      =?  pew.dom  |(?=(~ pew.dom) ?=(~ +.u.pew.dom))  ~
+      (send-ward(liv.dom liv) syd)
+    =?  pew.dom  |(?=(~ pew.dom) ?=(~ +.u.pew.dom))
+      `[mis ~]
+    %.  (send-ward(liv.dom %held) syd)
+    %-  slog
+    :~  leaf+"clay: can't set {<syd>} live, missing required permissions"
+        leaf+"clay: {<syd>} set to held, missing permissions: {<mis>}"
+    ==
   ::
   ++  rise                                              ::  [goad] <
     |=  [=dude:gall on=(unit ?)]
@@ -2930,14 +3407,20 @@
     ?^  err
       ((slog leaf+"clay: failed to upgrade kelvin (wick)" u.err) ..park)
     ?>  ?=(%base syd)
+    ::  start with the oldest new kelvin, but if that doesn't apply
+    ::  try progressively newer kelvins
+    ::
     =/  wis=(list [weft =yoki])
       %+  sort  ~(tap by wic.dom)
       |=  [a=[weft yoki] b=[weft yoki]]
       (gth num.a num.b)
     =.  wis  (skip wis |=([[* a=@ud] *] (gte a zuse)))
+    |-
     ?~  wis  ::  Every commit bottoms out here ?
       ..park
-    (park | & yoki.i.wis *rang)
+    ?:  =(~ (find-blocked yoki.i.wis %.y))
+      (park | & yoki.i.wis *rang)
+    $(wis t.wis)
   ::
   ::  Cancel a request.
   ::
@@ -3123,7 +3606,6 @@
         ::
         =/  base-dome  dom:(~(got by dos.rom) %base)
         =/  f
-          ~&  >  [%validate-x pax]
           %-  %*(. tako-ford dom base-dome)
           (~(got by hit.base-dome) let.base-dome)
         (page-to-cage:f peg)
@@ -4338,9 +4820,8 @@
         |=  [=desk =bill]
         leaf+"goad: output: {<desk>}: {<bill>}"
     =/  agents  (build-agents sat)
-    ::  TODO: enable if we can reduce memory usage
     ::
-    ::  =+  (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
+    =+  (build-marks (turn (skip sat |=([desk =bill] =(bill ~))) head))
     ::
     =.  ..abet  tare                                    ::  [tare] >
     (emit hen %pass /lu/load %g %load agents)
@@ -4394,7 +4875,6 @@
   ++  build-agents
     |=  sat=(list [=desk =bill])
     ^-  load:gall
-    ~&  >>  [%build-agents sat]
     =|  lad=load:gall
     |-  ^-  load:gall
     ?~  sat
@@ -4404,11 +4884,15 @@
       |-  ^-  load:gall
       ?~  bill.i.sat
         ~
+      =/  den  ((de now rof hen ruf) our desk.i.sat)
       =/  =vase
+        ~|  /app/[i.bill.i.sat]/hoon
         %-  road  |.
+        ~|  /app/[i.bill.i.sat]/hoon
         (build-file:f /app/[i.bill.i.sat]/hoon)
-      =/  lid  $(bill.i.sat t.bill.i.sat)
-      [[i.bill.i.sat [our desk.i.sat da+now] zuse-version:f vase] lid]
+      =/  agent  ~|  [%building-app bill.i.sat]  !<(agent:gall vase)
+      :_  $(bill.i.sat t.bill.i.sat)
+      [i.bill.i.sat [our desk.i.sat da+now] [peg peq]:dom.den agent]
     =.  lad  (weld lad new)
     $(sat t.sat)
   ::  build-dais for each mark
@@ -4469,9 +4953,10 @@
   ::  but if you're not calling +goad, you may need to call this.
   ::
   ++  tare
-    ?:  =(~ tyr)
-      ..abet
     =/  tor  tore
+    ?:  =(~ tyr)
+      =.  tur  tor
+      ..abet
     =/  waves=(list wave:tire)  (walk:tire tur tor)
     ?~  waves
       ..abet
@@ -4501,7 +4986,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%16                                       ::  vane version
+    $:  ver=%17                                       ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
@@ -4575,11 +5060,15 @@
     ?:  ?=(%base des.req)
       %-  (slog 'clay: base is always essential' ~)
       [~ ..^$]
+    =/  =dojo  (~(got by dos.rom.ruf) des.req)
+    ?:  &(ese.req !?=(%live liv.dom.dojo))
+      %-  %-  slog
+          :~  leaf+"clay: can't set {<des.req>} to essential"
+              leaf+"clay: {<des.req>} desk is {<liv.dom.dojo>}, not %live"
+          ==
+      [~ ..^$]
     =.  dos.rom.ruf
-      %+  ~(jab by dos.rom.ruf)
-        des.req
-      |=  =dojo
-      dojo(ese ese.req)
+      (~(put by dos.rom.ruf) des.req dojo(ese ese.req))
     =^  mos  ruf
       abet:wick:((de now rof hen ruf) our %base)
     [mos ..^$]
@@ -4714,12 +5203,27 @@
       abet:(perm:den pax.req rit.req)
     [mos ..^$]
   ::
+      %pine
+    =^  mos  ruf
+      =/  den  ((de now rof hen ruf) our des.req)
+      abet:(send-ward:(set-pine:den add.req pes.req) des.req)
+    =^  mos2  ruf  abet:goad:(lu now rof hen ruf)
+    [(weld mos mos2) ..^$]
+  ::
       %rein
     =^  m1  ruf
       =/  den  ((de now rof hen ruf) our des.req)
       abet:(set-rein:den ren.req)
     =^  m2  ruf  abet:goad:(lu now rof hen ruf)         ::  [goad] >
     [(weld m1 m2) ..^$]
+  ::
+      %seal
+    =^  mos  ruf
+      =/  den  ((de now rof hen ruf) our des.req)
+      abet:(set-seal:den add.req pes.req)
+    =^  mos2  ruf  abet:goad:(lu now rof hen ruf)
+    [(weld mos mos2) ..^$]
+    ::
   ::
       %stir
     ?+    arg.req  ~|(%strange-stir !!)
@@ -4782,6 +5286,13 @@
       [(weld moves-1 moves-2) ..^^$]
     [wake-moves ..^$]
   ::
+      %ward
+    =.  pes.ruf  (~(put in pes.ruf) hen)
+    :_  ..^$
+    %+  turn  (tell:ward waw.ruf *writ:ward)
+    |=  =cast:ward
+    [hen %give %ward cast]
+  ::
       ?(%warp %werp)
     ::  capture whether this read is on behalf of another ship
     ::  for permissions enforcement
@@ -4808,6 +5319,10 @@
     =^  mos  ruf
       abet:wick:((de now rof hen ruf) our %base)        ::  [wick]
     [mos ..^$]
+  ::
+      %wink
+    =.  pes.ruf  (~(del in pes.ruf) hen)
+    [~ ..^$]
   ::
       %zeal
     =^  m1  ruf
@@ -4858,7 +5373,8 @@
   ::
   =>  |%
       +$  raft-any
-        $%  [%16 raft-16]
+        $%  [%17 raft-17]
+            [%16 raft-16]
             [%15 raft-15]
             [%14 raft-14]
             [%13 raft-13]
@@ -4870,7 +5386,59 @@
             [%7 raft-7]
             [%6 raft-6]
         ==
-      +$  raft-16  raft
+      +$  raft-17  $+  raft-17  raft
+      ::
+      +$  raft-16
+        $+  raft-16
+        $:  rom=room-16
+            hoy=(map ship rung-16)
+            ran=rang
+            mon=(map term beam)
+            hez=(unit duct)
+            cez=(map @ta crew)
+            tyr=(set duct)
+            tur=rock:tire
+            pud=(unit [=desk =yoki])
+            sad=(map ship @da)
+            bug=[veb=@ mas=@]
+        ==
+      ::
+      +$  room-16
+        $:  hun=duct
+            dos=(map desk dojo-16)
+        ==
+      +$  rung-16
+        $:  rus=(map desk rede-16)
+        ==
+      +$  rede-16
+        $:  lim=@da
+            ref=(unit rind)
+            qyx=cult
+            dom=dome-16
+            per=regs
+            pew=regs
+            fiz=melt
+        ==
+      +$  dojo-16
+        $:  qyx=cult
+            dom=dome-16
+            per=regs
+            pew=regs
+            fiz=melt
+            ese=?
+        ==
+      ::
+      +$  dome-16
+        $:  let=aeon
+            hit=(map aeon tako)
+            lab=(map @tas aeon)
+            tom=(map tako norm)
+            nor=norm
+            mim=(map path mime)
+            wic=(map weft yoki)
+            liv=zest
+            ren=rein
+        ==
       ::
       +$  flow  (map leak [refs=@ud =soak])
       +$  leak
@@ -5343,7 +5911,8 @@
   =?  old  ?=(%13 -.old)  14+(raft-13-to-14 +.old)
   =?  old  ?=(%14 -.old)  15+(raft-14-to-15 +.old)
   =?  old  ?=(%15 -.old)  16+(raft-15-to-16 +.old)
-  ?>  ?=(%16 -.old)
+  =?  old  ?=(%16 -.old)  17+(raft-16-to-17 +.old)
+  ?>  ?=(%17 -.old)
   ..^^$(ruf +.old)
   ::
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
@@ -5653,7 +6222,7 @@
             dos.rom
           %-  ~(run by dos.rom.raf)
           |=  d=dojo-15
-          d(qyx (cult-15-to-cult qyx.d), dom (dome-13-to-dome dom.d))
+          d(qyx (cult-15-to-cult qyx.d), dom (dome-13-to-dome-16 dom.d))
         ::
             hoy
           %-  ~(run by hoy.raf)
@@ -5663,7 +6232,7 @@
           %=  r
             ref  (bind ref.r rind-15-to-rind)
             qyx  (cult-15-to-cult qyx.r)
-            dom  (dome-13-to-dome dom.r)
+            dom  (dome-13-to-dome-16 dom.r)
           ==
         ==
     ::
@@ -5676,9 +6245,9 @@
       ^-  [wove (set duct)]
       [w(rove (rove-15-to-rove rove.w)) s]
     ::
-    ++  dome-13-to-dome
+    ++  dome-13-to-dome-16
       |=  d=dome-13
-      ^-  dome
+      ^-  dome-16
       [let hit lab tom nor mim wic liv ren]:d
     ::
     ++  rove-15-to-rove
@@ -5700,6 +6269,37 @@
       |=  c=cach-15
       ?.  ?=([~ ~ *] c)  c
       ``(next-cage:a235 u.u.c)
+    --
+  ::
+  ++  raft-16-to-17
+    |=  raf=raft-16
+    ::  add granted, required and blocking perms to dome,
+    ::  and perm subscribers & updates to raft.
+    ::
+    |^  ^-  raft-17
+        %=  raf
+            dos.rom
+          %-  ~(run by dos.rom.raf)
+          |=  d=dojo-16
+          d(dom (dome-16-to-dome-17 dom.d))
+        ::
+            hoy
+          %-  ~(run by hoy.raf)
+          |=  r=rung-16
+          %-  ~(run by rus.r)
+          |=  r=rede-16
+          %=  r
+            dom  (dome-16-to-dome-17 dom.r)
+          ==
+        ::
+            bug
+          [bug.raf pes=~ waw=~]
+        ==
+    ::
+    ++  dome-16-to-dome-17
+      |=  d=dome-16
+      ^-  dome
+      d(ren [ren.d peg=~ peq=~ pew=~])
     --
   --
 ::
@@ -5776,6 +6376,7 @@
         %domes  domes
         %tire   ``[%tire !>(tore:(lu now rof *duct ruf))]
         %tyre   ``[%tyre !>(tyr.ruf)]
+        %bond   (bond t.path)
     ==
   ::
   ++  domes
@@ -5823,6 +6424,21 @@
       i.path
     ``[%esse !>(ese:(~(got by dos.rom.ruf) desk))]
   ::
+  ++  bond
+    |=   =path
+    ^-  (unit (unit cage))
+    ?~  path  [~ ~]
+    =/  =desk  i.path
+    =/  dom=dome  dom:(~(got by dos.rom.ruf) desk)
+    =/  den  ((de now rof [/scrybond ~] ruf) our desk)
+    =/  ped=(set perm:gall)  get-seal:den
+    =/  bon=bond:ward
+      :*  ped
+          peg.dom  peq.dom
+          ?~(pew.dom ~ -.u.pew.dom)
+      ==
+    ``[%bond !>(bon)]
+  ::
   ::  True if file is accessible
   ::
   ++  tomb
@@ -5841,7 +6457,7 @@
 ++  stay
   ^-  raft-any:load
   :-  ver
-  ^-  raft-16:load
+  ^-  raft-17:load
   ruf
 ::
 ++  take                                              ::  accept response

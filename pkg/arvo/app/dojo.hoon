@@ -374,14 +374,14 @@
       ?>  ?=(~ pux)
       %-  he-card(poy `+>+<(pux `way))
       =/  [=ship =desk =case]  beak
-      [%pass way %arvo %syscall %c %warp ship desk ~ %sing care case path]
+      [%pass way %arvo %clay %read ~ ship desk %sing care case path]
     ::
     ++  dy-request
       |=  [way=wire =request:http]
       ^+  +>+>
       ?>  ?=(~ pux)
       %-  he-card(poy `+>+<(pux `way))
-      [%pass way %arvo %syscall %i %request request *outbound-config:iris]
+      [%pass way %arvo %iris %request request *outbound-config:iris]
     ::
     ++  dy-stop                                         ::  stop work
       ^+  +>
@@ -391,7 +391,7 @@
       =<  he-diff
       ?.  ?=([%wool *] u.pux)
         =/  [=ship =desk =case]  he-beak
-        (he-card %pass u.pux %arvo %syscall %c %warp ship desk ~)
+        (he-card %pass u.pux %arvo %clay %rest ~)
       =.  +>  (he-card %pass u.pux %agent [our.hid %spider] %leave ~)
       ?@  t.u.pux  +>
       =/  =cage  [%spider-stop !>([i.t.u.pux |])]
@@ -589,9 +589,11 @@
         ==
       ::
           %file
+        =/  pax=path  (en-beam p.p.mad)
+        ?>  ?=([* * * *] pax)
         %-  he-card(poy ~)
-        :*  %pass  /file  %arvo  %syscall  %c
-            %info  (foal:space:userlib (en-beam p.p.mad) cay)
+        :*  %pass  /file  %arvo  %clay  %rite
+            `desk`i.t.pax  (flux:space:userlib pax cay)
         ==
       ::
           %flat
@@ -1641,7 +1643,6 @@
   --
 --
 ^-  agent:gall
-:-  %new-agent
 |_  hid=bowl:gall
 ++  on-init
   `..on-init
@@ -1760,7 +1761,9 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card:agent:gall _..on-init)
-  ?>  (team:title [our src]:hid)
+  ?>  ?|  (team:title [our src]:hid)
+          (~(has in acl) src.hid)
+      ==
   =^  moves  state
     ^-  (quip card:agent:gall house)
     ?+  mark  ~|([%dojo-poke-bad-mark mark] !!)
@@ -1853,29 +1856,35 @@
 ++  on-arvo
   |=  [=wire gift=gift-user-v1:gall]
   ^-  (quip card:agent:gall _..on-init)
-  ?>  ?=(%syscall -.gift)
-  =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
   ?>  ?=([@ @ *] wire)
   =/  =id  [(slav %p i.wire) i.t.wire]
   =/  =session  (~(got by hoc) id)
   =/  he-full  ~(. he hid id ~ session)
+  =?  gift  ?=(%syscall -.gift)
+    =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
+    ?+  sign-arvo  gift
+        [%clay %writ *]           [- %read ~ p]:sign-arvo
+        [%iris %http-response *]  sign-arvo
+    ==
   =^  moves  state
     =<  he-abet
-    ?+    +<.sign-arvo  ~|([%dojo-bad-take +<.sign-arvo] !!)
-        %writ           (he-writ:he-full t.t.wire +>.sign-arvo)
-        %http-response  (he-http-response:he-full t.t.wire +>.sign-arvo)
+    ?+    gift  ~|([%dojo-bad-take +<.gift] !!)
+        [%clay %read *]  (he-writ:he-full t.t.wire riot.gift)
+        [%iris %http-response *]
+      (he-http-response:he-full t.t.wire +>.gift)
+        [%unsupported ~]  ~|([%dojo-unsupported-take wire] !!)
     ==
   [moves ..on-init]
 ::  if dojo fails unexpectedly, kill whatever each session is working on
 ::
 ++  on-fail
-  |=  [=term =tang]
+  |=  [frag:agent:gall =call:agent:gall]
   =/  sessions=(list (pair id session))  ~(tap by hoc)
   |-  ^-  (quip card:agent:gall _..on-init)
   ?~  sessions
     [~ ..on-init]
   =^  cards-1  state
-    he-abet:(~(he-lame he hid p.i.sessions ~ q.i.sessions) term tang)
+    he-abet:(~(he-lame he hid p.i.sessions ~ q.i.sessions) from tang)
   =^  cards-2  ..on-init
     $(sessions t.sessions)
   [(weld cards-1 cards-2) ..on-init]

@@ -48,8 +48,8 @@
     =+  peer=(~(get by u.peers) sndr)
     ?.  ?=(^ peer)  |
     =(%known u.peer)
-  ?:  ?&  =-  ~?  -  %is-pawn
-              -
+  ?:  ?&  :: =-  ~?  -  %is-pawn
+          ::     -
           ?|  ?=(%pawn (clan:title sndr))
               ?=(%pawn (clan:title sndr.shot))
           ==
@@ -66,7 +66,7 @@
                   !is-known
               ==
               ?&  ?=(^ out)
-                  ?=(^ ;;((soft open-packet:ames-raw) (cue signed:(need (need out)))))
+                  ?=(^ ;;((soft [~ open-packet:ames-raw]) (mole |.((cue signed:(need (need out)))))))
                   ::  if this is an attestation packet, check if the rcvr has the comet
                   ::  as %known -- this is a workaround to prevent a bail:evil that will
                   ::  end up blocking the queue of the %aqua host, when it tries to decrypt

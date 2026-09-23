@@ -262,7 +262,7 @@
   ::
   :+  %pill  %solid
   :+  boot-ova  ~
-  =.  dez  (snoc dez [%base bas])
+  =.  dez  [[%base bas] dez]
   ;:  weld
     %+  turn  dez
     |=  [dek=desk bas=path]
@@ -270,11 +270,6 @@
   ::
     ?.  prime  ~
     [(prep-ovum (turn dez tail))]~
-  ::
-    %+  turn  dez
-    |=  [dek=desk *]
-    ^-  unix-event
-    [/c/essential/[dek] %esse dek %.y]
   ==
 ::
 ++  brass
@@ -333,10 +328,12 @@
       ?.  prime  ~
       [(prep-ovum (turn dez tail))]~
     ::
-      %+  turn  dez
-      |=  [dek=desk *]
-      ^-  unix-event
-      [/c/essential/[dek] %esse dek %.y]
+      %+  murn  dez
+      |=  [dek=desk bas=path]
+      ^-  (unit unix-event)
+      ?.  .^(? %cu (welp bas /desk/seal))  ~
+      =+  .^([@ per=(list perm:gall)] %cx (welp bas /desk/seal))
+      `[/c/init-seal %seal dek %.y (silt per)]
     ==
   ::
   =/  =wynn  (get-wynn sys new-wynn)

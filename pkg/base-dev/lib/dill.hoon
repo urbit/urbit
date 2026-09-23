@@ -11,6 +11,7 @@
     %+  frond  -.blit
     ?-  -.blit
       %bel  b+&
+      %bye  b+&
       %clr  b+&
       %hop  ?@  p.blit  (numb p.blit)
             (pairs 'x'^(numb x.p.blit) 'y'^(numb y.p.blit) ~)

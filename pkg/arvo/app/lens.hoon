@@ -271,10 +271,12 @@
   --
 ::
 ++  on-arvo
-  |=  [=wire =sign-arvo]
+  |=  [=wire gift=gift-user-v1:gall]
   ^-  (quip card:agent:gall _this)
+  ?.  ?=([%syscall *] gift)  (on-arvo:def wire gift)
+  =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
   ?.  ?=(%bound +<.sign-arvo)
-    (on-arvo:def wire sign-arvo)
+    (on-arvo:def wire gift)
   [~ this]
 ::
 ++  on-fail   on-fail:def

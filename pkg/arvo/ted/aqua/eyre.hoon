@@ -62,7 +62,7 @@
       :*  %pass
           /(scot %p who)/(scot %ud num)
           %arvo
-          %i
+          %iris
           %request
           (hiss-to-request:html u.req)
           *outbound-config:iris

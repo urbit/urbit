@@ -43,11 +43,10 @@
 :: TODO: if we're building the thread against user-provided dependencies, can
 :: TODO:    we always use the default beak here?
 ;<  ~  bind:m  (send-thread:strandio beak shed wir)
-;<  [wer=wire sig=sign-arvo]  bind:m  take-sign-arvo:strandio
+;<  [wer=wire gift=gift-user-v1:gall]  bind:m  take-gift-user:strandio
 ?>  =(wir wer)
-?>  ?=(%khan -.sig)
-?>  ?=(%arow +<.sig)
-=/  vow  ,.+>.sig
+?>  ?=([%khan %arow *] gift)
+=/  vow  res.gift
 ?-  -.vow
   %&  (pure:m q.p.vow)
   %|  (strand-fail:strand %child-failed +.vow)

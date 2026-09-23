@@ -13,8 +13,7 @@
   ^-  card:agent:gall
   =/  url  (cat 3 (crip "https://api.github.com/repos{<repo>}/commits/") branch)
   =/  =request:http  ~[%'GET' url ~[['User-Agent' 'vere-v1.20'] ['Accept' 'application/vnd.github.v3+json']]]
-  =/  =task:iris  [%request request *outbound-config:iris]
-  [%pass /http-req %arvo %i task]
+  [%pass /http-req %arvo %iris %request request *outbound-config:iris]
 --
 =,  strand=strand:spider
 ^-  thread:spider
@@ -24,7 +23,7 @@
 =/  repo  ;;(path +<.q.arg)
 =/  branch  ;;(cord +>.q.arg)
 ;<  ~  bind:m  (send-raw-card:strandio (build-commit-request repo branch))
-;<  res=(pair wire sign-arvo)  bind:m  take-sign-arvo:strandio
+;<  res=(pair wire gift-user-v1:gall)  bind:m  take-gift-user:strandio
 ?.  ?=([%iris %http-response %finished *] q.res)
   (strand-fail:strand %bad-sign ~)
 ?~  full-file.client-response.q.res
