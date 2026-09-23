@@ -4546,6 +4546,11 @@
       ::  %rule: updates our http configuration
       ::
       %rule
+    =*  update
+      =*  out-duct  outgoing-duct.server-state.ax
+      ?~  out-duct  ~
+      =,  server-state.ax
+      [out-duct %give %set-config (make-vere-config domains risk http-config)]~
     ?-  -.http-rule.task
         ::  %cert: install tls certificate
         ::
@@ -4564,11 +4569,7 @@
         ?&  ?=(^ secure.ports.server-state.ax)
             ?=(^ cert.http-rule.task)
         ==
-      :_  http-server-gate
-      =*  out-duct  outgoing-duct.server-state.ax
-      ?~  out-duct  ~
-      =,  server-state.ax
-      [out-duct %give %set-config (make-vere-config domains risk config)]~
+      [update http-server-gate]
     ::
         ::  %turf: add or remove domain name
         ::
@@ -4582,19 +4583,23 @@
           %del  [%del (normalize-turf turf.action.http-rule.task)]
           %new  [%new (~(run in turfs.action.http-rule.task) normalize-turf)]
         ==
-      =.  domains
+      =/  next
         ?-  -.action.http-rule.task
           %put  (~(put in domains) turf.action.http-rule.task)
           %del  (~(del in domains) turf.action.http-rule.task)
           %new  turfs.action.http-rule.task
         ==
-      [~ http-server-gate]
+      ?:  =(next domains)  [~ http-server-gate]
+      =.  domains  next
+      [update http-server-gate]
     ::
         ::  %risk: turn bare ip access on or off
         ::
         %risk
+      ?:  =(risk.server-state.ax on.http-rule.task)
+        [~ http-server-gate]
       =.  risk.server-state.ax  on.http-rule.task
-      [~ http-server-gate]
+      [update http-server-gate]
     ==
   ::
       %plea
