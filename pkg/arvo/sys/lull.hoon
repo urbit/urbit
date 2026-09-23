@@ -3471,9 +3471,6 @@
     $:  :: secure: per-domain PEM-encoded RSA private key and cert (or chain)
         ::
         secure=(map turf [key=wain cert=wain])
-        :: proxy: reverse TCP proxy HTTP(s)
-        ::
-        proxy=_|
         :: log: keep HTTP(s) access logs
         ::
         log=?
@@ -3486,19 +3483,18 @@
   :: +vere-config: full http-server configuration for vere's consumption
   ::
   +$  vere-config
-    $:  :: secure: priority-ordered per-domain keys & certs
+    $:  %1
+        ::  domains: known root-level domains, serialized $turfs
+        ::  secure:  priority-ordered per-domain (mb wildcard) keys & certs
         ::
+        domains=(list @t)
         secure=(list [=turf key=wain cert=wain])
-        :: proxy: reverse TCP proxy HTTP(s)
+        ::  risk: true if access through bare ip address is allowed
+        ::  log: keep HTTP(s) access logs
+        ::  redirect: send 301 to upgrade HTTP to HTTPS (if cert present)
         ::
-        proxy=_|
-        :: log: keep HTTP(s) access logs
-        ::
+        risk=?
         log=?
-        :: redirect: send 301 redirects to upgrade HTTP to HTTPS
-        ::
-        ::   Note: requires certificate.
-        ::
         redirect=?
     ==
   :: +http-rule: update configuration

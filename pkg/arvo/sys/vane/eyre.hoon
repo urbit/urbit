@@ -183,12 +183,19 @@
   ^+  turf
   %+  turn  turf
   |=(b=@ (run 3 b |=(a=@ ?.(&((gte a 'A') (lte a 'Z')) a (add 32 a)))))
-::  +http-to-vere-config: prepare for runtime consumption
+::  +make-vere-config: prepare for runtime consumption
 ::
-++  http-to-vere-config
-  |=  config=http-config
+++  make-vere-config
+  |=  [domains=(set turf) risk=? config=http-config]
   ^-  vere-config
-  =-  config(secure -)
+  =;  secure
+    :+  %1
+      ::  longest first for runtime convenience
+      ::
+      =-  (turn - en-turf:html)
+      %+  sort  ~(tap in domains)
+      |=([a=turf b=turf] (gth (lent a) (lent b)))
+    [secure risk [log redirect]:config]
   %+  sort  ~(tap by secure.config)
   |=  [[a=turf *] [b=turf *]]
   =.  a  (flop a)
@@ -1438,6 +1445,8 @@
       (handle-http-scry req)
     ::  handle requests to the cache, if a non-empty entry exists
     ::
+    ::REVIEWzz  move to be before most request logic?
+    ::TODOzz  must be served only from cache entry's desk's subdomain
     =/  cached=(unit [aeon=@ud val=(unit [=desk cache-entry])])
       (~(get by cache.state) url.request)
     ?:  &(?=([~ @ ^] cached) ?=(%'GET' method.request))
@@ -4484,7 +4493,7 @@
     :*  ::  hand back default configuration for now
         ::
         :^  duct  %give  %set-config
-        (http-to-vere-config http-config.server-state.ax)
+        (make-vere-config [domains risk http-config]:server-state.ax)
         ::  provide a list of valid auth tokens
         ::
         =<  give-session-tokens
@@ -4558,7 +4567,8 @@
       :_  http-server-gate
       =*  out-duct  outgoing-duct.server-state.ax
       ?~  out-duct  ~
-      [out-duct %give %set-config (http-to-vere-config config)]~
+      =,  server-state.ax
+      [out-duct %give %set-config (make-vere-config domains risk config)]~
     ::
         ::  %turf: add or remove domain name
         ::
