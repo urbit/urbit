@@ -112,6 +112,7 @@ export class Root extends Component {
                 <Eyre
                   bindings={state.bindings}
                   cache={state.cache}
+                  config={state.config}
                   connections={state.connections}
                   authentication={state.authentication}
                   channels={state.channels}

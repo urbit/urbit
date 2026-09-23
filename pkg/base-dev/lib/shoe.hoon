@@ -13,8 +13,8 @@
 /-  *sole
 /+  sole, auto=language-server-complete
 |%
-+$  state-1
-  $:  %1
++$  state-2
+  $:  %2
       soles=(map sole-id sole-share)
   ==
 ::  $card: standard gall cards plus shoe effects
@@ -147,7 +147,7 @@
 ++  agent
   |*  command-type=mold
   |=  =(shoe command-type)
-  =|  state-1
+  =|  state-2
   =*  state  -
   ^-  agent:gall
   =>
@@ -188,7 +188,7 @@
     =^  cards  shoe  on-init:og
     [(deal cards) this]
   ::
-  ++  on-save   !>([%shoe-app on-save:og state])
+  ++  on-save   :(slop !>(%shoe-app) on-save:og !>(state))
   ::
   ++  on-load
     |=  old-state=vase
@@ -201,23 +201,32 @@
     ?.  ?=([%shoe-app ^] q.old-state)
       =^  cards  shoe  (on-load:og old-state)
       [(deal cards) this]
-    |^  =|  old-outer=state-any
-        =^  old-inner  old-outer
-          +:!<([%shoe-app vase state-any] old-state)
-          :: ~!  q.old-state
-          :: ?+  +>.q.old-state  !!
-          ::   [%0 *]  +:!<([%shoe-app vase state-0] old-state)
-          ::   [%1 *]  +:!<([%shoe-app vase state-1] old-state)
-          :: ==
-        =^  caz  shoe  (on-load:og old-inner)
-        =^  cuz  old-outer
-          ?.  ?=(%0 -.old-outer)  [~ old-outer]
-          (state-0-to-1 old-outer)
-        ?>  ?=(%1 -.old-outer)
-        [(weld cuz (deal caz)) this(state old-outer)]
+    |^  ::  versions %0 and %1 stored the inner state double-vased.
+        ::  fixing this coincided with the 408 type-of-type migration.
+        ::
+        ?:  ?=([%shoe-app * ?(%0 %1) *] q.old-state)
+          =|  old-outer=state-any
+          =^  old-inner  old-outer
+            +:!<([%shoe-app vase:h136 state-any] old-state)
+          =^  caz  shoe  (on-load:og (next-vase:h136 old-inner))
+          =^  cuz  old-outer
+            ?.  ?=(%0 -.old-outer)  [~ old-outer]
+            (state-0-to-1 old-outer)
+          =?  old-outer  ?=(%1 -.old-outer)  (state-1-to-2 old-outer)
+          ?>  ?=(%2 -.old-outer)
+          [(weld cuz (deal caz)) this(state old-outer)]
+        ::
+        =+  !<(old=state-any (slot 7 old-state))
+        ?>  ?=(%2 -.old)
+        =.  state  old
+        ::
+        =^  caz  shoe  (on-load:og (slot 6 old-state))
+        [(deal caz) this]
     ::
-    +$  state-any  $%(state-1 state-0)
+    +$  state-any  $%(state-2 state-1 state-0)
+    +$  state-1    _%*(. *state-2 - %1)
     +$  state-0    [%0 soles=(map @ta sole-share)]
+    ++  state-1-to-2  |=(old=state-1 old(- %2))
     ++  state-0-to-1
       |=  old=state-0
       ^-  (quip card:agent:gall state-1)

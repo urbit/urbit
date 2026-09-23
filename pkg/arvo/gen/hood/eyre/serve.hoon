@@ -12,5 +12,5 @@
         ~
     ==
 :+  %helm-serve
-  `binding:eyre`[~ pax]
+  `binding:eyre`pax
 `generator:eyre`[syd gen ~]

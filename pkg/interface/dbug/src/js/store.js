@@ -15,6 +15,7 @@ class Store {
       commits: [],
       bindings: [],
       cache: [],
+      config: { secure: [], proxy: false, log: true, redirect: false },
       connections: [],
       authentication: {
         sessions: [],

@@ -388,7 +388,7 @@
     ::  %connect: serve path is path.binding
     %+  expect-eq
     !>  [%eyre %serve /foo/bar]~
-    !>  (do-must [%pass /path %arvo %eyre %connect [~ /foo/bar] %gen])
+    !>  (do-must [%pass /path %arvo %eyre %connect /foo/bar %gen])
   ::
     ::  %set-response: parsed url path
     %+  expect-eq
@@ -403,7 +403,7 @@
     ::  %disconnect is always allowed
     %+  expect-eq
     !>  [%.y ~]
-    !>  (do-must [%pass /path %arvo %eyre %disconnect [~ /foo]])
+    !>  (do-must [%pass /path %arvo %eyre %disconnect /foo])
   ::
     ::  %approve-origin(%reject-origin)
     %+  expect-eq

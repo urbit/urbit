@@ -62,7 +62,7 @@
     :_  this  :_  ~
     :*  %pass  /connect
         %arvo  %eyre
-        %connect  [~ /'~language-server-protocol']  %language-server
+        %connect  /'~language-server-protocol'  %language-server
     ==
   ::
   ++  on-save   !>(state)

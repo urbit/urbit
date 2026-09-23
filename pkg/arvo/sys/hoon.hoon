@@ -13210,7 +13210,7 @@
                   ['?' (rune wut %ktwt expa)]
                   ['*' (rune tar %kttr exqa)]
                   [':' (rune col %ktcl exqa)]
-                  ['#' (rune hax %ktcb expb)]
+                  ['_' (rune cab %ktcb expb)]
               ==
             ==
           :-  '~'
@@ -14438,11 +14438,15 @@
   ++  next-vase
     |=  a=vase
     ^-  vase:h135
+    ::  trigger unifying equality
+    ::
+    =;  b  =+(=(a b) b)
     a(p (next-type p.a))
   ::
   ++  next-type
     |=  a=type  ~+
     ^-  type:h135
+    =;  b  =+(=(a b) b)
     ?+  a  a
       [%cell *]  [%cell $(a p.a) $(a q.a)]
       [%core *]  [%core $(a p.a) (next-coil q.a)]
@@ -14456,6 +14460,7 @@
   ++  next-coil
     |=  a=coil
     ^-  coil:h135
+    =;  b  =+(=(a b) b)
     :+  p.a
       (next-type q.a)
     [p.r.a (~(run by q.r.a) next-tome)]
@@ -14463,22 +14468,26 @@
   ++  next-tome
     |=  a=tome
     ^-  tome:h135
+    =;  b  =+(=(a b) b)
     (~(run by q.a) next-hoon)
   ::
   ++  next-tune
     |=  a=tune
     ^-  tune:h135
+    =;  b  =+(=(a b) b)
     :-  (~(run by p.a) (curr bind next-hoon))
     (turn q.a next-hoon)
   ::
   ++  next-manx
     |=  a=manx:hoot
     ^-  manx:hoot:h135
+    =;  b  =+(=(a b) b)
     [(next-marx g.a) (next-marl c.a)]
   ::
   ++  next-marx
     |=  a=marx:hoot
     ^-  marx:hoot:h135
+    =;  b  =+(=(a b) b)
     :-  n.a
     %+  turn  a.a
     |=  [n=mane:hoot v=(list beer:hoot)]
@@ -14486,6 +14495,7 @@
   ::
   ++  next-marl
     |=  a=marl:hoot
+    =;  b  =+(=(a b) b)
     %+  turn  a
     |=  a=tuna:hoot
     ^-  tuna:hoot:h135
@@ -14495,6 +14505,7 @@
   ++  next-skin
     |=  a=skin
     ^-  skin:h135
+    =;  b  =+(=(a b) b)
     ?+  a  a
       [%cell *]  [%cell $(a +<.a) $(a +>.a)]
       [%dbug *]  [%dbug spot.a $(a skin.a)]
@@ -14507,6 +14518,7 @@
   ++  next-spec
     |=  a=spec  ~+
     ^-  spec:h135
+    =;  b  =+(=(a b) b)
     ?+  -.a  a
       %dbug  [%dbug p.a $(a q.a)]
       %gist  $(a q.a)  ::  drop
@@ -14540,6 +14552,7 @@
   ++  next-hoon
     |=  a=hoon  ~+
     ^-  hoon:h135
+    =;  b  =+(=(a b) b)
     ?+  a  a
       [^ *]      [$(a p.a) $(a q.a)]
     ::

@@ -28,6 +28,13 @@ a {
   text-decoration: none;
 }
 
+.cert {
+  display: inline-block;
+  vertical-align: top;
+  margin: 0 1em;
+  font-size: 0.8em;
+}
+
 .inter {
   font-family: Inter, sans-serif;
 }

@@ -70,7 +70,7 @@
     ^-  (quip card _this)
     =*  who  src.bowl
     =/  rac  (clan:title who)
-    ?.  ?=(?(%king %duke) rac)
+    ?.  ?=(?(%king %duke %earl) rac)
       ~|  [%dns-collector-bind-invalid who]  !!
     ?:  (reserved:eyre if.adr)
       ~|  [%dns-collector-reserved-address who if.adr]  !!

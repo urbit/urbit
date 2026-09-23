@@ -251,7 +251,32 @@
   ++  state-2-to-3
     |=  s=state-2
     ^-  state-3
-    s(- %3, movs.drips (~(run by movs.drips.s) next-vase:h136))
+    %=    s
+       -  %3
+      ::
+        movs.drips
+      %-  ~(run by movs.drips.s)
+      |=  vax=vase:h136
+      ^-  vase:h135
+      =/  new-vase=vase  (next-vase:h136 vax)
+      ::  %clay is the only vane that passes %drips to %behn.
+      ::  of those `?(%writ %wris)`, the only ones containing a
+      ::  vase is a [%writ ~ p q r=cage)].
+      ::
+      ::  on everything else we produce the bunted vase
+      ::
+      =+  !<  $=  task
+              $%  $<(%writ gift-arvo)
+                  $:  %writ
+                      riot=(unit [[care:clay case desk] path r=cage:a235])
+              ==  ==
+            new-vase
+      ?.  ?=(%writ -.task)           new-vase
+      ?~  riot.task                  new-vase
+      !>  ^-  $>(%writ gift:clay)
+      [%writ ~ u.riot.task(r (next-cage:a235 r.u.riot.task))]
+      ::
+    ==
   --
 ::  +scry: view timer state
 ::

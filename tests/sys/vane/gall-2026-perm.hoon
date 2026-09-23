@@ -441,15 +441,15 @@
       ==
     ::
       ^-  tracked-task
-      :*  [%eyre %connect [~ ['foo']~] %foo]
-          [%e %connect [~ ['foo']~] %foo]
-          [%eyre %binding ~ 'foo' ~]^`[%eyre %binding %foo]
+      :*  [%eyre %connect ['foo']~ %foo]
+          [%e %connect ['foo']~ %foo]
+          [%eyre %binding 'foo' ~]^`[%eyre %binding %foo]
           `%foo
         ::
-          [%e %disconnect ~ 'foo' ~]
+          [%e %disconnect 'foo' ~]
         ::
           ~
-          `[%e %connect [~ ['foo']~] %foo]
+          `[%e %connect ['foo']~ %foo]
           %.y
       ==
     ::
@@ -457,14 +457,14 @@
       =/  entry=cache-entry:eyre
         [auth=& %payload [200 ~] `[4 'body']]
       :*  [%eyre %set-response '/some/url' `entry]
-          [%e %set-response '/some/url' `entry]
+          [%e %set-response %desk '/some/url' `entry]
           [%eyre %cache '/some/url']^`[%eyre %cache entry]
           ~
         ::
-          [%e %set-response '/some/url' ~]
+          [%e %set-response %desk '/some/url' ~]
         ::
           ~
-          `[%e %set-response '/some/url' `entry]
+          `[%e %set-response %desk '/some/url' `entry]
           %.y
       ==
     ::
@@ -617,7 +617,7 @@
   ::
   ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %behn %wait ~2345.6.7)
   ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %clay %read 123 ~zod %desk rave)
-  ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %eyre %connect [~ /x] %dude)
+  ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %eyre %connect /x %dude)
   ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %iris %request *request:http *outbound-config:iris)
   ;<  *  bind:m  (mock-card %pass /agent/wire %arvo %lick %spin /mysocket)
   ;<  *  bind:m  (mock-card %pass /agent/wire %agent [~fun %bar] %watch /blah)
@@ -627,7 +627,7 @@
   =/  resources=(lest [res=_+:*arvo-resource:gall det=(unit resource-deet:gall)])
     :~  [%behn %wait ~2345.6.7]^~
         [%clay %warp 123]^`[%clay %warp ~zod %desk rave]
-        [%eyre %binding [~ /x]]^`[%eyre %binding %dude]
+        [%eyre %binding /x]^`[%eyre %binding %dude]
         [%iris %request]^~
         [%lick %spin /mysocket]^~
     ==
@@ -639,7 +639,7 @@
     %+  ex-moves  (sort moz aor)
     :~  (ex-move ~[/sysduct] %pass gall-wire [%i %cancel-request ~])
         (ex-move ~[/sysduct] %pass gall-wire [%l %shut [%mock /mysocket]])
-        (ex-move ~[/sysduct] %pass gall-wire-e [%e %disconnect ~ /x])
+        (ex-move ~[/sysduct] %pass gall-wire-e [%e %disconnect /x])
         (ex-move ~[/sysduct] %pass gall-wire-c [%c %warp ~zod %desk ~])
         (ex-move ~[/sysduct] %pass gall-wire-b [%b %rest ~2345.6.7])
         (ex-move ~[/sysduct] %pass gall-wire-a [%g %deal [~dev ~fun /gall/desk] %bar %leave ~])  ::TODO  deal constructor

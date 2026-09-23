@@ -84,7 +84,7 @@
   =/  m  (strand:strandio ,watchpup)
   ^-  form:m
   =/  zoom-margin=number:block  30
-  =/  zoom-step=number:block    100.000
+  =/  zoom-step=number:block    10.000
   ?:  (lth latest-number (add number.pup zoom-margin))
     (pure:m pup)
   =/  up-to-number=number:block

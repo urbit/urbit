@@ -718,11 +718,13 @@
           %d  (mo-give %unto %raw-fact mark.ames-response noun.ames-response)
           %x
         =.  mo-core  (mo-give %unto %kick ~)
-        =?  outstanding.state  =(~ outs)
-          ::  if there is an outstanding $plea don't delete it from
-          ::  .outstanding to avoid a %gall-missing print
-          ::
-          (~(del by outstanding.state) key)
+        ::  delete any outstanding $plea. when it gets acked we will
+        ::  see a beningn %gall-missing print for both acked and nacked
+        ::  (most likely) %leaves. leaving here a %leave that could be nacked
+        ::  would cause a gall/ames desync since the flow is corked way before
+        ::  the /nacked-leave timer resends the %leave
+        ::
+        =.  outstanding.state  (~(del by outstanding.state) key)
         (mo-pass sys+wire a/cork+ship)
       ==
     ::
@@ -775,6 +777,8 @@
               ::
               (~(put by -) u.ship (~(gut by -) u.ship ~))
           (~(del ju flubs.state) u.ship foreign-agent.response)
+        ::  XX check that flubs.state has this agent
+        ::
         %-  ~(rep by outstanding.state)
         |=  [[[=^wire =duct] queue=*] m=_mo-core]
         ?.  =(/sys/way/(scot %p u.ship)/[foreign-agent.response] wire)
@@ -1013,25 +1017,35 @@
   ::  +mo-load: install agents
   ::
   ++  mo-load
-    |=  [prov=path agents=(list [=dude =beak per=[peg=(set perm) peq=(set perm)] =agent])]
+    |=  [prov=path =load:gall]
+    =/  dez  ~(tap by load)
+    |-
+    ?~  dez  mo-core
+    =.  mo-core  (mo-bump prov i.dez)
+    $(dez t.dez)
+  ::  +mo-bump: install agents for desk
+  ::
+  ++  mo-bump
+    |=  [prov=path =desk pack]
+    ?>  =(desk q.byk)
+    =/  agents  ~(tap by duz)
     =.  mo-core
       |-  ^+  mo-core
       ?~  agents  mo-core
-      =/  [=dude =desk]  [dude q.beak]:i.agents
-      ::  ~>  %slog.0^leaf/"gall: starting {<dude>} on {<desk>}"
-      $(agents t.agents, mo-core (mo-receive-core prov i.agents))
+      =*  rc  mo-receive-core
+      $(agents t.agents, mo-core (rc prov p.i.agents byk per q.i.agents))
+    ::  suspend agents that are running off this desk but not included
+    ::  in this latest $pack
     ::
-    =/  kil
-      =/  lol
-        (skim ~(tap by yokes.state) |=([* y=yoke] &(?=(%live -.y) -.agent.y)))
-      =/  mol  (~(gas by *(map term yoke)) lol)
-      =/  sol  ~(key by mol)
-      =/  new  (silt (turn agents head))
-      ~(tap in (~(dif in sol) new))
+    =/  kil=(list [=dude yoke])
+      %+  skim  ~(tap by yokes.state)
+      |=  [=dude y=yoke]
+      &(?=(%live -.y) -.agent.y =(q.beak.y desk) !(~(has by duz) dude))
+    ::
     |-  ^+  mo-core
     ?~  kil  mo-core
-    ~>  %slog.0^leaf/"gall: stopping {<i.kil>}"
-    $(kil t.kil, mo-core (mo-idle prov i.kil))
+    ~>  %slog.0^leaf/"gall: stopping {<dude.i.kil>}"
+    $(kil t.kil, mo-core (mo-idle prov dude.i.kil))
   ::
   ++  mo-authorized-coop
     |=  [lyc=(set ship) =farm dap=term =path =coop]
@@ -1079,6 +1093,9 @@
       ::
       ?:  =(%noun mark.deal)
         (mo-apply-sure dap routes [%poke %noun %noun noun.deal])
+      ::  we do not defer noun validation if the poked agent is %spider,
+      ::  unlike with apps, because %spider may only be poked by us.
+      ::
       =/  =case  da+now
       =/  yok  (~(got by yokes.state) dap)
       =/  =desk  q.beak:?>(?=(%live -.yok) yok)  ::TODO acceptable assertion?
@@ -1094,9 +1111,6 @@
         ?:  ?=(%| -.res)
           =/  ror  "gall: raw-poke vale fail :{(trip dap)} {<mark.deal>}"
           (mo-give %unto %poke-ack `[leaf+ror p.res])
-        =.  mo-core
-          %+  mo-pass  /nowhere
-          [%c %warp our desk ~ %sing %b case /[mark.deal]]
         (mo-apply-sure dap routes [%poke mark.deal p.res])
       ==
     ::
@@ -1118,9 +1132,6 @@
         ?:  ?=(%| -.res)
           =/  ror  "gall: poke-as cast fail :{(trip dap)} {<mars>}"
           (mo-give %unto %poke-ack `[leaf+ror p.res])
-        =.  mo-core
-          %+  mo-pass  /nowhere
-          [%c %warp our desk ~ %sing %c case /[a.mars]/[b.mars]]
         (mo-apply-sure dap routes [%poke mark.deal p.res])
       ==
     ==
@@ -1700,11 +1711,7 @@
           ?:  ?=(%| -.res)
             %-  (slog leaf+"watch-as fact conversion failure" p.res)
             (ap-kill-up-slip duct)
-          :~  :*  duct  %pass  /nowhere  %c  %warp  our  q.beak.yoke  ~
-                  %sing  %c  case  mars-path
-              ==
-              [duct %give %unto %fact b.mars p.res]
-          ==
+          [duct %give %unto %fact b.mars p.res]~
         ==
       ::
           %pass
@@ -1802,6 +1809,9 @@
                   %connect
                 ?^  wat.neet  [%e %serve binding.neet wat.neet]
                 [%e %connect binding.neet wat.neet]
+              ::
+                  %set-response
+                [%e %set-response from +>+.neet]
               ==
             ::
               [%gall *]        [%g +>.neet]
@@ -2382,7 +2392,7 @@
           [unto ap-core]
         =/  =case  da+now
         ?:  ?=(%spider agent-name)
-          :-  [%fact mark.unto !>(noun.unto)]
+          :-  [%fact mark.unto `vase`[%noun noun.unto]]
           ap-core
         =/  sky  (rof [~ ~] /gall %cb [our q.beak.yoke case] /[mark.unto])
         ?.  ?=([~ ~ *] sky)
@@ -2393,9 +2403,7 @@
         ?:  ?=(%| -.res)
           (mean leaf+"gall: ames vale fail {<mark.unto>}" p.res)
         :-  [%fact mark.unto p.res]
-        %-  ap-move  :_  ~
-        :^  hen  %pass  /nowhere
-        [%c %warp our q.beak.yoke ~ %sing %b case /[mark.unto]]
+        ap-core
       |^  ^+  ap-core
           ::  %poke-ack has no nonce; ingest directly
           ::
@@ -3836,8 +3844,6 @@
   ~>  %spin.['take/gall']
   ?^  dud
     ~&(%gall-take-dud ((slog tang.u.dud) [~ gall-payload]))
-  ?:  =(/nowhere wire)
-    [~ gall-payload]
   ?:  =(/clear-huck wire)
     =/  =gift  ?>(?=([%behn %heck %gall *] syn) +>+.syn)
     [[duct %give gift]~ gall-payload]

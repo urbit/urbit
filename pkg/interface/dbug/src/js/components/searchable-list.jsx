@@ -47,7 +47,7 @@ export class SearchableList extends Component {
         ? <div>none</div>
         : <details open={(props.open === undefined) ? true : props.open}>
             <summary>{items.length} items</summary>
-            <div>{items}</div>
+            <div style={props.listStyle}>{items}</div>
           </details>
       }
     </div>);
