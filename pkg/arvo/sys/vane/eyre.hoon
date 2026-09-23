@@ -140,6 +140,7 @@
   |%
   ++  auth   ~d30
   ++  guest  ~d7
+  ++  new-guest  ~m5
   --
 ::  +tmp-token-timeout: the delay before a tmp subdomain auth token expires
 ::
@@ -2212,10 +2213,13 @@
       =;  [key=@uv sid=^identity]
         =/  timeout=@dr
           =,  session-timeout
-          ?:(?=(%fake -.who.sid) guest auth)
+          ?:(?=(%fake -.who.sid) new-guest auth)
         :-  :+  key  sid
             ::  if no session existed previously, we must kick off the
-            ::  session expiry timer
+            ::  session expiry timer.
+            ::  it's possible that the existing timer is further in the future
+            ::  than the timeout here, but that's ok: session expiry is checked
+            ::  on-use.
             ::
             ?^  sessions.auth.state  ~
             [duct %pass /sessions/expire %b %wait (add now timeout)]~
@@ -2336,14 +2340,13 @@
     ::  +session-cookie-string: compose session cookie
     ::
     ++  session-cookie-string
-      |=  [sid=@uv secure=? extend=(unit ?(%auth %guest))]
+      |=  [sid=@uv secure=? extend=(unit @da)]
       ^-  @t
       %-  crip
       =/  max-age=tape
         %-  a-co:co
         ?~  extend  0
-        =,  session-timeout
-        (div (msec:milly ?-(u.extend %auth auth, %guest guest)) 1.000)
+        (div (msec:milly (sub u.extend now)) 1.000)
       ;:  weld
         ?:(secure "__Host-" "")                       ::  on https, host-only
         "urbauth-{(scow %p our)}={(scow %uv sid)}; "  ::  local key, value
@@ -3987,12 +3990,13 @@
     ::  note that we overwrite existing cache-control headers, but leave
     ::  existing set-cookie headers in place.
     ::
-    :_  %+  ~(put by sessions)  sid
-        u.ses(expiry-time (add now timeout))
+    =?  expiry-time.u.ses  !new
+      (add now timeout)
+    :_  (~(put by sessions) sid u.ses)
     ::TODOxx  this could be cleaner if +set-header were case-insensitive
     =.  headers  (delete-header:http 'Cache-Control' headers)
     =.  headers  (set-header:http 'cache-control' 'no-store' headers)
-    [['set-cookie' (session-cookie-string sid secure `kind)] headers]
+    [['set-cookie' (session-cookie-string sid secure `expiry-time.u.ses)] headers]
   ::  +set-response: remember (or update) a cache mapping
   ::
   ++  set-response
