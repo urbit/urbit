@@ -20,6 +20,9 @@
   ^-  card
   =;  tez=(set (set turf))
     [%pass /acme/set-known %agent [our %acme] %poke %noun !>([%set-known tez])]
+  ::  base desk is served on the root domain, always exclude it
+  ::
+  =.  subs  (~(del in subs) %base)
   %-  ~(run in tops)
   |=  top=turf
   ::NOTE  letsencrypt prohibits certs with more than 100 subjects.
