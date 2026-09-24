@@ -3941,6 +3941,15 @@
     =?  headers  secure
       ::TODO  if use cases arise, consider omitting if x-eyre-no-uir is present
       ['content-security-policy'^'upgrade-insecure-requests' headers]
+    ::  ensure documents are treated as origin-keyed (not site-keyed)
+    ::
+    ::    browsers aren't _required_ to honor this, but it's defense-in-depth
+    ::    against SharedArrayBuffer, WebAssembly.Memory sharing etc.
+    ::    this prevents setting document.domain, but that's deprecated anyway.
+    ::
+    =.  headers
+      ::TODO  case-insensitive uniqueness
+      (set-header:http 'origin-agent-cluster' '?1' headers)
     ::
     ::  if no cross-origin-resource-policy was specified,
     ::  default to strict same-origin
