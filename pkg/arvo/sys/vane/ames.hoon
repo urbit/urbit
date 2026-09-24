@@ -9047,7 +9047,20 @@
             ::
             ++  max-backoff
               ^-  @dr
-              ?:(?=([[%gall %use %ping *] *] duct) ~s25 retry-timer)
+              ?:  ?=([[%gall %use %ping *] *] duct)  ~s25
+              ::  peers we have heard from recently keep the ~m2 ceiling
+              ::
+              ?.  ?=(%dead -.qos.peer-state)  retry-timer
+              ::  otherwise scale the ceiling with how long they have been
+              ::  gone.  we never give up on a flow, we just slow down: a
+              ::  peer that comes back almost always talks to us first, and
+              ::  a year-dead peer does not need a packet every ~m2.
+              ::
+              =/  gone=@dr  `@dr`(sub-safe now last-contact.qos.peer-state)
+              ?:  (lth gone ~d1)   retry-timer
+              ?:  (lth gone ~d7)   ~m10
+              ?:  (lth gone ~d30)  ~h1
+              ~h6
             ::  +in-slow-start: %.y if we're in "slow-start" mode
             ::
             ++  in-slow-start
