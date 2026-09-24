@@ -4024,19 +4024,18 @@
     ?:  &(?=([~ * ~ *] prev) !=(desk desk.u.val.u.prev))
       ~|  [%eyre %set-response-clash url=url from=desk.u.val.u.prev next=desk]
       !!  ::REVIEWxx, maybe notify caller with equivalent of %bound instead
-    ::  similar to +fill-headers, we want to ensure the presence of some
-    ::  response headers. we can't guarantee a secure connection, so csp: uir
-    ::  is off the table, but we do set a default cross-origin-resource-policy
+    ::  apply +fill-headers. we can't guarantee a secure connection, so pretend
+    ::  this is in response to an insecure request.
     ::
     =?  entry  ?=([~ ? %payload *] entry)
       =*  headers  headers.response-header.simple-payload.body.u.entry
       =.  headers  (normalize-headers headers)
       ::REVIEWyy  content-length headers behavior
-      ::TODO  should +get-header be case-insensitive?
       ::TODOzz  since this is new behavior, consider applying during migration
-      =?  headers
-          ?=(~ (get-header:http 'cross-origin-resource-policy' headers))
-        ['cross-origin-resource-policy'^'same-origin' headers]
+      =.  headers
+        %+  fill-headers
+          [%start response-header data &]:simple-payload.body.u.entry
+        %*(. *unpacked-request secure |, authenticated auth.u.entry)
       entry
     ::
     =/  aeon  ?^(prev +(aeon.u.prev) 1)
