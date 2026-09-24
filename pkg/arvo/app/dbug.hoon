@@ -393,7 +393,6 @@
     =;  secure=(list [=turf key=wain cert=wain])
       %-  pairs
       :~  'secure'^a+(turn secure render-cert:v-eyre)
-          'proxy'^b+proxy
           'log'^b+log
           'redirect'^b+redirect
       ==
