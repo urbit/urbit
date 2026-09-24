@@ -176,13 +176,15 @@
       |=  [=octs sum=@ud]
       (add sum p.octs)
   (can 3 a)
+::  +coss: lowercase cord
 ::  +normalize-turf: ensure lowercase
+::  +normalize-headers: ensure lowercase keys
 ::
-++  normalize-turf
-  |=  =turf
-  ^+  turf
-  %+  turn  turf
-  |=(b=@ (run 3 b |=(a=@ ?.(&((gte a 'A') (lte a 'Z')) a (add 32 a)))))
+++  coss
+  |=  b=@t
+  `@t`(run 3 b |=(a=@ ?.(&((gte a 'A') (lte a 'Z')) a (add 32 a))))
+++  normalize-turf     (curr turn coss)
+++  normalize-headers  (curr turn |=([k=@t v=@t] [(coss k) v]))
 ::  +make-vere-config: prepare for runtime consumption
 ::
 ++  make-vere-config
@@ -3819,9 +3821,10 @@
             %start
           ?^  h.res
             ((trace 0 |.("{<duct>} error multiple start")) cancel-response)
+          =*  headers  headers.response-header.http-event
           ::  auto-fill basic & important headers (content-length, cors...)
           ::
-          =?  headers.response-header.http-event  fill-heads
+          =?  headers  fill-heads
             (fill-headers http-event req)
           ::  if at this point there's still a session associated with the
           ::  request, consider it live and, as necessary, extend that
@@ -3829,11 +3832,11 @@
           ::
           =^  nuh  sessions.auth.state
             ?~  session.req
-              [headers.response-header.http-event sessions.auth.state]
+              [headers sessions.auth.state]
             %+  refresh-session
-              headers.response-header.http-event
+              headers
             [secure [new sid]:u.session]:req
-          =.  headers.response-header.http-event  nuh
+          =.  headers  nuh
           ::  book-keep the connection's state:
           ::  if we're done responding, clear it from state if it was there,
           ::  if we may still continue, update the existing entry.
@@ -3948,17 +3951,13 @@
     ::    this prevents setting document.domain, but that's deprecated anyway.
     ::
     =.  headers
-      ::TODO  case-insensitive uniqueness
       (set-header:http 'origin-agent-cluster' '?1' headers)
     ::
     ::  if no cross-origin-resource-policy was specified,
     ::  default to strict same-origin
     ::
-    ::TODO  should +get-header be case-insensitive?
     =?  headers
-        ?&  ?=(~ (get-header:http 'cross-origin-resource-policy' headers))
-            ?=(~ (get-header:http 'Cross-Origin-Resource-Policy' headers))
-        ==
+        ?=(~ (get-header:http 'cross-origin-resource-policy' headers))
       ['cross-origin-resource-policy'^'same-origin' headers]
     ::
     ::  if the request was a simple cors request from an approved origin
@@ -3969,8 +3968,8 @@
         ?&  ?=(^ origin)
             (~(has in approved.cors-registry.state) u.origin)
         ==
-      %^  set-header:http  'Access-Control-Allow-Origin'       u.origin
-      %^  set-header:http  'Access-Control-Allow-Credentials'  'true'
+      %^  set-header:http  'access-control-allow-origin'       u.origin
+      %^  set-header:http  'access-control-allow-credentials'  'true'
       headers
     headers
   ::  +refresh-session: if .sid is live but old, refresh it & add set-cookie
@@ -4011,8 +4010,6 @@
     =?  expiry-time.u.ses  !new
       (add now timeout)
     :_  (~(put by sessions) sid u.ses)
-    ::TODOxx  this could be cleaner if +set-header were case-insensitive
-    =.  headers  (delete-header:http 'Cache-Control' headers)
     =.  headers  (set-header:http 'cache-control' 'no-store' headers)
     [['set-cookie' (session-cookie-string sid secure `expiry-time.u.ses)] headers]
   ::  +set-response: remember (or update) a cache mapping
@@ -4033,13 +4030,12 @@
     ::
     =?  entry  ?=([~ ? %payload *] entry)
       =*  headers  headers.response-header.simple-payload.body.u.entry
+      =.  headers  (normalize-headers headers)
       ::REVIEWyy  content-length headers behavior
       ::TODO  should +get-header be case-insensitive?
       ::TODOzz  since this is new behavior, consider applying during migration
       =?  headers
-          ?&  ?=(~ (get-header:http 'cross-origin-resource-policy' headers))
-              ?=(~ (get-header:http 'Cross-Origin-Resource-Policy' headers))
-          ==
+          ?=(~ (get-header:http 'cross-origin-resource-policy' headers))
         ['cross-origin-resource-policy'^'same-origin' headers]
       entry
     ::
@@ -4762,7 +4758,9 @@
     ::
     =/  =http-event:http
       ?-  mark
-        %http-response-header  [%start !<(response-header:http vase) ~ |]
+        %http-response-header  =+  !<(response-header:http vase)
+                               =.  headers  (normalize-headers headers)
+                               [%start [status-code headers] ~ |]
         %http-response-data    [%continue !<((unit octs) vase) |]
         %http-response-cancel  [%cancel ~]
       ==
