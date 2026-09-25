@@ -24,7 +24,9 @@
 ::
 ;<  =bowl:spider  bind:m  get-bowl:strandio
 ::
-::  if peer not in ames, abort
+::  if peer not in ames, abort. this also excludes ourselves: a self
+::  scry of a future case answers ~ at once, so the case loop below
+::  would spin forever
 ::
 =+  .^  peers=(map ship ?(%alien %known))  %ax
     /(scot %p our.bowl)//(scot %da now.bowl)/peers
