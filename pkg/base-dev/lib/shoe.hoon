@@ -383,6 +383,12 @@
   ++  on-peek
     |=  =path
     ^-  (unit (unit cage))
+    ?:  =(/x/sole/sessions path)
+      :^    ~
+          ~
+        %sole-sessions
+      !>  ^-  (set sole-id)
+      ~(key by soles)
     ?.  =(/x/dbug/state path)  (on-peek:og path)
     ``noun+(slop on-save:og !>(shoe=state))
   ::
