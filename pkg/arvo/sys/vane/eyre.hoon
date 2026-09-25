@@ -745,26 +745,6 @@
       ;meta(http-equiv "Refresh", content "5; url={(trip u.return)}");
     ==
   ;body:"{msg}"
-::  +build-subdomain-negotiation: generate %holm redirect response
-::
-++  build-subdomain-negotiation
-  |=  [[host=turf port=(unit @ud)] target-path=@t expire=(unit @t)]
-  ^-  response-header:http
-  =/  sub=@t    (rear host)
-  =/  top=turf  (snip host)
-  =/  target=@t
-    %+  rap  3
-    :~  '//'
-        (host-string top port)
-        '/~/holm/sink/'  sub
-        ?:(=('' target-path) '/' target-path)
-    ==
-  :-  307
-  :-  ['location' target]
-  ?~  expire  ~
-  :~  ['set-cookie' u.expire]
-      ['cache-control' 'no-store']
-  ==
 ::  +render-tang-to-marl: renders a tang and adds <br/> tags between each line
 ::
 ++  render-tang-to-marl
@@ -1160,9 +1140,13 @@
             (host-string -.p.target)  url.request
         ==
       %+  instant:response  proto-req
-      ::NOTE  307 to retain req method+body
-      ::TODOzz  don't?
-      [[307 ['location' target-url]~] ~]
+      ?:  ?=(?(%'GET' %'HEAD') method.request)
+        [[307 ['location' target-url]~] ~]
+      ::  for unsafe methods, we serve 421: a redirect would make them fail
+      ::  the 'same-origin' .auth-level check above anyway, so better to
+      ::  return failure early
+      ::
+      [[421 ~] `(as-octs:mimes:html 'url not in scope')]
     ::  auth-state: authentication detail for the incoming request
     ::
     ::    %invalid:   an invalid session was provided, or the session's
@@ -1172,8 +1156,8 @@
     ::                may or may not mint them a guest session, depending on
     ::                what endpoint gets hit.
     ::    %negotiate: request lacks auth but came in on a subdomain. if we
-    ::                serve it the +build-subdomain-negotiation it may be able to
-    ::                obtain auth automagically. (this is %holm %jump.)
+    ::                send it into the holm flow it may be able to obtain auth
+    ::                automagically. (this is %holm %jump.)
     ::
     =/  t
       $%  [%invalid session=@uv]
@@ -1262,6 +1246,9 @@
           %miss             ~
           %negotiate        old-session.auth-state
         ==
+      =*  drop
+        ?~  session  ~
+        ['set-cookie' (session-cookie-string:authentication u.session secure ~)]~
       ::
       =/  msg=tape  "holm: fail"
       =*  fail
@@ -1281,17 +1268,31 @@
         ::    (or, if we're on root already, to the login page)
         ::
           %jump
-        %-  send-instant-response
-        ?~  desk.p.target
-          [[307 ['location' (crip "/~/login?redirect={url.step}")]~] ~]
-        ::REVIEWxx  inline that logic?
-        ::REVIEWzz  session not removed from state, so +refresh-session might refresh?
-        :_  ~
-        %-  build-subdomain-negotiation
-        :+  [(snoc domain.p.target u.desk.p.target) port.p.target]
-          (crip url.step)
-        %+  bind  session
-        (curr session-cookie-string:authentication secure ~)
+        ::  make sure we clean up the old session, we won't return to it
+        ::
+        =^  moz1  state
+          ?~  session  [~ state]
+          (close-session:authentication u.session |)
+        =^  moz2  state
+          %-  send-instant-response
+          ::  unsafe methods would get their method & body dropped by the
+          ::  redirects, so better to fail early
+          ::
+          ?.  ?=(?(%'GET' %'HEAD') method.request)
+            [[401 drop] `(as-octs:mimes:html 'bad session auth, no jump')]
+          ?~  desk.p.target
+            [[303 ['location' (crip "/~/login?redirect={url.step}")]~] ~]
+          :_  ~
+          :-  303
+          :_  [['cache-control' 'no-store'] drop]
+          :-  'location'
+          %+  rap  3
+          :~  '//'
+              (host-string domain.p.target port.p.target)
+              '/~/holm/sink/'  u.desk.p.target
+              ?:(=("" url.step) '/' (crip url.step))
+          ==
+        [(weld moz1 moz2) state]
       ::
         ::  %sink: obtain tmp-token for authenticating into subdomain
         ::
@@ -1328,7 +1329,7 @@
           "//{(trip desk.step)}.{(trip (host-string -.p.target))}/~/holm/gain/{(scow %uv tmp-token)}"
         =^  moz=(list move)  state
           %-  send-instant-response
-          [[307 ['location' (crip redirect-url)]~] ~]
+          [[303 ['location' (crip redirect-url)]~] ~]
         [[expire moz] state]
       ::
         ::  %gain: validate tmp-token from url and mint new scoped session
@@ -1360,7 +1361,7 @@
         =.  authenticated.req  ?=(%ours -.identity.o)
         =^  moz=(list move)  state
           %-  send-instant-response
-          [[307 ['location' (rap 3 '//' u.host url.target.u.authlet ~)]~] ~]
+          [[303 ['location' (rap 3 '//' u.host url.target.u.authlet ~)]~] ~]
         [[give-session-tokens (weld moz moves.o)] state]
       ==
     ?<  ?=(%negotiate -.auth-state)  ::NOTE  handled as %holm action above
@@ -2455,7 +2456,7 @@
             ?~  visa=(~(get by visitors.auth) nonce.plea)  [~ state]
             =.  visitors.auth  (~(del by visitors.auth) nonce.plea)
             =?  sessions.auth  ?=(@ +.u.visa)
-              (~(del by sessions.auth) sesh.u.visa)
+              (~(del by sessions.auth) sesh.u.visa)  ::REVIEW  +close-session?
             [[(send-boon %0 %shut nonce.plea)]~ state]
           ==
         ::  +cancel: the client aborted the eauth attempt, so clean it up
