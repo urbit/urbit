@@ -313,19 +313,22 @@
       ::
       =.  pending-ahoy.sat  (~(del in pending-ahoy.sat) who)
       (flog %crud [mote tang]:p.p.sign-arvo)
-    =+  !<  [[num=@ud has=@uvi wen=@da] no-response=?]
+    =+  !<  [[num=@ud out=[kel=@ud has=(unit @uvi)] wen=@da] no-response=?]
             q.p.p.sign-arvo
     ::
     =?  hashes.sat  !no-response  :: only update hashes if we did get a response
+      ::  maybe we did get a response, but the kids hash %keen timeout
+      ::
+      ?~  has.out  hashes.sat
       ?.  (~(has by hashes.sat) who)
-        (~(put by hashes.sat) who num^has^wen)
+        (~(put by hashes.sat) who num^u.has.out^wen)
       ::  the ship exists; update only if this
       ::  case is higher than previous
       ::
       %+  ~(jab by hashes.sat)  who
       |=  old=[num=@ud has=@uvi wen=@da]
       ?.  (gte num num.old)  old
-      [num has wen]
+      [num u.has.out wen]
     ::
     =.  no-response.sat
       ::  if none of these thread's attempts give a response
@@ -343,7 +346,8 @@
         ==
     ::  ahoy the peer if on last-hash, not yet migrated, and not pending
     ::
-    ?:  ?|  !=(last-hash.sat has)
+    ?:  ?|  ::  !=(last-hash.sat has.out) XX
+            !=(408 kel.out)
             (~(has by chums) who)
         ==
       ::  delete the peer from pending and try again on next %prob
