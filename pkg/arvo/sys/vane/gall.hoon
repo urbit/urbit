@@ -1144,6 +1144,12 @@
     ::
     =?  mo-core  ?=(%u -.ames-request)
       (mo-give %done ~)
+    ::  the /sys/req wire (and the internal /ames/bone wire in the duct),
+    ::  are pattern-matched by +mo-remote-blocked to recognize
+    ::  blocked remote %deals;
+    ::
+    ::  if we update it here, we need to update it there
+    ::
     =/  =wire  /sys/req/(scot %p ship)/[agent-name]
     ::
     =/  =deal
@@ -1154,6 +1160,25 @@
         %u  [%leave ~]
       ==
     (mo-pass wire %g %deal [ship our /] agent-name deal)
+  ::  +mo-remote-blocked: check if .dap has a remote blocked move for .ship
+  ::
+  ++  mo-remote-blocked
+    |=  [=duct =ship dap=term]
+    ^-  ?
+    ?~  waiting=(~(get by blocked.state) dap)
+      %.n
+    ?.  ?=(^ duct)
+      %.n
+    %+  lien  ~(tap to u.waiting)
+    ::  Check for a remote deal attributed to .ship on this exact Ames
+    ::  flow. The blocked queue is already scoped to .dap.
+    ::
+    |=  =blocked-move
+    ?&  ?=(%& -.move.blocked-move)
+        =(ship ship.attributing.routes.blocked-move)
+        ?=(^ duct.blocked-move)
+        =(i.duct i.duct.blocked-move)
+    ==
   ::  +mo-do-flub: drop incoming pleas in %ames
   ::
   ::    (if the /gf system flow has been established, notify the other ship
@@ -1178,10 +1203,10 @@
     ::  currently we always halt it
     ::
     %^  mo-give  %flub
-    ::  if we have blocked moves, skip the %flub handling logic in %ames
+    ::  if we have blocked remote moves, skip %flub handling in %ames
     ::  if /gf system flow is not established, skip sending the %flub $boon
     ::
-      maybe-blocked=?=(^ (~(get by blocked.state) agent-name))
+      maybe-blocked=(mo-remote-blocked hen ship agent-name)
     ?.((~(has by flub-ducts.state) ship) ~ `agent-name)
   ::
   ++  mo-handle-flub-plea
@@ -2453,11 +2478,19 @@
       %-  %^  trace:mo-core  &(?=([%gp @ ~] path) odd.veb.bug.state)  agent-name
           &+"on {<ship>} flubbing in-progress flow"
       (mo-do-flub:mo-core ship agent-name)
-    ?:  ?=([%gp @ ~] path)
+    ?:  ?=([%ge @ ~] path)
+      (mo-handle-ames-request:mo-core ship agent-name +.ames-request-all)
+    ::  The agent is running but the flow's %plea is still pending in Ames.
+    ::  If Gall has the exact blocked remote move, leave Ames' state alone.
+    ::  Otherwise ask Ames to redeliver its saved pending message.
+    ::
+    ?:  (mo-remote-blocked:mo-core duct ship agent-name)
       %-  %^  trace:mo-core  odd.veb.bug.state  agent-name
-          &+"on {<ship>} weird in-progress flow; running agent; skip %flub"
+          &+"on {<ship>} in-progress flow; %plea enqueued; wait"
       mo-core
-    (mo-handle-ames-request:mo-core ship agent-name +.ames-request-all)
+    %-  %^  trace:mo-core  odd.veb.bug.state  agent-name
+        &+"on {<ship>} in-progress flow; running agent; redeliver"
+    (mo-give:mo-core %flub ~)
   ::
       %sear  mo-abet:(mo-filter-queue:mo-core ship.task)
       %jolt  mo-abet:(mo-jolt:mo-core dude.task our desk.task)
