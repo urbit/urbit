@@ -317,6 +317,12 @@
       :+  %tsls  $(sin sam.sin)
       [%brcn %gold ~ [%$ $(sin bod.sin)] ~ ~]
     ::
+        %brts
+      =-  $(sin -)
+      :-  %xtra
+      :+  %brcl  [%tsls [%xtra %mold sam.sin] (kick 2)]
+      bod.sin
+    ::
         %mold
       =-  $(sin -)
       |-  ^-  naty-sugar

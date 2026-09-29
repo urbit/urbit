@@ -14,7 +14,7 @@
               %tsgr  %tsls
               %cnts
               %sggr
-              %brcn  %brpt  %brcl
+              %brcn  %brpt  %brcl  %brts
               %ktls  %ktcl
               %wtpt  %wtcn  %wtkt
               %cltr
@@ -32,7 +32,7 @@
       [%atom tol=? const=? =aura a=@]  ::  %atomw + %atomt
       [%mato =aura]
     ::
-      $:  ?(%dttr %dtwt %dtls %dtts %wtcl %tsgr %tsls %cnts %sggr %brcn %brpt %brcl %ktls %ktcl %wtpt %wtcn %wtkt %cltr)
+      $:  ?(%dttr %dtwt %dtls %dtts %wtcl %tsgr %tsls %cnts %sggr %brcn %brpt %brcl %brts %ktls %ktcl %wtpt %wtcn %wtkt %cltr)
           tol=?
       ==
   ==
@@ -64,7 +64,7 @@
           tsgrw+|+%tsgr  tsgrt+&+%tsgr    tslsw+|+%tsls  tslst+&+%tsls
           cntsw+|+%cnts  cntst+&+%cnts
           sggrw+|+%sggr  sggrt+&+%sggr
-          brcnw+|+%brcn  brcnt+&+%brcn    brptw+|+%brpt  brptt+&+%brpt    brclw+|+%brcl  brclt+&+%brcl
+          brcnw+|+%brcn  brcnt+&+%brcn    brptw+|+%brpt  brptt+&+%brpt    brclw+|+%brcl  brclt+&+%brcl    brtsw+|+%brts  brtst+&+%brts
           ktlsw+|+%ktls  ktlst+&+%ktls    ktclw+|+%ktcl  ktclt+&+%ktcl
           wtptw+|+%wtpt  wtptt+&+%wtpt    wtcnw+|+%wtcn  wtcnt+&+%wtcn    wtktw+|+%wtkt  wtktt+&+%wtkt
           cltrw+|+%cltr  cltrt+&+%cltr
@@ -299,6 +299,15 @@
     :-  %brclt
     '''
     '|:' gap
+    '''
+  ::
+    :-  %brtsw
+    '''
+    '|=('
+    '''
+    :-  %brtst
+    '''
+    '|=' gap
     '''
   ::
     :-  %ktlsw
@@ -617,7 +626,11 @@
                     =+  (expect %shep)        ?@  -  ~  =>  +(st s)
                     ?~  cor=(validate-layout l b)    ~  [[%brpt u.cor] st]
       [%brcl %&]    =+  tall-2(st move)       ?@  -  ~  [[%xtra %brcl u] s]
+      [%brts %&]    =+  tall-mold(st move)    ?@  -  ~  =>  [mol=u +(st s)]
+                    =+  (expect %gap)         ?@  -  ~  =>  +(st s)
+                    =+  tall                  ?@  -  ~  [[%xtra %brts mol u] s]
       [%ktls %&]    =+  tall-2(st move)       ?@  -  ~  [[%ktls u] s]
+      [%ktcl %&]    =+  tall-mold(st move)    ?@  -  ~  [[%xtra %mold u] s]
       [%wtpt %&]    =+  tall-wing-2(st move)  ?@  -  ~  [[%wtpt u] s]
       [%wtcn %&]    =+  wing-full(st move)    ?@  -  ~  =>  [w=u +(st s)]
                     =+  (expect %gap)         ?@  -  ~  =>  +(st s)
@@ -698,6 +711,9 @@
                     =+  (expect %ace)  ?@  -  ~  =>  +(st s)
                     =+  wide-1         ?@  -  ~  [[%sggr [a.t clu] u] s]
       [%brcl %|]    =+  wide-2         ?@  -  ~  [[%xtra %brcl u] s]
+      [%brts %|]    =+  wide-mold      ?@  -  ~  =>  [mol=u +(st s)]
+                    =+  (expect %ace)  ?@  -  ~  =>  +(st s)
+                    =+  wide-1         ?@  -  ~  [[%xtra %brts mol u] s]
       [%ktls %|]    =+  wide-2         ?@  -  ~  [[%ktls u] s]
       [%ktcl %|]    =+  wide-mold      ?@  -  ~  =>  [mol=u +(st s)]
                     =+  (expect %per)  ?@  -  ~  [[%xtra %mold mol] s]
@@ -709,6 +725,9 @@
                     =+  wide-2         ?@  -  ~  [[%wtcn w a u] s]
       [%wtkt %|]    =+  wide-wing-2    ?@  -  ~  [[%wtkt u] s]
     ==
+  ::
+  ++  tall-mold
+    wide-mold  ::TODO
   ::
   ++  tall-atom
     ^-  (mandatory @ _st)

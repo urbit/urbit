@@ -14,6 +14,7 @@
 +$  sugar
   $~  [%brcl [%noun %noun 0] [%noun %noun 0]]
   $%  [%brcl sam=naty-sugar bod=naty-sugar]
+      [%brts sam=mold bod=naty-sugar]
       [%mold =mold]
   ==
 +$  mold
