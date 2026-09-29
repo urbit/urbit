@@ -15,7 +15,7 @@
               %cnts
               %sggr
               %brcn  %brpt  %brcl
-              %ktls
+              %ktls  %ktcl
               %wtpt  %wtcn  %wtkt
               %cltr
             ::
@@ -32,7 +32,7 @@
       [%atom tol=? const=? =aura a=@]  ::  %atomw + %atomt
       [%mato =aura]
     ::
-      $:  ?(%dttr %dtwt %dtls %dtts %wtcl %tsgr %tsls %cnts %sggr %brcn %brpt %brcl %ktls %wtpt %wtcn %wtkt %cltr)
+      $:  ?(%dttr %dtwt %dtls %dtts %wtcl %tsgr %tsls %cnts %sggr %brcn %brpt %brcl %ktls %ktcl %wtpt %wtcn %wtkt %cltr)
           tol=?
       ==
   ==
@@ -65,7 +65,7 @@
           cntsw+|+%cnts  cntst+&+%cnts
           sggrw+|+%sggr  sggrt+&+%sggr
           brcnw+|+%brcn  brcnt+&+%brcn    brptw+|+%brpt  brptt+&+%brpt    brclw+|+%brcl  brclt+&+%brcl
-          ktlsw+|+%ktls  ktlst+&+%ktls
+          ktlsw+|+%ktls  ktlst+&+%ktls    ktclw+|+%ktcl  ktclt+&+%ktcl
           wtptw+|+%wtpt  wtptt+&+%wtpt    wtcnw+|+%wtcn  wtcnt+&+%wtcn    wtktw+|+%wtkt  wtktt+&+%wtkt
           cltrw+|+%cltr  cltrt+&+%cltr
       ==
@@ -308,6 +308,15 @@
     :-  %ktlst
     '''
     '^+' gap
+    '''
+  ::
+    :-  %ktclw
+    '''
+    '^:('
+    '''
+    :-  %ktclt
+    '''
+    '^:' gap
     '''
   ::
     :-  %wtptw
@@ -690,6 +699,8 @@
                     =+  wide-1         ?@  -  ~  [[%sggr [a.t clu] u] s]
       [%brcl %|]    =+  wide-2         ?@  -  ~  [[%xtra %brcl u] s]
       [%ktls %|]    =+  wide-2         ?@  -  ~  [[%ktls u] s]
+      [%ktcl %|]    =+  wide-mold      ?@  -  ~  =>  [mol=u +(st s)]
+                    =+  (expect %per)  ?@  -  ~  [[%xtra %mold mol] s]
       [%wtpt %|]    =+  wide-wing-2    ?@  -  ~  [[%wtpt u] s]
       [%wtcn %|]    =+  wing-full      ?@  -  ~  =>  [w=u +(st s)]
                     =+  (expect %ace)  ?@  -  ~  =>  +(st s)
