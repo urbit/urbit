@@ -861,7 +861,7 @@
     ^-  [(list move) server-state]
     ::
     =/  req=unpacked-request
-      [secure request & `[| *@uv [[%ours ~] ~]]]
+      [secure request & `[%old *@uv [[%ours ~] ~]]]
     ::
     %-  (trace 2 |.("{<duct>} creating local"))
     (request-to-app [req %respect] %lens address)
@@ -1007,6 +1007,10 @@
       ::  non-cookie auth is always respected
       ::
       ?:  ?=(^ (get-header:http 'authorization' headers))  ::  see also +session-from-header
+        %respect
+      ::
+      ::TMP
+      ?:  =(`'https://surface.localhost/' (get-header:http 'referer' headers))
         %respect
       ::
       =/  safe=?
@@ -1203,7 +1207,7 @@
     =/  req=unpacked-request
       :^  secure  request
         ?=([%have @ [%ours ~] *] auth-state)
-      ?:(?=(%have -.auth-state) `[| session identity]:auth-state ~)
+      ?:(?=(%have -.auth-state) `[%old session identity]:auth-state ~)
     =*  send-instant-data      (cury instant-data req)
     =*  send-instant-response  (cury instant:response req)
     ::
@@ -1314,7 +1318,7 @@
           ?~  session.req                                ::  ?-  -.auth-state
             (start-session:authentication %new-guest ~)  ::  %miss
           [[sid identity ~]:u.session.req state]         ::  %have
-        =.  session.req  `[?=(~ session.req) sid identity]
+        =.  session.req  `[?:(?=(~ session.req) %new %old) sid identity]
         =.  auth-state  [%have sid identity]
         ::
         =/  expiry=@da  (add now tmp-token-timeout)
@@ -1357,7 +1361,7 @@
         =.  authlets.auth.state  (~(del by authlets.auth.state) tok.step)
         =^  o  state
           (start-session:authentication new-id `parent.u.authlet)
-        =.  session.req        `[& session identity]:o
+        =.  session.req        `[%new session identity]:o
         =.  authenticated.req  ?=(%ours -.identity.o)
         =^  moz=(list move)  state
           %-  send-instant-response
@@ -1667,7 +1671,7 @@
   ::  +handle-name: respond with the requester's @p
   ::
   ++  handle-name
-    |=  [req=unpacked-request auth-state=?(%respect %drop)]
+    |=  [req=unpacked-request auth-level=?(%respect %drop)]
     ^-  (quip move server-state)
     ?.  =(%'GET' method.request.req)
       %+  instant:response  req
@@ -1682,8 +1686,8 @@
     ::  set-cookie header) if auth was respected in the first place. in %drop
     ::  cases we don't want to send cookies.
     ::
-    =?  session.req  ?=(%respect auth-state)
-      `[?=(~ session.req) sid identity]
+    =?  session.req  ?=(%respect auth-level)
+      `[?:(?=(~ session.req) %new %old) sid identity]
     ::
     =^  moves2  state
       %+  instant-data  req
@@ -1834,8 +1838,11 @@
     ::  set-cookie header) if auth was respected in the first place. in %drop
     ::  cases we don't want to send cookies.
     ::
-    =?  session  ?=(%respect auth-level)
-      `[?=(~ session) suv identity]
+    =?  session  ?=(~ session)
+      ?-  auth-level
+        %respect  `[%new suv identity]
+        %drop     `[%tmp suv identity]
+      ==
     ::  the request will be handled outside of eyre ("asynchronously"),
     ::  so store the connection in state before dispatching
     ::
@@ -2020,7 +2027,7 @@
       ::  initialize the new session
       ::
       =^  fex  state  (start-session [[%ours ~] ~] ~)
-      =.  session.req        `[& session identity]:fex
+      =.  session.req        `[%new session identity]:fex
       =.  authenticated.req  &
       =.  identity           `identity.fex  ::NOTE  doesn't matter but good form
       ::  store the hostname used for this login, later reuse it for eauth.
@@ -2525,7 +2532,7 @@
           =.  visitors.auth
             %+  ~(jab by visitors.auth)  nonce
             |=(v=visitor v(+ sid))
-          =.  session.req  `[& sid identity]
+          =.  session.req  `[%new sid identity]
           =^  moz3  state
             ::NOTE  the cookie will be set for us based on session.req
             (instant:response req 303^['location' last]~ ~)
@@ -3245,7 +3252,7 @@
         [[sid identity ~]:u.session.req state]
       ::NOTE  no need to worry about sending cookie to "%drop status" request,
       ::      because PUT requests never get %drop
-      =.  session.req  `[?=(~ session.req) sid identity]
+      =.  session.req  `[?:(?=(~ session.req) %new %old) sid identity]
       ::  check for the existence of the channel-id
       ::
       ::    if we have no session, create a new one set to expire in
@@ -3836,7 +3843,7 @@
               [headers sessions.auth.state]
             %+  refresh-session
               headers
-            [secure [new sid]:u.session]:req
+            [secure [wut sid]:u.session]:req
           =.  headers  nuh
           ::  book-keep the connection's state:
           ::  if we're done responding, clear it from state if it was there,
@@ -3981,9 +3988,8 @@
   ::    uncacheable for security reasons.
   ::
   ++  refresh-session
-    |=  [headers=header-list:http secure=? new=? sid=@uv]
+    |=  [headers=header-list:http secure=? wut=?(%new %old %tmp) sid=@uv]
     ^-  [header-list:http _sessions.auth.state]
-    =,  authentication
     =*  sessions    sessions.auth.state
     ::  if the session has expired since the request was opened,
     ::  tough luck, we don't create/revive sessions here
@@ -3999,7 +4005,7 @@
       ?:(?=(%guest kind) guest auth)
     ::  if the session existed and isn't close to expiring yet, no-op
     ::
-    ?:  ?&  !new
+    ?:  ?&  !?=(%new wut)
             (gth (sub expiry-time.u.ses now) (div timeout 2))
         ==
       [headers sessions]
@@ -4008,11 +4014,11 @@
     ::  note that we overwrite existing cache-control headers, but leave
     ::  existing set-cookie headers in place.
     ::
-    =?  expiry-time.u.ses  !new
+    =?  expiry-time.u.ses  ?=(%old wut)
       (add now timeout)
     :_  (~(put by sessions) sid u.ses)
     =.  headers  (set-header:http 'cache-control' 'no-store' headers)
-    [['set-cookie' (session-cookie-string sid secure `expiry-time.u.ses)] headers]
+    [['set-cookie' (session-cookie-string:authentication sid secure `expiry-time.u.ses)] headers]
   ::  +set-response: remember (or update) a cache mapping
   ::
   ++  set-response
