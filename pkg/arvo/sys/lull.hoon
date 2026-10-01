@@ -4122,6 +4122,7 @@
   +$  load  (map desk pack)                             ::  loadout
   +$  pack                                              ::
     $:  byk=beak                                        ::  origin desk
+        zus=@ud                                         ::  desk zuse kelvin
         per=[peg=(set perm) peq=(set perm)]             ::  permissions
         duz=(map dude agent)                            ::  live agents
     ==

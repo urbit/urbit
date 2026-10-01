@@ -597,6 +597,109 @@
     %+  stag  %tssg
     (most gap tall:(vang & pax))
   ==
+::
++$  pill
+  $%  [%ivory p=(list)]
+      $:  %pill
+          nam=term
+          boot-ova=(list)
+          kernel-ova=(list unix-event)
+          userspace-ova=(list unix-event)
+      ==
+      $:  %cash
+          $:  nam=term
+              boot-ova=(list)
+              kernel-ova=(list unix-event)
+              userspace-ova=(list unix-event)
+          ==
+          cache=(list)
+  ==  ==
+::
++$  unix-event
+  %+  pair  wire
+  $%  [%wack p=@]
+      [%what p=(list (pair path (cask)))]
+      [%whom p=ship]
+      [%boot ? $%($>(%fake task:jael) $>(%dawn task:jael))]
+      [%wyrd p=vere]
+      [%verb p=(unit ?)]
+      unix-task
+  ==
+::
+++  make-arvo
+  |=  pil=(unit pill)
+  ^-  (unit *)
+  ?~  pil  ~
+  =/  pil=$>(%pill pill)
+    ?+    -.u.pil  !!
+        %cash
+      ^-  $>(%pill pill)
+      [%pill +<.u.pil]
+    ::
+        %pill  u.pil
+    ==
+  ::
+  =.  kernel-ova.pil                            ::  filter to /sys
+    %+  turn  kernel-ova.pil
+    |=  =unix-event:pill
+    ^-  unix-event:pill
+    ?.  ?=([%what *] q.unix-event)  unix-event
+    =/  files=(list (pair path (cask)))
+      %+  skim  p.q.unix-event
+      |=  [=path *]
+      ?=([%sys *] path)
+    unix-event(q [%what files])
+  ::
+  =/  =wynn        ::  XX this is wrong, if we care, double bootstrap it?
+    :~  zuse+zuse
+        lull+lull
+        arvo+arvo
+        hoon+hoon-version
+        nock+4
+    ==
+  ::
+  =/  res=toon
+    %-  mock
+    :_  ~
+    :_  [%2 [%0 3] %0 2]
+    ;:  weld
+      boot-ova.pil
+      ^-  (list)
+      :~  [*@da //arvo %wack *@uvJ]
+          [*@da //arvo %whom *@p]
+          [*@da //arvo %wyrd [~.nonce /] wynn]
+      ==
+      `(list)`(turn kernel-ova.pil (lead *@da))
+      `(list)`[*@da [/d/term/1 %boot & %fake *@p]]^~
+    ==
+  ::
+  ?-  -.res
+    %0  `+7.p.res                       ::  success
+  ::
+    %1  ~&  [%vere-blocked p.res]  !!
+    %2  ~&  %vere-fail  (mean p.res)
+  ==
+::  +make-zuse: produce the desk's zuse vase, in the desk's own universe
+::
+::    for the native kelvin (no arvo) this is the live !>(..zuse); for a
+::    foreign kelvin it's the raw old vase, evaluated in the desk's arvo.
+::    no migration: callers build with the matching slub/slym.
+::
+++  make-zuse
+  |=  arv=(unit *)
+  ~>  %bout.[1 %make-zuse]
+  ?~  arv  !>(..zuse)
+  ((cury wisher u.arv) '!>(..zuse)')
+::
+++  wisher
+  |=  [arv=* txt=@t]
+  ?>  ?=(^ arv)
+  =/  res  (mock [arv +10.arv] ~)
+  =/  wish  ?>(?=(%0 -.res) p.res)
+  =/  res  (mule |.((slum wish txt)))
+  ?>  ?=(%& -.res)
+  p.res
+::
 --  =>
 ~%  %clay  +  ~
 |%
@@ -1145,12 +1248,55 @@
   ::
   ::  Create a ford appropriate for the aeon
   ::
+  ::  +get-pill: a desk's own kernel pill (/brass/pill), if it ships one
+  ::
+  ++  get-pill
+    |=  tak=tako
+    ^-  (unit pill)
+    =/  fiz=(map path lobe)  q:(tako-to-yaki:ze tak)
+    =/  pil=(unit lobe)  (~(get by fiz) /brass/pill)
+    ?~  pil  ~
+    =/  foo=(unit page)  (~(get by lat.ran) u.pil)
+    ?~  foo  ~
+    =+  ;;(pil=pill q.u.foo)
+    =?  pil  ?=(%cash -.pil)
+      ^-  $>(%pill pill)
+      [%pill +<.pil]
+    ?>  ?=(%pill -.pil)
+    `[%pill [nam boot-ova kernel-ova userspace-ova]:pil]
+  ::  +tako-ford: build ford-api for a tako; cross-kelvin if the desk ships a pill
+  ::
   ++  tako-ford
     |=  tak=tako
-    %-  live-ford
-    :_  [lat.ran veb.bug]
-    %-  apply-built-ins
-    (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
+    =/  arv=(unit *)
+      ?:  =(%base syd)  ~
+      =/  pil=(unit pill)  (get-pill tak)
+      =>  [make-arvo=make-arvo pil=pil]
+      ~>  %memo./clay/ford
+      (make-arvo pil)
+    =/  zud
+      =>  [make-zuse=make-zuse arv=arv]
+      ~>  %memo./clay/ford
+      (make-zuse arv)
+    =/  wish=(unit $-(@t *))
+      ?~  arv  ~
+      =>  [wisher=wisher uarv=u.arv]
+      `|=(t=@t (wisher uarv t))
+    ::  XX review +apply-built-ins
+    ::
+    =/  files
+      %-  apply-built-ins
+      (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
+    =/  ford-cord=@t  (get-ford files)
+    =/  ford-api
+      =>  :*  build-ford-api=build-ford-api:fusion
+              zud=zud
+              wish=wish
+              ford-cord=ford-cord
+          ==
+      ~>  %memo./clay/ford
+      (build-ford-api [zud wish ford-cord])
+    (ford-api files lat.ran veb.bug)
   ::
   ::  +get-ford: resolve +ford's source (base's /lib/ford/hoon) for a build
   ::
@@ -1598,7 +1744,13 @@
     ::  and prevent applying commits that will never become compatible
     ::  (because they're only compat with old, and base never downgrades)
     ::
-    ?:  (~(all in kel) |=(=weft (gth num.weft zuse)))
+    ::    exception: a desk compatible only with older kelvins still runs if it
+    ::    ships its own kernel (/brass/pill), since it builds cross-kelvin
+    ::    against that pill rather than the live kernel (see +tako-ford).
+    ::
+    ?:  ?&  (~(all in kel) |=(=weft (gth num.weft zuse)))
+            !(~(has by new-data) /brass/pill)
+        ==
       %-  (slog leaf+"clay: {<syd>} old-kelvin, {<[compat=kel have=zuse+zuse]>}" ~)
       ..park
     =/  mis=(set perm:gall)
@@ -3012,7 +3164,12 @@
       %+  fall
         (mole |.((get-kelvin %| (aeon-to-yaki:ze let.dom))))
       [[%1 ~] ~]
-    ?.  (~(has in kel) zuse+zuse)
+    ::  a desk that ships its own kernel (/brass/pill) runs cross-kelvin even
+    ::  when it doesn't support the live zuse (see +tako-ford).
+    ::
+    ?.  ?|  (~(has in kel) zuse+zuse)
+            (~(has by q:(aeon-to-yaki:ze let.dom)) /brass/pill)
+        ==
       %.  ..park(liv.dom %held)
       %-  slog
       :~  leaf+"clay: can't set {<syd>} live, it doesn't support zuse {<zuse>}"
@@ -4539,7 +4696,7 @@
     |-  ^-  pack:gall
     ?~  bill.i.sat
       =/  den  ((de now rof hen ruf) our desk.i.sat)
-      [[our desk.i.sat da+now] [peg peq]:dom.den duz]
+      [[our desk.i.sat da+now] zuse-version:f [peg peq]:dom.den duz]
     =/  =vase
       ~|  /app/[i.bill.i.sat]/hoon
       %-  road  |.
