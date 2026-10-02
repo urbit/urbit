@@ -101,7 +101,7 @@
     ::  if the set of subdomains is the currently-known set, do nothing
     ::
     ?:  =(suz subs)
-      [~ this]
+      [~ this(next ~)]
     ::  if no subs would get removed, apply the change right away
     ::
     ?:  =(~ (~(dif in subs) suz))
