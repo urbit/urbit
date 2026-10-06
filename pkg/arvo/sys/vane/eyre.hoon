@@ -253,6 +253,11 @@
   ::
   ~
 ::
++$  target
+  %+  each
+    [[domain=turf port=(unit @ud)] desk=(unit desk)]
+  [ip=@if port=(unit @ud)]
+::
 ::  +prune-events: removes all items from the front of the queue up to :id
 ::
 ::    also produces, per request-id, the amount of events that have got acked,
@@ -861,10 +866,10 @@
     ^-  [(list move) server-state]
     ::
     =/  req=unpacked-request
-      [secure request & `[%old *@uv [[%ours ~] ~]]]
+      [secure request & [~ %have *@uv [[%ours ~] ~]]]
     ::
     %-  (trace 2 |.("{<duct>} creating local"))
-    (request-to-app [req %respect] %lens address)
+    (request-to-app req %lens address)
   ::  +request: starts handling an inbound http request
   ::
   ++  request
@@ -883,6 +888,7 @@
       :: :+  (fall (forwarded-secure u.forwards) secure)
       ::   (clap (forwarded-host u.forwards) host head)
       :: (fall (forwarded-for u.forwards) address)
+    =*  proto-req  `unpacked-request`[secure request | ~ %drop ~]
     ::  according to spec, all http 1.1 connections must include a host header
     ::  (and for http 2 and 3, the same info should be in the ":authority"
     ::  pseudo-header). if they don't, we'll send a 400.
@@ -891,9 +897,8 @@
       ::TODO  should also make all other logic that has host=(unit @t) just be
       ::      host=@t, or better yet, host=turf
       ::
-      =/  req=unpacked-request  [secure request | ~]
-      %+  instant:response  req
-      (error-page 400 authenticated.req url.request ~)
+      %+  instant:response  proto-req
+      (error-page 400 authenticated.proto-req url.request ~)
     ::  parse the hostname from the request, then
     ::  either it's a naked ip address, or we
     ::  deduce the target scope from the known domain, based on known domains
@@ -912,7 +917,7 @@
     ::               .ip: request ip target
     ::               .port: request port
     ::
-    =/  proto-target=(unit (each [[domain=turf port=(unit @ud)] desk=(unit desk)] [ip=@if port=(unit @ud)]))
+    =/  proto-target=(unit target)
       ::REVIEW  should just parse earlier?
       =/  doom=(unit [port=(unit @ud) doom=(each turf @if)])
         (rush u.host thor:de-purl:html)
@@ -935,7 +940,6 @@
       ::  else, there is no target scope
       ::
       ~
-    =*  proto-req  `unpacked-request`[secure request | ~]
     ?~  proto-target
       %+  instant:response  proto-req
       [[421 ~] `(as-octs:mimes:html 'bad host')]
@@ -994,74 +998,6 @@
           %-  drop  %+  bind  ~(headers cors headers)
           (lead 'access-control-allow-headers')
       ==
-    ::  to prevent abuse, eyre MUST ignore auth provided by requests from
-    ::  domains other than the one being targetted.
-    ::  note that %drop results in %miss auth-state below.
-    ::
-    ::REVIEWzz
-    =/  auth-level=?(%respect %drop %reject)
-      ^-  $?  %respect  ::  use whatever auth is in request
-              %drop     ::  ignore request auth, mb mint guest, but _don't serve set-cookie_
-              %reject   ::  serve 403
-          ==
-      ::  non-cookie auth is always respected
-      ::
-      ?:  ?=(^ (get-header:http 'authorization' headers))  ::  see also +session-from-header
-        %respect
-      ::
-      ::TMP
-      ?:  =(`'https://surface.localhost/' (get-header:http 'referer' headers))
-        %respect
-      ::
-      =/  safe=?
-        ?=(?(%'GET' %'HEAD') method.request)
-      =/  origin=(unit @t)
-        (get-header:http 'origin' headers)
-      ::  even though browsers treat protocol as part of the origin,
-      ::  for our purposes we can ignore it
-      ::
-      =?  origin  ?=(^ origin)
-        ?:  =('http://' (end 3^7 u.origin))
-          `(rsh 3^7 u.origin)
-        ?:  =('https://' (end 3^8 u.origin))
-          `(rsh 3^8 u.origin)
-        origin  ::TODO  protocol-agnostic
-      =/  exact-origin=?
-        &(?=(^ origin) =(u.origin u.host))
-      ::  in insecure contexts, do best-effort
-      ::
-      ?.  secure
-        ?.  safe
-          ?:  exact-origin  %respect
-          ~&  %reject-1  %reject
-        ?:  &(?=(^ origin) !exact-origin)
-          %drop
-        :: ~?  ?=(~ origin)  %eyre-dangerously-respect-cookie  ::NOTE  can't do better here...
-        %respect
-      ::  in secure contexts, we can look at sec- headers
-      ::
-      =/  site=(unit @t)
-        (get-header:http 'sec-fetch-site' headers)
-      ?:  =(`'same-origin' site)
-        ?:  safe
-          ?:  |(?=(~ origin) exact-origin)  %respect
-          ~&  %reject-2  %reject  ::NOTE  contradictory to %same-origin
-        ?:  exact-origin  %respect
-        ~&  %reject-3  %reject
-      ?.  safe
-        ~&  %reject-4  %reject
-      ?:  ?&  ?=([~ ?(%'none' %'same-site' %'cross-site')] site)
-              =(`'navigate' (get-header:http 'sec-fetch-mode' headers))
-              =(`'document' (get-header:http 'sec-fetch-dest' headers))
-              ?=(~ origin)  ::  reasoning: no origin because it's user action
-          ==
-        %respect
-      %drop
-    ?:  ?=(%reject auth-level)
-      %+  instant:response  proto-req
-      [[403 ~] `(as-octs:mimes:html 'bad auth origin')]
-    ::
-    ::TODOzz  ?:  (is-public url-request) ... ?
     ::
     =/  =action
       (get-action-for-binding url.request)
@@ -1100,31 +1036,7 @@
         ?>  ?=([~ ~ %desk *] res)
         `!<(desk q.u.u.res)
       ==
-    ::  if authentication is provided in the headers (not cookies) then look
-    ::  exclusively at those, ignoring all cookies, and handle the request as
-    ::  coming from a not-browser source.
     ::
-    =/  head-auth=(unit (unit [session=@uv =identity]))
-      =/  head-auth=(unit (unit [=desk @uv identity]))
-        (session-from-header:authentication headers)
-      ?~  head-auth  ~
-      ::  provided but invalid/unknown
-      ::
-      ?~  u.head-auth  [~ ~]
-      ::  if provided it must match the target scope
-      ::
-      ?:  ?=(%& -.target)
-        ?.  =(desk.p.target u.u.head-auth)  [~ ~]
-        ``+.u.u.head-auth
-      ?:  ?|  ?=(~ pathowner)
-              =(u.pathowner desk.u.u.head-auth)
-          ==
-        ``+.u.u.head-auth
-      [~ ~]
-    ::  if invalid auth was provided, always reject the request
-    ::
-    ?:  ?=([~ ~] head-auth)
-      (instant:response proto-req [401 ~] `8^'bad auth')
     ::  when dealing with requests to domains on paths with non-eyre owners,
     ::  if the request targets the base subdomain, redirect to root. or:
     ::  if the domain is known, but doesn't match the pathowner (either because
@@ -1151,79 +1063,37 @@
       ::  return failure early
       ::
       [[421 ~] `(as-octs:mimes:html 'url not in scope')]
-    ::  auth-state: authentication detail for the incoming request
     ::
-    ::    %invalid:   an invalid session was provided, or the session's
-    ::                scope doesn't match the request target.
-    ::    %have:      known and valid session.
-    ::    %miss:      request provided no auth at all. request handling logic
-    ::                may or may not mint them a guest session, depending on
-    ::                what endpoint gets hit.
-    ::    %negotiate: request lacks auth but came in on a subdomain. if we
-    ::                send it into the holm flow it may be able to obtain auth
-    ::                automagically. (this is %holm %jump.)
+    =/  auth=auth-res:authentication
+      %-  read-auth:authentication
+      [secure u.host target pathowner method.request headers]
+    ::  if illicit auth was detected, reject the request wholesale
     ::
-    =/  t
-      $%  [%invalid session=@uv]
-          [%have session=@uv =identity]
-          [%miss ~]
-          [%negotiate old-session=(unit @uv)]
+    ?:  ?=(%reject +<.auth)
+      %+  instant:response  proto-req
+      [[403 ~] `(as-octs:mimes:html reason.auth)]
+    ::  the request provided authentication that's not (or no longer) valid.
+    ::  to make sure they're aware, tell them 401, and if they provided a
+    ::  cookie, make sure they expire it.
+    ::
+    ?:  ?=(%invalid +<.auth)
+      %+  instant:response  proto-req
+      =+  bod=(as-octs:mimes:html reason.auth)
+      :_  `bod
+      :-  401
+      :*  ['cache-control' 'no-store']
+          ['content-length' (crip (a-co:co p.bod))]
+          ?~  sid.auth  ~
+          ['set-cookie' (session-cookie-string:authentication u.sid.auth secure ~)]~
       ==
-    =^  auth-state=t  state
-      ?:  ?=(%drop auth-level)  [[%miss ~] state]
-      ?^  head-auth
-        [[%have u.u.head-auth] state]
-      ?~  sid=(session-id-from-request:authentication secure request)
-        ?:  ?=([%& * ^] target)  [[%negotiate ~] state]
-        [[%miss ~] state]
-      ?~  ses=(~(get by sessions.auth.state) u.sid)
-        ?:  ?=([%& * ^] target)
-          [[%negotiate `u.sid] state]
-        [[%invalid u.sid] state]
-      ?:  (gth now expiry-time.u.ses)
-        ?:  ?=([%& * ^] target)
-          [[%negotiate `u.sid] state]
-        [[%invalid u.sid] state]
-      ::  in the bare ip access case cookies will always be root scope,
-      ::  but clients may still have scoped auth tokens (x-urb-auth).
-      ::  in those cases, we want to take the session identity as-is generally,
-      ::  but also want to catch & disallow fetching of other desks' endpoints.
-      ::REVIEWzz  redundant with ?^ head-auth case above?
-      ::
-      ?:  ?=(%| -.target)
-        ?:  ?|  ?=(~ pathowner)
-                ?=(~ scope.identity.u.ses)
-                =(u.pathowner u.scope.identity.u.ses)
-            ==
-          [[%have u.sid identity.u.ses] state]
-        [[%invalid u.sid] state]
-      ::  provenance doesn't match request target,
-      ::  they shouldn't pass this cookie!
-      ::
-      ?:  =(desk.p.target scope.identity.u.ses)
-        [[%have u.sid identity.u.ses] state]
-      [[%negotiate ~] state]
     ::
     =/  req=unpacked-request
       :^  secure  request
-        ?=([%have @ [%ours ~] *] auth-state)
-      ?:(?=(%have -.auth-state) `[%old session identity]:auth-state ~)
+        ?=([* %have @ [%ours ~] *] auth)
+      auth
     =*  send-instant-data      (cury instant-data req)
     =*  send-instant-response  (cury instant:response req)
     ::
-    ?:  ?=(%invalid -.auth-state)
-      =*  session  session.auth-state
-      ::  the request provided a session cookie that's not (or no longer)
-      ::  valid. to make sure they're aware, tell them 401
-      ::
-      %-  send-instant-response
-      =+  bod=(as-octs:mimes:html 'bad session auth')
-      :_  `bod
-      :-  401
-      :~  ['set-cookie' (session-cookie-string:authentication session secure ~)]
-          ['cache-control' 'no-store']
-          ['content-length' (crip (a-co:co p.bod))]
-      ==
     ::  subdomain authentication flow (%holm)
     ::
     ::    the %holm flow is used to obtain scoped cookies on subdomains
@@ -1239,16 +1109,19 @@
     ::    because it takes priority over them: once you're in the holm flow
     ::    it must runs its course.
     ::
-    =?  .  &(?=(%negotiate -.auth-state) !=(%holm -.action))  ::NOTE  tmi
+    =?  .  &(?=(%negotiate +<.auth) !=(%holm -.action))  ::NOTE  tmi
       =.  action       [%holm ~]
       =.  url.request  (cat 3 '/~/holm/jump' url.request)
       .
     ?:  ?=(%holm -.action)
+      ::TODOxx  if %drop but %holm, serve 400?
+      ~?  ?=(%drop +<.auth)  %holm-for-drop-auth--todo-mb-400
       =/  session=(unit @uv)
-        ?-  -.auth-state
-          %have             (some session.auth-state)
+        ?-  +<.auth
+          %have             (some sid.auth)
+          %negotiate        sid.auth
           %miss             ~
-          %negotiate        old-session.auth-state
+          %drop             ~
         ==
       =*  drop
         ?~  session  ~
@@ -1309,17 +1182,15 @@
         ::
         ?^  desk.p.target
           =.(msg "holm: can't sink from subdomain" fail)
-        ?:  ?=(%negotiate -.auth-state)
+        ?:  ?=(%negotiate +<.auth)
           =.(msg "holm: unexpected negotiation auth during sink" fail)
         ::  if they provided no auth, mint them a new guest session:
         ::  having a parent session on root is required for tmp-token flow
         ::
         =^  [sid=@uv =identity moves=(list move)]  state
-          ?~  session.req                                ::  ?-  -.auth-state
-            (start-session:authentication %new-guest ~)  ::  %miss
-          [[sid identity ~]:u.session.req state]         ::  %have
-        =.  session.req  `[?:(?=(~ session.req) %new %old) sid identity]
-        =.  auth-state  [%have sid identity]
+          (session-from-auth:authentication authentication.req)
+        =.  +.authentication.req  [%have sid identity]
+        =.  +.auth  [%have sid identity]  ::REVIEWxx  why edit this? unused after
         ::
         =/  expiry=@da  (add now tmp-token-timeout)
         =^  tmp-token=@uv  authlets.auth.state
@@ -1344,7 +1215,7 @@
           %gain
         ?~  desk.p.target
           =.(msg "holm: can't gain on root domain" fail)
-        ?<  ?=(%miss -.auth-state)  ::NOTE  we only %miss on root
+        ?<  ?=(%miss +<.auth)  ::NOTE  we only %miss on root
         ?~  authlet=(~(get by authlets.auth.state) tok.step)
           =.(msg "holm: invalid gain token" fail)
         ?:  (gth now expiry.u.authlet)
@@ -1361,16 +1232,17 @@
         =.  authlets.auth.state  (~(del by authlets.auth.state) tok.step)
         =^  o  state
           (start-session:authentication new-id `parent.u.authlet)
-        =.  session.req        `[%new session identity]:o
-        =.  authenticated.req  ?=(%ours -.identity.o)
+        =.  +.authentication.req  [%miss ~ session identity]:o
+        =.  authenticated.req     ?=(%ours -.identity.o)
         =^  moz=(list move)  state
           %-  send-instant-response
           [[303 ['location' (rap 3 '//' u.host url.target.u.authlet ~)]~] ~]
         [[give-session-tokens (weld moz moves.o)] state]
       ==
-    ?<  ?=(%negotiate -.auth-state)  ::NOTE  handled as %holm action above
+    ~|  auth=+<.auth
+    ?<  ?=(%negotiate +<.auth)  ::NOTE  handled as %holm action above
     ::
-    ?>  ?=(?(%miss %have) -.auth-state)
+    ?>  ?=(?(%drop %miss %have) +<.auth)
     ::
     ^-  [moz=(list move) sat=server-state]
     ::  if we have no eauth endpoint yet, and the request is authenticated,
@@ -1464,7 +1336,7 @@
       %eauth    (on-request:eauth:authentication req)
       %channel  (handle-request:by-channel req)
       %scry     (handle-scry req)
-      %name     (handle-name req auth-level)
+      %name     (handle-name req)
       %ip       (handle-ip req address)
       %boot     (handle-boot req)
       %sponsor  (handle-sponsor req)
@@ -1529,7 +1401,7 @@
           url.request
           "%{(trip app.action)} not running"
         ==
-      (request-to-app [req auth-level] app.action address)
+      (request-to-app req app.action address)
     ::
         %authentication
       (handle-request:authentication req target address)
@@ -1671,7 +1543,7 @@
   ::  +handle-name: respond with the requester's @p
   ::
   ++  handle-name
-    |=  [req=unpacked-request auth-level=?(%respect %drop)]
+    |=  req=unpacked-request
     ^-  (quip move server-state)
     ?.  =(%'GET' method.request.req)
       %+  instant:response  req
@@ -1680,14 +1552,15 @@
     ::  if the request provided no auth, mint a guest identity.
     ::
     =^  [sid=@uv =identity moves1=(list move)]  state
-      ?~  session.req  (start-session:authentication %new-guest ~)
-      [[sid identity ~]:u.session.req state]
+      (session-from-auth:authentication authentication.req)
     ::  only associate the session with the request (and serve the matching
     ::  set-cookie header) if auth was respected in the first place. in %drop
     ::  cases we don't want to send cookies.
     ::
-    =?  session.req  ?=(%respect auth-level)
-      `[?:(?=(~ session.req) %new %old) sid identity]
+    =?  +.authentication.req  ?=(%drop +<.authentication.req)
+      [%drop `[sid identity]]
+    =?  +.authentication.req  ?=(%miss +<.authentication.req)
+      [%miss `[sid identity]]
     ::
     =^  moves2  state
       %+  instant-data  req
@@ -1706,7 +1579,12 @@
       (error-response 405 "may only GET scries")
     =/  rul  (parse-request-line url.request.req)
     =/  fqp  (fully-qualified site.rul)
-    =/  mym  (scry-mime now rof `scope.identity:(need session.req) [~ ~] ext.rul site.rul)
+    =/  mym
+      %:  scry-mime
+        now    rof
+        `scope:(need (identity-from-auth:authentication authentication.req))
+        [~ ~]  ext.rul  site.rul
+      ==
     ?:  ?=(%| -.mym)  (error-response 500 p.mym)
     =*  mime  p.mym
     %+  instant:response  req
@@ -1823,26 +1701,20 @@
   ::  +request-to-app: subscribe to app and poke it with request data
   ::
   ++  request-to-app
-    |=  [[unpacked-request auth-level=?(%respect %drop)] app=term =address]
+    |=  [unpacked-request app=term =address]
     ^-  [(list move) server-state]
-    =*  req  +<-<
+    =*  req  +<-
     ::TODOzz  strip eyre-consumed cookie and author headers from request,
     ::        here or earlier
     ::  requests into userspace must always have an associated identity.
     ::  if the request provided no auth, mint a guest identity.
     ::
     =^  [suv=@uv =identity moves=(list move)]  state
-      ?^  session  [[sid identity ~]:u.session state]
-      (start-session:authentication %new-guest ~)
-    ::  only associate the session with the request (and serve the matching
-    ::  set-cookie header) if auth was respected in the first place. in %drop
-    ::  cases we don't want to send cookies.
-    ::
-    =?  session  ?=(~ session)
-      ?-  auth-level
-        %respect  `[%new suv identity]
-        %drop     `[%tmp suv identity]
-      ==
+      (session-from-auth:^authentication authentication)
+    =?  +.authentication  ?=(%drop +<.authentication)
+      [%drop ~ suv identity]
+    =?  +.authentication  ?=(%miss +<.authentication)
+      [%miss ~ suv identity]
     ::  the request will be handled outside of eyre ("asynchronously"),
     ::  so store the connection in state before dispatching
     ::
@@ -1884,8 +1756,8 @@
       %-  (trace 1 |.("leaving subscription to {<app.action>}"))
       ::  requests to userspace are guaranteed to have an identity/session
       ::
-      ?>  ?=(^ session.u.connection)
-      (deal-as /watch-response/[eyre-id] identity.u.session our app.action %leave ~)
+      =+  identity=(need (identity-from-auth:^authentication authentication))
+      (deal-as /watch-response/[eyre-id] identity our app.action %leave ~)
     ::
         %eauth
       ::NOTE  expiry timer will clean up cancelled eauth attempts
@@ -1932,6 +1804,153 @@
   ::
   ++  authentication
     |%
+    ++  read-auth
+      |=  $:  secure=?
+              host=@t
+              =target
+              pathowner=(unit desk)
+              =method:http
+              headers=header-list:http
+          ==
+      ^-  auth-res
+      ::  if an authorization header is provided, look exclusively at that,
+      ::  assuming a non-browser source
+      ::
+      =/  head-auth=(unit (unit [=desk @uv identity]))
+        (session-from-header:authentication headers)
+      ?^  head-auth
+        :-  `%header
+        ::  provided but invalid/unknown
+        ::
+        ?~  u.head-auth  [%invalid 'invalid' ~]
+        ::  if provided it must match the target scope
+        ::
+        ?:  ?=(%& -.target)
+          ?.  =(desk.p.target u.u.head-auth)  [%invalid 'scope' ~]
+          [%have +.u.u.head-auth]
+        ::REVIEWxx  pathowner checking really necessary?
+        ?:  ?|  ?=(~ pathowner)
+                =(u.pathowner desk.u.u.head-auth)
+            ==
+          [%have +.u.u.head-auth]
+        [%invalid 'scope' ~]
+      ::  to prevent abuse, eyre MUST ignore cookies provided by requests from
+      ::  domains other than the one being targetted.
+      ::
+      ::    %respect: use whatever auth is in request
+      ::    %drop:    ignore request auth, mb mint guest, but _don't serve set-cookie_
+      ::    %reject:  serve 403
+      ::
+      =/  auth-level=$@(?(%respect %drop) [%reject reason=@])
+        ::  non-cookie auth is always respected.
+        ::  (see also +session-from-header)
+        ::
+        ?:  ?=(^ (get-header:http 'authorization' headers))
+          %respect
+        ::
+        ::TODOzz  parse desk & check perms for %embedder perm
+        ?:  =(`'https://surface.localhost/' (get-header:http 'referer' headers))
+          %respect
+        ::
+        =/  safe=?
+          ?=(?(%'GET' %'HEAD') method)
+        =/  origin=(unit @t)
+          (get-header:http 'origin' headers)
+        ::  even though browsers treat protocol as part of the origin,
+        ::  for our purposes we can ignore it
+        ::
+        =?  origin  ?=(^ origin)
+          ?:  =('http://' (end 3^7 u.origin))
+            `(rsh 3^7 u.origin)
+          ?:  =('https://' (end 3^8 u.origin))
+            `(rsh 3^8 u.origin)
+          origin  ::TODO  protocol-agnostic
+        =/  exact-origin=?
+          &(?=(^ origin) =(u.origin host))
+        ::  in insecure contexts, do best-effort
+        ::
+        ?.  secure
+          ?.  safe
+            ?:  exact-origin  %respect
+            [%reject 'insecure unsafe origin mismatch']
+          ?:  &(?=(^ origin) !exact-origin)
+            %drop
+          ::NOTE  can't do better here...
+          %respect
+        ::  in secure contexts, we can look at sec- headers
+        ::
+        =/  site=(unit @t)
+          (get-header:http 'sec-fetch-site' headers)
+        ?:  =(`'same-origin' site)
+          ?:  safe
+            ?:  |(?=(~ origin) exact-origin)  %respect
+            [%reject 'safe origin mismatch']  ::NOTE  contradictory to %same-origin
+          ?:  exact-origin  %respect
+          [%reject 'unsafe origin mismatch']
+        ?.  safe
+          [%reject 'unsafe cross-origin']
+        ?:  ?&  ?=([~ ?(%'none' %'same-site' %'cross-site')] site)
+                =(`'navigate' (get-header:http 'sec-fetch-mode' headers))
+                =(`'document' (get-header:http 'sec-fetch-dest' headers))
+                ?=(~ origin)  ::  reasoning: no origin because it's user action
+            ==
+          %respect
+        %drop
+      ::
+      ?:  ?=([%reject *] auth-level)
+        [~ %reject reason.auth-level]
+      ?:  ?=(%drop auth-level)
+        [~ %drop ~]
+      ::
+      :-  `%cookie
+      ^-  _+:*auth-res
+      ?~  sid=(session-id-from-request:authentication secure headers)
+        ?:  ?=([%& * ^] target)
+          [%negotiate ~]
+        [%miss ~]
+      ?~  ses=(~(get by sessions.auth.state) u.sid)
+        ?:  ?=([%& * ^] target)
+          [%negotiate sid]
+        [%invalid 'unknown' sid]
+      ?:  (gth now expiry-time.u.ses)
+        ?:  ?=([%& * ^] target)
+          [%negotiate sid]
+        [%invalid 'expired' sid]
+      ::  in the bare ip access case cookies will always be root scope.
+      ::
+      ?:  ?=(%| -.target)
+        ?:  ?=(~ scope.identity.u.ses)
+          [%have u.sid identity.u.ses]
+        [%invalid 'scoped-ip-cookie' sid]
+      ::  provenance doesn't match request target,
+      ::  they shouldn't pass this cookie!
+      ::
+      ?:  =(desk.p.target scope.identity.u.ses)
+        [%have u.sid identity.u.ses]
+      [%negotiate sid]
+    ::  +session-from-auth: extract from & mb mint session for $auth-res
+    ::
+    ++  session-from-auth
+      |=  auth=auth-res
+      ^-  [[sid=@uv =identity moves=(list move)] server-state]
+      ::  shouldn't call this utility in cases where request gets rejected
+      ::
+      ?:  ?=(?(%reject %invalid %negotiate) +<.auth)
+        ~|(%oops-session-from-rejected-request !!)
+      ?-  +<.auth
+        %drop  ?^(tmp.auth [[sid identity ~]:u.tmp.auth state] (start-session %new-guest ~))  ::REVIEWxx
+        %miss  ?^(new.auth [[sid identity ~]:u.new.auth state] (start-session %new-guest ~))
+        %have  [[sid identity ~]:auth state]
+      ==
+    ::
+    ++  session-id-from-auth
+      |=  auth=auth-res
+      ^-  (unit @uv)
+      (bind (sesh-from-auth auth) head)
+    ++  identity-from-auth
+      |=  auth=auth-res
+      ^-  (unit identity)
+      (bind (sesh-from-auth auth) tail)
     ::  +handle-request: handles an http request for the login page
     ::
     ++  handle-request
@@ -1942,8 +1961,7 @@
       ^-  [(list move) server-state]
       =*  request  request.req
       =/  identity=(unit identity)
-        ?~  session.req  ~
-        `identity.u.session.req
+        (identity-from-auth authentication.req)
       ::  parse the arguments out of request uri
       ::
       =+  request-line=(parse-request-line url.request)
@@ -2022,14 +2040,15 @@
       ::  clean up the session they're changing out from
       ::
       =^  moz  state
-        ?~  session.req  [~ state]
-        (close-session sid.u.session.req |)
+        ?~  sid=(session-id-from-auth authentication.req)  [~ state]
+        (close-session u.sid |)
       ::  initialize the new session
       ::
       =^  fex  state  (start-session [[%ours ~] ~] ~)
-      =.  session.req        `[%new session identity]:fex
-      =.  authenticated.req  &
-      =.  identity           `identity.fex  ::NOTE  doesn't matter but good form
+      ::NOTE  this forgets the original +.$auth-res of the request
+      =.  +.authentication.req  [%miss ~ session identity]:fex
+      =.  authenticated.req     &
+      =.  identity             `identity.fex  ::NOTE  doesn't matter but good form
       ::  store the hostname used for this login, later reuse it for eauth.
       ::  avoid overwriting public domains with localhost or local domains.
       ::  (only use "top level" domains for this, no desk-subdomains, but this
@@ -2106,7 +2125,7 @@
       =/  all=?
         ?=(^ (get-header:http 'all' arg))
       =/  sid=(unit @uv)
-        =*  siq  ?~(session.req ~ `sid.u.session.req)
+        =*  siq  (session-id-from-auth authentication.req)
         ?.  authenticated.req                siq
         ?~  sid=(get-header:http 'sid' arg)  siq
         ::  if you provided the parameter, but it doesn't parse, we just
@@ -2131,7 +2150,8 @@
         state
       ::  if the requester is logging themselves out, make them drop the cookie
       ::
-      =?  headers.response-header.payload  =(sid ?~(session.req ~ `sid.u.session.req))
+      =?  headers.response-header.payload
+          =(sid (session-id-from-auth authentication.req))
         :+  ['set-cookie' (session-cookie-string u.sid secure.req ~)]
           ['cache-control' 'no-store']
         headers.response-header.payload
@@ -2165,12 +2185,12 @@
     ::    looks in the cookie header(s) instead.
     ::
     ++  session-id-from-request
-      |=  [secure=? =request:http]
+      |=  [secure=? headers=header-list:http]
       ^-  (unit @uv)
       ::  are there cookies passed with this request?
       ::
       =/  cookie-header=@t
-        %+  roll  header-list.request
+        %+  roll  headers
         |=  [[key=@t value=@t] c=@t]
         ?.  =(key 'cookie')
           c
@@ -2203,7 +2223,7 @@
       ^-  ?
       ::  does the request pass a session cookie?
       ::
-      ?~  session-id=(session-id-from-request secure request)
+      ?~  session-id=(session-id-from-request secure header-list.request)
         %.n
       ::  is this a session that we know about?
       ::
@@ -2525,14 +2545,16 @@
           ::  and send the visitor the cookie + final redirect
           ::
           =^  moz1  state
-            ?~  session.req  [~ state]
-            (close-session sid.u.session.req |)
+            =+  sid=(session-id-from-auth authentication.req)
+            ?~  sid  [~ state]
+            (close-session u.sid |)
           =^  [sid=@uv =identity moz2=(list move)]  state
             (start-session [[%real ship] ~] ~)
           =.  visitors.auth
             %+  ~(jab by visitors.auth)  nonce
             |=(v=visitor v(+ sid))
-          =.  session.req  `[%new sid identity]
+          ::NOTE  may cause misleading response metadata if auth _was_ provided
+          =.  +.authentication.req  [%miss ~ sid identity]
           =^  moz3  state
             ::NOTE  the cookie will be set for us based on session.req
             (instant:response req 303^['location' last]~ ~)
@@ -2807,7 +2829,7 @@
             ::  request for confirmation page
             ::
             ?.  authenticated.req  login
-            ?>  ?=(^ session.req)
+            ?>  ?=(?([%drop ^] [%miss ^] [%have *]) +.authentication.req)  ::REVIEWxx  necessary?
             =/  book  (~(gut by visiting.auth) u.server *logbook)
             =/  door  (~(get by map.book) u.nonce)
             ?~  door
@@ -2860,7 +2882,7 @@
           %+  instant:response  req
           (eauth-error-page 405 ~)
         ?.  authenticated.req  login
-        ?>  ?=(^ session.req)
+        ?>  ?=(?([%drop ^] [%miss ^] [%have *]) +.authentication.req)  ::REVIEWxx  necessary?
         ::  POST requests are always submissions of the confirmation page
         ::
         =/  args=(map @t @t)
@@ -3074,9 +3096,7 @@
         ::
         ::  make sure the requester's identity matches the channel creator's
         ::
-        ?.  ?&  ?=(^ session.req)
-                =(identity.channel identity.u.session.req)
-            ==
+        ?.  =(`identity.channel (identity-from-auth:authentication authentication.req))
           =^  mos  state
             %+  instant:response  req
             (error-page 403 | url.request ~)
@@ -3173,7 +3193,7 @@
       ::
       =.  sessions.auth.state
         %+  ~(jab by sessions.auth.state)
-          sid:(need session.req)
+          (need (session-id-from-auth:authentication authentication.req))
         |=  =session
         session(channels (~(put in channels.session) channel-id))
       ::  initialize sse heartbeat
@@ -3220,13 +3240,12 @@
       |=  [req=unpacked-request channel-id=@t]
       ^-  [(list move) server-state]
       =*  request  request.req
-      ::TODOyy  ?>  ?=(^ session.req)
       ::  if the channel already exists, and is not of this identity, 403
       ::
       ::    the creation case happens in the +update-timeout-timer-for below
       ::
       ?:  ?~  c=(~(get by session.channel-state.state) channel-id)  |
-          ?~(session.req & !=(identity.u.session.req identity.u.c))
+          !=(`identity.u.c (identity-from-auth:authentication authentication.req))
         %+  instant:response  req
         (error-page 403 | url.request ~)
       ::  error when there's no body
@@ -3248,11 +3267,11 @@
       ::  so that their channel has an identity associated with it
       ::
       =^  [sid=@uv =identity sesh-moves=(list move)]  state
-        ?~  session.req  (start-session:authentication %new-guest ~)
-        [[sid identity ~]:u.session.req state]
-      ::NOTE  no need to worry about sending cookie to "%drop status" request,
-      ::      because PUT requests never get %drop
-      =.  session.req  `[?:(?=(~ session.req) %new %old) sid identity]
+        (session-from-auth:authentication authentication.req)
+      =?  +.authentication.req  ?=(%drop +<.authentication.req)
+        [%drop ~ sid identity]
+      =?  +.authentication.req  ?=(%miss +<.authentication.req)
+        [%miss ~ sid identity]
       ::  check for the existence of the channel-id
       ::
       ::    if we have no session, create a new one set to expire in
@@ -3770,8 +3789,8 @@
       %-  (trace 1 |.("leaving subscription to {<app.action>}"))
       ::  requests to userspace are guaranteed to have an identity/session
       ::
-      ?>  ?=(^ session.connection)
-      (deal-as /watch-response/[eyre-id] identity.u.session our app.action %leave ~)
+      =+  identity=(need (identity-from-auth:^authentication authentication))
+      (deal-as /watch-response/[eyre-id] identity our app.action %leave ~)
     ::
     =^  moves-2  state
       %-  async-easy:response
@@ -3839,11 +3858,9 @@
           ::  session's + cookie's life if they were close to expiring.
           ::
           =^  nuh  sessions.auth.state
-            ?~  session.req
-              [headers sessions.auth.state]
             %+  refresh-session
               headers
-            [secure [wut sid]:u.session]:req
+            [secure authentication]:req
           =.  headers  nuh
           ::  book-keep the connection's state:
           ::  if we're done responding, clear it from state if it was there,
@@ -3923,19 +3940,38 @@
           |.("leaving subscription to {<app.action>}")
       ::  requests to userspace are guaranteed to have an identity/session
       ::
-      ?>  ?=(^ session.u.con)
-      (deal-as /watch-response/[eyre-id] identity.u.session our app.action %leave ~)
+      =+  identity=(need (identity-from-auth:^authentication authentication))
+      (deal-as /watch-response/[eyre-id] identity our app.action %leave ~)
     --
   ::  +fill-headers: xx
   ::
   ++  fill-headers
-    ::REVIEWyy  pass in whole request instead of just extracted origin?
     |=  $:  http-event=$~([%start [500 ~] ~ &] $>(%start http-event:http))
             unpacked-request
         ==
     ^-  header-list:http
     =*  headers               headers.response-header.http-event
     =/  origin=(unit origin)  (get-header:http 'origin' header-list.request)
+    ::  for developer debugging convenience, put info about how and what eyre
+    ::  deduced about the request's authentication state.
+    ::  note that this may include modifications eyre did on the auth, in
+    ::  addition to what the requester provided.
+    ::
+    =.  headers
+      :_  headers
+      :-  'x-eyre-auth-info'
+      %+  rap  3
+      =*  a  authentication
+      :^  'read='  =>(a ?~(from 'none' u.from))  '; '
+      :^  'tag='   +<.a  '; '
+      ?-  +<.authentication
+        %reject     ['reason=' reason.a ~]
+        %invalid    ['reason=' reason.a ?~(sid.a ~ ['; ' 'sid=' (scot %uv u.sid.a) ~])]
+        %negotiate  ?~(sid.a ~ ['sid=' (scot %uv u.sid.a) ~])
+        %drop       ['tmp=' ?~(tmp.a 'none' 'minted') ~]
+        %miss       ['new=' ?~(new.a 'none' 'minted') ~]
+        %have       ['kind=' -.who.identity.a ~]
+      ==
     ::REVIEWyy  content-length headers behavior
     ::  ensure we have a matching content-length header
     ::
@@ -3988,13 +4024,14 @@
   ::    uncacheable for security reasons.
   ::
   ++  refresh-session
-    |=  [headers=header-list:http secure=? wut=?(%new %old %tmp) sid=@uv]
+    |=  [headers=header-list:http secure=? auth=auth-res]
     ^-  [header-list:http _sessions.auth.state]
     =*  sessions    sessions.auth.state
     ::  if the session has expired since the request was opened,
     ::  tough luck, we don't create/revive sessions here
     ::
-    ?~  ses=(~(get by sessions) sid)
+    =+  sid=(session-id-from-auth:authentication auth)
+    ?~  ses=(biff sid ~(get by sessions))
       [headers sessions]
     ?:  (gth now expiry-time.u.ses)
       [headers sessions]
@@ -4003,22 +4040,26 @@
     =/  timeout
       =,  session-timeout
       ?:(?=(%guest kind) guest auth)
+    ::  if the session is temporary, or
     ::  if the session existed and isn't close to expiring yet, no-op
     ::
-    ?:  ?&  !?=(%new wut)
+    ?:  ?|  ?=(%drop +<.auth)
+        ?&  ?=(%have +<.auth)
             (gth (sub expiry-time.u.ses now) (div timeout 2))
-        ==
+        ==  ==
+      ::TODOxx  delete from sessions if drop?
       [headers sessions]
+    ::  only refresh a session on re-use.
     ::  if we're refreshing the session and sending a set-cookie header,
     ::  we must signal that the response isn't cacheable.
     ::  note that we overwrite existing cache-control headers, but leave
     ::  existing set-cookie headers in place.
     ::
-    =?  expiry-time.u.ses  ?=(%old wut)
+    =?  expiry-time.u.ses  ?=(%have +<.auth)
       (add now timeout)
-    :_  (~(put by sessions) sid u.ses)
+    :_  (~(put by sessions) (need sid) u.ses)
     =.  headers  (set-header:http 'cache-control' 'no-store' headers)
-    [['set-cookie' (session-cookie-string:authentication sid secure `expiry-time.u.ses)] headers]
+    [['set-cookie' (session-cookie-string:authentication (need sid) secure `expiry-time.u.ses)] headers]
   ::  +set-response: remember (or update) a cache mapping
   ::
   ++  set-response
