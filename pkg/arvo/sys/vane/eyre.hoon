@@ -970,26 +970,31 @@
       ::
       ?:  ?=(%| -.target)  reject
       =/  method  (need ~(method cors headers))
+      =/  origin-desk=(unit (unit desk))  (scope-from-turf domains.state u.origin)
       ::  if the request they want to do is safe, always allow it
       ::  (but don't allow credentials to be used)
       ::
       ?:  ?=(?(%'GET' %'HEAD') method)
         =-  (instant:response proto-req [204 -] ~)
-        :*  'access-control-allow-origin'^(need (get-header:http 'origin' headers))
-            'access-control-allow-methods'^'GET, HEAD'
-            %-  drop  %+  bind  ~(headers cors headers)
-            (lead 'access-control-allow-headers')
-            ::NOTE  access-control-allow-credentials omitted intentionally
+        =-  (murn - same)
+        ^-  (list (unit [@t @t]))
+        :~  `'access-control-allow-origin'^(need (get-header:http 'origin' headers))
+            `'access-control-allow-methods'^'GET, HEAD'
+            (bind ~(headers cors headers) (lead 'access-control-allow-headers'))
+            ::  only allow credentials to be used if it's the same desk
+            ::  on both origins
+            ::
+            ?~  origin-desk  ~
+            ?.  =(u.origin-desk desk.p.target)  ~
+            `'access-control-allow-credentials'^'true'
         ==
       ::  if the request they want to do is unsafe, only allow it if the target
       ::  is the same desk (which is a silly edge-case, wouldn't ordinarily be
       ::  cross-origin)
       ::
-      =/  origin-desk=(unit (unit desk))  (scope-from-turf domains.state u.origin)
       ?~  origin-desk                     reject
       ?.  =(u.origin-desk desk.p.target)  reject
       ::  since it's the same desk, allow credentials
-      ::TODOzz  also hit this branch for safe requests, if they're the same desk?
       ::
       =-  (instant:response proto-req [204 -] ~)
       :*  'access-control-allow-origin'^(need (get-header:http 'origin' headers))
@@ -1067,6 +1072,7 @@
     =/  auth=auth-res:authentication
       %-  read-auth:authentication
       [secure u.host target pathowner method.request headers]
+    =*  proto-req  `unpacked-request`[secure request | auth]
     ::  if illicit auth was detected, reject the request wholesale
     ::
     ?:  ?=(%reject +<.auth)
@@ -1189,8 +1195,10 @@
         ::
         =^  [sid=@uv =identity moves=(list move)]  state
           (session-from-auth:authentication authentication.req)
-        =.  +.authentication.req  [%have sid identity]
-        =.  +.auth  [%have sid identity]  ::REVIEWxx  why edit this? unused after
+        =?  +.authentication.req  ?=(%drop +<.authentication.req)
+          [%drop ~ sid identity]
+        =?  +.authentication.req  ?=(%miss +<.authentication.req)
+          [%miss ~ sid identity]
         ::
         =/  expiry=@da  (add now tmp-token-timeout)
         =^  tmp-token=@uv  authlets.auth.state
@@ -1826,7 +1834,7 @@
         ::  if provided it must match the target scope
         ::
         ?:  ?=(%& -.target)
-          ?.  =(desk.p.target u.u.head-auth)  [%invalid 'scope' ~]
+          ?.  =(desk.p.target `desk.u.u.head-auth)  [%invalid 'scope' ~]
           [%have +.u.u.head-auth]
         ::REVIEWxx  pathowner checking really necessary?
         ?:  ?|  ?=(~ pathowner)
@@ -4080,6 +4088,7 @@
       =.  headers  (normalize-headers headers)
       ::REVIEWyy  content-length headers behavior
       ::TODOzz  since this is new behavior, consider applying during migration
+      ::NOTE  will put in a static x-eyre-auth-info header...
       =.  headers
         %+  fill-headers
           [%start response-header data &]:simple-payload.body.u.entry
