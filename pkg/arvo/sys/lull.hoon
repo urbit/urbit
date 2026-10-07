@@ -4122,6 +4122,7 @@
         $:  %eyre
         $%  [%setup ~]                                  ::  %eauth-host %rule
             [%serve =path]                              ::  %connect %set-response
+            [%embed ~]                                  ::  authed iframe other desks
             [%cross ~]                                  ::  %approve-origin %reject-origin
             [%debug ~]                                  ::  %spew
         ==  ==

@@ -1803,12 +1803,6 @@
       ?:  ?=(^ (get-header:http 'authorization' headers))
         %respect
       ::
-      ::TODOzz  parse desk & check perms for %embedder perm
-      ?:  =(`'https://surface.localhost/' (get-header:http 'referer' headers))
-        %respect
-      ?:  =(`'https://surface.a.plfn.io/' (get-header:http 'referer' headers))
-        %respect
-      ::
       =/  safe=?
         ?=(?(%'GET' %'HEAD') method)
       =/  origin=(unit @t)
@@ -1846,11 +1840,33 @@
         [%reject 'unsafe origin mismatch']
       ?.  safe
         [%reject 'unsafe cross-origin']
+      ::  may-embed: read desk from referer header, check for %embed perm
+      ::
+      =*  may-embed=?
+        =+  ref=(get-header:http 'referer' headers)
+        ?~  ref  |
+        =+  pur=(de-purl:html u.ref)
+        ?.  ?=([~ [? * %& *] *] pur)  |  ::  turf host
+        ?.  |(!secure p.p.u.pur)  |
+        =+  sop=(scope-from-turf domains.state p.r.p.u.pur)
+        ?.  ?=([~ ~ @] sop)  |
+        =+  pes=(rof [~ ~] /eyre %cx [our %$ da+now] /bond/[u.u.sop])
+        ?.  ?=([~ ~ %bond *] pes)  |
+        (have:guard:gall peg:!<(bond:ward:clay q.u.u.pes) [%eyre %embed ~])
+      ::
       ?:  ?&  ?=([~ ?(%'none' %'same-site' %'cross-site')] site)
               =(`'navigate' (get-header:http 'sec-fetch-mode' headers))
-              =(`'document' (get-header:http 'sec-fetch-dest' headers))
               ?=(~ origin)  ::  reasoning: no origin because it's user action
-          ==
+            ::
+              ::  document targets are always allowed. if the response will
+              ::  end up in an iframe, ensure the embedder is allowed to do so
+              ::
+              =+  dest=(get-header:http 'sec-fetch-dest' headers)
+              ?|  =(`'document' dest)
+              ?&  |(=(`'iframe' dest) =(`'frame' dest))
+                  !=('none' u.site)
+                  may-embed
+          ==  ==  ==
         %respect
       %drop
     ::
