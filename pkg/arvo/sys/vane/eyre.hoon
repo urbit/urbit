@@ -970,28 +970,22 @@
       ::
       ?:  ?=(%| -.target)  reject
       =/  method  (need ~(method cors headers))
-      =/  origin-desk=(unit (unit desk))  (scope-from-turf domains.state u.origin)
       ::  if the request they want to do is safe, always allow it
       ::  (but don't allow credentials to be used)
       ::
       ?:  ?=(?(%'GET' %'HEAD') method)
         =-  (instant:response proto-req [204 -] ~)
-        =-  (murn - same)
-        ^-  (list (unit [@t @t]))
-        :~  `'access-control-allow-origin'^(need (get-header:http 'origin' headers))
-            `'access-control-allow-methods'^'GET, HEAD'
-            (bind ~(headers cors headers) (lead 'access-control-allow-headers'))
-            ::  only allow credentials to be used if it's the same desk
-            ::  on both origins
-            ::
-            ?~  origin-desk  ~
-            ?.  =(u.origin-desk desk.p.target)  ~
-            `'access-control-allow-credentials'^'true'
+        :*  'access-control-allow-origin'^(need (get-header:http 'origin' headers))
+            'access-control-allow-methods'^'GET, HEAD'
+            %-  drop  %+  bind  ~(headers cors headers)
+            (lead 'access-control-allow-headers')
+            ::NOTE  access-control-allow-credentials omitted intentionally
         ==
       ::  if the request they want to do is unsafe, only allow it if the target
       ::  is the same desk (which is a silly edge-case, wouldn't ordinarily be
       ::  cross-origin)
       ::
+      =/  origin-desk=(unit (unit desk))  (scope-from-turf domains.state u.origin)
       ?~  origin-desk                     reject
       ?.  =(u.origin-desk desk.p.target)  reject
       ::  since it's the same desk, allow credentials
