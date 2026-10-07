@@ -969,33 +969,21 @@
       ::REVIEWzz  what if it's on the cors-registery?
       ::
       ?:  ?=(%| -.target)  reject
-      =/  method  (need ~(method cors headers))
-      ::  if the request they want to do is safe, always allow it
-      ::  (but don't allow credentials to be used)
-      ::
-      ?:  ?=(?(%'GET' %'HEAD') method)
-        =-  (instant:response proto-req [204 -] ~)
-        :*  'access-control-allow-origin'^(need (get-header:http 'origin' headers))
-            'access-control-allow-methods'^'GET, HEAD'
-            %-  drop  %+  bind  ~(headers cors headers)
-            (lead 'access-control-allow-headers')
-            ::NOTE  access-control-allow-credentials omitted intentionally
-        ==
-      ::  if the request they want to do is unsafe, only allow it if the target
-      ::  is the same desk (which is a silly edge-case, wouldn't ordinarily be
-      ::  cross-origin)
-      ::
-      =/  origin-desk=(unit (unit desk))  (scope-from-turf domains.state u.origin)
-      ?~  origin-desk                     reject
-      ?.  =(u.origin-desk desk.p.target)  reject
-      ::  since it's the same desk, allow credentials
-      ::
-      =-  (instant:response proto-req [204 -] ~)
-      :*  'access-control-allow-origin'^(need (get-header:http 'origin' headers))
-          'access-control-allow-methods'^method
-          'access-control-allow-credentials'^'true'
-          %-  drop  %+  bind  ~(headers cors headers)
-          (lead 'access-control-allow-headers')
+      =/  method  ((soft method:http) (need ~(method cors headers)))
+      ?~  method  reject
+      =/  auth-level
+        (read-auth-level:authentication secure u.host u.method headers)
+      ?:  ?=([%reject *] auth-level)
+        reject
+      ::NOTE  200, not 204, to work around browser stupidity
+      =-  (instant:response proto-req [200 -] ~)
+      =-  (murn - same)
+      ^-  (list (unit [@t @t]))
+      :~  `'access-control-allow-origin'^(need (get-header:http 'origin' headers))
+          `'access-control-allow-methods'^u.method
+          (bind ~(headers cors headers) (lead 'access-control-allow-headers'))
+          ?:  ?=(%drop auth-level)  ~
+          `'access-control-allow-credentials'^'true'
       ==
     ::
     =/  =action
@@ -1806,6 +1794,66 @@
   ::
   ++  authentication
     |%
+    ++  read-auth-level
+      |=  [secure=? host=@t method=method:http headers=header-list:http]
+      ^-  $@(?(%respect %drop) [%reject reason=@])
+      ::  non-cookie auth is always respected.
+      ::  (see also +session-from-header)
+      ::
+      ?:  ?=(^ (get-header:http 'authorization' headers))
+        %respect
+      ::
+      ::TODOzz  parse desk & check perms for %embedder perm
+      ?:  =(`'https://surface.localhost/' (get-header:http 'referer' headers))
+        %respect
+      ?:  =(`'https://surface.a.plfn.io/' (get-header:http 'referer' headers))
+        %respect
+      ::
+      =/  safe=?
+        ?=(?(%'GET' %'HEAD') method)
+      =/  origin=(unit @t)
+        (get-header:http 'origin' headers)
+      ::  even though browsers treat protocol as part of the origin,
+      ::  for our purposes we can ignore it
+      ::
+      =?  origin  ?=(^ origin)
+        ?:  =('http://' (end 3^7 u.origin))
+          `(rsh 3^7 u.origin)
+        ?:  =('https://' (end 3^8 u.origin))
+          `(rsh 3^8 u.origin)
+        origin  ::TODO  protocol-agnostic
+      =/  exact-origin=?
+        &(?=(^ origin) =(u.origin host))
+      ::  in insecure contexts, do best-effort
+      ::
+      ?.  secure
+        ?.  safe
+          ?:  exact-origin  %respect
+          [%reject 'insecure unsafe origin mismatch']
+        ?:  &(?=(^ origin) !exact-origin)
+          %drop
+        ::NOTE  can't do better here...
+        %respect
+      ::  in secure contexts, we can look at sec- headers
+      ::
+      =/  site=(unit @t)
+        (get-header:http 'sec-fetch-site' headers)
+      ?:  =(`'same-origin' site)
+        ?:  safe
+          ?:  |(?=(~ origin) exact-origin)  %respect
+          [%reject 'safe origin mismatch']  ::NOTE  contradictory to %same-origin
+        ?:  exact-origin  %respect
+        [%reject 'unsafe origin mismatch']
+      ?.  safe
+        [%reject 'unsafe cross-origin']
+      ?:  ?&  ?=([~ ?(%'none' %'same-site' %'cross-site')] site)
+              =(`'navigate' (get-header:http 'sec-fetch-mode' headers))
+              =(`'document' (get-header:http 'sec-fetch-dest' headers))
+              ?=(~ origin)  ::  reasoning: no origin because it's user action
+          ==
+        %respect
+      %drop
+    ::
     ++  read-auth
       |=  $:  secure=?
               host=@t
@@ -1844,60 +1892,7 @@
       ::    %reject:  serve 403
       ::
       =/  auth-level=$@(?(%respect %drop) [%reject reason=@])
-        ::  non-cookie auth is always respected.
-        ::  (see also +session-from-header)
-        ::
-        ?:  ?=(^ (get-header:http 'authorization' headers))
-          %respect
-        ::
-        ::TODOzz  parse desk & check perms for %embedder perm
-        ?:  =(`'https://surface.localhost/' (get-header:http 'referer' headers))
-          %respect
-        ::
-        =/  safe=?
-          ?=(?(%'GET' %'HEAD') method)
-        =/  origin=(unit @t)
-          (get-header:http 'origin' headers)
-        ::  even though browsers treat protocol as part of the origin,
-        ::  for our purposes we can ignore it
-        ::
-        =?  origin  ?=(^ origin)
-          ?:  =('http://' (end 3^7 u.origin))
-            `(rsh 3^7 u.origin)
-          ?:  =('https://' (end 3^8 u.origin))
-            `(rsh 3^8 u.origin)
-          origin  ::TODO  protocol-agnostic
-        =/  exact-origin=?
-          &(?=(^ origin) =(u.origin host))
-        ::  in insecure contexts, do best-effort
-        ::
-        ?.  secure
-          ?.  safe
-            ?:  exact-origin  %respect
-            [%reject 'insecure unsafe origin mismatch']
-          ?:  &(?=(^ origin) !exact-origin)
-            %drop
-          ::NOTE  can't do better here...
-          %respect
-        ::  in secure contexts, we can look at sec- headers
-        ::
-        =/  site=(unit @t)
-          (get-header:http 'sec-fetch-site' headers)
-        ?:  =(`'same-origin' site)
-          ?:  safe
-            ?:  |(?=(~ origin) exact-origin)  %respect
-            [%reject 'safe origin mismatch']  ::NOTE  contradictory to %same-origin
-          ?:  exact-origin  %respect
-          [%reject 'unsafe origin mismatch']
-        ?.  safe
-          [%reject 'unsafe cross-origin']
-        ?:  ?&  ?=([~ ?(%'none' %'same-site' %'cross-site')] site)
-                =(`'navigate' (get-header:http 'sec-fetch-mode' headers))
-                =(`'document' (get-header:http 'sec-fetch-dest' headers))
-                ?=(~ origin)  ::  reasoning: no origin because it's user action
-            ==
-          %respect
-        %drop
+        (read-auth-level secure host method headers)
       ::
       ?:  ?=([%reject *] auth-level)
         [~ %reject reason.auth-level]
