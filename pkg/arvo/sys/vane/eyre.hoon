@@ -1321,6 +1321,34 @@
       (~(get by cache.state) url.request)
     ?:  &(?=([~ @ ^] cached) ?=(%'GET' method.request))
       (handle-cache-req req +.u.val.u.cached)
+    ::  now that we've finished all the prep, remove authentication-related
+    ::  headers from the request, to prevent abusive introspection
+    ::
+    =.  header-list.request.req
+      %+  murn  header-list.request.req
+      =/  key=@t
+        %+  rap  3
+        :~  ?:(secure '__Host-' '')
+            'urbauth-'  (scot %p our)
+        ==
+      |=  [k=@t v=@t]
+      ^-  (unit [@t @t])
+      =*  keep  (some k v)
+      ?:  =(k 'authorization')  ~
+      ?.  =(k 'cookie')  keep
+      ?~  cookies=`(unit header-list:http)`(rush v cock:de-purl:html)  keep
+      ?~  (get-header:http key u.cookies)     keep
+      =.  u.cookies
+        |-
+        =+  new=(delete-header:http key u.cookies)
+        ?:  =(new u.cookies)  new
+        $(u.cookies new)
+      ?:  =(~ u.cookies)  ~
+      %+  some  k
+      %+  roll  u.cookies
+      |=  [[ck=@t cv=@t] sum=@t]
+      =?  sum  !=('' sum)  (cat 3 sum '; ')
+      (rap 3 sum ck '=' cv ~)
     ::
     ?-    -.action
       %logout   (handle-logout:authentication req)
