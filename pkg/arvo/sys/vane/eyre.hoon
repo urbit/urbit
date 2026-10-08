@@ -879,15 +879,16 @@
     =/  [secure=? host=(unit @t) =^address]
       =/  host=(unit @t)  (get-header:http 'host' headers)
       =*  same  [secure host address]
+      ::  for requests from localhost, respect the "forwarded" header,
+      ::  but only if a "via" header is also present, to prevent js request
+      ::  forging shenanigans
+      ::
       ?.  =([%ipv4 .127.0.0.1] address)        same
-      same
-      ::TODOzz  find out how to deal with proxies safely. Via or Proxy- headers mb?
-      :: ::  for requests from localhost, respect the "forwarded" header
-      :: ::
-      :: ?~  forwards=(forwarded-params headers)  same
-      :: :+  (fall (forwarded-secure u.forwards) secure)
-      ::   (clap (forwarded-host u.forwards) host head)
-      :: (fall (forwarded-for u.forwards) address)
+      ?~  (get-header:http 'via' headers)      same
+      ?~  forwards=(forwarded-params headers)  same
+      :+  (fall (forwarded-secure u.forwards) secure)
+        (clap (forwarded-host u.forwards) host head)
+      (fall (forwarded-for u.forwards) address)
     =*  proto-req  `unpacked-request`[secure request | ~ %drop ~]
     ::  according to spec, all http 1.1 connections must include a host header
     ::  (and for http 2 and 3, the same info should be in the ":authority"
