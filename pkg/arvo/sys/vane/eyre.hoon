@@ -1322,27 +1322,26 @@
     ?:  &(?=([~ @ ^] cached) ?=(%'GET' method.request))
       (handle-cache-req req +.u.val.u.cached)
     ::  now that we've finished all the prep, remove authentication-related
-    ::  headers from the request, to prevent abusive introspection
+    ::  headers from the request, to prevent abusive introspection.
+    ::  take care to clear both http and https cookie keys.
     ::
     =.  header-list.request.req
       %+  murn  header-list.request.req
       =/  key=@t
-        %+  rap  3
-        :~  ?:(secure '__Host-' '')
-            'urbauth-'  (scot %p our)
-        ==
+        (cat 3 'urbauth-' (scot %p our))
       |=  [k=@t v=@t]
       ^-  (unit [@t @t])
       =*  keep  (some k v)
       ?:  =(k 'authorization')  ~
       ?.  =(k 'cookie')  keep
       ?~  cookies=`(unit header-list:http)`(rush v cock:de-purl:html)  keep
-      ?~  (get-header:http key u.cookies)     keep
       =.  u.cookies
+        =/  sec=?  |
         |-
         =+  new=(delete-header:http key u.cookies)
-        ?:  =(new u.cookies)  new
-        $(u.cookies new)
+        ?.  =(new u.cookies)  $(u.cookies new)
+        ?:  sec  new
+        $(key (cat 3 '__Host-' key), sec &)
       ?:  =(~ u.cookies)  ~
       %+  some  k
       %+  roll  u.cookies
