@@ -4552,13 +4552,12 @@
           =(mus per)
       ==
     ::
-    ++  have-path  ::  check if req path nested within per
+    ++  have-path  ::  check if .per is prefix of .req
       |=  [req=path per=path]
-      =|  p=path
-      |-
-      ?:  =(p per)  &
-      ?~  req       |
-      $(p (welp p [i.req ~]), req t.req)
+      ?~  per  &
+      ?~  req  |
+      ?.  =(i.req i.per)  |
+      $(req t.req, per t.per)
     ::
     ++  must  ::  perm required for card
       |=  [our=ship =card:agent]
