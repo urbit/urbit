@@ -50,6 +50,7 @@
       ::  type operations
       ::
       [%ktls p=$ q=$]
+      [%ktts p=term q=$]
       ::[%bccb =$]
       [%wtpt =wing y=$ n=$]
       [%wtcn =wing tom=@ y=$ n=$]

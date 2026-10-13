@@ -306,6 +306,7 @@
     %brpt  [%brpt lay.sin (~(run by bat.sin) ..$)]
   ::
     %ktls  [%ktls $(sin p.sin) $(sin q.sin)]
+    %ktts  [%ktts p.sin $(sin q.sin)]
     %wtpt  [%wtpt wing.sin $(sin y.sin) $(sin n.sin)]
     %wtcn  [%wtcn wing.sin tom.sin $(sin y.sin) $(sin n.sin)]
     %wtkt  [%wtkt wing.sin $(sin y.sin) $(sin n.sin)]
@@ -497,6 +498,9 @@
     =/  sam  $(naty p.naty, gol %noun)
     ::TODO  check type from recursion against -.sam
     [-.sam +:$(naty q.naty, gol -.sam)]
+  ::
+    %ktts  =+  q=$(naty q.naty)
+           [[%face p.naty p.q] q.q]
   ::
     %wtpt  =/  [=vein =type]
              =/  [=vein =opal]  (find sut %read wing.naty)

@@ -244,6 +244,10 @@
     (make-primitive-test '$' |+%skip 1)
     (make-primitive-test '^$' |+%skip 2)
     (make-primitive-test 'a.b' |+%skip 1)
+  ::
+    (make-primitive-test 'a=' |+%face 2)
+    (make-primitive-test '^=  ' &+%ktts 4)
+    (make-primitive-test '^=(' |+%ktts 3)
   ==
 ::
 ::TODO  test +proc
@@ -324,6 +328,10 @@
     (make-parser-test '%=  $  $  0  ==' [%cnts w [w z] ~])
     (make-parser-test '%=($ $ 0, $ 0)' [%cnts w [w z] [w z] ~])
     (make-parser-test '%=  $  $  0  $  0  ==' [%cnts w [w z] [w z] ~])
+  ::
+    (make-parser-test 'a=0' [%ktts %a z])
+    (make-parser-test '^=(a 0)' [%ktts %a z])
+    (make-parser-test '^=  a  0' [%ktts %a z])
   ::
     (make-parser-test '|@  ++  a  0  --' [%brpt ~ (my [%a z] ~)])
     (make-parser-test '|@  ++  a  0  ++  b  1  --' [%brpt ~ (my [%a z] [%b o] ~)])

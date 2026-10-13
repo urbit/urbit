@@ -9,6 +9,8 @@
               %coma  %stis  %slus  %shep
               %axis  %lark  %skip
               ::TODO  %sym
+              %face
+              %ktts
               %dttr  %dtwt  %dtls  %dtts
               %wtcl
               %tsgr  %tsls
@@ -28,11 +30,12 @@
 +$  toke
   $@  ?(%ace %gap %dot %per %sel %ser %tar %bar %wut %ket %sig %coma %stis %slus %shep)
   $%  [%limb =limb]
+      [%face =term]
     ::
       [%atom tol=? const=? =aura a=@]  ::  %atomw + %atomt
       [%mato =aura]
     ::
-      $:  ?(%dttr %dtwt %dtls %dtts %wtcl %tsgr %tsls %cnts %sggr %brcn %brpt %brcl %brts %ktls %ktcl %wtpt %wtcn %wtkt %cltr)
+      $:  ?(%ktts %dttr %dtwt %dtls %dtts %wtcl %tsgr %tsls %cnts %sggr %brcn %brpt %brcl %brts %ktls %ktcl %wtpt %wtcn %wtkt %cltr)
           tol=?
       ==
   ==
@@ -56,9 +59,11 @@
           axis+|+%axis  lark+|+%lark  skip+|+%skip
           mato+|+%mato
           ::  %sym
+          face+|+%face  ::TODO  doesn't need a wideness tag...
           c-tas+|+[%atom & %tas]
           c-ud-w+|+[%atom & %ud]  c-ud-t+&+[%atom & %ud]
           a-ud-w+|+[%atom | %ud]  a-ud-t+&+[%atom | %ud]
+          kttsw+|+%ktts  kttst+&+%ktts
           dttrw+|+%dttr  dttrt+&+%dttr    dtwtw+|+%dtwt  dtwtt+&+%dtwt    dtlsw+|+%dtls  dtlst+&+%dtls    dttsw+|+%dtts  dttst+&+%dtts
           wtclw+|+%wtcl  wtclt+&+%wtcl
           tsgrw+|+%tsgr  tsgrt+&+%tsgr    tslsw+|+%tsls  tslst+&+%tsls
@@ -157,6 +162,11 @@
     ( '$' | [a-z][a-z0-9-]* )
     '''
   ::
+    :-  %face
+    '''
+    sym '='
+    '''
+  ::
     :-  %c-tas
     '''
     '%' sym
@@ -191,6 +201,15 @@
     :-  %skip
     '''
     '^'* sym
+    '''
+  ::
+    :-  %kttsw
+    '''
+    '^=('
+    '''
+    :-  %kttst
+    '''
+    '^=' gap
     '''
   ::
     :-  %dttrw
@@ -447,6 +466,8 @@
     ::
       %mato   [%mato (chunk +(i.cur.st) (dec len))]
     ::
+      %face   [%face (chunk i.cur.st (dec len))]
+    ::
       %com    [%limb %| 0 ~]
       %axis   :+  %limb  %&
               %+  big:digits  10
@@ -564,6 +585,10 @@
     =+  peek  ?@  -  ~  =>  [t=u +(st s)]
     ?+  t  wide(tol |)
       [%atom %& *]  [%noun [%atom aura.t ?.(const.t ~ `a.t)] a.t]^move
+      [%ktts %&]    =+  peek(st move)           ?@  -  ~  =>  [f=u +(st s)]
+                    ?.  ?=([%limb %| %0 ~ @] f)        ~
+                    =+  (expect(st move) %gap)  ?@  -  ~  =>  +(st s)
+                    =+  tall                    ?@  -  ~  [[%ktts u.q.limb.f u] s]
       [%cltr %&]    =+  %+  (autocons(st move) naty-sugar)
                           |=(t=toke ?=(%gap t))
                         |=  s=_st
@@ -672,6 +697,11 @@
     =+  gulp  ?@  -  ~  =>  [t=u +(st s)]
     ?+  t  ~
       [%limb *]     =+  (wing-tail limb.t)  ?@  -  ~  [[%cnts u ~] s]
+      [%face *]     =+  wide                    ?@  -  ~  [[%ktts term.t u] s]
+      [%ktts %|]    =+  peek                    ?@  -  ~  =>  [f=u +(st s)]
+                    ?.  ?=([%limb %| %0 ~ @] f)        ~
+                    =+  (expect(st move) %ace)  ?@  -  ~  =>  +(st s)
+                    =+  wide-1                  ?@  -  ~  [[%ktts u.q.limb.f u] s]
       ::TODO  handle %dot
       [%atom %| *]  [%noun [%atom aura.t ?.(const.t ~ `a.t)] a.t]^st
       [%mato @]     [%xtra %mold %atom aura.t]^st
