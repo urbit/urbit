@@ -2,6 +2,7 @@
     %azimuth
     %dbug
     %dojo
+    %domains-manager
     %eth-watcher
     %hood
     %herm
