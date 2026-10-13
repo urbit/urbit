@@ -9,7 +9,7 @@
 ::
 ::  XX: update these examples
 ::  Then try stuff:
-::  :aqua [%init ~[~bud ~dev]]
+::  :aqua &aqua-events [%init-ship ~bud %.y feed=~]~
 ::  :aqua [%dojo ~[~bud ~dev] "[our eny (add 3 5)]"]
 ::  :aqua [%dojo ~[~bud] "|hi ~dev"]
 ::  :aqua [%wish ~[~bud ~dev] '(add 2 3)']
@@ -22,18 +22,32 @@
 ::
 /-  aquarium
 /+  pill, azimuth, naive, default-agent, aqua-azimuth, dbug, verb
+/=  arvo-gate  /sys/arvo
+/=  ames-gate  /sys/vane/ames
+=/  larva-ames  (ames-gate ~zod)
+=.  larva-ames
+  %_  larva-ames
+    rof  |=(* ``[%noun !>(*(list turf))])  :: needed by %born
+    now  ~1111.1.1
+    eny  0v3f.arfnf
+  ==
+=/  ames-adult   +:(call:(larva-ames) ~[//unix] ~ %born ~)
 =,  aquarium
 =>  $~  |%
+    ++  larva-arvo    ..poke:+>.arvo-gate
+    ++  arvo-core    ..^poke:+>.arvo-gate
+    ++  ames-gate    _ames-adult
     +$  versioned-state
       $%  state-0
       ==
     +$  state-0
       $:  %0
           pil=$>(%pill pill-0)
-          assembled=*
+          assembled=*  ::  XX _larva_arvo
           fresh-piers=(map [=ship fake=?] [=pier boths=(list unix-both)])
           fleet-snaps=(map term fleet)
           piers=fleet
+          ames-retry=_~s1
       ==
     ::
     +$  pill-0
@@ -48,7 +62,7 @@
     ::
     +$  fleet  [ships=(map ship pier) azi=az-state]
     +$  pier
-      $:  snap=*
+      $:  snap=*  ::  XX  _arvo-core
           event-log=(list unix-timed-event)
           next-events=(qeu unix-event)
           processing-events=?
@@ -541,6 +555,10 @@
       [%clear-snap lab=@tas]
     =.  fleet-snaps  ~  ::  (~(del by fleet-snaps) lab.val)
     this
+  ::
+      [%ames-retry wen=@dr]
+    this(ames-retry wen.val)
+  ::
   ==
 ::
 ::  Make changes to azimuth state for the current fleet
@@ -644,6 +662,17 @@
       ==
     =.  this
       abet-pe:(ahoy fake):[ae initted]
+    ::  do config specific state modifications
+    ::
+    =.  this
+      =/  p  (pe who.ae)
+      =+  !<(=_arvo-core [-:!>(arvo-core) snap.initted])
+      =/  =vane  (~(got by van.mod.arvo-core) %ames)
+      =+  !<(=ames-gate [-:!>(ames-adult) q.vase.vane])
+      =.  van.mod.arvo-core
+        =.  retry-timer.ames-gate  ames-retry
+        (~(put by van.mod.arvo-core) %ames vane(vase !>(ames-gate)))
+      abet-pe:p(snap arvo-core)
     (pe who.ae)
   ::
       %pause-events
