@@ -2842,7 +2842,7 @@
         (card-resource:track i.caz)
       ?~  -  $(caz t.caz, out [cad out])
       ?:  |(?=(^ add) add)
-        ::  drop cards that would create duplicate resources on the floor
+        ::  drop cards that would create duplicate resources
         ::
         ?:  (~(has in resources.yoke) p.i.caz res)
           %.  $(caz t.caz)
@@ -2857,6 +2857,15 @@
           resources.yoke       (~(put in resources.yoke) p.i.caz res)
           resource-deets.yoke  ?@  add  resource-deets.yoke
                                (~(put by resource-deets.yoke) [p.i.caz res] add)
+        ==
+      ::  drop cards that would delete a non-existent resource
+      ::
+      ?.  (~(has in resources.yoke) p.i.caz res)
+        %.  $(caz t.caz)
+        %-  slog
+        :~  leaf+"gall: {<agent-name>}: non-existent resource deletion:"
+            leaf+"      {<p.i.caz>}"
+            leaf+"      {<res>}"
         ==
       %_  $
         caz                  t.caz
