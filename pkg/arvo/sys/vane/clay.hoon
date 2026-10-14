@@ -6381,12 +6381,31 @@
     ?-    -.clue
         %lobe  `(tomb-lobe lobe.clue &)
         %all
-      =/  lobes=(list [=lobe =page])  ~(tap by lat.ran.ruf)
-      |-
-      ?~  lobes
-        `..^^$
-      =.  ..^^$  (tomb-lobe lobe.i.lobes &)
-      $(lobes t.lobes)
+      =/  was=@ud  ~(wyt by lat.ran.ruf)
+      =/  live=(set lobe)
+        =/  desks=(list [=desk =dojo])  ~(tap by dos.rom.ruf)
+        =|  live=(set lobe)
+        |-  ^-  (set lobe)
+        =*  desk-loop  $
+        ?~  desks  live
+        ?:  =(0 let.dom.dojo.i.desks)  desk-loop(desks t.desks)
+        =/  =yaki
+          %-  ~(got by hut.ran.ruf)
+          %-  ~(got by hit.dom.dojo.i.desks)
+          let.dom.dojo.i.desks
+        ::
+        desk-loop(desks t.desks, live (~(gas in live) ~(val by q.yaki)))
+      ::
+      =.  lat.ran.ruf
+        %-  malt
+        %-  ~(rep in live)
+        |=  [=lobe acc=(list [lobe page])]
+        ?~  peg=(~(get by lat.ran.ruf) lobe)  acc
+        [[lobe u.peg] acc]
+      ::
+      =/  now=@ud  ~(wyt by lat.ran.ruf)
+      %-  (slog ~[leaf+"clay: tomb all {(scow %ud was)} -> {(scow %ud now)}"])
+      `..^$
     ::
         %pick  pick
         %norm
