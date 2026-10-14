@@ -1663,10 +1663,23 @@
       t.t.site.req
     ?.  ?=(^ site.req)
       (error-response 400 "scry path must start with app name")
-    ::  attempt the scry that was asked for
+    ::  attempt the scry that was asked for and
+    ::  verify scoped desk scry permissions
     ::
-    =/  res=(unit (unit cage))
-      (do-scry %gx i.site.req (snoc t.site.req (fall ext.req %mime)))
+    =/  scry-path  (snoc t.site.req (fall ext.req %mime))
+    =/  err-scry=(unit [@ud tape])
+      =+  identity=(need (identity-from-auth:authentication authentication.ruq))
+      ?~  scope=scope.identity  ~
+      =+  pes=(do-scry %cx %$ /bond/[u.scope])
+      ?.  ?=([~ ~ %bond *] pes)
+        `[500 "could not resolve scry for {<u.scope>} permissions"]
+      =+  !<(=bond:ward:clay q.u.u.pes)
+      =/  =omen  [%gx [our i.site.req da+now] scry-path]
+      ?:  (rite:guard:gall our peg.bond omen)  ~
+      `[403 "scry denied for {<u.scope>}: {<(en-omen omen)>}"]
+    ?^  err-scry  (error-response u.err-scry)
+    ::
+    =/  res=(unit (unit cage))  (do-scry %gx i.site.req scry-path)
     ?~  res    (error-response 500 "failed scry")
     ?~  u.res  (error-response 404 "no scry result")
     =*  mark   p.u.u.res
