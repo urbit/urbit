@@ -1822,6 +1822,7 @@
               ?+  +>-.neet  [%j +>.neet]
                   %public-keys
                 ?^  sub.neet  [%j %public-keys u.sub.neet]
+                ::REVIEW  this _crashes_ when closing non-existing sub
                 =+  sub=(~(got by resource-deets.yoke) p.card %jael %keys)
                 ?>  ?=([%jael %keys *] sub)
                 ?-  wat.sub

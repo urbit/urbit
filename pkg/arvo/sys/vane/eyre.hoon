@@ -768,7 +768,7 @@
   (zing (turn tan |=(a=tank (wash 0^wid a))))
 ::  +internal-server-error: 500 page, with a tang
 ::
-++  internal-server-error
+++  internal-server-error  ::TODO  redundant with +error-page?
   |=  [authorized=? url=@t t=tang]
   ^-  simple-payload:http
   %^  eyre-html  500
@@ -1338,6 +1338,7 @@
       =*  keep  (some k v)
       ?:  =(k 'authorization')  ~
       ?.  =(k 'cookie')  keep
+      ::TODO  +cock is stricter than spec, if parsing fails we don't cleanup...
       ?~  cookies=`(unit header-list:http)`(rush v cock:de-purl:html)  keep
       =.  u.cookies
         =/  sec=?  |
@@ -1739,8 +1740,6 @@
     |=  [unpacked-request app=term =address]
     ^-  [(list move) server-state]
     =*  req  +<-
-    ::TODOzz  strip eyre-consumed cookie and author headers from request,
-    ::        here or earlier
     ::  requests into userspace must always have an associated identity.
     ::  if the request provided no auth, mint a guest identity.
     ::
@@ -1887,6 +1886,10 @@
         [%reject 'unsafe cross-origin']
       ::  may-embed: read desk from referer header, check for %embed perm
       ::
+      ::TODO  this allows embedding of base desk userspace responses
+      ::      (eyre's responses have frame-ancestors:'none')
+      ::      because base desk stuff is unusually high risk, perhaps that
+      ::      should be gated by an expanded or different permission (or super)
       =*  may-embed=?
         =+  ref=(get-header:http 'referer' headers)
         ?~  ref  |
@@ -4123,6 +4126,8 @@
   ++  set-response
     |=  [=desk url=@t entry=(unit cache-entry)]
     ^-  [(list move) server-state]
+    ::TODO  prevent setting responses into the eyre namespace
+    :: ?<  =('/~/' (end 3^3 url))
     =/  prev  (~(get by cache.state) url)
     ::  if a cache entry already exists, but a different desk want to touch it,
     ::  prevent that: the original desk "owns" that part of cache namespace rn.
@@ -4138,6 +4143,7 @@
       =.  headers  (normalize-headers headers)
       ::REVIEWyy  content-length headers behavior
       ::TODOzz  since this is new behavior, consider applying during migration
+      ::TODOzz  migration should probably _clear_ the whole cache, actually
       ::NOTE  will put in a static x-eyre-auth-info header...
       =.  headers
         %+  fill-headers

@@ -64,6 +64,7 @@
       =/  cmd=[%clear-eyre-cache =desk url=@t]
         ((of clear-eyre-cache+(ot desk+so url+so ~) ~) jon)
       ?>  ?=(%clear-eyre-cache -.cmd)
+      ::TODO  broken. may need to do syscall & specify the desk?
       [[%pass /cmd %arvo %eyre %set-response url.cmd ~]~ this]
     ?.  ?=(%handle-http-request mark)
       (on-poke:def mark vase)
