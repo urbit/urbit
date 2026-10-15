@@ -1009,6 +1009,10 @@
         %gen  `desk.generator.action
       ::
           %app
+        ::  make an exception for spider: it doesn't need our cross-domain
+        ::  protections, it will instead read the provenance from the sap.bowl.
+        ::
+        ?:  =(%spider app.action)  ~
         ::  we need to look this up by scry every time,
         ::  storing the result in state could get stale.
         ::  we need to look this up before the +get-action-for-binding call,
