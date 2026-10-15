@@ -28,6 +28,34 @@
         %gx  ``atom+!>((bex (bex 14)))
       ==
     ::
+    ::  agent that sends a secret %keen to whoever pokes it
+    ::
+    ++  keen-agent
+      ^-  agent:gall
+      |_  =bowl:gall
+      ++  on-init   `..on-init
+      ++  on-save   !>(~)
+      ++  on-load   |=(vase `..on-init)
+      ++  on-poke
+        |=  [=mark =vase]
+        =+  !<(=ship vase)
+        :_  ..on-init
+        [%pass /keen %keen & ship /g/x/0/keen//1/foo]~
+      ++  on-watch  |=(path !!)
+      ++  on-leave  |=(path `..on-init)
+      ++  on-peek   |=(path ~)
+      ++  on-agent  |=([wire sign:agent:gall] !!)
+      ++  on-arvo   |=([wire sign-arvo] `..on-init)
+      ++  on-fail   |=([term tang] `..on-init)
+      --
+    ::  roof that blocks on everything
+    ::
+    ++  block-roof
+      ^-  roof
+      |=  [lyc=gang pov=path vis=view bem=beam]
+      ^-  (unit (unit cage))
+      ~
+    ::
     ++  etch-request-content
       |=  [our=@p =path num=@ud]
       ^-  @
@@ -318,4 +346,108 @@
     ==
   ::
   t4
+::
+::  remote scry of our own ship: answered locally, no packets, no peer
+::
+++  test-fine-self
+  %-  run-chain
+  |.  :-  %|
+  =+  (nec-bud-zod:v life=[nec=1 bud=1 zod=1] rift=[nec=1 bud=1 zod=1])
+  =/  scry-path=path  /c/x/1/kids/sys/kelvin
+  =/  =sage:mess:ames  [~nec^scry-path hoon/kelvin]
+  ::
+  ~?  >  dbug  'public %keen to ourselves'
+  =^  t1  ames.nec
+    %:  ames-check-call:v  ames.nec
+      [~1111.1.1 0xdead.beef kelvin-roof]
+      [~[/keen-duct-1] [%keen ~ ~nec scry-path]]
+      [~[/keen-duct-1] %give %sage sage]~
+    ==
+  :-  t1  |.  :-  %|
+  ~?  >  dbug  '%chum to ourselves'
+  =^  t2  ames.nec
+    %:  ames-check-call:v  ames.nec
+      [~1111.1.1 0xdead.beef kelvin-roof]
+      [~[/keen-duct-2] [%chum ~nec scry-path]]
+      [~[/keen-duct-2] %give %sage sage]~
+    ==
+  :-  t2  |.  :-  %|
+  ~?  >  dbug  'group-key %keen to ourselves ignores the key'
+  =^  t3  ames.nec
+    %:  ames-check-call:v  ames.nec
+      [~1111.1.1 0xdead.beef kelvin-roof]
+      [~[/keen-duct-3] [%keen `[1 0xdead] ~nec scry-path]]
+      [~[/keen-duct-3] %give %sage sage]~
+    ==
+  :-  t3  |.  :-  %|
+  ~?  >  dbug  'large payload is given whole'
+  =/  big-path=path  /g/x/0/dap//some/data/atom
+  =^  t4  ames.nec
+    %:  ames-check-call:v  ames.nec
+      [~1111.1.1 0xdead.beef bex-roof]
+      [~[/keen-duct-4] [%keen ~ ~nec big-path]]
+      [~[/keen-duct-4] %give %sage ~nec^big-path atom/(bex (bex 14))]~
+    ==
+  :-  t4  |.  :-  %|
+  ~?  >  dbug  'blocked scry gives empty %sage at once'
+  =^  t5  ames.nec
+    %:  ames-check-call:v  ames.nec
+      [~1111.1.1 0xdead.beef block-roof]
+      [~[/keen-duct-5] [%keen ~ ~nec scry-path]]
+      [~[/keen-duct-5] %give %sage ~nec^scry-path ~]~
+    ==
+  :-  t5  |.  :-  %|
+  ~?  >  dbug  'malformed path gives empty %sage'
+  =^  t6  ames.nec
+    %:  ames-check-call:v  ames.nec
+      [~1111.1.1 0xdead.beef kelvin-roof]
+      [~[/keen-duct-6] [%keen ~ ~nec /foo]]
+      [~[/keen-duct-6] %give %sage ~nec^/foo ~]~
+    ==
+  :-  t6  |.  :-  %|
+  ~?  >  dbug  '%yawn and %wham to ourselves are silent'
+  =^  t7  ames.nec
+    %:  ames-check-call:v  ames.nec
+      [~1111.1.1 0xdead.beef *roof]
+      [~[/keen-duct-1] [%yawn ~nec scry-path]]
+      ~
+    ==
+  :-  t7  |.  :-  %|
+  =^  t8  ames.nec
+    %:  ames-check-call:v  ames.nec
+      [~1111.1.1 0xdead.beef *roof]
+      [~[/wham-duct] [%wham ~nec scry-path]]
+      ~
+    ==
+  :-  t8  |.  :-  %&
+  ~?  >  dbug  'no peer state was created for ourselves'
+  =/  peers=(map ship ?(%alien %known))
+    !<  (map ship ?(%alien %known))
+    =<  q
+    %-  need  %-  need
+    %-  (ames-scry-gate:v [~1111.1.1 0xdead.beef *roof] ames.nec)
+    [[~ ~] / %x [[~nec %$ da+~1111.1.1] /peers]]
+  (expect-eq !>(|) !>((~(has by peers) ~nec)))
+::
+::  gall skips the group-key fetch for a secret %keen to ourselves
+::
+++  test-gall-keen-self
+  =+  (nec-bud-zod:v life=[nec=1 bud=1 zod=1] rift=[nec=1 bud=1 zod=1])
+  =.  gall.nec  (load-agent:v ~nec gall.nec %keen keen-agent)
+  =/  scry-path=path  /g/x/0/keen//1/foo
+  =/  =task:gall  [%deal [~nec ~nec /] %keen %poke noun+!>(~nec)]
+  =^  moves  gall.nec  (gall-call:v gall.nec ~[/keen] task *roof)
+  =/  passes=(list move:gall-bunt:v)
+    %+  skim  moves
+    |=  =move:gall-bunt:v
+    ?=([* %pass * %a *] move)
+  ;:  weld
+    ~?  >  dbug  'one %keen to ames, no key request'
+    (expect-eq !>(1) !>((lent passes)))
+  ::
+    ?>  ?=([[* %pass * %a *] ~] passes)
+    %+  expect-eq
+      !>(`*`[%keen ~ ~nec scry-path])
+    !>(`*`+>+.move.i.passes)
+  ==
 --
