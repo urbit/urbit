@@ -89,14 +89,13 @@
     ?~  s
       (turn (gulf 0 (dec dim)) squeeze)
     =/  s2=[(unit @) (unit @)]  (need s)
-    =/  c=^  [(fall -.s2 ~) (fall +.s2 ~)]
     ^-  (list (list @))
-    ?+    c  !!
-        [j=@ k=~]  (turn (gulf j.c (dec dim)) squeeze)
-        [j=@ k=@]  (turn (gulf j.c k.c) squeeze)
-        [j=~ k=@]  (turn (gulf 0 k.c) squeeze)
-        [~ ~]  (turn (gulf 0 (dec dim)) squeeze)
-    ==
+    ::  read bounds from the raw units, so a present upper bound of `0`
+    ::  stays distinct from an absent bound `~` ("slice to end").  (issue #8)
+    ::  lower defaults to 0, upper (inclusive) defaults to the last index.
+    =/  lo=@  ?~(-.s2 0 u.-.s2)
+    =/  hi=@  ?~(+.s2 (dec dim) u.+.s2)
+    (turn (gulf lo hi) squeeze)
     ::
     ::  calculate the shape of the result
     =/  out-shape=(list @)
