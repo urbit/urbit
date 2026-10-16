@@ -1011,6 +1011,10 @@
       ::
       ::TODOxx  what about /_~_ ?
       ?:  =('/~/' (end 3^3 url.request))  ~
+      ::  handle paths owned by desks cache
+      ::
+      =+  cached=(~(get by cache.state) url.request)
+      ?:  ?=([~ * ~ *] cached)  `desk.u.val.u.cached
       ::  other paths owned by whatever their binding corresponds to
       ::  (could still be eyre!)
       ::
@@ -1042,7 +1046,7 @@
     ::  if the request targets the base subdomain, redirect to root. or:
     ::  if the domain is known, but doesn't match the pathowner (either because
     ::  it's requesting at the wrong subdomain, or at top-level for a subdomain
-    ::  path), redirect to the subdomain that "owns" the requested url/binding.
+    ::  path), redirect to the subdomain that "owns" the requested url/cache-entry/binding.
     ::  (but don't do that for base-desk requests on root domain!)
     ::
     ?:  ?&  ?=(%& -.target)  ?=(^ pathowner)
@@ -1329,7 +1333,6 @@
     ::  handle requests to the cache, if a non-empty entry exists
     ::
     ::REVIEWzz  move to be before most request logic?
-    ::TODOzz  must be served only from cache entry's desk's subdomain
     =/  cached=(unit [aeon=@ud val=(unit [=desk cache-entry])])
       (~(get by cache.state) url.request)
     ?:  &(?=([~ @ ^] cached) ?=(%'GET' method.request))
