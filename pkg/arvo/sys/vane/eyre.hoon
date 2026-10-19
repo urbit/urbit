@@ -4406,11 +4406,10 @@
   ::
   ?:  ?&  ?=([~ ~ *] prov)
         ::
-          !&  ::TODO  re-enable after merge with userperms branch
-          :: =;  =bond:clay  !(rite:guard:gall our peg.bond u.u)
-          :: =+  r=(rof [~ ~] /eyre [%c %x] our %$ da+now /bond/[u.u.prov])
-          :: ?>  ?=([%bond ~ ~ *])
-          :: ;;(bond:clay q.u.u.r)
+          =;  =bond:ward:clay  !(rite:guard:gall our peg.bond u.u)
+          =+  r=(rof [~ ~] /eyre %cx [our %$ da+now] /bond/[u.u.prov])
+          ?>  ?=([~ ~ %bond *] r)
+          !<(bond:ward:clay q.u.u.r)
       ==
     [%| "no permission for scry"]
   ::  perform scry
