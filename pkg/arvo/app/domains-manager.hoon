@@ -65,6 +65,8 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
+  ?:  =(%retry q.vase)
+    [~[(tell-acme our.bowl tops subs)] this]
   ?.  ?=(%noun mark)  ~|([dap.bowl %strange-mark mark=mark] !!)
   =+  ;;(act=action q.vase)
   ?-  -.act
