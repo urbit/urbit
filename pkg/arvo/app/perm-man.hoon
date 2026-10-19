@@ -17,7 +17,7 @@
   ++  on-init
     ^-  (quip card _this)
     :_  this
-    [%pass /connect %arvo %eyre %connect [~ /'perm-man'] dap.bowl]~
+    [%pass /connect %arvo %eyre %connect /'perm-man' dap.bowl]~
   ::
   ++  on-save  !>(~)
   ++  on-load  |=(* [~ this])
@@ -794,6 +794,7 @@
         %setup  "manage web server and eauth configurations"
         %serve  "serve web content at {(spud path.perm)}"
         %cross  "manage which sites can make requests to your ship (CORS)"
+        %embed  "embed other application"
         %debug  "modify debug print settings for eyre"
       ==
     ::
