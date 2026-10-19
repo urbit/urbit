@@ -986,6 +986,15 @@
           ?:  ?=(%drop auth-level)  ~
           `'access-control-allow-credentials'^'true'
       ==
+    ::TMP  /session.js for docket-era backcompat
+    ?:  =('/session.js' url.request)
+      ~&  '/session.js deprecated, use /~/host (or /~/name)'
+      %^  instant:response  proto-req
+        :-  200
+        :~  ['content-type' 'text/javascript']
+            ['cache-control' 'max-age=604800']
+        ==
+      `(as-octs:mimes:html (rap 3 'window.ship = "' (rsh 3 (scot %p our)) '";' ~))
     ::
     =/  =action
       (get-action-for-binding url.request)
