@@ -4002,7 +4002,6 @@
       ::  and if request went to an agent, leave the response subscription
       ::
       ^-  [(list move) server-state]
-      ~&  %cancel-response-del-by
       :_  state(connections (~(del by connections.state) duct))
       :-  [duct %give %response %cancel ~]
       ?.  ?=(%app -.action.u.con)
