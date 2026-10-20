@@ -5,7 +5,7 @@
 +$  tag
   $:  tol=?
       $=  dat
-      $@  $?  %ace   %gap   %per   %dot   %com   %sel   %ser   %tar  %bar  %wut  %ket  %sig
+      $@  $?  %ace   %gap   %per   %dot   %com   %sel   %ser   %tar  %bar  %wut  %ket  %sig  %hax
               %coma  %stis  %slus  %shep
               %axis  %lark  %skip
               ::TODO  %sym
@@ -29,7 +29,7 @@
   ==
 ::
 +$  toke
-  $@  ?(%ace %gap %dot %per %sel %ser %tar %bar %wut %ket %sig %coma %stis %slus %shep)
+  $@  ?(%ace %gap %dot %per %sel %ser %tar %bar %wut %ket %sig %hax %coma %stis %slus %shep)
   $%  [%limb =limb]
       [%face =term]
     ::
@@ -55,7 +55,7 @@
   ::NOTE  important that %atomw is before %atomt,
   ::      if ambiguous we prefer the former
   %.  ^-  (list $@(term (pair term tag)))
-      :~  ace+|+%ace    gap+&+%gap    per+|+%per    dot+|+%dot  com+|+%com  sel+|+%sel  ser+|+%ser   tar+|+%tar  bar+|+%bar  wut+|+%wut  sig+|+%sig  ket+|+%ket
+      :~  ace+|+%ace    gap+&+%gap    per+|+%per    dot+|+%dot  com+|+%com  sel+|+%sel  ser+|+%ser   tar+|+%tar  bar+|+%bar  wut+|+%wut  sig+|+%sig  ket+|+%ket  hax+|+%hax
           coma+|+%coma  stis+&+%stis  slus+&+%slus  shep+|+%shep
           axis+|+%axis  lark+|+%lark  skip+|+%skip
           mato+|+%mato
@@ -133,6 +133,10 @@
     :-  %ket
     '''
     '^'
+    '''
+    :-  %hax
+    '''
+    '#'
     '''
   ::
     :-  %mato
@@ -476,7 +480,7 @@
     ::
     ^-  toke
     ?+  dat.tag  [dat.tag tol.tag]
-      ?(%ace %gap %dot %per %sel %ser %tar %bar %wut %sig %ket %coma %stis %slus %shep)  dat.tag
+      ?(%ace %gap %dot %per %sel %ser %tar %bar %wut %sig %ket %hax %coma %stis %slus %shep)  dat.tag
     ::
         [%atom *]
       :-  %atom
@@ -870,6 +874,20 @@
     ^-  (mandatory mold:..sugar _st)
     =+  gulp  ?@  -  ~  =>  [t=u +(st s)]
     ?+  t  (wide-mold-reg t)
+      [%limb *]     =+  (wing-tail limb.t)  ?@  -  ~     =>  [w=u +(st s)]
+                    =/  rev=(lest wing)  [w]~
+                    |^
+                    =+  peek         ?@  -  done          =>  [t=u bak=s +(st s)]
+                    ::TODO  non-temporary syntax
+                    ?.  ?=(%hax t)          done          =.  st  move
+                    =+  wing-full    ?@  -  done(st bak)  $(rev [u rev], st move)
+                    ++  done  :_  st
+                      :-  %bcmc
+                      |-  ^-  naty-sugar
+                      =+  i=[%cnts i.rev ~]
+                      ?~  t.rev  i
+                      [%tsgr i $(rev t.rev)]
+                    --
       [%mato @]     [%atom aura.t]^st
       [%face *]     =+  wide-mold  ?@  -  ~  [[%bcts term.t u] s]
       %tar          [%base %noun]^st
