@@ -4070,7 +4070,7 @@
   +$  gill  (pair ship term)                            ::  general contact
   ::
   +$  dash  [desk=(unit desk) =spur]
-  +$  cash  [care=(unit) dash]
+  +$  cash  [care=(unit term) dash]
   ::
   +$  perm
     $%  perm-arvo
@@ -4614,7 +4614,7 @@
             ?-  +<.task
                 %read
               ?.  =(our ship.task)  [%clay %peers ~]~
-              =/  to-per  |=  [care=(unit) =path]
+              =/  to-per  |=  [care=(unit term) =path]
                           ^-  perm
                           [%clay %local care `desk.task path]
               ?-  -.rave.task
@@ -4783,7 +4783,7 @@
         =+  det=(~(got by dets) res)
         ?>  ?=([%clay %warp *] det)
         ?.  =(our ship.det)  [%clay %peers ~]~
-        =/  to-per  |=  [care=(unit) =path]
+        =/  to-per  |=  [care=(unit term) =path]
                     ^-  perm
                     [%clay %local care `desk.det path]
         ?-  -.rave.det
