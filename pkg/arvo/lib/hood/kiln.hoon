@@ -344,7 +344,7 @@
   =<  abet
   ~>  %slog.(fmt "boot-setup")
   ::
-  =/  sop=ship  (sein:title our now our)
+  =/  sop=ship  ~morsec-matter-palfun-foslup  ::(sein:title our now our)
   ::  set up base desk
   ::
   =?  ..on-init  ?=(?(%earl %duke %king) (clan:title our))

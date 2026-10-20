@@ -382,9 +382,8 @@
     |=  [=turf reset=?]
     =/  m  (strand:rand ,~)
     ^-  form:m
-    ?.  reset
-      (send-raw-card:strandio %pass / %arvo %eyre %rule %turf %put turf)
-    (send-raw-card:strandio %pass / %arvo %eyre %rule %turf %new (silt turf ~))
+    ~?  reset  %tmp-no-dns-reset
+    (poke:strandio [our.bowl %domains-manager] %noun !>([%put turf]))
   ::
   ++  check-domain
     |=  =turf
@@ -416,7 +415,9 @@
     ^-  form:m
     =/  =hiss:eyre
       =/  url=purl:eyre
-        [[sec=| por=~ host] [ext=~ path=/~/name] query=~]
+        ::REVIEW  not /~/name! but we weren't checking the value anyway
+        ::        runtime endpoints still work even if ip mode disabled...
+        [[sec=| por=~ host] [ext=~ path=/'~_~'/healthz] query=~]
       [url %get ~ ~]
     =/  try=@ud  0
     |-  ^-  form:m
@@ -428,7 +429,7 @@
     ;<  ~                     bind:m  (sleep:strandio ?:(=(try 0) ~s0 ~s30))
     ;<  rep=(unit httr:eyre)  bind:m  (hiss-request:strandio hiss)
     ?:  ?&  ?=(^ rep)
-            |(=(200 p.u.rep) =(307 p.u.rep) =(301 p.u.rep))
+            |(=(200 p.u.rep) =(204 p.u.rep) =(307 p.u.rep) =(301 p.u.rep))
         ==
       (pure:m ~)
     ?.  ?|  ?=(~ rep)
