@@ -376,5 +376,10 @@
     (make-parser-test '^' [%xtra %mold %base %cell])
     (make-parser-test '~' [%noun [%atom %n `~] ~])
     :: (make-parser-test ',~' [%xtra %mold %base %null])  ::TODO
+  ::
+    (make-parser-test '|=(a=@ ~)' [%xtra [%brts [%bcts %a [%atom %$]] [%noun [%atom %n [~ 0]] 0]]])
+    (make-parser-test '|=($=(a @) ~)' [%xtra [%brts [%bcts %a [%atom %$]] [%noun [%atom %n [~ 0]] 0]]])
+    (make-parser-test '$=(a @)' [%xtra %mold %bcts %a [%atom %$]])
+    (make-parser-test '$;(|=(a=* ~))' [%xtra %mold %bcmc `naty-sugar:th`[%xtra %brts `mold:th`[%bcts %a %base %noun] [%noun [%atom %n [~ 0]] 0]]])
   ==
 --

@@ -18,9 +18,12 @@
       [%mold =mold]
   ==
 +$  mold
+  $~  [%base %noun]
   $^  [p=mold q=mold]
   $%  [%base ?(%noun %cell %null)]
       [%atom aura=term]
+      [%bcts p=term q=mold]
+      [%bcmc p=naty-sugar]
   ==
 ::
 ++  naty-xtra

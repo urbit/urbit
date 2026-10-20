@@ -367,6 +367,16 @@
         :^  %wtpt  [%& 6]~                       ::  ?@  +<
           [%cnts [%& 6]~ ~]                      ::    +<
         [%cnts [%& 0]~ ~]                        ::  !!
+      ::
+          %bcts
+        :+  %tsls  $(mold.sin q.mold.sin)        ::  =+  Q.MOLD.SIN
+        :-  %xtra                                ::
+        :+  %brcl  (kick 2)                      ::  |:  $:-
+        :+  %ktts  p.mold.sin                    ::  ^=  P.MOLD.SIN
+        (slam (peg 7 2) (waxs 6 ~))              ::  (Q.MOLD.SIN)
+      ::
+          %bcmc
+        p.mold.sin
       ==
     ==
   ==

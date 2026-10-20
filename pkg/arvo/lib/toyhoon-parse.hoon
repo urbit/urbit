@@ -20,6 +20,7 @@
               %ktls  %ktcl
               %wtpt  %wtcn  %wtkt
               %cltr
+              %bcts  %bcmc
             ::
               %mato
           ==
@@ -35,7 +36,7 @@
       [%atom tol=? const=? =aura a=@]  ::  %atomw + %atomt
       [%mato =aura]
     ::
-      $:  ?(%ktts %dttr %dtwt %dtls %dtts %wtcl %tsgr %tsls %cnts %sggr %brcn %brpt %brcl %brts %ktls %ktcl %wtpt %wtcn %wtkt %cltr)
+      $:  ?(%ktts %dttr %dtwt %dtls %dtts %wtcl %tsgr %tsls %cnts %sggr %brcn %brpt %brcl %brts %ktls %ktcl %wtpt %wtcn %wtkt %cltr %bcts %bcmc)
           tol=?
       ==
   ==
@@ -73,6 +74,7 @@
           ktlsw+|+%ktls  ktlst+&+%ktls    ktclw+|+%ktcl  ktclt+&+%ktcl
           wtptw+|+%wtpt  wtptt+&+%wtpt    wtcnw+|+%wtcn  wtcnt+&+%wtcn    wtktw+|+%wtkt  wtktt+&+%wtkt
           cltrw+|+%cltr  cltrt+&+%cltr
+          bctsw+|+%bcts  bctst+&+%bcts    bcmcw+|+%bcmc  bcmct+&+%bcmc
       ==
   %~  select-rules  rul
   %-  ~(def-cords rul ~)  :~
@@ -383,6 +385,23 @@
     ':*' gap
     '''
   ::
+    :-  %bctsw
+    '''
+    '$=('
+    '''
+    :-  %bctst
+    '''
+    '$=' gap
+    '''
+  ::
+    :-  %bcmcw
+    '''
+    '$;('
+    '''
+    :-  %bcmct
+    '''
+    '$;' gap
+    '''
   ==
 ::
 ++  parser  :: modeled after te, but different (hard to abstract)
@@ -804,11 +823,23 @@
     =+  wing-full      ?@  -  ~  =>  [w=u +(st s)]
     =+  (expect %ace)  ?@  -  ~  =>  +(st s)
     =+  wide-2         ?@  -  ~  [[w u] s]
+  ++  wide-mold-reg
+    |=  t=toke
+    ^-  (mandatory mold:..sugar _st)
+    ?+  t  ~
+      [%bcts %|]  =+  peek                    ?@  -  ~  =>  [f=u +(st s)]
+                  ?.  ?=([%limb %| %0 ~ @] f)        ~
+                  =+  (expect(st move) %ace)  ?@  -  ~  =>  +(st s)
+                  =+  wide-mold               ?@  -  ~  =>  [m=u +(st s)]
+                  =+  (expect %per)           ?@  -  ~  [[%bcts u.q.limb.f m] s]
+      [%bcmc %|]  =+  wide-1                  ?@  -  ~  [[%bcmc u] s]
+    ==
   ++  wide-mold
     ^-  (mandatory mold:..sugar _st)
     =+  gulp  ?@  -  ~  =>  [t=u +(st s)]
-    ?+  t  ~
+    ?+  t  (wide-mold-reg t)
       [%mato @]     [%atom aura.t]^st
+      [%face *]     =+  wide-mold  ?@  -  ~  [[%bcts term.t u] s]
       %tar          [%base %noun]^st
       %ket          [%base %cell]^st
       %sig          [%base %null]^st
