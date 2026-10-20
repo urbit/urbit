@@ -858,6 +858,21 @@
   ?.  ?&(?=(%noun -.b) ?=(%noun -.c))  [b c]
   [%noun [%cell type.b type.c] noun.b noun.c]
 ::
+++  expand-type
+  =|  nop=(set type)
+  |=  a=type
+  ^+  a
+  ?:  (~(has in nop) a)  a
+  ?+  a  a  ::TODO  edit consistently
+    [%cell *]  [%cell $(a p.a) $(a q.a)]
+    [%core *]  [%core $(a p.a) var.a $(a pay.a) bat.a nam.a]
+    [%face *]  [%face p.a $(a q.a)]
+    [%bcpt *]  [%bcpt $(a tom.a) $(a cel.a)]
+    [%bccn *]  [%bccn (~(run by p.a) |=([=aura =type] [aura ^$(a type)]))]
+    [%bckt *]  a(cel $(a cel.a), tom $(a tom.a))
+    [%hold *]  $(a (drop a), nop (~(put in nop) a))
+  ==
+::
 ++  parse
   |%
   ++  apex  expr

@@ -127,12 +127,7 @@
     ?-  -.command
         %eval
       :_  state
-      =.  p.p.out
-        =|  gil=(set type:th)
-        |-
-        ?.  ?=(%hold -.p.p.out)      p.p.out
-        ?:  (~(has in gil) p.p.out)  p.p.out
-        $(p.p.out (drop:th p.p.out), gil (~(put in gil) p.p.out))
+      =.  p.p.out  (expand-type:th p.p.out)
       [%sole %mor [%txt '> ' (trip hon)] [%tan >p.out< ~] ~]
     ::
         %save
