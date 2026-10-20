@@ -16,8 +16,7 @@
   ::
   ++  on-init
     ^-  (quip card _this)
-    :_  this
-    [%pass /connect %arvo %eyre %connect /'perm-man' dap.bowl]~
+    [~ this]
   ::
   ++  on-save  !>(~)
   ++  on-load  |=(* [~ this])
@@ -40,8 +39,8 @@
       =-  (fall - [[~ ~] ~])
       (rush url.request ;~(plug apat:de-purl:html yque:de-purl:html))
     =.  site
-      ?>  ?=([%perm-man *] site)
-      t.site
+      ?>  ?=([%'~' %perm-man *] site)
+      t.t.site
     =/  make-path
         |=  [=desk =spur]
         (weld /(scot %p our.bowl)/[desk]/(scot %da now.bowl) spur)

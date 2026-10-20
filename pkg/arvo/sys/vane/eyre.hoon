@@ -4240,6 +4240,7 @@
         [%sponsor *]    [%sponsor ~]
       ::
         [%spider *]     [%app %spider]
+        [%perm-man *]   [%app %perm-man]
       ==
     ::  resolve broader namespace by userspace bindings map
     ::
