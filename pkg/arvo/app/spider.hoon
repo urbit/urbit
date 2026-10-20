@@ -914,6 +914,7 @@
 ++  desk-from-sap
   |=  =bowl:gall
   ^-  (unit desk)
+  ?:  ?=([%eyre ~] sap.bowl)  `%base
   ?:  ?=([?(%eyre %khan %gall) @ ~] sap.bowl)
     `i.t.sap.bowl
   ~&('unknown provenance' ~)
