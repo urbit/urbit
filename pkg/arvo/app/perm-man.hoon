@@ -739,22 +739,21 @@
           ==
       ==
     ::  REVIEW
+    ::  "using this permission, an app could ..."
     ?-  -.perm
       %super  "act with your ship's full authority, internally and on the network"
-      %write  ?~  dude.perm  "poke any local agent"
-              "poke %{(trip u.dude.perm)} agent"
-      %watch  ?~  dude.perm  "subscribe to any local agent for {(spud path.perm)}"
-              "subscribe to %{(trip u.dude.perm)} agent for {(spud path.perm)}"
-      %reads  "read {(cash-text +>.perm)} from {(trip vane.perm)}"
-      %fling  "%fling thing"  :: TODO
+      %write  "poke {(dude-text dude.perm)}"
+      %watch  "subscribe to {(dude-text dude.perm)} {(spur-text path.perm)}"
+      %reads  "read {(scry-text +.perm)}"
+      %fling  "communicate over the network"
     ::
         %ames
       ?-  +<.perm
-        %block  "add and remove ships from blacklist/whitelist"
-        %reads  "remote scry local data {(dash-text +>.perm)}"
-        %keens  "remote scry data from other ships"
-        %write  "modify agent namespace"
-        %debug  "modify debug settings"
+        %block  "add and remove ships from blacklist"
+        %reads  "read from the local namespace {(dash-text +>.perm)}"
+        %keens  "read from other ships' namespaces"
+        %write  "publish into the local namespace"
+        %debug  "debug the ames vane"
       ==
     ::
         %behn
@@ -764,45 +763,41 @@
     ::
         %clay
       ?-  +<.perm
-        %write  "write files {(dash-text +>.perm)}"
-        %local  "read files on this ship {(cash-text +>.perm)}"
+        %write  "write files to {(dash-text +>.perm)}"
+        %local  "read files from {(file-text +>.perm)}"
         %peers  "read files from other ships"
-        %crews  "manage filesystem permissions groups"  ::??
-        %rules  ?~  des.perm  "manage filesystem permissions on any desk"
-                "manage filesystem permissions on %{(trip u.des.perm)} desk"
-        %stone  ?~  des.perm  "permanently delete files and desks versions on any desk"
-                "permanently delete files and desks versions on %{(trip u.des.perm)} desk"
-        %mount  "mount desk to the host filesystem"
-        %desks  ?~  des.perm  "install, suspend, revive, or mark any desk as essential"
-                "suspend, revive, or mark %{(trip u.des.perm)} desk as essential"
+        %crews  "manage filesystem permission groups"
+        %rules  "manage filesystem permissions for {(desk-text des.perm)}"
+        %stone  "manage tombstoning policy for {(desk-text des.perm)}"
+        %mount  "mount desks to the host filesystem"
+        %desks  "install, suspend, revive, or mark {(desk-text des.perm)} as essential"
         %pulse  "subscribe to desk liveness and pending updates"
-        %perms  "change userspace permissions"
-        %guard  "subscribe to userspace permissions updates"
+        %perms  "manage permissions"
+        %guard  "subscribe to permission updates"
       ==
     ::
         %dill
       ?-  +<.perm
-        %terms  "manage your terminal sessions"
-        %print  "print to termianal"
+        %terms  "control your terminal"
+        %print  "print system output"
         %sylog  "subscribe to system output"
         %weigh  "run a memory usage report"
-        %press  "optimise ship memory usage"
+        %press  "run memory defragmentation"
       ==
     ::
         %eyre
       ?-  +<.perm
-        %setup  "manage web server and eauth configurations"
-        %serve  "serve web content at {(spud path.perm)}"
+        %setup  "manage web server configuration"
+        %serve  "serve web content {(spur-text path.perm)}"
         %cross  "manage which sites can make requests to your ship (CORS)"
-        %embed  "embed other application"
-        %debug  "modify debug print settings for eyre"
+        %embed  "embed other applications"
+        %debug  "debug the eyre vane"
       ==
     ::
         %gall
       ?-  +<.perm
-        %clear  ?~  dude.perm  "delete any agent, permanently erase its data"
-                "delete %{(trip u.dude.perm)} agent, permanently erase its data"
-        %debug  "modify debug print settings for gall"
+        %clear  "permanently erase data in {(dude-text dude.perm)}"
+        %debug  "debug the gall vane"
       ==
     ::
         %iris
@@ -813,11 +808,11 @@
         %jael
       ?-  +<.perm
         %privy  "subscribe to private-key updates"
-        %watch  "manage public-keys tracking source for ships"
+        %watch  "set the public-key infrastructure source"
         %moons  "create and manage moons"
         %rekey  "change your private-keys"
-        %login  "reset web login code"
-        %blast  "simulate breach, will break communication with given ships"
+        %login  "reset your web login code"
+        %blast  "break communication with other ships"
       ==
     ::
         %khan
@@ -827,29 +822,89 @@
     ::
         %lick
       ?-  +<.perm
-        %ports  "manage IPC ports"
+        %ports  "manage sidecar connections"
       ==
     ==
-  ++  cash-text
+  ++  file-text
     |=  =cash:gall
-    =-  (weld - ' ' (dash-text +.cash))
+    =-  "{-} from {(dash-text +.cash)}"
     ^-  tape
     ?~  care.cash  "anything"
-    ?+  u.care.cash  "specific things"
-      %x  "data"
-      %y  "data listing"
+    ?+  u.care.cash  "'{(trip ;;(@ u.care.cash))}' things"
+      %a  "file build"
+      %b  "processed mark core"
+      %c  "mark conversion gate"
+      %d  "desk listing"
+      %e  "typed mark core"
+      %f  "mark conversion statically typed"
+    ::
+      %p  "file permissions"
+      %q  "raw file data"
+      %r  "vased file data"
+      %s  "miscellaneous data"
+      %t  "filetree"
+      %u  "file existence"
+      %v  "desk data"
+      %w  "revision details"
+      %x  "file data"
+      %y  "directory listing"
+      %z  "file hash"
+    ==
+  ::
+  ++  scry-text
+    |=  [vane=@tas =cash:gall]
+    ?:  =(%c vane)  "from clay, {(file-text cash)}"
+    ?:  =(%g vane)
+      ;:  weld
+        "from {(dude-text desk.cash)}, "
+        ?~  care.cash  "any data"
+        ?+  care.cash  "'{(trip ;;(@ u.care.cash))}' data"
+          [~ %x]  "data"
+        ==
+        " "
+        (spur-text spur.cash)
+      ==
+    =/  vane=tape
+      ?+  vane  "%{(trip vane)}"
+        %a  "ames"
+        %b  "behn"
+        %d  "dill"
+        %e  "eyre"
+        %f  "ford"
+        %i  "iris"
+        %j  "jael"
+        %k  "khan"
+        %l  "lick"
+      ==
+    =-  "from {vane}, {-}"
+    ?~  care.cash  "anything"
+    ?+  u.care.cash  "'{(trip ;;(@ u.care.cash))}' things"
       %u  "existence"
-      ::TODO
+      %x  "data"
+      %y  "listing"
+      %z  "hash"
     ==
   ::
   ++  dash-text
     |=  dash:gall
     ^-  tape
-    =/  spur-txt
-      ?~  spur  "any path"
-      (spud spur)
-    ?~  desk  "in any desk at {spur-txt}"
-    "in %{(trip u.desk)} desk at {spur-txt}"
+    "{(desk-text desk)} {(spur-text spur)}"
+  ::
+  ++  spur-text
+    |=  =spur
+    ^-  tape
+    ?~  spur  "at any path"
+    "at or under {(spud spur)}"
+  ::
+  ++  desk-text
+    |=  desk=(unit desk)
+    ?~  desk  "any desk"
+    "%{(trip u.desk)} desk"
+  ::
+  ++  dude-text
+    |=  dude=(unit dude:gall)
+    ?~  dude  "any local agent"
+    "the local %{(trip u.dude)} agent"
   ::
   ++  perm-to-input
     |=  [=desk pez=(set perm:gall)]
