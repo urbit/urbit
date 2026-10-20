@@ -602,7 +602,7 @@
   ++  tall
     ^-  (mandatory naty-sugar _st)
     =+  peek  ?@  -  ~  =>  [t=u +(st s)]
-    ?+  t  wide(tol |)
+    ?+  t  =+  (tall-mold-reg t)  ?@  -  wide(tol |)  [[%xtra %mold u] s]
       [%atom %& *]  [%noun [%atom aura.t ?.(const.t ~ `a.t)] a.t]^move
       [%ktts %&]    =+  peek(st move)           ?@  -  ~  =>  [f=u +(st s)]
                     ?.  ?=([%limb %| %0 ~ @] f)        ~
@@ -714,7 +714,7 @@
   ++  wide
     ^-  (mandatory naty-sugar _st)
     =+  gulp  ?@  -  ~  =>  [t=u +(st s)]
-    ?+  t  ~
+    ?+  t  =+  (wide-mold-reg t)  ?@  -  ~  [[%xtra %mold u] s]
       [%limb *]     =+  (wing-tail limb.t)  ?@  -  ~  [[%cnts u ~] s]
       [%face *]     =+  wide                    ?@  -  ~  [[%ktts term.t u] s]
       [%ktts %|]    =+  peek                    ?@  -  ~  =>  [f=u +(st s)]
@@ -775,8 +775,20 @@
       [%wtkt %|]    =+  wide-wing-2    ?@  -  ~  [[%wtkt u] s]
     ==
   ::
+  ++  tall-mold-reg  ::  tall molds, never wide molds
+    |=  t=toke
+    ^-  (mandatory mold:..sugar _st)
+    ?+  t  ~
+      [%bcts %&]  =+  peek(st move)           ?@  -  ~  =>  [f=u +(st s)]
+                  ?.  ?=([%limb %| %0 ~ @] f)        ~
+                  =+  (expect(st move) %gap)  ?@  -  ~  =>  +(st s)
+                  =+  tall-mold               ?@  -  ~  [[%bcts u.q.limb.f u] s]
+      [%bcmc %&]  =+  tall(st move)           ?@  -  ~  [[%bcmc u] s]
+    ==
+  ::
   ++  tall-mold
-    wide-mold  ::TODO
+    =+  peek               ?@  -  ~          =>  [t=u +(st s)]
+    =+  (tall-mold-reg t)  ?@  -  wide-mold  -
   ::
   ++  tall-atom
     ^-  (mandatory @ _st)
