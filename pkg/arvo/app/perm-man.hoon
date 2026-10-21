@@ -87,7 +87,7 @@
       ?~  body.request                [~ bad-body]
       =;  [del-perms=(jug desk perm:gall) add-perms=(jug desk perm:gall)]
         =/  redirect
-          (crip "/perm-man/page#{(trip +<.site)}")
+          (crip "/~/perm-man/page#{(trip +<.site)}")
         :_  :-  [303 'location'^redirect ~]
             `(as-octs:mimes:html '🔄 applying permission... will redirect when done...')
         %+  weld
@@ -136,7 +136,7 @@
         (fall (rush q.u.body.request yquy:de-purl:html) ~)
       ~&  >  args=args
       =/  redirect  ?.  ?=([%submit-prompt @ ~] site)  'page'
-                    (crip "/perm-man/page#{(trip +<.site)}")
+                    (crip "/~/perm-man/page#{(trip +<.site)}")
       =;  add=(jug desk perm:gall)
         ~&  >>  add=add
         :_  :-  [303 'location'^redirect ~]
