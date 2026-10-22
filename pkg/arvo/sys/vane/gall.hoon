@@ -2692,7 +2692,8 @@
       =/  res  (mock [run %9 2 %0 1] (ap-look rof [~ ~] /gall/[agent-name]))
       ?-  -.res
         %0  [%& !<(step:agent [-:!>(*step:agent) p.res])]
-        %1  [%| (smyt ;;(path p.res)) ~]
+        %1  =+  p=((soft path) p.res)
+            [%| ?~(p >p.res< (smyt u.p)) ~]
         %2  [%| p.res]
       ==
     ::  +ap-mule-peek: same as +ap-mule but for (unit (unit cage))
@@ -2703,7 +2704,8 @@
       =/  res  (mock [run %9 2 %0 1] (ap-look rof [~ ~] /gall/[agent-name]))
       ?-  -.res
         %0  [%& !<((unit (unit cage)) [-:!>(*(unit (unit cage))) p.res])]
-        %1  [%| (smyt ;;(path p.res)) ~]
+        %1  =+  p=((soft path) p.res)
+            [%| ?~(p >p.res< (smyt u.p)) ~]
         %2  [%| p.res]
       ==
     ::  +ap-look: namespase permission check
