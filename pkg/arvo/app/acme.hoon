@@ -338,6 +338,8 @@
 --
 =|  acme
 =*  state  -
+:-  %new-agent
+^-  form:agent:gall
 =<
   %+  verb  |
   |_  =bowl:gall

@@ -15,6 +15,42 @@
 =>
 |%
 +|  %helpers
+::  +vez: cross-kelvin migration for an agent's runtime vases, keyed on the
+::  agent's zuse kelvin .zuv (mirrors the +prev/+next/+ntv helpers in clay's
+::  +build-ford-api).  everything gall hands across the live boundary must be
+::  a live vase: a foreign agent runs as its own (desk) kelvin and emits
+::  desk-universe vases, so +to-live brings its output (on-peek results,
+::  outbound fact/poke cages) back to the live universe before anything else
+::  touches it; +to-desk is the inverse, for values an agent receives.  the
+::  live kelvin is the identity.  both directions are type-only: only the
+::  vase's $type noun is migrated across the boundary; the value is
+::  kelvin-invariant (see +prev-vase/+next-vase).
+::
+++  vez
+  |=  zuv=@ud
+  |%
+  ::  only an explicitly foreign kelvin triggers migration; the live kelvin
+  ::  .zuse, an unset .zuv (0, e.g. a yoke migrated from an older gall state),
+  ::  or any other value is treated as native and passed through unchanged.
+  ::  the h-core gates are applied via +slum (untyped): the ambient (live)
+  ::  $vase does not nest in the h-core's own $vase param, and the input
+  ::  noun's type already belongs to the other kelvin's universe.
+  ::
+  ++  to-live
+    |=  v=vase
+    ^-  vase
+    ?.  ?=(%409 zuv)  v
+    !<(vase [-:!>(*vase) (slum next-vase:h136 v)])
+  ++  to-desk
+    |=  v=vase
+    ^-  vase
+    ?.  ?=(%409 zuv)  v
+    !<(vase [-:!>(*vase) (slum prev-vase:h135 v)])
+  ++  cage-to-live
+    |=  c=cage
+    ^-  cage
+    [p.c (to-live q.c)]
+  --
 ::  +trace: print if .verb is set and we're tracking .dude
 ::
 ++  trace
@@ -140,8 +176,9 @@
           resources=(set arvo-resource)
           resource-deets=(map arvo-resource resource-deet)  ::TODO  rename???
           code=*
-          agent=(each agent [clean=? state=vase])
+          agent=(each agent-any [clean=? state=vase])
           =beak
+          zuv=@ud  ::  agent's zuse kelvin (=zuse for native agents)
           marks=(map duct mark)
           sky=farm
           gem=(jug coop [path page])
@@ -348,9 +385,17 @@
   ::
   ++  mo-receive-core
     ~/  %mo-receive-core
-    |=  [prov=path dap=term bek=beak per=[peg=(set perm) peq=(set perm)] =agent]
+    |=  [prov=path dap=term bek=beak per=[peg=(set perm) peq=(set perm)] zuv=@ud =vase]
     ^+  mo-core
+    ::  interpret the built agent-any vase under our live kelvin.  a same-
+    ::  kelvin desk extracts directly; a foreign-kelvin desk re-faces the
+    ::  built noun under our $agent-any type (its payload carries concrete
+    ::  types, so it runs; runtime cages are era-converted elsewhere).
     ::
+    =/  =agent-any
+      ?:  =(zuse zuv)
+        !<(agent-any vase)
+      !<(agent-any [-:!>(*agent-any) q.vase])
     =/  yak  (~(get by yokes.state) dap)
     =/  tex=(unit tape)
       ?~  yak  `"installing"
@@ -358,7 +403,7 @@
       ?-    -.agent.u.yak
           %|  `"reviving"
           %&
-        ?:  =(code.u.yak agent)
+        ?:  =(code.u.yak agent-any)
           ~
         `"reloading"
       ==
@@ -375,13 +420,13 @@
     =.  perms.state  (~(gas by perms.state) [q.bek per]~)
     ::
     ?:  ?=([~ %live *] yak)
-      ?:  &(=(q.beak.u.yak q.bek) =(code.u.yak agent) =(-.agent.u.yak &) =(~ mis))
+      ?:  &(=(q.beak.u.yak q.bek) =(code.u.yak agent-any) =(-.agent.u.yak &) =(~ mis))
         mo-core
       ::
       =.  yokes.state
-        (~(put by yokes.state) dap u.yak(beak bek, code agent))
+        (~(put by yokes.state) dap u.yak(beak bek, code agent-any, zuv zuv))
       =/  ap-core  (ap-abed:ap dap [~ our prov])
-      =.  ap-core  (ap-reinstall:ap-core agent)
+      =.  ap-core  (ap-reinstall:ap-core agent-any)
       =.  mo-core  ap-abet:ap-core
       =.  mo-core  (mo-give-halts dap)
       (mo-clear-queue dap)
@@ -391,8 +436,9 @@
       %*    .  *$>(%live yoke)
           control-duct  hen
           beak          bek
-          code          agent
-          agent         &+agent
+          zuv           zuv
+          code          agent-any
+          agent         &+agent-any
           run-nonce     (scot %uw (end 5 (shas %yoke-nonce eny)))
       ::
           sky
@@ -1033,7 +1079,7 @@
       |-  ^+  mo-core
       ?~  agents  mo-core
       =*  rc  mo-receive-core
-      $(agents t.agents, mo-core (rc prov p.i.agents byk per q.i.agents))
+      $(agents t.agents, mo-core (rc prov p.i.agents byk per zus q.i.agents))
     ::  suspend agents that are running off this desk but not included
     ::  in this latest $pack
     ::
@@ -1500,7 +1546,7 @@
           ?~  tac=(drop-resource:track res resource-deets.yoke)  ~
           `[%pass wire.res %arvo u.tac]
         ==
-      =^  maybe-frag  ap-core  (ap-ingest ~ |.([will *agent]))
+      =^  maybe-frag  ap-core  (ap-ingest ~ |.([will fom:*agent]))
       ?~  maybe-frag  ap-core
       ::REVIEW  crash instead?
       %.  ap-core
@@ -1684,6 +1730,8 @@
           [agent-duct %give %unto gift]~
         ::
         =/  ducts=(list duct)  (ap-ducts-from-paths paths.gift ~)
+        ::  .cage is in the agent's (possibly foreign) desk universe.
+        ::
         =/  =cage  cage.gift
         %-  zing
         %+  turn  ducts
@@ -1692,9 +1740,10 @@
         ~?  &(=(duct system-duct.state) !=(agent-name %hood))
           [%agent-giving-on-system-duct agent-name -.gift]
         =/  =mark  (~(gut by marks.yoke) duct p.cage)
+        ::  mark matches: no tube, just migrate the vase's kelvin to live.
         ::
         ?:  =(mark p.cage)
-          [duct %give %unto %fact cage.gift]~
+          [duct %give %unto %fact (cage-to-live:(vez zuv.yoke) cage)]~
         =/  =mars:clay  [p.cage mark]
         =/  =case       da+now
         =/  bek=beak    [our q.beak.yoke case]
@@ -1768,7 +1817,17 @@
           =/  prov=path  /gall/[from]
           ?-  -.neet
             %huck   note-arvo.neet
-            %agent  [%g %deal [our ship.neet prov] [name task]:neet]
+          ::  a foreign agent's outbound poke carries a desk-universe cage;
+          ::  migrate it to live so it travels the inter-agent bus in the live
+          ::  universe (the receiving agent migrates it back at its boundary).
+          ::
+              %agent
+            =/  tsk  task.neet
+            =?  tsk  ?=(%poke -.tsk)
+              tsk(q.cage (to-live:(vez zuv.yoke) q.cage.tsk))
+            =?  tsk  ?=(%poke-as -.tsk)
+              tsk(q.cage (to-live:(vez zuv.yoke) q.cage.tsk))
+            [%g %deal [our ship.neet prov] name.neet tsk]
           ::
               %arvo
             ?-  +.neet
@@ -1896,7 +1955,8 @@
     ::
     ++  ap-agent-core
       ?>  ?=(%& -.agent.yoke)
-      ~(. p.agent.yoke ap-construct-bowl)
+      ?>  ?=(%new-agent -.p.agent.yoke)
+      ~(. fom.p.agent.yoke ap-construct-bowl)
     ::  +ap-ducts-from-paths: get ducts subscribed to paths
     ::
     ++  ap-ducts-from-paths
@@ -1961,34 +2021,36 @@
       ?:  ?=(%| -.peek-result)
         ?.  veb  [~ ~]
         ((slog leaf+"peek bad result" p.peek-result) [~ ~])
-      ::  for non-%x scries, or failed %x scries, or %x results that already
-      ::  have the requested mark, produce the result as-is
+      ::  for non-%x scries or failed %x scries, produce the result as-is
       ::
       ?.  ?&  ?=(%x care)
               ?=([~ ~ *] p.peek-result)
-              !=(want p.u.u.p.peek-result)
           ==
         p.peek-result
-      ::  for %x scries, attempt to convert to the requested mark if needed
-      ::
       =*  have  p.u.u.p.peek-result
-      =*  vase  q.u.u.p.peek-result
-      =/  tub=(unit tube:clay)
-        ?:  =(have want)  `(bake same ^vase)
-        =/  tuc=(unit (unit cage))
-          (rof [~ ~] /gall %cc [our q.beak.yoke da+now] /[have]/[want])
-        ?.  ?=([~ ~ *] tuc)  ~
-        `!<(tube:clay q.u.u.tuc)
-      ?~  tub
+      ::  the on-peek result is a value in the agent's own (possibly foreign)
+      ::  desk universe.  if the requested mark already matches, there is no
+      ::  mark conversion to do -- just migrate the vase's kelvin to live.
+      ::
+      ?:  =(want have)
+        ``want^(to-live:(vez zuv.yoke) q.u.u.p.peek-result)
+      ::  otherwise convert .have -> .want with the (cross-kelvin) tube, which
+      ::  consumes the desk vase as-is and migrates its output to live; do NOT
+      ::  pre-convert the input (that round-trips and corrupts the type).
+      ::
+      =/  tuc=(unit (unit cage))
+        (rof [~ ~] /gall %cc [our q.beak.yoke da+now] /[have]/[want])
+      ?.  ?=([~ ~ *] tuc)
         =/  msg  "%{(trip agent-name)}: ".
                  "peek no tube from {(trip have)} to {(trip want)}"
         ((slog leaf+msg ~) ~)
-      =/  res  (mule |.((u.tub vase)))
+      =/  =tube:clay  !<(tube:clay q.u.u.tuc)
+      =/  res  (mule |.((tube q.u.u.p.peek-result)))
       ?:  ?=(%& -.res)
         ``want^p.res
       =/  msg  "%{(trip agent-name)}: ".
                "peek failed tube from {(trip have)} to {(trip want)}"
-      ((slog leaf+msg ~) ~)
+      ((slog leaf+msg p.res) ~)
     ::  +ap-move: send move directly
     ::
     ++  ap-move
@@ -2042,7 +2104,7 @@
     ::
     ++  ap-reinstall
       ~/  %ap-reinstall
-      |=  =agent
+      |=  =agent-any
       ^+  ap-core
       ::  sanity check, .inflating should only contain entries for the
       ::  duration of this arm
@@ -2073,7 +2135,7 @@
         ::  agent was already running, reload with the new core
         ::
         =^  error  ap-core
-          (ap-install(agent.yoke &+agent) `old-state)
+          (ap-install(agent.yoke &+agent-any) `old-state)
         ?^  error
           (mean >%load-failed< (frag-to-tang u.error))
         ?:  ?=(%base q.beak.yoke)  ap-core
@@ -2109,7 +2171,7 @@
       ::  load the agent back up
       ::
       =^  error  ap-core
-        (ap-install(agent.yoke &+agent) `old-state)
+        (ap-install(agent.yoke &+agent-any) `old-state)
       ?^  error
         (mean >%load-failed< (frag-to-tang u.error))
       ::  on the agent's behalf, drop resources revoked due to perms,
@@ -2283,6 +2345,11 @@
       |=  =cage
       ^+  ap-core
       ~>  %spin.[(crip "on-poke/{<agent-name>}")]
+      ::  the incoming cage is in the live universe; migrate it into the
+      ::  agent's (possibly foreign) desk universe so the agent sees its own
+      ::  kelvin.  (assumes a live poke source, the common case.)
+      ::
+      =.  q.cage  (to-desk:(vez zuv.yoke) q.cage)
       =^  maybe-frag  ap-core
         %+  ap-ingest  %poke-ack  |.
         (on-poke:ap-agent-core cage)
@@ -2435,7 +2502,13 @@
       ++  sub-key  [agent-wire dock]
       ++  ingest
         ~>  %spin.[(crip "on-agent/{<agent-name>}")]
-        (ap-ingest ~ |.((on-agent:ap-agent-core agent-wire sign)))
+        ::  migrate an incoming fact's (live) cage into the agent's desk
+        ::  universe so the agent sees its own kelvin.
+        ::
+        =/  sin=sign:agent
+          ?.  ?=(%fact -.sign)  sign
+          sign(q.cage (to-desk:(vez zuv.yoke) q.cage.sign))
+        (ap-ingest ~ |.((on-agent:ap-agent-core agent-wire sin)))
       ++  error
         |=  [=frag:agent =tank]
         %+  ap-error
@@ -2691,7 +2764,7 @@
       =/  res  (mock [run %9 2 %0 1] (ap-look rof [~ ~] /gall/[agent-name]))
       ?-  -.res
         %0  [%& !<(step:agent [-:!>(*step:agent) p.res])]
-        %1  [%| (smyt ;;(path p.res)) ~]
+        %1  [%| (smyt ~|(p.res ;;(path p.res))) ~]
         %2  [%| p.res]
       ==
     ::  +ap-mule-peek: same as +ap-mule but for (unit (unit cage))
@@ -2772,7 +2845,7 @@
       ~/  %ap-handle-result
       |=  result=step:agent
       ^-  [(list move) _ap-core]
-      =.  agent.yoke      &++.result
+      =.  agent.yoke      &+[%new-agent +.result]
       ::TODO  if we filter out "duplicate resource creation" cards here,
       ::      then we don't have to account for them in +ap-handle-peers and co
       ::      (and if we don't, we have to update handle-peers and co)
@@ -3689,7 +3762,11 @@
         :-  %|
         ?:  ?=(%| -.agent.u.yok)
           p.agent.u.yok
-        [clean=| on-save:p.agent.u.yok]
+        :-  clean=|
+        ?-  mod.p.agent.u.yok
+          %new-agent  on-save:fom.p.agent.u.yok
+          %old-agent  !!
+        ==
       ==
     ``noun+!>(`egg-any`[%21 egg])
   ::
@@ -3833,8 +3910,13 @@
     :-  %|
     ?:  ?=(%| -.agent.yoke)
       p.agent.yoke
-    [clean=| on-save:p.agent.yoke]
+    :-  clean=|
+    ?-  mod.p.agent.yoke
+      %new-agent  on-save:fom.p.agent.yoke
+      %old-agent  !!
+    ==
   ==
+
 ::  +take: response
 ::
 ++  take

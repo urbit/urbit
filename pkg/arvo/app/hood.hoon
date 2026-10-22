@@ -59,8 +59,9 @@
   ==
 ::
 --
+:-  %new-agent
 %-  agent:dbug
-^-  agent:gall
+^-  form:agent:gall
 =|  =state
 |_  =bowl:gall
 +*  this  .

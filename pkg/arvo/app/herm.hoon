@@ -14,9 +14,10 @@
 ::
 =|  state-0
 =*  state  -
+:-  %new-agent
 %+  verb  |
 %-  agent:dbug
-^-  agent:gall
+^-  form:agent:gall
 =>  |%
     ++  pass-session
       |=  [ses=@tas tas=session-task:dill]

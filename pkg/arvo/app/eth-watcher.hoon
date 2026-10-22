@@ -57,8 +57,9 @@
 ::
 ::  Main
 ::
+:-  %new-agent
 %-  agent:dbug
-^-  agent:gall
+^-  form:agent:gall
 =|  state=app-state
 %+  verb  |
 |_  =bowl:gall

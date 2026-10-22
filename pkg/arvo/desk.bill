@@ -1,11 +1,11 @@
-:~  %acme
-    %azimuth
-    %dbug
+:~  ::%acme
+::    %azimuth
+::    %dbug
     %dojo
-    %eth-watcher
+::    %eth-watcher
     %hood
-    %herm
-    %lens
-    %ping
+::    %herm
+::    %lens
+::    %ping
     %spider
 ==

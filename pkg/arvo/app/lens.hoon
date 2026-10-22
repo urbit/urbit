@@ -33,8 +33,9 @@
 --
 ::
 =|  =state
+:-  %new-agent
 %-  agent:dbug
-^-  agent:gall
+^-  form:agent:gall
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)

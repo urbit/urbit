@@ -47,9 +47,10 @@
 --
 ::
 =|  state=app-state
+:-  %new-agent
 %-  agent:dbug
 %+  verb  |
-^-  agent:gall
+^-  form:agent:gall
 ::  Cards
 ::
 =>  |%

@@ -328,20 +328,20 @@
       ?.  prime  ~
       [(prep-ovum (turn dez tail))]~
     ::
-      %+  murn  dez
-      |=  [dek=desk bas=path]
-      ^-  (unit unix-event)
-      ?.  .^(? %cu (welp bas /desk/seal))  ~
-      =+  .^([@ per=(list perm:gall)] %cx (welp bas /desk/seal))
-      `[/c/init-seal %seal dek %.y (silt per)]
+      :: %+  murn  dez
+      :: |=  [dek=desk bas=path]
+      :: ^-  (unit unix-event)
+      :: ?.  .^(? %cu (welp bas /desk/seal))  ~
+      :: =+  .^([@ per=(list perm:gall)] %cx (welp bas /desk/seal))
+      :: `[/c/init-seal %seal dek %.y (silt per)]
     ==
   ::
   =/  =wynn  (get-wynn sys new-wynn)
   ::
-  =/  cache=(list)
-    ?.  cache  ~
-    %~  tap  by
-    =<  +
+  ~&  >  %test
+  ::
+  =/  res
+    =-  [(mook -.-) +.-]
     %-  mice
     :_  [%2 [%0 3] %0 2]
     ;:  weld
@@ -356,6 +356,16 @@
       `(list)`(turn userspace-ova (lead *@da))
       `(list)`[*@da [/c/init-zest %zeal (turn dez |=([d=desk *] [d %live]))]]^~
     ==
+  ::
+  ?:  ?=(%2 -.-.res)
+    %-  mean
+    +.-.res
+  ::
+  =/  cache=(list)
+    ?.  cache  ~
+    %~  tap  by
+    =<  +
+    res
   ::
   ~>  %slog.[0 leaf+"brass: cache entries: {<(lent cache)>}"]
   ::
@@ -449,7 +459,7 @@
 ::  +mice: %memo hint caching version of mink
 ::
 |%
-++  mice  !.
+++  mice  !:
   ~/  %mice
   |=  [subject=* formula=*]
   =|  trace=(list [@ta *])

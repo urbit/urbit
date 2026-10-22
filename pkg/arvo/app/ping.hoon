@@ -31,6 +31,7 @@
   ==
 --
 ::
+:-  %new-agent
 %-  agent:dbug
 ::
 =|  state=state-3
@@ -57,7 +58,7 @@
     [%pass /ping %agent [ship %ping] %poke %noun !>(~)]~
 --
 %+  verb  |
-^-  agent:gall
+^-  form:agent:gall
 |_  =bowl:gall
 +*  this  .
     def  ~(. (default-agent this %|) bowl)

@@ -1642,7 +1642,8 @@
     !>([our=our now=now eny=eny]:hid)
   --
 --
-^-  agent:gall
+:-  %new-agent
+^-  form:agent:gall
 |_  hid=bowl:gall
 ++  on-init
   `..on-init

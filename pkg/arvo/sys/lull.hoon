@@ -3952,6 +3952,7 @@
             code=~
             old-state=[%| clean=? state=vase]
             =beak
+            zuv=@ud  ::  agent's zuse kelvin (=zuse for native agents)
             marks=(map duct mark)
             sky=farm
             gem=(jug coop [path page])
@@ -4124,7 +4125,7 @@
     $:  byk=beak                                        ::  origin desk
         zus=@ud                                         ::  desk zuse kelvin
         per=[peg=(set perm) peq=(set perm)]             ::  permissions
-        duz=(map dude agent)                            ::  live agents
+        duz=(map dude vase)                             ::  live agents (agent-any vases)
     ==
   +$  scar                                              ::  opaque duct
     $:  p=@ud                                           ::  bone sequence
@@ -4318,7 +4319,7 @@
   ::  +agent: app core
   ::
   ++  agent
-    =<  form
+    =<  ,[mod=%new-agent fom=form]
     |%
     +$  step  (quip card form)
     +$  card
@@ -4403,6 +4404,12 @@
         *(quip card _^|(..on-init))
       --
     --
+  ::  +agent-old: placeholder for old-model agents; not yet supported
+  ::
+  +$  agent-old  [mod=%old-agent fom=vase]
+  ::  +agent-any: an agent of either model (see +agent / +agent-old)
+  ::
+  +$  agent-any  $%(agent agent-old)
   ::
   ++  guard  ::  perm check utils
     |%
@@ -4830,6 +4837,7 @@
           code
           [%| clean=| +.old-state]  ::REVIEW  clean
           beak
+          zuv=0  ::  agents migrated from develop are native (treated as =zuse)
           marks
           sky
           gem

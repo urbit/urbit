@@ -873,27 +873,30 @@
     ++  build-tube
       |=  [a=mark b=mark]
       ^-  tube
+      ~|  %build-tube-foreign^[a b]^zuv
       =/  tub  (slum my-slam [(slum my-slub [cor [%limb %build-tube]]) (slum my-slop [!>(a) !>(b)])])
       |=  v=vase
       ^-  vase
-      ::  wrap .v as a vase-typed value: the raw +slam reads its sample's
-      ::  own type, so passing .v bare makes it check the payload's type
-      ::  (e.g. a loob) against .tub's $vase sample and nest-fail.
+      ::  .tub is compiled in the desk universe; migrate .v's own type into
+      ::  that universe and stamp it with the desk's native $vase mold.
       ::
-      ::  .tub is compiled in the desk universe, so +my-slam reads its sample's
-      ::  type with that universe's machinery.  for a foreign (h136) desk the
-      ::  live !>(v) carries an h135 $vase type h136 can't interpret.  we cannot
-      ::  just +prev-vase:h135 !>(v): the $vase wrapper embeds the $type mold,
-      ::  whose shape differs across the kelvin boundary, so migrating it
-      ::  nest-fails.  instead migrate only .v's own (ordinary) type into the
-      ::  desk universe, then stamp it with the desk's NATIVE $vase mold (built
-      ::  in that universe via +cor, never crossing the boundary).
+      ::  .v is already in the desk universe (callers hand us desk-universe
+      ::  input; a native desk's universe == live).  stamp it with the desk's
+      ::  native $vase mold -- do NOT +prev it: +prev would re-migrate an
+      ::  already-desk type and corrupt it.  only the output is +ntv'd to live.
       ::
       =/  sam
         ?:  =(zuse zuv)  !>(v)
         =/  vty  -:(slum my-slub [cor !,(*hoon *vase)])
-        [vty (prev v)]
-      (ntv +:(slum my-slam [tub sam]))
+        [vty v]
+      ::  run the desk cast under +mule: its internal +slam mints a %- call to
+      ::  type the result, which resolves arms over the desk mark battery --
+      ::  executed directly that trips the live +look jet ("bad look").  under
+      ::  +mule the mint runs as plain nock, so no jet fires.
+      ::
+      =/  res  (mule |.(`*`(slum my-slam [tub sam])))
+      ?:  ?=(%| -.res)  ~|(%build-tube-run-failed (mean p.res))
+      (ntv +:p.res)
     ::
     ++  validate-page
       |=  [=path =page]
@@ -1285,7 +1288,7 @@
     ::  XX review +apply-built-ins
     ::
     =/  files
-      %-  apply-built-ins
+      :: %-  apply-built-ins
       (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
     =/  ford-cord=@t  (get-ford files)
     =/  ford-api
@@ -1336,33 +1339,33 @@
       (build-ford-api [zud ~ ford-cord])
     (ford-api args)
   ::
-  ++  apply-built-ins
-    |=  files=(map path (each page lobe))
-    ^+  files
-    ::  built-ins come from clay, so never apply there
-    ::REVIEW  feels weird because .files decoupled from .syd,
-    ::        but in practice they're always "our"/"local" files...
-    ::
-    ?:  =(%base syd)  files
-    %-  ~(gas by files)
-    %+  murn
-      ^-  (list path)
-      :~  /mar/noun/hoon
-          /mar/hoon/hoon
-          /mar/mime/hoon
-          /mar/bill/hoon
-          /mar/seal/hoon
-          /mar/kelvin/hoon
-      ==
-    =/  =dojo  (~(got by dos.rom) %base)
-    =/  =yaki  (~(got by hut.ran) (~(got by hit.dom.dojo) let.dom.dojo))
-    |=  =path
-    ?:  (~(has by files) path)  ~
-    ~|  %missing-built-in^path
-    =/  lob  (~(got by q.yaki) path)
-    ~|  %built-in-not-page
-    =/  pag  (~(got by lat.ran) lob)
-    `[path &+pag]
+  :: ++  apply-built-ins
+  ::   |=  files=(map path (each page lobe))
+  ::   ^+  files
+  ::   ::  built-ins come from clay, so never apply there
+  ::   ::REVIEW  feels weird because .files decoupled from .syd,
+  ::   ::        but in practice they're always "our"/"local" files...
+  ::   ::
+  ::   ?:  =(%base syd)  files
+  ::   %-  ~(gas by files)
+  ::   %+  murn
+  ::     ^-  (list path)
+  ::     :~  /mar/noun/hoon
+  ::         /mar/hoon/hoon
+  ::         /mar/mime/hoon
+  ::         /mar/bill/hoon
+  ::         /mar/seal/hoon
+  ::         /mar/kelvin/hoon
+  ::     ==
+  ::   =/  =dojo  (~(got by dos.rom) %base)
+  ::   =/  =yaki  (~(got by hut.ran) (~(got by hit.dom.dojo) let.dom.dojo))
+  ::   |=  =path
+  ::   ?:  (~(has by files) path)  ~
+  ::   ~|  %missing-built-in^path
+  ::   =/  lob  (~(got by q.yaki) path)
+  ::   ~|  %built-in-not-page
+  ::   =/  pag  (~(got by lat.ran) lob)
+  ::   `[path &+pag]
   ::
   ++  request-wire
     |=  [kind=@ta =ship =desk index=@ud]
@@ -1847,7 +1850,7 @@
     =?  changes  updated  (changes-for-upgrade q.old-yaki deletes changes)
     ::
     =/  files
-      %-  apply-built-ins
+      :: %-  apply-built-ins
       =/  original=(map path (each page lobe))
         (~(run by q.old-yaki) |=(=lobe |+lobe))
       %-  ~(dif by (~(uni by original) changes))
@@ -2103,7 +2106,7 @@
       ::  ? remove deletes
       ::
       =/  all-changes=(map path (each page lobe))
-        %-  apply-built-ins
+        :: %-  apply-built-ins
         =/  original=(map path (each page lobe))
           (~(run by q.yaki) |=(=lobe |+lobe))
         (~(uni by original) changes)
@@ -3029,7 +3032,7 @@
       (~(put by mon) pot [her syd ud+for-yon] spur)
     =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) u.yon))
     =/  files  (~(run by q.yaki) |=(=lobe |+lobe))
-    =/  =args:fusion  [(apply-built-ins files) lat.ran veb.bug]
+    =/  =args:fusion  [files lat.ran veb.bug]
     =/  mim  (checkout-mime args ~ ~(key by files))
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
     (ergo for-yon mim)
@@ -4692,19 +4695,21 @@
     =/  f  (ford our desk.i.sat ~)
     =;  new=pack:gall
       $(sat t.sat, lad (~(put by lad) desk.i.sat new))
-    =|  duz=(map dude:gall agent:gall)
+    =|  duz=(map dude:gall vase)
     |-  ^-  pack:gall
     ?~  bill.i.sat
       =/  den  ((de now rof hen ruf) our desk.i.sat)
       [[our desk.i.sat da+now] zuse-version:f [peg peq]:dom.den duz]
+    ::  keep the raw agent-any vase; gall converts it across kelvin eras
+    ::  (keyed on the desk's zuse kelvin) when installing it.
+    ::
     =/  =vase
       ~|  /app/[i.bill.i.sat]/hoon
       %-  road  |.
       ~|  /app/[i.bill.i.sat]/hoon
       (build-file:f /app/[i.bill.i.sat]/hoon)
-    =/  agent  ~|  [%building-app bill.i.sat]  !<(agent:gall vase)
     %_  $
-      duz         (~(put by duz) i.bill.i.sat agent)
+      duz         (~(put by duz) i.bill.i.sat vase)
       bill.i.sat  t.bill.i.sat
     ==
   ::  build-dais for each mark
@@ -4750,9 +4755,13 @@
     |-  ^-  ~
     ?~  marks  ~
     =-  $(marks t.marks)
-    ~|  i.desks
-    %-  road  |.
-    ~:(build-dais:f i.marks)
+    ::  tolerate unbuildable marks (dead/broken marks not in desk.bill):
+    ::  skip + warn rather than crash the whole desk build
+    ::
+    =/  res  (mule |.(`*`(road |.(~:(build-dais:f i.marks)))))
+    ?:  ?=(%& -.res)  ~
+    %-  (slog leaf+"clay: skip unbuildable mark /{(trip i.marks)} on %{(trip i.desks)}" p.res)
+    ~
   ::
   ++  tore
     ^-  rock:tire
