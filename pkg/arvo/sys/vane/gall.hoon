@@ -2678,7 +2678,8 @@
       ?:  ?=(%a v)
         ap-kill-up(agent-duct duct)
       ap-load-delete(agent-duct duct)
-    ::  +ap-mule: run virtualized with intercepted scry, preserving type
+    ::  +ap-mule:      run virtualized with intercepted scry, preserving type
+    ::  +ap-mule-peek: same as +ap-mule but for (unit (unit cage))
     ::
     ::    Compare +mute and +mule.  Those pass through scry, which
     ::    doesn't allow us to catch crashes due to blocking scry.  If
@@ -2686,26 +2687,18 @@
     ::    polymorphically.  By monomorphizing, we are able to do so
     ::    safely.
     ::
-    ++  ap-mule
-      |=  run=_^?(|.(*step:agent))
-      ^-  (each step:agent tang)
+    ++  ap-mule       (ap-mule-f step:agent)
+    ++  ap-mule-peek  (ap-mule-f (unit (unit cage)))
+    ++  ap-mule-f
+      |*  m=mold
+      |=  run=_^?(|.(*m))
+      ^-  (each m tang)
       =/  res  (mock [run %9 2 %0 1] (ap-look rof [~ ~] /gall/[agent-name]))
       ?-  -.res
-        %0  [%& !<(step:agent [-:!>(*step:agent) p.res])]
-        %1  =+  p=((soft path) p.res)
-            [%| ?~(p >p.res< (smyt u.p)) ~]
-        %2  [%| p.res]
-      ==
-    ::  +ap-mule-peek: same as +ap-mule but for (unit (unit cage))
-    ::
-    ++  ap-mule-peek
-      |=  run=_^?(|.(*(unit (unit cage))))
-      ^-  (each (unit (unit cage)) tang)
-      =/  res  (mock [run %9 2 %0 1] (ap-look rof [~ ~] /gall/[agent-name]))
-      ?-  -.res
-        %0  [%& !<((unit (unit cage)) [-:!>(*(unit (unit cage))) p.res])]
-        %1  =+  p=((soft path) p.res)
-            [%| ?~(p >p.res< (smyt u.p)) ~]
+        %0  [%& !<(m [-:!>(*m) p.res])]
+        %1  :-  %|
+            :_  [(rap 3 'gall: %' agent-name ': blocked scry' ~) ~]
+            ?~(p=((soft path) p.res) 'non-path scry' (smyt u.p))
         %2  [%| p.res]
       ==
     ::  +ap-look: namespase permission check
