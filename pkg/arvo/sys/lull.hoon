@@ -4519,37 +4519,42 @@
   ::                                                    ::::
 ++  mach  ^?
   |%
-  ::  $wye: why a connection closed, by category then cause
-  ::
-  ::    %connect: the connection never opened
-  ::      %invalid      malformed $fief; never tried
-  ::      %unresolved   no domain resolved
-  ::      %refused      every address failed
-  ::      %timeout      not open within 30s
-  ::    %tls: tls failed
-  ::      %invalid      secure=& without a %turf; never tried
-  ::      %certificate  peer's certificate failed verification
-  ::      %handshake    handshake failed for another reason
-  ::      %decode       peer sent bad tls records once open
-  ::    %peer: the peer ended an open connection
-  ::      %done         peer closed cleanly
-  ::      %reset        peer reset, or a read or write failed
-  ::      %dead         keepalive or retransmission timed out
-  ::    %close: our %close ended the connection
-  ::      %done         outgoing bytes flushed
-  ::      %timeout      outgoing bytes unsent after 30s
-  ::    %local: our ship ended the connection
-  ::      %reborn       vere restarted
-  ::      %trimmed      %mach dropped its state on %trim
-  ::      %dropped      a %received event failed, leaving a gap
-  ::      %overflowed   more than 64 MiB queued to send
+  ::  $wye: why a connection closed
+  ::  by category, then cause
   ::
   +$  wye
-    $%  [%connect p=?(%invalid %unresolved %refused %timeout)]
-        [%tls p=?(%invalid %certificate %handshake %decode)]
-        [%peer p=?(%done %reset %dead)]
-        [%close p=?(%done %timeout)]
-        [%local p=?(%reborn %trimmed %dropped %overflowed)]
+    $%  $:  %connect                                    ::  never opened
+            $=  p
+            $?  %invalid                                ::  malformed $fief
+                %unresolved                             ::  no domain resolved
+                %refused                                ::  every address failed
+                %timeout                                ::  not open in time
+        ==  ==
+        $:  %tls                                        ::  tls failed
+            $=  p
+            $?  %invalid                                ::  invalid domain
+                %certificate                            ::  failed verification
+                %handshake                              ::  failed handshake
+                %decode                                 ::  bad tls records
+        ==  ==
+        $:  %peer                                       ::  peer ended it
+            $=  p
+            $?  %done                                   ::  peer closed cleanly
+                %reset                                  ::  reset or r/w failed
+                %dead                                   ::  keepalive timeout
+        ==  ==
+        $:  %close                                      ::  userspace ended it
+            $=  p
+            $?  %done                                   ::  flushed outgoing
+                %timeout                                ::  unsent after timeout
+        ==  ==
+        $:  %local                                      ::  arvo/vere ended it
+            $=  p
+            $?  %reborn                                 ::  vere restarted
+                %trimmed                                ::  dropped on %trim
+                %dropped                                ::  %received failed
+                %overflowed                             ::  send queue full
+        ==  ==
     ==
   ::
   +$  task
