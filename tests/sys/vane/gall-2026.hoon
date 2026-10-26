@@ -186,7 +186,7 @@
   =/  perm=[(set perm:gall) (set perm:gall)]
     ?:  ?=(%.n -.super)  [(~(put in p.super) [%write [~ %mock]]) ~]
     [[[%super ~] ~ ~] ~]
-  (call:g default-duct ~ %load [dude [our.g %desk da+now.g] perm agent]~)
+  (call:g default-duct ~ %load [%desk [our.g %desk da+now.g] perm [dude agent] ~ ~] ~ ~)
 ::
 ++  do-load-mock-super
   ::NOTE  grant super permissions so that perm checks always pass
