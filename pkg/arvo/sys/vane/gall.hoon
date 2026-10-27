@@ -803,9 +803,7 @@
     ?.  =(run-nonce.u.yoke nonce.pole)
       %-  (slog leaf+"gall: got old stub for {<dap>}" ~)
       mo-core
-    ::TODO  maybe need to check for agent.yoke being running?
-    ::      otherwise +ap-agent-core may end up crashing on the assert...
-    =/  =routes  [disclosing=~ attributing=[our /]]
+    =/  =routes  [disclosing=~ attributing=[our /]]  ::REVIEW  / route
     =/  ap-core  (ap-abed:ap agent.pole routes)
     ?+    rest.pole  ~|(mo-handle-key-bad-wire/wire !!)
         [%pug rest=*]
@@ -1822,7 +1820,6 @@
               ?+  +>-.neet  [%j +>.neet]
                   %public-keys
                 ?^  sub.neet  [%j %public-keys u.sub.neet]
-                ::REVIEW  this _crashes_ when closing non-existing sub
                 =+  sub=(~(got by resource-deets.yoke) p.card %jael %keys)
                 ?>  ?=([%jael %keys *] sub)
                 ?-  wat.sub
@@ -2143,8 +2140,12 @@
       ::
       %-  ~(rep in og-resources)
       |=  [res=arvo-resource acc=_ap-core]
-      ::REVIEW  cards produced here don't go through +ap-ingest, so can happen
-      ::        regardless of permission state
+      ::NOTE  cards produced here don't go through +ap-ingest, so can happen
+      ::      regardless of permission state. they were already created by the
+      ::      agent at the time, and would've still existed if it wasn't for
+      ::      suspension, so we're ok with re-establishing regardless of latest
+      ::      permissions.
+      ::      this isn't _maximally_ defensive but does uphold the "contract".
       =.  ap-core  acc
       ?-    +.res
         ::  re-establish trivially
@@ -2775,6 +2776,7 @@
       =/  og-deets        resource-deets.yoke
       =^  caz       yoke  (ap-handle-resources -.result)
       =^  caz  boat.yoke  (ap-handle-peers-tracking caz)
+      ::REVIEW  is +ap-redundant redundant with duplicate resource dropping in +ap-handle-resources?
       =.  caz             (skip caz ap-redundant)
       =^  caz  ap-core    (ap-handle-peers-transforms caz)
       =^  fex  ap-core    (ap-handle-sky caz)
@@ -2872,7 +2874,6 @@
     ::  +ap-handle-resource-gift: update tracked resource based on gift
     ::
     ++  ap-handle-resource-gift
-      ::REVIEW  updating tracked _kernel_ resource based on _userspace_ gift
       |=  [=wire gift=gift-user-v1]
       ^+  yoke
       =/  [res=(set arvo-resource) dets=(map arvo-resource resource-deet)]
@@ -2997,7 +2998,7 @@
           [%pass * %agent * ?(%watch %watch-as) *]
         =/  =wire  p.card
         =/  [=dock =task:agent:gall]  [[ship name] task]:q.card
-        ::TODO  should catch duplicate subs earlier
+        ::NOTE  we catch duplicate subs earlier, in +ap-handle-peers-tracking
         ?<  (~(has by boar.yoke) wire dock)
         ::NOTE  0-check guards against pre-release bug
         =?  p.card  !=(0 sub-nonce.yoke)
