@@ -726,6 +726,13 @@
   ::
   ++  wide
     ^-  (mandatory naty-sugar _st)
+    =+  wide-inner     ?@  -  ~       =>  [w=u +(st s)]
+    =+  peek           ?@  -  [w st]  =>  [t=u +(st s)]
+    ?.  ?=(%hax t)            [w st]
+    =+  wide(st move)  ?@  -  ~       [[%tsgr u w] s]
+  ::
+  ++  wide-inner
+    ^-  (mandatory naty-sugar _st)
     =+  gulp  ?@  -  ~  =>  [t=u +(st s)]
     ?+  t  =+  (wide-mold-reg t)  ?@  -  ~  [[%xtra %mold u] s]
       [%limb *]     =+  (wing-tail limb.t)  ?@  -  ~  [[%cnts u ~] s]
