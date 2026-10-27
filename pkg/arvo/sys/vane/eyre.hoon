@@ -1009,8 +1009,8 @@
     =/  pathowner=(unit desk)
       ::  /~ paths always owned by eyre
       ::
-      ::TODOxx  what about /_~_ ?
-      ?:  =('/~/' (end 3^3 url.request))  ~
+      ?:  =('/~/' (end 3^3 url.request))    ~
+      ?:  =('/_~_/' (end 3^5 url.request))  ~
       ::  handle paths owned by desks cache
       ::
       =+  cached=(~(get by cache.state) url.request)
@@ -1327,7 +1327,6 @@
     ::  ?^  p=(parse-http-scry url.request)
     ::    (handle-http-scry authenticated.req p request)
     ::
-    ::TODO  deprecate!
     ?:  =('/_~_/' (end [3 5] url.request))
       (handle-http-scry req)
     ::  handle requests to the cache, if a non-empty entry exists
@@ -1899,7 +1898,7 @@
       ::  may-embed: read desk from referer header, check for %embed perm
       ::
       ::TODO  this allows embedding of base desk userspace responses
-      ::      (eyre's responses have frame-ancestors:'none')
+      ::      (not eyre's responses, they have frame-ancestors:'none')
       ::      because base desk stuff is unusually high risk, perhaps that
       ::      should be gated by an expanded or different permission (or super)
       =*  may-embed=?
@@ -2312,8 +2311,8 @@
     ::    but "us" needs to differentiate between "us as root", "us as app",
     ::    etc.
     ::
-    ::TODO  maybe should take a =duct arg so it can do the "associate the new
-    ::      session with ..." step
+    ::TODO  maybe should take a =duct or unpacked-request arg so it can do
+    ::      the "associate the new session with ..." step
     ++  start-session
       |=  [identity=?(%new-guest identity) parent=(unit @uv)]
       ^-  [[session=@uv =^identity moves=(list move)] server-state]
@@ -2902,7 +2901,9 @@
             ::  request for confirmation page
             ::
             ?.  authenticated.req  login
-            ?>  ?=(?([%drop ^] [%miss ^] [%have *]) +.authentication.req)  ::REVIEWxx  necessary?
+            ::REVIEWxx  is this necessary? if it is, aren't %drop and %miss
+            ::          unexpected due to .authenticated.req being true??
+            ?>  ?=(?([%drop ^] [%miss ^] [%have *]) +.authentication.req)
             =/  book  (~(gut by visiting.auth) u.server *logbook)
             =/  door  (~(get by map.book) u.nonce)
             ?~  door
@@ -2955,7 +2956,9 @@
           %+  instant:response  req
           (eauth-error-page 405 ~)
         ?.  authenticated.req  login
-        ?>  ?=(?([%drop ^] [%miss ^] [%have *]) +.authentication.req)  ::REVIEWxx  necessary?
+        ::REVIEWxx  is this necessary? if it is, aren't %drop and %miss
+        ::          unexpected due to .authenticated.req being true??
+        ?>  ?=(?([%drop ^] [%miss ^] [%have *]) +.authentication.req)
         ::  POST requests are always submissions of the confirmation page
         ::
         =/  args=(map @t @t)
@@ -4079,7 +4082,7 @@
     ::  if the request was a simple cors request from an approved origin
     ::  append the necessary cors headers to the response
     ::
-    ::REVIEWzz
+    ::REVIEWzz  cors-registry stuff
     =?  headers
         ?&  ?=(^ origin)
             (~(has in approved.cors-registry.state) u.origin)
