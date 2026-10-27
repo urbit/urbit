@@ -843,23 +843,31 @@
       mo-core
     ::
     ?.  ?=([%out @ @ *] t.t.wire)
-      =^  syscall=?  t.t.wire
-        ?.  ?=([%hug @ *] t.t.wire)  [& t.t.wire]
-        [| t.t.t.wire]
-      ?>  ?=([@ *] t.t.t.wire)
+      ::  in this branch, one of two wire shapes is expected:
+      ::  /hug/[ship]/[deet][/wire]: arvo interactions through gall's api
+      ::  /[ship][/wire]:            %syscalls and pre-407 %arvo cards
+      ::
+      ::  .syscall: from informal/untracked kernel interaction?
+      ::  .ship:    ship.attributing.agent-routes from call-time
+      ::  .deet:    optional details if syscall, or ~
+      ::  .wire:    agent's wire
+      ::
+      =/  [syscall=? ship=@p deet=* =^wire]
+        ~|  [%mo-handle-use-bad-loc-wire t.t.wire]
+        ?-  t.t.wire
+          [%hug @ @ *]  :^  |  (slav %p i.t.t.t.wire)
+                          ?:  =('' i.t.t.t.t.wire)  ~
+                          =+  c=(need (slay i.t.t.t.t.wire))
+                          ?>(?=(%blob -.c) p.c)
+                        t.t.t.t.t.wire
+          [@ *]         [& (slav %p i.t.t.wire) ~ t.t.t.wire]
+        ==
       =/  app
-        ::  .ship: ship.attributing.agent-routes from call-time
-        =/  =ship  (slav %p i.t.t.wire)
-        =/  =routes  [disclosing=~ attributing=[ship /[-.sign-arvo]]]
-        (ap-abed:ap dap routes)
-      =/  deets=*
-        ?:  =('' i.t.t.t.wire)  ~
-        =+  c=(need (slay i.t.t.t.wire))
-        ::TODO  unsafe with old wires! crashes during/after migration
-        ?>(?=(%blob -.c) p.c)
+        %+  ap-abed:ap  dap
+        [disclosing=~ attributing=[ship /[-.sign-arvo]]]
       ::
       =<  ap-abet
-      %.  [syscall deets t.t.t.t.wire sign-arvo]
+      %.  [syscall deet wire sign-arvo]
       ?-  -.agent.u.yoke
         %&  ap-generic-take:app
         %|  ap-dozing-take:app
@@ -1733,30 +1741,35 @@
           ?-  -.neet
             %agent  [%out (scot %p ship.neet) name.neet wire]
             %huck   [%out (scot %p ship.neet) name.neet wire]
-            %arvo   =-  ?:  ?=(%syscall +<.neet)  -
-                        [%hug -]
-                    :+  (scot %p ship.attributing.agent-routes)  ::REVIEW  mb change?
-                      ::  pack identifying resource id details into the wire
-                      ::
-                      =;  deet=(unit *)
-                        ?~(deet '' (crip ~(rend co %blob u.deet)))
-                      ?+  +.neet  ~
-                        [@ %trim *]              ~
-                        [%behn *]                `time.neet
-                        [%clay %read *]          `id.neet
-                        [%clay %rest *]          `id.neet
-                        [%dill %shot @ %view *]  `ses.neet
-                        [%dill %shot @ %flee *]  `ses.neet
-                        [%eyre %connect *]       `wat.neet
-                        [%khan %fard *]          `[bear `name]:p.neet
-                        [%khan %lard *]          `[bear.neet ~]
-                      ::
-                          [%eyre %disconnect *]
-                        =;  det  ?>(?=([%eyre %binding *] det) `wat.det)
-                        %-  ~(got by resource-deets.yoke)
-                        [wire %eyre %binding binding.neet]
-                      ==
-                    wire
+            %arvo   ::NOTE  previous version of gall used just /[ship.a.a][/wire]
+                    ::      which is the shape we retain for syscalls
+                    ?:  ?=(%syscall +<.neet)
+                      [(scot %p ship.attributing.agent-routes) wire]
+                    ::  for gall-mediate kernel interactions, prefix with /hug
+                    ::  and put resource-relevant details in the wire, as:
+                    ::  /hug/[ship.a.a]/[deets][/wire]
+                    ::
+                    =-  [%hug (scot %p ship.attributing.agent-routes) - wire]
+                    ::  pack identifying resource id details into the wire
+                    ::
+                    =;  deet=(unit *)
+                      ?~(deet '' (crip ~(rend co %blob u.deet)))
+                    ?+  +.neet  ~
+                      [@ %trim *]              ~
+                      [%behn *]                `time.neet
+                      [%clay %read *]          `id.neet
+                      [%clay %rest *]          `id.neet
+                      [%dill %shot @ %view *]  `ses.neet
+                      [%dill %shot @ %flee *]  `ses.neet
+                      [%eyre %connect *]       `wat.neet
+                      [%khan %fard *]          `[bear `name]:p.neet
+                      [%khan %lard *]          `[bear.neet ~]
+                    ::
+                        [%eyre %disconnect *]
+                      =;  det  ?>(?=([%eyre %binding *] det) `wat.det)
+                      %-  ~(got by resource-deets.yoke)
+                      [wire %eyre %binding binding.neet]
+                    ==
           ==
         ::
         =/  =note-arvo
