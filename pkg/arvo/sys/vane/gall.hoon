@@ -2350,8 +2350,11 @@
       ^-  gift-user-v1
       ?:  syscall  [%syscall kelvin=zuse sign-arvo]
       ?+  sign-arvo
+          ::  seeing these prints is indicative of a gall bug!
+          ::  the sign in question should've been able to be handled in-api.
+          ::
           ~&  [%gall-unexpected-sign [- +<]:sign-arvo]
-          ~&  %gall-will-inject-syscall  ::REVIEW
+          ~&  %gall-will-inject-syscall
           [%syscall kelvin=zuse sign-arvo]
       ::
         [%ames %sage *]           sign-arvo
