@@ -1367,8 +1367,6 @@
       ::NOTE  requests the key even if a request is already in-flight, ames de-dupes
       =/  =fine-request  [%0 rest.pole]
       =/  =plea:ames     [%g /gk/[app.pole] fine-request]
-      ::REVIEW  keen now are per-wire resources, should brood plea be keyed
-      ::  by wire instead of spar?
       =/  out=^wire
         (welp /key/[agent-name]/[run-nonce.yoke]/bod/(scot %p ship) pole)
       (ap-move [hen %pass out %a %plea ship plea]~)
@@ -1380,6 +1378,7 @@
       ?>  ?=([@ *] wire)  :: TODO: strip crash semantics
       =/  =ship  (slav %p i.wire)
       =/  res=(list arvo-resource)
+        ::  TODO: make it nicer
         %+  skim  ~(tap in resources.yoke)
         |=(res=arvo-resource =([%ames %keen [ship t.wire]] +.res))
       ?+    syn  ~|(weird-sign-ap-take-brood/-.syn !!)
