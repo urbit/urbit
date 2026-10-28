@@ -2311,8 +2311,9 @@
       =^  maybe-frag  ap-core
         %+  ap-ingest  ~  |.
         (on-fail:ap-agent-core frag(tang (turn tang.frag form)) call)
-      ::TODO  maybe print about +on-fail failure?
-      ap-core
+      ?~  maybe-frag  ap-core
+      %.  ap-core
+      (slog leaf+"gall: {<agent-name>}: on-fail failed" u.maybe-frag)
     ::  +ap-dozing-take: handle sign for suspended agent
     ::
     ++  ap-dozing-take
