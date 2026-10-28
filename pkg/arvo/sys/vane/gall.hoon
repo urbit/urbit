@@ -1507,10 +1507,9 @@
           `[%pass wire.res %arvo u.tac]
         ==
       =^  maybe-frag  ap-core  (ap-ingest ~ |.([will *agent]))
-      ?~  maybe-frag  ap-core
-      ::REVIEW  crash instead?
-      %.  ap-core
-      (slog 'gall: nuke cleanup failed for {<agent-name>}' u.maybe-frag)
+      ~|  [%bad-gall-guard %nuke-cleanup-failed maybe-frag]
+      ?>  ?=(~ maybe-frag)
+      ap-core
     ::
     ++  ap-match-coop
       |=  =path
