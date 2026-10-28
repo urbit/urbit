@@ -1087,6 +1087,7 @@
     =/  app  (ap-abed:ap dap routes)
     (ap-peek:app veb care path)
   ::
+  ::  agent must be %live
   ++  mo-apply
     |=  [dap=term =routes =deal]
     ^+  mo-core
@@ -1104,7 +1105,7 @@
       ::
       =/  =case  da+now
       =/  yok  (~(got by yokes.state) dap)
-      =/  =desk  q.beak:?>(?=(%live -.yok) yok)  ::TODO acceptable assertion?
+      =/  =desk  q.beak:?>(?=(%live -.yok) yok)
       =/  sky  (rof [~ ~] /gall %cb [our desk case] /[mark.deal])
       ?-    sky
           ?(~ [~ ~])
