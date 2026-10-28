@@ -2786,21 +2786,15 @@
       |=  result=step:agent
       ^-  [(list move) _ap-core]
       =.  agent.yoke      &++.result
-      ::TODO  if we filter out "duplicate resource creation" cards here,
-      ::      then we don't have to account for them in +ap-handle-peers and co
-      ::      (and if we don't, we have to update handle-peers and co)
       =/  og-deets        resource-deets.yoke
       =^  caz       yoke  (ap-handle-resources -.result)
       =^  caz  boat.yoke  (ap-handle-peers-tracking caz)
-      ::REVIEW  is +ap-redundant redundant with duplicate resource dropping in +ap-handle-resources?
       =.  caz             (skip caz ap-redundant)
       =^  caz  ap-core    (ap-handle-peers-transforms caz)
       =^  fex  ap-core    (ap-handle-sky caz)
-      ::NOTE  hacky, mb do +uni:by with og-deets
-      =/  moves           (zing (turn fex ap-from-internal(resource-deets.yoke og-deets)))
-      ::TODO  why +ap-handle-kicks here, on .moves? those only result from
-      ::      formal %kick already present in the caz cards
-      ::      same for +ap-handle-peers, none of the transforms above add/remove watches or leaves
+      ::  TODO maybe pass deets and og-deets separetly
+      =/  deets           (~(uni by og-deets) resource-deets.yoke)
+      =/  moves           (zing (turn fex ap-from-internal(resource-deets.yoke deets)))
       =.  bitt.yoke       (ap-handle-kicks moves)
       [moves ap-core]
     ::  +ap-redundant: true for side-effects redundant with deflation
