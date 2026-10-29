@@ -2726,7 +2726,7 @@
   ::
   ::  +page-to-lobe: hash a page to get a lobe.
   ::
-  ++  page-to-lobe  |=(page (shax (jam +<)))
+  ++  page-to-lobe  |=(page (jam-shax +<))
   ::
   ++  cord-to-waft
     |=  =cord
