@@ -8751,17 +8751,20 @@
                 ?>  =(num 1) :: XX no-op instead?
                 (fi-first-rcv meow)
               ::
-              ?.  ?=([@ @ @ *] full-path)
-                ~|  fine-path-too-short+full-path
-                !!
-              ?.  =(`her (slaw %p i.full-path))
-                ~|  fine-path-bunk-ship+[full-path her]
-                !!
-              ?.  =(`rift.peer-state (slaw %ud i.t.full-path))
-                ~|  fine-path-bunk-rift+[full-path rift.peer-state]
-                !!
-              ?.  =(`life.peer-state (slaw %ud i.t.t.full-path))
-                ~|  fine-path-bunk-life+[full-path life.peer-state]
+              ?.  =((scag 3 `^path`full-path) (scag 3 `^path`fi-full-path))
+                ?.  ?=([@ @ @ *] full-path)
+                  ~|  fine-path-too-short+full-path
+                  !!
+                ?.  =(`her (slaw %p i.full-path))
+                  ~|  fine-path-bunk-ship+[full-path her]
+                  !!
+                ?.  =(`rift.peer-state (slaw %ud i.t.full-path))
+                  ~|  fine-path-bunk-rift+[full-path rift.peer-state]
+                  !!
+                ?.  =(`life.peer-state (slaw %ud i.t.t.full-path))
+                  ~|  fine-path-bunk-life+[full-path life.peer-state]
+                  !!
+                ~|  %impossible
                 !!
               ?.  (veri-fra:keys [full-path num [dat sig]:meow])
                 ~|  fine-purr-fail-signature/num^`@ux`sig.meow
