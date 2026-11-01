@@ -405,7 +405,15 @@
   =/  yarn  (~(get by tid.state) tid)
   ?~  yarn
     %-  (slog leaf+"spider got sign for non-existent {<tid>}" ~)
-    `state
+    ::  a finished thread left a dill %logs subscription behind
+    ::  (+thread-clean only leaves gall subscriptions). nobody can
+    ::  ever hear it, so unsubscribe on its behalf: this is the same
+    ::  wire, hence the same duct, that opened it.
+    ::
+    ?.  ?=([%dill %logs *] sign-arvo)
+      `state
+    :_  state
+    [%pass [%thread tid wire] %arvo %d %logs ~]~
   (take-input u.yarn ~ %sign wire sign-arvo)
 ::
 ++  on-agent

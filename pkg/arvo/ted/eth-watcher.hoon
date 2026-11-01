@@ -84,7 +84,7 @@
   =/  m  (strand:strandio ,watchpup)
   ^-  form:m
   =/  zoom-margin=number:block  30
-  =/  zoom-step=number:block    100.000
+  =/  zoom-step=number:block    10.000
   ?:  (lth latest-number (add number.pup zoom-margin))
     (pure:m pup)
   =/  up-to-number=number:block
@@ -99,7 +99,10 @@
     (pure:m pup(blocks ~))
   =/  to-number=number:block
     =;  step
-      (min up-to-number (add number.pup step))
+      ::  eth_getLogs ranges are inclusive, so [from, from+step-1]
+      ::  covers exactly step blocks
+      ::
+      (min up-to-number (add number.pup (dec step)))
     ::  Between "launch" (6.784.800) and "public" (7.033.765) blocks,
     ::  there are a lot events belonging to all the pre-ethereum ships
     ::  being established on-chain. By reducing the step, we avoid crashing.

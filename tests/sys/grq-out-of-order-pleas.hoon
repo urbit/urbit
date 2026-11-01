@@ -386,8 +386,6 @@
                0x51.201d.35c6.5c33.5fe4.af83.861f.bc5e.5c6c.7600.12f0.
                d0b9.c6ef.9f14.169d.b17e.3b3c.64b7.4600.0200.0132.ab71.5800
           ==
-          ::  %leave still outstanding
-          ::
           :: :-  ~[/ames]  [%pass /pump/~bud/0 %b %wait ~1111.1.5..00.02.00]  :: XX why not?
       ==
     ==

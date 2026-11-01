@@ -2,12 +2,12 @@
 ::
 /+  *test, v=test-mesa-gall
 ::
-=+  thres=32
+=+  thres=5
 ::
 =/  [life=@ud rift=@ud bone=@ud msg=@ud]
   [(dec (bex thres)) (dec (bex thres)) (dec (bex thres)) (dec (bex thres))]
-=+  lifes=[comet-a=life comet-b=life moon-a=life moon-b=life planet-a=life planet-b=life galaxy-a=1 galaxy-b=1]
-=+  rifts=[comet-a=rift comet-b=rift moon-a=rift moon-b=rift planet-a=rift planet-b=rift galaxy-a=0 galaxy-b=0]
+=+  lifes=[comet-a=1 comet-b=1 moon-a=life moon-b=life planet-a=life planet-b=life galaxy-a=1 galaxy-b=1]
+=+  rifts=[comet-a=0 comet-b=0 moon-a=rift moon-b=rift planet-a=rift planet-b=rift galaxy-a=0 galaxy-b=0]
 =+  (ames-comets-moons-planets-galaxies:v lifes rifts)
 ::
 =>  |%
@@ -408,9 +408,9 @@
   =+  blob=p:(fax:plot (en:pact:ames peek))
   =^  moves-2  sender
     (ames-call:v sender ~[//unix] [%heer *lane:pact:ames blob] bex-roof)     :: "ok, give me the %auth fragment"
-  =^  moves-3  receiver  (ames-reply:v receiver ~[//unix] moves-2 bex-roof)   :: "ok, here is the %auth frag"
-  =^  moves-4  sender  (ames-reply:v sender ~[//unix] moves-3 bex-roof)        :: "ok, give me the %data frag"
-  =^  moves-5  receiver  (ames-reply:v receiver ~[//unix] moves-4 bex-roof)   :: "ok, here is the %data frag"
+  =^  moves-3  receiver  (ames-reply:v receiver ~[//unix] moves-2 bex-roof) :: "ok, here is the %auth frag"
+  =^  moves-4  sender  (ames-reply:v sender ~[//unix] moves-3 bex-roof)     :: "ok, give me the %data frag"
+  =^  moves-5  receiver  (ames-reply:v receiver ~[//unix] moves-4 bex-roof) :: "ok, here is the %data frag"
   (ames-expect-msg:v moves-5 noun)
 ::
 --
