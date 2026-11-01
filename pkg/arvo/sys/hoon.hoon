@@ -6011,8 +6011,8 @@
 ++  mack
   |=  [sub=* fol=*]
   ^-  (unit)
-  =/  ton  (mink [sub fol] ~)
-  ?.(?=(%0 -.ton) ~ `product.ton)
+  =/  ton  (monk [sub fol] ~)
+  ?.(?=(%0 -.ton) ~ `p.ton)
 ::  +mink: raw virtual nock
 ::
 ++  mink  !.
@@ -6321,7 +6321,7 @@
       |=(a=^ ``.*(a 12+[0+2 0+3]))
     ::
     =/  ton  (monk [tap %9 2 %0 1] gul)
-    ?.(?=(%0 -.ton) ~ `product.ton)
+    ?.(?=(%0 -.ton) ~ `p.ton)
   ::  +mute: untyped virtual
   ::
   ++  mute
@@ -13440,8 +13440,8 @@
               ?:(tol ;~(sfix zor ;~(plug gap duz)) zor)
     ++  ulva  |*  zor=rule                              ::  closing -- and tall
               ?.(tol fail ;~(sfix zor ;~(plug gap dun)))
-    ++  glop  ~>(%memo.%core(glue mash))                ::  separated by space
-    ++  gunk  ~>(%memo.%core(glue muck))                ::  separated list
+    ++  glop  ~>(%memo.%core (glue mash))                ::  separated by space
+    ++  gunk  ~>(%memo.%core (glue muck))                ::  separated list
     ++  hank  (most muck loaf)                          ::  gapped hoons
     ++  hunk  (most muck loan)                          ::  gapped specs
     ++  loaf  ?:(tol tall wide)                         ::  hoon
