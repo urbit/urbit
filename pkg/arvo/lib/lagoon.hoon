@@ -276,20 +276,17 @@
   ++  en-ray    :: baum to ray
     |=  =baum
     ^-  ray
-    =/  a=ray  (zeros meta.baum)
-    =/  i  0
-    =/  n  (roll shape.meta.a ^mul)
-    |-
-    ?:  =(i n)  a
-    %=  $
-      i  +(i)
-      data.a
-        %+  con
-          data.a
-        %+  lsh
-          [bloq.meta.a i]
-        (get-item-baum baum (get-dim shape.meta.a i))
-    ==
+    ::  flatten the nested list row-major in one pass and pack it with +rep
+    ::  (the old per-element +get-dim/+get-item-baum/+con loop was quadratic).
+    =/  flat=(list @)
+      =|  acc=(list @)
+      =/  stk=(list ndray)  ~[data.baum]
+      |-  ^-  (list @)
+      ?~  stk  (flop acc)
+      ?@  i.stk  $(stk t.stk, acc [i.stk acc])
+      $(stk (weld i.stk t.stk))
+    ?>  =((lent flat) (roll shape.meta.baum ^mul))
+    (spac [meta.baum (rep bloq.meta.baum flat)])
   ::
   ++  de-ray    :: ray to baum
     |=  =ray
@@ -350,7 +347,9 @@
     ^-  ray
     =/  len  (roll shape.meta ^mul)
     :-  meta
-    (con +:(zeros meta) (fil bloq.meta len x))
+    ::  +rep, not +fil: +fil re-shifts a growing atom per element (quadratic
+    ::  in the length, and unjetted); +rep is one pass and jetted.
+    (con +:(zeros meta) (rep bloq.meta (reap len x)))
   ::
   ++  spac
     |=  =ray
@@ -371,52 +370,69 @@
     %-  spac
     [meta data]
   ::
+  ::  +change: convert .ray to a new .kind and .bloq (width), element by
+  ::  element, at any rank (rank 0 included).  Wired paths:
+  ::    %uint -> %uint   re-box at the new width; an element wider than the
+  ::                     new bloq is truncated to it (as +rep does)
+  ::    %uint -> %i754   integer to float (+sun, door rounding)
+  ::    %i754 -> %uint   to integer (+toi, door rounding).  KNOWN LIMITATION:
+  ::                     a negative value has no %uint image; +toi yields a
+  ::                     negative @s whose (div ... 2) wraps rather than
+  ::                     clamping or crashing, so callers must pre-clamp
+  ::    %i754 -> %i754   float to float across widths (+sea then +bit, door
+  ::                     rounding); the same width is a bit-exact copy
+  ::  Any other (kind, bloq) pair crashes.
   ++  change
     |=  [=ray =kind =bloq]
     ^-  ^ray
-    ?+    kind.meta.ray  !!
-        %uint
-      ?+    kind  !!
-          :: %uint -> %uint
+    ?>  (check ray)
+    =/  fun=$-(@ @)
+      ?+    kind.meta.ray  !!
           %uint
-        %-  en-ray
-        :-  [shape.meta.ray bloq %uint tail.meta.ray]
-        data:(de-ray ray)
-          :: %uint -> %i754
-          %i754
-        %-  en-ray
-        :-  [shape.meta.ray bloq %i754 tail.meta.ray]
-        %+  turn  (ravel ray)
-        ?+  bloq  !!
-          %7  ~(sun rq rnd)
-          %6  ~(sun rd rnd)
-          %5  ~(sun rs rnd)
-          %4  ~(sun rh rnd)
+        ?+    kind  !!
+          %uint  |=(a=@ a)
+            %i754
+          ?+  bloq  !!
+            %7  ~(sun rq rnd)
+            %6  ~(sun rd rnd)
+            %5  ~(sun rs rnd)
+            %4  ~(sun rh rnd)
+          ==
         ==
-      ==
       ::
-        %i754
-      ?+    kind  !!
-          :: %i754 -> %uint
-          :: XXX will incorrectly convert negative values to %uint
-          %uint
-        %-  en-ray
-        :-  [shape.meta.ray bloq %uint tail.meta.ray]
-        %+  turn  (ravel ray)
-        ?+  bloq.meta.ray  !!
-          %7  |=(a=@rq ^-(@u (^div (need (~(toi rq rnd) a)) 2)))
-          %6  |=(a=@rd ^-(@u (^div (need (~(toi rd rnd) a)) 2)))
-          %5  |=(a=@rs ^-(@u (^div (need (~(toi rs rnd) a)) 2)))
-          %4  |=(a=@rh ^-(@u (^div (need (~(toi rh rnd) a)) 2)))
-        ==
-          :: %i754 -> %i754
           %i754
-        ?>  &((^gte bloq %4) (^lte bloq %7))
-        %-  en-ray
-        :-  [shape.meta.ray bloq %i754 tail.meta.ray]
-        data:(de-ray ray)
+        ?+    kind  !!
+            %uint
+          ?+  bloq.meta.ray  !!
+            %7  |=(a=@rq ^-(@u (^div (need (~(toi rq rnd) a)) 2)))
+            %6  |=(a=@rd ^-(@u (^div (need (~(toi rd rnd) a)) 2)))
+            %5  |=(a=@rs ^-(@u (^div (need (~(toi rs rnd) a)) 2)))
+            %4  |=(a=@rh ^-(@u (^div (need (~(toi rh rnd) a)) 2)))
+          ==
+            %i754
+          ?:  =(bloq bloq.meta.ray)  |=(a=@ a)
+          =/  to-fn=$-(@ fn)
+            ?+  bloq.meta.ray  !!
+              %7  ~(sea rq rnd)
+              %6  ~(sea rd rnd)
+              %5  ~(sea rs rnd)
+              %4  ~(sea rh rnd)
+            ==
+          =/  of-fn=$-(fn @)
+            ?+  bloq  !!
+              %7  ~(bit rq rnd)
+              %6  ~(bit rd rnd)
+              %5  ~(bit rs rnd)
+              %4  ~(bit rh rnd)
+            ==
+          |=(a=@ (of-fn (to-fn a)))
+        ==
       ==
-    ==
+    ::  ravel -> map -> re-pin: rank-agnostic, unlike the old +de-ray/+en-ray
+    ::  round trip (which only knew ranks 1 and 2 and crashed at rank 0).
+    %-  spac
+    :-  [shape.meta.ray bloq kind tail.meta.ray]
+    (rep bloq (turn (ravel ray) fun))
   ::
   ::  Builders
   ::
@@ -438,6 +454,18 @@
     %^  set-item
         r
       ~[i i]
+    (one meta)
+  ::    Zeroes
+  ++  zeros
+    |=  =meta  ^-  ray
+    ~_  leaf+"lagoon-fail"
+    :-  meta
+    (lsh [bloq.meta (roll shape.meta ^mul)] 1)
+  ::    One: the raw bits of the kind's scalar one (1.0 for %i754, 1 for
+  ::    %uint), the multiplicative identity that +ones fills with, +eye puts
+  ::    on the diagonal, and +prod seeds its fold from.
+  ++  one
+    |=  =meta
     ^-  @
     ?-    kind.meta
         %uint  `@`1
@@ -452,31 +480,11 @@
         %4  .~~1
       ==
     ==
-  ::    Zeroes
-  ++  zeros
-    |=  =meta  ^-  ray
-    ~_  leaf+"lagoon-fail"
-    :-  meta
-    (lsh [bloq.meta (roll shape.meta ^mul)] 1)
   ::    Ones
   ++  ones
     |=  =meta  ^-  ray
     ~_  leaf+"lagoon-fail"
-    =/  one
-      ?-    kind.meta
-          %uint  `@`1
-        ::
-          %int2  !!
-        ::
-          %i754
-        ?+  bloq.meta  !!
-          %7  .~~~1
-          %6  .~1
-          %5  .1
-          %4  .~~1
-        ==
-      ==
-    (fill meta one)
+    (fill meta (one meta))
   ::  Produce a 1-dimensional index array.
   ::  Only produces %uint.
   ::  Note that this runs from 0 to n-1.  The point of ++iota is to be an index,
@@ -639,10 +647,11 @@
     ~/  %max
     |=  a=ray
     ?>  (check a)
+    =/  cmp  (fun-scalar meta.a %gth)
     =/  fun
-      |:  [b=1 c=-:(ravel a)] 
-      ?.  =(((fun-scalar meta.a %gth) b c) 0)
-        b  c 
+      |:  [b=1 c=-:(ravel a)]
+      ?.  =((cmp b c) 0)
+        b  c
     (scalar-to-ray meta.a (reel (ravel a) fun))
   ::
   ++  argmax :: Only returns first match
@@ -656,10 +665,11 @@
     ~/  %min
     |=  a=ray
     ?>  (check a)
+    =/  cmp  (fun-scalar meta.a %lth)
     =/  fun
-      |:  [b=1 c=-:(ravel a)] 
-      ?.  =(((fun-scalar meta.a %lth) b c) 0)
-        b  c 
+      |:  [b=1 c=-:(ravel a)]
+      ?.  =((cmp b c) 0)
+        b  c
     (scalar-to-ray meta.a (reel (ravel a) fun))
   ::
   ++  argmin :: Only returns first match
@@ -674,15 +684,23 @@
     |=  a=ray
     ^-  ray
     ?>  (check a)
+    =/  fun  (fun-scalar meta.a %add)
     %+  scalar-to-ray  meta.a
-    (reel (ravel a) |=([b=@ c=@] ((fun-scalar meta.a %add) b c)))
+    (reel (ravel a) |=([b=@ c=@] (fun b c)))
   ::
+  ::  +prod: the product of all elements, folded left to right from the
+  ::  kind's one (+one): (((1 * x0) * x1) * x2) ...  The seed must be the
+  ::  kind's own one, not the integer 1 -- as %i754 bits that is the smallest
+  ::  denormal, and the whole product collapses into the denormal range.
   ++  prod
     |=  a=ray
     ^-  ray
     ?>  (check a)
+    =/  fun  (fun-scalar meta.a %mul)
     %+  scalar-to-ray  meta.a
-    (reel (ravel a) |=([b=_1 c=_1] ((fun-scalar meta.a %mul) b c)))
+    %+  roll  (ravel a)
+    |:  [b=`@`0 acc=(one meta.a)]
+    (fun acc b)
   ::
   ++  reshape
     |=  [a=ray shape=(list @)]
@@ -1151,13 +1169,14 @@
     ?>  (check b)
     %-  spac
     :-  meta.a
+    %+  rep  bloq.meta.a
     =/  ali  (ravel a)
     =/  bob  (ravel b)
-    %+  rep  bloq.meta.a
-    %+  turn
-      (gulf 0 (dec (lent ali)))
-    |=  i=@
-    (op (snag i ali) (snag i bob))
+    ::  walk both ravels together: +snag per index is quadratic in the length.
+    |-  ^-  (list @)
+    ?~  ali  ~
+    ?>  ?=(^ bob)
+    [(op i.ali i.bob) $(ali t.ali, bob t.bob)]
   ::
   ++  ter-op
     |=  [a=ray b=ray c=ray op=$-([@ @ @] @)]
@@ -1169,13 +1188,13 @@
     ?>  (check c)
     %-  spac:la
     :-  meta.a
+    %+  rep  bloq.meta.a
     =/  ali  (ravel:la a)
     =/  bob  (ravel:la b)
     =/  car  (ravel:la c)
-    %+  rep  bloq.meta.a
-    %+  turn
-      (gulf 0 (dec (lent ali)))
-    |=  i=@
-    (op (snag i ali) (snag i bob) (snag i car))
+    |-  ^-  (list @)
+    ?~  ali  ~
+    ?>  &(?=(^ bob) ?=(^ car))
+    [(op i.ali i.bob i.car) $(ali t.ali, bob t.bob, car t.car)]
   --
 --
