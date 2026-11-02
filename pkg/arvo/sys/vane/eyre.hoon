@@ -4162,8 +4162,11 @@
   ++  set-response
     |=  [=desk url=@t entry=(unit cache-entry)]
     ^-  [(list move) server-state]
-    ::TODO  prevent setting responses into the eyre namespace
-    :: ?<  =('/~/' (end 3^3 url))
+    ::  prevent setting responses in reserved namespaces
+    ::
+    ?<  =('/~/' (end 3^3 url))
+    ?<  =('/~_~/' (end 3^5 url))
+    ?<  =('/_~_/' (end 3^5 url))
     =/  prev  (~(get by cache.state) url)
     ::  if a cache entry already exists, but a different desk want to touch it,
     ::  prevent that: the original desk "owns" that part of cache namespace rn.
