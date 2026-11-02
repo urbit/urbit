@@ -3332,7 +3332,13 @@
       ^-  (list [tako path lobe])
       =|  miss=(set lobe)
       =/  let-tako  (~(got by gar.nako) let.nako)
-      =/  yakis  ~(tap in lar.nako)
+      ::  request the latest commit's bodies first, so that the desk can
+      ::  be finalized before the rest of the history has downloaded
+      ::
+      =/  yakis=(list yaki)
+        =/  [las=(list yaki) res=(list yaki)]
+          (skid ~(tap in lar.nako) |=(=yaki =(let-tako r.yaki)))
+        (weld las res)
       |-  ^-  (list [tako path lobe])
       =*  yaki-loop  $
       ?~  yakis
@@ -3374,19 +3380,24 @@
       ^+  ..abet
       ?.  =(~ busy.sat)  ::NOTE  tmi
         ..abet
+      ::  apply any nako whose latest commit is complete, so that kiln
+      ::  can merge it while older bodies are still downloading
+      ::
+      =.  ..abet  release
       |-  ^+  ..abet
       ?~  need.sat
-        ::  NB: if you change to release nakos as we get enough lobes
-        ::  for them instead of all at the end, you *must* store the
-        ::  `lim` that should be applied after the nako is complete and
-        ::  not use the one in the rave, since that will apply to the
-        ::  end of subscription.
-        ::
         |-  ^+  ..abet
         ?:  =(~ nako.sat)
           ..abet
         =^  next=(unit nako)  nako.sat  ~(get to nako.sat)
         ?~  next
+          ::  end of subscription: only now are we complete up to the
+          ::  end of the requested range (nakos may have been applied
+          ::  early, so this can't be done per nako)
+          ::
+          =/  =rave  rave.sat
+          ?>  ?=(%many -.rave)
+          =?  lim  ?=(%da -.to.moat.rave)  p.to.moat.rave
           ..abet(done &)
         =.  ..abet  =>((apply-foreign-update u.next) ?>(?=(~ need.sat) .))
         =.  ..foreign-update  =<(?>(?=(^ ref) .) wake)  ::  [wake] >
@@ -3422,6 +3433,35 @@
         =/  =fill  [%0 syd lobe]
         (emit hen %pass wire %a %plea her %c path fill)
       ..abet(busy.sat ?~(scry `%ames scry))
+    ::
+    ::  +release: apply nakos at the front of the queue whose latest
+    ::  commit's bodies have all arrived
+    ::
+    ++  release
+      ^+  ..abet
+      |-  ^+  ..abet
+      =/  peek  ~(top to nako.sat)
+      ?~  peek  ..abet
+      ?~  u.peek  ..abet
+      ?.  (ready u.u.peek)  ..abet
+      =^  next=(unit nako)  nako.sat  ~(get to nako.sat)
+      =.  ..abet  (apply-foreign-update (need next))
+      =.  ..foreign-update  =<(?>(?=(^ ref) .) wake)  ::  [wake] >
+      $
+    ::
+    ::  +ready: the bodies of a nako's latest commit are all present
+    ::
+    ++  ready
+      |=  =nako
+      ^-  ?
+      ?:  =(0 let.nako)  &
+      =/  let-tako  (~(got by gar.nako) let.nako)
+      =/  yak=(unit yaki)
+        =/  las  (skim ~(tap in lar.nako) |=(=yaki =(let-tako r.yaki)))
+        ?^  las  `i.las
+        (~(get by hut.ran) let-tako)
+      ?~  yak  &
+      (levy ~(val by q.u.yak) |=(=lobe (~(has by lat.ran) lobe)))
     ::
     ::  When we get a %w foreign update, store this in our state.
     ::
@@ -3460,8 +3500,6 @@
         $(aeon +(aeon))
       ::  produce updated state
       ::
-      =/  =rave  rave:(~(got by bom.u.ref) inx)
-      ?>  ?=(%many -.rave)
       ::  [ergo] We do not call +ergo here, but if we wanted to support
       ::  keeping a foreign mounted desk up-to-date, this would open
       ::  that invariant.
@@ -3473,11 +3511,6 @@
       =:  let.dom   (max let.nako let.dom)              ::  [wake] < +work
           hit.dom   hit
           hut.ran   hut
-          ::  Is this correct?  Seeems like it should only go to `to` if
-          ::  we've gotten all the way to the end.  Leaving this
-          ::  behavior unchanged for now, but I believe it's wrong.
-          ::
-          lim       ?.(?=(%da -.to.moat.rave) lim p.to.moat.rave)
         ==
       ..abet
     --
