@@ -875,6 +875,24 @@
               ==
             (ex-resources %mock ~)
           ::
+            :-  'suspend & revive: got done error'
+            ;<  moz=(list move:gall)  bind:m
+              (do-call ~ %idle %mock)
+            ;<  ~  bind:m  (ex-moves moz ~)
+            ;<  moz=(list move:gall)  bind:m
+              (do-take [plea-wire ~[/sysduct]] %ames %done `[%fail ~])
+            ;<  ~  bind:m  (ex-moves moz ~)
+            ;<  ~  bind:m
+              (ex-resources %mock [/agent/wire [%ames %keen spar]]^`[%ames %keen ``~] ~)
+            ;<  moz=(list move:gall)  bind:m
+              do-load-mock-super
+            ;<  ~  bind:m
+              %+  ex-moves  moz
+              :~  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
+                  (ex-on-arvo /agent/wire [%ames %sage spar ~])
+              ==
+            (ex-resources %mock ~)
+          ::
             :-  'suspend & revive before got brood'
             ;<  moz=(list move:gall)  bind:m
               (do-call ~ %idle %mock)
@@ -891,7 +909,7 @@
               ==
             (ex-resources %mock enc-res ~)
           ::
-            :-  'suspend & revive'
+            :-  'suspend & revive: got key'
             ;<  moz=(list move:gall)  bind:m
               (do-call ~ %idle %mock)
             ;<  ~  bind:m  (ex-moves moz ~)
