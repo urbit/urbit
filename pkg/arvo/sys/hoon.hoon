@@ -3319,6 +3319,10 @@
   =/  len  (max 32 (met 3 sal))
   (shay len (mix sal (shax ruz)))
 ::
+++  jam-shax                                            ::  sha-256 of jam
+  ~/  %jam-shax
+  |=(* (shax (jam +<)))
+::
 ++  shax                                                ::  sha-256
   ~/  %shax
   |=  ruz=@  ^-  @
