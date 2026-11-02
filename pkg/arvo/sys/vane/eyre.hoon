@@ -1627,6 +1627,9 @@
           :~  ['content-type' (rsh 3 (spat p.mime))]
               ['content-length' (crip (a-co:co p.q.mime))]
               ['cache-control' ?:(fqp 'private, max-age=31536000' 'no-cache')]
+              ['content-disposition' 'attachment']
+              ['x-content-type-options' 'nosniff']
+              ['content-security-policy' 'sandbox']
           ==
         data=[~ q.mime]
     ==
@@ -1700,10 +1703,20 @@
     ?~  u.res  (error-response 404 "no scry result")
     =*  mark   p.u.u.res
     =*  vase   q.u.u.res
+    =/  heads
+      ::  these headers prevent scry responses from rendering as pages in the
+      ::  browser. they could contain malicious client code even though we let
+      ::  it be loaded at essentially arbitrary domains.
+      ::
+      :~  ['content-disposition' 'attachment']
+          ['x-content-type-options' 'nosniff']
+          ['content-security-policy' 'sandbox']
+      ==
     ?:  =(%mime mark)
       =/  =mime  !<(mime vase)
-      %+  instant-data  ruq
-      [200 (rsh 3 (spat p.mime)) q.mime]
+      %^  instant:response  ruq
+        [200 ['content-type' (rsh 3 (spat p.mime))] heads]
+      `q.mime
     ::  attempt to find conversion gate to mime
     ::
     =/  tub=(unit tub=tube:clay)
@@ -1716,8 +1729,9 @@
     =^  cards  state
       ?-  -.mym
         %|  (error-response 500 "failed tube from {(trip mark)} to mime")
-        %&  %+  instant-data  ruq
-            [200 (rsh 3 (spat p.p.mym)) q.p.mym]
+        %&  %^  instant:response  ruq
+              [200 ['content-type' (rsh 3 (spat p.p.mym))] heads]
+            `q.p.mym
       ==
     [cards state]
     ::
