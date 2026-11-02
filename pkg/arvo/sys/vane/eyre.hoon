@@ -1383,13 +1383,21 @@
       ?>  =(%vase p.cag)
       =/  gat=vase  !<(vase q.cag)
       =/  res=toon
-        %-  mock  :_  (look rof [~ ~] /eyre)
-        :_  [%9 2 %0 1]  |.
-        %+  slam
-          %+  slam  gat
-          !>([[now=now eny=eny bek=bek] ~ ~])
-        ::TODO  should get passed the requester's identity
-        !>([authenticated request]:req)
+        %+  mock
+          :_  [%9 2 %0 1]  |.
+          %+  slam
+            %+  slam  gat
+            !>([[now=now eny=eny bek=bek] ~ ~])
+          ::TODO  should get passed the requester's identity
+          !>([authenticated request]:req)
+        =;  ruf=roof  (look ruf [~ ~] /eyre)
+        |=  [lyc=gang pov=path =omen]
+        ::NOTE  .lyc and .pov directly from above
+        ?>  =([~ ~] lyc)
+        ?>  =(/eyre pov)
+        =+  res=(permissioned-scry now rof ``desk.generator.action [~ ~] omen)
+        ::TODO  preserve ~ vs [~ ~] result disambiguation?
+        ?-(-.res %& ``p.res, %| ~)
       ?:  ?=(%2 -.res)
         %-  send-instant-response
         %:  internal-server-error
@@ -4401,19 +4409,9 @@
   ::      which the subscription was opened.
   /(scot %p ship)/[app]/(scot %p from)
 ::
-::REVIEW  mixing two permission/access control modalities...
-++  scry-mime
-  |=  [now=@da rof=roof prov=(unit (unit desk)) =gang ext=(unit @ta) pax=path]
-  |^  ^-  (each mime tape)
-  ::  parse
-  ::
-  =/  u=(unit [view=term bem=beam])
-    ?.  ?=([@ @ @ @ *] pax)    ~
-    ?~  view=(slaw %tas i.t.pax)    ~
-    ?~  path=(expand-path t.t.pax)  ~
-    ?~  beam=(de-beam u.path)       ~
-    `[u.view u.beam]
-  ?~  u  [%| "invalid scry path"]
+++  permissioned-scry
+  |=  [now=@da rof=roof prov=(unit (unit desk)) =gang =omen]
+  ^-  (each cage tape)
   ::  we must have _some_ form of permissioning control
   ::
   ?:  &(?=(~ gang) ?=(~ prov))
@@ -4423,18 +4421,35 @@
   ::
   ?:  ?&  ?=([~ ~ *] prov)
         ::
-          =;  =bond:ward:clay  !(rite:guard:gall our peg.bond u.u)
+          =;  =bond:ward:clay  !(rite:guard:gall our peg.bond omen)
           =+  r=(rof [~ ~] /eyre %cx [our %$ da+now] /bond/[u.u.prov])
           ?>  ?=([~ ~ %bond *] r)
           !<(bond:ward:clay q.u.u.r)
       ==
     [%| "no permission for scry"]
-  ::  perform scry
   ::
-  ?~  res=(rof gang /eyre u.u)  [%| "failed scry"]
-  ?~  u.res                  [%| "no scry result"]
-  =*  mark   p.u.u.res
-  =*  vase   q.u.u.res
+  ?~  res=(rof gang /eyre omen)  [%| "failed scry"]
+  ?~  u.res                   [%| "no scry result"]
+  &+u.u.res
+::
+::REVIEW  mixing two permission/access control modalities...
+++  scry-mime
+  |=  [now=@da rof=roof prov=(unit (unit desk)) =gang ext=(unit @ta) pax=path]
+  |^  ^-  (each mime tape)
+   ::  parse
+  ::
+  =/  u=(unit [view=term bem=beam])
+    ?.  ?=([@ @ @ @ *] pax)    ~
+    ?~  view=(slaw %tas i.t.pax)    ~
+    ?~  path=(expand-path t.t.pax)  ~
+    ?~  beam=(de-beam u.path)       ~
+    `[u.view u.beam]
+  ?~  u  [%| "invalid scry path"]
+  ::
+  =/  res   (permissioned-scry now rof prov gang u.u)
+  ?:  ?=(%| -.res)  res
+  =*  mark  p.p.res
+  =*  vase  q.p.res
   ::  convert to mime via ext
   ::
   =/  dysk  (conversion-desk u.u)
