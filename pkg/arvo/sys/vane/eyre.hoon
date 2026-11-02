@@ -4424,6 +4424,7 @@
   ::
   ?:  ?&  ?=([~ ~ *] prov)
         ::
+          ?:  =(%base u.u.prov)  |
           =;  =bond:ward:clay  !(rite:guard:gall our peg.bond omen)
           =+  r=(rof [~ ~] /eyre %cx [our %$ da+now] /bond/[u.u.prov])
           ?>  ?=([~ ~ %bond *] r)
