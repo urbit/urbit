@@ -926,21 +926,17 @@
       ?:  ?=(%| -.doom.u.doom)
         ?.  risk.state  ~
         `[%| p.doom port]:u.doom
-      ::TODOxx  use +scope-from-turf
-      ::  if requested domain is known, scope is root
+      ::  no target scope
       ::
-      ?:  (~(has in domains.state) p.doom.u.doom)
-        `[%& [p.doom port]:u.doom ~]
-      ::  if requested domain is direct subdomain of known domain,
-      ::  scope is that subdomain interpreted as desk name
+      ?~  scope=(scope-from-turf domains.state p.doom.u.doom)
+        ~
+      ::  scope is root
       ::
-      ?:  ?&  ?=([@ @ *] p.doom.u.doom)
-              (~(has in domains.state) (snip `turf`p.doom.u.doom))  ::NOTE  tmi
-          ==
-        `[%& [(snip `turf`p.doom.u.doom) port.u.doom] `(rear p.doom.u.doom)]
-      ::  else, there is no target scope
+      ?:  ?=([~ ~] scope)  `[%& [p.doom port]:u.doom ~]
+      ::  scope is a direct subdomain of known domain,
+      ::  subdomain interpreted as desk name
       ::
-      ~
+      `[%& [(snip `turf`p.doom.u.doom) port.u.doom] u.scope]
     ?~  proto-target
       %+  instant:response  proto-req
       [[421 ~] `(as-octs:mimes:html 'bad host')]
