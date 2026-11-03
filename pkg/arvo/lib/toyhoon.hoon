@@ -332,6 +332,7 @@
           [$(mold.sin p.mold.sin) $(mold.sin q.mold.sin)]
         :-  %xtra
         :+  %brcl                              ::  |:  [$:- $:+]
+          :+  %ktls  [%noun %noun 0]
           [(kick 2) (kick 3)]
         ::NOTE  intentional implicit crash on non-cells
         :-  (slam (peg 7 2) (waxs 2 6 ~))
