@@ -5495,21 +5495,14 @@
         %rejected  ``noun+!>((~(has in rejected.cors-registry) u.origin))
       ==
     ::
-        [%authenticated %cookie @ ~]
-      ?~  cookies=(slaw %t i.t.t.tyl)  [~ ~]
+        [%authenticated %cookie ?(%secure %insecure) @ ~]
+      ?~  cookies=(slaw %t i.t.t.t.tyl)  [~ ~]
       :^  ~  ~  %noun
       !>  ^-  ?
-      ::TODOxx  take secure flag in scry path?
-      ?|  %+  =<  request-is-authenticated:authentication
-              (per-server-event [eny *duct now rof] server-state.ax)
-            secure=&
-          %*(. *request:http header-list ['cookie' u.cookies]~)
-        ::
-          %+  =<  request-is-authenticated:authentication
-              (per-server-event [eny *duct now rof] server-state.ax)
-            secure=|
-          %*(. *request:http header-list ['cookie' u.cookies]~)
-      ==
+      %+  =<  request-is-authenticated:authentication
+          (per-server-event [eny *duct now rof] server-state.ax)
+        ?=(%secure i.t.t.tyl)
+      %*(. *request:http header-list ['cookie' u.cookies]~)
     ::
         [%'_~_' *]
       ::TODOxx  who would .^ this??
