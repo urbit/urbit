@@ -946,25 +946,25 @@
       [[421 ~] `(as-octs:mimes:html 'bad host')]
     =*  target  u.proto-target
     ::
-    =/  origin=(unit turf)  ::TODO  proto-target type?
-      =/  og  (get-header:http 'origin' headers)
-      ?~  og  ~
-      ?:  =('null' u.og)  ~
-      =/  or=(unit [sec=? port=(unit @ud) doom=(each turf @if)])
-        (rush u.og =>(de-purl:html ;~(plug htts thor)))
-      ?:(?=([~ * * %& *] or) `p.doom.u.or ~)
+    =/  origin  (get-header:http 'origin' headers)
     ::  respond to CORS preeflight requests automatically: allow cross-origin
     ::  GETs, but only allow cross-origin unsafe methods if the two origins
     ::  actually point to the same desk on this ship
     ::
     ?:  ?&  ?=(%'OPTIONS' method.request)
-            ?=(^ (get-header:http 'origin' headers))
+            ?=(^ origin)
             ?=(^ ~(method cors headers))
         ==
       =*  reject  (instant:response proto-req [403 ~] ~)
       ::  options request without origin header is malformed, reject always
       ::
-      ?~  origin  reject
+      ?:  ?|  =('null' u.origin)
+            ::
+              =/  or=(unit [sec=? port=(unit @ud) doom=(each turf @if)])
+                (rush u.origin =>(de-purl:html ;~(plug htts thor)))
+              !?=([~ * * %& *] or)
+          ==
+        reject
       ::  in ip mode, never cross-origin with ourselves, so the origin is
       ::  surely foreign, so we reject.
       ::REVIEWzz  what if it's on the cors-registery?
@@ -980,7 +980,7 @@
       =-  (instant:response proto-req [200 -] ~)
       =-  (murn - same)
       ^-  (list (unit [@t @t]))
-      :~  `'access-control-allow-origin'^(need (get-header:http 'origin' headers))
+      :~  `'access-control-allow-origin'^u.origin
           `'access-control-allow-methods'^u.method
           (bind ~(headers cors headers) (lead 'access-control-allow-headers'))
           ?:  ?=(%drop auth-level)  ~
