@@ -1116,23 +1116,22 @@
       =.  url.request  (cat 3 '/~/holm/jump' url.request)
       .
     ?:  ?=(%holm -.action)
-      ::TODOxx  if %drop but %holm, serve 400?
-      ~?  ?=(%drop +<.auth)  %holm-for-drop-auth--todo-mb-400
+      =/  msg=tape  "holm: fail"
+      =*  fail
+        %-  send-instant-response
+        (error-page 400 & url.request msg)
+      ?:  ?=(%drop +<.auth)
+        =.(msg "holm: cross-origin forbidden" fail)
       =/  session=(unit @uv)
         ?-  +<.auth
           %have             (some sid.auth)
           %negotiate        sid.auth
           %miss             ~
-          %drop             ~
         ==
       =*  drop
         ?~  session  ~
         ['set-cookie' (session-cookie-string:authentication u.session secure ~)]~
       ::
-      =/  msg=tape  "holm: fail"
-      =*  fail
-        %-  send-instant-response
-        (error-page 400 & url.request msg)
       ?:  ?=(%| -.target)
         =.(msg "holm: no domain" fail)
       ::
