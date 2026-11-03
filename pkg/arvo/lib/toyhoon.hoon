@@ -328,14 +328,14 @@
       =-  $(sin -)
       |-  ^-  naty-sugar
       ?^  -.mold.sin
-        :+  %tsls                              ::  =+  [P Q]:MOLD.SIN
+        :+  %tsgr                              ::  =>  [P Q]:MOLD.SIN
           [$(mold.sin p.mold.sin) $(mold.sin q.mold.sin)]
         :-  %xtra
-        :+  %brcl                              ::  |:  [$:-< $:->]
-          [(kick 4) (kick 5)]
+        :+  %brcl                              ::  |:  [$:- $:+]
+          [(kick 2) (kick 3)]
         ::NOTE  intentional implicit crash on non-cells
-        :-  (slam (peg 7 4) (waxs 2 6 ~))
-        (slam (peg 7 5) (waxs 3 6 ~))
+        :-  (slam (peg 7 2) (waxs 2 6 ~))
+        (slam (peg 7 3) (waxs 3 6 ~))
       ?-  -.mold.sin
           %base
         ?-  +.mold.sin
