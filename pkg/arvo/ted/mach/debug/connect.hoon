@@ -1,10 +1,9 @@
 ::  connect to .fief and report every gift until %mach closes it, and
-::  how long that took. .via is ~ if it never connected, else what
-::  %connected said: the domain reached, for a %turf
+::  how long that took. .opened says whether %connected came
 ::
 ::    covers server modes that end the connection themselves (close,
-::    reset) and connects that never open (refused, unresolved, timeout,
-::    failed tls); hangs if the peer keeps the connection open
+::    reset) and connects that never open (refused, timeout); hangs if
+::    the peer keeps the connection open
 ::
 /-  spider
 /+  io=strandio
@@ -13,12 +12,12 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<([~ secure=? =fief] arg)
+=+  !<([~ fief=fief:mach] arg)
 ;<  =bowl:spider  bind:m  get-bowl:io
 =*  start  now.bowl
 =/  wir=wire  /(scot %uv (cut 5 [0 1] eny.bowl))
-;<  ~  bind:m  (send-raw-card:io [%pass wir %arvo %m %connect secure fief])
-=|  via=(unit (unit turf))
+;<  ~  bind:m  (send-raw-card:io [%pass wir %arvo %m %connect wir fief])
+=/  opened=?  |
 =|  bytes=@ud
 |-  ^-  form:m
 =*  loop  $
@@ -26,11 +25,11 @@
 ?.  =(wir wire)
   (strand-fail:strand %wrong-wire >wire< ~)
 ?+  sign-arvo  (strand-fail:strand %unexpected-sign ~)
-  [%mach %connected *]  loop(via `p.sign-arvo)
+  [%mach %connected *]  loop(opened &)
   [%mach %received *]   loop(bytes (add bytes p.octs.sign-arvo))
 ::
     [%mach %closed *]
   ;<  now=@da  bind:m  get-time:io
   %-  pure:m
-  !>([via=via bytes=bytes why=p.sign-arvo took=`@dr`(sub now start)])
+  !>([opened=opened bytes=bytes why=p.sign-arvo took=`@dr`(sub now start)])
 ==

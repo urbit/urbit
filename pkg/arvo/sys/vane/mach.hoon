@@ -11,14 +11,14 @@
     ::
     ::  XX reset to %0 before release; needs fresh dev ships
     +$  mach-state
-      $:  %2
+      $:  %3
           ::  XX  randomize next on init?
           ::      per https://datatracker.ietf.org/doc/html/draft-ietf-tcpm-tcp-security#section-3.1
           ::      could also randomize on %born
           next=@ud
           unix-duct=_`duct`[//mach ~]
-          owners=(map @ud duct)
-          ducts=(map duct @ud)
+          names=(map name [=duct id=@ud])
+          ids=(map @ud name)
       ==
     --
 ::
@@ -39,14 +39,14 @@
   ?-    -.task
       %born
     :-  %+  turn
-          ~(tap by owners)
-        |=  [* =duct]
+          ~(tap by names)
+        |=  [=name =duct id=@ud]
         ^-  move
-        [duct %give %closed %local %reborn]
+        [duct %give %closed name %local %reborn]
     %=  mach-gate
       unix-duct  hen
-      ducts      ~
-      owners     ~
+      names      ~
+      ids        ~
     ==
   ::
       %trim
@@ -54,66 +54,48 @@
     ::  tell each owner, and have the driver close its socket
     :-  %-  zing
         %+  turn
-          ~(tap by owners)
-        |=  [id=@ud =duct]
+          ~(tap by names)
+        |=  [=name =duct id=@ud]
         ^-  (list move)
-        :~  [duct %give %closed %local %trimmed]
+        :~  [duct %give %closed name %local %trimmed]
             [unix-duct %give %close id]
         ==
     %=  mach-gate
-      ducts   ~
-      owners  ~
+      names  ~
+      ids    ~
     ==
   ::
       %vega
     [~ mach-gate]
   ::
       %connect
-    %-  (slog leaf+"mach: %connect {<secure.task>} {<fief.task>}" ~)
-    ::
-    ::  an agent connects on a duct only once its last connection there
-    ::  has closed, so an id still held is stale: the event carrying
-    ::  its %closed crashed. have the driver drop it, and forget it, so
-    ::  a later %closed for it is ignored
-    =/  old=(unit @ud)  (~(get by ducts) hen)
-    =/  drop=(list move)
-      ?~  old  ~
-      %-  (slog leaf+"mach: %connect replaces connection {<u.old>}" ~)
-      [unix-duct %give %close u.old]~
-    =?  owners  ?=(^ old)  (~(del by owners) u.old)
-    =.  ducts   (~(del by ducts) hen)
-    ::
-    ::  certificates name hosts, so tls needs a domain
-    ?:  &(secure.task !?=(%turf -.fief.task))
-      %-  (slog leaf+"mach: tls needs a %turf" ~)
-      [(snoc drop [hen %give %closed %tls %invalid]) mach-gate]
-    =*  id      next
-    =.  next    +(next)
-    =.  ducts   (~(put by ducts) [hen id])
-    =.  owners  (~(put by owners) [id hen])
-    :_  mach-gate
-    (snoc drop [unix-duct %give %connect id secure.task fief.task])
+    %-  (slog leaf+"mach: %connect {<name.task>} {<addr.task>}" ~)
+    ?:  (~(has by names) name.task)
+      ::  existing connection stays open
+      %-  (slog leaf+"mach: {<name.task>} taken" ~)
+      [[hen %give %closed name.task %connect %taken]~ mach-gate]
+    =.  names  (~(put by names) name.task [hen next])
+    =.  ids    (~(put by ids) next name.task)
+    :-  [unix-duct %give %connect next addr.task]~
+    mach-gate(next +(next))
   ::
-      %send
-    %-  (slog leaf+"mach: %send {<p.octs.task>} bytes" ~)
-    ?.  (~(has by ducts) hen)
-      ::  XX print duct
-      %-  (slog leaf+"mach: no connection" ~)
+      ?(%send %close)
+    =/  nam=name
+      ?-  -.task
+        %send   name.task
+        %close  name.task
+      ==
+    =/  con  (~(get by names) nam)
+    ?~  con
+      %-  (slog leaf+"mach: {<-.task>} on {<nam>}, no connection" ~)
       [~ mach-gate]
-    =*  id  (~(got by ducts) hen)
-    :_  mach-gate
-    :~  [unix-duct %give %send id octs.task]
-    ==
-  ::
-      %close
-    %-  (slog leaf+"mach: %close" ~)
-    ?.  (~(has by ducts) hen)
-      ::  XX print duct
-      %-  (slog leaf+"mach: no connection" ~)
+    ?.  =(hen duct.u.con)
+      %-  (slog leaf+"mach: {<-.task>} on {<nam>}, not from owner" ~)
       [~ mach-gate]
-    =*  id  (~(got by ducts) hen)
     :_  mach-gate
-    :~  [unix-duct %give %close id]
+    ?-  -.task
+      %send   [unix-duct %give %send id.u.con octs.task]~
+      %close  [unix-duct %give %close id.u.con]~
     ==
   ::
       ?(%closed %opened %received)
@@ -121,28 +103,27 @@
       ::  XX crash here? would reject bad events from log
       %-  (slog leaf+"mach: {<-.task>} on bad duct {<hen>}" ~)
       [~ mach-gate]
-    =*  id  id.task
-    =/  owner=(unit duct)  (~(get by owners) id)
-    ?~  owner
+    =/  id=@ud
+      ?-  -.task
+        %opened    id.task
+        %received  id.task
+        %closed    id.task
+      ==
+    =/  nam=(unit name)  (~(get by ids) id)
+    ?~  nam
       %-  (slog leaf+"mach: {<-.task>} on old connection, ignoring" ~)
       [~ mach-gate]
+    =*  owner  duct:(~(got by names) u.nam)
     ?-   -.task
         %opened
-      :_  mach-gate
-      :~  [u.owner %give %connected p.task]
-      ==
+      [[owner %give %connected u.nam]~ mach-gate]
     ::
         %received
-      :_  mach-gate
-      :~  [u.owner %give %received octs.task]
-      ==
+      [[owner %give %received u.nam octs.task]~ mach-gate]
     ::
         %closed
-      =.  ducts   (~(del by ducts) u.owner)
-      =.  owners  (~(del by owners) id)
-      :_  mach-gate
-      :~  [u.owner %give %closed p.task]
-      ==
+      :-  [owner %give %closed u.nam p.task]~
+      mach-gate(names (~(del by names) u.nam), ids (~(del by ids) id))
     ==
   ==
 ::
@@ -154,9 +135,9 @@
 ::
 ::  +scry: view state
 ::
-::    %a  /connections   list open connections
-::    %d  /owner/<id>    get the duct that opened a connection
-::    %u  /<id>          does a connection exist
+::    %a  /connections     list open connections by name
+::    %d  /owner/<name>    get the duct that opened a connection
+::    %u  /<name>          does a connection exist
 ++  scry
   ^-  roon
   |=  [lyc=gang pov=path car=term bem=beam]
@@ -181,30 +162,22 @@
     ^-  (unit (unit cage))
     ?.  ?=([%connections ~] s.bem)
       [~ ~]
-    ``[%noun !>(`(list @ud)`~(tap in ~(key by owners)))]
+    ``[%noun !>(`(list name)`~(tap in ~(key by names)))]
   ::
   ::  +read-d: get the duct that opened a connection
   ++  read-d
     ^-  (unit (unit cage))
-    ?.  ?=([%owner @ ~] s.bem)
+    ?.  ?=([%owner *] s.bem)
       [~ ~]
-    =/  id=(unit @ud)  (slaw %ud i.t.s.bem)
-    ?~  id
+    =/  con  (~(get by names) t.s.bem)
+    ?~  con
       [~ ~]
-    =/  hen=(unit duct)  (~(get by owners) u.id)
-    ?~  hen
-      [~ ~]
-    ``[%noun !>(u.hen)]
+    ``[%noun !>(duct.u.con)]
   ::
   ::  +read-u: does a connection exist
   ++  read-u
     ^-  (unit (unit cage))
-    ?.  ?=([@ ~] s.bem)
-      [~ ~]
-    =/  id=(unit @ud)  (slaw %ud i.s.bem)
-    ?~  id
-      [~ ~]
-    ``[%noun !>((~(has by owners) u.id))]
+    ``[%noun !>((~(has by names) s.bem))]
   --
 ::
 ++  stay  state
