@@ -1624,12 +1624,16 @@
         =/  =note-arvo
           =/  prov=path  /gall/[agent-name]
           ?-  -.neet
-            %arvo   ?.  ?=([%l *] +.neet)
-                      +.neet
-                    ?+  +.neet
-                      ~|(%nope !!)
+            %arvo   ?+  +.neet  +.neet
                       [%l ?(%spin %shut) *]  +.neet(name [agent-name name.+.neet])
                       [%l %spit *]           +.neet(name [agent-name name.+.neet])
+                    ::
+                      [%m %connect *]        +.neet(name [agent-name name.+.neet])
+                      [%m %send *]           +.neet(name [agent-name name.+.neet])
+                      [%m %close *]          +.neet(name [agent-name name.+.neet])
+                    ::
+                        [%l *]
+                      ~|(%nope !!)
                     ==
             %huck   note-arvo.neet
             %agent  [%g %deal [our ship.neet prov] [name task]:neet]
@@ -1888,6 +1892,22 @@
           =-  sign-arvo(name -)
           ?>  &(?=(^ name.sign-arvo) =(agent-name i.name.sign-arvo))
           t.name.sign-arvo
+        ==
+      =?  sign-arvo  ?=([%mach *] sign-arvo)
+        ?+  sign-arvo
+          ~|(%nope !!)
+        ::
+            [%mach %connected *]
+          ?>  &(?=(^ name.sign-arvo) =(agent-name i.name.sign-arvo))
+          sign-arvo(name t.name.sign-arvo)
+        ::
+            [%mach %received *]
+          ?>  &(?=(^ name.sign-arvo) =(agent-name i.name.sign-arvo))
+          sign-arvo(name t.name.sign-arvo)
+        ::
+            [%mach %closed *]
+          ?>  &(?=(^ name.sign-arvo) =(agent-name i.name.sign-arvo))
+          sign-arvo(name t.name.sign-arvo)
         ==
       =^  maybe-tang  ap-core
         %+  ap-ingest  ~  |.
