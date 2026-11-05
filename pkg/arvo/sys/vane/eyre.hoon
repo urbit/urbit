@@ -43,7 +43,7 @@
 ++  axle
   $:  ::  date: date at which http-server's state was updated to this data structure
       ::
-      date=%~2025.1.31
+      date=%~2026.12.31
       ::  server-state: state of inbound requests
       ::
       =server-state
@@ -4176,8 +4176,6 @@
       =*  headers  headers.response-header.simple-payload.body.u.entry
       =.  headers  (normalize-headers headers)
       ::REVIEWyy  content-length headers behavior
-      ::TODOzz  since this is new behavior, consider applying during migration
-      ::TODOzz  migration should probably _clear_ the whole cache, actually
       ::NOTE  will put in a static x-eyre-auth-info header...
       =.  headers
         %+  fill-headers
@@ -4576,7 +4574,6 @@
     ::  set up always-known domains
     ::
     =.  domains.server-state.ax
-      ::TODO  add to migration
       (~(put in domains.server-state.ax) 'localhost' ~)
     [~ http-server-gate]
   ::  %trim: in response to memory pressure
@@ -5105,7 +5102,6 @@
 ++  http-server-gate  ..$
 ::  +load: migrate old state to new state (called on vane reload)
 ::
-::TODOxx  migrations (auth tokens, bindings, etc)
 ++  load
   =>  |%
       +$  axle-any
@@ -5116,43 +5112,44 @@
             [date=%~2023.4.11 server-state-3]
             [date=%~2023.5.15 server-state-4]
             [date=%~2024.8.20 server-state-4]
-            [date=%~2025.1.31 server-state]
+            [date=%~2025.1.31 server-state-5]
+            [date=%~2026.12.31 server-state]
         ==
       ::
       +$  server-state-0
-        $:  bindings=(list [=binding =duct =action])
+        $:  bindings=(list [=binding-5 =duct =action])
             =cors-registry
             connections=(map duct outstanding-connection-3)
             auth=authentication-state-3
             channel-state=channel-state-2
             domains=(set turf)
-            =http-config
+            http-config=http-config-5
             ports=[insecure=@ud secure=(unit @ud)]
             outgoing-duct=duct
         ==
       ::
       +$  server-state-1
-        $:  bindings=(list [=binding =duct =action])
+        $:  bindings=(list [=binding-5 =duct =action])
             =cors-registry
             connections=(map duct outstanding-connection-3)
             auth=authentication-state-3
             channel-state=channel-state-2
             domains=(set turf)
-            =http-config
+            http-config=http-config-5
             ports=[insecure=@ud secure=(unit @ud)]
             outgoing-duct=duct
             verb=@                                                ::  <-  new
         ==
       ::
       +$  server-state-2
-        $:  bindings=(list [=binding =duct =action])
+        $:  bindings=(list [=binding-5 =duct =action])
             cache=(map url=@t [aeon=@ud val=(unit cache-entry)])  ::  <- new
             =cors-registry
             connections=(map duct outstanding-connection-3)
             auth=authentication-state-3
             channel-state=channel-state-2
             domains=(set turf)
-            =http-config
+            http-config=http-config-5
             ports=[insecure=@ud secure=(unit @ud)]
             outgoing-duct=duct
             verb=@
@@ -5178,14 +5175,14 @@
         ==
       ::
       +$  server-state-3
-        $:  bindings=(list [=binding =duct =action])
+        $:  bindings=(list [=binding-5 =duct =action])
             cache=(map url=@t [aeon=@ud val=(unit cache-entry)])
             =cors-registry
             connections=(map duct outstanding-connection-3)
             auth=authentication-state-3
             channel-state=channel-state-3
             domains=(set turf)
-            =http-config
+            http-config=http-config-5
             ports=[insecure=@ud secure=(unit @ud)]
             outgoing-duct=duct
             verb=@
@@ -5217,18 +5214,65 @@
         ==
       ::
       +$  server-state-4
-        $:  bindings=(list [=binding =duct =action])
+        $:  bindings=(list [=binding-5 =duct =action])
             cache=(map url=@t [aeon=@ud val=(unit cache-entry)])
             =cors-registry
-            connections=(map duct outstanding-connection)
-            auth=authentication-state
-            =channel-state
+            connections=(map duct outstanding-connection-5)
+            auth=authentication-state-5
+            channel-state=channel-state-5
             domains=(set turf)
-            =http-config
+            http-config=http-config-5
             ports=[insecure=@ud secure=(unit @ud)]
             outgoing-duct=duct
             verb=@
         ==
+      ::
+      ::TODO  rewrite as change on latest types where possible?
+      +$  server-state-5
+        $:  bindings=(list [binding=binding-5 =duct =action])
+            cache=(map url=@t [aeon=@ud val=(unit cache-entry)])
+            =cors-registry
+            connections=(map duct outstanding-connection-5)
+            auth=authentication-state-5
+            channel-state=channel-state-5
+            domains=(set turf)
+            http-config=http-config-5
+            ports=[insecure=@ud secure=(unit @ud)]
+            outgoing-duct=duct
+            verb=@
+            check-session-timer=_|
+        ==
+      +$  http-config-5
+        $:  secure=(unit [key=wain cert=wain])
+            proxy=_|
+            log=?
+            redirect=?
+        ==
+      +$  binding-5  [site=(unit @t) path=(list @t)]
+      +$  outstanding-connection-5
+        $:  =action
+            =inbound-request
+            [session-id=@uv identity=identity-5]
+            response-header=(unit response-header:http)
+            bytes-sent=@ud
+        ==
+      +$  authentication-state-5
+        $:  sessions=(map @uv session-5)
+            visitors=(map @uv visitor)
+            visiting=(map ship logbook)
+            endpoint=[user=(unit @t) auth=(unit @t) =time]
+        ==
+      +$  channel-state-5
+        $:  session=(map @t channel-5)
+            duct-to-key=(map duct @t)
+        ==
+      +$  channel-5  _%*(. *channel identity *identity-5)
+      +$  session-5
+        $:  identity=identity-5
+            expiry-time=@da
+            channels=(set @t)
+        ==
+      +$  identity-5  _who:*identity
       --
   |=  old=axle-any
   ^+  http-server-gate
@@ -5294,48 +5338,116 @@
   ::  each session and channel
   ::
       %~2023.4.11
-    !!  ::TODOxx
-    :: %=  $
-    ::   date.old  %~2023.5.15
-    :: ::
-    ::     connections.old
-    ::   %-  ~(run by connections.old)
-    ::   |=  outstanding-connection-3
-    ::   ^-  outstanding-connection
-    ::   !!  ::TODOxx
-    ::   :: [action inbound-request [*@uv [%ours ~]] response-header bytes-sent]
-    :: ::
-    ::     auth.old
-    ::   :_  [~ ~ [~ ~ now]]
-    ::   %-  ~(run by sessions.auth.old)
-    ::   |=  s=session-3
-    ::   ^-  session
-    ::   [[%ours ~] s]
-    :: ::
-    ::     session.channel-state.old
-    ::   %-  ~(run by session.channel-state.old)
-    ::   |=  c=channel-3
-    ::   ^-  channel
-    ::   [-.c [%ours ~] +.c]
-    :: ==
-  ::
-  ::  adds /~/boot, /~/sponsor and /~/ip (later deprecated by general /~ resolution)
-  ::
-      %~2023.5.15
     %=  $
-        date.old  %~2024.8.20
+      date.old  %~2023.5.15
+    ::
+        connections.old
+      %-  ~(run by connections.old)
+      |=  outstanding-connection-3
+      ^-  outstanding-connection-5
+      [action inbound-request [*@uv [%ours ~]] response-header bytes-sent]
+    ::
+        auth.old
+      :_  [~ ~ [~ ~ now]]
+      %-  ~(run by sessions.auth.old)
+      |=  s=session-3
+      ^-  session-5
+      [[%ours ~] s]
+    ::
+        session.channel-state.old
+      %-  ~(run by session.channel-state.old)
+      |=  c=channel-3
+      ^-  channel-5
+      [-.c [%ours ~] +.c]
     ==
   ::
+  ::  added /~/boot, /~/sponsor and /~/ip,
+  ::  but those were later deprecated by general /~ resolution
+  ::
+      %~2023.5.15
+    %=($ date.old %~2024.8.20)
+  ::
       %~2024.8.20
-    !!  ::TODOxx  migrations
-    :: %=  $
-    ::   date.old  %~2025.1.31
-    ::   verb.old  [verb.old check-session-timer=&]
-    :: ==
+    %=  $
+      date.old  %~2025.1.31
+      verb.old  [verb.old check-session-timer=&]
+    ==
+  ::
+  ::  eyre security migration, dropping all cache entries, changing binding
+  ::  and session/identity types
   ::
       %~2025.1.31
-    http-server-gate(ax old)
+    =;  new=server-state  $(old [%~2026.12.31 new])
+    :*
+      ^=  bindings
+      ::  kernel bindings got removed from the binding map,
+      ::  and get resolved specially
+      ::
+      %+  murn  bindings.old
+      |=  [binding=binding-5 =duct =action]
+      ^-  (unit [^binding _duct $>(?(%app %gen) ^action)])
+      ?:  ?=([?(%'~' %'~_~' %'_~_') *] path.binding)  ~
+      ?.  ?=(?(%app %gen) -.action)  ~
+      `[path.binding duct action]
+    ::
+      ^=  cache
+      ::  we can't recover the original desk to add it,
+      ::  so we drop cache entries wholesale,
+      ::  but must take care not to lose the aeons,
+      ::  and increment them if we make a change
+      ::
+      %-  ~(run by cache.old)
+      |=  [aeon=@ud val=(unit cache-entry)]
+      [?~(val aeon +(aeon)) ~]
+    ::
+      cors-registry.old
+    ::
+      ^=  connections
+      ::  instead of the $inbound-request, we store an $unpacked-request.
+      ::  we can safely assume a specific $auth-res
+      ::
+      %-  ~(run by connections.old)
+      |=  outstanding-connection-5
+      ^-  outstanding-connection
+      =,  inbound-request
+      :-  [secure request authenticated auth-res=[`%cookie %have session-id [identity ~]]]
+      [action response-header bytes-sent]
+    ::
+      ^=  auth
+      ::  tmp auth tokens were added
+      ::
+      =,  auth.old
+      :*  %-  ~(run by sessions.auth.old)
+          |=(session-5 `session`[[identity ~] &+~ expiry-time channels])
+          authlets=~
+        ::
+          visitors
+          visiting
+          endpoint
+      ==
+    ::
+      ^=  channel-state
+      :_  duct-to-key.channel-state.old
+      %-  ~(run by session.channel-state.old)
+      |=(c=channel-5 c(identity [identity.c ~]))
+    ::
+      (~(put in domains.old) /localhost)
+      risk=|
+    ::
+      ^=  http-config
+      :_  [log redirect]:http-config.old
+      ?~  secure.http-config.old  ~
+      ::REVIEW  wildcard sanity
+      [[/$ u.secure.http-config.old] ~ ~]
+    ::
+      ports.old
+      outgoing-duct.old
+      verb.old
+      check-session-timer.old
+    ==
   ::
+      %~2026.12.31
+    http-server-gate(ax old)
   ==
 ::  +stay: produce current state
 ::

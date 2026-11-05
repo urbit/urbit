@@ -3513,6 +3513,7 @@
         ::   Note: requires certificate.
         ::
         redirect=?
+        ::TODO  risk?
     ==
   :: +vere-config: full http-server configuration for vere's consumption
   ::
