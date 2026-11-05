@@ -10433,6 +10433,8 @@
                        dext(sut q.sut, ref q.ref, seg ~, reg ~)
                    ==
         [%core *]  ?.  ?=([%core *] ref)  sint
+                   =.  seg  ~
+                   =.  reg  ~
                    ?:  =(q.sut q.ref)  dext(sut p.sut, ref p.ref)
                    ?&  =(q.p.q.sut q.p.q.ref)  ::  same wet/dry
                        meet(sut q.q.sut, ref p.sut)
