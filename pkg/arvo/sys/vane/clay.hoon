@@ -410,6 +410,79 @@
 ::  %utilities
 ::
 |%
+++  from-commit
+  |_  [syd=desk lat=(map lobe page) =yoki]
+  ++  sys-kelvin
+    ^-  waft
+    |^  ?-    -.yoki
+            %|
+          %-  lobe-to-waft
+          ~>  %mean.(cat 3 'clay: missing /sys/kelvin on ' syd)
+          ~|  ~(key by q.p.yoki)
+          (~(got by q.p.yoki) /sys/kelvin)
+        ::
+            %&
+          =/  fil=(each page lobe)
+            ~>  %mean.(cat 3 'clay: missing /sys/kelvin on ' syd)
+            ~|  ~(key by q.p.yoki)
+            (~(got by q.p.yoki) /sys/kelvin)
+          ?-    -.fil
+              %&  (page-to-waft p.fil)
+              %|  (lobe-to-waft p.fil)
+          ==
+        ==
+    ::
+    ++  lobe-to-waft
+      |=  =lobe
+      ^-  waft
+      =/  peg=(unit page)  (~(get by lat) lobe)
+      ?~  peg  ~|([%sys-kelvin-tombstoned syd] !!)
+      (page-to-waft u.peg)
+    ::
+    ++  page-to-waft
+      |=  =page
+      ^-  waft
+      ?+    p.page  ~|(clay-bad-kelvin-mark/p.page !!)
+          %kelvin  ;;(waft q.page)
+          %mime    (cord-to-waft q.q:;;(mime q.page))
+      ==
+    --
+  ::
+  ++  desk-seal
+    ^-  (set perm:gall)
+    |^  ?-  -.yoki
+            %|
+          ?~  per=(~(get by q.p.yoki) /desk/seal)
+            *(set perm:gall)
+          %-  silt
+          +:(lobe-to-seal (~(got by q.p.yoki) /desk/seal))  ::  return lobe
+        ::
+            %&
+          ?~  lob=(~(get by q.p.yoki) /desk/seal)
+            *(set perm:gall)
+          %-  silt
+          ?-  -.u.lob
+            %|  +:(lobe-to-seal p.u.lob)
+            %&  +:(page-to-seal p.u.lob)
+          ==
+        ==
+    ::
+    ++  lobe-to-seal
+      |=  =lobe
+      ^-  seal
+      ?~  peg=(~(get by lat) lobe)
+        ~|([%desk-seal-tombstoned syd] !!)
+      (page-to-seal u.peg)
+    ::
+    ++  page-to-seal
+      |=  =page
+      ^-  seal
+      ?+  p.page  ~|(clay-bad-seal-mark+p.page !!)
+        %seal  ;;(seal q.page)
+        %mime  !<(seal (slap !>([%0 ~]) (ream q.q:;;(mime q.page))))
+      ==
+    --
+  --
 ::  +sort-by-head: sorts alphabetically using the head of each element
 ::
 ++  sort-by-head
@@ -1234,6 +1307,7 @@
   |=  [now=@da rof=roof hen=duct raft]
   ~/  %de-in
   |=  [her=ship syd=desk]
+  ~|  +<
   ::  NB: ruf=raft crashes in the compiler
   ::
   =*  ruf  |3.+6.^$
@@ -1362,40 +1436,7 @@
   ::
   ++  get-kelvin
     |=  =yoki
-    ^-  waft
-    |^  ?-    -.yoki
-            %|
-          %-  lobe-to-waft
-          ~>  %mean.(cat 3 'clay: missing /sys/kelvin on ' syd)
-          ~|  ~(key by q.p.yoki)
-          (~(got by q.p.yoki) /sys/kelvin)
-        ::
-            %&
-          =/  fil=(each page lobe)
-            ~>  %mean.(cat 3 'clay: missing /sys/kelvin on ' syd)
-            ~|  ~(key by q.p.yoki)
-            (~(got by q.p.yoki) /sys/kelvin)
-          ?-    -.fil
-              %&  (page-to-waft p.fil)
-              %|  (lobe-to-waft p.fil)
-          ==
-        ==
-    ::
-    ++  lobe-to-waft
-      |=  =lobe
-      ^-  waft
-      =/  peg=(unit page)  (~(get by lat.ran) lobe)
-      ?~  peg  ~|([%sys-kelvin-tombstoned syd] !!)
-      (page-to-waft u.peg)
-    ::
-    ++  page-to-waft
-      |=  =page
-      ^-  waft
-      ?+    p.page  ~|(clay-bad-kelvin-mark/p.page !!)
-          %kelvin  ;;(waft q.page)
-          %mime    (cord-to-waft q.q:;;(mime q.page))
-      ==
-    --
+    ~(sys-kelvin from-commit syd lat.ran yoki)
   ::
   ::  +get-seal: read the desk's current required permissions from /seal/desk
   ::  +seal-at-commit: read required permissions from target commit
@@ -1403,38 +1444,7 @@
   ++  get-seal  (seal-at-commit [%| (aeon-to-yaki:ze let.dom)])
   ++  seal-at-commit
     |=  =yoki
-    ^-  (set perm:gall)
-    |^  ?-  -.yoki
-        %|
-      ?~  per=(~(get by q.p.yoki) /desk/seal)
-        *(set perm:gall)
-      %-  silt
-      +:(lobe-to-seal (~(got by q.p.yoki) /desk/seal))  ::  return lobe
-        %&
-      ?~  lob=(~(get by q.p.yoki) /desk/seal)
-        *(set perm:gall)
-      %-  silt
-      ?-  -.u.lob
-        %|  +:(lobe-to-seal p.u.lob)
-        %&  +:(page-to-seal p.u.lob)
-      ==
-    ==
-    ::
-      ++  lobe-to-seal
-        |=  =lobe
-        ^-  seal
-        ?~  peg=(~(get by lat.ran) lobe)
-          ~|([%desk-seal-tombstoned syd] !!)
-        (page-to-seal u.peg)
-      ::
-      ++  page-to-seal
-        |=  =page
-        ^-  seal
-        ?+  p.page  ~|(clay-bad-seal-mark+p.page !!)
-          %seal  ;;(seal q.page)
-          %mime  !<(seal (slap !>([%0 ~]) (ream q.q:;;(mime q.page))))
-        ==
-    --
+    ~(desk-seal from-commit syd lat.ran yoki)
   ::
   ++  send-ward
     |=  =desk
@@ -4971,7 +4981,7 @@
 ::
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 =|                                                    ::  instrument state
-    $:  ver=%17                                       ::  vane version
+    $:  ver=%18                                       ::  vane version
         ruf=raft                                      ::  revision tree
     ==                                                ::
 |=  [now=@da eny=@uvJ rof=roof]                       ::  current invocation
@@ -5354,7 +5364,8 @@
   ::
   =>  |%
       +$  raft-any
-        $%  [%17 raft-17]
+        $%  [%18 raft-18]
+            [%17 raft-17]
             [%16 raft-16]
             [%15 raft-15]
             [%14 raft-14]
@@ -5367,11 +5378,58 @@
             [%7 raft-7]
             [%6 raft-6]
         ==
-      +$  raft-17  raft
+      ::
+      +$  raft-18  raft
+      ::
+      +$  raft-17
+        $:  rom=room-17
+            hoy=(map ship rung-17)
+            ran=rang
+            mon=(map term beam)
+            hez=(unit duct)
+            cez=(map @ta crew)
+            tyr=(set duct)
+            tur=rock:tire
+            pud=(unit [=desk =yoki])
+            bug=[veb=@ mas=@]
+        ==
+      +$  dome-17
+        $:  let=aeon
+            hit=(map aeon tako)
+            lab=(map @tas aeon)
+            tom=(map tako norm)
+            nor=norm
+            mim=(map path mime)
+            wic=(map weft yoki)
+            liv=zest
+            ren=rein
+        ==
+      +$  room-17
+        $:  hun=duct
+            dos=(map desk dojo-17)
+        ==
+      +$  dojo-17
+        $:  qyx=cult
+            dom=dome-17
+            per=regs
+            pew=regs
+            fiz=melt
+            ese=?
+        ==
+      +$  rung-17  rus=(map desk rede-17)
+      +$  rede-17
+        $:  lim=@da
+            ref=(unit rind)
+            qyx=cult
+            dom=dome-17
+            per=regs
+            pew=regs
+            fiz=melt
+        ==
       ::
       +$  raft-16
         $+  raft-16
-        $:  rom=room
+        $:  rom=room-17
             hoy=(map ship rung-16)
             ran=rang
             mon=(map term beam)
@@ -5390,7 +5448,7 @@
         $:  lim=@da
             ref=(unit rind-16)
             qyx=cult
-            dom=dome
+            dom=dome-17
             per=regs
             pew=regs
             fiz=melt
@@ -5882,7 +5940,8 @@
   =?  old  ?=(%14 -.old)  15+(raft-14-to-15 +.old)
   =?  old  ?=(%15 -.old)  16+(raft-15-to-16 +.old)
   =?  old  ?=(%16 -.old)  17+(raft-16-to-17 +.old)
-  ?>  ?=(%17 -.old)
+  =?  old  ?=(%17 -.old)  18+(raft-17-to-18 +.old)
+  ?>  ?=(%18 -.old)
   ..^^$(ruf +.old)
   ::
   ::  +raft-6-to-7: delete stale ford caches (they could all be invalid)
@@ -6192,7 +6251,7 @@
             dos.rom
           %-  ~(run by dos.rom.raf)
           |=  d=dojo-15
-          d(qyx (cult-15-to-cult qyx.d), dom (dome-13-to-dome-16 dom.d))
+          d(qyx (cult-15-to-cult qyx.d), dom (dome-13-to-dome-17 dom.d))
         ::
             hoy
           %-  ~(run by hoy.raf)
@@ -6202,7 +6261,7 @@
           %=  r
             ref  (bind ref.r rind-15-to-rind)
             qyx  (cult-15-to-cult qyx.r)
-            dom  (dome-13-to-dome-16 dom.r)
+            dom  (dome-13-to-dome-17 dom.r)
           ==
         ==
     ::
@@ -6215,10 +6274,10 @@
       ^-  [wove (set duct)]
       [w(rove (rove-15-to-rove rove.w)) s]
     ::
-    ++  dome-13-to-dome-16
+    ++  dome-13-to-dome-17
       |=  d=dome-13
-      ^-  dome
-      [let hit lab tom nor mim wic liv ren peg=~ peq=~ pew=~]:d  ::TODO  perms not in dome-16
+      ^-  dome-17
+      [let hit lab tom nor mim wic liv ren]:d
     ::
     ++  rove-15-to-rove
       |=  r=rove-15
@@ -6255,18 +6314,16 @@
             tur.raf
             pud.raf
             bug.raf
-            pes=~  ::TODO  not in 17
-            waw=*writ:ward  ::TODO  not in 17
         ==
     ::
     ++  rung-16-to-rung
       |=  r=rung-16
-      ^-  rung
+      ^-  rung-17
       [rus=(~(run by rus.r) rede-16-to-rede)]
     ::
     ++  rede-16-to-rede
       |=  r=rede-16
-      ^-  rede
+      ^-  rede-17
       r(ref (bind ref.r rind-16-to-rind))
     ::
     ++  rind-16-to-rind
@@ -6284,37 +6341,46 @@
         `[kind.u.busy.u path.u.busy.u]
       ==
     --
-  ::
-  ::TODO  17-to-18
-  :: ++  raft-17-to-18
-  ::   |=  raf=raft-17
-  ::   ::  add granted, required and blocking perms to dome,
-  ::   ::  and perm subscribers & updates to raft.
-  ::   ::
-  ::   |^  ^-  raft-18
-  ::       %=  raf
-  ::           dos.rom
-  ::         %-  ~(run by dos.rom.raf)
-  ::         |=  d=dojo-17
-  ::         d(dom (dome-17-to-dome-18 dom.d))
-  ::       ::
-  ::           hoy
-  ::         %-  ~(run by hoy.raf)
-  ::         |=  r=rung-17
-  ::         %-  ~(run by rus.r)
-  ::         |=  r=rede-17
-  ::         %=  r
-  ::           dom  (dome-17-to-dome-18 dom.r)
-  ::         ==
-  ::       ::
-  ::           bug
-  ::         [bug.raf pes=~ waw=~]
-  ::       ==
-  ::   ::
-  ::   ++  dome-17-to-dome-18
-  ::     |=  d=dome-17
-  ::     ^-  dome
-  ::     d(ren [ren.d peg=~ peq=~ pew=~])
+    ::
+  ++  raft-17-to-18
+    |=  raf=raft-17
+    ::  add granted, required and blocking perms to dome,
+    ::  and perm subscribers & updates to raft.
+    ::
+    |^  ^-  raft-18
+        %=  raf
+            dos.rom
+          %-  ~(urn by dos.rom.raf)
+          |=  [=desk d=dojo-17]
+          d(dom (dome-17-to-dome-18 desk dom.d &))
+        ::
+            hoy
+          %-  ~(run by hoy.raf)
+          |=  r=rung-17
+          %-  ~(urn by rus.r)
+          |=  [=desk r=rede-17]
+          %=  r
+            dom  (dome-17-to-dome-18 desk dom.r |)
+          ==
+        ::
+            bug
+          [bug.raf pes=~ waw=*writ:ward]
+        ==
+    ::
+    ++  dome-17-to-dome-18
+      |=  [=desk d=dome-17 grant-perms=?]
+      ^-  dome
+      =;  pes=(set perm:gall)
+        d(ren [ren.d peg=pes peq=~ pew=~])
+      ::  if we want to grant perms for this (local) desk,
+      ::  and it has a pending 407 commit,
+      ::  read the /desk/seal file for required permissions and grant them.
+      ::REVIEW  clever or precarious?
+      ::
+      ?.  grant-perms  ~
+      ?~  yok=(~(get by wic.d) [%zuse 407])  ~
+      ~(desk-seal from-commit desk lat.ran.raf u.yok)
+    --
   --
 ::
 ++  scry                                              ::  inspect
@@ -6471,7 +6537,7 @@
 ++  stay
   ^-  raft-any:load
   :-  ver
-  ^-  raft-17:load
+  ^-  raft-18:load
   ruf
 ::
 ++  take                                              ::  accept response
