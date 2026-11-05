@@ -2059,6 +2059,14 @@
       =/  with-eauth=(unit ?)
         ?:  =(~ eauth-url:eauth)  ~
         `?=(^ (get-header:http 'eauth' args.request-line))
+      ::  drop weird redirect params, only absolute url paths allowed
+      ::TODO  could be (sane %ta) check?
+      ::
+      ?:  ?|  &(?=(^ target-desk) !((sane %tas) u.target-desk))
+              &(?=(^ redirect) |(!=('/' (end 3^1 u.redirect)) !((sane %t) u.redirect)))
+          ==
+        %+  instant:response  req
+        (login-page 400 [~ ~] our identity with-eauth %.n)
       ::  all /~/login requests on subdomains must redirect to root,
       ::  which is the only legitimate place for authentication requests
       ::
@@ -2102,6 +2110,14 @@
       ::
       =/  target-desk=(unit @t)  (get-header:http 'desk' u.parsed)
       =/  redirect=(unit @t)     (get-header:http 'redirect' u.parsed)
+      ::  drop weird redirect params, only absolute url paths allowed
+      ::TODO  could be (sane %ta) check?
+      ::
+      ?:  ?|  &(?=(^ target-desk) !((sane %tas) u.target-desk))
+              &(?=(^ redirect) |(!=('/' (end 3^1 u.redirect)) !((sane %t) u.redirect)))
+          ==
+        %+  instant:response  req
+        (login-page 400 [~ ~] our identity with-eauth %.n)
       ?^  (get-header:http 'eauth' u.parsed)
         ?~  ship=(biff (get-header:http 'name' u.parsed) (cury slaw %p))
           %+  instant:response  req
@@ -2200,6 +2216,8 @@
         =/  redirect=(unit @t)
           %+  get-header:http  'redirect'
           args:(parse-request-line url.request.req)
+        =?  redirect  &(?=(^ redirect) |(!=('/' (end 3^1 u.redirect)) !((sane %t) u.redirect)))
+          ~
         :*  response-header=[303 ['location' (fall redirect '/~/login')]~]
             data=~
         ==
