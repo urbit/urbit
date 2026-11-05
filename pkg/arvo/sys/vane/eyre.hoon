@@ -2498,6 +2498,7 @@
         "urbauth-{(scow %p our)}={(scow %uv sid)}; "  ::  local key, value
         "Path=/; "                                    ::  required by __Host-
         ?:(secure "Secure; " "")                      ::  required by __Host-
+        "HttpOnly; "                                  ::  defense-in-depth
         "SameSite=Lax; "                              ::  defense-in-depth
         "Max-Age={max-age}; "                         ::  lifetime
       ==
