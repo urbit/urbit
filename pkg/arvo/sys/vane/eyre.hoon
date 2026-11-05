@@ -688,6 +688,35 @@
             }
             '''
   ==
+::  +logout-page: page w/ logout button
+::
+++  logout-page
+  |=  [code=@ud redirect-url=(unit @t)]
+  ^-  simple-payload:http
+  =+  redirect-str=?~(redirect-url "" (trip u.redirect-url))
+  %^  eyre-html  code
+    :~
+      ;title:"Urbit"
+      ;style:"{(trip auth-styling)}"
+    ==
+  ;body
+    ;div
+      ;p:"Urbit ID"
+      ;form(action "/~/logout", method "post", enctype "application/x-www-form-urlencoded")
+        ;label(for "all")
+          ;input
+            =type     "checkbox"
+            =id       "all"
+            =name     "all"
+            =value    "all"
+            =style    "width: auto;";
+          ; Log me out on all devices
+        ==
+        ;input(type "hidden", name "redirect", value redirect-str);
+        ;button(type "submit"):"Log Out"
+      ==
+    ==
+  ==
 ::  +eauth-error-page: render an eauth error reporting page
 ::
 ::    optionally redirects the user back to either the login page if we're
@@ -1361,7 +1390,7 @@
       (rap 3 sum ck '=' cv ~)
     ::
     ?-    -.action
-      %logout   (handle-logout:authentication req)
+      %logout   (handle-logout:authentication req target)
       %eauth    (on-request:eauth:authentication req target)
       %channel  (handle-request:by-channel req)
       %scry     (handle-scry req)
@@ -2208,8 +2237,34 @@
     ::  +handle-logout: handles an http request for logging out
     ::
     ++  handle-logout
-      |=  req=unpacked-request
+      |=  $:  req=unpacked-request
+              target=(each [[domain=turf port=(unit @ud)] desk=(unit desk)] [ip=@if port=(unit @ud)])
+          ==
       ^-  [(list move) server-state]
+      =*  request  request.req
+      ::  all /~/logout requests on subdomains must redirect to root,
+      ::  which is the only legitimate place for authentication requests
+      ::
+      ?:  ?=([%& * ^] target)
+          %+  instant:response  req
+          =/  next=@t
+            %+  rap  3
+            :~  '//'
+                (host-string -.p.target)
+                url.request
+            ==
+          [[303 ['location' next]~] data=~]
+      ::
+      ?:  ?=(%'GET' method.request)
+        (instant:response req (logout-page 200 ~))
+      ?.  ?=(%'POST' method.request)
+        (instant:response req (logout-page 405 ~))
+      ?~  body.request
+        (instant:response req (logout-page 400 ~))
+      =/  parsed=(unit (list [key=@t value=@t]))
+        (rush q.u.body.request yquy:de-purl:html)
+      ?~  parsed
+        (instant:response req (logout-page 400 ~))
       ::  whatever we end up doing, we always respond with a redirect
       ::
       =/  payload=simple-payload:http
@@ -2226,15 +2281,12 @@
       ::  sid: which session do we log out? (defaults to requester's)
       ::  hos: host to log out from, for eauth logins (sid signifies the nonce)
       ::
-      =/  arg=header-list:http
-        ?~  body.request.req  ~
-        (fall (rush q.u.body.request.req yquy:de-purl:html) ~)
       =/  all=?
-        ?=(^ (get-header:http 'all' arg))
+        ?=(^ (get-header:http 'all' u.parsed))
       =/  sid=(unit @uv)
         =*  siq  (session-id-from-auth authentication.req)
-        ?.  authenticated.req                siq
-        ?~  sid=(get-header:http 'sid' arg)  siq
+        ?.  authenticated.req                     siq
+        ?~  sid=(get-header:http 'sid' u.parsed)  siq
         ::  if you provided the parameter, but it doesn't parse, we just
         ::  no-op. otherwise, a poorly-implemented frontend might result in
         ::  accidental log-outs, which would be very annoying.
@@ -2242,7 +2294,7 @@
         (slaw %uv u.sid)
       =/  hos=(unit @p)
         ?.  authenticated.req  ~
-        (biff (get-header:http 'host' arg) (cury slaw %p))
+        (biff (get-header:http 'host' u.parsed) (cury slaw %p))
       ?~  sid
         (instant:response req payload)
       ::  if this is an eauth remote logout, send the %shut
