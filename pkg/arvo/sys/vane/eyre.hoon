@@ -1362,7 +1362,7 @@
     ::
     ?-    -.action
       %logout   (handle-logout:authentication req)
-      %eauth    (on-request:eauth:authentication req)
+      %eauth    (on-request:eauth:authentication req target)
       %channel  (handle-request:by-channel req)
       %scry     (handle-scry req)
       %name     (handle-name req)
@@ -2888,9 +2888,23 @@
       ::  +on-request: http request to the /~/eauth endpoint
       ::
       ++  on-request
-        |=  req=unpacked-request
+        |=  $:  req=unpacked-request
+                target=(each [[domain=turf port=(unit @ud)] desk=(unit desk)] [ip=@if port=(unit @ud)])
+            ==
         ^-  [(list move) server-state]
         =*  request  request.req
+        ::  all /~/eauth requests on subdomains must redirect to root,
+        ::  which is the only legitimate place for authentication requests
+        ::
+        ?:  ?=([%& * ^] target)
+          %+  instant:response  req
+          =/  next=@t
+            %+  rap  3
+            :~  '//'
+                (host-string -.p.target)
+                url.request
+            ==
+          [[303 ['location' next]~] data=~]
         ::  we may need the requester to log in before proceeding
         ::
         =*  login
