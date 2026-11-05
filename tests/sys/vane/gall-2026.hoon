@@ -92,8 +92,8 @@
   |%
   ++  easy  (make ~)
   +$  arm   ?(%on-init %on-load %on-poke %on-watch %on-leave %on-agent %on-arvo %on-fail)
-  +$  fec   $-(vase (unit card:agent:gall))
-  ++  echo  |=(v=vase `[%pass /echo %agent [~dev %mock] %poke %noun v])
+  +$  fec   $-(vase (list card:agent:gall))
+  ++  echo  |=(v=vase [%pass /echo %agent [~dev %mock] %poke %noun v]~)
   ::
   ++  make  ::  from stock
     |=  a=(list (pair arm fec))
@@ -108,8 +108,10 @@
         :-  %on-poke
         |=  a=vase
         =+  !<([=mark =vase] a)
-        ?.  ?=(%test-card mark)  ~
-        `!<(card:agent:gall vase)
+        ?+  mark  !!
+          %test-card   [!<(card:agent:gall vase) ~]
+          %test-cards  !<((list card:agent:gall) vase)
+        ==
         ::
         a
     ==
@@ -123,7 +125,7 @@
     =/  c
       |=  [a=arm b=vase]
       ^-  (list card:agent:gall)
-      (murn (~(get ja j) a) |=(f=fec (f b)))
+      (zing (turn (~(get ja j) a) |=(f=fec (f b))))
     ^-  agent:gall
     |_  =bowl:gall
     +*  this  .
@@ -327,6 +329,10 @@
 ++  mock-card
   |=  =card:agent:gall
   (do-deal %mock %poke %test-card !>(card))
+::
+++  mock-cards
+  |=  caz=(list card:agent:gall)
+  (do-deal %mock %poke %test-cards !>(caz))
 ::
 ++  a2k-wire
   |=  [=dude:gall =wire deet=(unit *)]
@@ -651,7 +657,7 @@
             :-  'duplicate resource creation'
             %^  do-load  %mock
               %-  make:mock
-              [%on-load |=(* `[%pass /agent/wire %arvo task])]~
+              [%on-load |=(* [%pass /agent/wire %arvo task]~)]~
             [%.y ~]
         ==
       |=  moz=(list move:gall)
@@ -1060,7 +1066,7 @@
   ;<  moz=(list move:gall)  bind:m
     %^  do-load  %mock
       %-  make:mock
-      [%on-load |=(* `[%pass /agent/wire %arvo %behn %rest ~2345.6.7])]~
+      [%on-load |=(* [%pass /agent/wire %arvo %behn %rest ~2345.6.7]~)]~
     [%.y ~]
   ::  expect timer to not be reinflated,
   ::  and not to see a redundant %rest,
@@ -1086,7 +1092,7 @@
   ;<  moz=(list move:gall)  bind:m
     %^  do-load  %mock
       %-  make:mock
-      [%on-agent |=(* `[%pass /agent/wire %arvo %behn %rest ~2345.6.7])]~
+      [%on-agent |=(* [%pass /agent/wire %arvo %behn %rest ~2345.6.7]~)]~
     [%.y ~]
   ::  expect timer to not be reinflated,
   ::  and not to see a redundant %rest,
@@ -1112,7 +1118,7 @@
   ;<  moz=(list move:gall)  bind:m
     %^  do-load  %mock
       %-  make:mock
-      [%on-load |=(* `[%pass /agent/wire %agent [~fun %bar] %leave ~])]~
+      [%on-load |=(* [%pass /agent/wire %agent [~fun %bar] %leave ~]~)]~
     [%.y ~]
   ::  expect +on-agent not to be called,
   ::  and not to see a redundant %leave,
@@ -1139,7 +1145,7 @@
   ;<  moz=(list move:gall)  bind:m
     %^  do-load  %mock
       %-  make:mock
-      [%on-agent |=(* `[%pass /agent/wire2 %agent [~fun %baz] %leave ~])]~
+      [%on-agent |=(* [%pass /agent/wire2 %agent [~fun %baz] %leave ~]~)]~
     [%.y ~]
   ::  expect +on-agent to only be called for the first-kicked sub,
   ::  and not to see a redundant %leave,
@@ -1193,7 +1199,7 @@
   ;<  moz=(list move:gall)  bind:m
     %^  do-load  %mock
       %-  make:mock
-      [%on-arvo |=(* `[%pass /agent/wire %arvo [%lick %shut /mysocket]])]~
+      [%on-arvo |=(* [%pass /agent/wire %arvo [%lick %shut /mysocket]]~)]~
     [%.y ~]
   %+  ex-moves  moz
   :~  (ex-move default-duct %pass /sys/say [%d [%text "gall: bumped %mock"]])
@@ -1519,6 +1525,81 @@
   %+  ex-moves  moz
   :~  (ex-move default-duct %give %unto %poke-ack ~)
       (ex-move ~[/sysduct] %pass gall-wire note)
+  ==
+::
+++  test-re-create-resource
+  %-  eval-mare
+  ;<  *  bind:m  do-load-mock-super
+  ;<  gall-wire=wire  bind:m  (a2k-wire %mock /agent/wire `'id')
+  =/  rav=rave:clay   [%sing %x ud+1 /some/txt]
+  =/  rav2=rave:clay  [%sing %x ud+1 /new/txt]
+  ::
+  ;<  moz=(list move:gall)  bind:m
+    (mock-card %pass /agent/wire %arvo %clay %read 'id' ~zod %desk rav)
+  ;<  ~  bind:m
+    %+  ex-moves  moz
+    :~  (ex-move default-duct %give %unto %poke-ack ~)
+        (ex-move ~[/sysduct] %pass gall-wire [%c %warp ~zod %desk `rav])
+    ==
+  ;<  ~  bind:m
+    %+  ex-resources  %mock
+    :~  [/agent/wire %clay %warp 'id']^`[%clay %warp ~zod %desk rav]
+    ==
+  ::
+  ;<  moz=(list move:gall)  bind:m
+    %-  mock-cards
+    :~  [%pass /agent/wire %arvo %clay %rest 'id']
+        [%pass /agent/wire %arvo %clay %read 'id' ~zod %desk rav2]
+    ==
+  ;<  ~  bind:m
+    %+  ex-moves  moz
+    :~  (ex-move default-duct %give %unto %poke-ack ~)
+        (ex-move ~[/sysduct] %pass gall-wire [%c %warp ~zod %desk ~])
+        (ex-move ~[/sysduct] %pass gall-wire [%c %warp ~zod %desk `rav2])
+    ==
+  %+  ex-resources  %mock
+  :~  [/agent/wire %clay %warp 'id']^`[%clay %warp ~zod %desk rav2]
+  ==
+::
+++  test-add-remove-resource
+  %-  eval-mare
+  ;<  *  bind:m  do-load-mock-super
+  ;<  gall-wire=wire  bind:m  (a2k-wire %mock /agent/wire `~2026.1.2)
+  ::
+  ;<  moz=(list move:gall)  bind:m
+    %-  mock-cards
+    :~  [%pass /agent/wire %arvo %behn %wait ~2026.1.2]
+        [%pass /agent/wire %arvo %behn %rest ~2026.1.2]
+    ==
+  ;<  ~  bind:m
+    %+  ex-moves  moz
+    :~  (ex-move default-duct %give %unto %poke-ack ~)
+        (ex-move ~[/sysduct] %pass gall-wire [%b %wait ~2026.1.2])
+        (ex-move ~[/sysduct] %pass gall-wire [%b %rest ~2026.1.2])
+    ==
+  (ex-resources %mock ~)
+::
+++  test-delete-non-existent-resource
+  %-  eval-mare
+  ;<  *  bind:m  do-load-mock-super
+  ;<  moz=(list move:gall)  bind:m
+    (mock-card %pass /agent/wire %arvo %clay %rest 'id')
+  ;<  ~  bind:m  (ex-resources %mock ~)
+  %+  ex-moves  moz  :~((ex-move default-duct %give %unto %poke-ack ~))
+::
+++  test-dole-resource
+  %-  eval-mare
+  ;<  *  bind:m  do-load-mock-super
+  ;<  gall-wire=wire  bind:m  (a2k-wire %mock /agent/wire `~2026.2.2)
+  ;<  moz=(list move:gall)  bind:m
+    (mock-card %pass /agent/wire %dole %foo %arvo %behn %wait ~2026.2.2)
+  ;<  ~  bind:m
+    %+  ex-resources  %mock
+    :~  [/agent/wire %behn %wait ~2026.2.2]^~
+    ==
+  %+  ex-moves  moz
+  :~  (ex-move default-duct %give %unto %poke-ack ~)
+      (ex-move ~[/sysduct] %pass gall-wire [%b %wait ~2026.2.2])
   ==
 --
 ::
