@@ -10411,7 +10411,7 @@
     ::
     ++  dext
       =<  $
-      ~%  %nest-dext  +  ~
+      ~%  %nest-dext2  +  ~  ::  becomes %nest-dext in %134
       |.
       ^-  ?
       =-  ?:  -  &
