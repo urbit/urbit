@@ -2371,25 +2371,6 @@
       ::  if it's formatted like a valid session cookie, produce it
       ::
       `(unit @)`(rush u.urbauth ;~(pfix (jest '0v') viz:ag))
-    ::  +request-is-authenticated: checks to see if the request is "us"
-    ::
-    ::    We are considered authenticated if this request has an urbauth
-    ::    Cookie for the local identity that is not expired.
-    ::
-    ++  request-is-authenticated
-      |=  [secure=? =request:http]
-      ^-  ?
-      ::  does the request pass a session cookie?
-      ::
-      ?~  session-id=(session-id-from-request secure header-list.request)
-        %.n
-      ::  is this a session that we know about?
-      ::
-      ?~  session=(~(get by sessions.auth.state) `@uv`u.session-id)
-        %.n
-      ::  does this session have our id, and is it still valid?
-      ::
-      &(?=(%ours -.who.identity.u.session) (lte now expiry-time.u.session))
     ::  +start-session: create a new session with %local or %guest identity
     ::
     ::    note that only sessions with the local identity have "scope",
@@ -5685,15 +5666,6 @@
         %approved  ``noun+!>((~(has in approved.cors-registry) u.origin))
         %rejected  ``noun+!>((~(has in rejected.cors-registry) u.origin))
       ==
-    ::
-        [%authenticated %cookie ?(%secure %insecure) @ ~]
-      ?~  cookies=(slaw %t i.t.t.t.tyl)  [~ ~]
-      :^  ~  ~  %noun
-      !>  ^-  ?
-      %+  =<  request-is-authenticated:authentication
-          (per-server-event [eny *duct now rof] server-state.ax)
-        ?=(%secure i.t.t.tyl)
-      %*(. *request:http header-list ['cookie' u.cookies]~)
     ::
         [%'_~_' *]
       ::TODOxx  who would .^ this??
