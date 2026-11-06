@@ -1360,34 +1360,33 @@
       (~(get by cache.state) url.request)
     ?:  &(?=([~ @ ^] cached) ?=(%'GET' method.request))
       (handle-cache-req req +.u.val.u.cached)
-    ::  now that we've finished all the prep, remove authentication-related
+    ::  now that we've finished all the prep, remove eyre-authentication
     ::  headers from the request, to prevent abusive introspection.
     ::  take care to clear both http and https cookie keys.
     ::
     =.  header-list.request.req
       %+  murn  header-list.request.req
-      =/  key=@t
-        (cat 3 'urbauth-' (scot %p our))
       |=  [k=@t v=@t]
       ^-  (unit [@t @t])
       =*  keep  (some k v)
-      ?:  =(k 'authorization')  ~
+      ?:  =(k 'authorization')  ~  ::TODO  reconsider
       ?.  =(k 'cookie')  keep
-      ::TODO  +cock is stricter than spec, if parsing fails we don't cleanup...
-      ?~  cookies=`(unit header-list:http)`(rush v cock:de-purl:html)  keep
-      =.  u.cookies
-        =/  sec=?  |
-        |-
-        =+  new=(delete-header:http key u.cookies)
-        ?.  =(new u.cookies)  $(u.cookies new)
-        ?:  sec  new
-        $(key (cat 3 '__Host-' key), sec &)
-      ?:  =(~ u.cookies)  ~
-      %+  some  k
-      %+  roll  u.cookies
-      |=  [[ck=@t cv=@t] sum=@t]
-      =?  sum  !=('' sum)  (cat 3 sum '; ')
-      (rap 3 sum ck '=' cv ~)
+      ::  strip urbauth cookies from the cookie header, dropping it entirely
+      ::  if that would make it empty. we're very permissive here, retaining
+      ::  all other fields regardless of spec-compliance
+      ::
+      =;  n=(list @t)
+        ?~(n ~ `[k (crip (join '; ' n))])
+      %+  murn
+        ::NOTE  +rash is fine, this never fails to parse
+        %+  rash  v
+        =+  w=(star (mask ' ' '\09' '\0a' ~))
+        ;~(pfix w (most ;~(sfix mic w) (star ;~(less mic next))))
+      =+  p=;~(plug (punt (jest '__Host-')) (jest 'urbauth-~') fed:ag tis)
+      |=  c=tape
+      ^-  (unit @t)
+      ?:  ?|(=("" c) ?=(^ =+((p [1 1] c) q)))  ~
+      `(crip c)
     ::
     ?-    -.action
       %logout   (handle-logout:authentication req target)
