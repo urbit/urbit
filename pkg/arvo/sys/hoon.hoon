@@ -3633,13 +3633,11 @@
 ::
 ++  sha                                                 ::  correct byte-order
   ~%  %sha  ..sha  ~
-  =>  |%
-      ++  flin  |=(a=@ (swp 3 a))                       ::  flip input
-      ++  flim  |=(byts [wid (rev 3 wid dat)])          ::  flip input w= length
-      ++  flip  |=(w=@u (cury (cury rev 3) w))          ::  flip output of size
-      ++  meet  |=(a=@ [(met 3 a) a])                   ::  measure input size
-      --
   |%
+  ++  flin  |=(a=@ (swp 3 a))                           ::  flip input
+  ++  flim  |=(byts [wid (rev 3 wid dat)])              ::  flip input w= length
+  ++  flip  |=(w=@u (cury (cury rev 3) w))              ::  flip output of size
+  ++  meet  |=(a=@ [(met 3 a) a])                       ::  measure input size
   ::
   ::  use with @
   ::
@@ -5454,8 +5452,8 @@
 ::
 ++  co
   !:
-  ~%  %co  ..co  ~
-  =<  |_  lot=coin
+  =<  ~%  %co  ..a-co  ~
+      |_  lot=coin
       ++  rear  |=(rom=tape rend(rep rom))
       ++  rent  ~+  `@ta`(rap 3 rend)
       ++  rend
@@ -5583,7 +5581,8 @@
         ==
       --
   =|  rep=tape
-  =<  |%
+  =<  ~%  %co-digit  ..em-co  ~
+      |%
       ::  rendering idioms, output zero-padded to minimum lengths
       ::
       ::  +a-co: decimal
@@ -5628,6 +5627,7 @@
       ++  y-co  |=(dat=@ ((d-co 2) dat))
       ++  z-co  |=(dat=@ `tape`['0' 'x' ((x-co 1) dat)])
       --
+  ~%  %co-base  ..co  ~
   |%
   ::  +em-co: format in numeric base
   ::
@@ -8253,7 +8253,7 @@
 ::
 ++  ap                                                  ::  hoon engine
   ~%    %ap
-      +>+
+      ..ap
     ==
       %open  open
       %rake  rake
