@@ -1,4 +1,4 @@
-::  connect to .fief and take %received until .want bytes arrive
+::  connect to .addr and take %received until .want bytes arrive
 ::
 ::    for the flood server mode. reports how many bytes and events
 ::    arrived, the largest event (the driver caps them at 1 MiB), and
@@ -11,10 +11,10 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<([~ want=@ud fief=fief:mach] arg)
+=+  !<([~ want=@ud addr=addr:mach] arg)
 ;<  =bowl:spider  bind:m  get-bowl:io
 =/  wir=wire  /(scot %uv (cut 5 [0 1] eny.bowl))
-;<  ~  bind:m  (send-raw-card:io [%pass wir %arvo %m %connect wir fief])
+;<  ~  bind:m  (send-raw-card:io [%pass wir %arvo %m %connect wir addr])
 ;<  [* first=sign-arvo]  bind:m  take-sign-arvo:io
 ?.  ?=([%mach %connected *] first)
   (strand-fail:strand %connection-failed >first< ~)

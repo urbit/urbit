@@ -1,4 +1,4 @@
-::  connect to .fief and report every gift until %mach closes it, and
+::  connect to .addr and report every gift until %mach closes it, and
 ::  how long that took. .opened says whether %connected came
 ::
 ::    covers server modes that end the connection themselves (close,
@@ -12,11 +12,11 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<([~ fief=fief:mach] arg)
+=+  !<([~ addr=addr:mach] arg)
 ;<  =bowl:spider  bind:m  get-bowl:io
 =*  start  now.bowl
 =/  wir=wire  /(scot %uv (cut 5 [0 1] eny.bowl))
-;<  ~  bind:m  (send-raw-card:io [%pass wir %arvo %m %connect wir fief])
+;<  ~  bind:m  (send-raw-card:io [%pass wir %arvo %m %connect wir addr])
 =/  opened=?  |
 =|  bytes=@ud
 |-  ^-  form:m

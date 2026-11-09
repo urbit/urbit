@@ -1,4 +1,4 @@
-::  connect to .fief, send .size bytes, close, and report how it closed
+::  connect to .addr, send .size bytes, close, and report how it closed
 ::
 ::    for the discard and silent server modes. a silent peer never reads,
 ::    so once .size outgrows the socket buffers the driver can't drain
@@ -11,10 +11,10 @@
 |=  arg=vase
 =/  m  (strand ,vase)
 ^-  form:m
-=+  !<([~ size=@ud fief=fief:mach] arg)
+=+  !<([~ size=@ud addr=addr:mach] arg)
 ;<  =bowl:spider  bind:m  get-bowl:io
 =/  wir=wire  /(scot %uv (cut 5 [0 1] eny.bowl))
-;<  ~  bind:m  (send-raw-card:io [%pass wir %arvo %m %connect wir fief])
+;<  ~  bind:m  (send-raw-card:io [%pass wir %arvo %m %connect wir addr])
 ;<  [* first=sign-arvo]  bind:m  take-sign-arvo:io
 ?.  ?=([%mach %connected *] first)
   (strand-fail:strand %connection-failed >first< ~)
