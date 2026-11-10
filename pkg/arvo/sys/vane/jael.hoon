@@ -1268,6 +1268,30 @@
       ``[%noun !>(~)]
     ``[%noun !>((some `@tas`q.u.mat))]
   ::
+      %suit
+    ?.  ?=([@ ~] tyl)
+      [~ ~]
+    ?.  =([%& our] why)
+      [~ ~]
+    =/  who  (slaw %p i.tyl)
+    ?~  who
+      [~ ~]
+    ?:  fak.own.pki.lex
+      ``[%noun !>(~)]
+    =/  pos  (~(get by pos.zim.pki.lex) u.who)
+    ?~  pos
+      ``[%noun !>(~)]
+    =/  key  (~(get by keys.u.pos) life.u.pos)
+    ?~  key
+      ``[%noun !>(~)]
+    ::  +cric is used because it envelops the
+    ::  two extant %b and %c suites, and may be
+    ::  replaced here by any future crypto core
+    ::  that abstracts over all suites
+    ::
+    =/  cek  +<:(com:nu:cric:crypto pass.u.key)
+    ``[%noun !>((some -.cek))]
+  ::
       %vein
     ?.  ?=([@ ~] tyl)  [~ ~]
     ?.  &(?=(%& -.why) =(p.why our))
