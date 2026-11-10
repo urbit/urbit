@@ -1227,6 +1227,47 @@
     ?~  pos  ``[%noun !>(~)]
     ``[%noun !>((some rift.u.pos))]
   ::
+      %dome
+    ?.  ?=([@ ~] tyl)
+      [~ ~]
+    ?.  =([%& our] why)
+      [~ ~]
+    =/  who  (slaw %p i.tyl)
+    ?~  who
+      [~ ~]
+    ?:  fak.own.pki.lex
+      ``[%noun !>(~)]
+    =/  pos  (~(get by pos.zim.pki.lex) u.who)
+    ?~  pos
+      ``[%noun !>(~)]
+    =/  key  (~(get by keys.u.pos) life.u.pos)
+    ?~  key
+      ``[%noun !>(~)]
+    =/  cek  +<:(com:nu:cric:crypto pass.u.key)
+    ::  a +cric $pass encodes its pki
+    ::  domain in the head of its tweak
+    ::
+    ?.  ?=([%c *] cek)
+      ``[%noun !>(~)]
+    ::  XX is bounding .dat just to protect
+    ::     against a failure in the +rub jet?
+    ::
+    =*  dat  dat.tw.pub.cek
+    =/  short=?
+      =/  c=@ud  0
+      |-  ^-  ?
+      ?:  (gth c 20)
+        .n
+      ?:  =(0 (cut 0 [c 1] dat))
+        $(c +(c))
+      .y
+    ?.  short
+      ``[%noun !>(~)]
+    =/  mat  (mole |.((rub 0 dat)))
+    ?~  mat
+      ``[%noun !>(~)]
+    ``[%noun !>((some `@tas`q.u.mat))]
+  ::
       %vein
     ?.  ?=([@ ~] tyl)  [~ ~]
     ?.  &(?=(%& -.why) =(p.why our))
