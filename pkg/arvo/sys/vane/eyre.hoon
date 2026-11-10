@@ -4150,11 +4150,14 @@
     ::   headers
     ::
     ::  if we're responding to a secure request, ensure that the client knows
-    ::  to stick to the secure
+    ::  to stick to the secure. userspace can opt out of this policy by setting
+    ::  an x-eyre-no-uir header in the response
     ::
-    =?  headers  secure
-      ::TODO  if use cases arise, consider omitting if x-eyre-no-uir is present
+    =/  no-uir=?  ?=(^ (get-header:http 'x-eyre-no-uir' headers))
+    =?  headers  &(secure !no-uir)
       ['content-security-policy'^'upgrade-insecure-requests' headers]
+    =?  headers  no-uir
+      (delete-header:http 'x-eyre-no-uir' headers)
     ::  ensure documents are treated as origin-keyed (not site-keyed)
     ::
     ::    browsers aren't _required_ to honor this, but it's defense-in-depth
