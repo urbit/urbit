@@ -2003,13 +2003,11 @@
         ::
         ?~  u.head-auth  [%invalid 'invalid' ~]
         ::  if provided it must match the target scope
+        ::  (even for the ip case, based on the pathowner "scope"!)
         ::
-        ?:  ?=(%& -.target)
-          ?.  =(desk.p.target `desk.u.u.head-auth)  [%invalid 'scope' ~]
-          [%have +.u.u.head-auth]
-        ::REVIEWxx  pathowner checking really necessary?
-        ?:  ?|  ?=(~ pathowner)
-                =(u.pathowner desk.u.u.head-auth)
+        ?:  ?-  -.target
+              %&  =(desk.p.target `desk.u.u.head-auth)
+              %|  |(?=(~ pathowner) =(u.pathowner desk.u.u.head-auth))
             ==
           [%have +.u.u.head-auth]
         [%invalid 'scope' ~]
