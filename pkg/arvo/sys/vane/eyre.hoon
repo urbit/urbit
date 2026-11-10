@@ -1406,14 +1406,21 @@
       =/  cag=cage  (need (need ski))
       ?>  =(%vase p.cag)
       =/  gat=vase  !<(vase q.cag)
+      ::
+      =^  [sid=@uv =identity moves1=(list move)]  state
+        (session-from-auth:authentication authentication.req)
+      =?  +.authentication.req  ?=(%drop +<.authentication.req)
+        [%drop `[sid identity]]
+      =?  +.authentication.req  ?=(%miss +<.authentication.req)
+        [%miss `[sid identity]]
+      ::
       =/  res=toon
         %+  mock
           :_  [%9 2 %0 1]  |.
           %+  slam
             %+  slam  gat
             !>([[now=now eny=eny bek=bek] ~ ~])
-          ::TODO  should get passed the requester's identity
-          !>([authenticated request]:req)
+          !>([identity request.req])
         =;  ruf=roof  (look ruf [~ ~] /eyre)
         |=  [lyc=gang pov=path =omen]
         ::NOTE  .lyc and .pov directly from above
@@ -1440,6 +1447,7 @@
         ==
       =/  result  ;;(simple-payload:http +.p.res)
       ::  ensure we have a valid content-length header
+      ::TODO  consolidate with other content-length behavior
       ::
       ::    We pass on the response and the headers the generator produces, but
       ::    ensure that we have a single content-length header set correctly in

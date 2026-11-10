@@ -2,7 +2,7 @@
 ::  @p request handler
 ::
 |=  [[now=@da eny=@ bek=beak] ~ ~]
-|=  [authorized=? =request:http]
+|=  [=identity:eyre =request:http]
 ^-  simple-payload:http
 =/  url=(unit pork:eyre)
   (rush url.request apat:de-purl:html)

@@ -1,7 +1,7 @@
 ::  :acme domain validation request handler
 ::
 |=  [[now=@da eny=@ bek=beak] ~ ~]
-|=  [authorized=? =request:http]
+|=  [=identity:eyre =request:http]
 ^-  simple-payload:http
 =/  url=(unit (pair pork:eyre quay:eyre))
   %+  rush  url.request
