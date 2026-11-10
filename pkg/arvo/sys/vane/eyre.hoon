@@ -2366,8 +2366,9 @@
         ==
       ?~  urbauth=(get-header:http key u.cookies)
         ~
-      ::TODO  consider returning a (list @uv) mb, there could be multiple
-      ::      relevant cookies in urbauth
+      ::NOTE  if there's multiple identical-key cookies provided,
+      ::      we are content taking the first. on plain http this allows some
+      ::      denial of service shenanigans, but no escalation.
       ::  if it's formatted like a valid session cookie, produce it
       ::
       `(unit @)`(rush u.urbauth ;~(pfix (jest '0v') viz:ag))
