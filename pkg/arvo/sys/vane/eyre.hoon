@@ -929,6 +929,7 @@
       ::
       %+  instant:response  proto-req
       (error-page 400 authenticated.proto-req url.request ~)
+    =/  host=@t  u.host
     ::  parse the hostname from the request, then
     ::  either it's a naked ip address, or we
     ::  deduce the target scope from the known domain, based on known domains
@@ -950,7 +951,7 @@
     =/  proto-target=(unit target)
       ::REVIEW  should just parse earlier?
       =/  doom=(unit [port=(unit @ud) doom=(each turf @if)])
-        (rush u.host thor:de-purl:html)
+        (rush host thor:de-purl:html)
       ?~  doom  ~
       ?:  ?=(%| -.doom.u.doom)
         ?.  risk.state  ~
@@ -998,7 +999,7 @@
       =/  method  ((soft method:http) (need ~(method cors headers)))
       ?~  method  reject
       =/  auth-level
-        (read-auth-level:authentication secure u.host u.method headers)
+        (read-auth-level:authentication secure host u.method headers)
       ?:  ?=([%reject *] auth-level)
         reject
       ::NOTE  200, not 204, to work around browser stupidity
@@ -1096,7 +1097,7 @@
     ::
     =/  auth=auth-res:authentication
       %-  read-auth:authentication
-      [secure u.host target pathowner method.request headers]
+      [secure host target pathowner method.request headers]
     =*  proto-req  `unpacked-request`[secure request | auth]
     ::  if illicit auth was detected, reject the request wholesale
     ::
@@ -1268,7 +1269,7 @@
         =.  authenticated.req     ?=(%ours -.identity.o)
         =^  moz=(list move)  state
           %-  send-instant-response
-          [[303 ['location' (rap 3 '//' u.host url.target.u.authlet ~)]~] ~]
+          [[303 ['location' (rap 3 '//' host url.target.u.authlet ~)]~] ~]
         [[give-session-tokens (weld moz moves.o)] state]
       ==
     ~|  auth=+<.auth
@@ -1284,9 +1285,9 @@
         ?&  authenticated.req
             ?=(~ auth.endpoint.auth.state)
         ==
-      %-  (trace 2 |.("eauth: storing endpoint at {(trip u.host)}"))
+      %-  (trace 2 |.("eauth: storing endpoint at {(trip host)}"))
       :+  user.endpoint.auth.state
-        `(cat 3 ?:(secure 'https://' 'http://') u.host)
+        `(cat 3 ?:(secure 'https://' 'http://') host)
       now
     ::  redirect to https if insecure, redirects enabled
     ::  and secure port live
@@ -1298,7 +1299,7 @@
       =/  location=@t
         %+  rap  3
         :~  'https://'
-            (rash (fall host '') host-sans-port)
+            (rash host host-sans-port)
             ?:  =(443 u.secure.ports.state)
               ''
             (crip ":{(a-co:co u.secure.ports.state)}")
