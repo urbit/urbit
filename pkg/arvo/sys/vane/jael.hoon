@@ -1292,6 +1292,29 @@
     =/  cek  +<:(com:nu:cric:crypto pass.u.key)
     ``[%noun !>((some -.cek))]
   ::
+      %twee
+    ?.  ?=([@ ~] tyl)
+      [~ ~]
+    ?.  =([%& our] why)
+      [~ ~]
+    =/  who  (slaw %p i.tyl)
+    ?~  who
+      [~ ~]
+    ?:  fak.own.pki.lex
+      ``[%noun !>(~)]
+    =/  pos  (~(get by pos.zim.pki.lex) u.who)
+    ?~  pos
+      ``[%noun !>(~)]
+    =/  key  (~(get by keys.u.pos) life.u.pos)
+    ?~  key
+      ``[%noun !>(~)]
+    ::  only a +cric ship carries a tweak for now
+    ::
+    =/  cek  +<:(com:nu:cric:crypto pass.u.key)
+    ?.  ?=([%c *] cek)
+      ``[%noun !>(~)]
+    ``[%noun !>((some tw.pub.cek))]
+  ::
       %vein
     ?.  ?=([@ ~] tyl)  [~ ~]
     ?.  &(?=(%& -.why) =(p.why our))
