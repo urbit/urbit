@@ -80,7 +80,7 @@
 +$  note                                                ::  out request $->
   $~  [%a %plea *ship *plea:ames]                       ::
   $%  $:  %a                                            ::    to %ames
-          $>(%plea task:ames)                           ::  send request message
+          $>(?(%plea %cork) task:ames)                  ::  send request message
       ==                                                ::
       $:  %b                                            ::    to %behn
           $>(%wait task:behn)                           ::  set timer
@@ -538,8 +538,19 @@
     ::
         [%ames %boon *]
       =+  ;;  [%public-keys-result =public-keys-result]  payload.hin
+      =/  sus  ~(. su hen now pki etn)
+      ?:  ?=([%public-keys @ ~] tea)
+        =/  res=(unit ^public-keys-result)
+          (authorized:sus (slav %p i.t.tea) public-keys-result)
+        ?~  res
+          +>.$
+        %-  curd  =<  abet
+        (public-keys:feel:sus pos.zim.pki u.res)
+      ?.  ?=([%public-keys ~] tea)
+        ~&  [%jael-boon-unknown-wire tea]
+        +>.$
       %-  curd  =<  abet
-      (public-keys:~(feel su hen now pki etn) pos.zim.pki public-keys-result)
+      (migrate:sus public-keys-result)
     ::
         [%ames %lost *]
       ::  TODO: better error handling
@@ -562,11 +573,9 @@
         =;  core=_sus
           =.  tim  plea/~
           (curd abet:core)
-        =/  plea=[@tas path %0 term whos=(set @p)]
-          [%j /public-keys %0 %public-keys whos=~]
         %-  ~(rep by mon.zim.pki)
-        |=  [[[hen=duct source=ship] whos=(set ship)] s=_sus]
-        (emit:s hen %pass /public-keys %a %plea source plea(whos whos))
+        |=  [[[* source=ship] whos=(set ship)] s=_sus]
+        (send-plea:s source whos)
       ?>  ?=([%breach @ ~] tea)
       =/  =source-id  (slav %ud i.t.tea)
       =/  =source  (~(got by sources.etn) source-id)
@@ -733,6 +742,79 @@
       sources.etn          (~(put by sources) top-source-id.etn source)
       sources-reverse.etn  (~(put by sources-reverse) source top-source-id.etn)
     ==
+  ::
+  ++  plea-duct  `duct`~[/jael/sources]
+  ::
+  ++  send-plea
+    |=  [who=ship whos=(set ship)]
+    ^+  this-su
+    =/  =plea:ames  [%j /public-keys %0 %public-keys whos]
+    (emit plea-duct %pass /public-keys/(scot %p who) %a %plea who plea)
+  ::
+  ++  authorized
+    |=  [from=ship res=public-keys-result]
+    ^-  (unit public-keys-result)
+    =/  ok  |=(who=ship =([%& from] (get-source who)))
+    ?-    -.res
+        %breach  `res
+        %diff
+      ?:  (ok who.res)  `res
+      ~&  [%jael-unauthorized-diff from=from who=who.res]
+      ~
+        %full
+      =/  [good=(map ship point) bad=(map ship point)]
+        %-  ~(rep by points.res)
+        |=  [[who=ship =point] good=(map ship point) bad=(map ship point)]
+        ?:  (ok who)
+          [(~(put by good) who point) bad]
+        [good (~(put by bad) who point)]
+      ~?  !=(~ bad)
+        [%jael-unauthorized-keys from=from who=~(key by bad)]
+      ?:  =(~ good)  ~
+      `[%full good]
+    ==
+  ::
+  ++  migrate
+    |=  res=public-keys-result
+    ^+  this-su
+    =/  whos=(list ship)
+      ?-  -.res
+        %full    ~(tap in ~(key by points.res))
+        %diff    ~[who.res]
+        %breach  ~[who.res]
+      ==
+    =/  froms=(set ship)
+      %-  ~(gas in *(set ship))
+      %+  murn  whos
+      |=  who=ship
+      =/  sor  (get-source who)
+      ?.(?=(%& -.sor) ~ `p.sor)
+    %-  ~(rep in froms)
+    |=  [from=ship s=_this-su]
+    =/  all=?  =(`[%& from] (~(get by sources.etn) default-source.etn))
+    =/  mine=(set ship)
+      %-  ~(gas in *(set ship))
+      %+  weld
+        (skim whos |=(who=ship =([%& from] (get-source who))))
+      %+  murn  ~(tap by ship-sources.etn)
+      |=  [who=ship id=source-id]
+      ?.  =(`[%& from] (~(get by sources.etn) id))  ~
+      `who
+    ~&  [%jael-migrate-flow from=from]
+    =/  nuke
+      |=  whos=(set ship)
+      ^-  move
+      =/  =plea:ames  [%j /public-keys %0 %nuke whos]
+      [hen %pass /public-keys %a %plea from plea]
+    =?  s  !=(~ mine)  (emit:s (nuke mine))
+    =?  s  all         (emit:s (nuke ~))
+    =.  s  (emit:s hen %pass /public-keys %a %cork from)
+    =?  mon.zim.s  !all
+      %-  ~(rep in mine)
+      |=  [who=ship m=_mon.zim.s]
+      ?.  ?=(%earl (clan:title who))  m
+      (~(put ju m) [plea-duct from] who)
+    (send-plea:s from ?:(all ~ mine))
   ::
   ++  new-event
     |=  =udiffs:point
@@ -911,7 +993,10 @@
             ?^  sponsor.point.i.pointl
               u.sponsor.point.i.pointl
             (^sein:title who.i.pointl)
-          (~(del ju mon.zim) hen^sponsor who.i.pointl)
+          %-  ~(rep by mon.zim)
+          |=  [[k=[duct source=ship] *] m=_mon.zim]
+          ?.  =(sponsor source.k)  m
+          (~(del ju m) k who.i.pointl)
         $(pointl t.pointl)
       ::
       ?:  ?=(%breach -.public-keys-result)
@@ -1009,10 +1094,8 @@
         =.  mon.zim
           %-  ~(rep in whos)
           |=  [=ship m=_mon.zim]
-          (~(put ju m) [hen p.source] ship)
-        %-  emit
-        =/  =plea:ames  [%j /public-keys %0 %public-keys whos]
-        [hen %pass /public-keys %a %plea p.source plea]
+          (~(put ju m) [plea-duct p.source] ship)
+        (send-plea p.source whos)
       (peer p.source whos)
     --
   ::
