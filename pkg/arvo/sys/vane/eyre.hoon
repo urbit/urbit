@@ -136,11 +136,12 @@
 ++  channel-timeout  ~h12
 ::  session-timeout: the delay before an idle session expires
 ::
-++  session-timeout
+++  session-timeout  ^?
   |%
-  ++  auth   ~d30
-  ++  guest  ~d7
+  ++  auth       ~d30
+  ++  guest      ~d7
   ++  new-guest  ~m5
+  ++  tmp        ~s5
   --
 ::  +tmp-token-timeout: the delay before a tmp subdomain auth token expires
 ::
@@ -2062,7 +2063,7 @@
       ?:  ?=(?(%reject %invalid %negotiate) +<.auth)
         ~|(%oops-session-from-rejected-request !!)
       ?-  +<.auth
-        %drop  ?^(tmp.auth [[sid identity ~]:u.tmp.auth state] (start-session %new-guest ~))  ::REVIEWxx
+        %drop  ?^(tmp.auth [[sid identity ~]:u.tmp.auth state] (start-session %tmp ~))
         %miss  ?^(new.auth [[sid identity ~]:u.new.auth state] (start-session %new-guest ~))
         %have  [[sid identity ~]:auth state]
       ==
@@ -2389,7 +2390,7 @@
     ::TODO  maybe should take a =duct or unpacked-request arg so it can do
     ::      the "associate the new session with ..." step
     ++  start-session
-      |=  [identity=?(%new-guest identity) parent=(unit @uv)]
+      |=  [identity=?(%new-guest %tmp identity) parent=(unit @uv)]
       ^-  [[session=@uv =^identity moves=(list move)] server-state]
       ?.  ?|  &(?=(%new-guest identity) ?=(~ parent))
               &(?=(^ identity) ?=(~ scope.identity) ?=(~ parent))
@@ -2399,7 +2400,11 @@
       =;  [key=@uv sid=^identity]
         =/  timeout=@dr
           =,  session-timeout
-          ?:(?=(%fake -.who.sid) new-guest auth)
+          ?-  identity
+            ^           auth
+            %new-guest  new-guest
+            %tmp        tmp
+          ==
         :-  :+  key  sid
             ::  if no session existed previously, we must kick off the
             ::  session expiry timer.
@@ -2420,9 +2425,8 @@
         [sid ?~(parent &+~ |+u.parent) (add now timeout) ~]
       ::  create a new session with a fake identity
       ::
-      =/  sik=@uv  new-session-key
-      :-  sik
-      ?.  ?=(%new-guest identity)  identity
+      :-  new-session-key
+      ?^  identity  identity
       :_  scope=~
       :-  %fake
       ::  pre-scramble our ship name into its displayed value, and
