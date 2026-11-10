@@ -2179,21 +2179,63 @@
     ::
     ::  use with @
     ::
-    ++  hmac-sha1     (cork meet hmac-sha1l)
-    ++  hmac-sha256   (cork meet hmac-sha256l)
-    ++  hmac-sha512   (cork meet hmac-sha512l)
+    ++  hmac-sha1
+      ~/  %hmac-sha1
+      |=  [k=@ m=@]
+      ^-  @
+      (hmac-sha1l (meet k m))
+    ::
+    ++  hmac-sha256
+      ~/  %hmac-sha256
+      |=  [k=@ m=@]
+      ^-  @
+      (hmac-sha256l (meet k m))
+    ::
+    ++  hmac-sha512
+      ~/  %hmac-sha512
+      |=  [k=@ m=@]
+      ^-  @
+      (hmac-sha512l (meet k m))
     ::
     ::  use with @t
     ::
-    ++  hmac-sha1t    (cork flip hmac-sha1)
-    ++  hmac-sha256t  (cork flip hmac-sha256)
-    ++  hmac-sha512t  (cork flip hmac-sha512)
+    ++  hmac-sha1t
+      ~/  %hmac-sha1t
+      |=  [k=@ m=@]
+      ^-  @
+      (hmac-sha1 (flip k m))
+    ::
+    ++  hmac-sha256t
+      ~/  %hmac-sha256t
+      |=  [k=@ m=@]
+      ^-  @
+      (hmac-sha256 (flip k m))
+    ::
+    ++  hmac-sha512t
+      ~/  %hmac-sha512t
+      |=  [k=@ m=@]
+      ^-  @
+      (hmac-sha512 (flip k m))
     ::
     ::  use with byts
     ::
-    ++  hmac-sha1l    (cury hmac sha-1l 64 20)
-    ++  hmac-sha256l  (cury hmac sha-256l 64 32)
-    ++  hmac-sha512l  (cury hmac sha-512l 128 64)
+    ++  hmac-sha1l
+      ~/  %hmac-sha1l
+      |=  [key=byts msg=byts]
+      ^-  @
+      (hmac [sha-1l 64 20] key msg)
+    ::
+    ++  hmac-sha256l
+      ~/  %hmac-sha256l
+      |=  [key=byts msg=byts]
+      ^-  @
+      (hmac [sha-256l 64 32] key msg)
+    ::
+    ++  hmac-sha512l
+      ~/  %hmac-sha512l
+      |=  [key=byts msg=byts]
+      ^-  @
+      (hmac [sha-512l 128 64] key msg)
     ::
     ::  main logic
     ::
@@ -2382,6 +2424,12 @@
         ?>  (in-order private-key)
         (mul-point-scalar g.domain private-key)
       ::
+      ::  +make-k: the nonce of RFC 6979 (3.2), as libsecp256k1 makes it
+      ::
+      ::    each message to the hmac is V || 0x00 or 0x01 || x || h1, of a
+      ::    fixed length: V is a digest and may start with zero bytes, which
+      ::    +as-octs would measure away. h1 is the hash mod n (bits2octets).
+      ::
       ++  make-k
         |=  [hash=@ private-key=@]
         ^-  @
@@ -2389,19 +2437,20 @@
         ?>  (valid-hash hash)
         =/  v  (fil 3 bytes 1)
         =/  k  0
+        =/  h  (mod hash n.domain)
         =.  k  %+  hmac-sha256l:hmac  [bytes k]
-               %-  as-octs:mimes:html
+               :-  +((mul 3 bytes))
                %+  can  3
-               :~  [bytes hash]
+               :~  [bytes h]
                    [bytes private-key]
                    [1 0]
                    [bytes v]
                ==
         =.  v  (hmac-sha256l:hmac bytes^k bytes^v)
         =.  k  %+  hmac-sha256l:hmac  [bytes k]
-               %-  as-octs:mimes:html
+               :-  +((mul 3 bytes))
                %+  can  3
-               :~  [bytes hash]
+               :~  [bytes h]
                    [bytes private-key]
                    [1 1]
                    [bytes v]
