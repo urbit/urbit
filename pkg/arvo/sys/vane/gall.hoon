@@ -1416,7 +1416,9 @@
     ++  ap-keen
       |=  [=wire secret=? =spar:ames]
       ^+  ap-core
-      ?:  secret
+      ::  ames answers requests to ourselves locally; no key needed
+      ::
+      ?:  &(secret !=(our ship.spar))
         (ap-request-brood wire spar)
       =.  ken.yoke  (~(put ju ken.yoke) spar wire)
       (ap-pass wire %arvo %a %keen ~ spar)
