@@ -1414,6 +1414,8 @@
         [%drop `[sid identity]]
       =?  +.authentication.req  ?=(%miss +<.authentication.req)
         [%miss `[sid identity]]
+      =-  [(weld -< moves1) ->]
+      ^-  [(list move) _state]
       ::
       =/  res=toon
         %+  mock
@@ -1462,10 +1464,7 @@
         %^  set-header:http  'content-length'
           (crip (a-co:co p.u.data.result))
         headers.response-header.result
-      ::
-      =^  moves2=(list move)  state
-        (send-instant-response result)
-      [(weld moves1 moves2) state]
+      (send-instant-response result)
     ::
         %app
       ::  if the agent isn't running, we synchronously serve a 503
