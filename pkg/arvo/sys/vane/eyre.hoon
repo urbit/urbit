@@ -2638,9 +2638,10 @@
             ::
             ?~  visa=(~(get by visitors.auth) nonce.plea)  [~ state]
             =.  visitors.auth  (~(del by visitors.auth) nonce.plea)
-            =?  sessions.auth  ?=(@ +.u.visa)
-              (~(del by sessions.auth) sesh.u.visa)  ::REVIEW  +close-session?
-            [[(send-boon %0 %shut nonce.plea)]~ state]
+            =^  moves  state
+              ?^  +.u.visa  [~ state]
+              (close-session sesh.u.visa |)
+            [[(send-boon %0 %shut nonce.plea) moves] state]
           ==
         ::  +cancel: the client aborted the eauth attempt, so clean it up
         ::
