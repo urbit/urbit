@@ -2390,19 +2390,20 @@
         ?>  (valid-hash hash)
         =/  v  (fil 3 bytes 1)
         =/  k  0
+        =/  h  (mod hash n.domain)
         =.  k  %+  hmc  [bytes k]
-               %-  as-octs
+               :-  +((mul 3 bytes))
                %+  can  3
-               :~  [bytes hash]
+               :~  [bytes h]
                    [bytes private-key]
                    [1 0]
                    [bytes v]
                ==
         =.  v  (hmc bytes^k bytes^v)
         =.  k  %+  hmc  [bytes k]
-               %-  as-octs
+               :-  +((mul 3 bytes))
                %+  can  3
-               :~  [bytes hash]
+               :~  [bytes h]
                    [bytes private-key]
                    [1 1]
                    [bytes v]
