@@ -2480,6 +2480,7 @@
             =(who.identity.s who.identity.u.ses)
             ?=(%& -.scopes.s)
         ==
+      =/  sez=(set @uv)  (sy session-id siz)
       |-
       ?^  siz
         =^  moz=(list move)  state
@@ -2517,7 +2518,9 @@
       =^  moz=(list move)  visitors.auth.state
         %+  roll  ~(tap by visitors.auth.state)
         |=  [[nonce=@uv visa=visitor] [moz=(list move) viz=(map @uv visitor)]]
-        ?^  +.visa  [moz (~(put by viz) nonce visa)]
+        =*  keep  [moz (~(put by viz) nonce visa)]
+        ?^  +.visa                     keep
+        ?.  (~(has in sez) sesh.visa)  keep
         :_  viz
         %+  weld  moz
         ?~  duct.visa  ~
@@ -2633,14 +2636,14 @@
             [[(send-boon %0 %okay nonce.plea url)]~ state]
           ::
               %shut
-            ::  the visitor wants the associated session gone
+            ::  the visitor wants the associated session gone.
+            ::  if the session was already fully set up, we can depend on
+            ::  +close-session. if not, do the (smaller) cleanup ourselves.
             ::
             ?~  visa=(~(get by visitors.auth) nonce.plea)  [~ state]
+            ?@  +.u.visa  (close-session sesh.u.visa |)
             =.  visitors.auth  (~(del by visitors.auth) nonce.plea)
-            =^  moves  state
-              ?^  +.u.visa  [~ state]
-              (close-session sesh.u.visa |)
-            [[(send-boon %0 %shut nonce.plea) moves] state]
+            [[(send-boon %0 %shut nonce.plea)]~ state]
           ==
         ::  +cancel: the client aborted the eauth attempt, so clean it up
         ::
