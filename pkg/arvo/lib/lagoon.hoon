@@ -542,6 +542,7 @@
       =/  bad  `(list @)`~[a]
       |-  ^-  baum
       ?:  (?:((~(lth rh rnd) ba .~~0) ~(lte rh rnd) ~(gte rh rnd)) (~(add rh rnd) (snag 0 bad) d) b)
+        =.  shape.meta  ~[(lent bad)]
         [meta (flop bad)]
       $(bad [(~(add rh rnd) (snag 0 bad) d) bad])
     ==
@@ -792,7 +793,7 @@
     :-  `meta`[~[-.shape 1] bloq kind tail]
     ^-  ndray
     %+  turn
-      `(list @)`(flop (gulf 0 (dec -.shape)))
+      `(list @)`(gulf 0 (dec -.shape))
     |=(i=@ (get-item a ~[i i]))
   ::
   ++  trace
@@ -1137,7 +1138,7 @@
     ?>  (check a)
     %-  spac
     :-  meta.a
-    =/  ali  (flop (ravel a))  :: compensate for LSB
+    =/  ali  (ravel a)
     %+  rep  bloq.meta.a
     %+  turn
       ali
