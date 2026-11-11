@@ -2637,10 +2637,16 @@
           ::
               %shut
             ::  the visitor wants the associated session gone.
+            ::  check to make sure it's a session that's theirs!
             ::  if the session was already fully set up, we can depend on
             ::  +close-session. if not, do the (smaller) cleanup ourselves.
             ::
             ?~  visa=(~(get by visitors.auth) nonce.plea)  [~ state]
+            ?>  =(`duct duct.u.visa)
+            ?>  ?-  +.u.visa
+                  @  =([%real ship] who.identity:(~(got by sessions.auth) sesh.u.visa))
+                  ^  =(ship ship.u.visa)
+                ==
             ?@  +.u.visa  (close-session sesh.u.visa |)
             =.  visitors.auth  (~(del by visitors.auth) nonce.plea)
             [[(send-boon %0 %shut nonce.plea)]~ state]
