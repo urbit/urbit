@@ -1463,7 +1463,9 @@
           (crip (a-co:co p.u.data.result))
         headers.response-header.result
       ::
-      (send-instant-response result)
+      =^  moves2=(list move)  state
+        (send-instant-response result)
+      [(weld moves1 moves2) state]
     ::
         %app
       ::  if the agent isn't running, we synchronously serve a 503
@@ -2406,6 +2408,8 @@
             %tmp        tmp
           ==
         :-  :+  key  sid
+            ::TODO  consider not starting timer here, but have eyre _always_
+            ::      start and re-kick it
             ::  if no session existed previously, we must kick off the
             ::  session expiry timer.
             ::  it's possible that the existing timer is further in the future
