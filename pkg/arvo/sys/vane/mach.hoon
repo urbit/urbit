@@ -8,10 +8,8 @@
     +$  move  [p=duct q=(wite note gift)]
     +$  note  ~                                         ::  out request $->
     +$  sign  ~                                         ::  in result $<-
-    ::
-    ::  XX reset to %0 before release; needs fresh dev ships
     +$  mach-state
-      $:  %3
+      $:  %0
           ::  XX  randomize next on init?
           ::      per https://datatracker.ietf.org/doc/html/draft-ietf-tcpm-tcp-security#section-3.1
           ::      could also randomize on %born
