@@ -25,8 +25,8 @@
 =*  mach-gate  .
 ^?
 |%
-::
 ::  +call: handle a +task:mach request
+::
 ++  call
   |=  [hen=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _mach-gate]
@@ -45,8 +45,8 @@
     ==
   ::
       %trim
-    ::
     ::  tell each owner, and have the driver close its socket
+    ::
     :-  %-  zing
         %+  turn
           ~(tap by names)
@@ -121,13 +121,12 @@
       mach-gate(names (~(del by names) u.nam), ids (~(del by ids) id))
     ==
   ==
-::
 ::  +load: migrate an old state to a new mach version
+::
 ++  load
   |=  old=mach-state
   ^+  mach-gate
   mach-gate(state old)
-::
 ::  +scry: view state
 ::
 ::    %a  /connections     list open connections by name
@@ -138,8 +137,8 @@
   |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
   |^
-  ::
   ::  only respond on our, now, root
+  ::
   ?.  ?&  =(our p.bem)
           =(%$ q.bem)
           =([%da now] r.bem)
@@ -151,15 +150,15 @@
     %d  read-d
     %u  read-u
   ==
-  ::
   ::  +read-a: list open connections
+  ::
   ++  read-a
     ^-  (unit (unit cage))
     ?.  ?=([%connections ~] s.bem)
       [~ ~]
     ``[%noun !>(`(list name)`~(tap in ~(key by names)))]
-  ::
   ::  +read-d: get the duct that opened a connection
+  ::
   ++  read-d
     ^-  (unit (unit cage))
     ?.  ?=([%owner *] s.bem)
@@ -168,16 +167,16 @@
     ?~  con
       [~ ~]
     ``[%noun !>(duct.u.con)]
-  ::
   ::  +read-u: does a connection exist
+  ::
   ++  read-u
     ^-  (unit (unit cage))
     ``[%noun !>((~(has by names) s.bem))]
   --
 ::
 ++  stay  state
-::
 ::  +take: handle a response from another vane
+::
 ++  take
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^-  [(list move) _mach-gate]
