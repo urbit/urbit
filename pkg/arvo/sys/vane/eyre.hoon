@@ -2641,9 +2641,14 @@
             ::  if the session was already fully set up, we can depend on
             ::  +close-session. if not, do the (smaller) cleanup ourselves.
             ::
-            ?~  visa=(~(get by visitors.auth) nonce.plea)  [~ state]
+            ?~  visa=(~(get by visitors.auth) nonce.plea)
+              ::  even though we cleaned it up (or never had it) they appear
+              ::  to still have it. let them know it's gone on our end.
+              ::
+              [[(send-boon %0 %shut nonce.plea)]~ state]
             ?>  =(`duct duct.u.visa)
             ?>  ?-  +.u.visa
+                  ::NOTE  +got:by safe because @ visa implies session existence
                   @  =([%real ship] who.identity:(~(got by sessions.auth) sesh.u.visa))
                   ^  =(ship ship.u.visa)
                 ==
