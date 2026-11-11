@@ -1310,6 +1310,81 @@
     ?~  pos  ``[%noun !>(~)]
     ``[%noun !>((some rift.u.pos))]
   ::
+      %dome
+    ?.  ?=([@ ~] tyl)
+      [~ ~]
+    ?.  =([%& our] why)
+      [~ ~]
+    =/  who  (slaw %p i.tyl)
+    ?~  who
+      [~ ~]
+    ?:  fak.own.pki.lex
+      ``[%noun !>(~)]
+    =/  pos  (~(get by pos.zim.pki.lex) u.who)
+    ?~  pos
+      ``[%noun !>(~)]
+    =/  key  (~(get by keys.u.pos) life.u.pos)
+    ?~  key
+      ``[%noun !>(~)]
+    =/  cek  +<:(com:nu:cric:crypto pass.u.key)
+    ::  a +cric $pass encodes its pki
+    ::  domain in the head of its tweak
+    ::
+    ?.  ?=([%c *] cek)
+      ``[%noun !>(~)]
+    =*  dat  dat.tw.pub.cek
+    ?:  =(0 dat)
+      ::  exit early to avoid crashing in +rub
+      ``[%noun !>(~)]
+    ``[%noun !>((some `@tas`q:(rub 0 dat)))]
+  ::
+      %suit
+    ?.  ?=([@ ~] tyl)
+      [~ ~]
+    ?.  =([%& our] why)
+      [~ ~]
+    =/  who  (slaw %p i.tyl)
+    ?~  who
+      [~ ~]
+    ?:  fak.own.pki.lex
+      ``[%noun !>(~)]
+    =/  pos  (~(get by pos.zim.pki.lex) u.who)
+    ?~  pos
+      ``[%noun !>(~)]
+    =/  key  (~(get by keys.u.pos) life.u.pos)
+    ?~  key
+      ``[%noun !>(~)]
+    ::  +cric is used because it envelops the
+    ::  two extant %b and %c suites, and may be
+    ::  replaced here by any future crypto core
+    ::  that abstracts over all suites
+    ::
+    =/  cek  +<:(com:nu:cric:crypto pass.u.key)
+    ``[%noun !>((some -.cek))]
+  ::
+      %twee
+    ?.  ?=([@ ~] tyl)
+      [~ ~]
+    ?.  =([%& our] why)
+      [~ ~]
+    =/  who  (slaw %p i.tyl)
+    ?~  who
+      [~ ~]
+    ?:  fak.own.pki.lex
+      ``[%noun !>(~)]
+    =/  pos  (~(get by pos.zim.pki.lex) u.who)
+    ?~  pos
+      ``[%noun !>(~)]
+    =/  key  (~(get by keys.u.pos) life.u.pos)
+    ?~  key
+      ``[%noun !>(~)]
+    ::  only a +cric ship carries a tweak for now
+    ::
+    =/  cek  +<:(com:nu:cric:crypto pass.u.key)
+    ?.  ?=([%c *] cek)
+      ``[%noun !>(~)]
+    ``[%noun !>((some tw.pub.cek))]
+  ::
       %vein
     ?.  ?=([@ ~] tyl)  [~ ~]
     ?.  &(?=(%& -.why) =(p.why our))
