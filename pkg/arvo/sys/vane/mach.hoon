@@ -10,9 +10,6 @@
     +$  sign  ~                                         ::  in result $<-
     +$  mach-state
       $:  %0
-          ::  XX  randomize next on init?
-          ::      per https://datatracker.ietf.org/doc/html/draft-ietf-tcpm-tcp-security#section-3.1
-          ::      could also randomize on %born
           next=@ud
           unix-duct=_`duct`[//mach ~]
           names=(map name [=duct id=@ud])
