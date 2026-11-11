@@ -1249,24 +1249,11 @@
     ::
     ?.  ?=([%c *] cek)
       ``[%noun !>(~)]
-    ::  XX is bounding .dat just to protect
-    ::     against a failure in the +rub jet?
-    ::
     =*  dat  dat.tw.pub.cek
-    =/  short=?
-      =/  c=@ud  0
-      |-  ^-  ?
-      ?:  (gth c 20)
-        .n
-      ?:  =(0 (cut 0 [c 1] dat))
-        $(c +(c))
-      .y
-    ?.  short
+    ?:  =(0 dat)
+      ::  exit early to avoid crashing in +rub
       ``[%noun !>(~)]
-    =/  mat  (mole |.((rub 0 dat)))
-    ?~  mat
-      ``[%noun !>(~)]
-    ``[%noun !>((some `@tas`q.u.mat))]
+    ``[%noun !>((some `@tas`q:(rub 0 dat)))]
   ::
       %suit
     ?.  ?=([@ ~] tyl)
