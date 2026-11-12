@@ -64,7 +64,6 @@
     ==
   ::
       %connect
-    %-  (slog leaf+"mach: %connect {<name.task>} {<addr.task>}" ~)
     ?:  (~(has by names) name.task)
       ::  existing connection stays open
       %-  (slog leaf+"mach: bad %connect on {<name.task>}: already connected" ~)
