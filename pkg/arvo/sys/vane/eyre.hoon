@@ -1219,7 +1219,7 @@
         ::  if they provided no auth, mint them a new guest session:
         ::  having a parent session on root is required for tmp-token flow
         ::
-        =^  [sid=@uv =identity moves=(list move)]  state
+        =^  [sid=@uv =identity]  state
           (session-from-auth:authentication authentication.req)
         =?  +.authentication.req  ?=(%drop +<.authentication.req)
           [%drop ~ sid identity]
@@ -1271,7 +1271,7 @@
         =^  moz=(list move)  state
           %-  send-instant-response
           [[303 ['location' (rap 3 '//' host url.target.u.authlet ~)]~] ~]
-        [[give-session-tokens (weld moz moves.o)] state]
+        [[give-session-tokens moz] state]
       ==
     ~|  auth=+<.auth
     ?<  ?=(%negotiate +<.auth)  ::NOTE  handled as %holm action above
@@ -1408,13 +1408,12 @@
       ?>  =(%vase p.cag)
       =/  gat=vase  !<(vase q.cag)
       ::
-      =^  [sid=@uv =identity moves1=(list move)]  state
+      =^  [sid=@uv =identity]  state
         (session-from-auth:authentication authentication.req)
       =?  +.authentication.req  ?=(%drop +<.authentication.req)
         [%drop `[sid identity]]
       =?  +.authentication.req  ?=(%miss +<.authentication.req)
         [%miss `[sid identity]]
-      =-  [(weld -< moves1) ->]
       ^-  [(list move) _state]
       ::
       =/  res=toon
@@ -1627,7 +1626,7 @@
     ::  requests for /~/name must always resolve to an identity.
     ::  if the request provided no auth, mint a guest identity.
     ::
-    =^  [sid=@uv =identity moves1=(list move)]  state
+    =^  [sid=@uv =identity]  state
       (session-from-auth:authentication authentication.req)
     ::  only associate the session with the request (and serve the matching
     ::  set-cookie header) if auth was respected in the first place. in %drop
@@ -1638,13 +1637,11 @@
     =?  +.authentication.req  ?=(%miss +<.authentication.req)
       [%miss `[sid identity]]
     ::
-    =^  moves2  state
-      %+  instant-data  req
-      :+  200  'text/plain'
-      =/  nom=@p
-        ?+(-.who.identity who.who.identity %ours our)
-      (as-octs:mimes:html (scot %p nom))
-    [(weld moves1 moves2) state]
+    %+  instant-data  req
+    :+  200  'text/plain'
+    =/  nom=@p
+      ?+(-.who.identity who.who.identity %ours our)
+    (as-octs:mimes:html (scot %p nom))
   ::  +handle-http-scry: respond with scry result
   ::
   ++  handle-http-scry
@@ -1810,7 +1807,7 @@
     ::  requests into userspace must always have an associated identity.
     ::  if the request provided no auth, mint a guest identity.
     ::
-    =^  [suv=@uv =identity moves=(list move)]  state
+    =^  [suv=@uv =identity]  state
       (session-from-auth:^authentication authentication)
     =?  +.authentication  ?=(%drop +<.authentication)
       [%drop ~ suv identity]
@@ -1824,7 +1821,6 @@
     ::  subscribe to the agent and poke it with the request
     ::
     :_  state
-    %+  weld  moves
     :~  %+  deal-as
           /watch-response/[eyre-id]
         [identity our app %watch /http-response/[eyre-id]]
@@ -2058,15 +2054,15 @@
     ::
     ++  session-from-auth
       |=  auth=auth-res
-      ^-  [[sid=@uv =identity moves=(list move)] server-state]
+      ^-  [[sid=@uv =identity] server-state]
       ::  shouldn't call this utility in cases where request gets rejected
       ::
       ?:  ?=(?(%reject %invalid %negotiate) +<.auth)
         ~|(%oops-session-from-rejected-request !!)
       ?-  +<.auth
-        %drop  ?^(tmp.auth [[sid identity ~]:u.tmp.auth state] (start-session %tmp ~))
-        %miss  ?^(new.auth [[sid identity ~]:u.new.auth state] (start-session %new-guest ~))
-        %have  [[sid identity ~]:auth state]
+        %drop  ?^(tmp.auth [[sid identity]:u.tmp.auth state] (start-session %tmp ~))
+        %miss  ?^(new.auth [[sid identity]:u.new.auth state] (start-session %new-guest ~))
+        %have  [[sid identity]:auth state]
       ==
     ::
     ++  session-id-from-auth
@@ -2186,11 +2182,11 @@
         (close-session u.sid |)
       ::  initialize the new session
       ::
-      =^  fex  state  (start-session [[%ours ~] ~] ~)
+      =^  ses  state  (start-session [[%ours ~] ~] ~)
       ::NOTE  this forgets the original +.$auth-res of the request
-      =.  +.authentication.req  [%miss ~ session identity]:fex
+      =.  +.authentication.req  [%miss ~ session identity]:ses
       =.  authenticated.req     &
-      =.  identity             `identity.fex  ::NOTE  doesn't matter but good form
+      =.  identity             `identity.ses  ::NOTE  doesn't matter but good form
       ::  store the hostname used for this login, later reuse it for eauth.
       ::  avoid overwriting public domains with localhost or local domains.
       ::  (only use "top level" domains for this, no desk-subdomains, but this
@@ -2218,14 +2214,14 @@
         ?:(|(?=(^ user) =(`new-auth auth)) time now)
       ::
       =;  out=[moves=(list move) server-state]
-        out(moves [give-session-tokens :(weld moz moves.fex moves.out)])
+        out(moves [give-session-tokens (weld moz moves.out)])
       ::NOTE  that we don't provide a 'set-cookie' header here.
       ::      +response does that for us.
       ::TODO  that should really also handle the content-length header for us,
       ::      somewhat surprising that it doesn't...
       %+  instant:response  req
       =/  bod=octs
-        (as-octs:mimes:html (scot %uv session.fex))
+        (as-octs:mimes:html (scot %uv session.ses))
       =/  col=[key=@t value=@t]
         ['content-length' (crip (a-co:co p.bod))]
       ?~  redirect
@@ -2392,7 +2388,7 @@
     ::      the "associate the new session with ..." step
     ++  start-session
       |=  [identity=?(%new-guest %tmp identity) parent=(unit @uv)]
-      ^-  [[session=@uv =^identity moves=(list move)] server-state]
+      ^-  [[session=@uv =^identity] server-state]
       ?.  ?|  &(?=(%new-guest identity) ?=(~ parent))
               &(?=(^ identity) ?=(~ scope.identity) ?=(~ parent))
               &(?=(^ identity) ?=(^ scope.identity) ?=(^ parent))
@@ -2406,17 +2402,7 @@
             %new-guest  new-guest
             %tmp        tmp
           ==
-        :-  :+  key  sid
-            ::TODO  consider not starting timer here, but have eyre _always_
-            ::      start and re-kick it
-            ::  if no session existed previously, we must kick off the
-            ::  session expiry timer.
-            ::  it's possible that the existing timer is further in the future
-            ::  than the timeout here, but that's ok: session expiry is checked
-            ::  on-use.
-            ::
-            ?^  sessions.auth.state  ~
-            [duct %pass /sessions/expire %b %wait (add now timeout)]~
+        :-  [key sid]
         =-  state(sessions.auth -)
         =?  sessions.auth.state  ?=(^ parent)
           ~|  %eyre-session-orphan
@@ -2722,17 +2708,17 @@
             =+  sid=(session-id-from-auth authentication.req)
             ?~  sid  [~ state]
             (close-session u.sid |)
-          =^  [sid=@uv =identity moz2=(list move)]  state
+          =^  [sid=@uv =identity]  state
             (start-session [[%real ship] ~] ~)
           =.  visitors.auth
             %+  ~(jab by visitors.auth)  nonce
             |=(v=visitor v(+ sid))
           ::NOTE  may cause misleading response metadata if auth _was_ provided
           =.  +.authentication.req  [%miss ~ sid identity]
-          =^  moz3  state
+          =^  moz2  state
             ::NOTE  the cookie will be set for us based on session.req
             (instant:response req 303^['location' last]~ ~)
-          [:(weld moz1 moz2 moz3) state]
+          [:(weld moz1 moz2) state]
         ::  +on-fail: we crashed or received an empty %tune, clean up
         ::
         ++  on-fail
@@ -3458,7 +3444,7 @@
       ::  if the requester provided no auth, mint them a new session
       ::  so that their channel has an identity associated with it
       ::
-      =^  [sid=@uv =identity sesh-moves=(list move)]  state
+      =^  [sid=@uv =identity]  state
         (session-from-auth:authentication authentication.req)
       =?  +.authentication.req  ?=(%drop +<.authentication.req)
         [%drop ~ sid identity]
@@ -3494,7 +3480,7 @@
                 data=~
             ==
           ::
-          [:(weld (flop gall-moves) http-moves sesh-moves moves) state]
+          [:(weld (flop gall-moves) http-moves moves) state]
         ::  some things went wrong. revert all operations & give 400
         ::
         %-  (trace 1 |.("{<channel-id>} reverting due to errors"))
@@ -3507,7 +3493,7 @@
           %+  turn  (sort ~(tap by errors) dor)
           |=  [id=@ud er=@t]
           (rap 3 (crip (a-co:co id)) ': ' er '<br/>' ~)
-        [:(weld http-moves sesh-moves moves) state]
+        [(weld http-moves moves) state]
       ::
       ?-    -.i.requests
           %ack
