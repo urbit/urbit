@@ -45,7 +45,7 @@
 =*  state  -
 ::
 %-  agent:dbug
-%+  verb  &
+%+  verb  |
 ::
 ^-  agent:gall
 |_  =bowl:gall
@@ -65,6 +65,8 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card _this)
+  ?:  =(%retry q.vase)
+    [~[(tell-acme our.bowl tops subs)] this]
   ?.  ?=(%noun mark)  ~|([dap.bowl %strange-mark mark=mark] !!)
   =+  ;;(act=action q.vase)
   ?-  -.act
@@ -101,7 +103,7 @@
     ::  if the set of subdomains is the currently-known set, do nothing
     ::
     ?:  =(suz subs)
-      [~ this]
+      [~ this(next ~)]
     ::  if no subs would get removed, apply the change right away
     ::
     ?:  =(~ (~(dif in subs) suz))

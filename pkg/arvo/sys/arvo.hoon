@@ -414,10 +414,60 @@
   ?~  dat=(rof lyc pov u.mon)  ~
   ?~  u.dat  [~ ~]
   =*  vax  q.u.u.dat
+  ::  clay %cr (+read-r) returns a $vase and %cc (+read-c) a $tube ($-(vase
+  ::  vase)); callers request those exact types.  cross-kelvin we can't nest
+  ::  the recursive $vase/$type meta-type (forward-migrate -> scry-lost,
+  ::  backward -> +look bad look), so honor clay's contract: for a prior-kelvin
+  ::  (%136) %cr/%cc request, restamp the meta-type into the %136 universe so it
+  ::  nests the +next-type-migrated reference type.  %cr: the returned $vase's
+  ::  .p (its $type) is used only for the +nets check here -- it never leaves
+  ::  (the scry yields .q, the value).  so give .p the cheap, fixed $vase:h136
+  ::  meta-type (which nests +next-type's migrated reference, as the old
+  ::  +prev-vase's `^- vase:h136` did) and leave .q as the untouched desk-native
+  ::  file vase from +read-r (via +read-x-desk) -- a desk mark tube consumes it
+  ::  directly.  note we must NOT +prev-vase the file: its $type can embed a
+  ::  %core carrying the whole zuse context, and walking that explodes.  native
+  ::  (%135) requests still type-check.  TODO: real cross-kelvin type conversion
+  ::  should retire this special case.
+  ::
+  =/  vew  vis.u.mon
+  ~&  >  [-.ref pax]
+  =?  vax  ?&  ?=(^ ref)
+             =(%136 -.ref)
+           ==
+    :: ?+  vew  vax
+    ::   ?(%cr [%c %r])  !>((prev-vase:h135 !<(vase vax)))
+    :: ::
+    ::     ?(%cc [%c %c])
+    ::   !>
+    ::   =>  [f=!<($-(vase vase) vax) ..arvo]
+    ::   |=  v=vase:h136
+    ::   =-  ~&  >  %1  -
+    ::   %-  prev-vase:h135
+    ::   =-  ~&  >  %2  -
+    ::   %-  f
+    ::   =-  ~&  >  %3  -
+    ::   (next-vase:h136 v)
+    :: ==
+    ?+  vew  vax
+      ?(%cr [%c %r])  `vase`[p:!>(*vase:h136) !<(vase vax)]
+    ::
+        ?(%cc [%c %c])
+      !>
+      =>  [tv=vax ..arvo]
+      |=  v=vase:h136
+      ^-  vase:h136
+      ::  nest-extract, not +;;: clamming a $vase recursively clams its $type
+      ::  field, which bails on the tube's non-trivial output type.
+      ::
+      !<(vase:h136 [-:!>(*vase:h136) (slum +.tv v)])
+      :: (prev-vase:h136 (slum +.tv (next-vase:h136 v)))
+    ==
   ::  TODO move under =>
   =?  ref  =(-.ref %136)
     :-  %135
     (slum next-type:h136 +.ref)
+  ~&  >  %okay
   ?.  =>  [ref=ref vax=p=p.vax hoon-version=hoon-version wa=wa worm=worm]
       ~>  %memo./arvo/look                  ::  with memoization
       ?&  ?=(^ ref)
@@ -425,6 +475,7 @@
           -:(~(nets wa *worm) +.ref p.vax)
       ==
     ~>(%slog.[0 leaf+"arvo: scry-lost"] ~)
+  ~&  >  u.pax
   [~ ~ q.vax]
 ::  |wyrd: kelvin negotiation
 ::

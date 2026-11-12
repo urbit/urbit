@@ -1881,6 +1881,7 @@
               ?+  +>-.neet  [%j +>.neet]
                   %public-keys
                 ?^  sub.neet  [%j %public-keys u.sub.neet]
+                ::REVIEW  this _crashes_ when closing non-existing sub
                 =+  sub=(~(got by resource-deets.yoke) p.card %jael %keys)
                 ?>  ?=([%jael %keys *] sub)
                 ?-  wat.sub
@@ -2764,7 +2765,8 @@
       =/  res  (mock [run %9 2 %0 1] (ap-look rof [~ ~] /gall/[agent-name]))
       ?-  -.res
         %0  [%& !<(step:agent [-:!>(*step:agent) p.res])]
-        %1  [%| (smyt ~|(p.res ;;(path p.res))) ~]
+        %1  =+  p=((soft path) p.res)
+            [%| ?~(p >p.res< (smyt u.p)) ~]
         %2  [%| p.res]
       ==
     ::  +ap-mule-peek: same as +ap-mule but for (unit (unit cage))
@@ -2775,7 +2777,8 @@
       =/  res  (mock [run %9 2 %0 1] (ap-look rof [~ ~] /gall/[agent-name]))
       ?-  -.res
         %0  [%& !<((unit (unit cage)) [-:!>(*(unit (unit cage))) p.res])]
-        %1  [%| (smyt ;;(path p.res)) ~]
+        %1  =+  p=((soft path) p.res)
+            [%| ?~(p >p.res< (smyt u.p)) ~]
         %2  [%| p.res]
       ==
     ::  +ap-look: namespase permission check
@@ -2915,7 +2918,7 @@
         (card-resource:track i.caz)
       ?~  -  $(caz t.caz, out [cad out])
       ?:  |(?=(^ add) add)
-        ::  drop cards that would create duplicate resources on the floor
+        ::  drop cards that would create duplicate resources
         ::
         ?:  (~(has in resources.yoke) p.i.caz res)
           %.  $(caz t.caz)
@@ -2930,6 +2933,15 @@
           resources.yoke       (~(put in resources.yoke) p.i.caz res)
           resource-deets.yoke  ?@  add  resource-deets.yoke
                                (~(put by resource-deets.yoke) [p.i.caz res] add)
+        ==
+      ::  drop cards that would delete a non-existent resource
+      ::
+      ?.  (~(has in resources.yoke) p.i.caz res)
+        %.  $(caz t.caz)
+        %-  slog
+        :~  leaf+"gall: {<agent-name>}: non-existent resource deletion:"
+            leaf+"      {<p.i.caz>}"
+            leaf+"      {<res>}"
         ==
       %_  $
         caz                  t.caz

@@ -3128,12 +3128,46 @@
         approved=(set origin)
         rejected=(set origin)
     ==
+  ::  auth-res: authentication conclusion & state for incoming request
+  ::
+  ::    .from:      where authentication was read from
+  ::    %reject:    cookie provided in untrustworthy context, req rejected
+  ::    %invalid:   provided auth unknown or expired, req rejected
+  ::    %negotiate: needs (new) subdomain auth, req redirected
+  ::    %drop:      cookie provenance sketchy, auth ignored, mb guest minted
+  ::    %miss:      no auth provided, maybe guest session minted
+  ::    %have:      valid auth provided & respected
+  ::
+  +$  auth-res
+    $:  from=(unit ?(%cookie %header))
+    $?  auth-bad
+        auth-gud
+    ==  ==
+  +$  auth-bad
+    $%  [%reject reason=@t]
+        [%invalid reason=@t sid=(unit @uv)]
+        [%negotiate sid=(unit @uv)]
+    ==
+  +$  auth-gud
+    $%  [%drop tmp=(unit sesh)]
+        [%miss new=(unit sesh)]  ::  .new possible replaced %have
+        [%have sesh]
+    ==
+  +$  sesh  [sid=@uv =identity]
+  ++  sesh-from-auth
+    |=  auth=auth-res
+    ^-  (unit sesh)
+    ?+  +<.auth  ~
+      %drop  ?^(tmp.auth `u.tmp.auth ~)
+      %miss  ?^(new.auth `u.new.auth ~)
+      %have  `+>.auth
+    ==
   ::  $unpacked-request: a request and inferred details
   ::
-  ::    .secure:        whether the request came in over a secure connection
-  ::    .request:       the request from which the other details were inferred
-  ::    .authenticated: whether the request is authenticated as the local host
-  ::    .session:       the auth session provided by the request & its identity
+  ::    .secure:         whether the request came in over a secure connection
+  ::    .request:        the request from which the other details were inferred
+  ::    .authenticated:  whether the request is authenticated as the local host
+  ::    .authentication: the auth details concluded from the request
   ::
   ::    two important details to know about this data structure's lifecycle:
   ::    - the details are inferred from the .request _during initial creation_,
@@ -3149,7 +3183,7 @@
     $:  secure=?
         =request:http
         authenticated=?
-        session=(unit [new=? sid=@uv =identity])
+        authentication=auth-res
     ==
   ::  +outstanding-connection: open http connections not fully complete:
   ::
@@ -4037,7 +4071,7 @@
   +$  gill  (pair ship term)                            ::  general contact
   ::
   +$  dash  [desk=(unit desk) =spur]
-  +$  cash  [care=(unit) dash]
+  +$  cash  [care=(unit term) dash]
   ::
   +$  perm
     $%  perm-arvo
@@ -4089,6 +4123,7 @@
         $:  %eyre
         $%  [%setup ~]                                  ::  %eauth-host %rule
             [%serve =path]                              ::  %connect %set-response
+            [%embed ~]                                  ::  authed iframe other desks
             [%cross ~]                                  ::  %approve-origin %reject-origin
             [%debug ~]                                  ::  %spew
         ==  ==
@@ -4525,13 +4560,12 @@
           =(mus per)
       ==
     ::
-    ++  have-path  ::  check if req path nested within per
+    ++  have-path  ::  check if .per is prefix of .req
       |=  [req=path per=path]
-      =|  p=path
-      |-
-      ?:  =(p per)  &
-      ?~  req       |
-      $(p (welp p [i.req ~]), req t.req)
+      ?~  per  &
+      ?~  req  |
+      ?.  =(i.req i.per)  |
+      $(req t.req, per t.per)
     ::
     ++  must  ::  perm required for card
       |=  [our=ship =card:agent]
@@ -4588,7 +4622,7 @@
             ?-  +<.task
                 %read
               ?.  =(our ship.task)  [%clay %peers ~]~
-              =/  to-per  |=  [care=(unit) =path]
+              =/  to-per  |=  [care=(unit term) =path]
                           ^-  perm
                           [%clay %local care `desk.task path]
               ?-  -.rave.task
@@ -4757,7 +4791,7 @@
         =+  det=(~(got by dets) res)
         ?>  ?=([%clay %warp *] det)
         ?.  =(our ship.det)  [%clay %peers ~]~
-        =/  to-per  |=  [care=(unit) =path]
+        =/  to-per  |=  [care=(unit term) =path]
                     ^-  perm
                     [%clay %local care `desk.det path]
         ?-  -.rave.det

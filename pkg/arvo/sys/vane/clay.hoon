@@ -870,33 +870,34 @@
       ^-  vase
       (ntv (slum +:(slum my-slub [cor [%limb %build-cast]]) [a b]))
     ::
+    ::  XX produce tub as is
+    ::  
     ++  build-tube
       |=  [a=mark b=mark]
       ^-  tube
       ~|  %build-tube-foreign^[a b]^zuv
-      =/  tub  (slum my-slam [(slum my-slub [cor [%limb %build-tube]]) (slum my-slop [!>(a) !>(b)])])
+      ::  use the desk's own +build-tube, which yields a vase->vase $tube that
+      ::  internally +slams the cast gate (handling the vase (un)wrap and the
+      ::  output-type mint).  raw-+slum that $tube onto v so the whole
+      ::  conversion -- including the mint -- runs in the *desk* universe via
+      ::  the gate's baked-in context, exactly as a native ship would.  feeding
+      ::  a desk-native file vase keeps every type desk-side: no cross-kelvin
+      ::  mint, no bad look.  (+build-cast alone is a content->content gate; its
+      ::  vase (un)wrap only happens inside +slam, so applying it raw mis-shapes
+      ::  the sample.)  the OUTPUT stays desk-universe -- the consumer is a
+      ::  desk-kelvin agent (+in converts for it), so do NOT +ntv to live here.
+      ::
+      =/  dtube
+        %+  slum  my-slam
+        :-  (slum my-slub [cor [%limb %build-tube]])
+        (slum my-slop [!>(a) !>(b)])
       |=  v=vase
       ^-  vase
-      ::  .tub is compiled in the desk universe; migrate .v's own type into
-      ::  that universe and stamp it with the desk's native $vase mold.
+      ::  +slum yields a raw noun; nest-extract it to $vase (never +;;, which
+      ::  would recursively clam the output $type and bail).
       ::
-      ::  .v is already in the desk universe (callers hand us desk-universe
-      ::  input; a native desk's universe == live).  stamp it with the desk's
-      ::  native $vase mold -- do NOT +prev it: +prev would re-migrate an
-      ::  already-desk type and corrupt it.  only the output is +ntv'd to live.
-      ::
-      =/  sam
-        ?:  =(zuse zuv)  !>(v)
-        =/  vty  -:(slum my-slub [cor !,(*hoon *vase)])
-        [vty v]
-      ::  run the desk cast under +mule: its internal +slam mints a %- call to
-      ::  type the result, which resolves arms over the desk mark battery --
-      ::  executed directly that trips the live +look jet ("bad look").  under
-      ::  +mule the mint runs as plain nock, so no jet fires.
-      ::
-      =/  res  (mule |.(`*`(slum my-slam [tub sam])))
-      ?:  ?=(%| -.res)  ~|(%build-tube-run-failed (mean p.res))
-      (ntv +:p.res)
+      !<(vase [-:!>(*vase) (slum +:dtube v)])
+
     ::
     ++  validate-page
       |=  [=path =page]
@@ -907,6 +908,20 @@
       |=  =page
       ^-  cage
       (ntc (slum +:(slum my-slub [cor [%limb %page-to-cage]]) page))
+    ::  desk-native variant: skip the +next migration, keep the cage in the
+    ::  desk universe.  the $type noun is byte-identical across kelvins, so the
+    ::  desk vase is a structurally valid live vase; we only coerce the label.
+    ::  used by +read-r (%cr) so the file stays desk-native for a desk mark tube.
+    ::
+    ++  page-to-cage-desk
+      |=  =page
+      ^-  cage
+      =/  n  (slum +:(slum my-slub [cor [%limb %page-to-cage]]) page)
+      ?>  ?=(^ n)
+      ::  mirror +ntc but drop +next: extract via a $cage-typed vase (nest,
+      ::  not clam) so the desk vase's recursive $type is passed through raw.
+      ::
+      !<(cage [-:!>(*cage) [;;(@tas -.n) +.n]])
     ::
     ++  cast-path
       |=  [=path mak=mark]
@@ -4263,10 +4278,22 @@
     ++  read-r
       |=  [tak=tako pax=path]
       ^-  (unit (unit cage))
-      =/  x  (read-x tak pax)
+      :: =/  x  (read-x tak pax)
+      =/  x  (read-x-desk tak pax)
       ?~  x     ~
       ?~  u.x  [~ ~]
       ``[p.u.u.x !>(q.u.u.x)]
+    ::  +read-x-desk: like +read-x but keeps the cage in the desk universe
+    ::  (no +next migration), so cross-kelvin the file vase can feed a desk
+    ::  mark tube natively.  native (same-kelvin) this is identical to +read-x.
+    ::
+    ++  read-x-desk
+      |=  [tak=tako pax=path]
+      ^-  (unit (unit cage))
+      =/  q  (read-q tak pax)
+      ?~  q     ~
+      ?~  u.q  [~ ~]
+      ``(page-to-cage-desk:(tako-ford tak) p.u.u.q q.q.u.u.q)
     ::  +read-s: produce miscellaneous
     ::
     ++  read-s

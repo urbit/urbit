@@ -14183,6 +14183,16 @@
   +$  foot  $%  [%dry p=hoon]                             ::  dry arm, geometric
                 [%wet p=hoon]                             ::  wet arm, generic
             ==                                            ::
+  +$  link                                                ::  lexical segment
+            $%  [%chat p=term]                            ::  |chapter
+                [%cone p=aura q=atom]                     ::  %constant
+                [%frag p=term]                            ::  .face
+                [%funk p=term]                            ::  +arm
+                [%plan p=term]                            ::  $spec
+            ==                                            ::
+  +$  cuff  (list link)                                   ::  parsed lex segments
+  +$  crib  [summary=cord details=(list sect)]            ::
+  +$  help  [=cuff =crib]                                 ::  documentation
   +$  limb  $@  term                                      ::  wing element
             $%  [%& p=axis]                               ::  by geometry
                 [%| p=@ud q=(unit term)]                  ::  by name
@@ -14201,7 +14211,7 @@
             $~  [%base %null]                             ::
             $%  [%base p=base]                            ::  base type
                 [%dbug p=spot q=spec]                     ::  set debug
-                [%gist p=[%help p=*] q=spec]  :: p.p=help ::  formal comment
+                [%gist p=[%help p=help] q=spec]           ::  formal comment
                 [%leaf p=term q=@]                        ::  constant atom
                 [%like p=wing q=(list wing)]              ::  reference
                 [%loop p=term]                            ::  hygienic reference
@@ -14245,13 +14255,13 @@
                 [%cell =skin =skin]                       ::  pair
                 [%dbug =spot =skin]                       ::  trace
                 [%leaf =aura =atom]                       ::  atomic constant
-                [%help help=* =skin]                      ::  describe
+                [%help =help =skin]                       ::  describe
                 [%name =term =skin]                       ::  apply label
                 [%over =wing =skin]                       ::  relative to
                 [%spec =spec =skin]                       ::  cast to
                 [%wash depth=@ud]                         ::  strip faces
             ==                                            ::
-  +$  tome  (pair * (map term hoon))  ::  p=what          ::  core chapter
+  +$  tome  (pair what (map term hoon))                   ::  core chapter
   +$  tope                                                ::  topographic type
     $@  $?  %&                                            ::  cell or atom
             %|                                            ::  atom
@@ -14408,7 +14418,7 @@
   +$  tyre  (list [p=term q=hoon])                        ::
   +$  tyke  (list (unit hoon))                            ::
   +$  note                                                ::  type annotation
-            $%  [%help p=*]  ::  p=help                   ::  documentation
+            $%  [%help p=help]                            ::  documentation
                 [%know p=stud]                            ::  global standard
                 [%made p=term q=(unit (list wing))]       ::  structure
             ==                                            ::
@@ -14434,6 +14444,8 @@
   +$  typo  type                                          ::  old type
   +$  vase  [p=type q=*]                                  ::  type-value pair
   +$  vise  [p=typo q=*]                                  ::  old vase
+  +$  what  (unit (pair cord (list sect)))                ::  help slogan/section
+  +$  sect  (list pica)                                   ::  paragraph
   ::
   ++  next-vase
     |=  a=vase

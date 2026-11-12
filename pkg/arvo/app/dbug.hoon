@@ -65,6 +65,7 @@
       =/  cmd=[%clear-eyre-cache =desk url=@t]
         ((of clear-eyre-cache+(ot desk+so url+so ~) ~) jon)
       ?>  ?=(%clear-eyre-cache -.cmd)
+      ::TODO  broken. may need to do syscall & specify the desk?
       [[%pass /cmd %arvo %eyre %set-response url.cmd ~]~ this]
     ?.  ?=(%handle-http-request mark)
       (on-poke:def mark vase)
@@ -429,14 +430,16 @@
       ::
         :-  'request'
         %-  pairs
+        =/  sesh=(unit sesh:eyre)  (sesh-from-auth:eyre authentication)
         =/  ses=json
-          ?~  session  ~
+          ?~  sesh  ~
           %-  pairs
-          :~  'cookie'^s+(scot %uv sid.u.session)
-              'identity'^(render-identity-p:v-eyre identity.u.session)
+          :~  'kind'^s++<.authentication
+              'cookie'^s+(scot %uv sid.u.sesh)
+              'identity'^(render-identity-p:v-eyre identity.u.sesh)
           ==
         :~  'session'^ses  ::TODO  use in client code
-            'authenticated'^b+?=([~ @ [%ours ~] ~] session)  ::TODO  remove usage from client code
+            'authenticated'^b+authenticated
             'secure'^b+|  ::TODO  remove usage from client code
             'source'^s+'0.0.0.0'  ::TODO  remove usage from client code
         ==

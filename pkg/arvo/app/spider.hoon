@@ -362,6 +362,7 @@
 ++  bec  `beak`byk.bowl(r da+now.bowl)
 ++  bind-eyre
   ^-  card
+  ::TODO  deprecate in favor of eyre-supplied /~/spider binding
   [%pass /bind %arvo %eyre %connect /spider %spider]
 ::
 ++  new-thread-id
@@ -401,6 +402,9 @@
   ?>  authenticated.inbound-request
   =/  url
     (parse-request-line:server url.request.inbound-request)
+  ::TODO  deprecate /spider eventually
+  ~?  ?=([%spider *] site.url)  '/spider deprecated, use /~/spider'
+  =?  site.url  ?=([%'~' %spider *] site.url)  t.site.url
   ?>  ?=([%spider @t @t @t @t ~] site.url)
   =*  desk         i.t.site.url
   =*  input-mark   i.t.t.site.url
@@ -911,6 +915,7 @@
 ++  desk-from-sap
   |=  =bowl:gall
   ^-  (unit desk)
+  ?:  ?=([%eyre ~] sap.bowl)  `%base
   ?:  ?=([?(%eyre %khan %gall) @ ~] sap.bowl)
     `i.t.sap.bowl
   ~&('unknown provenance' ~)

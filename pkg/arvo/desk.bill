@@ -7,5 +7,7 @@
 ::    %herm
 ::    %lens
 ::    %ping
+::    %domains-manager
+::    %perm-man
     %spider
 ==
