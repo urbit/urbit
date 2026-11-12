@@ -4369,6 +4369,7 @@
     %+  roll  ~(tap by sessions.auth.state)
     |=  [[sid=@uv session] m=(map @t (unit desk))]
     ?.  ?=(%ours -.who.identity)  m
+    ?:  (lte expiry-time now)     m
     (~(put by m) (scot %uv sid) scope.identity)
   ::  +new-session-key
   ::
