@@ -1448,10 +1448,17 @@
     ?~  t=(~(get by hit.dom.dojo) let.dom.dojo)
       ::  desk never had a commit, no-op
       des
+    =/  yak=yaki  (tako-to-yaki:ze u.t)
     =/  kel=(set weft)
-      (waft-to-wefts (get-kelvin %| (tako-to-yaki:ze u.t)))
+      (waft-to-wefts (get-kelvin %| yak))
     ?:  (~(has in kel) sys-kel)
       ::  desk alredy supports kel update case
+      des
+    ::  a desk that ships its own kernel (/brass/pill) runs cross-kelvin even
+    ::  when it doesn't support the new zuse (see +tako-ford), so it neither
+    ::  blocks the update nor gets suspended by it.
+    ::
+    ?:  (~(has by q.yak) /brass/pill)
       des
     ?~  yok=(~(get by wic.dom.dojo) sys-kel)
       ::  has no pending commit for current kel update case

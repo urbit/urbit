@@ -2796,7 +2796,46 @@
         %.  ~
         %+  trace  odd.veb.bug.state
         |+[leaf+"insufficient permission: {sef} scrying for {tar}" ~]
-      (rof lyc pov omen)
+      =/  dat  (rof lyc pov omen)
+      ?.  ?=(%409 zuv.yoke)  dat
+      ?.  ?=([~ ~ *] dat)    dat
+      ::  prior-kelvin agent: fix up the type of clay %cr and %cc results
+      ::
+      ::    clay %cr (+read-r) produces a $vase and %cc (+read-c) a $tube
+      ::    ($-(vase vase)), and the agent's .^ asks for exactly those
+      ::    types -- but its own kelvin's $vase/$tube.  +look checks the
+      ::    result's type against the agent's requested type (after
+      ::    +next-type), and the live $vase type doesn't nest the old one
+      ::    (scry-lost), while converting the value with +prev-vase crashes
+      ::    (bad look).  so we change the type the result is labeled with
+      ::    to the agent kelvin's $vase (vase:h136), which does nest.  the
+      ::    noun itself is unchanged.  all other views produce plain data
+      ::    and pass through.
+      ::
+      ::    %cr: the outer type is only seen by +look's check; the agent
+      ::    gets the noun, which is the file's vase from +read-r.  don't
+      ::    +prev-vase that inner vase: its $type can contain
+      ::    a core holding all of zuse, and walking that explodes.
+      ::
+      ::    %cc: clay built the tube against the desk, so it already takes
+      ::    and produces the agent's vases.  wrap it in a gate typed
+      ::    $-(vase:h136 vase:h136) that calls it with +slum and extracts
+      ::    the result with !< (not +;;, which would recursively clam the
+      ::    output $type and bail).
+      ::
+      ::    TODO: real cross-kelvin type conversion should retire this.
+      ::
+      :^  ~  ~  p.u.u.dat
+      ?+  vis.omen  q.u.u.dat
+        ?(%cr [%c %r])  `vase`[p:!>(*vase:h136) !<(vase q.u.u.dat)]
+      ::
+          ?(%cc [%c %c])
+        !>
+        =>  [tv=q.u.u.dat ..vez]
+        |=  v=vase:h136
+        ^-  vase:h136
+        !<(vase:h136 [-:!>(*vase:h136) (slum +.tv v)])
+      ==
     ::  +ap-ingest: call agent arm
     ::
     ::    Handle acks here because they need to be emitted before the
