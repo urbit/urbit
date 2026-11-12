@@ -2451,6 +2451,10 @@
     ::    if this closes an %ours session, the caller is responsible for
     ::    also calling +give-session-tokens afterwards.
     ::
+    ::    you MUST NEVER delete from sessions.auth.state by hand!
+    ::    you MUST ALWAYS go through +close-session!
+    ::    it does important bookkeeping wrt channels, eauth, etc.
+    ::
     ::NOTE  the factoring here isn't perf-optimal, but it's legibility-optimal
     ++  close-session
       |=  [session-id=@uv all=?]
@@ -4644,7 +4648,6 @@
     =/  [moz=(list move) etc=_http-server-gate]  $
     :_  etc
     ^-  (list move)
-    ?:  =(~ sessions.auth.server-state.ax.etc)  moz
     ::  if .moz is already setting the timer,
     ::  we don't need to do it here
     ::
@@ -4665,7 +4668,7 @@
     ::  we need a timer, but aren't setting one, and don't have one,
     ::  so prepend a session expire timer to the .moz
     ::
-    [[duct %pass /sessions/expire %b %wait now] moz]
+    [[[/eyre/session-expiry/synthetic]~ %pass /sessions/expire %b %wait now] moz]
   ::  %init: tells us what our ship name is
   ::
   ?:  ?=(%init -.task)
@@ -4673,7 +4676,8 @@
     ::
     =.  domains.server-state.ax
       (~(put in domains.server-state.ax) 'localhost' ~)
-    [~ http-server-gate]
+    :_  http-server-gate
+    [[/eyre/session-expiry/synthetic]~ %pass /sessions/expire %b %wait (add now ~d1)]~
   ::  %trim: in response to memory pressure
   ::
   ::    Cancel all inactive channels
@@ -5072,32 +5076,37 @@
       ::  and hope it will run successfully later...
       ::
       :~  [duct %slip %d %flog %crud %wake u.error.sign]
-          [duct %pass /sessions/expire %b %wait (add now ~d1)]
+          [[/eyre/session-expiry/synthetic]~ %pass /sessions/expire %b %wait (add now ~d1)]
       ==
-    ::NOTE  we are not concerned with expiring channels that are still in
-    ::      use. we require acks for messages, which bump their session's
-    ::      timer. channels have their own expiry timer, too.
-    ::  remove cookies that have expired
+    ::  remove sessions that have expired
     ::
     =*  sessions  sessions.auth.server-state.ax
-    =.  sessions.auth.server-state.ax
-      %-  ~(gas by *(map @uv session))
-      %+  skip  ~(tap by sessions)
-      |=  [cookie=@uv session]
-      (lth expiry-time now)
-    ::  if there's any cookies left, set a timer for the next expected expiry
+    =/  [ded=(list @uv) nex=@da]
+      %-  ~(rep by sessions)
+      |=  [[sid=@uv session] ded=(list @uv) nex=$~((add now ~d1) @da)]
+      ?:  (lte expiry-time now)
+        [[sid ded] nex]
+      [ded (min expiry-time nex)]
+    =|  moves=(list move)
+    |-
+    ?^  ded
+      =^  moz=(list move)  server-state.ax
+        %.  [i.ded |]
+        =<  close-session:authentication
+        (per-server-event [eny duct now rof] server-state.ax)
+      =.  moves  (weld moz moves)
+      $(ded t.ded)
+    ::  update the runtime about the changes to active sessions,
+    ::  and set a timer for the next expected expiry, or next day if none.
+    ::  (if we ever set multiple timers accidentally, eventually we will set
+    ::  them to the same .nex, deduplicating)
     ::
     ^-  [(list move) _http-server-gate]
     :_  http-server-gate
     :-  =<  give-session-tokens
         (per-server-event [eny duct now rof] server-state.ax)
-    ?:  =(~ sessions)  ~
-    =;  next-expiry=@da
-      [duct %pass /sessions/expire %b %wait next-expiry]~
-    %+  roll  ~(tap by sessions)
-    |=  [[@uv session] next=@da]
-    ?:  =(*@da next)  expiry-time
-    (min next expiry-time)
+    :_  moves
+    [[/eyre/session-expiry/synthetic]~ %pass /sessions/expire %b %wait nex]
   ::
   ++  holm
     ?>  ?=([%behn %wake *] sign)
@@ -5541,7 +5550,7 @@
       ports.old
       outgoing-duct.old
       verb.old
-      check-session-timer.old
+      check-session-timer=&  ::  just in case; we changed how it gets set
     ==
   ::
       %~2026.12.31
