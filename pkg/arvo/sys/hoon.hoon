@@ -5134,11 +5134,14 @@
   ::
   ::  fold .lef into .wag, combining results with .raq
   ::
-  %+  roll  lef
-  |=  _[vex=(fel tub) wag=wag]  :: q.vex is always (some)
-  ^+  wag
-  :-  (last p.vex p.wag)
-  [~ (raq p.u.+.q.vex p.u.q.wag) q.u.q.wag]
+  |-  ^+  wag
+  ?~  lef  wag
+  =/  vex  i.lef                    :: q.vex is always (some)
+  %=  $
+    lef  t.lef
+    wag  :-  (last p.vex p.wag)
+         [~ (raq p.u.+.q.vex p.u.q.wag) q.u.q.wag]
+  ==
 ::
 ++  stun                                                ::  parse several times
   ~/  %stun
