@@ -5770,7 +5770,6 @@
       ;~(pfix hep (stag %c (cook taft urx:ab)))
     ==
   ++  nuck
-    ~/  %nuck  |=  a=nail  %.  a
     %+  knee  *coin  |.  ~>  %memo.%core
     %-  stew
     ^.  stet  ^.  limo
