@@ -1,0 +1,47 @@
+::  connect to .addr, send .size bytes, and wait without closing until
+::  %mach closes the connection; report how it closed
+::
+::    for the stall timer: point it at a silent server with .size well
+::    past the kernel's socket buffers but under the driver's 16 MiB
+::    queue cap, such as 12 MiB. no write finishes once the buffers
+::    fill, so the driver should close with [%peer %dead] 180s later.
+::    a .size over the cap, such as 20 MiB, should close with
+::    [%local %overflowed] at once
+::
+/-  spider
+/+  io=strandio
+=,  strand=strand:spider
+^-  thread:spider
+|=  arg=vase
+=/  m  (strand ,vase)
+^-  form:m
+=+  !<([~ size=@ud addr=addr:mach] arg)
+;<  =bowl:spider  bind:m  get-bowl:io
+=/  wir=wire  /(scot %uv (cut 5 [0 1] eny.bowl))
+;<  ~  bind:m  (send-raw-card:io [%pass wir %arvo %m %connect wir addr])
+;<  [* first=sign-arvo]  bind:m  take-sign-arvo:io
+?.  ?=([%mach %connected *] first)
+  (strand-fail:strand %connection-failed >first< ~)
+::
+::  +fil isn't jetted, so double with +cat instead
+=/  data=@
+  =/  a=@  'x'
+  |-
+  ?:  (gte (met 3 a) size)
+    (end [3 size] a)
+  $(a (cat 3 a a))
+;<  ~  bind:m  (send-raw-card:io [%pass wir %arvo %m %send wir size data])
+;<  start=@da  bind:m  get-time:io
+=|  bytes=@ud
+|-  ^-  form:m
+=*  loop  $
+;<  [=wire =sign-arvo]  bind:m  take-sign-arvo:io
+?.  =(wir wire)
+  (strand-fail:strand %wrong-wire >wire< ~)
+?+  sign-arvo  (strand-fail:strand %unexpected-sign ~)
+  [%mach %received *]  loop(bytes (add bytes p.octs.sign-arvo))
+::
+    [%mach %closed *]
+  ;<  now=@da  bind:m  get-time:io
+  (pure:m !>([received=bytes why=p.sign-arvo took=`@dr`(sub now start)]))
+==
