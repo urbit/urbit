@@ -2,9 +2,11 @@
 ::  %mach closes the connection; report how it closed
 ::
 ::    for the stall timer: point it at a silent server with .size well
-::    past the kernel's socket buffers. no write finishes once they
-::    fill, so the driver should close with [%peer %dead] about 180s
-::    later. a 20 MiB .size should close with [%local %overflowed]
+::    past the kernel's socket buffers but under the driver's 16 MiB
+::    queue cap, such as 12 MiB. no write finishes once the buffers
+::    fill, so the driver should close with [%peer %dead] 180s later.
+::    a .size over the cap, such as 20 MiB, should close with
+::    [%local %overflowed] at once
 ::
 /-  spider
 /+  io=strandio

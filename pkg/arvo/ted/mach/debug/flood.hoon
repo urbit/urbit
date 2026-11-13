@@ -1,7 +1,7 @@
 ::  connect to .addr and take %received until .want bytes arrive
 ::
 ::    for the flood server mode. reports how many bytes and events
-::    arrived, the largest event (the driver caps them at 1 MiB), and
+::    arrived, the largest event (the driver caps them at 4 MiB), and
 ::    how the connection closed, whether by us or by the driver
 ::
 /-  spider

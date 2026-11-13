@@ -4,8 +4,9 @@
 ::    for the retransmission test: point it at a silent server, then
 ::    drop the server's packets with tcp-server/pf-drop.sh. the sends
 ::    keep data in flight, so keepalive never starts, and the driver's
-::    retransmission bound should close with [%peer %dead] about 180s
-::    after the first unacknowledged send
+::    retransmission bound should close with [%peer %dead] at most 180s
+::    after the first unacknowledged send. on macos loopback the os
+::    gives up by its own retry count first, 20s to 40s in
 ::
 /-  spider
 /+  io=strandio

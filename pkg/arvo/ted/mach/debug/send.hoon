@@ -2,7 +2,9 @@
 ::
 ::    for the discard and silent server modes. a silent peer never reads,
 ::    so once .size outgrows the socket buffers the driver can't drain
-::    its queue, and should close with %timeout after 30 seconds
+::    its queue, and should close with [%close %timeout] after 30
+::    seconds. the driver queues 16 MiB at most, so a larger .size
+::    should close with [%local %overflowed] at once, whatever the peer
 ::
 /-  spider
 /+  io=strandio

@@ -4,7 +4,7 @@
 |%
 ::  +take-echo: take %received gifts on .wir until .want bytes arrive
 ::
-::    the driver caps each %received at 1 MiB, so a long echo arrives
+::    the driver caps each %received at 4 MiB, so a long echo arrives
 ::    in chunks; we join them in order and fail if the peer closes early
 ::
 ++  take-echo
