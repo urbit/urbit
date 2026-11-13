@@ -14,16 +14,19 @@
 ::      (line bug wer txt)  as (rush txt wide:vast), raw
 ::
 ::    +rd is a door over vast's sample (bug for !: spots, wer for % paths)
-::    and the line of a wide form.  the text is taken line by line: an arm
-::    on a tape parses within one line, an arm on a +sat can cross lines.
-::    every arm returns [product rest] or an atom: 0 where the stock rule
-::    finds no parse, 1 where this parser declines.  a choice goes on to
-::    its next alternative on 0 only.  no rule is built and no gate is
-::    passed.  what is left to hoon.hoon: the rarer atom syntaxes (rules
-::    of +so, called on the rest of the line), path interpolation
-::    (posh:vast), tape lists (phax:vast), flay, autoname.  declined:
-::    sail, block cords and tapes, #/ paths, and a few forms that span
-::    lines inside a wide hoon.
+::    and the place of a tape in the text.  the text is taken line by
+::    line: an arm on a +sat (tall forms) can cross lines, an arm on a
+::    tape (wide forms) first gets the rest of one line.  every arm
+::    returns [product rest] or an atom: 0 where the stock rule finds no
+::    parse, 1 where this parser declines, 2 where a wide arm needs the
+::    following lines or its place in the text; its caller on a +sat then
+::    runs it again on a tape of more lines.  a choice goes on to its next
+::    alternative on 0 only.  no rule is built and no gate is passed.
+::    what is left to hoon.hoon: the rarer atom syntaxes (rules of +so),
+::    path interpolation (posh:vast), tape lists (phax:vast), flay,
+::    autoname, and the markdown of sail (cram:vast, for ;> and the text
+::    children of a tall tag).  the stock rules run under mule; where
+::    one crashes, this parser declines.
 ::
 |%
 ++  ream                                                ::  parse cord to hoon
@@ -50,22 +53,20 @@
 ++  file                                                ::  0, 1 or a file's hoon
   |=  [bug=? wer=path txt=@]
   ^-  $@(@ hoon)
-  (~(apex rd bug wer 0 0) (rows txt))
+  (~(apex rd bug wer 0 0 ~ 0 %line &) (rowt (trip txt)))
 ::
 ++  line                                                ::  0, 1 or a wide hoon
   |=  [bug=? wer=path txt=@]
   ^-  $@(@ hoon)
-  =/  lis  (rows txt)
-  ?^  t.lis  1
-  =/  r  (~(wide rd bug wer 1 len.i.lis) tap.i.lis)
-  ?@  r  r
+  =/  tap  (trip txt)
+  =/  r  (~(wide rd bug wer 1 (lent tap) tap 0 %eof &) tap)
+  ?@  r  ?:(=(0 r) 0 1)
   ?^  q.r  0
   p.r
 ::
-++  rows                                                ::  the text by lines,
-  |=  txt=@                                             ::  each with its length
+++  rowt                                                ::  a tape by lines,
+  |=  tub=tape                                          ::  each with its length
   ^-  (lest [len=@ud tap=tape])
-  =/  tub  (trip txt)
   =|  acc=(list [len=@ud tap=tape])
   |-  ^-  (lest [len=@ud tap=tape])
   =/  i  (find "\0a" tub)
@@ -75,7 +76,17 @@
   $(acc [[u.i (scag u.i tub)] acc], tub (slag +(u.i) tub))
 ::
 ++  rd
-  |_  [bug=? wer=path lin=@ud len=@ud]
+  |_  $:  bug=?                                         ::  spots are on
+          wer=path                                      ::  path for % forms
+          lin=@ud                                       ::  line of the tape's
+          len=@ud                                       ::  start, 0 if unknown;
+          all=tape                                      ::  %line: len of line.
+          beg=@ud                                       ::  else: the joined
+          end=?(%line %more %eof)                       ::  tape, its length, the
+          fin=?                                         ::  column before it,
+      ==                                                ::  and what its end is.
+                                                        ::  fin: a sat ends the
+                                                        ::  text
   +$  res  $@(@ [p=hoon q=tape])                    ::  hoon and rest
   +$  rez  $@(@ [p=spec q=tape])                    ::  spec and rest
   +$  rew  $@(@ [p=wing q=tape])                    ::  wing and rest
@@ -88,21 +99,24 @@
     |=  tub=tape
     ^-  res
     ?.  bug  (wode tub)
-    =/  a  (lent tub)
+    ?:  =(0 lin)  2
     =/  r  (wode tub)
     ?@  r  r
-    :_  q.r
-    [%dbug [wer [lin +((sub len a))] lin +((sub len (lent q.r)))] p.r]
+    [[%dbug [wer (hair tub) (hair q.r)] p.r] q.r]
   ::                                                ::  ++wode
   ++  wode                                          ::  wide, no spot
     |=  tub=tape
     ^-  res
     ?~  tub  0
     =/  nex  t.tub
-    ?.  ?=([@ %'(' *] nex)  (long tub)
-    =/  r  (rune i.tub i.nex t.t.nex)
+    =/  r=res
+      ?.  ?=([@ %'(' *] nex)  0
+      (rune i.tub i.nex t.t.nex)
     ?.  =(0 r)  r
-    (long tub)
+    =/  r  (long tub)
+    ?.  =(0 r)  r
+    ?.  =(';' i.tub)  0
+    (saiw nex)
   ::                                                ::  ++long
   ++  long                                          ::  scat and a suffix
     |=  tub=tape
@@ -215,9 +229,11 @@
         [[%bust %null] nex]
       =/  c=$@(@ [p=coin q=tape])
         ?.  (twid nex)  0
-        =/  vex  (twid:so [[1 1] nex])
+        =/  mex  (mule |.((twid:so [[1 1] nex])))
+        ?.  ?=(%& -.mex)  1
+        =/  vex  p.mex
         ?~  q.vex  0
-        ?:  (gapy q.q.u.q.vex)  1
+        ?:  (gapy q.q.u.q.vex)  2
         [p.u.q.vex q.q.u.q.vex]
       ?^  c  [((jock |) p.c) q.c]
       ?.  =(0 c)  c
@@ -310,9 +326,11 @@
               =('~' d)  =('-' d)  =('_' d)
           ==
         (cnts tub)
-      =/  vex  (perd:so [[1 1] nex])
+      =/  mex  (mule |.((perd:so [[1 1] nex])))
+      ?.  ?=(%& -.mex)  1
+      =/  vex  p.mex
       ?~  q.vex  (cnts tub)
-      ?:  (gapy q.q.u.q.vex)  1
+      ?:  (gapy q.q.u.q.vex)  2
       [((jock |) p.u.q.vex) q.q.u.q.vex]
     ::
         %'`'
@@ -462,8 +480,7 @@
       ?~  u  0
       [[%clsg u.u] q.pof]
     ::
-        %';'  1
-        %'#'  1
+        %'#'  ?.(?=([%'/' *] nex) 0 (reed t.nex))
     ==
   ::                                                ::  ++pash
   ++  pash                                          ::  tyke to hoons
@@ -500,24 +517,73 @@
   ++  nuck                                          ::  an atom by nuck:so
     |=  tub=tape
     ^-  $@(@ [p=coin q=tape])
-    =/  vex  (nuck:so [[1 1] tub])
+    =/  mex  (mule |.((nuck:so [[1 1] tub])))
+    ?.  ?=(%& -.mex)  1
+    =/  vex  p.mex
     ?~  q.vex  0
-    ?:  (gapy q.q.u.q.vex)  1
+    ?:  (gapy q.q.u.q.vex)  2
     [p.u.q.vex q.q.u.q.vex]
   ::                                                ::  ++gapy
-  ++  gapy                                          ::  a stock atom rule may
-    |=  tub=tape                                    ::  go on past this line
-    ^-  ?
+  ++  gapy                                          ::  a stock atom rule
+    |=  tub=tape                                    ::  may want text past
+    ^-  ?                                           ::  the end of the tape
     ?~  tub  |
     =/  c  i.tub
     ?.  |(=('.' c) =('-' c) =('\\' c))  |
-    =/  nex  t.tub
-    ?~  nex  &
-    ?:  |(=(' ' i.nex) ?=([%':' %':' *] nex))  &
-    ?.  &(=('-' c) =('-' i.nex))  |
-    =/  nix  t.nex
-    ?~  nix  &
-    |(=(' ' i.nix) ?=([%':' %':' *] nix))
+    ?:  ?=(@ (tgay t.tub))  &
+    ?.  &(=('-' c) ?=([%'-' *] t.tub))  |
+    ?=(@ (tgay t.t.tub))
+  ::                                                ::  ++hair
+  ++  hair                                          ::  line and column of
+    |=  tub=tape                                    ::  a rest of the tape
+    ^-  [@ud @ud]
+    ?:  =(%line end)  [lin +((sub len (lent tub)))]
+    =/  n  (sub len (lent tub))
+    =/  [l=@ud c=@ud t=tape]  [lin beg all]
+    |-  ^-  [@ud @ud]
+    ?:  =(0 n)  [l +(c)]
+    ?~  t  [l +(c)]
+    ?:  =(10 i.t)  $(n (dec n), l +(l), c 0, t t.t)
+    $(n (dec n), c +(c), t t.t)
+  ::                                                ::  ++tgay
+  ++  tgay                                          ::  optional gap in a
+    |=  tub=tape                                    ::  tape; 2 if it may
+    ^-  $@(@ [~ q=tape])                            ::  run past the end
+    ?~  tub  ?:(=(%eof end) [~ ~] 2)
+    =/  c  i.tub
+    ?:  =(10 c)  (tgaw t.tub)
+    ?:  =(' ' c)
+      =/  nex  t.tub
+      ?~  nex  ?:(=(%eof end) [~ tub] 2)
+      ?:  |(=(' ' i.nex) =(10 i.nex))  (tgaw t.nex)
+      ?.  ?=([%':' %':' *] nex)  [~ tub]
+      =/  v  (tvul t.t.nex)
+      ?@  v  ?:(=(0 v) [~ tub] v)
+      (tgaw q.v)
+    ?.  ?=([%':' %':' *] tub)  [~ tub]
+    =/  v  (tvul t.t.tub)
+    ?@  v  ?:(=(0 v) [~ tub] v)
+    (tgaw q.v)
+  ::                                                ::  ++tvul
+  ++  tvul                                          ::  comment, after ::
+    |=  tub=tape
+    ^-  $@(@ [~ q=tape])
+    ?~  tub  ?:(=(%eof end) [~ ~] 2)
+    =/  c  i.tub
+    ?:  =(10 c)  [~ t.tub]
+    ?:  |((lth c 32) =(127 c))  0
+    $(tub t.tub)
+  ::                                                ::  ++tgaw
+  ++  tgaw                                          ::  spaces, line ends
+    |=  tub=tape                                    ::  and comments
+    ^-  $@(@ [~ q=tape])
+    ?~  tub  ?:(=(%eof end) [~ ~] 2)
+    =/  c  i.tub
+    ?:  |(=(' ' c) =(10 c))  $(tub t.tub)
+    ?.  ?=([%':' %':' *] tub)  [~ tub]
+    =/  v  (tvul t.t.tub)
+    ?@  v  ?:(=(0 v) [~ tub] v)
+    $(tub q.v)
   ::                                                ::  ++sols
   ++  sols                                          ::  tapes by dots, after
     |=  [pre=@ tub=tape]                            ::  a doq; pre: 0, + or -
@@ -526,11 +592,12 @@
     ?@  s  s
     =/  nex  q.s
     ?.  ?=([%'.' *] nex)  [[p.s ~] nex]
-    ?:  (gapy nex)  1
+    =/  g  (tgay t.nex)
+    ?@  g  g
     =/  nix=tape
-      ?:  =(0 pre)  t.nex
-      ?.  &(?=(^ t.nex) =(pre i.t.nex))  ~
-      t.t.nex
+      ?:  =(0 pre)  q.g
+      ?.  &(?=(^ q.g) =(pre i.q.g))  ~
+      t.q.g
     ?.  ?=([%'"' *] nix)  [[p.s ~] nex]
     =/  m  $(tub t.nix)
     ?@  m  ?:(=(0 m) [[p.s ~] nex] m)
@@ -679,9 +746,16 @@
   ++  rupl                                          ::  [a b], after sel
     |=  [sig=? tub=tape]
     ^-  res
-    ?:  ?=([%' ' *] tub)
-      ?:(|(?=(~ t.tub) ?=([%' ' *] t.tub)) 0 1)
-    =/  r  (hank ']' tub)
+    =/  r=rel
+      ?.  ?=([%' ' *] tub)  (hank ']' tub)
+      ?:  |(?=(~ t.tub) ?=([?(%' ' %10) *] t.tub))  0
+      ?:  =(0 lin)  2
+      =/  f=?  &(fin =(%eof end))
+      =/  a  (tall(fin f) (stas t.tub))
+      ?@  a  ?:(&(=(0 a) !f) 2 a)
+      =/  l  (thak(fin f) ']' p.a q.a)
+      ?@  l  ?:(&(=(0 l) !f) 2 l)
+      [p.l (taps q.l)]
     ?@  r  r
     =/  nex  q.r
     ?.  ?=([%'~' *] nex)
@@ -1115,8 +1189,11 @@
     =/  nex  q.s
     =/  m=$@(@ [p=$@(term [term hoon]) q=tape])
       ?.  ?=([%'.' *] nex)  s
-      ?:  ?=([%' ' *] t.nex)  1
       =/  h  (wide t.nex)
+      ?^  h  [[p.s p.h] q.h]
+      ?.  =(0 h)  h
+      ?.  ?=([%' ' *] t.nex)  s
+      =/  h  (wide t.t.nex)
       ?@  h  ?:(=(0 h) s h)
       [[p.s p.h] q.h]
     ?@  m  m
@@ -1238,11 +1315,10 @@
     |=  tub=tape
     ^-  rez
     ?.  bug  (wydo tub)
-    =/  a  (lent tub)
+    ?:  =(0 lin)  2
     =/  r  (wydo tub)
     ?@  r  r
-    :_  q.r
-    [%dbug [wer [lin +((sub len a))] lin +((sub len (lent q.r)))] p.r]
+    [[%dbug [wer (hair tub) (hair q.r)] p.r] q.r]
   ::                                                ::  ++wydo
   ++  wydo                                          ::  wyde, no spot
     |=  tub=tape
@@ -1251,7 +1327,7 @@
     =/  c  i.tub
     ?:  &((gte c 'a') (lte c 'z'))  (scad tub)
     =/  nex  t.tub
-    ?:  =('#' c)  1
+    ?:  =('#' c)  (redy tub)
     ?.  ?=([@ %'(' *] nex)  (scad tub)
     ?:  =('$' c)
       =/  r  (stru i.nex t.t.nex)
@@ -1350,17 +1426,19 @@
       [[%base %cell] nex]
     ::
         %'='
-      =/  r=rez
+      =/  a=$@(@ [p=[term spec] q=tape])
         ?~  nex  0
         ?.  &((gte i.nex 'a') (lte i.nex 'z'))  0
         =/  s  (sym nex)
         ?.  ?=([%'=' *] q.s)  0
         =/  p  (wyde t.q.s)
         ?@  p  p
-        =/  n  ~(autoname ax p.p)
-        ?~  n  1
-        [[%bcts (cat 3 p.s (cat 3 '-' u.n)) p.p] q.p]
-      ?.  =(0 r)  r
+        [[p.s p.p] q.p]
+      ?^  a
+        =/  n  ~(autoname ax +.p.a)
+        ?~  n  0
+        [[%bcts (cat 3 -.p.a (cat 3 '-' u.n)) +.p.a] q.a]
+      ?.  =(0 a)  a
       =/  p  (wyde nex)
       ?@  p  p
       =/  n  ~(autoname ax p.p)
@@ -1437,9 +1515,11 @@
       ?@  r  ?:(=(0 r) [[%ud 0] nex] r)
       [[%ub p.r] q.r]
     ?:  |(=('c' c) =('i' c) =('v' c) =('w' c))
-      =/  vex  (bisk:so [[1 1] tub])
+      =/  mex  (mule |.((bisk:so [[1 1] tub])))
+      ?.  ?=(%& -.mex)  1
+      =/  vex  p.mex
       ?~  q.vex  0
-      ?:  (gapy q.q.u.q.vex)  1
+      ?:  (gapy q.q.u.q.vex)  2
       [p.u.q.vex q.q.u.q.vex]
     [[%ud 0] nex]
   ::                                                ::  ++digv
@@ -1474,12 +1554,16 @@
     ?.  (lth d bas)  (rest bas wuc v tub)
     $(n (dec n), v (add d (mul bas v)), tub t.tub)
   ::                                                ::  ++rest
-  ++  rest                                          ::  dot and a full group,
-    |=  [bas=@ wuc=@ v=@ tub=tape]                  ::  repeated
+  ++  rest                                          ::  dot, gap and a full
+    |=  [bas=@ wuc=@ v=@ tub=tape]                  ::  group, repeated
     ^-  rea
     ?.  ?=([%'.' *] tub)  [v tub]
-    ?:  |(?=(~ t.tub) ?=([?(%' ' %':' %10) *] t.tub))  1
-    =/  g  (grup bas wuc t.tub)
+    =/  nex  t.tub
+    =/  g=$@(@ [~ q=tape])
+      ?:  &(?=(^ nex) !=(' ' i.nex) !=(10 i.nex) !=(':' i.nex))  [~ nex]
+      (tgay nex)
+    ?@  g  g
+    =/  g  (grup bas wuc q.g)
     ?@  g  [v tub]
     $(v (add p.g (mul wuc v)), tub q.g)
   ::                                                ::  ++grup
@@ -1497,7 +1581,7 @@
   ++  qut                                           ::  cord, after the soq
     |=  tub=tape
     ^-  rea
-    ?:  ?=([%'\'' %'\'' *] tub)  1
+    ?:  ?=([%'\'' %'\'' *] tub)  (bloc tub)
     =|  acc=(list @)
     |-  ^-  rea
     ?~  tub  0
@@ -1506,21 +1590,104 @@
     ?.  =('\\' c)
       ?:  |((lth c 32) =(127 c))  0
       $(acc [c acc], tub t.tub)
+    =/  g=$@(@ [~ q=tape])  ?~(acc [~ ~] (tgay t.tub))
+    ?@  g  g
+    =/  r=rea
+      ?.  &(?=(^ acc) ?=([%'/' *] q.g))  (qit tub)
+      (qit t.q.g)
+    ?@  r  r
+    $(acc [p.r acc], tub q.r)
+  ::                                                ::  ++qit
+  ++  qit                                           ::  one char of a cord
+    |=  tub=tape
+    ^-  rea
+    ?~  tub  0
+    =/  c  i.tub
+    ?:  =('\'' c)  0
+    ?.  =('\\' c)  ?:(|((lth c 32) =(127 c)) 0 [c t.tub])
     =/  nex  t.tub
-    ?~  nex  1
+    ?~  nex  0
     =/  d  i.nex
-    ?:  |(=('\\' d) =('\'' d))  $(acc [d acc], tub t.nex)
-    ?:  |(=('/' d) =(' ' d) =(10 d) =(':' d))  1
+    ?:  |(=('\\' d) =('\'' d))  [d t.nex]
     =/  nix  t.nex
     ?~  nix  0
     =/  [a=@ b=@]  [(hitv d) (hitv i.nix)]
     ?:  |(=(16 a) =(16 b))  0
-    $(acc [(add b (mul 16 a)) acc], tub t.nix)
+    [(add b (mul 16 a)) t.nix]
+  ::                                                ::  ++bloc
+  ++  bloc                                          ::  ''' block cord, at
+    |=  tub=tape                                    ::  its second soq
+    ^-  rea
+    ?.  ?=([%'\'' %'\'' *] tub)  0
+    ?:  =(0 lin)  2
+    =/  lev  (sub +:(hair tub) 2)
+    =/  aft=$@(@ [~ q=tape])
+      =/  t  t.t.tub
+      ?~  t  ?:(=(%eof end) 0 2)
+      ?:  =(10 i.t)  [~ t]
+      ?.  =(' ' i.t)  0
+      =/  u=tape  t.t
+      |-  ^-  $@(@ [~ q=tape])
+      ?:  ?=([%' ' *] u)  $(u t.u)
+      ?.  ?=([%':' %':' *] u)  0
+      =/  l  (prnt u)
+      ?^  q.l  ?:(=(10 i.q.l) [~ q.l] 0)
+      ?:(=(%eof end) 0 2)
+    ?@  aft  aft
+    =/  b  (inde lev '\'' q.aft)
+    ?@  b  b
+    [(crip p.b) q.b]
+  ::                                                ::  ++inde
+  ++  inde                                          ::  indented block, at
+    |=  [lev=@ud quo=@ tub=tape]                    ::  the line end after
+    ^-  $@(@ [p=tape q=tape])                       ::  its opener
+    =|  acc=(list tape)
+    =/  fir=?  &
+    |-  ^-  $@(@ [p=tape q=tape])
+    ?~  tub  ?:(=(%eof end) 0 2)
+    ?.  =(10 i.tub)  0
+    =/  row  t.tub
+    =/  d  (dent lev row)
+    ?~  d
+      ?~  row  ?:(=(%eof end) 0 2)
+      ?.  =(10 i.row)  0
+      $(tub row, acc [~ acc], fir |)
+    =/  t  u.d
+    ?:  &(!fir ?=([@ @ @ *] t) =(quo i.t) =(quo i.t.t) =(quo i.t.t.t))
+      [(zing (join `tape`[`@tD`10 ~] (flop acc))) t.t.t.t]
+    =/  l  (prnt t)
+    ?:  &(?=(~ q.l) !=(%eof end))  2
+    $(tub q.l, acc [p.l acc], fir |)
+  ::                                                ::  ++dent
+  ++  dent                                          ::  drop lev spaces
+    |=  [lev=@ud tub=tape]
+    ^-  (unit tape)
+    ?:  =(0 lev)  [~ tub]
+    ?.  ?=([%' ' *] tub)  ~
+    $(lev (dec lev), tub t.tub)
+  ::                                                ::  ++prnt
+  ++  prnt                                          ::  printable chars
+    |=  tub=tape
+    ^-  [p=tape q=tape]
+    =|  acc=tape
+    |-  ^-  [p=tape q=tape]
+    ?~  tub  [(flop acc) ~]
+    =/  c  i.tub
+    ?:  |((lth c 32) =(127 c))  [(flop acc) tub]
+    $(acc [c acc], tub t.tub)
   ::                                                ::  ++soil
   ++  soil                                          ::  tape, after the doq
     |=  tub=tape
     ^-  $@(@ [p=(list woof) q=tape])
-    ?:  ?=([%'"' %'"' *] tub)  1
+    ?:  ?=([%'"' %'"' *] tub)
+      ?:  =(0 lin)  2
+      =/  h  (hair tub)
+      =/  b  (inde (sub +.h 2) '"' t.t.tub)
+      ?@  b  b
+      =/  me  ..soil(lin -.h, len (lent p.b), all p.b, beg 0, end %eof)
+      =/  c  (soic:me p.b)
+      ?@  c  c
+      [p.c q.b]
     =|  acc=(list woof)
     |-  ^-  $@(@ [p=(list woof) q=tape])
     ?~  tub  0
@@ -1537,6 +1704,31 @@
     ?~  nex  0
     =/  d  i.nex
     ?:  |(=('\\' d) =('"' d) =('{' d))  $(acc [d acc], tub t.nex)
+    =/  nix  t.nex
+    ?~  nix  0
+    =/  [a=@ b=@]  [(digv d) (digv i.nix)]
+    ?:  |(=(16 a) =(16 b))  0
+    $(acc [(add b (mul 16 a)) acc], tub t.nix)
+  ::                                                ::  ++soic
+  ++  soic                                          ::  text of a block tape
+    |=  tub=tape
+    ^-  $@(@ [p=(list woof) ~])
+    =|  acc=(list woof)
+    |-  ^-  $@(@ [p=(list woof) ~])
+    ?~  tub  [(flop acc) ~]
+    =/  c  i.tub
+    ?:  =(10 c)  $(acc [c acc], tub t.tub)
+    ?:  =('{' c)
+      =/  r  (hank '}' t.tub)
+      ?@  r  r
+      $(acc [[~ %cltr p.r] acc], tub q.r)
+    ?.  =('\\' c)
+      ?:  |((lth c 32) =(127 c))  0
+      $(acc [c acc], tub t.tub)
+    =/  nex  t.tub
+    ?~  nex  0
+    =/  d  i.nex
+    ?:  |(=('\\' d) =('{' d))  $(acc [d acc], tub t.nex)
     =/  nix  t.nex
     ?~  nix  0
     =/  [a=@ b=@]  [(digv d) (digv i.nix)]
@@ -1651,7 +1843,7 @@
           %'/'  =/(r (expa tub) ?@(r r [[%mcfs p.r] q.r]))
           %'<'  =/(r (expz tub) ?@(r r [[%mcgl p.r] q.r]))
         ==
-      ?:(=(0 r) 1 r)
+      r
     ::
         %'%'
       ?+    b  0
@@ -1703,24 +1895,40 @@
         %'%'  =/(r (hind tub) ?@(r r [[%sgcn p.r] q.r]))
         %'/'  =/(r (hine tub) ?@(r r [[%sgfs p.r] q.r]))
           %'+'
-        ?:  ?=([%'=' *] tub)  1
+        =/  n  (tiss tub)
+        =/  r=res
+          ?.  &(!=(0 p.n) ?=([%' ' *] q.n))  0
+          =/  r  (expa t.q.n)
+          ?@  r  r
+          [[%sgls p.n p.r] q.r]
+        ?.  =(0 r)  r
         =/  r  (expa tub)
         ?@  r  r
         [[%sgls 0 p.r] q.r]
       ::
           %'&'
         =/  g  (gars tub)
-        ?:  =(4 p.g)  1
-        =/  r  (expb q.g)
-        ?@  r  ?:(=(0 p.g) r 1)
-        [[%sgpm p.g p.r] q.r]
+        =/  r=res
+          ?:  |(=(0 p.g) =(4 p.g))  0
+          =/  r  (expb q.g)
+          ?@  r  r
+          [[%sgpm p.g p.r] q.r]
+        ?.  =(0 r)  r
+        =/  r  (expb tub)
+        ?@  r  r
+        [[%sgpm 0 p.r] q.r]
       ::
           %'?'
         =/  g  (gars tub)
-        ?:  =(4 p.g)  1
-        =/  r  (expc q.g)
-        ?@  r  ?:(=(0 p.g) r 1)
-        [[%sgwt p.g p.r] q.r]
+        =/  r=res
+          ?:  |(=(0 p.g) =(4 p.g))  0
+          =/  r  (expc q.g)
+          ?@  r  r
+          [[%sgwt p.g p.r] q.r]
+        ?.  =(0 r)  r
+        =/  r  (expc tub)
+        ?@  r  r
+        [[%sgwt 0 p.r] q.r]
       ==
     ::
         %'.'
@@ -1741,8 +1949,8 @@
         %'<'  =/(r (exqc tub) ?@(r r [[%zpgl p.r] q.r]))
         %'@'  =/(r (expx tub) ?@(r r [[%zppt p.r] q.r]))
         %'?'  =/(r (hinh tub) ?@(r r [[%zpwt p.r] q.r]))
-        %':'  ?:(=(0 lin) 1 (expa(bug &) tub))
-        %'.'  ?:(=(0 lin) 1 (expa(bug |) tub))
+        %':'  ?:(=(0 lin) 2 (expa(bug &) tub))
+        %'.'  ?:(=(0 lin) 2 (expa(bug |) tub))
       ==
     ::
         %'$'
@@ -1754,7 +1962,7 @@
       [[%ktcl p.r] q.r]
     ==
   ::
-  ++  vaz  =+(v=vast v(wer wer))                        ::  vast on our path
+  ++  vaz  =+(v=vast v(wer wer, bug bug))               ::  vast as we are
   ::
   ::    more wide rune bodies
   ::
@@ -1839,9 +2047,15 @@
     |-  ^-  rea
     ?~  tub  [v ~]
     =/  c  i.tub
-    ?:  =('\\' c)  1
-    ?.  &((gte c '0') (lte c '9'))  [v tub]
-    $(v (add (sub c '0') (mul 10 v)), tub t.tub)
+    ?:  &((gte c '0') (lte c '9'))
+      $(v (add (sub c '0') (mul 10 v)), tub t.tub)
+    ?.  =('\\' c)  [v tub]
+    =/  g  (tgay t.tub)
+    ?@  g  g
+    ?.  ?=([%'/' @ *] q.g)  [v tub]
+    =/  d  i.t.q.g
+    ?.  &((gte d '0') (lte d '9'))  [v tub]
+    $(v (add (sub d '0') (mul 10 v)), tub t.t.q.g)
   ::
   ++  hinn                                              ::  n or [n m]
     |=  tub=tape
@@ -1978,6 +2192,456 @@
     ?:  ?=(%& -.tik)  syn
     [%over [%& 3]~ syn]
   ::
+  ::    #/ paths
+  ::
+  ++  reed                                              ::  #/a/b, after the fas
+    |=  tub=tape
+    ^-  res
+    =/  l  (stes tub)
+    ?@  l  l
+    [[%clsg p.l] q.l]
+  ::
+  ++  stes                                              ::  path elements by fases
+    |=  tub=tape
+    ^-  $@(@ [p=(list hoon) q=tape])
+    =/  e  (stem tub)
+    ?@  e  e
+    ?.  ?=([%'/' *] q.e)  [[p.e ~] q.e]
+    =/  m  $(tub t.q.e)
+    ?@  m  m
+    [[p.e p.m] q.m]
+  ::
+  ++  stem                                              ::  one typed element
+    |=  tub=tape
+    ^-  res
+    =/  non=res  [[%rock %tas %$] tub]
+    ?~  tub  non
+    =/  c  i.tub
+    ?:  &((gte c 'a') (lte c 'z'))
+      =/  s  (sym tub)
+      ?.  ?=([%'+' ?(%'(' %'[') *] q.s)  [[%rock %tas p.s] q.s]
+      =/  h=res
+        ?:  =('[' i.t.q.s)
+          =/  w  (wide t.t.q.s)
+          ?@  w  w
+          ?.  ?=([%']' *] q.w)  0
+          [p.w t.q.w]
+        =/  w  (hank ')' t.t.q.s)
+        ?@  w  w
+        [[%cncl p.w] q.w]
+      ?^  h  [[%clhp [%rock %tas p.s] p.h] q.h]
+      ?.  =(0 h)  h
+      [[%rock %tas p.s] q.s]
+    =/  r=res
+      ?+    c  0
+          %'$'  [[%rock %tas %$] t.tub]
+          %'['
+        =/  w  (wide t.tub)
+        ?@  w  w
+        ?.  ?=([%']' *] q.w)  0
+        [p.w t.q.w]
+      ::
+          %'('
+        =/  w  (hank ')' t.tub)
+        ?@  w  w
+        [[%cncl p.w] q.w]
+      ::
+          %'\''
+        =/  s  (qut t.tub)
+        ?@  s  s
+        [[%clhp [%rock %tas %t] %sand %t p.s] q.s]
+      ::
+          ?(%'-' %'.' %'~' %'0' %'1' %'2' %'3' %'4' %'5' %'6' %'7' %'8' %'9')
+        =/  mex
+          %-  mule  |.
+          ^-  (unit [p=* q=tape])
+          ?:  =('.' c)
+            =/  wex  (zust:so [[1 1] t.tub])
+            ?~  q.wex  ~
+            [~ p.u.q.wex q.q.u.q.wex]
+          =/  wex=(unit [p=* q=tape])
+            ?:  =('-' c)
+              =/  xex  (tash:so [[1 1] tub])
+              ?~(q.xex ~ [~ p.u.q.xex q.q.u.q.xex])
+            ?.  =('~' c)
+              =/  xex  (bisk:so [[1 1] tub])
+              ?~(q.xex ~ [~ p.u.q.xex q.q.u.q.xex])
+            =/  xex  (crub:so [[1 1] t.tub])
+            ?~(q.xex [~ [%n ~] t.tub] [~ p.u.q.xex q.q.u.q.xex])
+          ?~  wex  ~
+          ?~  ((soft iota) p.u.wex)  ~
+          wex
+        ?.  ?=(%& -.mex)  1
+        =/  vex  p.mex
+        ?~  vex  0
+        ?:  (gapy q.u.vex)  2
+        =/  d  p.u.vex
+        ?@  d  0
+        ?.  ?=(@ -.d)  0
+        [[%clhp [%rock %tas `@tas`-.d] [%sand `@tas`-.d +.d]] q.u.vex]
+      ==
+    ?:  =(0 r)  non
+    r
+  ::
+  ++  redy                                              ::  #/ path spec, at the hax
+    |=  tub=tape
+    ^-  rez
+    ?.  ?=([%'#' %'/' *] tub)  0
+    =/  l  (redi t.t.tub)
+    ?@  l  l
+    =/  nex  q.l
+    ?:  ?=([%'/' %'*' *] nex)
+      [[%bccl i.p.l (snoc t.p.l [%base %noun])] t.t.nex]
+    [[%bccl i.p.l (snoc t.p.l [%base %null])] nex]
+  ::
+  ++  redi                                              ::  path spec items
+    |=  tub=tape
+    ^-  $@(@ [p=[i=spec t=(list spec)] q=tape])
+    =/  e  (redo tub)
+    =/  nex  q.e
+    ?.  &(?=([%'/' *] nex) !?=([%'*' *] t.nex))  [[p.e ~] nex]
+    =/  m  $(tub t.nex)
+    ?@  m  m
+    [[p.e p.m] q.m]
+  ::
+  ++  redo                                              ::  one path spec item
+    |=  tub=tape
+    ^-  [p=spec q=tape]
+    =/  non=[p=spec q=tape]  [[%leaf %tas %$] tub]
+    ?~  tub  non
+    =/  c  i.tub
+    ?:  =('$' c)  [[%leaf %tas %$] t.tub]
+    ?:  =('?' c)  [[%bccl [%leaf %tas %f] [%base %flag] ~] t.tub]
+    ?:  =('~' c)  [[%bccl [%leaf %tas %n] [%base %null] ~] t.tub]
+    ?:  =('@' c)
+      =/  m  (mota t.tub)
+      [[%bccl [%leaf %tas p.m] [%base %atom p.m] ~] q.m]
+    ?.  &((gte c 'a') (lte c 'z'))  non
+    =/  s  (sym tub)
+    ?.  ?=([%'=' %'@' *] q.s)  [[%leaf %tas p.s] q.s]
+    =/  m  (mota t.t.q.s)
+    =/  bas=spec
+      ?+  p.m  [%base %atom p.m]
+        %f  [%base %flag]
+        %n  [%base %null]
+      ==
+    [[%bccl [%leaf %tas p.m] [%bcts p.s bas] ~] q.m]
+  ::
+  ::    tall hoons in a wide place
+  ::
+  ++  stas                                              ::  a tape as a sat
+    |=  tub=tape
+    ^-  sat
+    =/  h  (hair tub)
+    =/  lis  (rowt tub)
+    [tap.i.lis -.h (add (dec +.h) len.i.lis) t.lis]
+  ::
+  ++  taps                                              ::  a sat as a tape
+    |=  s=sat
+    ^-  tape
+    =/  cur=tape  tub.s
+    =/  rem  nex.s
+    |-  ^-  tape
+    ?~  rem  cur
+    (weld cur `tape`[`@tD`10 $(cur tap.i.rem, rem t.rem)])
+  ::
+  ::    sail, wide form
+  ::
+  ++  tnod  |=(a=tape `manx:hoot`;/(a))                 ::  text node
+  ++  saiw                                              ::  wide sail, after mic
+    |=  tub=tape
+    ^-  res
+    =/  t  (swit tub)
+    ?@  t  t
+    :_  q.t
+    ?-  -.p.t
+      %&  [%xray p.p.t]
+      %|  [%mcts p.p.t]
+    ==
+  ::
+  ++  swit                                              ::  quote, flow or tag
+    |=  tub=tape
+    ^-  $@(@ [p=(each manx:hoot marl:hoot) q=tape])
+    ?~  tub  0
+    ?:  =('"' i.tub)
+      =/  q  (squo | tub)
+      ?@  q  q
+      [[%| p.q] q.q]
+    ?:  =('(' i.tub)
+      =/  q  (spar tub)
+      ?@  q  q
+      [[%| p.q] q.q]
+    =/  h  (shed tub)
+    ?@  h  h
+    =/  t  (stai q.h)
+    ?@  t  t
+    [[%& p.h p.t] q.t]
+  ::
+  ++  drop                                              ::  one top as marl
+    |=  a=(each manx:hoot marl:hoot)
+    ^-  marl:hoot
+    ?-  -.a
+      %&  [p.a ~]
+      %|  p.a
+    ==
+  ::
+  ++  squo                                              ::  "text" as marl, at
+    |=  [tal=? tub=tape]                                ::  the doq
+    ^-  $@(@ [p=marl:hoot q=tape])
+    ?.  ?=([%'"' *] tub)  0
+    ?.  ?=([%'"' %'"' *] t.tub)
+      =/  i  (sinn tal & t.tub)
+      ?@  i  i
+      ?.  ?=([%'"' *] q.i)  0
+      [(coll tal p.i) t.q.i]
+    ?:  =(0 lin)  2
+    =/  h  (hair tub)
+    =/  b  (inde (dec +.h) '"' t.t.t.tub)
+    ?@  b  b
+    =/  me  ..squo(lin -.h, len (lent p.b), all p.b, beg 0, end %eof)
+    =/  i  (sinn:me tal | p.b)
+    ?@  i  i
+    ?^  q.i  0
+    [(coll tal p.i) q.b]
+  ::
+  ++  sinn                                              ::  text and embeds
+    |=  [tal=? lyn=? tub=tape]
+    ^-  $@(@ [p=(list $@(@ tuna:hoot)) q=tape])
+    =|  acc=(list $@(@ tuna:hoot))
+    |-  ^-  $@(@ [p=(list $@(@ tuna:hoot)) q=tape])
+    ?~  tub  [(flop acc) ~]
+    =/  c  i.tub
+    ?:  =('\\' c)
+      =/  nex  t.tub
+      ?~  nex  [(flop acc) tub]
+      =/  d  i.nex
+      ?:  ?|  =('-' d)  =('+' d)  =('*' d)  =('%' d)  =(';' d)  =('{' d)
+              =('\\' d)  =('"' d)
+          ==
+        $(acc [d acc], tub t.nex)
+      =/  nix  t.nex
+      ?~  nix  [(flop acc) tub]
+      =/  [a=@ b=@]  [(digv d) (digv i.nix)]
+      ?:  |(=(16 a) =(16 b))  [(flop acc) tub]
+      $(acc [(add b (mul 16 a)) acc], tub t.nix)
+    ?:  |(=(';' c) =('{' c) =('-' c) =('+' c) =('*' c) =('%' c))
+      =/  e  (sinl tub)
+      ?^  e  $(acc [p.e acc], tub q.e)
+      ?.  =(0 e)  e
+      ?:  =('{' c)  [(flop acc) tub]
+      $(acc [c acc], tub t.tub)
+    ?:  =(10 c)
+      ?:  lyn  [(flop acc) tub]
+      $(acc [c acc], tub t.tub)
+    ?:  &(=('"' c) !tal)  [(flop acc) tub]
+    ?:  |((lth c 32) =(127 c))  [(flop acc) tub]
+    $(acc [c acc], tub t.tub)
+  ::
+  ++  sinl                                              ::  embed in text
+    |=  tub=tape
+    ^-  $@(@ [p=tuna:hoot q=tape])
+    ?~  tub  0
+    =/  c  i.tub
+    ?:  =(';' c)
+      ?.  ?=([%'{' *] t.tub)  0
+      =/  h  (shed t.t.tub)
+      ?@  h  h
+      =/  e  (sele q.h)
+      ?@  e  e
+      ?.  ?=([%'}' *] q.e)  0
+      [[p.h p.e] t.q.e]
+    ?:  =('{' c)
+      =/  r  (hank '}' t.tub)
+      ?@  r  r
+      [[%tape %cltr p.r] q.r]
+    ?.  ?=([%'{' *] t.tub)  0
+    =/  r  (hank '}' t.t.tub)
+    ?@  r  r
+    =/  gen=hoon  [%cltr p.r]
+    :_  q.r
+    ?:  =('-' c)  [%tape gen]
+    ?:  =('+' c)  [%manx gen]
+    ?:  =('*' c)  [%marl gen]
+    [%call gen]
+  ::
+  ++  sele                                              ::  aces and tops
+    |=  tub=tape
+    ^-  $@(@ [p=marl:hoot q=tape])
+    ?.  ?=([%' ' *] tub)  [~ tub]
+    =/  i  (sint t.tub)
+    ?@  i  ?:(=(0 i) [~ tub] i)
+    =/  m  $(tub q.i)
+    ?@  m  m
+    [(weld p.i p.m) q.m]
+  ::
+  ++  sint                                              ::  top or -hoon, as marl
+    |=  tub=tape
+    ^-  $@(@ [p=marl:hoot q=tape])
+    =/  t  (swit tub)
+    ?^  t  [(drop p.t) q.t]
+    ?.  =(0 t)  t
+    ?~  tub  0
+    =/  c  i.tub
+    ?.  |(=('-' c) =('+' c) =('*' c) =('%' c))  0
+    =/  h  (wide t.tub)
+    ?@  h  h
+    :_  q.h
+    :_  ~
+    ?:  =('-' c)  [%tape p.h]
+    ?:  =('+' c)  [%manx p.h]
+    ?:  =('*' c)  [%marl p.h]
+    [%call p.h]
+  ::
+  ++  spar                                              ::  (a b c) flow, at pal
+    |=  tub=tape
+    ^-  $@(@ [p=marl:hoot q=tape])
+    ?.  ?=([%'(' *] tub)  0
+    =/  i  (sint t.tub)
+    ?@  i
+      ?.  =(0 i)  i
+      ?.  ?=([%')' *] t.tub)  0
+      [~ t.t.tub]
+    |-  ^-  $@(@ [p=marl:hoot q=tape])
+    =/  nex  q.i
+    ?~  nex  0
+    ?:  =(')' i.nex)  [p.i t.nex]
+    ?.  =(' ' i.nex)  0
+    =/  j  (sint t.nex)
+    ?@  j  j
+    $(i [(weld p.i p.j) q.j])
+  ::
+  ++  stai                                              ::  wide tail of a tag
+    |=  tub=tape
+    ^-  $@(@ [p=marl:hoot q=tape])
+    ?~  tub  [~ ~]
+    ?:  =(';' i.tub)  [~ t.tub]
+    ?.  =(':' i.tub)  [~ tub]
+    =/  w  (swra t.tub)
+    ?^  w  w
+    ?.  =(0 w)  w
+    [~ tub]
+  ::
+  ++  swra                                              ::  flow, cord or top
+    |=  tub=tape
+    ^-  $@(@ [p=marl:hoot q=tape])
+    =/  p  (spar tub)
+    ?.  =(0 p)  p
+    =/  q=$@(@ [p=marl:hoot q=tape])
+      ?.  ?=([%'\'' *] tub)  0
+      =/  c  (qut t.tub)
+      ?@  c  c
+      [[(tnod (trip p.c)) ~] q.c]
+    ?.  =(0 q)  q
+    =/  t  (swit tub)
+    ?@  t  t
+    [(drop p.t) q.t]
+  ::
+  ++  smix                                              ::  mixed-case symbol
+    |=  tub=tape
+    ^-  $@(@ [p=@tas q=tape])
+    ?~  tub  0
+    =/  c  i.tub
+    ?.  |(&((gte c 'a') (lte c 'z')) &((gte c 'A') (lte c 'Z')))  0
+    =/  acc=(list @)  [c ~]
+    =/  tub=tape  t.tub
+    |-  ^-  [p=@tas q=tape]
+    ?~  tub  [(rap 3 (flop acc)) ~]
+    =/  c  i.tub
+    ?:  ?|  &((gte c 'a') (lte c 'z'))
+            &((gte c 'A') (lte c 'Z'))
+            &((gte c '0') (lte c '9'))
+            =('-' c)
+        ==
+      $(acc [c acc], tub t.tub)
+    [(rap 3 (flop acc)) tub]
+  ::
+  ++  sman                                              ::  tag or attribute name
+    |=  tub=tape
+    ^-  $@(@ [p=mane:hoot q=tape])
+    =/  a  (smix tub)
+    ?@  a  a
+    ?.  ?=([%'_' *] q.a)  a
+    =/  b  (smix t.q.a)
+    ?@  b  a
+    [[p.a p.b] q.b]
+  ::
+  ++  shed                                              ::  tag head
+    |=  tub=tape
+    ^-  $@(@ [p=marx:hoot q=tape])
+    =/  n  (sman tub)
+    ?@  n  n
+    =/  i=[p=mart:hoot q=tape]
+      =/  t  q.n
+      ?.  ?=([%'#' @ *] t)  [~ t]
+      ?.  &((gte i.t.t 'a') (lte i.t.t 'z'))  [~ t]
+      =/  s  (sym t.t)
+      [[[%id (trip p.s)] ~] q.s]
+    =/  c=[p=tape q=tape]
+      =/  t  q.i
+      =|  acc=tape
+      |-  ^-  [p=tape q=tape]
+      ?.  ?=([%'.' @ *] t)  [acc t]
+      ?.  &((gte i.t.t 'a') (lte i.t.t 'z'))  [acc t]
+      =/  s  (sym t.t)
+      $(t q.s, acc ?~(acc (trip p.s) :(weld acc " " (trip p.s))))
+    =/  h=$@(@ [p=mart:hoot q=tape])
+      =/  t  q.c
+      ?.  ?=([?(%'/' %'@') %'"' *] t)  [~ t]
+      =/  s  (soil t.t.t)
+      ?@  s  ?:(=(0 s) [~ t] s)
+      [[[?:(=('/' i.t) %href %src) p.s] ~] q.s]
+    ?@  h  h
+    =/  a  (satt q.h)
+    ?@  a  a
+    =/  cla=mart:hoot  ?~(p.c ~ [[%class p.c] ~])
+    [[p.n :(weld p.i cla p.h p.a)] q.a]
+  ::
+  ++  satt                                              ::  (a "b", c d)
+    |=  tub=tape
+    ^-  $@(@ [p=mart:hoot q=tape])
+    ?.  ?=([%'(' *] tub)  [~ tub]
+    ?:  ?=([%')' *] t.tub)  [~ t.t.tub]
+    =/  r=$@(@ [p=mart:hoot q=tape])
+      =/  tub=tape  t.tub
+      |-  ^-  $@(@ [p=mart:hoot q=tape])
+      =/  n  (sman tub)
+      ?@  n  n
+      ?.  ?=([%' ' *] q.n)  0
+      =/  h  (shop t.q.n)
+      ?@  h  h
+      =/  nex  q.h
+      ?~  nex  0
+      ?:  ?=([%',' %' ' *] nex)
+        =/  m  $(tub t.t.nex)
+        ?@  m  m
+        [[[p.n p.h] p.m] q.m]
+      ?.  =(')' i.nex)  0
+      [[[p.n p.h] ~] t.nex]
+    ?:  =(0 r)  [~ tub]
+    r
+  ::
+  ++  shop                                              ::  attribute value
+    |=  tub=tape
+    ^-  $@(@ [p=(list beer:hoot) q=tape])
+    =/  h  (wide tub)
+    ?@  h  h
+    [?:(?=([%knit *] p.h) p.p.h [[~ p.h] ~]) q.h]
+  ::
+  ++  coll                                              ::  group chars to text
+    |=  [tal=? reb=(list $@(@ tuna:hoot))]
+    ^-  marl:hoot
+    =|  [sim=(list @) tuz=marl:hoot]
+    |-  ^-  marl:hoot
+    ?~  reb
+      =.  sim
+        ?.  tal  sim
+        [10 |-(?~(sim sim ?:(=(32 i.sim) $(sim t.sim) sim)))]
+      ?~(sim tuz [(tnod (flop sim)) tuz])
+    ?@  i.reb
+      $(reb t.reb, sim [i.reb sim])
+    ?~  sim  [i.reb $(reb t.reb, sim ~)]
+    [(tnod (flop sim)) i.reb $(reb t.reb, sim ~)]
+  ::
   ::    tall form: arms on a +sat, the rest of the text by lines
   ::
   +$  sat  [tub=tape lin=@ud len=@ud nex=(list [len=@ud tap=tape])]
@@ -1988,15 +2652,47 @@
     |=  lis=(lest [len=@ud tap=tape])
     ^-  $@(@ hoon)
     =/  r  (tall (gay [tap.i.lis 1 len.i.lis t.lis]))
-    ?@  r  r
+    ?@  r  ?:(=(0 r) 0 1)
     =/  e  (gay q.r)
     ?.  &(?=(~ tub.e) ?=(~ nex.e))  0
     p.r
   ::                                                    ::  ++self
   ++  self                                              ::  this core, on the line
     |=  s=sat                                           ::  of s if spots are on
-    ?.  bug  ..self
-    ..self(lin lin.s, len len.s)
+    ?:  &(!bug =(0 lin) =(%line end))  ..self
+    ..self(lin ?:(bug lin.s 0), len len.s, all ~, beg 0, end %line)
+  ::                                                    ::  ++lump
+  ++  lump                                              ::  the rest of the line
+    |=  [k=@ud s=sat]                                   ::  of s and k more
+    ^-  [all=tape end=?(%more %eof) out=?]              ::  lines, as one tape
+    =/  cur=tape  tub.s
+    =/  rem  nex.s
+    |-  ^-  [all=tape end=?(%more %eof) out=?]
+    ?~  rem  [cur ?:(fin %eof %more) &]
+    ?:  =(0 k)  [cur %more |]
+    =/  m  $(k (dec k), cur tap.i.rem, rem t.rem)
+    [(weld cur `tape`[`@tD`10 all.m]) end.m out.m]
+  ::                                                    ::  ++slow
+  ++  slow                                              ::  this core on a tape
+    |=  [s=sat all=tape end=?(%more %eof)]              ::  joined from s
+    %=  ..slow
+      lin  lin.s
+      len  (lent all)
+      all  all
+      beg  (sub len.s (lent tub.s))
+      end  end
+    ==
+  ::                                                    ::  ++seat
+  ++  seat                                              ::  the sat at a rest
+    |=  [s=sat all=tape r=tape]                         ::  of a joined tape
+    ^-  sat
+    =/  n  (sub (nels all) (nels r))
+    =/  i  (find "\0a" r)
+    =/  tub=tape  ?~(i r (scag u.i r))
+    ?:  =(0 n)  s(tub tub)
+    =/  rem  (slag (dec n) nex.s)
+    ?>  ?=(^ rem)
+    [tub (add n lin.s) len.i.rem t.rem]
   ::                                                    ::  ++hare
   ++  hare                                              ::  line and column
     |=  s=sat
@@ -2069,20 +2765,11 @@
     =/  r=tes
       ?~  nex  0
       ?.  ?=([%'(' *] t.nex)  (tune i.tub i.nex s(tub t.nex))
-      =/  w  (rune:(self s) i.tub i.nex t.t.nex)
-      ?@  w  w
-      [p.w s(tub q.w)]
+      (wrun s)
     ?.  =(0 r)  r
-    =/  w  (long:(self s) tub)
-    ?^  w  [p.w s(tub q.w)]
-    ?:  &(=(1 w) |(=('\'' i.tub) &((gte i.tub '0') (lte i.tub '9'))))
-      (tnum s)
-    ?:  &(=(1 w) =('"' i.tub))
-      =/  k  (tsol s)
-      ?@  k  k
-      ?:  ?=([?(%'=' %':' %'^' %'(') *] tub.q.k)  1
-      [[%knit (knit p.k)] q.k]
+    =/  w  (wlon s)
     ?.  =(0 w)  w
+    ?:  =(';' i.tub)  (sait s(tub nex))
     ?.  =('[' i.tub)  0
     =/  g  (gap s(tub nex))
     ?@  g  0
@@ -2091,63 +2778,6 @@
     =/  l  (thak ']' p.a q.a)
     ?@  l  l
     [[%cltr p.l] q.l]
-  ::                                                    ::  ++tnum
-  ++  tnum                                              ::  a number or a cord
-    |=  s=sat                                           ::  that goes on past
-    ^-  tes                                             ::  this line, by the
-    =/  tub  tub.s                                      ::  stock rule
-    ?~  tub  0
-    =/  cod=?  =('\'' i.tub)
-    =/  t=tape
-      =/  cur=tape  tub
-      =/  rem  nex.s
-      |-  ^-  tape
-      ?.  (doty cod cur)  cur
-      ?~  rem  cur
-      (weld cur `tape`[`@tD`10 $(cur tap.i.rem, rem t.rem)])
-    =/  vex=(unit [p=dime q=tape])
-      ?.  cod
-        =/  wex  (bisk:so [[1 1] t])
-        ?~  q.wex  ~
-        [~ p.u.q.wex q.q.u.q.wex]
-      =/  wex  (^qut [[1 1] t])
-      ?~  q.wex  ~
-      [~ [%t p.u.q.wex] q.q.u.q.wex]
-    ?~  vex  1
-    =/  r  q.u.vex
-    =/  n  (sub (nels t) (nels r))
-    ?:  =(0 n)  1
-    =/  i  (find "\0a" r)
-    =/  tub=tape  ?~(i r (scag u.i r))
-    =/  rem  (slag (dec n) nex.s)
-    ?~  rem  1
-    ?:  ?=([?(%'+' %'/' %'=' %':' %'^' %'(') *] tub)  1
-    ?:  (gapy tub)  1
-    [[%sand p.u.vex] tub (add n lin.s) len.i.rem t.rem]
-  ::                                                    ::  ++doty
-  ++  doty                                              ::  the line ends with
-    |=  [cod=? tub=tape]                                ::  a bas (cord) or a
-    ^-  ?                                               ::  dot, then spaces
-    =/  dot=?  |                                        ::  and a comment
-    |-  ^-  ?
-    ?~  tub  dot
-    ?:  =(' ' i.tub)  $(tub t.tub)
-    ?:  cod  $(tub t.tub, dot =('\\' i.tub))
-    ?:  ?=([%':' %':' *] tub)  dot
-    $(tub t.tub, dot =('.' i.tub))
-  ::                                                    ::  ++tsol
-  ++  tsol                                              ::  tapes by dots, over
-    |=  s=sat                                           ::  lines
-    ^-  $@(@ [p=(list (list woof)) q=sat])
-    =/  tub  tub.s
-    ?.  ?=([%'"' *] tub)  0
-    =/  a  (soil:(self s) t.tub)
-    ?@  a  a
-    =/  nex  q.a
-    ?.  ?=([%'.' *] nex)  [[p.a ~] s(tub nex)]
-    =/  m  $(s (gay s(tub t.nex)))
-    ?@  m  ?:(=(0 m) [[p.a ~] s(tub nex)] m)
-    [[p.a p.m] q.m]
   ::                                                    ::  ++nels
   ++  nels                                              ::  count line ends
     |=  tub=tape
@@ -2176,9 +2806,7 @@
       ?:  =('$' i.tub)  (tstr i.t.tub s(tub t.t.tub))
       (tstp i.t.tub s(tub t.t.tub))
     ?.  =(0 r)  r
-    =/  w  (wydo:(self s) tub)
-    ?@  w  w
-    [p.w s(tub q.w)]
+    (wwyo s)
   ::                                                    ::  ++thak
   ++  thak                                              ::  more hoons, then ==
     |=  [end=@ h=hoon s=sat]                            ::  or ]; s: after h
@@ -2327,9 +2955,7 @@
   ++  twis                                              ::  skin of =/
     |=  s=sat
     ^-  $@(@ [p=skin q=sat])
-    =/  w  (wise:(self s) tub.s)
-    ?@  w  w
-    [p.w s(tub q.w)]
+    (wwis s)
   ::
   ++  tlor                                              ::  hoon as a skin
     |=  s=sat
@@ -2349,16 +2975,14 @@
     =/  y  (sym tub)
     =/  nex  q.y
     ?.  ?=([%'=' *] nex)  [[p.y ~] s(tub nex)]
-    =/  p  (wyde:(self s) t.nex)
+    =/  p  (wwye s(tub t.nex))
     ?@  p  ?:(=(0 p) [[p.y ~] s(tub nex)] p)
-    [[p.y ~ p.p] s(tub q.p)]
+    [[p.y ~ p.p] q.p]
   ::
   ++  tbok                                              ::  jet signature
     |=  s=sat
     ^-  $@(@ [p=chum q=sat])
-    =/  k  (bonk tub.s)
-    ?@  k  k
-    [p.k s(tub q.k)]
+    (wbon s)
   ::
   ++  tbon                                              ::  %a, %a.b or %a.  b
     |=  s=sat
@@ -2367,8 +2991,8 @@
     ?@  y  y
     =/  nex  q.y
     ?.  ?=([%'.' *] nex)  [p.y s(tub nex)]
-    =/  w  (wide:(self s) t.nex)
-    ?^  w  [[p.y p.w] s(tub q.w)]
+    =/  w  (wwid s(tub t.nex))
+    ?^  w  [[p.y p.w] q.w]
     ?.  =(0 w)  w
     =/  g  (gap s(tub t.nex))
     ?@  g  [p.y s(tub nex)]
@@ -2404,9 +3028,7 @@
   ++  thin                                              ::  n or [n m]
     |=  s=sat
     ^-  $@(@ [p=$@(@ [@ @]) q=sat])
-    =/  n  (hinn tub.s)
-    ?@  n  n
-    [p.n s(tub q.n)]
+    (whin s)
   ::
   ++  tlyn                                              ::  a, [a b] or a  b  ==
     |=  s=sat
@@ -2439,8 +3061,7 @@
   ++  teek                                              ::  wing or hoon to test
     |=  s=sat
     ^-  $@(@ [p=tiki q=sat])
-    =/  w  (teak:(self s) tub.s)
-    ?^  w  [p.w s(tub q.w)]
+    =/  w  (wtea s)
     ?.  =(0 w)  w
     =/  tub  tub.s
     =/  r=$@(@ [p=tiki q=sat])
@@ -2592,6 +3213,188 @@
     =/  m  $(s g)
     ?@  m  ?:(=(0 m) [[[p.y p.h] ~] q.h] m)
     [[[p.y p.h] p.m] q.m]
+  ::
+  ::    sail, tall form
+  ::
+  ++  runt                                              ::  xy(..) at a tape
+    |=  tub=tape
+    ^-  res
+    ?.  ?=([@ @ %'(' *] tub)  0
+    (rune i.tub i.t.tub t.t.t.tub)
+  ::
+  ++  sin1  |=(tub=tape (sinn & & tub))                 ::  tall text
+  ++  squ1  |=(tub=tape (squo & tub))                   ::  quote in a tall top
+  ++  sait                                              ::  tall sail, after mic
+    |=  s=sat
+    ^-  tes
+    =/  t  (stot s)
+    ?@  t  t
+    :_  q.t
+    ?-  -.p.t
+      %&  [%xray p.p.t]
+      %|  [%mcts p.p.t]
+    ==
+  ::
+  ++  stot                                              ::  one tall top
+    |=  s=sat
+    ^-  $@(@ [p=(each manx:hoot marl:hoot) q=sat])
+    =/  tub  tub.s
+    ?:  ?=([%' ' *] tub)
+      =/  t=tape  t.tub
+      =.  t  |-(?:(?=([%' ' *] t) $(t t.t) t))
+      =/  i  (wsin s(tub t))
+      ?@  i  i
+      [[%| (coll & p.i)] q.i]
+    =/  r=$@(@ [p=(each manx:hoot marl:hoot) q=sat])
+      =/  n=$@(~ [p=@tas q=tape])
+        ?:  ?=([%'s' %'c' %'r' %'i' %'p' %'t' *] tub)
+          [%script t.t.t.t.t.t.tub]
+        ?:  ?=([%'s' %'t' %'y' %'l' %'e' *] tub)  [%style t.t.t.t.t.tub]
+        ~
+      ?~  n  0
+      =/  a  (wsat s(tub q.n))
+      ?@  a  a
+      =/  l  (ssty q.a)
+      ?@  l  l
+      [[%& [p.n p.a] p.l] q.l]
+    ?.  =(0 r)  r
+    =/  r=$@(@ [p=(each manx:hoot marl:hoot) q=sat])
+      =/  h  (wshe s)
+      ?@  h  h
+      =/  a  (stat q.h)
+      ?@  a  a
+      =/  t  (stta q.a)
+      ?@  t  t
+      [[%& [n.p.h (weld a.p.h p.a)] p.t] q.t]
+    ?.  =(0 r)  r
+    =/  r=$@(@ [p=(each manx:hoot marl:hoot) q=sat])
+      ?.  ?=([%'"' *] tub)  0
+      =/  q  (wsqu s)
+      ?@  q  q
+      [[%| p.q] q.q]
+    ?.  =(0 r)  r
+    =/  non=[p=(each manx:hoot marl:hoot) q=sat]  [[%| (tnod "\0a") ~] s]
+    ?~  tub  non
+    =/  c  i.tub
+    =/  r=$@(@ [p=(each manx:hoot marl:hoot) q=sat])
+      ?.  =('=' c)  0
+      =/  t  (stta s(tub t.tub))
+      ?@  t  t
+      [[%| p.t] q.t]
+    ?.  =(0 r)  r
+    =/  r=$@(@ [p=(each manx:hoot marl:hoot) q=sat])
+      ?.  =('>' c)  0
+      =/  g  (gap s(tub t.tub))
+      ?@  g  0
+      =/  m  (scra g)
+      ?@  m  m
+      [[%& [%div ~] p.m] q.m]
+    ?.  =(0 r)  r
+    =/  r=$@(@ [p=(each manx:hoot marl:hoot) q=sat])
+      ?.  |(=('-' c) =('+' c) =('*' c) =('%' c))  0
+      =/  g  (gap s(tub t.tub))
+      ?@  g  0
+      =/  h  (tall g)
+      ?@  h  h
+      :_  q.h
+      :-  %|
+      :_  ~
+      ?:  =('-' c)  [%tape p.h]
+      ?:  =('+' c)  [%manx p.h]
+      ?:  =('*' c)  [%marl p.h]
+      [%call p.h]
+    ?.  =(0 r)  r
+    non
+  ::
+  ++  stat                                              ::  =name  value lines
+    |=  s=sat
+    ^-  $@(@ [p=mart:hoot q=sat])
+    =/  g  (gap s)
+    ?@  g  [~ s]
+    ?.  ?=([%'=' *] tub.g)  [~ s]
+    =/  n  (sman t.tub.g)
+    ?@  n  [~ s]
+    =/  f  (gap g(tub q.n))
+    ?@  f  [~ s]
+    =/  h  (wsho f)
+    ?@  h  ?:(=(0 h) [~ s] h)
+    =/  m  $(s q.h)
+    ?@  m  m
+    [[[p.n p.h] p.m] q.m]
+  ::
+  ++  stta                                              ::  tail of a tall tag
+    |=  s=sat
+    ^-  $@(@ [p=marl:hoot q=sat])
+    =/  tub  tub.s
+    ?:  ?=([%';' *] tub)  [~ s(tub t.tub)]
+    =/  r=$@(@ [p=marl:hoot q=sat])
+      ?.  ?=([%':' *] tub)  0
+      =/  w  (wswr s(tub t.tub))
+      ?.  =(0 w)  w
+      ?.  ?=([%' ' *] t.tub)  0
+      =/  i  (wsin s(tub t.t.tub))
+      ?@  i  i
+      [(coll | p.i) q.i]
+    ?.  =(0 r)  r
+    =/  g  (gap s)
+    ?@  g  0
+    (skid g)
+  ::
+  ++  skid                                              ::  child tops, then ==
+    |=  s=sat
+    ^-  $@(@ [p=marl:hoot q=sat])
+    =/  tub  tub.s
+    =/  k=$@(@ [p=marl:hoot q=sat])
+      ?:  ?=([%'=' %'=' *] tub)  0
+      ?.  ?=([%';' *] tub)  (scra s)
+      =/  t  (stot s(tub t.tub))
+      ?@  t  t
+      [(drop p.t) q.t]
+    ?@  k  k
+    =/  g  (gap q.k)
+    ?@  g  0
+    =/  m  $(s g)
+    ?^  m  [(weld p.k p.m) q.m]
+    ?.  =(0 m)  m
+    ?.  ?=([%'=' %'=' *] tub.g)  0
+    [p.k g(tub t.t.tub.g)]
+  ::
+  ++  scra                                              ::  markdown, by
+    |=  s=sat                                           ::  cram:vast
+    ^-  $@(@ [p=marl:hoot q=sat])
+    =/  k=@ud  16
+    |-  ^-  $@(@ [p=marl:hoot q=sat])
+    =/  j  (lump k s)
+    =/  mex  (mule |.((cram:vaz [(hare s) all.j])))
+    ?.  ?=(%& -.mex)  1
+    =/  vex  p.mex
+    ?~  q.vex
+      ?:  =(%eof end.j)  0
+      ?:(out.j 2 $(k (mul 2 k)))
+    =/  r  q.q.u.q.vex
+    ?.  &(?=(~ r) !=(%eof end.j))
+      [p.u.q.vex (seat s all.j r)]
+    ?:(out.j 2 $(k (mul 2 k)))
+  ::
+  ++  ssty                                              ::  script or style lines
+    |=  s=sat
+    ^-  $@(@ [p=marl:hoot q=sat])
+    =/  g  (gap s)
+    ?@  g  0
+    |-  ^-  $@(@ [p=marl:hoot q=sat])
+    =/  tub  tub.g
+    ?.  ?=([%';' *] tub)  0
+    =/  l=[p=tape q=tape]
+      ?.  ?=([%' ' *] t.tub)  ["\0a" t.tub]
+      (prnt t.t.tub)
+    =/  f  (gap g(tub q.l))
+    ?@  f  0
+    ?:  ?=([%';' *] tub.f)
+      =/  m  $(g f)
+      ?@  m  m
+      [[(tnod p.l) p.m] q.m]
+    ?.  ?=([%'=' %'=' *] tub.f)  0
+    [[(tnod p.l) ~] f(tub t.t.tub.f)]
   ::
   ++  texa                                              ::  one hoon
     |=  s=sat
@@ -3463,5 +4266,233 @@
       ?@  r  r
       [[%make p.r] q.r]
     ==
+  ::
+  ::    wide arms on a sat: on 2, again with spots and more lines
+  ::
+  ++  wlon
+    |=  s=sat
+    ^-  $@(@ [p=hoon q=sat])
+    =/  w  (long:(self s) tub.s)
+    ?^  w  [p.w s(tub q.w)]
+    ?.  =(2 w)  w
+    =/  k=@ud  0
+    |-  ^-  $@(@ [p=hoon q=sat])
+    =/  j  (lump k s)
+    =/  w  (long:(slow s all.j end.j) all.j)
+    ?^  w  [p.w (seat s all.j q.w)]
+    ?.  =(2 w)  w
+    ?:  =(%eof end.j)  1
+    ?:  out.j  2
+    $(k ?:(=(0 k) 1 (mul 2 k)))
+  ++  wrun
+    |=  s=sat
+    ^-  $@(@ [p=hoon q=sat])
+    =/  w  (runt:(self s) tub.s)
+    ?^  w  [p.w s(tub q.w)]
+    ?.  =(2 w)  w
+    =/  k=@ud  0
+    |-  ^-  $@(@ [p=hoon q=sat])
+    =/  j  (lump k s)
+    =/  w  (runt:(slow s all.j end.j) all.j)
+    ?^  w  [p.w (seat s all.j q.w)]
+    ?.  =(2 w)  w
+    ?:  =(%eof end.j)  1
+    ?:  out.j  2
+    $(k ?:(=(0 k) 1 (mul 2 k)))
+  ++  wwid
+    |=  s=sat
+    ^-  $@(@ [p=hoon q=sat])
+    =/  w  (wide:(self s) tub.s)
+    ?^  w  [p.w s(tub q.w)]
+    ?.  =(2 w)  w
+    =/  k=@ud  0
+    |-  ^-  $@(@ [p=hoon q=sat])
+    =/  j  (lump k s)
+    =/  w  (wide:(slow s all.j end.j) all.j)
+    ?^  w  [p.w (seat s all.j q.w)]
+    ?.  =(2 w)  w
+    ?:  =(%eof end.j)  1
+    ?:  out.j  2
+    $(k ?:(=(0 k) 1 (mul 2 k)))
+  ++  wwyo
+    |=  s=sat
+    ^-  $@(@ [p=spec q=sat])
+    =/  w  (wydo:(self s) tub.s)
+    ?^  w  [p.w s(tub q.w)]
+    ?.  =(2 w)  w
+    =/  k=@ud  0
+    |-  ^-  $@(@ [p=spec q=sat])
+    =/  j  (lump k s)
+    =/  w  (wydo:(slow s all.j end.j) all.j)
+    ?^  w  [p.w (seat s all.j q.w)]
+    ?.  =(2 w)  w
+    ?:  =(%eof end.j)  1
+    ?:  out.j  2
+    $(k ?:(=(0 k) 1 (mul 2 k)))
+  ++  wwye
+    |=  s=sat
+    ^-  $@(@ [p=spec q=sat])
+    =/  w  (wyde:(self s) tub.s)
+    ?^  w  [p.w s(tub q.w)]
+    ?.  =(2 w)  w
+    =/  k=@ud  0
+    |-  ^-  $@(@ [p=spec q=sat])
+    =/  j  (lump k s)
+    =/  w  (wyde:(slow s all.j end.j) all.j)
+    ?^  w  [p.w (seat s all.j q.w)]
+    ?.  =(2 w)  w
+    ?:  =(%eof end.j)  1
+    ?:  out.j  2
+    $(k ?:(=(0 k) 1 (mul 2 k)))
+  ++  wwis
+    |=  s=sat
+    ^-  $@(@ [p=skin q=sat])
+    =/  w  (wise:(self s) tub.s)
+    ?^  w  [p.w s(tub q.w)]
+    ?.  =(2 w)  w
+    =/  k=@ud  0
+    |-  ^-  $@(@ [p=skin q=sat])
+    =/  j  (lump k s)
+    =/  w  (wise:(slow s all.j end.j) all.j)
+    ?^  w  [p.w (seat s all.j q.w)]
+    ?.  =(2 w)  w
+    ?:  =(%eof end.j)  1
+    ?:  out.j  2
+    $(k ?:(=(0 k) 1 (mul 2 k)))
+  ++  wtea
+    |=  s=sat
+    ^-  $@(@ [p=tiki q=sat])
+    =/  w  (teak:(self s) tub.s)
+    ?^  w  [p.w s(tub q.w)]
+    ?.  =(2 w)  w
+    =/  k=@ud  0
+    |-  ^-  $@(@ [p=tiki q=sat])
+    =/  j  (lump k s)
+    =/  w  (teak:(slow s all.j end.j) all.j)
+    ?^  w  [p.w (seat s all.j q.w)]
+    ?.  =(2 w)  w
+    ?:  =(%eof end.j)  1
+    ?:  out.j  2
+    $(k ?:(=(0 k) 1 (mul 2 k)))
+  ++  wbon
+    |=  s=sat
+    ^-  $@(@ [p=chum q=sat])
+    =/  w  (bonk:(self s) tub.s)
+    ?^  w  [p.w s(tub q.w)]
+    ?.  =(2 w)  w
+    =/  k=@ud  0
+    |-  ^-  $@(@ [p=chum q=sat])
+    =/  j  (lump k s)
+    =/  w  (bonk:(slow s all.j end.j) all.j)
+    ?^  w  [p.w (seat s all.j q.w)]
+    ?.  =(2 w)  w
+    ?:  =(%eof end.j)  1
+    ?:  out.j  2
+    $(k ?:(=(0 k) 1 (mul 2 k)))
+  ++  whin
+    |=  s=sat
+    ^-  $@(@ [p=$@(@ [@ @]) q=sat])
+    =/  w  (hinn:(self s) tub.s)
+    ?^  w  [p.w s(tub q.w)]
+    ?.  =(2 w)  w
+    =/  k=@ud  0
+    |-  ^-  $@(@ [p=$@(@ [@ @]) q=sat])
+    =/  j  (lump k s)
+    =/  w  (hinn:(slow s all.j end.j) all.j)
+    ?^  w  [p.w (seat s all.j q.w)]
+    ?.  =(2 w)  w
+    ?:  =(%eof end.j)  1
+    ?:  out.j  2
+    $(k ?:(=(0 k) 1 (mul 2 k)))
+  ++  wsin
+    |=  s=sat
+    ^-  $@(@ [p=(list $@(@ tuna:hoot)) q=sat])
+    =/  w  (sin1:(self s) tub.s)
+    ?^  w  [p.w s(tub q.w)]
+    ?.  =(2 w)  w
+    =/  k=@ud  0
+    |-  ^-  $@(@ [p=(list $@(@ tuna:hoot)) q=sat])
+    =/  j  (lump k s)
+    =/  w  (sin1:(slow s all.j end.j) all.j)
+    ?^  w  [p.w (seat s all.j q.w)]
+    ?.  =(2 w)  w
+    ?:  =(%eof end.j)  1
+    ?:  out.j  2
+    $(k ?:(=(0 k) 1 (mul 2 k)))
+  ++  wshe
+    |=  s=sat
+    ^-  $@(@ [p=marx:hoot q=sat])
+    =/  w  (shed:(self s) tub.s)
+    ?^  w  [p.w s(tub q.w)]
+    ?.  =(2 w)  w
+    =/  k=@ud  0
+    |-  ^-  $@(@ [p=marx:hoot q=sat])
+    =/  j  (lump k s)
+    =/  w  (shed:(slow s all.j end.j) all.j)
+    ?^  w  [p.w (seat s all.j q.w)]
+    ?.  =(2 w)  w
+    ?:  =(%eof end.j)  1
+    ?:  out.j  2
+    $(k ?:(=(0 k) 1 (mul 2 k)))
+  ++  wswr
+    |=  s=sat
+    ^-  $@(@ [p=marl:hoot q=sat])
+    =/  w  (swra:(self s) tub.s)
+    ?^  w  [p.w s(tub q.w)]
+    ?.  =(2 w)  w
+    =/  k=@ud  0
+    |-  ^-  $@(@ [p=marl:hoot q=sat])
+    =/  j  (lump k s)
+    =/  w  (swra:(slow s all.j end.j) all.j)
+    ?^  w  [p.w (seat s all.j q.w)]
+    ?.  =(2 w)  w
+    ?:  =(%eof end.j)  1
+    ?:  out.j  2
+    $(k ?:(=(0 k) 1 (mul 2 k)))
+  ++  wsqu
+    |=  s=sat
+    ^-  $@(@ [p=marl:hoot q=sat])
+    =/  w  (squ1:(self s) tub.s)
+    ?^  w  [p.w s(tub q.w)]
+    ?.  =(2 w)  w
+    =/  k=@ud  0
+    |-  ^-  $@(@ [p=marl:hoot q=sat])
+    =/  j  (lump k s)
+    =/  w  (squ1:(slow s all.j end.j) all.j)
+    ?^  w  [p.w (seat s all.j q.w)]
+    ?.  =(2 w)  w
+    ?:  =(%eof end.j)  1
+    ?:  out.j  2
+    $(k ?:(=(0 k) 1 (mul 2 k)))
+  ++  wsat
+    |=  s=sat
+    ^-  $@(@ [p=mart:hoot q=sat])
+    =/  w  (satt:(self s) tub.s)
+    ?^  w  [p.w s(tub q.w)]
+    ?.  =(2 w)  w
+    =/  k=@ud  0
+    |-  ^-  $@(@ [p=mart:hoot q=sat])
+    =/  j  (lump k s)
+    =/  w  (satt:(slow s all.j end.j) all.j)
+    ?^  w  [p.w (seat s all.j q.w)]
+    ?.  =(2 w)  w
+    ?:  =(%eof end.j)  1
+    ?:  out.j  2
+    $(k ?:(=(0 k) 1 (mul 2 k)))
+  ++  wsho
+    |=  s=sat
+    ^-  $@(@ [p=(list beer:hoot) q=sat])
+    =/  w  (shop:(self s) tub.s)
+    ?^  w  [p.w s(tub q.w)]
+    ?.  =(2 w)  w
+    =/  k=@ud  0
+    |-  ^-  $@(@ [p=(list beer:hoot) q=sat])
+    =/  j  (lump k s)
+    =/  w  (shop:(slow s all.j end.j) all.j)
+    ?^  w  [p.w (seat s all.j q.w)]
+    ?.  =(2 w)  w
+    ?:  =(%eof end.j)  1
+    ?:  out.j  2
+    $(k ?:(=(0 k) 1 (mul 2 k)))
   --  ::rd
 --
