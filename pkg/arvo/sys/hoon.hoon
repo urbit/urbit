@@ -3633,13 +3633,11 @@
 ::
 ++  sha                                                 ::  correct byte-order
   ~%  %sha  ..sha  ~
-  =>  |%
-      ++  flin  |=(a=@ (swp 3 a))                       ::  flip input
-      ++  flim  |=(byts [wid (rev 3 wid dat)])          ::  flip input w= length
-      ++  flip  |=(w=@u (cury (cury rev 3) w))          ::  flip output of size
-      ++  meet  |=(a=@ [(met 3 a) a])                   ::  measure input size
-      --
   |%
+  ++  flin  |=(a=@ (swp 3 a))                           ::  flip input
+  ++  flim  |=(byts [wid (rev 3 wid dat)])              ::  flip input w= length
+  ++  flip  |=(w=@u (cury (cury rev 3) w))              ::  flip output of size
+  ++  meet  |=(a=@ [(met 3 a) a])                       ::  measure input size
   ::
   ::  use with @
   ::
@@ -5136,11 +5134,14 @@
   ::
   ::  fold .lef into .wag, combining results with .raq
   ::
-  %+  roll  lef
-  |=  _[vex=(fel tub) wag=wag]  :: q.vex is always (some)
-  ^+  wag
-  :-  (last p.vex p.wag)
-  [~ (raq p.u.+.q.vex p.u.q.wag) q.u.q.wag]
+  |-  ^+  wag
+  ?~  lef  wag
+  =/  vex  i.lef                    :: q.vex is always (some)
+  %=  $
+    lef  t.lef
+    wag  :-  (last p.vex p.wag)
+         [~ (raq p.u.+.q.vex p.u.q.wag) q.u.q.wag]
+  ==
 ::
 ++  stun                                                ::  parse several times
   ~/  %stun
@@ -5454,8 +5455,8 @@
 ::
 ++  co
   !:
-  ~%  %co  ..co  ~
-  =<  |_  lot=coin
+  =<  ~%  %co  ..a-co  ~
+      |_  lot=coin
       ++  rear  |=(rom=tape rend(rep rom))
       ++  rent  ~+  `@ta`(rap 3 rend)
       ++  rend
@@ -5583,7 +5584,8 @@
         ==
       --
   =|  rep=tape
-  =<  |%
+  =<  ~%  %co-digit  ..em-co  ~
+      |%
       ::  rendering idioms, output zero-padded to minimum lengths
       ::
       ::  +a-co: decimal
@@ -5628,6 +5630,7 @@
       ++  y-co  |=(dat=@ ((d-co 2) dat))
       ++  z-co  |=(dat=@ `tape`['0' 'x' ((x-co 1) dat)])
       --
+  ~%  %co-base  ..co  ~
   |%
   ::  +em-co: format in numeric base
   ::
@@ -5718,7 +5721,7 @@
   ~%  %so  +  ~
   |%
   ++  bisk
-    ~+
+    ~>  %memo.%core
     ;~  pose
       ;~  pfix  (just '0')
         ;~  pose
@@ -5733,7 +5736,7 @@
       (stag %ud dem:ag)
     ==
   ++  crub
-    ~+
+    ~>  %memo.%core
     ;~  pose
       (cook |=(det=date `dime`[%da (year det)]) when)
     ::
@@ -5767,8 +5770,7 @@
       ;~(pfix hep (stag %c (cook taft urx:ab)))
     ==
   ++  nuck
-    ~/  %nuck  |=  a=nail  %.  a
-    %+  knee  *coin  |.  ~+
+    %+  knee  *coin  |.  ~>  %memo.%core
     %-  stew
     ^.  stet  ^.  limo
     :~  :-  ['a' 'z']  (cook |=(a=@ta [%$ %tas a]) sym)
@@ -5778,16 +5780,16 @@
         :-  '~'        ;~(pfix sig ;~(pose twid (easy [%$ %n 0])))
     ==
   ++  nusk
-    ~+
+    ~>  %memo.%core
     :(sear |=(a=@ta (rush a nuck)) wick urt:ab)
   ++  perd
-    ~+
+    ~>  %memo.%core
     ;~  pose
       (stag %$ zust)
       (stag %many (ifix [cab ;~(plug cab cab)] (more cab nusk)))
     ==
   ++  royl
-    ~+
+    ~>  %memo.%core
     ;~  pose
       (stag %rh royl-rh)
       (stag %rq royl-rq)
@@ -5847,7 +5849,7 @@
     [%d a h (add (mul c.b (pow 10 d.b)) e.b)]
   ::
   ++  tash
-    ~+
+    ~>  %memo.%core
     =+  ^=  neg
         |=  [syn=? mol=dime]  ^-  dime
         ?>  =('u' (end 3 p.mol))
@@ -5860,7 +5862,7 @@
     ==
   ::
   ++  twid
-    ~+
+    ~>  %memo.%core
     ;~  pose
       %+  stag  %blob
       %+  sear  |=(a=@ (mole |.((cue a))))
@@ -5870,7 +5872,7 @@
     ==
   ::
   ++  when
-    ~+
+    ~>  %memo.%core
     ;~  plug
       %+  cook
         |=([a=@ b=?] [b a])
@@ -5892,7 +5894,7 @@
     ==
   ::
   ++  zust
-    ~+
+    ~>  %memo.%core
     ;~  pose
       (stag %is bip:ag)
       (stag %if lip:ag)
@@ -6013,8 +6015,8 @@
 ++  mack
   |=  [sub=* fol=*]
   ^-  (unit)
-  =/  ton  (mink [sub fol] ~)
-  ?.(?=(%0 -.ton) ~ `product.ton)
+  =/  ton  (monk [sub fol] ~)
+  ?.(?=(%0 -.ton) ~ `p.ton)
 ::  +mink: raw virtual nock
 ::
 ++  mink  !.
@@ -6022,6 +6024,7 @@
   |=  $:  [subject=* formula=*]
           scry=$@(~ $-(^ (unit (unit))))
       ==
+  ~>  %virt
   =|  trace=(list [@ta *])
   |^  ^-  tone
       ?+  formula  [%2 trace]
@@ -6178,11 +6181,21 @@
       %3  `[-.target u.mutant]
     ==
   --
-::  +mock: virtual nock
+::  +mock: virtual nock, rendered trace
 ::
 ++  mock
+  ~/  %mock
   |=  [[sub=* fol=*] gul=$@(~ $-(^ (unit (unit))))]
   (mook (mink [sub fol] gul))
+::  +monk: virtual nock, no trace
+::
+++  monk
+  ~/  %monk
+  |=  [[sub=* fol=*] gul=$@(~ $-(^ (unit (unit))))]
+  ^-  toon
+  =/  ton=tone  (mink [sub fol] gul)
+  ?.  ?=([%2 *] ton)  ton
+  [%2 ~]
 ::  +mook: convert %tone to %toon, rendering stack frames
 ::
 ++  mook
@@ -6287,6 +6300,7 @@
     ~/  %mole
     |*  tap=(trap)
     ^-  (unit _$:tap)
+    ~>  %virt
     =/  mur  (mure tap)
     ?~(mur ~ `$:tap)
   ::  +mule: typed virtual
@@ -6294,6 +6308,7 @@
   ++  mule
     ~/  %mule
     |*  tap=(trap)
+    ~>  %virt
     =/  mud  (mute tap)
     ?-  -.mud
       %&  [%& p=$:tap]
@@ -6309,8 +6324,8 @@
       =>  ~
       |=(a=^ ``.*(a 12+[0+2 0+3]))
     ::
-    =/  ton  (mink [tap %9 2 %0 1] gul)
-    ?.(?=(%0 -.ton) ~ `product.ton)
+    =/  ton  (monk [tap %9 2 %0 1] gul)
+    ?.(?=(%0 -.ton) ~ `p.ton)
   ::  +mute: untyped virtual
   ::
   ++  mute
@@ -8240,7 +8255,7 @@
 ::
 ++  ap                                                  ::  hoon engine
   ~%    %ap
-      +>+
+      ..ap
     ==
       %open  open
       %rake  rake
@@ -11580,7 +11595,7 @@
               ==
               (cook |=(a=(list) (turn a |=(b=* ~))) (plus tis))
             ==
-  ++  glam  ~+((glue ace))
+  ++  glam  ~>(%memo.%core (glue ace))
   ++  hasp  ;~  pose                                    ::  path element
               (ifix [sel ser] wide)
               (stag %cncl (ifix [pal par] (most ace wide)))
@@ -11682,7 +11697,7 @@
     ==
   ::
   ++  stem
-    %+  knee  *hoon  |.  ~+
+    %+  knee  *hoon  |.  ~>  %memo.%core
     %+  cook
       |=  iota=$%([%hoon =hoon] iota)
       ?@  iota  [%rock %tas iota]
@@ -11784,7 +11799,7 @@
       ==
     ::
     ++  wide-top                                        ::  wide outer top
-      %+  knee  *(each manx:hoot marl:hoot)  |.  ~+
+      %+  knee  *(each manx:hoot marl:hoot)  |.  ~>  %memo.%core
       ;~  pose
         (stag %| wide-quote)
         (stag %| wide-paren-elems)
@@ -11792,7 +11807,7 @@
       ==
     ::
     ++  wide-inner-top                                  ::  wide inner top
-      %+  knee  *(each tuna:hoot marl:hoot)  |.  ~+
+      %+  knee  *(each tuna:hoot marl:hoot)  |.  ~>  %memo.%core
       ;~  pose
         wide-top
         (stag %& ;~(plug tuna-mode wide))
@@ -11915,7 +11930,7 @@
       ==
     ::
     ++  tall-top                                        ::  tall top
-      %+  knee  *(each manx:hoot marl:hoot)  |.  ~+
+      %+  knee  *(each manx:hoot marl:hoot)  |.  ~>  %memo.%core
       ;~  pose
         (stag %| ;~(pfix (plus ace) (cook collapse-chars quote-innards)))
         (stag %& ;~(plug script-or-style script-style-tail))
@@ -12475,7 +12490,7 @@
       ::
       ::
       ++  word                                          ::  tarp parser
-        %+  knee  *(list graf)  |.  ~+
+        %+  knee  *(list graf)  |.  ~>  %memo.%core
         %+  cook
           |=  a=$%(graf [%list (list graf)])
           ^-  (list graf)
@@ -12583,7 +12598,7 @@
       ++  werk  (cook zing (star word))                 ::  indefinite tarp
       ::
       ++  down                                          ::  parse inline tarp
-        %+  knee  *tarp  |.  ~+
+        %+  knee  *tarp  |.  ~>  %memo.%core
         =-  (cook - werk)
         ::
         ::  collect raw tarp into xml tags
@@ -12635,7 +12650,7 @@
         ;~(plug tic tic tic (just '\0a'))
       ::
       ++  fens
-        |=  col=@u  ~+
+        |=  col=@u  ~>  %memo.%core
         =/  ind  (stun [(dec col) (dec col)] ace)
         =/  ind-tics  ;~(plug ind tics)
         %+  cook  |=(txt=tape `tarp`[[%pre ~] ;/(txt) ~]~)
@@ -12704,7 +12719,7 @@
     --
   ::
   ++  scad
-    %+  knee  *spec  |.  ~+
+    %+  knee  *spec  |.  ~>  %memo.%core
     %-  stew
     ^.  stet  ^.  limo
     :~
@@ -12780,7 +12795,7 @@
     ==
   ::
   ++  scat
-    %+  knee  *hoon  |.  ~+
+    %+  knee  *hoon  |.  ~>  %memo.%core
     %-  stew
     ^.  stet  ^.  limo
     :~
@@ -13303,9 +13318,9 @@
     ::
     ++  boog  !:
       %+  knee  [q=*term s=*hoon]
-      |.(~+(;~(pose bola boba)))
+      |.(~>(%memo.%core ;~(pose bola boba)))
     ++  bola                                           ::  ++  arms
-      %+  knee  [q=*term s=*hoon]  |.  ~+
+      %+  knee  [q=*term s=*hoon]  |.  ~>  %memo.%core
       ;~  pfix  (jest '++')
         ;~  plug
           ;~(pfix gap ;~(pose (cold %$ buc) sym))
@@ -13314,7 +13329,7 @@
       ==
     ::TODO consider special casing $%
     ++  boba                                           ::  +$  arms
-      %+  knee  [q=*term s=*hoon]  |.  ~+
+      %+  knee  [q=*term s=*hoon]  |.  ~>  %memo.%core
       %+  cook
         |=  [q=term s=spec]
         [q [%ktcl %name q s]]
@@ -13429,8 +13444,8 @@
               ?:(tol ;~(sfix zor ;~(plug gap duz)) zor)
     ++  ulva  |*  zor=rule                              ::  closing -- and tall
               ?.(tol fail ;~(sfix zor ;~(plug gap dun)))
-    ++  glop  ~+((glue mash))                           ::  separated by space
-    ++  gunk  ~+((glue muck))                           ::  separated list
+    ++  glop  ~>(%memo.%core (glue mash))                ::  separated by space
+    ++  gunk  ~>(%memo.%core (glue muck))                ::  separated list
     ++  hank  (most muck loaf)                          ::  gapped hoons
     ++  hunk  (most muck loan)                          ::  gapped specs
     ++  loaf  ?:(tol tall wide)                         ::  hoon
@@ -13439,7 +13454,7 @@
     ++  lomp  ;~(plug sym (punt ;~(pfix tis wyde)))     ::  typeable name
     ++  mash  ?:(tol gap ;~(plug com ace))              ::  list separator
     ++  muck  ?:(tol gap ace)                           ::  general separator
-    ++  teak  %+  knee  *tiki  |.  ~+                   ::  wing or hoon
+    ++  teak  %+  knee  *tiki  |.  ~>  %memo.%core      ::  wing or hoon
               =+  ^=  gub
                   |=  [a=term b=$%([%& p=wing] [%| p=hoon])]
                   ^-  tiki
@@ -13603,7 +13618,7 @@
     ==
   ::
   ++  lung
-    ~+
+    ~>  %memo.%core
     %-  bend
     |:  $:lang
     ^-  (unit hoon)
@@ -13616,7 +13631,7 @@
     ==
   ::
   ++  long
-    %+  knee  *hoon  |.  ~+
+    %+  knee  *hoon  |.  ~>  %memo.%core
     ;~  lung
       scat
       ;~  pose
@@ -13633,7 +13648,7 @@
   ++  lobo  (most ;~(plug com ace) ;~(glam rope wide))
   ++  loon  (most ;~(plug com ace) ;~(glam wide wide))
   ++  lute                                              ::  tall [] noun
-    ~+
+    ~>  %memo.%core
     %+  cook  |=(hoon +<)
     %+  stag  %cltr
     %+  ifix
@@ -13643,7 +13658,7 @@
   ++  ropa  (most col rope)
   ++  rope                                              ::  wing form
     %+  knee  *wing
-    |.  ~+
+    |.  ~>  %memo.%core
     %+  (slug |=([a=limb b=wing] [a b]))
       dot
     %-  stew
@@ -13697,20 +13712,24 @@
   ::
   ++  tall                                              ::  full tall form
     %+  knee  *hoon
-    |.(~+((wart ;~(pose expression:(norm &) long lute apex:(sail &)))))
+    |.  ~>  %memo.%core
+    (wart ;~(pose expression:(norm &) long lute apex:(sail &)))
   ++  till                                              ::  mold tall form
     %+  knee  *spec
-    |.(~+((wert ;~(pose structure:(norm &) scad))))
+    |.  ~>  %memo.%core
+    (wert ;~(pose structure:(norm &) scad))
   ++  wede                                              ::  wide bulb
     ::  XX: lus deprecated
     ::
     ;~(pfix ;~(pose lus fas) wide)
   ++  wide                                              ::  full wide form
     %+  knee  *hoon
-    |.(~+((wart ;~(pose expression:(norm |) long apex:(sail |)))))
+    |.  ~>  %memo.%core
+    (wart ;~(pose expression:(norm |) long apex:(sail |)))
   ++  wyde                                              ::  mold wide form
     %+  knee  *spec
-    |.(~+((wert ;~(pose structure:(norm |) scad))))
+    |.  ~>  %memo.%core
+    (wert ;~(pose structure:(norm |) scad))
   ++  wart
     |*  zor=rule
     %+  here

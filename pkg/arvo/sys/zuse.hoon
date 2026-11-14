@@ -2,7 +2,7 @@
 ::  %zuse: arvo library
 ::
 =>  ..lull
-~%  %zuse  ..part  ~
+~%  %zuse  ..lull  ~
 |%
 ++  zuse  %408
 ::                                                      ::  ::
@@ -262,12 +262,13 @@
 ++  crypto  ^?
   =,  ames
   =,  number
+  ~%  %crypto  ..crypto  ~
   |%
   ::                                                    ::
   ::::                    ++aes:crypto                  ::  (2b1) aes, all sizes
     ::                                                  ::::
   ++  aes    !.
-    ~%  %aes  ..part  ~
+    ~%  %aes  ..aes  ~
     |%
     ::                                                  ::  ++ahem:aes:crypto
     ++  ahem                                            ::  kernel state
@@ -1027,11 +1028,15 @@
                %+  add
                  (bex 252)
                27.742.317.777.372.353.535.851.937.790.883.648.493
-          =+  d=(dif.fq 0 (fra.fq 121.665 121.666))
-          =+  ii=(exp.fq (div (dec q) 4) 2)
-          [b=b cb=cb q=q fq=fq l=l d=d ii=ii]
-      ~%  %coed  ..part  ~
+          =+  d=(dif:fq 0 (fra:fq 121.665 121.666))
+          =+  ii=(exp:fq (div (dec q) 4) 2)
+          [b=b cb=cb q=q l=l d=d ii=ii]
+      ~%  %coed  ..ed  ~
       |%
+      ::  the field as an arm: a jet covers the code in the registered cores
+      ::  and their parents, a pinned door is neither
+      ::
+      ++  fq  ~(. fo q)
       ::                                                ::  ++norm:ed:crypto
       ++  norm                                          ::
         |=(x=@ ?:(=(0 (mod x 2)) x (sub q x)))
@@ -1042,28 +1047,28 @@
       ++  xrec                                          ::  recover x-coord
         |=  y=@  ^-  @
         =+  ^=  xx
-            %+  mul  (dif.fq (mul y y) 1)
-                     (inv.fq +(:(mul d y y)))
-        =+  x=(exp.fq (div (add 3 q) 8) xx)
-        ?:  !=(0 (dif.fq (mul x x) (sit.fq xx)))
-          (norm (pro.fq x ii))
+            %+  mul  (dif:fq (mul y y) 1)
+                     (inv:fq +(:(mul d y y)))
+        =+  x=(exp:fq (div (add 3 q) 8) xx)
+        ?:  !=(0 (dif:fq (mul x x) (sit:fq xx)))
+          (norm (pro:fq x ii))
         (norm x)
       ::                                                ::  ++ward:ed:crypto
       ++  ward                                          ::  edwards multiply
         |=  [pp=[@ @] qq=[@ @]]  ^-  [@ @]
-        =+  dp=:(pro.fq d -.pp -.qq +.pp +.qq)
+        =+  dp=:(pro:fq d -.pp -.qq +.pp +.qq)
         =+  ^=  xt
-            %+  pro.fq
-              %+  sum.fq
-                (pro.fq -.pp +.qq)
-              (pro.fq -.qq +.pp)
-            (inv.fq (sum.fq 1 dp))
+            %+  pro:fq
+              %+  sum:fq
+                (pro:fq -.pp +.qq)
+              (pro:fq -.qq +.pp)
+            (inv:fq (sum:fq 1 dp))
         =+  ^=  yt
-            %+  pro.fq
-              %+  sum.fq
-                (pro.fq +.pp +.qq)
-              (pro.fq -.pp -.qq)
-            (inv.fq (dif.fq 1 dp))
+            %+  pro:fq
+              %+  sum:fq
+                (pro:fq +.pp +.qq)
+              (pro:fq -.pp -.qq)
+            (inv:fq (dif:fq 1 dp))
         [xt yt]
       ::                                                ::  ++scam:ed:crypto
       ++  scam                                          ::  scalar multiply
@@ -1083,11 +1088,11 @@
       ++  curv                                          ::  point on curve?
         |=  [x=@ y=@]  ^-  ?
         .=  0
-            %+  dif.fq
-              %+  sum.fq
-                (pro.fq (sub q (sit.fq x)) x)
-              (pro.fq y y)
-            (sum.fq 1 :(pro.fq d x x y y))
+            %+  dif:fq
+              %+  sum:fq
+                (pro:fq (sub q (sit:fq x)) x)
+              (pro:fq y y)
+            (sum:fq 1 :(pro:fq d x x y y))
       ::                                                ::  ++deco:ed:crypto
       ++  deco                                          ::  decode point
         |=  s=@  ^-  (unit [@ @])
@@ -1102,7 +1107,7 @@
         [~ pp]
       ::                                                ::  ++bb:ed:crypto
       ++  bb                                            ::
-        =+  bby=(pro.fq 4 (inv.fq 5))
+        =+  bby=(pro:fq 4 (inv:fq 5))
         [(xrec bby) bby]
       --  ::
     ~%  %ed  +  ~
@@ -1224,7 +1229,7 @@
       =>  .(pub `@uxpoint`pub)
       =+  prv=(end [0 b] sek)
       =.  pub  +:(need (deco pub))
-      =+  crv=(fra.fq (sum.fq 1 pub) (dif.fq 1 pub))
+      =+  crv=(fra:fq (sum:fq 1 pub) (dif:fq 1 pub))
       (curt prv crv)
     ::                                                  ::  ++sign:ed:crypto
     ++  sign                                            ::  certify
@@ -1280,7 +1285,7 @@
   ::::                    ++scr:crypto                  ::  (2b3) scrypt
     ::                                                  ::::
   ++  scr
-    ~%  %scr  ..part  ~
+    ~%  %scr  ..scr  ~
     |%
     ::                                                  ::  ++sal:scr:crypto
     ++  sal                                             ::  salsa20 hash
@@ -1860,7 +1865,7 @@
   ::::                    ++keccak:crypto               ::  (2b7) keccak family
     ::                                                  ::::
   ++  keccak
-    ~%  %kecc  ..part  ~
+    ~%  %kecc  ..^keccak  ~
     |%
     ::
     ::  keccak
@@ -2166,31 +2171,71 @@
   ::::                    ++hmac:crypto                 ::  (2b8) hmac family
     ::                                                  ::::
   ++  hmac
-    ~%  %hmac  ..part  ~
+    ~%  %hmac  ..^hmac  ~
     =,  sha
-    =>  |%
-        ++  meet  |=([k=@ m=@] [[(met 3 k) k] [(met 3 m) m]])
-        ++  flip  |=([k=@ m=@] [(swp 3 k) (swp 3 m)])
-        --
     |%
+    ++  meet  |=([k=@ m=@] [[(met 3 k) k] [(met 3 m) m]])
+    ++  flip  |=([k=@ m=@] [(swp 3 k) (swp 3 m)])
     ::
     ::  use with @
     ::
-    ++  hmac-sha1     (cork meet hmac-sha1l)
-    ++  hmac-sha256   (cork meet hmac-sha256l)
-    ++  hmac-sha512   (cork meet hmac-sha512l)
+    ++  hmac-sha1
+      ~/  %hmac-sha1
+      |=  [k=@ m=@]
+      ^-  @
+      (hmac-sha1l (meet k m))
+    ::
+    ++  hmac-sha256
+      ~/  %hmac-sha256
+      |=  [k=@ m=@]
+      ^-  @
+      (hmac-sha256l (meet k m))
+    ::
+    ++  hmac-sha512
+      ~/  %hmac-sha512
+      |=  [k=@ m=@]
+      ^-  @
+      (hmac-sha512l (meet k m))
     ::
     ::  use with @t
     ::
-    ++  hmac-sha1t    (cork flip hmac-sha1)
-    ++  hmac-sha256t  (cork flip hmac-sha256)
-    ++  hmac-sha512t  (cork flip hmac-sha512)
+    ++  hmac-sha1t
+      ~/  %hmac-sha1t
+      |=  [k=@ m=@]
+      ^-  @
+      (hmac-sha1 (flip k m))
+    ::
+    ++  hmac-sha256t
+      ~/  %hmac-sha256t
+      |=  [k=@ m=@]
+      ^-  @
+      (hmac-sha256 (flip k m))
+    ::
+    ++  hmac-sha512t
+      ~/  %hmac-sha512t
+      |=  [k=@ m=@]
+      ^-  @
+      (hmac-sha512 (flip k m))
     ::
     ::  use with byts
     ::
-    ++  hmac-sha1l    (cury hmac sha-1l 64 20)
-    ++  hmac-sha256l  (cury hmac sha-256l 64 32)
-    ++  hmac-sha512l  (cury hmac sha-512l 128 64)
+    ++  hmac-sha1l
+      ~/  %hmac-sha1l
+      |=  [key=byts msg=byts]
+      ^-  @
+      (hmac [sha-1l 64 20] key msg)
+    ::
+    ++  hmac-sha256l
+      ~/  %hmac-sha256l
+      |=  [key=byts msg=byts]
+      ^-  @
+      (hmac [sha-256l 64 32] key msg)
+    ::
+    ++  hmac-sha512l
+      ~/  %hmac-sha512l
+      |=  [key=byts msg=byts]
+      ^-  @
+      (hmac [sha-512l 128 64] key msg)
     ::
     ::  main logic
     ::
@@ -2219,11 +2264,7 @@
   ::::                    ++secp:crypto                 ::  (2b9) secp family
     ::                                                  ::::
   ++  secp  !.
-    ::  TODO: as-octs and hmc are outside of jet parent
-    =>  :+  ..part
-          hmc=hmac-sha256l:hmac:crypto
-        as-octs=as-octs:mimes:html
-    ~%  %secp  +<  ~
+    ~%  %secp  ..^secp  ~
     |%
     +$  jacobian   [x=@ y=@ z=@]                    ::  jacobian point
     +$  point      [x=@ y=@]                        ::  curve point
@@ -2383,6 +2424,12 @@
         ?>  (in-order private-key)
         (mul-point-scalar g.domain private-key)
       ::
+      ::  +make-k: the nonce of RFC 6979 (3.2), as libsecp256k1 makes it
+      ::
+      ::    each message to the hmac is V || 0x00 or 0x01 || x || h1, of a
+      ::    fixed length: V is a digest and may start with zero bytes, which
+      ::    +as-octs would measure away. h1 is the hash mod n (bits2octets).
+      ::
       ++  make-k
         |=  [hash=@ private-key=@]
         ^-  @
@@ -2390,25 +2437,26 @@
         ?>  (valid-hash hash)
         =/  v  (fil 3 bytes 1)
         =/  k  0
-        =.  k  %+  hmc  [bytes k]
-               %-  as-octs
+        =/  h  (mod hash n.domain)
+        =.  k  %+  hmac-sha256l:hmac  [bytes k]
+               :-  +((mul 3 bytes))
                %+  can  3
-               :~  [bytes hash]
+               :~  [bytes h]
                    [bytes private-key]
                    [1 0]
                    [bytes v]
                ==
-        =.  v  (hmc bytes^k bytes^v)
-        =.  k  %+  hmc  [bytes k]
-               %-  as-octs
+        =.  v  (hmac-sha256l:hmac bytes^k bytes^v)
+        =.  k  %+  hmac-sha256l:hmac  [bytes k]
+               :-  +((mul 3 bytes))
                %+  can  3
-               :~  [bytes hash]
+               :~  [bytes h]
                    [bytes private-key]
                    [1 1]
                    [bytes v]
                ==
-        =.  v  (hmc bytes^k bytes^v)
-        (hmc bytes^k bytes^v)
+        =.  v  (hmac-sha256l:hmac bytes^k bytes^v)
+        (hmac-sha256l:hmac bytes^k bytes^v)
       ::
       ++  ecdsa-raw-sign
         |=  [hash=@ private-key=@]
@@ -2510,31 +2558,29 @@
         pub
       ++  schnorr
         ~%  %schnorr  ..schnorr  ~
-        =>  |%
-            ++  tagged-hash
-              |=  [tag=@ [l=@ x=@]]
-              =+  hat=(sha-256:sha (swp 3 tag))
-              %-  sha-256l:sha
-              :-  (add 64 l)
-              (can 3 ~[[l x] [32 hat] [32 hat]])
-            ++  lift-x
-              |=  x=@I
-              ^-  (unit point)
-              =/  c  curve
-              ?.  (lth x p.domain.c)
-                ~
-              =/  fop  field-p.c
-              =+  [fadd fpow]=[sum.fop exp.fop]
-              =/  cp  (fadd (fpow 3 x) 7)
-              =/  y  (fpow (rsh [0 2] +(p.domain.c)) cp)
-              ?.  =(cp (fpow 2 y))
-                ~
-              %-  some  :-  x
-              ?:  =(0 (mod y 2))
-                y
-              (sub p.domain.c y)
-            --
         |%
+        ++  tagged-hash
+          |=  [tag=@ [l=@ x=@]]
+          =+  hat=(sha-256:sha (swp 3 tag))
+          %-  sha-256l:sha
+          :-  (add 64 l)
+          (can 3 ~[[l x] [32 hat] [32 hat]])
+        ++  lift-x
+          |=  x=@I
+          ^-  (unit point)
+          =/  c  curve
+          ?.  (lth x p.domain.c)
+            ~
+          =/  fop  field-p.c
+          =+  [fadd fpow]=[sum.fop exp.fop]
+          =/  cp  (fadd (fpow 3 x) 7)
+          =/  y  (fpow (rsh [0 2] +(p.domain.c)) cp)
+          ?.  =(cp (fpow 2 y))
+            ~
+          %-  some  :-  x
+          ?:  =(0 (mod y 2))
+            y
+          (sub p.domain.c y)
         ::
         ++  sign                                        ::  schnorr signature
           ~/  %sosi
@@ -2618,7 +2664,7 @@
     --
   ::
   ++  blake
-    ~%  %blake  ..part  ~
+    ~%  %blake  ..blake  ~
     |%
     ++  blake3
       =<
@@ -2952,40 +2998,37 @@
     --  ::blake
   ::
   ++  chacha
-    =<
-      =<  crypt
-      ~%  %chacha  ..part  ~
-      |%
-      ++  crypt
-        ~/  %crypt
-        |=  [rounds=@ud key=@uxI nonce=@uxG counter=@udG msg=octs]
-        ^+  msg
-        :-  p.msg
-        %+  end  [3 p.msg]
-        %+  mix  q.msg
-        %+  rep  9
-        %+  turn  (iota (div (add p.msg 63) 64))
-        |=  i=@
-        =/  state  (can32 [4 sigma] [8 key] [2 (add counter i)] [2 nonce] ~)
-        =/  final  (do-rounds rounds state)
-        %+  rep  5
-        %+  turn  (iota 16)
-        |=(i=@ (add32 (get32 i state) (get32 i final)))
-      ::
-      ++  ietf
-        |=  [nonce=@ux]
-        ^-  [nonce=@uxG counter=@ud]
-        [(rsh 5 nonce) (lsh [5 1] (end 5 nonce))]
-      ::
-      ++  xchacha
-        ~/  %xchacha
-        |=  [rounds=@ud key=@uxI nonce=@ux]
-        ^-  [key=@uxI nonce=@uxG]
-        :_  (rsh [5 4] nonce)
-        =/  state  (do-rounds rounds (can32 [4 sigma] [8 key] [4 nonce] ~))
-        (cat 7 (end [5 4] state) (rsh [5 12] state))
-      --
+    =<  crypt
+    ~%  %chacha  ..chacha  ~
     |%
+    ++  crypt
+      ~/  %crypt
+      |=  [rounds=@ud key=@uxI nonce=@uxG counter=@udG msg=octs]
+      ^+  msg
+      :-  p.msg
+      %+  end  [3 p.msg]
+      %+  mix  q.msg
+      %+  rep  9
+      %+  turn  (iota (div (add p.msg 63) 64))
+      |=  i=@
+      =/  state  (can32 [4 sigma] [8 key] [2 (add counter i)] [2 nonce] ~)
+      =/  final  (do-rounds rounds state)
+      %+  rep  5
+      %+  turn  (iota 16)
+      |=(i=@ (add32 (get32 i state) (get32 i final)))
+    ::
+    ++  ietf
+      |=  [nonce=@ux]
+      ^-  [nonce=@uxG counter=@ud]
+      [(rsh 5 nonce) (lsh [5 1] (end 5 nonce))]
+    ::
+    ++  xchacha
+      ~/  %xchacha
+      |=  [rounds=@ud key=@uxI nonce=@ux]
+      ^-  [key=@uxI nonce=@uxG]
+      :_  (rsh [5 4] nonce)
+      =/  state  (do-rounds rounds (can32 [4 sigma] [8 key] [4 nonce] ~))
+      (cat 7 (end [5 4] state) (rsh [5 12] state))
     ++  do-rounds
       |^
         |=  [rounds=@ud state=@uxJ]
@@ -3038,7 +3081,7 @@
     --
   ::
   ++  argon2
-    ~%  %argon  ..part  ~
+    ~%  %argon  ..^argon2  ~
     |%
     ::
     ::  structures
@@ -3535,7 +3578,7 @@
     --
   ::
   ++  ripemd
-    ~%  %ripemd  ..part  ~
+    ~%  %ripemd  ..ripemd  ~
     |%
     ++  ripemd-160
       ~/  %ripemd160
@@ -3811,10 +3854,11 @@
 ::::                      ++format                      ::  (2d) common formats
   ::                                                    ::::
 ++  format  ^?
+  ~%  %format  ..format  ~
   |%
   ::  0 ending a line (invalid @t) is not preserved     ::  ++to-wain:format
   ++  to-wain                                           ::  cord to line list
-    ~%  %leer  ..part  ~
+    ~/  %leer
     |=  txt=cord
     ^-  wain
     ?~  txt  ~
@@ -4464,6 +4508,7 @@
 ++  differ  ^?
   =,  clay
   =,  format
+  ~%  %differ  ..differ  ~
   |%
   ::                                                    ::  ++berk:differ
   ++  berk                                              ::  invert diff patch
@@ -4477,7 +4522,7 @@
     ==
   ::                                                    ::  ++loss:differ
   ++  loss                                              ::  longest subsequence
-    ~%  %loss  ..part  ~
+    ~/  %loss
     |*  [hel=(list) hev=(list)]
     |-  ^+  hev
     =+  ^=  sev
@@ -4621,12 +4666,13 @@
   ::                                                    ::::
 ++  html  ^?  ::  XX rename to web-txt
   =,  eyre
+  ~%  %html  ..html  ~
   |%
   ::                                                    ::
   ::::                    ++mimes:html                  ::  (2e1) MIME
     ::                                                  ::::
   ++  mimes  ^?
-    ~%  %mimes  ..part  ~
+    ~%  %mimes  ..mimes  ~
     |%
     ::                                                  ::  ++as-octs:mimes:html
     ++  as-octs                                         ::  atom to octstream
@@ -4830,14 +4876,19 @@
   ::::                    ++json:html                   ::  (2e2) JSON
     ::                                                  ::::
   ++  json  ^?
-    ~%  %json  ..part  ~
+    ~%  %json  ..json  ~
     |%
     ::                                                  ::  ++en:json:html
     ++  en                                              ::  encode JSON to cord
-      ~%  %en  +>+  ~
-      |^  |=  jon=^json
+      ::  the helpers are a registered core under the jetted gate, so the
+      ::  jet's template covers them and x:en:json:html still reaches them
+      ::
+      =<  ~/  %en
+          |=  jon=^json
           ^-  cord
           (rap 3 (flop (onto jon ~)))
+      ~%  %en  ..en  ~
+      |%
       ::                                                ::  ++onto:en:json:html
       ++  onto
         |=  [val=^json out=(list @t)]
@@ -4897,10 +4948,15 @@
       --  ::en
     ::                                                  ::  ++de:json:html
     ++  de                                              ::  parse cord to JSON
-      ~%  %de  +>+  ~
-      |^  |=  txt=cord
+      ::  the rules are a registered core under the jetted gate, so the
+      ::  jet's template covers them and apex:de:json:html still parses
+      ::
+      =<  ~/  %de
+          |=  txt=cord
           ^-  (unit ^json)
           (rush txt apex)
+      ~%  %de  ..de  ~
+      |%
       ::                                                ::  ++abox:de:json:html
       ++  abox                                          ::  array
         %+  stag  %a
@@ -6083,6 +6139,7 @@
 ::::                      ++userlib                     ::  (2u) non-vane utils
   ::                                                    ::::
 ++  userlib  ^?
+  ~%  %userlib  ..userlib  ~
   |%
   ::                                                    ::
   ::::                    ++chrono:userlib              ::  (2uB) time
@@ -6323,10 +6380,11 @@
   ::::                  ++unix:userlib                  ::  (2uD) unix line-list
     ::                                                  ::::
   ++  unix  ^?
+    ~%  %unix  ..unix  ~
     |%
     ::                                                  ::  ++lune:unix:userlib
     ++  lune                                            ::  cord by unix line
-      ~%  %lune  ..part  ~
+      ~/  %lune
       |=  txt=@t
       ?~  txt
         ^-  (list @t)  ~
@@ -6349,7 +6407,7 @@
       $(off +(off))
     ::                                                  ::  ++nule:unix:userlib
     ++  nule                                            ::  lines to unix cord
-      ~%  %nule  ..part  ~
+      ~/  %nule
       |=  lin=(list @t)
       ^-  @t
       %+  can  3
@@ -6495,7 +6553,7 @@
   ::    standard implementation and in anticipation of a more
   ::    general adler32 checksum interface.
   ::
-  ~%  %checksum  ..part  ~
+  ~%  %checksum  ..checksum  ~
   |%
   ++  adler
     ~%  %adler  ..adler  ~

@@ -456,8 +456,8 @@
   =|  memo=(map)
   =;  [ton=tone mem=_memo]
     ?.  ?=(%0 -.ton)
-      [ton ~]
-    [ton mem]
+      [(mook ton) ~]
+    [(mook ton) mem]
   |^  ^-  [tone _memo]
       ?+  formula  [[%2 trace] memo]
           [^ *]
