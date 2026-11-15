@@ -5201,8 +5201,8 @@
               (wake-dead-flows:event-core ~ abort=%.n)
             ::
             %-  (slog leaf+"ames: switching to dead flow consolidation" ~)
-            =;  cor=event-core
-              set-dead-flow-timer:cor
+            =<  set-dead-flow-timer
+            ^+  event-core
             %-  ~(rep by peers.ames-state)
             |=  [[=ship =ship-state] core=_event-core]
             ^+  core
