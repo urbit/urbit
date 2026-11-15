@@ -14386,6 +14386,7 @@
   |=  [hen=duct dud=(unit goof) wrapped-task=(hobo task)]
   ^-  [(list move) _vane-gate]
   ~>  %spin.['call/ames']
+  ~>  %ska  ::  redundant because of the hint at +poke of arvo
   =*  sample  +<
   =+  me-core=mesa
   =+  am-core=(ames now eny rof)
@@ -14442,6 +14443,7 @@
   |=  [=wire =duct dud=(unit goof) =sign]
   ^-  [(list move) _vane-gate]
   ~>  %spin.['take/ames']
+  ~>  %ska  ::  redundant because of the hint at +poke of arvo
   =*  sample  +<
   =+  me-core=mesa
   =+  am-core=(ames now eny rof)
