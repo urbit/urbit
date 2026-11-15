@@ -219,6 +219,7 @@
       ==
   ^-  [(list move) _behn-gate]
   ~>  %spin.[%call]
+  ~>  %ska  ::  redundant because of the hint at +poke of arvo
   =/  =task  ((harden task) wrapped-task)
   =/  event-core  (per-event [now hen] state)
   =^  moves  state
