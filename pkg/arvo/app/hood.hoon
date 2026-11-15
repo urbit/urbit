@@ -83,6 +83,7 @@
 ++  on-peek
   |=  =path
   ^-  (unit (unit cage))
+  ~>  %ska
   ?+  path  (on-peek:def path)
     [* %kiln *]  (on-peek:kiln-core path)
   ==
@@ -115,6 +116,7 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  step:agent:gall
+  ~>  %ska
   |^
   =/  fin  (end [3 4] mark)
   ?:  =(%drum fin)  poke-drum
@@ -137,6 +139,7 @@
 ++  on-watch
   |=  =path
   ^-  step:agent:gall
+  ~>  %ska
   ?+  path  (on-watch:def +<)
     [%drum *]  =^(c drum.state (peer:drum-core t.path) [c this])
     [%kiln *]  =^(c kiln.state (peer:kiln-core t.path) [c this])
@@ -146,6 +149,7 @@
 ++  on-agent
   |=  [=wire syn=sign:agent:gall]
   ^-  step:agent:gall
+  ~>  %ska
   ?+  wire  ~|([%hood-bad-wire wire] !!)
     [%drum *]  =^(c drum.state (take-agent:drum-core t.wire syn) [c this])
     [%helm *]  =^(c helm.state (take-agent:helm-core t.wire syn) [c this])
@@ -155,6 +159,7 @@
 ++  on-arvo
   |=  [=wire syn=sign-arvo]
   ^-  step:agent:gall
+  ~>  %ska
   ?+  wire  ~|([%hood-bad-wire wire] !!)
     [%drum *]  =^(c drum.state (take-arvo:drum-core t.wire syn) [c this])
     [%helm *]  =^(c helm.state (take-arvo:helm-core t.wire syn) [c this])
