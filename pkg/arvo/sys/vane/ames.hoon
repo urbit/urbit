@@ -6605,14 +6605,14 @@
           ++  on-memo
             |=  [=bone =message]
             ^+  peer-core
-            =+  log="ames: {<her>} ignoring {<-.message>} on "
+            =/  log  |.("ames: {<her>} ignoring {<-.message>} on ")
             ?:  ?&  (~(has in closing.peer-state) bone)
                     !=(message [%plea %$ /flow %cork ~])
                 ==
-              ~>  %slog.0^leaf/(weld log "closing bone {<bone>}")
+              ~>  %slog.0^leaf/(weld (log) "closing bone {<bone>}")
               peer-core
             ?:  (~(has in corked.peer-state) bone)
-              ~>  %slog.0^leaf/(weld log "corked bone {<bone>}")
+              ~>  %slog.0^leaf/(weld (log) "corked bone {<bone>}")
               peer-core
             ::
             abet:(call:(abed:mu bone) %memo message)
