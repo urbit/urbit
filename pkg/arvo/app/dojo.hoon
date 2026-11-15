@@ -1063,6 +1063,7 @@
   ++  he-dope
     |=  txt=tape                                        ::
     ^-  (each (unit (each dojo-command tape)) hair)     ::  prefix+result
+    ~>  %ska
     =+  len=+((lent txt))                               ::  line length
     =.  txt  (weld buf `tape`(weld txt "\0a"))          ::
     =+  vex=((full parse-command-line:he-parser) [1 1] txt)
