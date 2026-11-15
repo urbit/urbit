@@ -896,6 +896,9 @@
       ::  +slum yields a raw noun; nest-extract it to $vase (never +;;, which
       ::  would recursively clam the output $type and bail).
       ::
+      ?:  =(zuv %409)
+        %-  next-vase:h136
+        !<(vase:h136 [-:!>(*vase:h136) (slum +:dtube (prev-vase:h135 v))])
       !<(vase [-:!>(*vase) (slum +:dtube v)])
 
     ::
@@ -4400,6 +4403,15 @@
         %+  turn  ~(tap in (find-merge-points other-yaki our-yaki))
         |=  =yaki
         r.yaki
+      ::
+          ::  /convert/target-mark/[pax]
+          %convert
+        ?>  ?=(^ t.t.pax)
+        =/  =tube  (build-tube:(tako-ford tak) (rear t.t.pax) i.t.pax)
+        =/  q  (read-x tak t.t.pax)
+        ?~  q     ~
+        ?~  u.q  [~ ~]
+        ``[i.t.pax (tube q.u.u.q)]
       ==
     ::  +read-t: produce the list of paths within a yaki with :pax as prefix
     ::

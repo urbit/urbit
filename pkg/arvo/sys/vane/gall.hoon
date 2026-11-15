@@ -2775,8 +2775,14 @@
       |=  run=_^?(|.(*(unit (unit cage))))
       ^-  (each (unit (unit cage)) tang)
       =/  res  (mock [run %9 2 %0 1] (ap-look rof [~ ~] /gall/[agent-name]))
-      ?-  -.res
-        %0  [%& !<((unit (unit cage)) [-:!>(*(unit (unit cage))) p.res])]
+      ?-    -.res
+          %0
+        ::  TODO switch on zuv, upgrade if needed (for %0)
+        ?:  =(zuv.yoke %409)
+          [%& !<((unit (unit cage)) [-:!>(*(unit (unit cage))) p.res])]
+        ?>  =(zuv.yoke %408)
+        [%& !<((unit (unit cage)) [-:!>(*(unit (unit cage))) p.res])]
+      ::
         %1  =+  p=((soft path) p.res)
             [%| ?~(p >p.res< (smyt u.p)) ~]
         %2  [%| p.res]
