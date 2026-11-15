@@ -936,14 +936,23 @@
             %arch  "bush: arch: {(spud path.nod)}"
           ==
       =|  cycle=(set bush-node)
-      |-  ^-  bush
+      ::  done: the nodes this call has walked, with their bushes: a node
+      ::  that many paths lead to is walked once
+      ::
+      =|  done=(map bush-node bush)
+      =<  -
+      |-  ^-  [bush _done]
       =*  bush-loop  $
       ?:  (~(has in cycle) nod)  ~|  [cycle+nod cycle]  !!
+      =/  hav=(unit bush)  (~(get by done) nod)
+      ?^  hav  [u.hav done]
       =.  cycle  (~(put in cycle) nod)
+      =;  [res=bush don=_done]
+        [res (~(put by don) nod res)]
       ?-    -.nod
           %file
         =/  file=cage  (cast-path path.nod mark.nod)
-        [%file file]
+        [[%file file] done]
       ::
           %hoon
         =/  file=cage  (read-file path.nod)
@@ -952,29 +961,36 @@
         =/  deps=(list (pair (unit term) bush-node))
           (parse-header path.nod src)
         ::
-        :^  %hoon  src
-          %+  turn  deps
-          |=  [u=(unit term) don=bush-node]
-          [u bush-loop(nod don)]
-        path.nod
+        =|  bus=(list (pair (unit term) bush))
+        |-
+        ?~  deps
+          [[%hoon src (flop bus) path.nod] done]
+        =^  res  done  bush-loop(nod q.i.deps)
+        $(deps t.deps, bus [[p.i.deps res] bus])
       ::
           %mark
         =/  cor=vase  (build-fit %mar mark.nod)
         =/  gad=vase  (slap cor limb/%grad)
-        ?^  q.gad  [%mark ~ cor mark.nod]
-        =/  deg  bush-loop(nod mark+q.gad)
-        =/  tub  bush-loop(nod tube+[mark.nod q.gad])
-        =/  but  bush-loop(nod tube+[q.gad mark.nod])
-        [%mark `[deg tub but] cor mark.nod]
+        ?^  q.gad  [[%mark ~ cor mark.nod] done]
+        =^  deg  done  bush-loop(nod mark+q.gad)
+        =^  tub  done  bush-loop(nod tube+[mark.nod q.gad])
+        =^  but  done  bush-loop(nod tube+[q.gad mark.nod])
+        [[%mark `[deg tub but] cor mark.nod] done]
       ::
           %tube
-        ?:  =(a.mars.nod b.mars.nod)  tube+%same
-        ?:  =([%mime %hoon] [a.mars.nod b.mars.nod])  tube+%mime
-        :+  %tube
-          =/  pax=(unit path)  (try-fit-path %mar a.mars.nod)
-          [a.mars.nod ?~(pax ~ `bush-loop(nod hoon+u.pax))]
+        ?:  =(a.mars.nod b.mars.nod)  [tube+%same done]
+        ?:  =([%mime %hoon] [a.mars.nod b.mars.nod])  [tube+%mime done]
+        =/  pax=(unit path)  (try-fit-path %mar a.mars.nod)
+        =^  one=(unit bush)  done
+          ?~  pax  [~ done]
+          =^  res  done  bush-loop(nod hoon+u.pax)
+          [`res done]
         =/  pax=(unit path)  (try-fit-path %mar b.mars.nod)
-        [b.mars.nod ?~(pax ~ `bush-loop(nod hoon+u.pax))]
+        =^  two=(unit bush)  done
+          ?~  pax  [~ done]
+          =^  res  done  bush-loop(nod hoon+u.pax)
+          [`res done]
+        [[%tube [a.mars.nod one] b.mars.nod two] done]
       ::
           %arch
         =/  fiz=(list @ta)
@@ -992,10 +1008,10 @@
         =|  rez=(map @ta bush)
         |-
         ?~  fiz
-          [%arch spec.nod rez path.nod]
+          [[%arch spec.nod rez path.nod] done]
         =*  nom=@ta   i.fiz
         =/  pax=path  (weld path.nod nom %hoon ~)
-        =/  res=bush  bush-loop(nod hoon+pax)
+        =^  res=bush  done  bush-loop(nod hoon+pax)
         $(fiz t.fiz, rez (~(put by rez) nom res))
       ==
     ::
