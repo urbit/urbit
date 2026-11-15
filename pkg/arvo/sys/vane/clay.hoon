@@ -4720,6 +4720,7 @@
       ==
   ^-  [(list move) _..^$]
   ~>  %spin.['call/clay']
+  ~>  %ska  ::  redundant because of the hint at +poke of arvo
   ::
   =/  req=task  ((harden task) wrapped-task)
   ::
@@ -5994,6 +5995,7 @@
   |=  [lyc=gang pov=path car=term bem=beam]
   ^-  (unit (unit cage))
   ~>  %spin.['scry/clay']
+  ~>  %ska
   =*  scry-loop  $
   |^
   =*  ren  car
