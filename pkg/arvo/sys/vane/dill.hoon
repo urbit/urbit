@@ -257,6 +257,7 @@
       ==
   ^+  [*(list move) ..^$]
   ~>  %spin.['call/dill']
+  ~>  %ska  ::  redundant because of the hint at +poke of arvo
   =/  task=task
     ~|  wrapped-task
     ((harden task) wrapped-task)
@@ -564,6 +565,7 @@
   |=  [tea=wire hen=duct dud=(unit goof) hin=sign]
   ^+  [*(list move) ..^$]
   ~>  %spin.['take/dill']
+  ~>  %ska  ::  redundant because of the hint at +poke of arvo
   ?^  dud
     ~|(%dill-take-dud (mean tang.u.dud))
   ::
