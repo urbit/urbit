@@ -1063,7 +1063,7 @@
   ++  he-dope
     |=  txt=tape                                        ::
     ^-  (each (unit (each dojo-command tape)) hair)     ::  prefix+result
-    ~>  %ska
+    ~>  %ska  ::  redundant because of the hint at +on-poke
     =+  len=+((lent txt))                               ::  line length
     =.  txt  (weld buf `tape`(weld txt "\0a"))          ::
     =+  vex=((full parse-command-line:he-parser) [1 1] txt)
@@ -1760,6 +1760,7 @@
 ++  on-poke
   |=  [=mark =vase]
   ^-  (quip card:agent:gall _..on-init)
+  ~>  %ska
   ?>  ?|  (team:title [our src]:hid)
           (~(has in acl) src.hid)
       ==
@@ -1813,6 +1814,7 @@
 ++  on-watch
   |=  =path
   ^-  (quip card:agent:gall _..on-init)
+  ~>  %ska
   ?>  ?|  (team:title our.hid src.hid)
           (~(has in acl) src.hid)
       ==
@@ -1838,6 +1840,7 @@
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   ^-  (quip card:agent:gall _..on-init)
+  ~>  %ska
   ?>  ?=([@ @ @ *] wire)
   =/  =id  [(slav %p i.wire) i.t.wire]
   =/  =session  (~(got by hoc) id)
@@ -1855,6 +1858,7 @@
 ++  on-arvo
   |=  [=wire =sign-arvo]
   ^-  (quip card:agent:gall _..on-init)
+  ~>  %ska
   ?>  ?=([@ @ *] wire)
   =/  =id  [(slav %p i.wire) i.t.wire]
   =/  =session  (~(got by hoc) id)
