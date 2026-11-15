@@ -2388,6 +2388,7 @@
   |=  [=duct dud=(unit goof) hic=(hobo task)]
   ^-  [(list move) _gall-payload]
   ~>  %spin.['call/gall']
+  ~>  %ska  ::  redundant because of the hint at +poke of arvo
   ?^  dud
     ~|(%gall-call-dud (mean tang.u.dud))
   ::
@@ -2900,6 +2901,7 @@
   |=  [lyc=gang pov=path care=term bem=beam]
   ^-  (unit (unit cage))
   ~>  %spin.['scry/gall']
+  ~>  %ska
   =*  ship  p.bem
   =*  dap  q.bem
   =/  =coin  $/r.bem
@@ -3190,6 +3192,7 @@
   |=  [=wire =duct dud=(unit goof) syn=sign-arvo]
   ^-  [(list move) _gall-payload]
   ~>  %spin.['take/gall']
+  ~>  %ska  ::  redundant because of the hint at +poke of arvo
   ?^  dud
     ~&(%gall-take-dud ((slog tang.u.dud) [~ gall-payload]))
   ?:  =(/clear-huck wire)
