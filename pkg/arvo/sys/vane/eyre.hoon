@@ -2969,7 +2969,7 @@
         ?~  convert
           ((trace 0 |.("no convert from {(trip have)} to json")) [~ ~])
         ~|  "conversion failed from {(trip have)} to json"
-        [`[desk.event have] `[%fact %json (slym u.convert noun.event)]]
+        [`[desk.event have] `[%fact %json ~>(%bare (slym u.convert noun.event))]]
       ?~  jsyn  ~
       %-  some
       =*  sign  u.jsyn
