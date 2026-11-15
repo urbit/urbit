@@ -476,6 +476,28 @@
   ?~  rib=(mole |.((slub core [%wing ~[arm]])))  |
   (slob mark p.u.rib)
 ::
+::  +slam: that of hoon, with its mint kept in the persistent memo
+::
+::    a mark's gates are called with the same types again and again.
+::    nothing is saved to that memo while a scry handler is present, as it
+::    is where gall runs a tube, so we ask in a virtual run without one,
+::    and directly if that fails (to crash as the mint does)
+::
+++  slam
+  |=  [gat=vase sam=vase]  ^-  vase
+  =/  typ=type  [%cell p.gat p.sam]
+  =/  gen=hoon  [%cnsg [%$ ~] [%$ 2] [%$ 3] ~]
+  =/  gun
+    =/  res
+      %-  ~(mule vi |)
+      |.
+      =>  [typ=typ gen=gen ut=ut]
+      ~>  %memo./clay/slam
+      (~(mint ut typ) %noun gen)
+    ?:  ?=(%& -.res)  p.res
+    (~(mint ut typ) %noun gen)
+  [p.gun (slum q.gat q.sam)]
+::
 ++  rave-to-rove
   |=  rav=rave
   ^-  rove
@@ -1056,7 +1078,7 @@
       =/  nav=vase  (build-nave mak)
       %-  (trace 1 |.("make dais {<mak>}"))
       ^-  dais
-      =>  [nav=nav ..zuse]
+      =>  [nav=nav slam=slam ..zuse]
       ~>  %memo./clay/ford
       |_  sam=vase
       ++  diff
@@ -1107,7 +1129,7 @@
       ~|  error-building-tube+[a b]
       =/  gat=vase  (build-cast a b)
       %-  (trace 1 |.("make tube {<a>} -> {<b>}"))
-      =>  [gat=gat ..zuse]
+      =>  [gat=gat slam=slam ..zuse]
       ~>  %memo./clay/ford
       |=(v=vase (slam gat v))
     ::
