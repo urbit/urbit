@@ -276,7 +276,8 @@
   =+  size=(met 3 mes)
   =+  hash=`@ux`(mug mes)
   %+  flog  %text
-  "< {<src.bowl>}: {?:((gth size 100) <[hash=hash size=size]> (trip mes))}"
+  =/  who  (scow %p src.bowl)
+  "< {who}: {?:((gth size 100) <[hash=hash size=size]> (trip mes))}"
 ::
 ++  poke-ames-prod
   |=  ships=(list ship)
@@ -291,7 +292,7 @@
   =+  len=(scow %ud (met 3 ato))
   =+  gum=(scow %p (mug ato))
   =<  abet
-  (flog %text "< {<src.bowl>}: atom: {len} bytes, mug {gum}")
+  (flog %text "< {(scow %p src.bowl)}: atom: {len} bytes, mug {gum}")
 ::
 ++  coup-hi
   |=  [pax=path cop=(unit tang)]  =<  abet
