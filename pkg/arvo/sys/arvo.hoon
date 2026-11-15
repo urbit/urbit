@@ -1890,6 +1890,7 @@
   |=  [now=@da ovo=ovum]
   ^-  ^
   ~>  %spin.['poke/arvo']
+  ~>  %ska
   ::  this assertion is not yet viable, as vere's timestamps
   ::  are too unreliable. sad!
   ::
