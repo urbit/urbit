@@ -4,13 +4,19 @@
 ::    type, a goal and a hoon to a type and a formula.  no jets: every
 ::    arm is first-order hoon, the state of a compilation is threaded
 ::    through the calls, and what +ut memoizes on whole types and hoons
-::    is kept here against the ids of arms.
+::    is kept here against the ids of arms.  see doc/ska-ut.md.
 ::
 ::    a type ($tip) mirrors $type node for node.  a core names its
 ::    definition ($dee): a base ($bax: context, arms) and what is known
-::    of the battery.  a hold names an arm ($arm) of a core.  a fork is
-::    a list sorted by mug.  small fields come first, so that = on two
+::    of the battery.  a hold names an arm ($arm) of a core, and arms
+::    of one hoon in a core are one arm, as the stock hold is its core
+::    and its hoon.  a fork is a list sorted by the constant at each
+::    member's head.  small fields come first, so that = on two
 ::    different types fails early.
+::
+::    +nest is the stock one with seg and reg emptied in a core
+::    (urbit/urbit#7441), and keeps an answer only if it used no
+::    assumption made above its frame (the rule of urbit/vere#1158).
 ::
 |%
 +$  tip                                                 ::  type
@@ -35,7 +41,13 @@
       axe=axis                                          ::  in the battery
       gen=hoon
   ==
-+$  arx  $@(~ [n=[m=@ a=arm] l=arx r=arx])              ::  arms by name mug
++$  arx                                                 ::  arms by name mug:
+  $@  ~                                                 ::  the name, the axis
+  [n=[m=@ nam=term axe=axis a=arm] l=arx r=arx]         ::  and the arm, which
+::                                                      ::  arms of one hoon
+::                                                      ::  share, as a hold is
+::                                                      ::  its core and hoon
++$  gex  $@(~ [n=[m=@ a=arm] l=gex r=gex])              ::  arms by hoon mug
 +$  bax                                                 ::  base of a core
   $:  b=@                                               ::  number
       nym=(unit term)
@@ -85,14 +97,18 @@
   $@  ~                                                 ::  c: the arm, wet,
   [n=[m=@ p=tip c=? q=(unit tip)] l=hot r=hot]          ::  is checked; q:
 +$  kip  [a=@ b=@ p=tip q=tip]                          ::  the hold, played
++$  hyp  [d=@ a=@ b=@ p=tip q=tip]                      ::  pair assumed, and
++$  hod  [d=@ t=tip]                                    ::  hold open, depth d
++$  nez                                                 ::  of a nest:
+  $:  gil=(list hyp)                                    ::  pairs assumed on
+      yes=(list kip)                                    ::  the path; proved
+      nog=(list kip)                                    ::  and refuted pairs;
+      hit=@                                             ::  least depth of a
+      cut=@                                             ::  gil or reg hit,
+  ==                                                    ::  and of a seg hit
 +$  arr  $@(~ [v=rec p=[a=arr b=arr] q=[c=arr d=arr]])  ::  recs by arm id
 +$  sat                                                 ::  compilation
-  $:  $=  nes                                           ::  of a nest:
-      $:  gil=(list kip)                                ::  pairs assumed
-          nog=(list kip)                                ::  pairs refuted
-          rof=?                                         ::  a ref looped
-          sof=?                                         ::  a sut looped
-      ==
+  $:  nes=nez
       rut=(list [a=@ b=@ p=tip q=tip r=?])              ::  nests that were
       fan=(list [i=@ p=tip])                            ::  long; holds in play
       rib=(list [p=tip q=tip r=hoon])                   ::  arms in mull
@@ -294,20 +310,20 @@
 ::                                                      ::::  cores
 ++  arx-get                                             ::  arm by name
   |=  [m=@ nam=term a=arx]
-  ^-  $@(~ arm)
+  ^-  $@(~ [m=@ nam=term axe=axis a=arm])
   ?~  a  ~
   ?:  =(m m.n.a)
-    ?:  =(nam nam.a.n.a)  a.n.a
+    ?:  =(nam nam.n.a)  n.a
     (arx-get m nam r.a)
   ?:  (lth m m.n.a)  (arx-get m nam l.a)
   (arx-get m nam r.a)
 ::
 ++  arx-put                                             ::  first of a name
-  |=  [a=arx m=@ new=arm]                               ::  stays
+  |=  [a=arx m=@ nam=term axe=axis new=arm]             ::  stays
   ^-  arx
-  ?~  a  [[m new] ~ ~]
+  ?~  a  [[m nam axe new] ~ ~]
   ?:  =(m m.n.a)
-    ?:  =(nam.new nam.a.n.a)  a
+    ?:  =(nam nam.n.a)  a
     a(r $(a r.a))
   ?:  (lth m m.n.a)  a(l $(a l.a))
   a(r $(a r.a))
@@ -315,34 +331,62 @@
 ++  arx-dom                                             ::  arms of chapters
   |=  [nex=[i=@ x=(list @)] dom=(map term tome)]
   ^-  [arx [i=@ x=(list @)]]
-  =|  a=arx
-  =/  axe=axis  1
-  |-  ^-  [arx [i=@ x=(list @)]]
-  ?~  dom  [a nex]
+  =/  out  (arx-cha [~ ~] nex 1 dom)
+  [a.p.out q.out]
+::
+++  arx-cha
+  |=  $:  ag=[a=arx g=gex]  nex=[i=@ x=(list @)]  axe=axis
+          dom=(map term tome)
+      ==
+  ^-  [p=[a=arx g=gex] q=[i=@ x=(list @)]]
+  ?~  dom  [ag nex]
   ?:  &(?=(~ l.dom) ?=(~ r.dom))
-    (arx-tom a nex axe q.n.dom)
-  =^  b  nex  (arx-tom a nex (peg axe 2) q.n.dom)
-  =.  a  b
-  ?~  l.dom  $(dom r.dom, axe (peg axe 3))
-  ?~  r.dom  $(dom l.dom, axe (peg axe 3))
-  =^  c  nex  $(dom l.dom, axe (peg axe 6))
-  =.  a  c
-  $(dom r.dom, axe (peg axe 7))
+    (arx-tom ag nex axe q.n.dom)
+  =^  b  nex  (arx-tom ag nex (peg axe 2) q.n.dom)
+  ?~  l.dom  (arx-cha b nex (peg axe 3) r.dom)
+  ?~  r.dom  (arx-cha b nex (peg axe 3) l.dom)
+  =^  c  nex  (arx-cha b nex (peg axe 6) l.dom)
+  (arx-cha c nex (peg axe 7) r.dom)
 ::
 ++  arx-tom                                             ::  arms of a chapter
-  |=  [a=arx nex=[i=@ x=(list @)] axe=axis dab=(map term hoon)]
-  ^-  [arx [i=@ x=(list @)]]
-  ?~  dab  [a nex]
+  |=  $:  ag=[a=arx g=gex]  nex=[i=@ x=(list @)]  axe=axis
+          dab=(map term hoon)
+      ==
+  ^-  [p=[a=arx g=gex] q=[i=@ x=(list @)]]
+  ?~  dab  [ag nex]
   =/  two  &(?=(~ l.dab) ?=(~ r.dab))
-  =/  new=arm  [i.nex x.nex p.n.dab ?:(two axe (peg axe 2)) q.n.dab]
-  =.  a  (arx-put a (mug p.n.dab) new)
-  =.  nex  [+(i.nex) (step x.nex)]
-  ?:  two  [a nex]
-  ?~  l.dab  $(dab r.dab, axe (peg axe 3))
-  ?~  r.dab  $(dab l.dab, axe (peg axe 3))
-  =^  b  nex  $(dab l.dab, axe (peg axe 6))
-  =.  a  b
-  $(dab r.dab, axe (peg axe 7))
+  =/  axy  ?:(two axe (peg axe 2))
+  ::  an arm with the hoon of an earlier one is that arm.  the mug of
+  ::  the hoon is at hand, from the mug of the chapters in +base
+  ::
+  =/  m  (mug q.n.dab)
+  =/  dup  (gex-get m q.n.dab g.ag)
+  =/  new=arm  ?^(dup dup [i.nex x.nex p.n.dab axy q.n.dab])
+  =.  a.ag  (arx-put a.ag (mug p.n.dab) p.n.dab axy new)
+  =?  g.ag  ?=(~ dup)  (gex-put g.ag m new)
+  =?  nex  ?=(~ dup)  [+(i.nex) (step x.nex)]
+  ?:  two  [ag nex]
+  ?~  l.dab  (arx-tom ag nex (peg axe 3) r.dab)
+  ?~  r.dab  (arx-tom ag nex (peg axe 3) l.dab)
+  =^  b  nex  (arx-tom ag nex (peg axe 6) l.dab)
+  (arx-tom b nex (peg axe 7) r.dab)
+::
+++  gex-get                                             ::  arm by its hoon,
+  |=  [m=@ gen=hoon g=gex]                              ::  of mug m
+  ^-  $@(~ arm)
+  ?~  g  ~
+  ?:  =(m m.n.g)
+    ?:  =(gen gen.a.n.g)  a.n.g
+    (gex-get m gen r.g)
+  ?:  (lth m m.n.g)  (gex-get m gen l.g)
+  (gex-get m gen r.g)
+::
+++  gex-put
+  |=  [g=gex m=@ new=arm]
+  ^-  gex
+  ?~  g  [[m new] ~ ~]
+  ?:  (lth m m.n.g)  g(l $(g l.g))
+  g(r $(g r.g))
 ::
 ++  arx-gen                                             ::  arm by its hoon
   |=  [a=arx gen=hoon]
@@ -520,6 +564,26 @@
   ?~  l  |
   ?:  &(=(a a.i.l) =(b b.i.l) =(sut p.i.l) =(ref q.i.l))  &
   (kips a b sut ref t.l)
+::
+++  gils                                                ::  pair assumed: its
+  |=  [a=@ b=@ sut=tip ref=tip l=(list hyp)]            ::  depth and one,
+  ^-  @                                                 ::  or 0
+  ?~  l  0
+  ?:  &(=(a a.i.l) =(b b.i.l) =(sut p.i.l) =(ref q.i.l))  +(d.i.l)
+  (gils a b sut ref t.l)
+::
+++  hods                                                ::  hold open: its
+  |=  [sut=tip l=(list hod)]                            ::  depth and one,
+  ^-  @                                                 ::  or 0
+  ?~  l  0
+  ?:  =(t.i.l sut)  +(d.i.l)
+  (hods sut t.l)
+::
+++  low                                                 ::  lesser depth
+  |=  [a=@ b=@]
+  ^-  @
+  ?:  =(a b)  a
+  ?:((lth a b) a b)
 ::
 ++  hath                                                ::  in a list
   |=  [sut=tip l=(list tip)]
@@ -1067,7 +1131,7 @@
     ?:  &(?=(^ zem) =(0 ski))
       :_  s
       :*  %arm  [axe lon]  (peg 2 axe.zem)  %void
-          [[sut =(%wet hud.bas.q.sut) zem] ~]
+          [[sut =(%wet hud.bas.q.sut) a.zem] ~]
           [%0 0]
       ==
     =?  ski  ?=(^ zem)  (dec ski)
@@ -1276,10 +1340,12 @@
   ?:  =(1 hit)  [& s]
   ?:  =(2 hit)  ?.(tel [| s] ~>(%mean.'nest-fail' !!))
   =/  old  nes.s
-  =.  nes.s  [~ ~ | |]
+  =.  nes.s  [~ ~ ~ 1.073.741.824 1.073.741.824]
   =^  ok  s  (dext s ~ ~ sut ref)
-  =?  s  &(ok !rof.nes.s ?=(^ gil.nes.s))  (keep s gil.nes.s)
-  =?  rut.s  ?|  ?=([* * * * * * * * *] gil.nes.s)
+  ::  what is in yes and nog used no assumption: it holds for good
+  ::
+  =?  s  ?=(^ yes.nes.s)  (keep s yes.nes.s)
+  =?  rut.s  ?|  ?=([* * * * * * * * *] yes.nes.s)
                  ?=([* * * * * * * * *] nog.nes.s)
              ==
     [[ka kb sut ref ok] (scag 15 rut.s)]
@@ -1297,7 +1363,7 @@
   $(l t.l)
 ::
 ++  keep                                                ::  remember pairs
-  |=  [s=sat l=(list kip)]
+  |=  [s=sat l=(list kip)]                              ::  of holds
   ^-  sat
   ?~  l  s
   =/  sut  p.i.l
@@ -1305,14 +1371,6 @@
   ?.  &(?=([%hold *] sut) ?=([%hold *] ref))  $(l t.l)
   =/  r  (aget tab.s x.q.sut)
   $(l t.l, tab.s (aput tab.s x.q.sut r(nes [[i.q.ref sut ref] nes.r])))
-::
-++  long                                                ::  a refuted frame
-  |=  [old=(list kip) nog=(list kip) gil=(list kip) now=(list kip)]
-  ^-  ?                                                 ::  kept a pair of
-  ?~  gil  &                                            ::  its own
-  ?|  !=(old t.gil)
-      !=(nog now)
-  ==
 ::
 ++  ness                                                ::  pair remembered
   |=  [y=@ sut=tip ref=tip l=(list [y=@ p=tip q=tip])]
@@ -1328,8 +1386,56 @@
   ?.  a  [| s]
   (nest s ref | sut)
 ::
+::    The memo of +nest.  A frame that opens a hold or walks the arms of
+::    two cores assumes its pair: the pair goes on gil, and a hold on seg
+::    or reg, each with the depth of gil at the time.  An answer is kept
+::    only if it used no assumption made above its frame: a %.y if no
+::    pair of gil and no hold of reg found under the frame was put there
+::    above it (hit, the least depth found, is not less than the depth
+::    of the frame), a %.n if no hold of seg found under it was (cut).
+::    seg can only turn %.y into %.n, reg and gil %.n into %.y, so a
+::    %.n owes nothing to the latter and a %.y nothing to the former.
+::    What is kept, in yes and nog, answers under any assumptions.
+::
+++  posit                                               ::  a frame begins:
+  |=  [s=sat n=@ ka=@ kb=@ sut=tip ref=tip]             ::  its pair assumed
+  ^-  sat
+  %=  s
+    gil.nes  [[n ka kb sut ref] gil.nes.s]
+    hit.nes  1.073.741.824
+    cut.nes  1.073.741.824
+  ==
+::
+++  settle                                              ::  a frame ends: its
+  |=  $:  s=sat  a=?  n=@  ka=@  kb=@  sut=tip  ref=tip ::  answer kept if it
+          old=nez                                       ::  owes nothing above
+      ==
+  ^-  [? sat]
+  =/  h  hit.nes.s
+  =/  c  cut.nes.s
+  ?:  a
+    :-  &
+    %=  s
+      gil.nes  gil.old
+      hit.nes  (low hit.old h)
+      cut.nes  cut.old
+      yes.nes  ?:  &(!=(h 1.073.741.824) (lth h n))  yes.nes.s
+               [[ka kb sut ref] yes.nes.s]
+    ==
+  :-  |
+  %=  s
+    gil.nes  gil.old
+    hit.nes  hit.old
+    cut.nes  (low cut.old c)
+    nog.nes  ?:  &(!=(c 1.073.741.824) (lth c n))  nog.nes.s
+             ::  remembered if it took more than a look
+             ::
+             ?:  &(=(yes.old yes.nes.s) =(nog.old nog.nes.s))  nog.nes.s
+             [[ka kb sut ref] nog.nes.s]
+  ==
+::
 ++  dext                                                ::  by the need
-  |=  [s=sat seg=(list tip) reg=(list tip) sut=tip ref=tip]
+  |=  [s=sat seg=(list hod) reg=(list hod) sut=tip ref=tip]
   ^-  [? sat]
   ?:  =(sut ref)  [& s]
   ?-    sut
@@ -1350,18 +1456,20 @@
   ::
       [%core *]
     ?.  ?=([%core *] ref)  (sint s seg reg sut ref)
+    ::  seg and reg are emptied, as in a cell
+    ::
     ?:  &(=(r.sut r.ref) =(q.sut q.ref))
-      (dext s seg reg p.sut p.ref)
+      (dext s ~ ~ p.sut p.ref)
     ?.  =(hud.bas.q.sut hud.bas.q.ref)  [| s]
     =/  sux  ctx.bas.q.sut
     =/  rex  ctx.bas.q.ref
-    =^  a  s  (dext s seg reg sux p.sut)
+    =^  a  s  (dext s ~ ~ sux p.sut)
     ?.  a  [| s]
-    =^  b  s  (dext s seg reg p.sut sux)
+    =^  b  s  (dext s ~ ~ p.sut sux)
     ?.  b  [| s]
-    =^  c  s  (dext s seg reg rex p.ref)
+    =^  c  s  (dext s ~ ~ rex p.ref)
     ?.  c  [| s]
-    =^  d  s  (deem s sux rex seg reg r.sut r.ref)
+    =^  d  s  (deem s sux rex r.sut r.ref)
     ?.  d  [| s]
     ?:  =(%wet hud.bas.q.sut)
       [=(dom.bas.q.sut dom.bas.q.ref) s]
@@ -1371,21 +1479,22 @@
     ?:  =(b.bas.q.sut b.bas.q.ref)  [& s]
     =/  ka  (kee sut)
     =/  kb  (kee ref)
-    ?:  (kips ka kb sut ref gil.nes.s)  [& s]
-    =/  old  gil.nes.s
-    =.  gil.nes.s  [[ka kb sut ref] gil.nes.s]
+    ?:  (kips ka kb sut ref yes.nes.s)  [& s]
+    ?:  (kips ka kb sut ref nog.nes.s)  [| s]
+    =/  g  (gils ka kb sut ref gil.nes.s)
+    ?.  =(0 g)  [& s(hit.nes (low hit.nes.s (dec g)))]
+    =/  old  nes.s
+    =/  n  ?~(gil.old 0 +(d.i.gil.old))
+    =.  s  (posit s n ka kb sut ref)
     =^  e  s
       %:  deep
         s
         [%core %gold q.sut sux]
         [%core %gold q.ref rex]
-        seg
-        reg
         dom.bas.q.sut
         dom.bas.q.ref
       ==
-    ?:  e  [& s]
-    [| s(gil.nes old)]
+    (settle s e n ka kb sut ref old)
   ::
       [%face *]  (dext s seg reg q.sut ref)
       [%fork *]
@@ -1396,32 +1505,29 @@
   ::
       [%hint *]  (dext s seg reg q.sut ref)
       [%hold *]
-    ?:  (hath sut seg)  [| s(sof.nes &)]
     =/  ka  i.q.sut
     =/  kb  (kee ref)
-    ?:  (kips ka kb sut ref gil.nes.s)  [& s]
+    ?:  (kips ka kb sut ref yes.nes.s)  [& s]
     ?:  (kips ka kb sut ref nog.nes.s)  [| s]
     ?:  ?&  ?=([%hold *] ref)
             (ness kb sut ref nes:(aget tab.s x.q.sut))
         ==
       [& s]
-    =/  old  gil.nes.s
-    =/  nog  nog.nes.s
-    =/  sof  sof.nes.s
-    =.  s  s(gil.nes [[ka kb sut ref] gil.nes.s], sof.nes |)
+    =/  c  (hods sut seg)
+    ?.  =(0 c)  [| s(cut.nes (low cut.nes.s (dec c)))]
+    =/  g  (gils ka kb sut ref gil.nes.s)
+    ?.  =(0 g)  [& s(hit.nes (low hit.nes.s (dec g)))]
+    =/  old  nes.s
+    =/  n  ?~(gil.old 0 +(d.i.gil.old))
+    =.  s  (posit s n ka kb sut ref)
     =^  typ  s  (repo s sut)
-    =^  a  s  (dext s [sut seg] reg typ ref)
-    ?:  a  [& s(sof.nes |(sof sof.nes.s))]
-    ::  refuted: remembered if it took more than a look
-    ::
-    =?  nog.nes.s  &(!sof.nes.s (long old nog gil.nes.s nog.nes.s))
-      [[ka kb sut ref] nog.nes.s]
-    [| s(gil.nes old, sof.nes |(sof sof.nes.s))]
+    =^  a  s  (dext s [[n sut] seg] reg typ ref)
+    (settle s a n ka kb sut ref old)
   ==
 ::
 ++  lien-dext                                           ::  ref in a member;
   |=  $:  s=sat  ref=tip  rc=?  rk=@                    ::  rc: ref has the
-          seg=(list tip)  reg=(list tip)  yed=(list fom)::  constant rk at
+          seg=(list hod)  reg=(list hod)  yed=(list fom)::  constant rk at
       ==                                                ::  its head
   ^-  [? sat]
   ?~  yed  [| s]
@@ -1440,7 +1546,7 @@
   (lien-dext s ref rc rk seg reg t.yed)
 ::
 ++  levy-dext                                           ::  each member in sut
-  |=  [s=sat sut=tip seg=(list tip) reg=(list tip) yed=(list fom)]
+  |=  [s=sat sut=tip seg=(list hod) reg=(list hod) yed=(list fom)]
   ^-  [? sat]
   ?~  yed  [& s]
   =^  a  s  (dext s seg reg sut t.i.yed)
@@ -1474,7 +1580,7 @@
   ==
 ::
 ++  sint                                                ::  by the have
-  |=  [s=sat seg=(list tip) reg=(list tip) sut=tip ref=tip]
+  |=  [s=sat seg=(list hod) reg=(list hod) sut=tip ref=tip]
   ^-  [? sat]
   ?-    ref
       %noun      [| s]
@@ -1489,60 +1595,56 @@
     ::
     =/  ka  (kee sut)
     =/  kb  (kee ref)
-    ?:  (kips ka kb sut ref gil.nes.s)  [& s]
+    ?:  (kips ka kb sut ref yes.nes.s)  [& s]
     ?:  (kips ka kb sut ref nog.nes.s)  [| s]
-    =/  sof  sof.nes.s
-    =.  sof.nes.s  |
+    =/  old  nes.s
+    =/  n  ?~(gil.old 0 +(d.i.gil.old))
+    =.  s  s(hit.nes 1.073.741.824, cut.nes 1.073.741.824)
     =^  a  s  (levy-dext s sut seg reg p.ref)
-    ?:  a  [& s(gil.nes [[ka kb sut ref] gil.nes.s], sof.nes |(sof sof.nes.s))]
-    =?  nog.nes.s  !sof.nes.s  [[ka kb sut ref] nog.nes.s]
-    [| s(sof.nes |(sof sof.nes.s))]
+    (settle s a n ka kb sut ref old)
   ::
       [%hint *]  (dext s seg reg sut q.ref)
       [%hold *]
-    ?:  (hath ref reg)  [& s(rof.nes &)]
     =/  ka  (kee sut)
     =/  kb  i.q.ref
-    ?:  (kips ka kb sut ref gil.nes.s)  [& s]
+    ?:  (kips ka kb sut ref yes.nes.s)  [& s]
     ?:  (kips ka kb sut ref nog.nes.s)  [| s]
-    =/  old  gil.nes.s
-    =/  nog  nog.nes.s
-    =/  sof  sof.nes.s
-    =.  s  s(gil.nes [[ka kb sut ref] gil.nes.s], sof.nes |)
+    =/  r  (hods ref reg)
+    ?.  =(0 r)  [& s(hit.nes (low hit.nes.s (dec r)))]
+    =/  g  (gils ka kb sut ref gil.nes.s)
+    ?.  =(0 g)  [& s(hit.nes (low hit.nes.s (dec g)))]
+    =/  old  nes.s
+    =/  n  ?~(gil.old 0 +(d.i.gil.old))
+    =.  s  (posit s n ka kb sut ref)
     =^  typ  s  (repo s ref)
-    =^  a  s  (dext s seg [ref reg] sut typ)
-    ?:  a  [& s(sof.nes |(sof sof.nes.s))]
-    =?  nog.nes.s  &(!sof.nes.s (long old nog gil.nes.s nog.nes.s))
-      [[ka kb sut ref] nog.nes.s]
-    [| s(gil.nes old, sof.nes |(sof sof.nes.s))]
+    =^  a  s  (dext s seg [[n ref] reg] sut typ)
+    (settle s a n ka kb sut ref old)
   ==
 ::
 ++  deem                                                ::  variance
-  |=  $:  s=sat  sut=tip  ref=tip  seg=(list tip)  reg=(list tip)
-          mel=vair  ram=vair
-      ==
+  |=  [s=sat sut=tip ref=tip mel=vair ram=vair]
   ^-  [? sat]
   ?.  |(=(mel ram) =(%lead mel) =(%gold ram))  [| s]
   ?-    mel
       %lead  [& s]
       %gold
-    =^  a  s  (dext s seg reg sut ref)
+    =^  a  s  (dext s ~ ~ sut ref)
     ?.  a  [| s]
-    (dext s seg reg ref sut)
+    (dext s ~ ~ ref sut)
   ::
       %iron
     =^  a  s  (peek s ref %rite 2)
     =^  b  s  (peek s sut %rite 2)
-    (dext s seg reg a b)
+    (dext s ~ ~ a b)
   ::
       %zinc
     =^  a  s  (peek s sut %read 2)
     =^  b  s  (peek s ref %read 2)
-    (dext s seg reg a b)
+    (dext s ~ ~ a b)
   ==
 ::
 ++  deep                                                ::  arms of cores
-  |=  $:  s=sat  sut=tip  ref=tip  seg=(list tip)  reg=(list tip)
+  |=  $:  s=sat  sut=tip  ref=tip
           dom=(map term tome)  vim=(map term tome)
       ==
   ^-  [? sat]
@@ -1565,7 +1667,7 @@
   ?.  b  [| s]
   =^  x  s  (play s sut q.n.dab)
   =^  y  s  (play s ref q.n.hem)
-  (dext s seg reg x y)
+  (dext s ~ ~ x y)
 ::                                                      ::::  refinement
 ++  crop                                                ::  sut less ref
   |=  [s=sat sut=tip ref=tip]
@@ -2534,7 +2636,7 @@
       (play s log u.gen)
     =/  a  (arx-get (mug p.n.dab) p.n.dab arx.bas.q.sut)
     =^  vad  s
-      (hemp s sut hud gog ?:(&(?=(^ a) =(gen.a q.n.dab)) a ~) q.n.dab)
+      (hemp s sut hud gog ?:(&(?=(^ a) =(gen.a.a q.n.dab)) a.a ~) q.n.dab)
     ?~  l.dab
       ?~  r.dab  [vad s]
       =^  r  s  $(dab r.dab)
