@@ -1051,7 +1051,7 @@
       ::
           [~ ~ *]
         =+  !<(=dais:clay q.u.u.sky)
-        =/  res  (mule |.((vale:dais noun.deal)))
+        =/  res  (mule |.(~>(%bare (vale:dais noun.deal))))
         ?:  ?=(%| -.res)
           =/  ror  "gall: raw-poke vale fail :{(trip dap)} {<mark.deal>}"
           (mo-give %unto %poke-ack `[leaf+ror p.res])
@@ -1072,7 +1072,7 @@
       ::
           [~ ~ *]
         =+  !<(=tube:clay q.u.u.sky)
-        =/  res  (mule |.((tube q.cage.deal)))
+        =/  res  (mule |.(~>(%bare (tube q.cage.deal))))
         ?:  ?=(%| -.res)
           =/  ror  "gall: poke-as cast fail :{(trip dap)} {<mars>}"
           (mo-give %unto %poke-ack `[leaf+ror p.res])
@@ -1384,7 +1384,7 @@
       ?:  ?=(%| -.agent.yoke)  ap-core
       ~>  %spin.[(rap 3 'on-save/%' agent-name ~)]
       =>  [ken=ken.yoke (ap-ingest ~ |.([ap-yawn-all p.agent.yoke]))]
-      ap-core(ken.yoke ken, agent.yoke |+on-save:ap-agent-core)
+      ap-core(ken.yoke ken, agent.yoke |+~>(%bare on-save:ap-agent-core))
     ::
     ++  ap-nuke
       ^+  ap-core
@@ -1596,7 +1596,7 @@
         ::
             [~ ~ *]
           =+  !<(=tube:clay q.u.u.sky)
-          =/  res  (mule |.((tube q.cage)))
+          =/  res  (mule |.(~>(%bare (tube q.cage))))
           ?:  ?=(%| -.res)
             %-  (slog leaf+"watch-as fact conversion failure" p.res)
             (ap-kill-up-slip duct)
@@ -1766,7 +1766,7 @@
         =/  msg  "%{(trip agent-name)}: ".
                  "peek no tube from {(trip have)} to {(trip want)}"
         ((slog leaf+msg ~) ~)
-      =/  res  (mule |.((u.tub vase)))
+      =/  res  (mule |.(~>(%bare (u.tub vase))))
       ?:  ?=(%& -.res)
         ``want^p.res
       =/  msg  "%{(trip agent-name)}: ".
@@ -1816,7 +1816,7 @@
       ~>  %spin.[(rap 3 'on-save/%' agent-name ~)]
       =/  old-state=vase
         ?:  ?=(%& -.agent.yoke)
-          on-save:ap-agent-core
+          ~>(%bare on-save:ap-agent-core)
         p.agent.yoke
       =?  ap-core  &(?=(%| -.agent.yoke) ?=(^ ken.yoke))
         =-  +:(ap-ingest ~ |.([+< agent]))
@@ -1922,7 +1922,7 @@
           (mean leaf+"gall: ames mark fail {<mark.unto>}" ~)
         ::
         =+  !<(=dais:clay q.u.u.sky)
-        =/  res  (mule |.((vale:dais noun.unto)))
+        =/  res  (mule |.(~>(%bare (vale:dais noun.unto))))
         ?:  ?=(%| -.res)
           (mean leaf+"gall: ames vale fail {<mark.unto>}" p.res)
         :-  [%fact mark.unto p.res]
@@ -2206,7 +2206,7 @@
     ++  ap-mule
       |=  run=_^?(|.(*step:agent))
       ^-  (each step:agent tang)
-      =/  res  (mock [run %9 2 %0 1] (look rof [~ ~] /gall/[agent-name]))
+      =/  res  (mock [run %11 %bare %9 2 %0 1] (look rof [~ ~] /gall/[agent-name]))
       ?-  -.res
         %0  [%& !<(step:agent [-:!>(*step:agent) p.res])]
         %1  [%| (smyt ;;(path p.res)) ~]
@@ -2217,7 +2217,7 @@
     ++  ap-mule-peek
       |=  run=_^?(|.(*(unit (unit cage))))
       ^-  (each (unit (unit cage)) tang)
-      =/  res  (mock [run %9 2 %0 1] (look rof [~ ~] /gall/[agent-name]))
+      =/  res  (mock [run %11 %bare %9 2 %0 1] (look rof [~ ~] /gall/[agent-name]))
       ?-  -.res
         %0  [%& !<((unit (unit cage)) [-:!>(*(unit (unit cage))) p.res])]
         %1  [%| (smyt ;;(path p.res)) ~]
@@ -3037,7 +3037,7 @@
         :-  %|
         ?:  ?=(%| -.agent.u.yok)
           p.agent.u.yok
-        on-save:p.agent.u.yok
+        ~>(%bare on-save:p.agent.u.yok)
       ==
     ``noun+!>(`egg-any`[%20 egg])
   ::
@@ -3181,7 +3181,7 @@
     :-  %|
     ?:  ?=(%| -.agent.yoke)
       p.agent.yoke
-    on-save:p.agent.yoke
+    ~>(%bare on-save:p.agent.yoke)
   ==
 ::  +take: response
 ::
