@@ -798,7 +798,8 @@
               %+  slub  (with-faces cor+u.old ~)
               :+  %brcl  !,(*hoon v=+<.cor)
               :+  %sggr
-                [%spin %cltr [%sand %t (crip "grow-{<mark.a>}->{<mark.b>}")] ~]
+                :-  %spin
+                [%cltr [%sand %t (rap 3 'grow-%' mark.a '->%' mark.b ~)] ~]
               :+  %tsgl  limb/mark.b
               !,(*hoon ~(grow cor v))
             =/  new=(unit vase)  (bind bush.b bush-to-vase)
@@ -809,7 +810,8 @@
                 ~_('clay: @ product of +grab not supported' !!)
               %+  slub  u.new
               :+  %sggr
-                [%spin %cltr [%sand %t (crip "grab-{<mark.a>}->{<mark.b>}")] ~]
+                :-  %spin
+                [%cltr [%sand %t (rap 3 'grab-%' mark.a '->%' mark.b ~)] ~]
               tsgl/[limb/mark.a limb/%grab]
             ?:  ?=(%noun mark.b)
               :: %-  (trace 4 |.("default"))
