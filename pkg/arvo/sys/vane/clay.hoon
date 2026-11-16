@@ -476,6 +476,18 @@
   ?~  rib=(mole |.((slub core [%wing ~[arm]])))  |
   (slob mark p.u.rib)
 ::
+::  +slub: that of hoon, with the run in the plain interpreter: what ford
+::  runs is the code of desks, which is analyzed only where it says so
+::  itself
+::
+++  slub
+  |=  [vax=vase gen=hoon]  ^-  vase
+  =/  gun
+    =>  [vax=p=p.vax gen=gen ut=ut]
+    ~>  %memo./hoon/mint
+    (~(mint ut p.vax) %noun gen)
+  [p.gun ~>(%bare .*(q.vax q.gun))]
+::
 ::  +slam: that of hoon, with its mint kept in the persistent memo
 ::
 ::    a mark's gates are called with the same types again and again.
@@ -496,7 +508,7 @@
       (~(mint ut typ) %noun gen)
     ?:  ?=(%& -.res)  p.res
     (~(mint ut typ) %noun gen)
-  [p.gun (slum q.gat q.sam)]
+  [p.gun ~>(%bare (slum q.gat q.sam))]
 ::
 ++  rave-to-rove
   |=  rav=rave
