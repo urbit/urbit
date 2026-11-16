@@ -2991,6 +2991,13 @@
           :-  'json'
           ~|  [%unexpected-fact-mark p.cage.sign]
           ?>  =(%json p.cage.sign)
+          ::  the type check of !< is memoized between events
+          ::
+          =/  levi
+            |=  [a=type b=type]
+            =>  [levi=levi a=a b=b]
+            ~>  %memo./eyre/levi
+            (levi a b)
           !<(json q.cage.sign)
         ::
         ?~  from  ~

@@ -6605,14 +6605,14 @@
           ++  on-memo
             |=  [=bone =message]
             ^+  peer-core
-            =+  log="ames: {<her>} ignoring {<-.message>} on "
+            =/  log  |.("ames: {<her>} ignoring {<-.message>} on ")
             ?:  ?&  (~(has in closing.peer-state) bone)
                     !=(message [%plea %$ /flow %cork ~])
                 ==
-              ~>  %slog.0^leaf/(weld log "closing bone {<bone>}")
+              ~>  %slog.0^leaf/(weld (log) "closing bone {<bone>}")
               peer-core
             ?:  (~(has in corked.peer-state) bone)
-              ~>  %slog.0^leaf/(weld log "corked bone {<bone>}")
+              ~>  %slog.0^leaf/(weld (log) "corked bone {<bone>}")
               peer-core
             ::
             abet:(call:(abed:mu bone) %memo message)
@@ -10566,12 +10566,13 @@
             ::  could have the same lane?
             ::
             per
-          =/  lane=tape
-            ?@  i.next
-              "from {<`@p`i.next>}"
-            "lane={(scow %if p.i.next)}:{((d-co:co 1) q.i.next)}"
           %-  %+  ev-tace  rcv.veb.bug.ames-state
-              |.("hear indirect packet hop={<hop>} {lane}")
+              |.  ^-  tape
+              =/  lane=tape
+                ?@  i.next
+                  "from {<`@p`i.next>}"
+                "lane={(scow %if p.i.next)}:{((d-co:co 1) q.i.next)}"
+              "hear indirect packet hop={<hop>} {lane}"
           %_    per
               lane
             ?~  lane.per  `[hop i.next]
@@ -12093,6 +12094,7 @@
             sy-core
           ::
           %-  %+  %*(ev-tace ev her ship.stun)  sun.veb.bug.ames-state
+              |.  ^-  tape
               =/  lane=tape
                 ?:  ?=(%& -.lane.stun)
                   "from {<p.lane.stun>}"
@@ -12100,7 +12102,7 @@
                 =/  ip=@if  (end [0 32] p)
                 =/  pt=@ud  (cut 0 [32 16] p)
                 "lane {(scow %if ip)}:{((d-co:co 1) pt)} ({(scow %ux p)})"
-              |.("inject %stun {<-.stun>} {lane}")
+              "inject %stun {<-.stun>} {lane}"
           ::
           %-  sy-emit
           %^  poke-ping-app  unix-duct  our
