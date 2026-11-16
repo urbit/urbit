@@ -11423,6 +11423,45 @@
   |=  vax=vase
   ^-  tank
   ~|  %sell
+  ::  an atom, or a fork of atoms, under hints, faces and holds: +dish
+  ::  with the wine +dole would make, without +dole's question at every
+  ::  layer whether the type is that of $type, which no atom's is
+  ::
+  =/  win
+    =|  dep=@ud
+    |-  ^-  (unit wine:us)
+    ?+    p.vax  ~
+        [%atom *]
+      `?~(q.p.vax [%mato p.p.vax] [%pear p.p.vax u.q.p.vax])
+    ::
+        [%hold *]
+      ?:  (gth dep 8)  ~
+      $(p.vax ~(repo ut p.vax), dep +(dep))
+    ::
+        [%hint *]
+      =/  yad  $(p.vax q.p.vax)
+      ?~  yad  ~
+      ?.  ?=(%know -.q.p.p.vax)  yad
+      `[%name p.q.p.p.vax u.yad]
+    ::
+        [%face *]
+      =/  yad  $(p.vax q.p.vax)
+      ?~  yad  ~
+      ?^(p.p.vax yad `[%face p.p.vax u.yad])
+    ::
+        [%fork *]
+      =/  yed  ~(tap in p.p.vax)
+      =|  wal=(list (pair type wine:us))
+      |-  ^-  (unit wine:us)
+      ?~  yed
+        =/  rot  |=([a=(pair type wine:us) b=(pair type wine:us)] (aor p.a p.b))
+        `[%bcwt (turn (sort wal rot) tail)]
+      =/  yad  ^$(p.vax i.yed)
+      ?~  yad  ~
+      $(yed t.yed, wal [[i.yed u.yad] wal])
+    ==
+  ?:  &(?=(^ win) ?=(@ q.vax))
+    (~(dish us p.vax) [~ u.win] q.vax)
   (~(deal us p.vax) q.vax)
 ::
 ::  +skol:  $-(type tank) using duck.
