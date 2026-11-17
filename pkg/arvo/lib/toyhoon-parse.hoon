@@ -21,6 +21,7 @@
               %wtpt  %wtcn  %wtkt
               %cltr
               %bccl  %bcts  %bcmc  %bccb  %bcpt  %bccn
+              %zpcl  %zpdt
             ::
               %mato
           ==
@@ -36,7 +37,7 @@
       [%atom tol=? const=? =aura a=@]  ::  %atomw + %atomt
       [%mato =aura]
     ::
-      $:  ?(%ktts %dttr %dtwt %dtls %dtts %wtcl %tsgr %tsls %cnts %sggr %brcn %brpt %brcl %brts %ktls %ktcl %wtpt %wtcn %wtkt %cltr %bccl %bcts %bcmc %bccb %bcpt %bccn)
+      $:  ?(%ktts %dttr %dtwt %dtls %dtts %wtcl %tsgr %tsls %cnts %sggr %brcn %brpt %brcl %brts %ktls %ktcl %wtpt %wtcn %wtkt %cltr %bccl %bcts %bcmc %bccb %bcpt %bccn %zpcl %zpdt)
           tol=?
       ==
   ==
@@ -75,6 +76,7 @@
           wtptw+|+%wtpt  wtptt+&+%wtpt    wtcnw+|+%wtcn  wtcnt+&+%wtcn    wtktw+|+%wtkt  wtktt+&+%wtkt
           cltrw+|+%cltr  cltrt+&+%cltr
           bcclw+|+%bccl  bcclt+&+%bccl    bctsw+|+%bcts  bctst+&+%bcts    bcmcw+|+%bcmc  bcmct+&+%bcmc    bccbw+|+%bccb  bccbt+&+%bccb    bcptw+|+%bcpt  bcptt+&+%bcpt    bccnw+|+%bccn  bccnt+&+%bccn
+          zpclw+|+%zpcl  zpclt+&+%zpcl    zpdtw+|+%zpdt  zpdtt+&+%zpdt
       ==
   %~  select-rules  rul
   %-  ~(def-cords rul ~)  :~
@@ -442,6 +444,24 @@
     '''
     '$%' gap
     '''
+  ::
+    :-  %zpclw
+    '''
+    '!:('
+    '''
+    :-  %zpclt
+    '''
+    '!:' gap
+    '''
+  ::
+    :-  %zpdtw
+    '''
+    '!.('
+    '''
+    :-  %zpdtt
+    '''
+    '!.' gap
+    '''
   ==
 ::
 ++  parser  :: modeled after te, but different (hard to abstract)
@@ -659,9 +679,12 @@
     [%dbug pint mold]
   ::
   ++  tall
+    ^-  (mandatory naty-sugar _st)
+    =+  peek  ?@  -  ~  ?:  ?=([%zpcl %&] u)  tall(st move(st s), bug &)
+                        ?:  ?=([%zpdt %&] u)  tall(st move(st s), bug |)
     %+  trace  dbug-naty  |.
     ^-  (mandatory naty-sugar _st)
-    =+  peek  ?@  -  ~  =>  [t=u +(st s)]
+    =>  [t=u +(st s)]
     ?+  t  =+  (tall-mold-reg t)  ?@  -  wide(tol |)  [[%xtra %mold u] s]
       [%atom %& *]  [%noun [%atom aura.t ?.(const.t ~ `a.t)] a.t]^move
       [%ktts %&]    =+  peek(st move)           ?@  -  ~  =>  [f=u +(st s)]
@@ -772,12 +795,15 @@
     $(u.lay +.u.lay)
   ::
   ++  wide
+    ^-  (mandatory naty-sugar _st)
+    =+  peek  ?@  -  ~  ?:  ?=([%zpcl %|] u)  wide-1(st move(st s), bug &)
+                        ?:  ?=([%zpdt %|] u)  wide-1(st move(st s), bug |)
     %+  trace  dbug-naty  |.
     ^-  (mandatory naty-sugar _st)
-    =+  wide-inner     ?@  -  ~       =>  [w=u +(st s)]
-    =+  peek           ?@  -  [w st]  =>  [t=u +(st s)]
-    ?.  ?=(%hax t)            [w st]
-    =+  wide(st move)  ?@  -  ~       [[%tsgr u w] s]
+    =+  wide-inner(st s)  ?@  -  ~       =>  [w=u +(st s)]
+    =+  peek              ?@  -  [w st]  =>  [t=u +(st s)]
+    ?.  ?=(%hax t)               [w st]
+    =+  wide(st move)     ?@  -  ~       [[%tsgr u w] s]
   ::
   ++  wide-inner
     ^-  (mandatory naty-sugar _st)
@@ -841,10 +867,15 @@
                     =+  (expect %ace)  ?@  -  ~  =>  +(st s)
                     =+  wide-2         ?@  -  ~  [[%wtcn w a u] s]
       [%wtkt %|]    =+  wide-wing-2    ?@  -  ~  [[%wtkt u] s]
+      [%zpcl %|]    wide-1(bug &)
+      [%zpdt %|]    wide-1(bug |)
     ==
   ::
   ++  tall-mold-reg  ::  tall molds, never wide molds
     |=  t=toke
+    ^-  (mandatory mold:..sugar _st)
+    ?:  ?=([%zpcl %&] t)  tall-mold(st move, bug &)
+    ?:  ?=([%zpdt %&] t)  tall-mold(st move, bug |)
     ^-  (mandatory mold:..sugar _st)
     ?+  t  ~
       [%bccl %&]  =+  %+  (autocons(st move) mold:..sugar)
@@ -926,6 +957,11 @@
   ++  wide-mold-reg
     |=  t=toke
     ^-  (mandatory mold:..sugar _st)
+    ?:  ?=([%zpcl %|] t)  =+  wide-mold(bug &)  ?@  -  ~  =>  [m=u +(st s)]
+                          =+  (expect %per)     ?@  -  ~  [m s]
+    ?:  ?=([%zpdt %|] t)  =+  wide-mold(bug |)  ?@  -  ~  =>  [m=u +(st s)]
+                          =+  (expect %per)     ?@  -  ~  [m s]
+    ^-  (mandatory mold:..sugar _st)
     ?+  t  ~
       [%bccl %|]  =+  %+  (autocons mold:..sugar)
                         |=(t=toke ?=(%ace t))
@@ -951,6 +987,8 @@
                       =+  wide-mold             ?@  -  ~  [[a.a aura.a u] s]
                                             ?@  -  ~  =>  [l=u +(st s)]
                   =+  (expect %per)         ?@  -  ~      [[%bccn (my l)] s]
+      [%zpcl %|]  wide-mold(bug &)
+      [%zpdt %|]  wide-mold(bug |)
     ==
   ++  wide-mold
     %+  trace  dbug-mold  |.
