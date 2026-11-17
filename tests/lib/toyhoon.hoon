@@ -254,15 +254,15 @@
 ::
 ++  test-cursor-tracking
   =/  input=@t  '.+\0a1'
-  =+  res=~(tall p & (init-cord-cursor:tp input) [1 1] ~)
+  =+  res=~(tall p & | (init-cord-cursor:tp input) [1 1] ~)
   ?~  res  ~['failed to parse' input]
   %+  expect-eq
     !>([row=2 col=2])
-  !>(~(here parser:tp & s.res))
+  !>(~(here parser:tp & | s.res))
 ::
 ++  make-parser-test
   |=  [input=@t naty=naty-sugar:th]
-  =+  res=~(tall p & (init-cord-cursor:tp input) [1 1] ~)
+  =+  res=~(tall p & | (init-cord-cursor:tp input) [1 1] ~)
   ?~  res  ~['failed to parse' input]
   ;:  weld
     (expect-eq !>(naty) !>(u.res))
@@ -273,7 +273,7 @@
 ++  make-parser-fail-test
   |=  input=@t
   ^-  tang
-  =+  res=~(tall p & (init-cord-cursor:tp input) [1 1] ~)
+  =+  res=~(tall p & | (init-cord-cursor:tp input) [1 1] ~)
   ?^  res  ~['parsed unexpectedly' input]
   ~
 ::

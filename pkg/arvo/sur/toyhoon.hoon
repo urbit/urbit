@@ -16,6 +16,7 @@
   $%  [%brcl sam=naty-sugar bod=naty-sugar]
       [%brts sam=mold bod=naty-sugar]
       [%mold =mold]
+      [%dbug =pint bod=naty-sugar]
   ==
 +$  mold
   $~  [%base %noun]
@@ -35,6 +36,7 @@
       ::      (could always fall back to $; %= for name references)
       ::TODO  gates, cores, ??
       ::TODO  $>, etc
+      [%dbug =pint =mold]
   ==
 ::
 ++  naty-xtra

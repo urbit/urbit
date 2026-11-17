@@ -313,6 +313,8 @@
   ::
       %xtra
     ?-  +<.sin
+        %dbug
+      [%sggr [%spot [%noun %noun `spot`[/ pint.sin]]] $(sin bod.sin)]
     ::
         %brcl
       :+  %tsls  $(sin sam.sin)
@@ -326,6 +328,7 @@
     ::
         %mold
       =-  $(sin -)
+      =|  pint=(unit pint)
       |-  ^-  naty-sugar
       ?^  -.mold.sin
         :+  %tsgr                              ::  =>  [P Q]:MOLD.SIN
@@ -338,12 +341,16 @@
         :-  (slam (peg 7 2) (waxs 2 6 ~))
         (slam (peg 7 3) (waxs 3 6 ~))
       ?-  -.mold.sin
+          %dbug
+        $(pint `pint.mold.sin, mold.sin mold.mold.sin)
+      ::
           %base
         ?-  +.mold.sin
             %noun
           :+  %tsgr  [%noun %noun 0]               ::  =>  ~
           :-  %xtra
           :+  %brcl  [%noun %noun 0]               ::  |:  `*`0
+          %+  dbug-naty  pint
           [%cnts [%& 6]~ ~]                        ::  +<
         ::
             %cell
@@ -354,6 +361,7 @@
           :+  %tsgr  [%noun %noun 0]               ::  =>  ~
           :-  %xtra
           :+  %brcl  [%noun %noun 0]               ::  |:  `*`0
+          %+  dbug-naty  pint
           :^  %wtcl                                ::  ?:
               [%dtts [%noun %noun 0] [%cnts [%& 6]~ ~]]  ::  .=(`*`0 +<)
             [%noun [%atom %n `0] 0]                ::    `~`0
@@ -364,15 +372,17 @@
         :+  %tsgr  [%noun %noun 0]               ::  =>  ~
         :-  %xtra
         :+  %brcl  [%noun %noun 0]               ::  |:  `*`0
+        %+  dbug-naty  pint
         :+  %ktls  [%noun [%atom aura.mold.sin ~] 0]  ::  ^+  `@AURA.SIN`0
         :^  %wtpt  [%& 6]~                       ::  ?@  +<
           [%cnts [%& 6]~ ~]                      ::    +<
         [%cnts [%& 0]~ ~]                        ::  !!
       ::
           %bcts
-        :+  %tsls  $(mold.sin q.mold.sin)        ::  =+  Q.MOLD.SIN
+        :+  %tsls  $(pint ~, mold.sin q.mold.sin)::  =+  Q.MOLD.SIN
         :-  %xtra                                ::
         :+  %brcl  (kick 2)                      ::  |:  $:-
+        %+  dbug-naty  pint
         :+  %ktts  p.mold.sin                    ::  ^=  P.MOLD.SIN
         (slam (peg 7 2) (waxs 6 ~))              ::  (Q.MOLD.SIN)
       ::
@@ -382,18 +392,21 @@
           %bccb
         !!
         :: ::TODO  revisit, derive mold from type
-        :: :+  %tsgr  $(sin p.mold.sin)
+        :: :+  %tsgr  $(pint ~, sin p.mold.sin)
         :: :-  %xtra
         :: :+  %brcl  (waxs 1 ~)                     ::  |:  -  ::TODO  mb cast to noun?
+        :: %+  dbug-naty  pint
         :: :^  %wtcl  [%dtts (waxs 6 ~) (waxs 7 ~)]  ::  ?:  .=  +6  +7
         ::   (waxs 7 ~)                              ::    +7
         :: (waxs 0 ~)                                ::  !!
       ::
           %bcpt
         :+  %tsgr                                    ::  =>  [+< -]
+          =.  pint  ~
           [$(mold.sin tom.mold.sin) $(mold.sin cel.mold.sin)]
         :-  %xtra
         :+  %brcl  [%ktls [%noun %noun 0] (kick 2)]  ::  |:  `*`$:-
+        %+  dbug-naty  pint
         :^  %wtpt  [%& 6]~                           ::  ?@  +<
           (slam 14 (waxs 6 ~))                       ::    (TOM.MOLD.SIN +<)
         (slam 15 (waxs 6 ~))                         ::  (CEL.MOLD.SIN +<)
@@ -402,6 +415,7 @@
         =/  sap
           %-  shake-treap
           %-  ~(run by p.mold.sin)
+          =.  pint  ~
           |=([* =mold] ^$(mold.sin mold))
         =+  max=(treap-axes p.mold.sin)
         :+  %tsgr  sap                              ::  =>  SAP
@@ -412,6 +426,7 @@
           =*  a  ->-.p.mold.sin
           :-  [%noun [%atom a `k] k]
           (kick (~(got by max) k))
+        %+  dbug-naty  pint
         %-  ~(rep by p.mold.sin)
         |=  $:  [k=@ [=aura *]]
                 acc=$~([%cnts [%& 0]~ ~] naty-sugar)
@@ -933,6 +948,12 @@
   ^-  type
   ?@  noun  [%atom %$ ~]
   [%cell $(noun -.noun) $(noun +.noun)]
+::
+++  dbug-naty
+  |=  [pint=(unit pint) =naty-sugar]
+  ^+  naty-sugar
+  ?~  pint  naty-sugar
+  [%xtra %dbug u.pint naty-sugar]
 ::
 ++  parse-and-run
   |=  code=@t

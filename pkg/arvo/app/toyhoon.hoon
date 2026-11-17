@@ -101,13 +101,13 @@
         [%sole %mor [%txt '> ?? ' (trip hon)] [%tan >toz< ~] ~]
       =+  parser=parser:tp
       =/  pst  ^+  +<:parser
-        [& (init-cord-cursor:tp hon) [1 1] ~]
+        [& & (init-cord-cursor:tp hon) [1 1] ~]
       |-  ^+  toz
       =+  res=~(gulp parser pst)
       ?~  res  (flop toz)
-      $(toz [u.res toz], +.pst s.res)
+      $(toz [u.res toz], +>.pst s.res)
     =+  parser=parser:tp
-    =+  res=~(tall parser & (init-cord-cursor:tp hon) [1 1] ~)
+    =+  res=~(tall parser & & (init-cord-cursor:tp hon) [1 1] ~)
     ?~  res
       :_  state
       [%sole %mor [%txt '? ' (trip hon)] [%bel ~] ~]

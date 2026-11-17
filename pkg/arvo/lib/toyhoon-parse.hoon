@@ -453,7 +453,8 @@
       +$  post  [row=@ col=@]
       --
   =/  lex  gate
-  |_  $:  tol=?  :: tall-mode
+  |_  $:  tol=?  ::  tall-mode
+          bug=?  ::  spot hints
           $=  st
           $:  cur=cord-cursor
               rap=_`post`[1 1] :: raw position (ignoring buffering)
@@ -639,7 +640,26 @@
     ^-  ?
     =(i len):cur.st
   ::
+  ++  trace
+    |*  [wrap=$-([pint *] *) f=(trap (mandatory))]
+    ^+  $.f
+    ?.  bug  (f)
+    =+  beg=here
+    =+  res=(f)
+    ?~  res  ~
+    [(wrap [beg here(st s.res)] u.res) s.res]
+    :: [[%xtra %dbug [beg here(st s.res)] u.res] s.res]
+  ::
+  ++  dbug-naty
+    |=  [=pint =naty-sugar]
+    [%xtra %dbug pint naty-sugar]
+  ::
+  ++  dbug-mold
+    |=  [=pint =mold:..sugar]
+    [%dbug pint mold]
+  ::
   ++  tall
+    %+  trace  dbug-naty  |.
     ^-  (mandatory naty-sugar _st)
     =+  peek  ?@  -  ~  =>  [t=u +(st s)]
     ?+  t  =+  (tall-mold-reg t)  ?@  -  wide(tol |)  [[%xtra %mold u] s]
@@ -752,6 +772,7 @@
     $(u.lay +.u.lay)
   ::
   ++  wide
+    %+  trace  dbug-naty  |.
     ^-  (mandatory naty-sugar _st)
     =+  wide-inner     ?@  -  ~       =>  [w=u +(st s)]
     =+  peek           ?@  -  [w st]  =>  [t=u +(st s)]
@@ -852,6 +873,8 @@
     ==
   ::
   ++  tall-mold
+    %+  trace  dbug-mold  |.
+    ^-  (mandatory mold:..sugar _st)
     =+  peek               ?@  -  ~          =>  [t=u +(st s)]
     =+  (tall-mold-reg t)  ?@  -  wide-mold  -
   ::
@@ -930,6 +953,7 @@
                   =+  (expect %per)         ?@  -  ~      [[%bccn (my l)] s]
     ==
   ++  wide-mold
+    %+  trace  dbug-mold  |.
     ^-  (mandatory mold:..sugar _st)
     =+  gulp  ?@  -  ~  =>  [t=u +(st s)]
     ?+  t  (wide-mold-reg t)
