@@ -10454,7 +10454,9 @@
                        ==  ==
                    ==
         [%face *]  dext(sut q.sut)
-        [%fork *]  ?.  ?=(?([%atom *] %noun [%cell *] [%core *]) ref)  sint
+        [%fork *]  ?:  ?=(%noun ref)
+                     sint(ref ^~([%fork (sy [%atom %$ ~] [%cell %noun %noun] ~)]))
+                   ?.  ?=(?([%atom *] [%cell *] [%core *]) ref)  sint
                    (lien ~(tap in p.sut) |=(type dext(tel |, sut +<)))
         [%hint *]  dext(sut q.sut)
         [%hold *]  ?:  (~(has in seg) sut)  |
