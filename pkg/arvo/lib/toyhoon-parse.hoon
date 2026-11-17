@@ -20,7 +20,7 @@
               %ktls  %ktcl
               %wtpt  %wtcn  %wtkt
               %cltr
-              %bccl  %bcts  %bcmc
+              %bccl  %bcts  %bcmc  %bccb  %bcpt  %bccn
             ::
               %mato
           ==
@@ -36,7 +36,7 @@
       [%atom tol=? const=? =aura a=@]  ::  %atomw + %atomt
       [%mato =aura]
     ::
-      $:  ?(%ktts %dttr %dtwt %dtls %dtts %wtcl %tsgr %tsls %cnts %sggr %brcn %brpt %brcl %brts %ktls %ktcl %wtpt %wtcn %wtkt %cltr %bccl %bcts %bcmc)
+      $:  ?(%ktts %dttr %dtwt %dtls %dtts %wtcl %tsgr %tsls %cnts %sggr %brcn %brpt %brcl %brts %ktls %ktcl %wtpt %wtcn %wtkt %cltr %bccl %bcts %bcmc %bccb %bcpt %bccn)
           tol=?
       ==
   ==
@@ -74,7 +74,7 @@
           ktlsw+|+%ktls  ktlst+&+%ktls    ktclw+|+%ktcl  ktclt+&+%ktcl
           wtptw+|+%wtpt  wtptt+&+%wtpt    wtcnw+|+%wtcn  wtcnt+&+%wtcn    wtktw+|+%wtkt  wtktt+&+%wtkt
           cltrw+|+%cltr  cltrt+&+%cltr
-          bcclw+|+%bccl  bcclt+&+%bccl    bctsw+|+%bcts  bctst+&+%bcts    bcmcw+|+%bcmc  bcmct+&+%bcmc
+          bcclw+|+%bccl  bcclt+&+%bccl    bctsw+|+%bcts  bctst+&+%bcts    bcmcw+|+%bcmc  bcmct+&+%bcmc    bccbw+|+%bccb  bccbt+&+%bccb    bcptw+|+%bcpt  bcptt+&+%bcpt    bccnw+|+%bccn  bccnt+&+%bccn
       ==
   %~  select-rules  rul
   %-  ~(def-cords rul ~)  :~
@@ -415,6 +415,33 @@
     '''
     '$;' gap
     '''
+  ::
+    :-  %bccbw
+    '''
+    '$_('
+    '''
+    :-  %bccbt
+    '''
+    '$_' gap
+    '''
+  ::
+    :-  %bcptw
+    '''
+    '$@('
+    '''
+    :-  %bcptt
+    '''
+    '$@' gap
+    '''
+  ::
+    :-  %bccnw
+    '''
+    '$%('
+    '''
+    :-  %bccnt
+    '''
+    '$%' gap
+    '''
   ==
 ::
 ++  parser  :: modeled after te, but different (hard to abstract)
@@ -691,7 +718,7 @@
       [%wtpt %&]    =+  tall-wing-2(st move)  ?@  -  ~  [[%wtpt u] s]
       [%wtcn %&]    =+  wing-full(st move)    ?@  -  ~  =>  [w=u +(st s)]
                     =+  (expect %gap)         ?@  -  ~  =>  +(st s)
-                    =+  tall-atom             ?@  -  ~  =>  [a=u +(st s)]
+                    =+  tall-atom             ?@  -  ~  =>  [a=a.u +(st s)]
                     =+  (expect %gap)         ?@  -  ~  =>  +(st s)
                     =+  tall-2                ?@  -  ~  [[%wtcn w a u] s]
       [%wtkt %&]    =+  tall-wing-2(st move)  ?@  -  ~  [[%wtkt u] s]
@@ -789,7 +816,7 @@
       [%wtpt %|]    =+  wide-wing-2    ?@  -  ~  [[%wtpt u] s]
       [%wtcn %|]    =+  wing-full      ?@  -  ~  =>  [w=u +(st s)]
                     =+  (expect %ace)  ?@  -  ~  =>  +(st s)
-                    =+  wide-atom      ?@  -  ~  =>  [a=u +(st s)]
+                    =+  wide-atom      ?@  -  ~  =>  [a=a.u +(st s)]
                     =+  (expect %ace)  ?@  -  ~  =>  +(st s)
                     =+  wide-2         ?@  -  ~  [[%wtcn w a u] s]
       [%wtkt %|]    =+  wide-wing-2    ?@  -  ~  [[%wtkt u] s]
@@ -810,6 +837,18 @@
                   =+  (expect(st move) %gap)  ?@  -  ~  =>  +(st s)
                   =+  tall-mold               ?@  -  ~  [[%bcts u.q.limb.f u] s]
       [%bcmc %&]  =+  tall(st move)           ?@  -  ~  [[%bcmc u] s]
+      [%bccb %&]  =+  tall(st move)           ?@  -  ~  [[%bccb u] s]
+      [%bcpt %&]  =+  tall-mold               ?@  -  ~  =>  [p=u +(st s)]
+                  =+  (expect %gap)           ?@  -  ~  =>  +(st s)
+                  =+  tall-mold               ?@  -  ~  [[%bcpt p u] s]
+      [%bccn %&]  =+  %+  (most (pair @ ,[aura mold:..sugar]))
+                        |=(t=toke ?=(%gap t))
+                      |=  s=_st
+                      =+  tall-atom(st s)       ?@  -  ~  =>  [a=u +(st s)]
+                      =+  (expect %gap)         ?@  -  ~  =>  +(st s)
+                      =+  tall-mold             ?@  -  ~  [[a.a aura.a u] s]
+                                            ?@  -  ~  =>  [l=u +(st s)]
+                  =+  (expect %stis)        ?@  -  ~      [[%bccn (my l)] s]
     ==
   ::
   ++  tall-mold
@@ -817,16 +856,16 @@
     =+  (tall-mold-reg t)  ?@  -  wide-mold  -
   ::
   ++  tall-atom
-    ^-  (mandatory @ _st)
+    ^-  (mandatory [const=? =aura a=@] _st)
     =+  peek  ?@  -  ~  =>  [t=u +(st s)]
     ?.  ?=([%atom %& *] t)  wide-atom
-    [a.t move]
+    [+>.t move]
   ::
   ++  wide-atom
-    ^-  (mandatory @ _st)
+    ^-  (mandatory [const=? =aura a=@] _st)
     =+  gulp  ?@  -  ~  =>  [t=u +(st s)]
     ?.  ?=([%atom %| *] t)  ~
-    [a.t st]
+    [+>.t st]
   ::
   ++  wing-full
     ^-  (mandatory wing _st)
@@ -876,6 +915,19 @@
                   =+  wide-mold               ?@  -  ~  =>  [m=u +(st s)]
                   =+  (expect %per)           ?@  -  ~  [[%bcts u.q.limb.f m] s]
       [%bcmc %|]  =+  wide-1                  ?@  -  ~  [[%bcmc u] s]
+      [%bccb %|]  =+  wide-1                  ?@  -  ~  [[%bccb u] s]
+      [%bcpt %|]  =+  wide-mold               ?@  -  ~  =>  [p=u +(st s)]
+                  =+  (expect %ace)           ?@  -  ~  =>  +(st s)
+                  =+  wide-mold               ?@  -  ~  =>  [q=u +(st s)]
+                  =+  (expect %per)           ?@  -  ~  [[%bcpt p q] s]
+      [%bccn %|]  =+  %+  (most (pair @ ,[aura mold:..sugar]))
+                        |=(t=toke ?=(%coma t))
+                      |=  s=_st
+                      =+  wide-atom(st s)       ?@  -  ~  =>  [a=u +(st s)]
+                      =+  (expect %ace)         ?@  -  ~  =>  +(st s)
+                      =+  wide-mold             ?@  -  ~  [[a.a aura.a u] s]
+                                            ?@  -  ~  =>  [l=u +(st s)]
+                  =+  (expect %per)         ?@  -  ~      [[%bccn (my l)] s]
     ==
   ++  wide-mold
     ^-  (mandatory mold:..sugar _st)

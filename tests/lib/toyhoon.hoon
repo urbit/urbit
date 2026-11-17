@@ -387,5 +387,8 @@
     (make-parser-test '$:(@ @)' [%xtra %mold [%atom %$] [%atom %$]])
     (make-parser-test '$:  @  @  ==' [%xtra %mold [%atom %$] [%atom %$]])
     (make-parser-test '$;(|=(a=* ~))' [%xtra %mold %bcmc `naty-sugar:th`[%xtra %brts `mold:th`[%bcts %a %base %noun] [%noun [%atom %n [~ 0]] 0]]])
+  ::
+    %+  make-parser-test  '^:(a#b)'
+    [%xtra %mold %bcmc %tsgr [%cnts [%| 0 `%b]~ ~] [%cnts [%| 0 `%a]~ ~]]
   ==
 --

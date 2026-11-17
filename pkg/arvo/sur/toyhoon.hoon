@@ -24,6 +24,17 @@
       [%atom aura=term]
       [%bcts p=term q=mold]
       [%bcmc p=naty-sugar]
+      [%bccb p=naty-sugar]
+      [%bcpt tom=mold cel=mold]
+      [%bccn p=(map @ [=aura mold=$~([%base %noun] mold)])]
+      [%bckt cel=mold tom=mold]
+      [%bcwt p=(map @ aura)]
+      ::TODO  %rock or w/e, constant atoms
+      ::TODO  %bcpt, %bccn, %bckt, %bcwt for our $type
+      ::TODO  $_, $~, $;
+      ::      (could always fall back to $; %= for name references)
+      ::TODO  gates, cores, ??
+      ::TODO  $>, etc
   ==
 ::
 ++  naty-xtra

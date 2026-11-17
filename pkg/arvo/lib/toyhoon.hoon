@@ -378,6 +378,55 @@
       ::
           %bcmc
         p.mold.sin
+      ::
+          %bccb
+        !!
+        :: ::TODO  revisit, derive mold from type
+        :: :+  %tsgr  $(sin p.mold.sin)
+        :: :-  %xtra
+        :: :+  %brcl  (waxs 1 ~)                     ::  |:  -  ::TODO  mb cast to noun?
+        :: :^  %wtcl  [%dtts (waxs 6 ~) (waxs 7 ~)]  ::  ?:  .=  +6  +7
+        ::   (waxs 7 ~)                              ::    +7
+        :: (waxs 0 ~)                                ::  !!
+      ::
+          %bcpt
+        :+  %tsgr                                    ::  =>  [+< -]
+          [$(mold.sin tom.mold.sin) $(mold.sin cel.mold.sin)]
+        :-  %xtra
+        :+  %brcl  [%ktls [%noun %noun 0] (kick 2)]  ::  |:  `*`$:-
+        :^  %wtpt  [%& 6]~                           ::  ?@  +<
+          (slam 14 (waxs 6 ~))                       ::    (TOM.MOLD.SIN +<)
+        (slam 15 (waxs 6 ~))                         ::  (CEL.MOLD.SIN +<)
+      ::
+          %bccn
+        =/  sap
+          %-  shake-treap
+          %-  ~(run by p.mold.sin)
+          |=([* =mold] ^$(mold.sin mold))
+        =+  max=(treap-axes p.mold.sin)
+        :+  %tsgr  sap                              ::  =>  SAP
+        :-  %xtra
+        :+  %brcl                                   ::  |:  `%N`$:N
+          :+  %ktls  [%noun %noun 0]
+          =*  k  -<.p.mold.sin
+          =*  a  ->-.p.mold.sin
+          :-  [%noun [%atom a `k] k]
+          (kick (~(got by max) k))
+        %-  ~(rep by p.mold.sin)
+        |=  $:  [k=@ [=aura *]]
+                acc=$~([%cnts [%& 0]~ ~] naty-sugar)
+            ==
+        ^+  acc
+        :^  %wtcl  [%dtts [%noun %noun k] (waxs 12 ~)]  ::  ?:  .=  K  +12
+          :-  [%noun [%atom aura `k] k]                 ::
+          (slam (peg 7 (~(got by max) k)) (waxs 13 ~))  ::    (TYPE +13)
+        acc                                             ::  next
+      ::
+          %bckt
+        !!
+      ::
+          %bcwt
+        !!
       ==
     ==
   ==
@@ -394,6 +443,29 @@
   |=  axes=(list axis)
   ^-  naty-sugar
   [%cnts (turn axes |=(a=@ [%& a])) ~]
+::
+++  make-mold
+  |=  sut=type
+  ^-  mold
+  ?@  sut
+    ?-  sut
+      %noun  [%base %noun]
+      %void  !!
+    ==
+  ?-  -.sut
+    %atom  ::TODO  constant atoms in $mold
+           ?:  &(=(%n p.sut) =(`~ q.sut))  [%base %null]
+           [%atom p.sut]
+    %cell  ?:  &(=(%noun p.sut) =(%noun q.sut))  [%base %cell]
+           [$(sut p.sut) $(sut q.sut)]
+    %core  !!
+    %face  [%bcts p.sut $(sut q.sut)]
+    %bcpt  [%bcpt $(sut tom.sut) $(sut cel.sut)]
+    %bccn  [%bccn (~(run by p.sut) |=([=aura =type] [aura ^$(sut type)]))]
+    %bckt  [%bckt $(sut cel.sut) $(sut tom.sut)]
+    %bcwt  sut
+    %hold  !!
+  ==
 ::
 ++  play
   |=  [sut=type =naty]
@@ -618,15 +690,34 @@
   ?.  ?=([^ *] bat)  ~
   $(axe (mas axe), bat ?:(?=(%2 (cap axe)) -.bat +.bat))
 ::
-++  make-battery
-  |=  bat=(map term nock)
-  |-  ^-  noun
-  ?-  bat
+++  make-battery  shake-treap
+::
+++  shake-treap
+  |*  m=(map)
+  |-
+  ?-  m
     ~        !!
-    [* ~ ~]  q.n.bat
-    [* * ~]  [q.n.bat $(bat l.bat)]
-    [* ~ *]  [q.n.bat $(bat r.bat)]
-    [* * *]  [q.n.bat $(bat l.bat) $(bat r.bat)]
+    [* ~ ~]  q.n.m
+    [* * ~]  [q.n.m $(m l.m)]
+    [* ~ *]  [q.n.m $(m r.m)]
+    [* * *]  [q.n.m $(m l.m) $(m r.m)]
+  ==
+::
+++  treap-axes
+  |*  m=(map)
+  =+  axe=1
+  =|  max=(map _?>(?=(^ m) p.n.m) axis)
+  |-  ^+  max
+  ?-  m
+    ~        !!
+    [* ~ ~]  (~(put by max) p.n.m axe)
+    [* * ~]  $(max (~(put by max) p.n.m (peg axe 2)), axe (peg axe 3), m l.m)
+    [* ~ *]  $(max (~(put by max) p.n.m (peg axe 2)), axe (peg axe 3), m r.m)
+    [* * *]  %_  $
+               max  $(max (~(put by max) p.n.m (peg axe 2)), axe (peg axe 6), m l.m)
+               axe  (peg axe 7)
+               m    r.m
+             ==
   ==
 ::
 ++  look
