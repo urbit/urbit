@@ -2380,7 +2380,7 @@
         =/  timeout=@dr
           =,  session-timeout
           ?-  identity
-            ^           auth
+            ^           ?:(?=(%fake -.who.sid) new-guest auth)
             %new-guest  new-guest
             %tmp        tmp
           ==
