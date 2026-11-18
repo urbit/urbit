@@ -1864,6 +1864,14 @@
   ::
   ++  authentication
     |%
+    ::  +read-auth-level: decide whether we can respect the provided auth
+    ::
+    ::    the logic herein protects against cross-origin cookie usage in
+    ::    browser contexts. browsers send origin and sec-fetch-* headers under
+    ::    various conditions, which help us make an informed decision about
+    ::    whether to "respect" the cookie. the goal is to never respect the
+    ::    cookie when a request to foo subdomain is made from bar subdomain.
+    ::
     ++  read-auth-level
       |=  [secure=? host=@t method=method:http headers=header-list:http]
       ^-  $@(?(%respect %drop) [%reject reason=@])
@@ -1871,6 +1879,16 @@
       ::  (see also +session-from-header)
       ::
       ?:  ?=(^ (get-header:http 'authorization' headers))
+        %respect
+      ::  browsers will always include the origin header in unsafe cross-origin
+      ::  cases, and always include the sec-fetch-* headers over secure
+      ::  connections. if they are both absent, we can safely assume the client
+      ::  is not a browser (or at least, not one doing a cross-origin request)
+      ::  and so it is always safe for us to respect their cookie.
+      ::
+      ?:  ?&  ?=(~ (get-header:http 'origin' headers))
+              ?=(~ (get-header:http 'sec-fetch-site' headers))
+          ==
         %respect
       ::
       =/  safe=?
