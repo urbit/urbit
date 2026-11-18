@@ -1077,7 +1077,7 @@
             ?&  !=(pathowner desk.p.target)
                 !&(?=(~ desk.p.target) ?=(%base u.pathowner))  ::  base on root
             ==  ==
-            ?=(~ (get-header:http 'x-eyre-no-desk-redirect' headers))
+            ?=(~ (get-header:http 'eyre-no-desk-redirect' headers))
         ==
       =/  target-url=@t
         %+  rap  3
@@ -4118,7 +4118,7 @@
     ::
     =.  headers
       :_  headers
-      :-  'x-eyre-auth-info'
+      :-  'eyre-auth-info'
       %+  rap  3
       =*  a  authentication
       :^  'read='  =>(a ?~(from 'none' u.from))  '; '
@@ -4143,13 +4143,13 @@
     ::
     ::  if we're responding to a secure request, ensure that the client knows
     ::  to stick to the secure. userspace can opt out of this policy by setting
-    ::  an x-eyre-no-uir header in the response
+    ::  an eyre-no-uir header in the response
     ::
-    =/  no-uir=?  ?=(^ (get-header:http 'x-eyre-no-uir' headers))
+    =/  no-uir=?  ?=(^ (get-header:http 'eyre-no-uir' headers))
     =?  headers  &(secure !no-uir)
       ['content-security-policy'^'upgrade-insecure-requests' headers]
     =?  headers  no-uir
-      (delete-header:http 'x-eyre-no-uir' headers)
+      (delete-header:http 'eyre-no-uir' headers)
     ::  ensure documents are treated as origin-keyed (not site-keyed)
     ::
     ::    browsers aren't _required_ to honor this, but it's defense-in-depth
@@ -4235,7 +4235,7 @@
       =*  headers  headers.response-header.simple-payload.body.u.entry
       =.  headers  (normalize-headers headers)
       ::REVIEWyy  content-length headers behavior
-      ::NOTE  will put in a static x-eyre-auth-info header...
+      ::NOTE  will put in a static eyre-auth-info header...
       =.  headers
         %+  fill-headers
           [%start response-header data &]:simple-payload.body.u.entry
