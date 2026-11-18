@@ -2029,15 +2029,13 @@
           ==
         p.peek-result
       =*  have  p.u.u.p.peek-result
-      ::  the on-peek result is a value in the agent's own (possibly foreign)
-      ::  desk universe.  if the requested mark already matches, there is no
-      ::  mark conversion to do -- just migrate the vase's kelvin to live.
+      ::  +ap-mule-peek has already converted the result's vase to the live
+      ::  kelvin.  if the requested mark already matches, produce it as-is.
       ::
       ?:  =(want have)
-        ``want^(to-live:(vez zuv.yoke) q.u.u.p.peek-result)
-      ::  otherwise convert .have -> .want with the (cross-kelvin) tube, which
-      ::  consumes the desk vase as-is and migrates its output to live; do NOT
-      ::  pre-convert the input (that round-trips and corrupts the type).
+        p.peek-result
+      ::  otherwise convert .have -> .want with clay's tube, which takes and
+      ::  produces live vases.
       ::
       =/  tuc=(unit (unit cage))
         (rof [~ ~] /gall %cc [our q.beak.yoke da+now] /[have]/[want])
@@ -2777,11 +2775,14 @@
       =/  res  (mock [run %9 2 %0 1] (ap-look rof [~ ~] /gall/[agent-name]))
       ?-    -.res
           %0
-        ::  TODO switch on zuv, upgrade if needed (for %0)
-        ?:  =(zuv.yoke %409)
-          [%& !<((unit (unit cage)) [-:!>(*(unit (unit cage))) p.res])]
-        ?>  =(zuv.yoke %408)
-        [%& !<((unit (unit cage)) [-:!>(*(unit (unit cage))) p.res])]
+        ::  (unit (unit cage)) has the same noun layout in every kelvin, so
+        ::  labeling it with the live type is enough.  for a 409 agent, only
+        ::  the $type inside the cage's vase is in the 409 kelvin, so
+        ::  convert that one to the live kelvin's.
+        ::
+        =/  out  !<((unit (unit cage)) [-:!>(*(unit (unit cage))) p.res])
+        ?.  ?=([~ ~ *] out)  [%& out]
+        [%& ``(cage-to-live:(vez zuv.yoke) u.u.out)]
       ::
         %1  =+  p=((soft path) p.res)
             [%| ?~(p >p.res< (smyt u.p)) ~]
@@ -2823,11 +2824,13 @@
       ::    +prev-vase that inner vase: its $type can contain
       ::    a core holding all of zuse, and walking that explodes.
       ::
-      ::    %cc: clay built the tube against the desk, so it already takes
-      ::    and produces the agent's vases.  wrap it in a gate typed
-      ::    $-(vase:h136 vase:h136) that calls it with +slum and extracts
-      ::    the result with !< (not +;;, which would recursively clam the
-      ::    output $type and bail).
+      ::    %cc: clay's tube takes and produces live vases (+build-tube
+      ::    converts to and from the desk's kelvin itself).  wrap it in a
+      ::    gate typed $-(vase:h136 vase:h136) that converts the agent's
+      ::    input to live with +next-vase, applies the tube, and converts
+      ::    the output back with +prev-vase.  all three are called with
+      ::    +slum, and the result extracted with !< (not +;;, which would
+      ::    recursively clam the output $type and bail).
       ::
       ::    TODO: real cross-kelvin type conversion should retire this.
       ::
@@ -2840,7 +2843,9 @@
         =>  [tv=q.u.u.dat ..vez]
         |=  v=vase:h136
         ^-  vase:h136
-        !<(vase:h136 [-:!>(*vase:h136) (slum +.tv v)])
+        =/  liv  (slum next-vase:h136 v)
+        =/  out  (slum +.tv liv)
+        !<(vase:h136 [-:!>(*vase:h136) (slum prev-vase:h135 out)])
       ==
     ::  +ap-ingest: call agent arm
     ::
