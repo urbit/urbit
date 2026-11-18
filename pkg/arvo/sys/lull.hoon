@@ -3105,28 +3105,12 @@
         ::  notifies us that web login code changed
         ::
         [%code-changed ~]
-        ::  start responding positively to cors requests from origin
-        ::
-        [%approve-origin =origin]
-        ::  start responding negatively to cors requests from origin
-        ::
-        [%reject-origin =origin]
         ::  %spew: set verbosity toggle
         ::
         [%spew veb=@]
         ::  remember (or update) a cache mapping
         ::
         [%set-response =desk url=@t entry=(unit cache-entry)]
-    ==
-  ::  +origin: request origin as specified in an Origin header
-  ::
-  +$  origin  @torigin
-  ::  +cors-registry: origins categorized by approval status
-  ::
-  +$  cors-registry
-    $:  requests=(set origin)
-        approved=(set origin)
-        rejected=(set origin)
     ==
   ::  auth-res: authentication conclusion & state for incoming request
   ::
@@ -4124,7 +4108,6 @@
         $%  [%setup ~]                                  ::  %eauth-host %rule
             [%serve =path]                              ::  %connect %set-response
             [%embed ~]                                  ::  authed iframe other desks
-            [%cross ~]                                  ::  %approve-origin %reject-origin
             [%debug ~]                                  ::  %spew
         ==  ==
       ::
@@ -4264,8 +4247,6 @@
             [%eauth-host host=(unit @t)]
             [%connect =binding:eyre wat=$@(term generator:eyre)]
             [%disconnect =binding:eyre]
-            [%approve-origin =origin:eyre]
-            [%reject-origin =origin:eyre]
             [%spew veb=@]
             [%set-response url=@t entry=(unit cache-entry:eyre)]
             [%trim p=@ud]
@@ -4686,8 +4667,6 @@
               [%eyre %serve p.u.q.segs]~
             ::
               %disconnect           [%.y ~]
-              ?(%approve-origin %reject-origin)
-                                    [%eyre %cross ~]~
               %spew                 [%eyre %debug ~]~
               %trim                 [%super ~]~
             ==

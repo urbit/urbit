@@ -347,16 +347,6 @@
   ::  we %syscall to avoid resource tracking
   (emit-syscall /helm/serv %e %serve binding generator)
 ::
-++  poke-cors-approve
-  |=  =origin:eyre
-  =<  abet
-  (emit %pass /helm/cors/approve %arvo %eyre %approve-origin origin)
-::
-++  poke-cors-reject
-  |=  =origin:eyre
-  =<  abet
-  (emit %pass /helm/cors/reject %arvo %eyre %reject-origin origin)
-::
 ++  poke-doff
   |=  [dude=(unit dude:gall) ship=(unit ship)]
   =<  abet
@@ -652,8 +642,6 @@
     %helm-automass         =;(f (f !<(_+<.f vase)) poke-automass)
     %helm-cancel-automass  =;(f (f !<(_+<.f vase)) poke-cancel-automass)
     %helm-code             =;(f (f !<(_+<.f vase)) poke-code)
-    %helm-cors-approve     =;(f (f !<(_+<.f vase)) poke-cors-approve)
-    %helm-cors-reject      =;(f (f !<(_+<.f vase)) poke-cors-reject)
     %helm-doff             =;(f (f !<(_+<.f vase)) poke-doff)
     %helm-gall-sift        =;(f (f !<(_+<.f vase)) poke-gall-sift)
     %helm-gall-verb        =;(f (f !<(_+<.f vase)) poke-gall-verb)

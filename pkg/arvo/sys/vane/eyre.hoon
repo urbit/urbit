@@ -68,9 +68,6 @@
       ::  cache: mapping from url to versioned entry
       ::
       cache=(map url=@t [aeon=@ud val=(unit [=desk cache-entry])])
-      ::  cors-registry: state used and managed by the +cors core
-      ::
-      =cors-registry
       ::  connections: open http connections not fully complete
       ::
       connections=(map duct outstanding-connection)
@@ -994,7 +991,6 @@
         reject
       ::  in ip mode, never cross-origin with ourselves, so the origin is
       ::  surely foreign, so we reject.
-      ::REVIEWzz  what if it's on the cors-registery?
       ::
       ?:  ?=(%| -.target)  reject
       =/  method  ((soft method:http) (need ~(method cors headers)))
@@ -1313,39 +1309,6 @@
           headers=['location' location]~
           data=~
       ==
-    ::TODOzz  revisit
-    :: ::  figure out whether this is a cors request,
-    :: ::  whether the origin is approved or not,
-    :: ::  and maybe add it to the "pending approval" set
-    :: ::
-    :: =/  origin=(unit origin)
-    ::   (get-header:http 'origin' headers)
-    :: =^  cors-approved  requests.cors-registry.state
-    ::   =,  cors-registry.state
-    ::   ?~  origin                         [| requests]
-    ::   ?:  (~(has in approved) u.origin)  [& requests]
-    ::   ?:  (~(has in rejected) u.origin)  [| requests]
-    ::   [| (~(put in requests) u.origin)]
-    :: ::  if this is a cors preflight request from an approved origin
-    :: ::  handle it synchronously
-    :: ::
-    :: ?:  &(?=(^ origin) cors-approved ?=(%'OPTIONS' method.request))
-    ::   %-  send-instant-response
-    ::   =;  =header-list:http
-    ::     [[204 header-list] ~]
-    ::   ::  allow the method and headers that were asked for,
-    ::   ::  falling back to wildcard if none specified
-    ::   ::
-    ::   ::NOTE  +response will add the rest of the headers
-    ::   ::
-    ::   :~  :-  'Access-Control-Allow-Methods'
-    ::       =-  (fall - '*')
-    ::       (get-header:http 'access-control-request-method' headers)
-    ::     ::
-    ::       :-  'Access-Control-Allow-Headers'
-    ::       =-  (fall - '*')
-    ::       (get-header:http 'access-control-request-headers' headers)
-    ::   ==
     ::  handle HTTP scries
     ::
     ::  TODO: ideally this would look more like:
@@ -4127,8 +4090,8 @@
             unpacked-request
         ==
     ^-  header-list:http
-    =*  headers               headers.response-header.http-event
-    =/  origin=(unit origin)  (get-header:http 'origin' header-list.request)
+    =*  headers           headers.response-header.http-event
+    =/  origin=(unit @t)  (get-header:http 'origin' header-list.request)
     ::  for developer debugging convenience, put info about how and what eyre
     ::  deduced about the request's authentication state.
     ::  note that this may include modifications eyre did on the auth, in
@@ -4184,17 +4147,6 @@
         ?=(~ (get-header:http 'cross-origin-resource-policy' headers))
       ['cross-origin-resource-policy'^'same-origin' headers]
     ::
-    ::  if the request was a simple cors request from an approved origin
-    ::  append the necessary cors headers to the response
-    ::
-    ::REVIEWzz  cors-registry stuff
-    =?  headers
-        ?&  ?=(^ origin)
-            (~(has in approved.cors-registry.state) u.origin)
-        ==
-      %^  set-header:http  'access-control-allow-origin'       u.origin
-      %^  set-header:http  'access-control-allow-credentials'  'true'
-      headers
     headers
   ::  +refresh-session: if .sid is live but old, refresh it & add set-cookie
   ::
@@ -4883,22 +4835,6 @@
     =.  server-state.ax  (remove-binding:server binding.task)
     [~ http-server-gate]
   ::
-      %approve-origin
-    =.  cors-registry.server-state.ax
-      =,  cors-registry.server-state.ax
-      :+  (~(del in requests) origin.task)
-        (~(put in approved) origin.task)
-      (~(del in rejected) origin.task)
-    [~ http-server-gate]
-  ::
-      %reject-origin
-    =.  cors-registry.server-state.ax
-      =,  cors-registry.server-state.ax
-      :+  (~(del in requests) origin.task)
-        (~(del in approved) origin.task)
-      (~(put in rejected) origin.task)
-    [~ http-server-gate]
-  ::
       %spew
     =.  verb.server-state.ax  veb.task
     `http-server-gate
@@ -5212,7 +5148,7 @@
       ::
       +$  server-state-0
         $:  bindings=(list [=binding-5 =duct =action])
-            =cors-registry
+            cors-registry=*
             connections=(map duct outstanding-connection-3)
             auth=authentication-state-3
             channel-state=channel-state-2
@@ -5224,7 +5160,7 @@
       ::
       +$  server-state-1
         $:  bindings=(list [=binding-5 =duct =action])
-            =cors-registry
+            cors-registry=*
             connections=(map duct outstanding-connection-3)
             auth=authentication-state-3
             channel-state=channel-state-2
@@ -5238,7 +5174,7 @@
       +$  server-state-2
         $:  bindings=(list [=binding-5 =duct =action])
             cache=(map url=@t [aeon=@ud val=(unit cache-entry)])  ::  <- new
-            =cors-registry
+            cors-registry=*
             connections=(map duct outstanding-connection-3)
             auth=authentication-state-3
             channel-state=channel-state-2
@@ -5271,7 +5207,7 @@
       +$  server-state-3
         $:  bindings=(list [=binding-5 =duct =action])
             cache=(map url=@t [aeon=@ud val=(unit cache-entry)])
-            =cors-registry
+            cors-registry=*
             connections=(map duct outstanding-connection-3)
             auth=authentication-state-3
             channel-state=channel-state-3
@@ -5310,7 +5246,7 @@
       +$  server-state-4
         $:  bindings=(list [=binding-5 =duct =action])
             cache=(map url=@t [aeon=@ud val=(unit cache-entry)])
-            =cors-registry
+            cors-registry=*
             connections=(map duct outstanding-connection-5)
             auth=authentication-state-5
             channel-state=channel-state-5
@@ -5325,7 +5261,7 @@
       +$  server-state-5
         $:  bindings=(list [binding=binding-5 =duct =action])
             cache=(map url=@t [aeon=@ud val=(unit cache-entry)])
-            =cors-registry
+            cors-registry=*
             connections=(map duct outstanding-connection-5)
             auth=authentication-state-5
             channel-state=channel-state-5
@@ -5493,8 +5429,6 @@
       %-  ~(run by cache.old)
       |=  [aeon=@ud val=(unit cache-entry)]
       [?~(val aeon +(aeon)) ~]
-    ::
-      cors-registry.old
     ::
       ^=  connections
       ::  instead of the $inbound-request, we store an $unpacked-request.
@@ -5681,20 +5615,6 @@
                                channels+&+channel-state.server-state.ax
                                axle+&+ax
                            ==
-    ::
-      [%cors ~]            ``noun+!>(cors-registry)
-      [%cors %requests ~]  ``noun+!>(requests.cors-registry)
-      [%cors %approved ~]  ``noun+!>(approved.cors-registry)
-      [%cors %rejected ~]  ``noun+!>(rejected.cors-registry)
-    ::
-        [%cors ?(%approved %rejected) @ ~]
-      =*  kind  i.t.tyl
-      =*  orig  i.t.t.tyl
-      ?~  origin=(slaw %t orig)  [~ ~]
-      ?-  kind
-        %approved  ``noun+!>((~(has in approved.cors-registry) u.origin))
-        %rejected  ``noun+!>((~(has in rejected.cors-registry) u.origin))
-      ==
     ::
         [%'_~_' *]
       ::TODOxx  who would .^ this??

@@ -788,7 +788,6 @@
       ?-  +<.perm
         %setup  "manage web server configuration"
         %serve  "serve web content {(spur-text path.perm)}"
-        %cross  "manage which sites can make requests to your ship (CORS)"
         %embed  "embed other applications"
         %debug  "debug the eyre vane"
       ==
