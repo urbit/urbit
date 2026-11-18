@@ -1044,6 +1044,12 @@
       ~>  %memo./clay/ford
       ~|  %error-building-mark^mak
       (bush-to-vase (build-bush %mark mak))
+    ::
+    ++  slam-memo
+      |=  [gat=vase sam=vase]
+      ^-  vase
+      %-  road  |.
+      (slub (slop gat sam) [%cnhp $+2 $+3])
     ::  +build-dais: build a dynamically typed mark definition
     ::
     ++  build-dais
@@ -1055,7 +1061,7 @@
       =/  nav=vase  (build-nave mak)
       %-  (trace 1 |.("make dais {<mak>}"))
       ^-  dais
-      =>  [nav=nav ..zuse]
+      =>  [nav=nav slam=slam-memo ..zuse]
       ~>  %memo./clay/ford
       |_  sam=vase
       ++  diff
@@ -1106,7 +1112,7 @@
       ~|  error-building-tube+[a b]
       =/  gat=vase  (build-cast a b)
       %-  (trace 1 |.("make tube {<a>} -> {<b>}"))
-      =>  [gat=gat ..zuse]
+      =>  [gat=gat slam=slam-memo ..zuse]
       ~>  %memo./clay/ford
       |=(v=vase (slam gat v))
     ::
