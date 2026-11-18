@@ -1077,6 +1077,7 @@
             ?&  !=(pathowner desk.p.target)
                 !&(?=(~ desk.p.target) ?=(%base u.pathowner))  ::  base on root
             ==  ==
+            ?=(~ (get-header:http 'x-eyre-no-desk-redirect' headers))
         ==
       =/  target-url=@t
         %+  rap  3
