@@ -20,7 +20,7 @@
 |%
 ++  test-mesa-peek-no-proof
   ~?  >  dbug  'test-mesa-peek-no-proof'
-  ::  tell ~nec to ask ~nec for a 1-fragment message
+  ::  tell ~nec to ask ~bud for a 1-fragment message
   ::
   =/  dat=@        'hi'
   =/  =space:ames  publ/bud-life
@@ -31,6 +31,17 @@
   =^  moves-2  ames.bud  (ames-reply:v ames.bud ~[/pact] moves-1 bex-roof) :: "ok, here is the 1st fragment"
   =^  moves-3  ames.nec  (ames-reply:v ames.nec ~[/pact] moves-2 bex-roof) :: "ok, here is the complete message"
   (ames-expect-msg:v moves-3 dat)
+::
+++  test-mesa-peek-self
+  ~?  >  dbug  'test-mesa-peek-self'
+  ::  tell ~nec to ask itself; answered locally in one call
+  ::
+  =/  dat=@        (bex (bex 14))
+  =/  pat          /g/x/0/dap//hello/atom
+  =/  bex-roof     (make-roof //hello/atom atom+!>(dat))
+  =^  moves  ames.nec
+    (ames-call:v ames.nec [~[/pact] [%keen ~ ~nec pat] bex-roof])
+  (ames-expect-msg:v moves dat)
 ::
 ++  test-mesa-peek-inline-proof
   ~?  >  dbug  'test-mesa-peek-inline-proof'

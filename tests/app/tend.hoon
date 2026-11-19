@@ -4,10 +4,13 @@
 +$  card  card:agent:gall
 +$  coop  coop:gall
 +$  action
-  $%  [%tend =coop =path =page]
-      [%germ =coop]
-      [%snip =coop]
-      [%keen =ship case=@ud =path]
+  $%   [%cull =case =spur]
+       [%germ =coop]
+       [%grow =spur =page]
+       [%keen =ship case=@ud =path]
+       [%snip =coop]
+       [%tend =coop =path =page]
+       [%tomb =case =spur]
   ==
 --
 ::

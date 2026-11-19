@@ -12,11 +12,14 @@
   ;<  ~  bind:m  (dojo ~bud ":tend +dbug %bowl")
   (pure:m ~)
 ::
+::
+::  .who scries ~bud; ~bud scrying itself exercises the self remote-scry path
+::
 ++  keen-wait-for-result
-  |=  [cas=@ud zuse=@ud]
+  |=  [who=ship cas=@ud zuse=@ud]
   =/  m  (strand ,~)
-  ;<  ~  bind:m  (dojo ~dev ":tend [%keen ~bud {(scow %ud cas)} /foo/baz]")
-  ;<  ~  bind:m  (wait-for-output ~dev "kal=[lal=%zuse num={(scow %ud zuse)}]")
+  ;<  ~  bind:m  (dojo who ":tend [%keen ~bud {(scow %ud cas)} /foo/baz]")
+  ;<  ~  bind:m  (wait-for-output who "kal=[lal=%zuse num={(scow %ud zuse)}]")
   (pure:m ~)
 ::
 ++  setup
@@ -47,10 +50,12 @@
   ;<  ~  bind:m  (dojo ~bud ":tend [%germ /foo]")
   ;<  ~  bind:m  (sleep:strandio ~s2)
   ;<  ~  bind:m  (tend zuse)
-  ;<  ~  bind:m  (keen-wait-for-result 1 zuse)
+  ;<  ~  bind:m  (keen-wait-for-result ~dev 1 zuse)
+  ;<  ~  bind:m  (keen-wait-for-result ~bud 1 zuse)
   =/  zuse  (dec zuse)
   ;<  ~  bind:m  (tend zuse)
-  ;<  ~  bind:m  (keen-wait-for-result 2 zuse)
+  ;<  ~  bind:m  (keen-wait-for-result ~dev 2 zuse)
+  ;<  ~  bind:m  (keen-wait-for-result ~bud 2 zuse)
   ;<  ~  bind:m  end
   (pure:m ~)
 ::
@@ -61,10 +66,12 @@
   ;<  ~  bind:m  (dojo ~bud ":tend [%germ /foo]")
   ;<  ~  bind:m  (sleep:strandio ~s2)
   ;<  ~  bind:m  (tend zuse)
-  ;<  ~  bind:m  (keen-wait-for-result 1 zuse)
+  ;<  ~  bind:m  (keen-wait-for-result ~dev 1 zuse)
+  ;<  ~  bind:m  (keen-wait-for-result ~bud 1 zuse)
   =/  zuse  (dec zuse)
   ;<  ~  bind:m  (tend zuse)
-  ;<  ~  bind:m  (keen-wait-for-result 2 zuse)
+  ;<  ~  bind:m  (keen-wait-for-result ~dev 2 zuse)
+  ;<  ~  bind:m  (keen-wait-for-result ~bud 2 zuse)
   ;<  ~  bind:m  end
   (pure:m ~)
 --

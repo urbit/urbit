@@ -33,6 +33,9 @@
     ==
   %+  murn  ~(tap by all)
   |=  [who=ship sta=?(%alien %known)]
+  ::  never scan ourselves: a self scry of a future case answers ~ at
+  ::  once, which would make the case loop below spin forever
+  ::
   ?:  =(our.bowl who)  ~
   ?.  ?=(%known sta)   ~
   ?:  ?=(%pawn (clan:title who))  ~
