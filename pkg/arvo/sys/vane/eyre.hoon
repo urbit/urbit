@@ -4233,7 +4233,7 @@
     =/  cookie-expiry
       ?^  scope.identity.u.ses  expiry-time.u.ses
       (add expiry-time.u.ses ~d9999)
-    [['set-cookie' (session-cookie-string:authentication (need sid) secure `expiry-time.u.ses)] headers]
+    [['set-cookie' (session-cookie-string:authentication (need sid) secure `cookie-expiry)] headers]
   ::  +set-response: remember (or update) a cache mapping
   ::
   ++  set-response
