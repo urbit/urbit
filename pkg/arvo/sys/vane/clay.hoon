@@ -1046,6 +1046,7 @@
       (bush-to-vase (build-bush %mark mak))
     ::
     ++  slam-memo
+      =>  [=_road ..ride]
       |=  [gat=vase sam=vase]
       ^-  vase
       %-  road  |.
