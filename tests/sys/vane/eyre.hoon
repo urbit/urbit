@@ -156,7 +156,7 @@
 ::
 ::  set desk which requests (and their cookies) operate on
 ::
-++  set-dek
+++  set-subdomain
   |=  dek=(unit desk)
   =/  m  (mare ,~)
   ^-  form:m
@@ -346,10 +346,11 @@
   [%'PUT' url (append-headers header-list) `body]
 ::
 ++  connect
-  |=  [app=@t pax=path overwrite=(unit [app=@t pax=path])]
+  |=  [app=@t =desk pax=path overwrite=(unit [app=@t pax=path])]
   =/  m  (mare ,~)
   ^-  form:m
   ;<  mos=(list move)  bind:m  (call ~[/[app]] [%connect pax app])
+  ;<  ~  bind:m  (set-desk app desk)
   ?~  overwrite
     (expect-moves mos (ex ~[/[app]] %give %bound %.y pax) ~)
   %+  expect-moves  mos
@@ -438,6 +439,7 @@
   %-  easy:(mare ,$-(move tang))
   |=  =state
   =?  headers  ?=(~ (get-header:http 'set-cookie' headers))
+    :-  'cache-control'^'no-store'
     =-  [['set-cookie' -] headers]
     %+  bake-cookie  guest.state
     (fall (~(get by sesh.state) dek.state) g-cook)
@@ -446,9 +448,31 @@
 ++  ex-headers
   |=  [headers=header-list:http body=(unit octs)]
   |=  ex=header-list:http
-  =.  ex  (skip ex |=([k=@t *] =(k 'x-eyre-auth-info')))
-  ::  TODO: headers 'content-length',
-  ::        eyre-html: 'content-security-policy', 'cache-control' etc.
+  ::  TODO: headers 'content-length'
+  =.  ex  (skip ex |=([k=@t *] |(=(k 'eyre-auth-info') =(k 'content-length'))))
+  =/  eyre-html=?
+    ?~  url=(get-header:http 'location' headers)  |
+    =-   ?=([~ %'~' *] -)
+      ^-  (unit (list @t))
+      =,  de-purl:html
+      %+  rush  u.url
+      ;~  pfix
+        (punt ;~(plug htts thor))
+        ;~  sfix
+          ;~(pose ;~(pfix fas (more fas smeg)) (easy ~))
+          yque
+        ==
+      ==
+  =?  headers  eyre-html
+    %+  welp  headers
+    :~  'content-type'^'text/html; charset=utf-8'
+        'x-content-type-options'^'nosniff'
+        'content-security-policy'^'frame-ancestors \'none\''
+        'cache-control'^'no-store'
+    ==
+  =?  headers  secure
+    :-  'content-security-policy'^'upgrade-insecure-requests'
+    headers
   =.  headers
     %+  welp  headers
     :~  'cross-origin-resource-policy'^'same-origin'
@@ -462,6 +486,7 @@
     ?:  =(0 req-id)  [/http-blah ~]
     [/http-blah/[(scot %ud req-id)] ~]
   |=  [[status=@ud headers=header-list:http] body=(unit octs)]
+  =/  redirect  |(=(303 status) =(307 status))
   |=  mov=move
   ^-  tang
   ?.  ?=([* %give %response %start * * %.y] mov)
@@ -471,7 +496,7 @@
     (expect-eq !>(status) !>(status-code.response-header.http-event.p.card.mov))
     (expect-eq !>(body) !>(data.http-event.p.card.mov))
   ::
-    ?.  verify-headers  ~
+    ?.  |(verify-headers redirect)  ~
     %-  (ex-headers headers body)
     headers.response-header.http-event.p.card.mov
   ==
@@ -483,6 +508,7 @@
   %-  easy:(mare ,$-(move tang))
   |=  =state
   =.  headers
+    :-  'cache-control'^'no-store'
     =-  [['set-cookie' -] headers]
     %+  bake-cookie  guest.state
     (fall (~(get by sesh.state) dek.state) g-cook)
@@ -628,7 +654,7 @@
   =/  m  (mare ,~)
   |=  computation=form:m
   ^-  tang
-  =/  res  (computation eyre-gate ~1111.1.1 guest=[%.y %guest] sesh=~ desks=~ dek=~)
+  =/  res  (computation eyre-gate ~1111.1.1 guest=[%.y %tmp] sesh=~ desks=~ dek=~)
   ?-  -.res
     %&  ~
     %|  p.res
@@ -681,7 +707,7 @@
     ?:(secure "Secure; " "")
     "HttpOnly; SameSite=Lax; Max-Age="
     (trip time)
-    ";"
+    "; "
   ==
 ::
 ++  g-name  ~fitbur-togtep-ladnup-ronbus--tanmer-sibsyn-lavryg-ramnul
@@ -758,7 +784,10 @@
     ::NOTE  post-hoc token rationalization, but this tests the mechanism used
     ::      in these tests for capturing it from moves coming out of eyre.
     ;<  t=@t  bind:m  get-token
-    =/  headers  ['set-cookie' (bake-cookie [%.n ~] (cat 3 'urbauth-~nul=' t))]~
+    =/  headers
+      :~  ['set-cookie' (bake-cookie [%.n ~] (cat 3 'urbauth-~nul=' t))]
+          'cache-control'^'no-store'
+      ==
     =/  ses  (~(put by *(map @t (unit desk))) t ~)
     (expect-moves mos (ex-sessions ses) (ex-response [200 headers] `(as-octs:mimes:html t)) ~)
   (pure:m ~)
@@ -792,8 +821,7 @@
   ;<  ~  bind:m  perform-born
   ::  app1 binds successfully
   ::
-  ;<  ~  bind:m  (connect %app1 / ~)
-  ;<  ~  bind:m  (set-desk %app1 %desk)
+  ;<  ~  bind:m  (connect %app1 %desk / ~)
   ::  outside requests a path that app1 has bound to
   ::
   ;<  ~  bind:m  (do-holm %desk '/' |)
@@ -814,11 +842,11 @@
   ;<  ~  bind:m  (wait ~d1)
   ::  app1 binds successfully
   ::
-  ;<  ~  bind:m  (connect %app1 / ~)
+  ;<  ~  bind:m  (connect %app1 %desk / ~)
   ;<  ~  bind:m  (wait ~d1)
   ::  app2 tries to bind to the same path and succeeds
   ::
-  (connect %app2 / `[%app1 /])
+  (connect %app2 %foo / `[%app1 /])
 ::
 ++  test-remove-binding
   %-  eval-mare
@@ -827,7 +855,7 @@
   ;<  ~  bind:m  (wait ~d1)
   ::  app1 binds successfully
   ::
-  ;<  ~  bind:m  (connect %app1 / ~)
+  ;<  ~  bind:m  (connect %app1 %desk / ~)
   ;<  ~  bind:m  (wait ~d1)
   ::  app1 unbinds
   ::
@@ -836,7 +864,7 @@
   ;<  ~  bind:m  (wait ~d1)
   ::  app2 binds successfully
   ::
-  (connect %app2 / ~)
+  (connect %app2 %foo / ~)
 ::
 ++  test-builtin-four-oh-four
   %-  eval-mare
@@ -849,8 +877,8 @@
   ;<  mos=(list move)  bind:m  (get '/' ~)
   ;<  ~  bind:m  (expect-moves mos ex-rs ~)
   ;<  ~  bind:m  perform-authentication
-  ;<  ex-rs=$-(move tang)  bind:m
-    (make-ex-resp (error-page:eyre-gate 404 %.y '/' ~))
+  =/  ex-rs
+    (ex-response (error-page:eyre-gate 404 %.y '/' ~))
   ;<  mos=(list move)  bind:m  (get '/' ~)
   (expect-moves mos ex-rs ~)
 ::
@@ -861,12 +889,16 @@
   =/  m  (mare ,~)
   ^-  form:m
   =/  host=@t  (cat 3 target '.localhost')
-  ;<  ~  bind:m  (set-dek `target)
+  ;<  ~  bind:m  (set-subdomain `target)
   ;<  mos=(list move)  bind:m
     (get url ['host' host] ~)
   =/  location
     :((cury cat 3) '//localhost/~/holm/sink/' target url)
-  (expect-moves mos (ex-response [303 ~['location'^location]] ~) ~)
+  =/  headers
+    :~  'cache-control'^'no-store'
+        'location'^location
+    ==
+  (expect-moves mos (ex-response [303 headers] ~) ~)
 ::
 ++  request-name
   =/  m  (mare ,@p)
@@ -878,22 +910,27 @@
 ++  tmp-token  '0v4.ht6if.4n0mi.45goo.a0p19.cjog9'
 ::
 ++  holm-sink
-  |=  [target=desk url=@t]
+  |=  [target=desk url=@t root-auth=?]
   =/  m  (mare ,~)
   ^-  form:m
-  ;<  ~  bind:m  (set-dek ~)
+  ;<  ~  bind:m  (set-subdomain ~)
+  ;<  root-c=(unit @t)  bind:m  get-cookie
   ;<  mos=(list move)  bind:m
     (get :((cury cat 3) '/~/holm/sink/' target url) ~)
-  ;<  now=@da    bind:m  get-now
+  ;<  now=@da          bind:m  get-now
+  ;<  ~                bind:m
+    ?:  root-auth  (pure:m ~)
+    (set-guest ?~(root-c [%.y %tmp] [%.y %guest]))
+  ::;<  ~  bind:m  (set-subdomain ~)
   ;<  cookie=@t  bind:m  (expected-cookie &)
-  =/  location
-    :((cury cat 3) '//' target '.localhost/~/holm/gain/' tmp-token)
-  =/  ex-headers
-    :~  'location'^location
-        'set-cookie'^cookie
+  =/  ex-headers=header-list:http
+    :-  'location'^(rap 3 '//' target '.localhost/~/holm/gain/' tmp-token ~)
+    ?:  root-auth  ~
+    :~  'set-cookie'^cookie
+        'cache-control'^'no-store'
     ==
   %+  expect-moves  mos
-  :~  (ex-wait /holm/[tmp-token] (add now ~s30))  :: expire token
+  :~  (ex-wait /holm/[tmp-token] (add now ~s30))  ::  expire token
       (ex-response [303 ex-headers] ~)
   ==
 ::
@@ -902,11 +939,11 @@
   =/  m  (mare ,(map @t (unit desk)))
   ^-  form:m
   ?.  auth  (pure:m ~)
-  ;<  ~  bind:m  (set-dek `target)
+  ;<  ~  bind:m  (set-subdomain `target)
   ;<  target-token=@t  bind:m  get-token
-  ;<  ~  bind:m  (set-dek ~)
+  ;<  ~  bind:m  (set-subdomain ~)
   ;<  base-token=@t  bind:m  get-token
-   (pure:m (~(gas by *(map @t (unit desk))) ~[[base-token ~] [target-token `target]]))
+  (pure:m (~(gas by *(map @t (unit desk))) ~[[base-token ~] [target-token `target]]))
 ::
 ++  holm-gain
   |=  [target=desk url=@t root-auth=?]
@@ -915,17 +952,20 @@
   =/  host=@t  (cat 3 target '.localhost')
   ::  root session, desk session will be scoped under it
   ::
-  ;<  ~  bind:m  (set-dek `target)
+  ;<  ~  bind:m  (set-subdomain `target)
   ;<  mos=(list move)  bind:m
     %+  get  :((cury cat 3) '/~/holm/gain/' tmp-token)
     ['host' host]~
+  ;<  ~  bind:m
+    ?:(root-auth (pure:m ~) (set-guest [%.y %tmp]))
   ;<  cookie=@t  bind:m  (expected-cookie &)
   =/  ex-headers
     :~  ['location' :((cury cat 3) '//' host url)]
+        'cache-control'^'no-store'
         'set-cookie'^cookie
     ==
   ;<  ses=(map @t (unit desk))  bind:m  (holm-get-sesh root-auth target)
-  ;<  ~  bind:m  (set-dek `target)
+  ;<  ~  bind:m  (set-subdomain `target)
   %+  expect-moves   mos
   :~  (ex-sessions ses)
       (ex-response [303 ex-headers] ~)
@@ -936,7 +976,7 @@
   =/  m  (mare ,~)
   ^-  form:m
   ;<  ~  bind:m  (holm-jump target url)
-  ;<  ~  bind:m  (holm-sink target url)
+  ;<  ~  bind:m  (holm-sink target url auth)
   (holm-gain target url auth)
 ::
 ::  tests: holm flow, subdomain authentication
@@ -949,11 +989,10 @@
   ^-  form:m
   ;<  ~  bind:m  perform-init-wo-timer
   ;<  ~  bind:m  perform-born
-  ;<  ~  bind:m  (connect %app1 /app1 ~)
-  ;<  ~  bind:m  (set-desk %app1 %desk)
+  ;<  ~  bind:m  (connect %app1 %desk /app1 ~)
   ;<  ~  bind:m  (wait ~d1)
   ;<  ~  bind:m  (holm-jump 'desk' '/app1')
-  ;<  ~  bind:m  (holm-sink 'desk' '/app1')
+  ;<  ~  bind:m  (holm-sink 'desk' '/app1' |)
   (holm-gain 'desk' '/app1' |)
 ::  +test-holm-jump: full holm flow w/o cookie starting
 ::  from /~/holm/jump, authenticated on root
@@ -964,38 +1003,19 @@
   ^-  form:m
   ;<  ~  bind:m  perform-init-wo-timer
   ;<  ~  bind:m  perform-born
-  ;<  ~  bind:m  (connect %app1 /app1 ~)
-  ;<  ~  bind:m  (set-desk %app1 %desk)
-  ;<  ~  bind:m  (wait ~d1)
+  ;<  ~  bind:m  (connect %app1 %desk /app1 ~)
   ;<  ~  bind:m  perform-authentication
   ;<  name=@p  bind:m  request-name
   ?^  fail=(expect-eq !>(~nul) !>(name))  (fail:m fail)
   ::
-  ;<  ~  bind:m  (set-dek `%desk)
+  ;<  ~  bind:m  (set-subdomain `%desk)
   ;<  mos=(list move)  bind:m
-    (get '/~/holm/jump/app1' ~['host'^'desk.localhost'])
+    (get '/~/holm/jump/app1' 'host'^'desk.localhost' ~)
   ;<  ~  bind:m
     =/  location  '//localhost/~/holm/sink/desk/app1'
-  (expect-moves mos (ex-response [303 ~['location'^location]] ~) ~)
-  ;<  ~  bind:m  (holm-sink 'desk' '/app1')
-  (holm-gain 'desk' '/app1' &)
-::  +test-holm-missing-cookie: full holm flow w/o cookie
-::  authenticated on root
-::
-++  test-holm-missing-cookie
-  %-  eval-mare
-  =/  m  (mare ,~)
-  ^-  form:m
-  ;<  ~  bind:m  perform-init-wo-timer
-  ;<  ~  bind:m  perform-born
-  ;<  ~  bind:m  (connect %app1 /app1 ~)
-  ;<  ~  bind:m  (set-desk %app1 %desk)
-  ;<  ~  bind:m  (wait ~d1)
-  ;<  ~  bind:m  perform-authentication
-  ;<  name=@p  bind:m  request-name
-  ?^  fail=(expect-eq !>(~nul) !>(name))  (fail:m fail)
-  ;<  ~  bind:m  (holm-jump 'desk' '/app1')
-  ;<  ~  bind:m  (holm-sink 'desk' '/app1')
+    =/  headers   ~['location'^location 'cache-control'^'no-store']
+    (expect-moves mos (ex-response [303 headers] ~) ~)
+  ;<  ~  bind:m  (holm-sink 'desk' '/app1' &)
   (holm-gain 'desk' '/app1' &)
 ::  +test-sink-on-subdomain: fail when request /holm/sink
 ::  on subdomain
@@ -1006,7 +1026,7 @@
   ^-  form:m
   ;<  ~  bind:m  perform-init-wo-timer
   ;<  ~  bind:m  perform-born
-  ;<  ~  bind:m  (set-dek `%foo)
+  ;<  ~  bind:m  (set-subdomain `%foo)
   =/  url  '/~/holm/sink/foo/foobar'
   ;<  mos=(list move)  bind:m
     (get url ~['host'^'foo.localhost'])
@@ -1037,8 +1057,7 @@
   ^-  form:m
   ;<  ~  bind:m  perform-init-wo-timer
   ;<  ~  bind:m  perform-born
-  ;<  ~  bind:m  (connect %app1 / ~)
-  ;<  ~  bind:m  (set-desk %app1 %desk)
+  ;<  ~  bind:m  (connect %app1 %desk / ~)
   ;<  ~  bind:m  (wait ~d1)
   ::
   ;<  ~  bind:m  perform-authentication
@@ -1214,12 +1233,12 @@
     ==
   ::  ~sampel gets back to us with a url, we redirect the requester
   ::
-  ;<  ex-rs=$-(move tang)  bind:m
+  =/  ex-rs
     =/  loc=@t
       %^  cat  3
         'https://sampel.com/~/eauth?server=~nul&nonce='
       (scot %uv nonce)
-    (make-ex-resp [303 ['location' loc]~] ~)
+    (ex-response [303 ['location' loc]~] ~)
   ;<  mos=(list move)  bind:m  sage
   ;<  ~  bind:m
     (expect-moves mos ex-rs ~)
@@ -1233,8 +1252,6 @@
     ==
   ::  requester returns for the final request
   ::
-  ;<  ex-rs=$-(move tang)  bind:m
-    (make-ex-resp [303 ['location' '/final']~] ~)
   ;<  mos=(list move)  bind:m  final
   ;<  ~  bind:m
     =/  nook
@@ -1243,11 +1260,18 @@
       ::  of eyre killing the old session first, and the tests passing a static
       ::  entropy value.
       ::
-      %^  cat  3
-        'urbauth-~nul=0v5.gbhev.sbeh0.3rov1.o6ibh.a3t9r; Path=/; Max-Age='
-      auth-time
+      %+  rap  3
+        :~  '__Host-urbauth-~nul=0v5.gbhev.sbeh0.3rov1.o6ibh.a3t9r; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age='
+            auth-time
+            '; '
+        ==
+    =/  headers
+      :~  'location'^'/final'
+          'cache-control'^'no-store'
+          'set-cookie'^nook
+      ==
     %+  expect-moves  mos
-    :~  (ex-response [303 ~['location'^'/final' 'set-cookie'^nook]] ~)
+    :~  (ex-response [303 headers] ~)
     ==
   (pure:m ~)
 ::
@@ -1262,8 +1286,8 @@
   ;<  *  bind:m  grant
   ::  requester GETs a url with a non-matching token
   ::
-  ;<  ex-rs=$-(move tang)  bind:m
-    %-  make-ex-resp
+  =/  ex-rs
+    %-  ex-response
     (eauth-error-page:eyre-gate 400 %server '/final')
   ;<  mos=(list move)  bind:m
     =;  url=@t  (get url ~)
@@ -1283,8 +1307,8 @@
   ::  expiry timer fires, we serve a response and delete the attempt
   ::
   ;<  ~  bind:m  (wait eauth-timeout:eyre-gate)
-  ;<  ex-rs=$-(move tang)  bind:m
-    %-  make-ex-resp
+  =/  ex-rs
+    %-  ex-response
     (eauth-error-page:eyre-gate 503 %server '/final')
   ;<  mos=(list move)  bind:m
     =/  =^wire  /eauth/expire/visitors/(scot %uv nonce)
@@ -1332,8 +1356,8 @@
   ;<  *  bind:m  sage
   ::  visitor returns, saying the attempt was aborted. we delete it
   ::
-  ;<  ex-rs=$-(move tang)  bind:m
-    (make-ex-resp [303 ['location' '/~/login?eauth&redirect=%2Ffinal']~] ~)
+  =/  ex-rs
+    (ex-response [303 ['location' '/~/login?eauth&redirect=%2Ffinal']~] ~)
   ;<  mos=(list move)  bind:m
     =;  url=@t  (get url ~)
     (cat 3 '/~/eauth?abort&nonce=' (scot %uv nonce))
@@ -1352,8 +1376,8 @@
   ;<  *  bind:m  grant
   ::  visitor returns, saying the attempt was aborted. we delete it
   ::
-  ;<  ex-rs=$-(move tang)  bind:m
-    (make-ex-resp [303 ['location' '/~/login?eauth&redirect=%2Ffinal']~] ~)
+  =/  ex-rs
+    (ex-response [303 ['location' '/~/login?eauth&redirect=%2Ffinal']~] ~)
   ;<  mos=(list move)  bind:m
     =;  url=@t  (get url ~)
     (cat 3 '/~/eauth?abort&nonce=' (scot %uv nonce))
@@ -1401,10 +1425,10 @@
     ==
   ::  upon receiving an %okay from ~hoster, redirect the user
   ::
-  ;<  ex-rs=$-(move tang)  bind:m
+  =/  ex-rs
     =/  loc=@t
       'https://hoster.com/~/eauth?nonce=0vnonce&token=0v4.qkgot.d07e3.pi1qd.m1bhj.ti8bo'
-    (make-ex-resp [303 ['location' loc]~] ~)
+    (ex-response [303 ['location' loc]~] ~)
   ;<  mos=(list move)  bind:m  okay
   ;<  ~  bind:m
     (expect-moves mos ex-rs ~)
@@ -1473,8 +1497,7 @@
   ;<  ~  bind:m  (wait ~d1)
   ::  app1 binds successfully
   ::
-  ;<  ~  bind:m  (connect %app1 /app ~)
-  ;<  ~  bind:m  (set-desk %app1 %desk)
+  ;<  ~  bind:m  (connect %app1 %desk /app ~)
   ;<  ~  bind:m  (wait ~d1)
   ::  outside requests a path that app1 has bound to
   ::
@@ -1500,35 +1523,36 @@
   ;<  ~  bind:m  (wait ~d1)
   ::  app1 binds successfully
   ::
-  ;<  ~  bind:m  (connect %app1 /app ~)
-  ;<  ~  bind:m  (set-desk %app1 %desk)
+  ;<  ~  bind:m  (connect %app1 %desk /app ~)
   ::  outside requests a path that app1 has bound to
   ::
   ;<  ~  bind:m  (do-holm %desk '/app' |)
   ;<  ~  bind:m  (request %app1 /app)
   ::  the poke fails. we should relay this to the client
   ::
-  ;<  mov-2=$-(move tang)  bind:m
-    (make-ex-resp (internal-server-error:eyre-gate %.n '/app' ~))
   ;<  mos=(list move)  bind:m
     =/  sign=sign:eyre-gate
       [%gall %unto %poke-ack ~ [%leaf "/~zod/...../app1:<[1 1].[1 20]>"]~]
     (take /run-app-request/[eyre-id] ~[/http-blah] sign)
   ;<  mov-1=$-(move tang)  bind:m
     (ex-gall-deal /watch-response/[eyre-id] g-name %app1 [%leave ~])
+  =/  mov-2
+    (ex-response (internal-server-error:eyre-gate %.n '/app' ~))
   (expect-moves mos mov-1 mov-2 ~)
 ::
 ++  test-multipart-app-request
   %-  eval-mare
   =/  m  (mare ,~)
   ;<  ~  bind:m  perform-init-wo-timer
+  ;<  ~  bind:m  perform-born
   ;<  ~  bind:m  (wait ~d1)
   ::  app1 binds successfully
   ::
-  ;<  ~  bind:m  (connect %app1 / ~)
+  ;<  ~  bind:m  (connect %app1 %desk / ~)
   ;<  ~  bind:m  (wait ~d1)
   ::  outside requests a path that app1 has bound to
   ::
+  ;<  ~  bind:m  (do-holm %desk '/' |)
   ;<  ~  bind:m  (request %app1 /)
   ;<  ~  bind:m  (wait ~d1)
   ::  theoretical outside response
@@ -1560,7 +1584,7 @@
   ;<  ~  bind:m  (wait ~d1)
   ::  dead-app binds successfully
   ::
-  ;<  ~  bind:m  (connect %dead-app / ~)
+  ;<  *  bind:m  (call ~[/dead-app] [%connect / %dead-app])
   ;<  ~  bind:m  (wait ~d1)
   ::  outside requests a path that dead-app has bound to
   ::
@@ -1578,8 +1602,7 @@
   ;<  ~  bind:m  perform-born
   ::  app1 binds successfully
   ::
-  ;<  ~  bind:m  (connect %app1 /'~landscape' ~)
-  ;<  ~  bind:m  (set-desk %app1 %desk)
+  ;<  ~  bind:m  (connect %app1 %desk /'~landscape' ~)
   ::  obtain guest cookie on desk.localhost
   ;<  ~  bind:m  (do-holm %desk '/~landscape/inner-path' |)
   ::  outside requests a path that app1 has bound to
@@ -1604,7 +1627,7 @@
   =.  eyre-id  '~.eyre_0v4.elsnk.20412.0h04v.50lom.5lq0o'
   ::  set desk-origin to root, request to /~/login
   ::
-  ;<  ~  bind:m  (set-dek ~)
+  ;<  ~  bind:m  (set-subdomain ~)
   ;<  mos=(list move)  bind:m
     (get '/~/login?desk=desk&redirect=/~landscape/inner-path' ~)
   ::  eyre expiring tmp-cookie acquired during holm
@@ -1625,6 +1648,7 @@
   ;<  t=@t  bind:m  get-token
   =/  headers
     :~  ['location' '//localhost/~/holm/sink/desk/~landscape/inner-path']
+        ['cache-control' 'no-store']
         ['set-cookie' (bake-cookie [%.n ~] (cat 3 'urbauth-~nul=' t))]
     ==
   ;<  ~  bind:m
@@ -1634,7 +1658,7 @@
     ==
   ::  do holm authentication for a desk subdomain
   ::
-  ;<  ~  bind:m  (holm-sink %desk '/~landscape/inner-path')
+  ;<  ~  bind:m  (holm-sink %desk '/~landscape/inner-path' &)
   ;<  ~  bind:m  (holm-gain %desk '/~landscape/inner-path' &)
   ::  going back to the original url will acknowledge the authentication cookie
   ::
@@ -1681,19 +1705,23 @@
     %+  skim  ~(tap by sessions.auth.server-state.ax.gate.state)
     |=([sc=@uv =session:eyre] ?|(=(token sc) =([%| token] scopes.session)))
   ::
-  ;<  ~  bind:m  (connect %app /app ~)
-  ;<  ~  bind:m  (set-desk %app %desk)
+  ;<  ~  bind:m  (connect %app %desk /app ~)
   ;<  ~  bind:m  (do-holm %desk '/app' &)
   ::
   ;<  ses=(list [@uv session:eyre])  bind:m  our-sessions
   ;<  ~  bind:m  (try (expect-eq !>(2) !>((lent ses))))
-  ;<  ~  bind:m  (set-dek ~)
+  ;<  ~  bind:m  (set-subdomain ~)
+  ;<  cookie=@t  bind:m  (expected-cookie |)
   ;<  mos=(list move)  bind:m  (post '/~/logout' ~ 'all=')
-  ;<  ~  bind:m
-    %+  expect-moves  mos
-    :~  (ex-sessions ~)
-        (ex-response [[303 'location'^'/~/login' ~] ~])
+  =/  headers
+    :~  'location'^'/~/login'
+        'cache-control'^'no-store'
+        'set-cookie'^cookie
     ==
+  ;<  ex-rs=$-(move tang)  bind:m
+    (make-ex-resp [[303 headers] ~])
+  ;<  ~  bind:m
+    (expect-moves mos (ex-sessions ~) ex-rs ~)
   ;<  ses=(list [@uv session:eyre])  bind:m  our-sessions
   (try (expect-eq !>(~) !>(ses)))
 ::
@@ -2346,8 +2374,7 @@
   ;<  ~  bind:m  perform-born
   ;<  ~  bind:m  perform-authentication
   ::
-  ;<  ~  bind:m  (connect %app /app ~)
-  ;<  ~  bind:m  (set-desk %app %desk)
+  ;<  ~  bind:m  (connect %app %desk /app ~)
   ;<  ~  bind:m  (do-holm %desk '/app' &)
   ::  clear out the sesh so that we don't send a cookie,
   ::  then request our name while passing in header auth with the same token
@@ -2377,8 +2404,7 @@
   ;<  ~  bind:m  perform-born
   ;<  ~  bind:m  perform-authentication
   ::
-  ;<  ~  bind:m  (connect %app /app ~)
-  ;<  ~  bind:m  (set-desk %app %desk)
+  ;<  ~  bind:m  (connect %app %desk /app ~)
   ;<  ~  bind:m  (do-holm %desk '/app' &)
   ::
   ;<  mos=(list move)  bind:m
@@ -2387,11 +2413,8 @@
         ['authorization' 'Basic foo']
     ==
     (get '/~/name' headers)
-  ?.  ?=([[* %give %response %start * * %.y] ~] mos)
-    (fail:m [leaf+"expected %response, got: {<mos>}" ~])
-  =/  name=(unit @p)
-    (slaw %p `@t`q:(need data.http-event.p.card.i.mos))
-  (try (expect-eq !>(~) !>(name)))
+  =/  ex-rs   (ex-response [401 ~] `(as-octs:mimes:html 'invalid auth: invalid. refreshing...'))
+  (expect-moves mos ex-rs ~)
 ::
 ::  tests: subdomain handling
 ::
@@ -2424,9 +2447,8 @@
   ^-  form:m
   ;<  ~  bind:m  perform-init-wo-timer
   ;<  ~  bind:m  perform-born
-  ;<  ~  bind:m  (connect %app1 /app1 ~)
-  ;<  ~  bind:m  (set-desk %app1 %desk)
-  ;<  ~  bind:m  (wait ~d1)
+  ;<  ~  bind:m  (connect %app1 %desk /app1 ~)
+  ::
   ;<  mos=(list move)  bind:m  (get '/~/name' ~)
   =/  body   `(as-octs:mimes:html (scot %p g-name))
   =/  ex-res  (ex-response [200 ~] body)
@@ -2448,8 +2470,7 @@
   ^-  form:m
   ;<  ~  bind:m  perform-init-wo-timer
   ;<  ~  bind:m  perform-born
-  ;<  ~  bind:m  (connect %app /app ~)
-  ;<  ~  bind:m  (set-desk %app %desk)
+  ;<  ~  bind:m  (connect %app %desk /app ~)
   ;<  ~  bind:m  (wait ~d1)
   ::  request to a desk binding on a different desk subdomain
   ::  redirected to the correct desk subdomain
@@ -2471,8 +2492,7 @@
   ^-  form:m
   ;<  ~  bind:m  perform-init-wo-timer
   ;<  ~  bind:m  perform-born
-  ;<  ~  bind:m  (connect %app /app ~)
-  ;<  ~  bind:m  (set-desk %app %base)
+  ;<  ~  bind:m  (connect %app %base /app ~)
   ;<  ~  bind:m  (wait ~d1)
   ::
   ;<  mos=(list move)  bind:m  (get '/app' 'host'^'foo.localhost' ~)
@@ -2481,6 +2501,25 @@
   ::
   ;<  mos=(list move)  bind:m  (get '/app' 'host'^'base.localhost' ~)
   (expect-moves mos ex-res ~)
+::
+:: ++  test-options-cross-origin
+::   %-  eval-mare
+::   =/  m  (mare ,~)
+::   ^-  form:m
+::   ;<  ~  bind:m  perform-init-wo-timer
+::   ;<  ~  bind:m  perform-born
+::   ;<  ~  bind:m  (connect %app %desk /app ~)
+::   ;<  ~  bind:m  perform-authentication
+::   ::
+::   ;<  mos=(list move)  bind:m
+::     =/  headers
+::       :~  'origin'^'https://localhost'
+::           'host'^'foo.localhost'
+::       ==
+::     %+  call-request  ~[/http-blah]
+::     [%'OPTIONS' '//localhost/app' headers ~]
+::   ~&  mos=mos
+::   (pure:m ~)
 ::
 ::  tests: bare ip address request handling
 ::
@@ -2538,7 +2577,10 @@
   ;<  ~  bind:m  perform-born
   ;<  *  bind:m  (call ~[/set-risk] [%rule %risk &])
   =.  secure  |
-  ;<  ~  bind:m  (connect %app1 /app ~)
+  ::  not setting desk for agent binding on bare IP case
+  ::  no scope.identity, no provenance
+  ::
+  ;<  *  bind:m  (call ~[/app1] [%connect /app %app1])
   ;<  ~  bind:m  (wait ~d1)
   =/  headers=header-list:http  ~['host'^'192.168.1.1']
   ;<  mos=(list move)  bind:m  (get '/app' headers)
@@ -2574,8 +2616,7 @@
   ;<  token=@t             bind:m  get-token
   =/  ses  (~(put by *(map @t (unit desk))) token ~)
   ;<  ex-rs=$-(move tang)  bind:m
-    =/  body  `(as-octs:mimes:html token)
-    (make-ex-resp [303 ['location' '/foo']~] body)
+    (make-ex-resp [303 'location'^'/foo' ~] `(as-octs:mimes:html token))
   (expect-moves mos (ex-sessions ses) ex-rs ~)
 ::  +test-ip-scoped-session: session created while using bare ip
 ::  must have a root scope
@@ -2629,19 +2670,21 @@
       !>([[duct=~[/unix] %give %grow /cache/1/~~~2f.foo~2f.bar] ~])
     !>(mos)
   ::  send request to cache entry
-  ;<  ~  bind:m  (set-dek `%desk)
+  ;<  ~  bind:m  (set-subdomain `%desk)
   ;<  mos=(list move)  bind:m
     (get '/foo/bar' ~['host'^'desk.localhost'])
   ;<  ~  bind:m
-    %+  expect-moves  mos
-    :_  ~
-    (ex-response [303 ['location' '//localhost/~/holm/sink/desk/foo/bar']~] ~)
+    =/  headers
+      :~  'cache-control'^'no-store'
+          'location'^'//localhost/~/holm/sink/desk/foo/bar'
+      ==
+    (expect-moves mos (ex-response [303 headers] ~) ~)
   ::  fetch icon
   ::
   ;<  *  bind:m  (get '/favicon.ico' ~['host'^'desk.localhost'])
   ::  proceed with redirect to holm flow
   ::
-  ;<  ~  bind:m  (holm-sink %desk '/foo/bar')
+  ;<  ~  bind:m  (holm-sink %desk '/foo/bar' &)
   ;<  ~  bind:m  (holm-gain %desk '/foo/bar' &)
   ::  redirect back to cache entry
   ::
