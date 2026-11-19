@@ -4509,6 +4509,73 @@
   ::
   +$  name  path
   --  ::lick
+::                                                      ::::
+::::                    ++mach                            ::  (1k) TCP
+  ::                                                    ::::
+++  mach  ^?
+  |%
+  ::  $addr: ip address and port
+  ::
+  +$  addr
+    $%  [%if p=@if q=@ud]                               ::  ipv4
+        [%is p=@is q=@ud]                               ::  ipv6
+    ==
+  ::  $name: connection name, unique per agent
+  ::
+  +$  name  path
+  ::  $wye: why a connection closed
+  ::  by category, then cause
+  ::
+  +$  wye
+    $%  $:  %connect                                    ::  never opened
+            $=  p
+            $?  %invalid                                ::  malformed $addr
+                %taken                                  ::  name in use
+                %refused                                ::  connect failed
+                %timeout                                ::  not open in time
+        ==  ==
+        $:  %peer                                       ::  peer ended it
+            $=  p
+            $?  %done                                   ::  peer closed cleanly
+                %reset                                  ::  reset or r/w failed
+                %dead                                   ::  peer unresponsive
+        ==  ==
+        $:  %close                                      ::  userspace ended it
+            $=  p
+            $?  %done                                   ::  flushed outgoing
+                %timeout                                ::  unsent after timeout
+        ==  ==
+        $:  %local                                      ::  arvo/vere ended it
+            $=  p
+            $?  %reborn                                 ::  vere restarted
+                %trimmed                                ::  dropped on %trim
+                %dropped                                ::  %received failed
+                %overflowed                             ::  send queue full
+        ==  ==
+    ==
+  ::
+  +$  task
+    $~  [%vega ~]
+    $%  $>(%born vane-task)                             ::  new unix process
+        $>(%trim vane-task)                             ::  trim state
+        $>(%vega vane-task)                             ::  report upgrade
+        [%close =name]                                  ::  close connection
+        [%send =name =octs]                             ::  send bytes
+        [%connect =name =addr]                          ::  connect to address
+        [%opened id=@ud]                                ::  vere opens
+        [%closed id=@ud p=wye]                          ::  vere closes
+        [%received id=@ud =octs]                        ::  vere receives bytes
+    ==
+  ::
+  +$  gift
+    $%  [%connected =name]                              ::  opened
+        [%received =name =octs]                         ::  received bytes
+        [%closed =name p=wye]                           ::  connection closed
+        [%connect id=@ud =addr]                         ::  vere, open connection
+        [%send id=@ud =octs]                            ::  vere, send bytes
+        [%close id=@ud]                                 ::  vere, close connection
+    ==
+  --  ::mach
 ::
 ++  rand                                                ::  computation
   |%
@@ -4731,6 +4798,7 @@
       gift:jael
       gift:khan
       gift:lick
+      gift:mach
   ==
 +$  task-arvo                                           ::  in request ->$
   $%  task:ames
@@ -4743,6 +4811,7 @@
       task:jael
       task:khan
       task:lick
+      task:mach
   ==
 +$  note-arvo                                           ::  out request $->
   $~  [%b %wake ~]
@@ -4756,6 +4825,7 @@
       [%j task:jael]
       [%k task:khan]
       [%l task:lick]
+      [%m task:mach]
       [%$ %whiz ~]
       [@tas %meta vase]
   ==
@@ -4779,6 +4849,7 @@
       [%jael gift:jael]
       [%khan gift:khan]
       [%lick gift:lick]
+      [%mach gift:mach]
   ==
 ::  $unix-task: input from unix
 ::
@@ -4837,5 +4908,8 @@
       ::  %behn: wakeup
       ::
       $>(%wake task:behn)
+      ::  %mach: connection opened, received bytes, or closed
+      ::
+      $>(?(%opened %received %closed) task:mach)
   ==
 --  ::
