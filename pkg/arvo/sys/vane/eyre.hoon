@@ -1935,10 +1935,6 @@
         [%reject 'unsafe cross-origin']
       ::  may-embed: read desk from referer header, check for %embed perm
       ::
-      ::TODO  this allows embedding of base desk userspace responses
-      ::      (not eyre's responses, they have frame-ancestors:'none')
-      ::      because base desk stuff is unusually high risk, perhaps that
-      ::      should be gated by an expanded or different permission (or super)
       =*  may-embed=?
         =+  ref=(get-header:http 'referer' headers)
         ?~  ref  |
@@ -2013,6 +2009,9 @@
       :-  `%cookie
       ^-  _+:*auth-res
       ?~  sid=(session-id-from-request:authentication secure headers)
+        ::  if no auth provided on a subdomain, make them negotiate.
+        ::  on root, simply register the lack of auth.
+        ::
         ?:  ?=([%& * ^] target)
           [%negotiate ~]
         [%miss ~]
@@ -2045,6 +2044,14 @@
       ::
       ?:  ?=(?(%reject %invalid %negotiate) +<.auth)
         ~|(%oops-session-from-rejected-request !!)
+      ::NOTE  the %drop and %miss branches always mint root sessions
+      ::
+      ::    that may seem alarming, but it's fine. it's effectively dead code.
+      ::    %miss only ever happens on root, per +read-auth.
+      ::    %drop is short-lived and cookie not given, so root is fine.
+      ::    additionally, at the callsites for this arm, %drop and %miss
+      ::    effectively never happen, instead getting caught earlier.
+      ::
       ?-  +<.auth
         %drop  ?^(tmp.auth [[sid identity]:u.tmp.auth state] (start-session %tmp ~))
         %miss  ?^(new.auth [[sid identity]:u.new.auth state] (start-session %new-guest ~))
@@ -2981,12 +2988,10 @@
           ?~  nonce  error
           ::
           ?^  server
-            ::  request for confirmation page
+            ::  request for confirmation page.
+            ::  we know it's %have because we're .authenticated.req
             ::
             ?.  authenticated.req  login
-            ::REVIEWxx  is this necessary? if it is, aren't %drop and %miss
-            ::          unexpected due to .authenticated.req being true??
-            ?>  ?=(?([%drop ^] [%miss ^] [%have *]) +.authentication.req)
             =/  book  (~(gut by visiting.auth) u.server *logbook)
             =/  door  (~(get by map.book) u.nonce)
             ?~  door
@@ -3039,9 +3044,6 @@
           %+  instant:response  req
           (eauth-error-page 405 ~)
         ?.  authenticated.req  login
-        ::REVIEWxx  is this necessary? if it is, aren't %drop and %miss
-        ::          unexpected due to .authenticated.req being true??
-        ?>  ?=(?([%drop ^] [%miss ^] [%have *]) +.authentication.req)
         ::  POST requests are always submissions of the confirmation page
         ::
         =/  args=(map @t @t)
@@ -4510,11 +4512,10 @@
   ?~  u.res                   [%| "no scry result"]
   &+u.u.res
 ::
-::REVIEW  mixing two permission/access control modalities...
 ++  scry-mime
   |=  [now=@da rof=roof prov=(unit (unit desk)) =gang ext=(unit @ta) pax=path]
   |^  ^-  (each mime tape)
-   ::  parse
+  ::  parse
   ::
   =/  u=(unit [view=term bem=beam])
     ?.  ?=([@ @ @ @ *] pax)    ~
