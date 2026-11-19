@@ -2365,17 +2365,12 @@
       `(unit @)`(rush u.urbauth ;~(pfix (jest '0v') viz:ag))
     ::  +start-session: create a new session with %local or %guest identity
     ::
-    ::    note that only sessions with the local identity have "scope",
-    ::    foreign & fake identities are always just themselves, "foreigners",
-    ::    but "us" needs to differentiate between "us as root", "us as app",
-    ::    etc.
-    ::
     ::TODO  maybe should take a =duct or unpacked-request arg so it can do
     ::      the "associate the new session with ..." step
     ++  start-session
       |=  [identity=?(%new-guest %tmp identity) parent=(unit @uv)]
       ^-  [[session=@uv =^identity] server-state]
-      ?.  ?|  &(?=(%new-guest identity) ?=(~ parent))
+      ?.  ?|  &(?=(@ identity) ?=(~ parent))
               &(?=(^ identity) ?=(~ scope.identity) ?=(~ parent))
               &(?=(^ identity) ?=(^ scope.identity) ?=(^ parent))
           ==
