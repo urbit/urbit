@@ -1108,11 +1108,15 @@
     ::
     ?:  ?=(%invalid +<.auth)
       %+  instant:response  proto-req
-      =+  bod=(as-octs:mimes:html reason.auth)
+      =/  bod
+        %-  as-octs:mimes:html
+        %+  rap  3
+        ~['invalid auth: ' reason.auth '. refreshing...']
       :_  `bod
       :-  401
       :*  ['cache-control' 'no-store']
           ['content-length' (crip (a-co:co p.bod))]
+          ['refresh' '0']
           ?~  sid.auth  ~
           ['set-cookie' (session-cookie-string:authentication u.sid.auth secure ~)]~
       ==
@@ -4201,15 +4205,37 @@
       ::TODOxx  delete from sessions if drop?
       [headers sessions]
     ::  only refresh a session on re-use.
-    ::  if we're refreshing the session and sending a set-cookie header,
-    ::  we must signal that the response isn't cacheable.
-    ::  note that we overwrite existing cache-control headers, but leave
-    ::  existing set-cookie headers in place.
+    ::  if we're refreshing a child session, ensure its parent outlives it.
     ::
     =?  expiry-time.u.ses  ?=(%have +<.auth)
       (add now timeout)
+    =?  sessions  ?=(%| -.scopes.u.ses)
+      ~|  %eyre-bad-session-bookkeeping
+      =+  par=(~(got by sessions) p.scopes.u.ses)
+      ::NOTE  +max not strictly necessary, .expiry-time.u.ses _should_ always
+      ::      be latest, since both sessions' expiry gets keyed off their .kind
+      ::      but this is more robust against future changes
+      =.  expiry-time.par  (max expiry-time.par expiry-time.u.ses)
+      (~(put by sessions) p.scopes.u.ses par)
     :_  (~(put by sessions) (need sid) u.ses)
+    ::  if we're sending a set-cookie header, we must signal that the response
+    ::  isn't cacheable.
+    ::  note that we overwrite existing cache-control headers, but leave
+    ::  existing set-cookie headers in place.
+    ::
     =.  headers  (set-header:http 'cache-control' 'no-store' headers)
+    ::  bumping the parents of child sessions means that during normal usage
+    ::  it's possible we never re-send the root cookie after first mint
+    ::  (because most of the interactions happen on subdomains, and we only
+    ::  re-send the cookie if the session used was close to expiry).
+    ::  to mitigate risk of the browser dropping the root cookie early, always
+    ::  send the root cookie with a far-future expiry time, even on first mint.
+    ::  this doesn't conflict with initial short life of guest sessions, since
+    ::  that's about eyre-side state for clients that don't remember cookies.
+    ::
+    =/  cookie-expiry
+      ?^  scope.identity.u.ses  expiry-time.u.ses
+      (add expiry-time.u.ses ~d9999)
     [['set-cookie' (session-cookie-string:authentication (need sid) secure `expiry-time.u.ses)] headers]
   ::  +set-response: remember (or update) a cache mapping
   ::
