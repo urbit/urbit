@@ -500,31 +500,45 @@
   ~/  %parse-pile
   |=  [pax=path txt=@t]
   ^-  pile
+  =>  [=_pax =_txt =_pile-rule =_report-error clay ..ride]
+  ~>  %memo./clay/pile
   =/  [=hair res=(unit [=pile =nail])]
     %-  road  |.
-    =>  [pile-rule=pile-rule pax=pax txt=txt trip=trip]
-    ~>  %memo./clay/pile
     ((pile-rule pax) [1 1] (trip txt))
+  ::
   ?^  res  pile.u.res
   (report-error pax txt hair)
 ::
 ++  report-error
+  =>  ..ride
   |=  [pax=path txt=@t =hair]
   %-  mean
   =/  lyn  p.hair
   =/  col  q.hair
   ^-  (list tank)
-  :~  leaf+"syntax error at [{<lyn>} {<col>}] in {<pax>}"
-    ::
-      =/  =wain  (to-wain:format txt)
-      ?:  (gth lyn (lent wain))
-        '<<end of file>>'
-      (snag (dec lyn) wain)
-    ::
-      leaf+(runt [(dec col) '-'] "^")
-  ==
+  =-  :~  leaf+"syntax error at [{<lyn>} {<col>}] in {<pax>}"
+          ?~(- '<<end of file>>' u)
+          leaf+(runt [(dec col) '-'] "^")
+      ==
+  ::
+  ^-  (unit @t)
+  ?:  =(0 txt)  ~
+  =/  len  (met 3 txt)
+  =|  [from=@ lyn-count=@ud]
+  |-  ^-  (unit @t)
+  ?:  =(from len)  ~
+  =/  till=@
+    |-  ^-  @
+    ?:  |(=(from len) =(10 (cut 3 [from 1] txt)))
+      from
+    $(from +(from))
+  ::
+  ?:  =(+(lyn-count) lyn)  `(cut 3 [from (sub till from)] txt)
+  ?:  =(till len)  ~
+  $(from +(till), lyn-count +(lyn-count))
 ::
 ++  parsing-rules
+  =>  [clay ..ride]
   |%
   ++  pant
     |*  fel=^rule
@@ -550,8 +564,7 @@
   --
 ::
 ++  pile-rule
-  =>  [..lull parsing-rules]
-  =,  clay
+  =>  parsing-rules
   |=  pax=path
   %-  full
   %+  ifix
@@ -594,6 +607,72 @@
     %+  stag  %tssg
     (most gap tall:(vang & pax))
   ==
+++  header-raw-rule
+  =>  parsing-rules
+  |=  txt=@t
+  %.  [[1 1] (trip txt)]
+  %+  ifix
+    :_  gay
+    ::  parse optional /? and ignore
+    ::
+    ;~(plug gay (punt ;~(plug fas wut gap dem gap)))
+  ;~  plug
+    %+  cook  (bake zing (list (list taut)))
+    %+  rune  hep
+    (most ;~(plug com gaw) taut-rule)
+  ::
+    %+  cook  (bake zing (list (list taut)))
+    %+  rune  lus
+    (most ;~(plug com gaw) taut-rule)
+  ::
+    %+  rune  tis
+    ;~(plug sym ;~(pfix gap stap))
+  ::
+    %+  rune  sig
+    ;~((glue gap) sym wyde:vast stap)
+  ::
+    %+  rune  cen
+    ;~(plug sym ;~(pfix gap ;~(pfix cen sym)))
+  ::
+    %+  rune  buc
+    ;~  (glue gap)
+      sym
+      ;~(pfix cen sym)
+      ;~(pfix cen sym)
+    ==
+  ::
+    %+  rune  tar
+    ;~  (glue gap)
+      sym
+      ;~(pfix cen sym)
+      ;~(pfix stap)
+    ==
+  ==
+::
++$  raw-header
+  $:  sur=(list taut)
+      lib=(list taut)
+      raw=(list [face=term =path])
+      raz=(list [face=term =spec =path])
+      maz=(list [face=term =mark])
+      caz=(list [face=term =mars])
+      bar=(list [face=term =mark =path])
+  ==
+::
+++  parse-header-raw
+  |=  [pax=path txt=@t]
+  ^-  raw-header
+  =/  res=(each raw-header hair)
+    ::  exclude full edge from memoized result as it contains the full tape
+    ::
+    =>  [=_header-raw-rule =_txt]
+    ~>  %memo./clay/ford
+    =/  edg  (header-raw-rule txt)
+    ?~  q.edg  |+p.edg
+    &+p.u.q.edg
+  ::
+  ?:  ?=(%& -.res)  p.res
+  (report-error pax txt p.res)
 --  =>
 ~%  %clay  +  ~
 |%
@@ -629,6 +708,15 @@
     =/  faz  (with-face i.vaz)
     =.  res  `?~(res faz (slop faz u.res))
     $(vaz t.vaz)
+  ::
+  ::  +tako-args: laundered $args:ford of a commit's files
+  ::
+  ++  tako-args
+    |=  [fil=(map path lobe) lat=(map lobe page) veb=@]
+    ^-  args:ford
+    =>  [fil=fil lat=lat veb=veb ford=ford ..by]
+    ~>  %memo./clay/ford
+    (launder-args:ford (~(run by fil) |=(l=@uvI |+l)) lat veb)
   ::
   ++  ford
     !.
@@ -822,7 +910,6 @@
         --
     ~%  %ford-gate  ..ford  ~
     |=  args
-    =.  +<  (launder-args +<)
     ~%  %ford-core  ..$  ~
     |%
     ::  Chapter for constructing $bush (dependency graph of a file) given its
@@ -834,54 +921,10 @@
       |=  [pax=path txt=@t]
       ^-  (list (pair (unit term) bush-node))
       ~>  %memo./clay/ford
-      =*  out  (list (pair (unit term) bush-node))
-      =/  [=hair res=(unit [=out =nail])]
-        (header-rule [1 1] (trip txt))
-      ?^  res  out.u.res
-      (report-error pax txt hair)
+      (pile-header-to-bush:header-rule (parse-header-raw pax txt))
     ::
     ++  header-rule
-      |^
-      =,  parsing-rules
-      %+  cook  pile-header-to-bush
-      %+  ifix
-        :_  gay
-        ::  parse optional /? and ignore
-        ::
-        ;~(plug gay (punt ;~(plug fas wut gap dem gap)))
-      ;~  plug
-        %+  cook  (bake zing (list (list taut)))
-        %+  rune  hep
-        (most ;~(plug com gaw) taut-rule)
-      ::
-        %+  cook  (bake zing (list (list taut)))
-        %+  rune  lus
-        (most ;~(plug com gaw) taut-rule)
-      ::
-        %+  rune  tis
-        ;~(plug sym ;~(pfix gap stap))
-      ::
-        %+  rune  sig
-        ;~((glue gap) sym wyde:vast stap)
-      ::
-        %+  rune  cen
-        ;~(plug sym ;~(pfix gap ;~(pfix cen sym)))
-      ::
-        %+  rune  buc
-        ;~  (glue gap)
-          sym
-          ;~(pfix cen sym)
-          ;~(pfix cen sym)
-        ==
-      ::
-        %+  rune  tar
-        ;~  (glue gap)
-          sym
-          ;~(pfix cen sym)
-          ;~(pfix stap)
-        ==
-      ==
-      ::
+      |%
       ++  pile-header-to-bush
         |=  $:  sur=(list taut)
                 lib=(list taut)
@@ -1473,8 +1516,7 @@
   ++  tako-ford
     |=  tak=tako
     %-  ford:fusion
-    :_  [lat.ran veb.bug]
-    (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
+    (tako-args:fusion q:(tako-to-yaki:ze tak) lat.ran veb.bug)
   ::
   ++  request-wire
     |=  [kind=@ta =ship =desk index=@ud]
@@ -1875,7 +1917,7 @@
       %-  ~(dif by (~(uni by original) changes))
       %-  ~(gas by *(map path (each page lobe)))
       (turn ~(tap in deletes) |=(=path [path |+*lobe]))
-    =/  =args:ford:fusion  [files lat.ran veb.bug]
+    =/  =args:ford:fusion  (launder-args:ford:fusion files lat.ran veb.bug)
     ::
     =/  change-cages  (checkout-changes args changes)
     =/  sane-continuation  (sane-changes changes change-cages)
@@ -1884,9 +1926,16 @@
       %+  turn  ~(tap by change-cages)
       |=  [=path =lobe =cage]
       [lobe [p q.q]:cage]
+    ::
     =/  data=(map path lobe)
-      %-  ~(urn by new-data)
-      |=  [=path value=(each page lobe)]
+      =/  dat=(map path lobe)
+        %+  roll  ~(tap in deletes)
+        |=  [=path dat=_q.old-yaki]
+        (~(del by dat) path)
+      ::
+      %+  roll  ~(tap by changes)
+      |=  [[=path value=(each page lobe)] =_dat]
+      %+  ~(put by dat)  path
       ?-  -.value
         %|  p.value
         %&  lobe:(~(got by change-cages) path)
@@ -1911,7 +1960,7 @@
         hut.ran  (~(put by hut.ran) r.yaki yaki)
         lat.ran  (~(uni by new-pages) lat.ran)
       ==
-    =.  file-store.args  lat.ran
+    =.  args  (tako-args:fusion q.yaki lat.ran veb.bug)
     ::
     =/  mem  (want-mime 0)
     =/  res=[mum=(map path (unit mime)) mim=_mim.dom args=_args]
@@ -2036,6 +2085,7 @@
     ++  checkout-changes
       |=  [=ford=args:ford:fusion changes=(map path (each page lobe))]
       ^-  (map path [=lobe =cage])
+      =/  fod  (ford:fusion ford-args)
       %+  roll  `(list [path (each page lobe)])`~(tap by changes)
       |=  $:  [=path change=(each page lobe)]
               built=(map path [lobe cage])
@@ -2043,7 +2093,7 @@
       ^+  built
       =/  =cage
         ::  ~>  %slog.[0 leaf/"clay: validating {(spud path)}"]
-        (read-file:(ford:fusion ford-args) path)
+        (read-file:fod path)
       =/  =lobe
         ?-  -.change
           %|  p.change
@@ -2125,7 +2175,8 @@
         =/  original=(map path (each page lobe))
           (~(run by q.yaki) |=(=lobe |+lobe))
         (~(uni by original) changes)
-      =/  =args:ford:fusion  [all-changes lat.ran veb.bug]
+      =/  =args:ford:fusion
+        (launder-args:ford:fusion all-changes lat.ran veb.bug)
       =/  all-change-cages  (checkout-changes args all-changes)
       =/  ccs=(list [=path =lobe =cage])  ~(tap by change-cages)
       |-  ^+  *sane-changes
@@ -2911,11 +2962,12 @@
         ~
       (~(put by $(dels t.dels)) i.dels ~)
     =/  cans=(list path)  ~(tap by changes)
+    =/  fod  (ford:fusion ford-args)
     |-  ^-  (map path (unit mime))
     ?~  cans  mim
     =/  =cage
       ~|  mime-cast-fail+i.cans
-      (cast-path:(ford:fusion ford-args) i.cans %mime)
+      (cast-path:fod i.cans %mime)
     =/  mim  $(cans t.cans)
     (~(put by mim) i.cans `!<(mime q.cage))
   ::
@@ -2984,9 +3036,8 @@
     =.  mon                                             ::  [ergo]
       (~(put by mon) pot [her syd ud+for-yon] spur)
     =/  =yaki  (~(got by hut.ran) (~(got by hit.dom) u.yon))
-    =/  files  (~(run by q.yaki) |=(=lobe |+lobe))
-    =/  =args:ford:fusion  [files lat.ran veb.bug]
-    =/  mim  (checkout-mime args ~ ~(key by files))
+    =/  =args:ford:fusion  (tako-args:fusion q.yaki lat.ran veb.bug)
+    =/  mim  (checkout-mime args ~ ~(key by q.yaki))
     =.  mim.dom  (apply-changes-to-mim mim.dom mim)
     (ergo for-yon mim)
   ::
