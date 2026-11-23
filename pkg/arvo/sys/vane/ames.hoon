@@ -5201,8 +5201,8 @@
               (wake-dead-flows:event-core ~ abort=%.n)
             ::
             %-  (slog leaf+"ames: switching to dead flow consolidation" ~)
-            =;  cor=event-core
-              set-dead-flow-timer:cor
+            =<  set-dead-flow-timer
+            ^+  event-core
             %-  ~(rep by peers.ames-state)
             |=  [[=ship =ship-state] core=_event-core]
             ^+  core
@@ -6605,14 +6605,14 @@
           ++  on-memo
             |=  [=bone =message]
             ^+  peer-core
-            =+  log="ames: {<her>} ignoring {<-.message>} on "
+            =/  log  |.("ames: {<her>} ignoring {<-.message>} on ")
             ?:  ?&  (~(has in closing.peer-state) bone)
                     !=(message [%plea %$ /flow %cork ~])
                 ==
-              ~>  %slog.0^leaf/(weld log "closing bone {<bone>}")
+              ~>  %slog.0^leaf/(weld $:log "closing bone {<bone>}")
               peer-core
             ?:  (~(has in corked.peer-state) bone)
-              ~>  %slog.0^leaf/(weld log "corked bone {<bone>}")
+              ~>  %slog.0^leaf/(weld $:log "corked bone {<bone>}")
               peer-core
             ::
             abet:(call:(abed:mu bone) %memo message)
@@ -9047,7 +9047,20 @@
             ::
             ++  max-backoff
               ^-  @dr
-              ?:(?=([[%gall %use %ping *] *] duct) ~s25 retry-timer)
+              ?:  ?=([[%gall %use %ping *] *] duct)  ~s25
+              ::  peers we have heard from recently keep the ~m2 ceiling
+              ::
+              ?.  ?=(%dead -.qos.peer-state)  retry-timer
+              ::  otherwise scale the ceiling with how long they have been
+              ::  gone.  we never give up on a flow, we just slow down: a
+              ::  peer that comes back almost always talks to us first, and
+              ::  a year-dead peer does not need a packet every ~m2.
+              ::
+              =/  gone=@dr  `@dr`(sub-safe now last-contact.qos.peer-state)
+              ?:  (lth gone ~d1)   retry-timer
+              ?:  (lth gone ~d7)   ~m10
+              ?:  (lth gone ~d30)  ~h1
+              ~h6
             ::  +in-slow-start: %.y if we're in "slow-start" mode
             ::
             ++  in-slow-start
@@ -10553,12 +10566,11 @@
             ::  could have the same lane?
             ::
             per
-          =/  lane=tape
-            ?@  i.next
-              "from {<`@p`i.next>}"
-            "lane={(scow %if p.i.next)}:{((d-co:co 1) q.i.next)}"
           %-  %+  ev-tace  rcv.veb.bug.ames-state
-              |.("hear indirect packet hop={<hop>} {lane}")
+              |.  ^-  tape
+              =;  lane=tape  "hear indirect packet hop={<hop>} {lane}"
+              ?@  i.next  "from {<`@p`i.next>}"
+              "lane={(scow %if p.i.next)}:{((d-co:co 1) q.i.next)}"
           %_    per
               lane
             ?~  lane.per  `[hop i.next]
@@ -12080,6 +12092,7 @@
             sy-core
           ::
           %-  %+  %*(ev-tace ev her ship.stun)  sun.veb.bug.ames-state
+              |.  ^-  tape
               =/  lane=tape
                 ?:  ?=(%& -.lane.stun)
                   "from {<p.lane.stun>}"
@@ -12087,7 +12100,7 @@
                 =/  ip=@if  (end [0 32] p)
                 =/  pt=@ud  (cut 0 [32 16] p)
                 "lane {(scow %if ip)}:{((d-co:co 1) pt)} ({(scow %ux p)})"
-              |.("inject %stun {<-.stun>} {lane}")
+              "inject %stun {<-.stun>} {lane}"
           ::
           %-  sy-emit
           %^  poke-ping-app  unix-duct  our

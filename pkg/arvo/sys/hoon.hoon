@@ -2466,7 +2466,9 @@
       ?~  a.a  [%f & zer]
       ::
       ?:  =(den %i)  [%f & a]
-      ?:  =((cmp:si emx e.a) -1)  [%i &]  [%f & a]      ::  enforce max. exp
+      ?.  =((cmp:si emx e.a) -1)  [%f & a]              ::  enforce max. exp
+      ?:  ?=(?(%fl %sm) t)  [%f & lfn]                  ::  toward 0: saturate
+      [%i &]
     ::
     ++  drg                                             ::  dragon4; get
       ~/  %drg                                          ::  printable decimal;

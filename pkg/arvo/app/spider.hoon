@@ -339,7 +339,8 @@
     ~/  %on-arvo
     |=  [=wire gift=gift-user-v1:gall]
     ^-  (quip card _this)
-    ?:  ?=(%unsupported -.gift)  (on-arvo:def wire gift) :: TODO: handle failed syscalls
+    ::TODO  handle failed syscalls
+    ?:  ?=(%unsupported -.gift)  (on-arvo:def wire gift)
     =^  cards  state
       ?+  wire  (on-arvo:def wire gift)
         [%thread @ *]  (handle-gift:sc i.t.wire t.t.wire gift)
@@ -466,10 +467,19 @@
 ++  handle-gift
   ~/  %handle-gift
   |=  [=tid =wire gift=gift-user-v1:gall]
+  ^-  (quip card _state)
   =/  yarn  (~(get by tid.state) tid)
   ?~  yarn
     %-  (slog leaf+"spider got gift for non-existent {<tid>}" ~)
-    `state
+    ::  for some legacy thread gifts, do explicit clean-up to prevent
+    ::  recurring triggers
+    ::
+    :_  state
+    ?+  gift  ~
+      [%syscall @ %dill %logs *]  [%pass [%thread tid wire] %arvo %syscall %d %logs ~]~
+    ==
+  ::  apply the gifts to the thread's tracked resources
+  ::
   =/  res=(set arvo-resource)  (~(gut by resources.state) tid ~)
   =/  deets=(map arvo-resource resource-deet)
     (~(gut by resource-deets.state) tid ~)

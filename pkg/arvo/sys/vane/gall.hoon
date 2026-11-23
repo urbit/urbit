@@ -1454,7 +1454,7 @@
     ++  ap-idle
       ^+  ap-core
       ?:  ?=(%| -.agent.yoke)  ap-core
-      ~>  %spin.[(crip "on-save/{<agent-name>}")]
+      ~>  %spin.[(rap 3 'on-save/%' agent-name ~)]
       ::  arvo-resources -> generate appropriate cleanup card
       ::
       %-  ap-move(agent.yoke |+[clean=& on-save:ap-agent-core])
@@ -1957,7 +1957,7 @@
       ~/  %ap-peek
       |=  [veb=? care=term tyl=path]
       ^-  (unit (unit cage))
-      ~>  %spin.[(crip "on-peek/{<agent-name>}")]
+      ~>  %spin.[(rap 3 'on-peek/%' agent-name ~)]
       ::  take trailing mark off path for %x scrys
       ::
       =^  want=mark  tyl
@@ -2061,7 +2061,7 @@
       =<  ~|  inflating=inflating
           ?>(=(~ inflating) .)
       ^+  ap-core
-      ~>  %spin.[(crip "on-save/{<agent-name>}")]
+      ~>  %spin.[(rap 3 'on-save/%' agent-name ~)]
       =/  old-state=vase
         ?:  ?=(%& -.agent.yoke)
           on-save:ap-agent-core
@@ -2281,7 +2281,7 @@
       ~/  %ap-subscribe
       |=  pax=path
       ^+  ap-core
-      ~>  %spin.[(crip "on-watch/{<agent-name>}")]
+      ~>  %spin.[(rap 3 'on-watch/%' agent-name ~)]
       =/  incoming   [ship.attributing.agent-routes pax]
       =.  bitt.yoke  (~(put by bitt.yoke) agent-duct incoming)
       =^  maybe-frag  ap-core
@@ -2296,7 +2296,7 @@
       ~/  %ap-poke
       |=  =cage
       ^+  ap-core
-      ~>  %spin.[(crip "on-poke/{<agent-name>}")]
+      ~>  %spin.[(rap 3 'on-poke/%' agent-name ~)]
       =^  maybe-frag  ap-core
         %+  ap-ingest  %poke-ack  |.
         (on-poke:ap-agent-core cage)
@@ -2306,7 +2306,7 @@
     ++  ap-error
       |=  [=frag:agent =call:agent]
       ^+  ap-core
-      ~>  %spin.[(crip "on-fail/{<agent-name>}")]
+      ~>  %spin.[(rap 3 'on-fail/%' agent-name ~)]
       =/  form  |=(=tank [%rose [~ "! " ~] tank ~])
       =^  maybe-frag  ap-core
         %+  ap-ingest  ~  |.
@@ -2345,7 +2345,7 @@
       ~/  %ap-generic-take
       |=  [syscall=? deets=* =wire =sign-arvo]
       ^+  ap-core
-      ~>  %spin.[(crip "on-arvo/{<agent-name>}")]
+      ~>  %spin.[(rap 3 'on-arvo/%' agent-name ~)]
       %+  ap-handle-gift  wire
       ^-  gift-user-v1
       ?:  syscall  [%syscall kelvin=zuse sign-arvo]
@@ -2452,7 +2452,7 @@
       ::
       ++  sub-key  [agent-wire dock]
       ++  ingest
-        ~>  %spin.[(crip "on-agent/{<agent-name>}")]
+        ~>  %spin.[(rap 3 'on-agent/%' agent-name ~)]
         (ap-ingest ~ |.((on-agent:ap-agent-core agent-wire sign)))
       ++  error
         |=  [=frag:agent =tank]
@@ -2556,7 +2556,7 @@
       ~/  %ap-upgrade-state
       |=  maybe-vase=(unit vase)
       ^-  [(unit frag:agent) _ap-core]
-      ~>  %spin.[(crip "on-init/{<agent-name>}")]
+      ~>  %spin.[(rap 3 'on-init/%' agent-name ~)]
       ::
       =^  maybe-frag  ap-core
         %+  ap-ingest  ~
@@ -2573,7 +2573,7 @@
     ::
     ++  ap-load-delete
       ^+  ap-core
-      ~>  %spin.[(crip "on-leave/{<agent-name>}")]
+      ~>  %spin.[(rap 3 'on-leave/%' agent-name ~)]
       ::
       =/  maybe-incoming  (~(get by bitt.yoke) agent-duct)
       ?~  maybe-incoming
