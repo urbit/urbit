@@ -1305,8 +1305,6 @@
             ?:  =(443 u.secure.ports.state)
               ''
             (crip ":{(a-co:co u.secure.ports.state)}")
-            ?:  ?=([[~ ~] ~] (parse-request-line url.request))
-              '/'
             url.request
         ==
       %-  send-instant-response
@@ -1618,13 +1616,14 @@
     ?.  authenticated.req  (error-response 403 ~)
     ?.  =(%'GET' method.request.req)
       (error-response 405 "may only GET scries")
-    =/  rul  (parse-request-line url.request.req)
-    =/  fqp  (fully-qualified site.rul)
+    ?~  rul=(parse-request-line url.request.req)
+      (error-response 400 "unparsable url")
+    =/  fqp  (fully-qualified site.u.rul)
     =/  mym
       %:  scry-mime
         now    rof
         `scope:(need (identity-from-auth:authentication authentication.req))
-        [~ ~]  ext.rul  site.rul
+        [~ ~]  ext.u.rul  site.u.rul
       ==
     ?:  ?=(%| -.mym)  (error-response 500 p.mym)
     =*  mime  p.mym
@@ -1683,16 +1682,17 @@
       (error-response 405 "may only GET scries")
     ::  make sure the path contains an app to scry into
     ::
-    =+  req=(parse-request-line url.request.ruq)
-    =.  site.req
-      ?>  ?=([%'~' %scry *] site.req)
-      t.t.site.req
-    ?.  ?=(^ site.req)
+    ?~  req=(parse-request-line url.request.ruq)
+      (error-response 400 "unparsable url")
+    =.  site.u.req
+      ?>  ?=([%'~' %scry *] site.u.req)
+      t.t.site.u.req
+    ?.  ?=(^ site.u.req)
       (error-response 400 "scry path must start with app name")
     ::  attempt the scry that was asked for and
     ::  verify scoped desk scry permissions
     ::
-    =/  scry-path  (snoc t.site.req (fall ext.req %mime))
+    =/  scry-path  (snoc t.site.u.req (fall ext.u.req %mime))
     =/  err-scry=(unit [@ud tape])
       =+  identity=(need (identity-from-auth:authentication authentication.ruq))
       ?~  scope=scope.identity  ~
@@ -1700,12 +1700,12 @@
       ?.  ?=([~ ~ %bond *] pes)
         `[500 "could not resolve scry for {<u.scope>} permissions"]
       =+  !<(=bond:ward:clay q.u.u.pes)
-      =/  =omen  [%gx [our i.site.req da+now] scry-path]
+      =/  =omen  [%gx [our i.site.u.req da+now] scry-path]
       ?:  (rite:guard:gall our peg.bond omen)  ~
       `[403 "scry denied for {<u.scope>}: {<(en-omen omen)>}"]
     ?^  err-scry  (error-response u.err-scry)
     ::
-    =/  res=(unit (unit cage))  (do-scry %gx i.site.req scry-path)
+    =/  res=(unit (unit cage))  (do-scry %gx i.site.u.req scry-path)
     ?~  res    (error-response 500 "failed scry")
     ?~  u.res  (error-response 404 "no scry result")
     =*  mark   p.u.u.res
@@ -1727,7 +1727,7 @@
     ::  attempt to find conversion gate to mime
     ::
     =/  tub=(unit tub=tube:clay)
-      (find-tube i.site.req mark %mime)
+      (find-tube i.site.u.req mark %mime)
     ?~  tub  (error-response 500 "no tube from {(trip mark)} to mime")
     ::  attempt conversion, then send results
     ::
@@ -2079,12 +2079,14 @@
         (identity-from-auth authentication.req)
       ::  parse the arguments out of request uri
       ::
-      =+  request-line=(parse-request-line url.request)
-      =/  target-desk  (get-header:http 'desk' args.request-line)
-      =/  redirect     (get-header:http 'redirect' args.request-line)
+      ?~  request-line=(parse-request-line url.request)
+        %+  instant:response  req
+        (login-page 400 [~ ~] our identity ~ %.n)
+      =/  target-desk  (get-header:http 'desk' args.u.request-line)
+      =/  redirect     (get-header:http 'redirect' args.u.request-line)
       =/  with-eauth=(unit ?)
         ?:  =(~ eauth-url:eauth)  ~
-        `?=(^ (get-header:http 'eauth' args.request-line))
+        `?=(^ (get-header:http 'eauth' args.u.request-line))
       ::  drop weird redirect params, only absolute url paths allowed
       ::TODO  could be (sane %ta) check?
       ::
@@ -2262,12 +2264,14 @@
         (rush q.u.body.request yquy:de-purl:html)
       ?~  parsed
         (instant:response req (logout-page 400 ~))
+      ?~  rel=(parse-request-line url.request.req)
+        (instant:response req (logout-page 400 ~))
       ::  whatever we end up doing, we always respond with a redirect
       ::
       =/  payload=simple-payload:http
         =/  redirect=(unit @t)
-          %+  get-header:http  'redirect'
-          args:(parse-request-line url.request.req)
+          (get-header:http 'redirect' args.u.rel)
+        ::TODO  review, make consistent with login?
         =?  redirect  &(?=(^ redirect) |(!=('/' (end 3^1 u.redirect)) !((sane %t) u.redirect)))
           ~
         :*  response-header=[303 ['location' (fall redirect '/~/login')]~]
@@ -2975,11 +2979,13 @@
         =*  error
           %+  instant:response  req
           (eauth-error-page 400 ~)
+        ?~  rel=(parse-request-line url.request.req)
+          error
         ::  GET requests either render the confirmation page,
         ::  or finalize an eauth flow
         ::
         ?:  ?=(%'GET' method.request)
-          =/  args=(map @t @t)  (malt args:(parse-request-line url.request))
+          =/  args=(map @t @t)  (malt args.u.rel)
           =/  server=(unit @p)  (biff (~(get by args) 'server') (cury slaw %p))
           =/  nonce=(unit @uv)  (biff (~(get by args) 'nonce') (cury slaw %uv))
           =/  token=(unit @uv)  (biff (~(get by args) 'token') (cury slaw %uv))
@@ -3092,14 +3098,14 @@
       ::  parse out the path key the subscription is on
       ::
       =+  request-line=(parse-request-line url.request)
-      ?.  ?=([@t @t @t ~] site.request-line)
-        ::  url is not of the form '/~/channel/'
+      ?.  ?=([~ [* [@t @t @t ~]] *] request-line)
+        ::  url is unparsable, or not of the form '/~/channel/'
         ::
         %+  instant:response  req
         (error-page 400 & url.request "malformed channel url")
       ::  channel-id: unique channel id parsed out of url
       ::
-      =+  channel-id=i.t.t.site.request-line
+      =+  channel-id=i.t.t.site.u.request-line
       ::
       ?:  =('PUT' method.request)
         ::  PUT methods starts/modifies a channel, and returns a result immediately
@@ -4324,8 +4330,9 @@
     ::    todo: this is really input validation, and we should return a 500 to
     ::    the client.
     ::
-    =/  request-line  (parse-request-line url)
-    =/  parsed-url=(list @t)  site.request-line
+    ?~  request-line=(parse-request-line url)
+      [%four-oh-four ~]
+    =/  parsed-url=(list @t)  site.u.request-line
     ::  resolve eyre namespace manually
     ::
     ?:  ?=([%'~' *] parsed-url)
@@ -4447,8 +4454,8 @@
 ::
 ++  parse-request-line
   |=  url=@t
-  ^-  [[ext=(unit @ta) site=(list @t)] args=(list [key=@t value=@t])]
-  (fall (rush url ;~(plug apat:de-purl:html yque:de-purl:html)) [[~ ~] ~])
+  ^-  (unit [[ext=(unit @ta) site=(list @t)] args=(list [key=@t value=@t])])
+  (rush url ;~(plug apat:de-purl:html yque:de-purl:html))
 ::  +insert-binding: add a new binding, replacing any existing at its path
 ::
 ++  insert-binding
