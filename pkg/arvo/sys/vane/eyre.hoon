@@ -4229,6 +4229,7 @@
     ::  send the root cookie with a far-future expiry time, even on first mint.
     ::  this doesn't conflict with initial short life of guest sessions, since
     ::  that's about eyre-side state for clients that don't remember cookies.
+    ::  (in practice, most browsers limit cookie age to max 400 days...)
     ::
     =/  cookie-expiry
       ?^  scope.identity.u.ses  expiry-time.u.ses
