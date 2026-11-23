@@ -2140,7 +2140,7 @@
       ::TODO  could be (sane %ta) check?
       ::
       ?:  ?|  &(?=(^ target-desk) !((sane %tas) u.target-desk))
-              &(?=(^ redirect) |(!=('/' (end 3^1 u.redirect)) !((sane %t) u.redirect)))
+              &(?=(^ redirect) !=('' u.redirect) |(!=('/' (end 3^1 u.redirect)) !((sane %t) u.redirect)))
           ==
         %+  instant:response  req
         (login-page 400 [~ ~] our identity with-eauth %.n)
