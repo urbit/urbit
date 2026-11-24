@@ -1178,10 +1178,12 @@
         ::    (or, if we're on root already, to the login page)
         ::
           %jump
-        ::  make sure we clean up the old session, we won't return to it
+        ::  make sure we clean up the old session, we won't return to it.
+        ::  but never log out a root session!
         ::
         =^  moz1  state
-          ?~  session  [~ state]
+          ?~  session        [~ state]
+          ?~  desk.p.target  [~ state]
           (close-session:authentication u.session |)
         =^  moz2  state
           %-  send-instant-response
