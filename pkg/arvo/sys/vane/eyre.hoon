@@ -4454,7 +4454,7 @@
 ::
 ++  sane-url  ::  ascii w/o ctrl chars or newlines or del
   |=  url=@t
-  (lien (rip 3 url) |=(a=@ &((gte a 32) !=(a 0x7f))))
+  (levy (rip 3 url) |=(a=@ &((gte a 32) !=(a 0x7f))))
 ::
 ++  parse-request-line
   |=  url=@t
