@@ -2221,9 +2221,9 @@
         (as-octs:mimes:html (scot %uv session.ses))
       =/  col=[key=@t value=@t]
         ['content-length' (crip (a-co:co p.bod))]
-      ?~  redirect
+      ?~  (get-header:http 'redirect' u.parsed)
         [200^~[col] `bod]
-      =/  actual-redirect=@t  ?:(=(u.redirect '') '/' u.redirect)
+      =/  actual-redirect=@t  ?~(redirect '/' u.redirect)
       =?  actual-redirect   ?&  ?=(^ target-desk)
                                 !=('' u.target-desk)
                                 ?=([%& *] target)
