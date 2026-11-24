@@ -2262,9 +2262,8 @@
         (instant:response req (logout-page 200 (get-header:http 'redirect' args.u.rel)))
       ?.  ?=(%'POST' method.request)
         (instant:response req (logout-page 405 ~))
-      ?~  body.request
-        (instant:response req (logout-page 400 ~))
       =/  parsed=(unit (list [key=@t value=@t]))
+        ?~  body.request  `~
         (rush q.u.body.request yquy:de-purl:html)
       ?~  parsed
         (instant:response req (logout-page 400 ~))
