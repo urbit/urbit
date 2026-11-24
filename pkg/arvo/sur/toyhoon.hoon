@@ -78,7 +78,7 @@
 +$  type
   $~  %noun
   $@  $?  %noun
-          %void
+          :: %void
       ==
   $%  [%atom p=term q=(unit @)]
       [%cell p=type q=type]

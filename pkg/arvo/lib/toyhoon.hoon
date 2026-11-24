@@ -39,7 +39,9 @@
     ?-  mel
       %lead  &
       %gold  &(dext dext(sut ref, ref sut)) ::meet
-      %iron  dext(sut (peek ref %rite 2), ref (peek sut %rite 2))
+      %iron  ?~  r=(peek ref %rite 2)  !!  ::TODO
+             ?~  s=(peek sut %rite 2)  !!  ::TODO
+             dext(sut r, ref s)
     ==
   ::
   ++  deep
@@ -58,11 +60,7 @@
   ++  dext
     ^-  ?
     ?:  =(sut ref)  &
-    ?@  sut
-      ?-  sut
-        %noun  &
-        %void  sint
-      ==
+    ?@  sut  &  ::  %noun
     ?-  -.sut
     ::
       %atom  ?.  ?=([%atom *] ref)  sint
@@ -110,19 +108,16 @@
     ::
       %hold  ?:  (~(has in seg) sut)  |
              ?:  (~(has in gil) [sut ref])  &
+             ?~  d=(drop sut)  |
              %=  dext
-               sut  (drop sut)
+               sut  d
                seg  (~(put in seg) sut)
                gil  (~(put in gil) [sut ref])
              ==
     ==
   ++  sint
     ^-  ?
-    ?@  ref
-      ?-  ref
-        %noun  |
-        %void  &
-      ==
+    ?@  ref  &  ::  %noun
     ?-  -.ref
     ::
       %atom  |
@@ -144,8 +139,9 @@
     ::
       %hold  ?:  (~(has in reg) ref)  &
              ?:  (~(has in gil) [sut ref])  &
+             ?~  d=(drop ref)  &
              %=  dext
-               ref  (drop ref)
+               ref  d
                reg  (~(put in reg) ref)
                gil  (~(put in gil) [sut ref])
              ==
@@ -173,7 +169,8 @@
     ?:  ?=(%& -.heg)
       ::  resolve the tree address directly
       ::
-      [%pale [`p.heg]~ %leg (peek sut way p.heg)]
+      ?~  p=(peek sut way p.heg)  [%void ~]
+      [%pale [`p.heg]~ %leg p]
     =/  axe  1
     =|  gil=(set type)
     |-  ^-  pony
@@ -181,7 +178,6 @@
       ?>  =(0 p.heg)  ::  no skipping on bare com
       [%pale [~ `axe ~] %leg ?:(?=([%face *] sut) q.sut sut)]
     ?-  sut
-      %void      [%void ~]
       %noun      [%fail p.heg]
       [%atom *]  [%fail p.heg]
       [%cell *]  =+  taf=$(axe (peg axe 2), sut p.sut)
@@ -191,7 +187,8 @@
                  ?.  =(0 p.heg)        [%fail (dec p.heg)]
                  [%pale [~ `axe ~] %leg q.sut]
       [%hold *]  ?:  (~(has in gil) sut)  [%void ~]  ::TODO  review: necessary?
-                 $(gil (~(put in gil) sut), sut (drop sut))
+                 ?~  d=(drop sut)  [%void ~]
+                 $(gil (~(put in gil) sut), sut d)
       [%bcpt *]  [%fail p.heg]
       [%bccn *]  [%fail p.heg]
       [%bckt *]  [%fail p.heg]
@@ -213,7 +210,8 @@
         [&(?=(%iron var.sut) ?=(%rite way)) |]
       ?.  sam.pec  [%fail p.heg]
       ?:  con.pec  $(sut p.sut, axe (peg axe 3))
-      $(sut (peek p.sut way 2), axe (peg axe 6))
+      ?~  p=(peek p.sut way 2)  [%void ~]
+      $(sut p, axe (peg axe 6))
     ==
   --
 ::
@@ -233,15 +231,15 @@
     |-  ^-  ^type
     ?+  sut  ^$(vein t.vein)
       [%face *]  sut(q $(sut q.sut))
-      [%hold *]  $(sut (drop sut))
+      [%hold *]  ?~  d=(drop sut)  !!  ::TODO
+                 $(sut d)
     ==
   =*  axis  u.i.vein
-  |-  ^-  ^type
+  |-  ^-  typo
   ?:  =(1 axis)  ^$(vein t.vein)
   ?-  sut
-    %void      %void
     %noun      $(sut [%cell %noun %noun])
-    [%atom *]  %void
+    [%atom *]  ~
     [%cell *]  ?:  =(2 (cap axis))  ::TODO  wrong, propagate %void!
                  sut(p $(sut p.sut, axis (mas axis)))
                sut(q $(sut q.sut, axis (mas axis)))
@@ -249,30 +247,30 @@
                  $(sut [%cell %noun p.sut])
                sut(p $(sut p.sut, axis (mas axis)))
     [%face *]  sut(q $(sut q.sut))
-    [%bcpt *]  %void  ::TODO  review after writing name resolution! mb do cell branch
-    [%bccn *]  %void  ::TODO  review after writing name resolution!
-    [%bckt *]  %void  ::TODO  review after writing name resolution!
-    [%bcwt *]  %void
+    [%bcpt *]  ~  ::TODO  review after writing name resolution! mb do cell branch
+    [%bccn *]  ~  ::TODO  review after writing name resolution!
+    [%bckt *]  ~  ::TODO  review after writing name resolution!
+    [%bcwt *]  ~
     [%hold *]  $(sut (drop sut))
   ==
 ::
 ++  peek
   |=  [sut=type way=vial axe=axis]
-  ^-  type
+  ^-  typo
   ?:  =(1 axe)  sut
   =+  [now=(cap axe) lat=(mas axe)]
   =|  gil=(set type)
-  |-  ^-  type
+  |-  ^-  typo
   ?@  sut  sut
   ?-  -.sut
-      %atom  %void
+      %atom  ~
       %cell  ?:(=(2 now) ^$(sut p.sut, axe lat) ^$(sut q.sut, axe lat))
       %face  $(sut q.sut)
       %bcpt  %noun
-      %bccn  ?:(&(=(2 now) !=(2 axe)) %void %noun)
+      %bccn  ?:(&(=(2 now) !=(2 axe)) ~ %noun)
       %bckt  %noun
-      %bcwt  %void
-      %hold  $(sut (drop sut))
+      %bcwt  ~
+      %hold  ?~(d=(drop sut) ~ $(sut d))
       %core  ?:  =(2 now)  %noun
              ?.  |(?=(%gold var.sut) ?=(%wet var.sut) ?=(%free way))
                %noun
@@ -280,9 +278,9 @@
   ==
 ++  drop
   |=  $=  sut
-      $~  [%hold %void *naty]
-      $>(%hold type)
-  ^-  type
+      $~  [%hold %noun *naty]
+      $>(%hold typo)
+  ^-  typo
   (play +.sut)
 ::
 ++  open
@@ -462,11 +460,7 @@
 ++  make-mold
   |=  sut=type
   ^-  mold
-  ?@  sut
-    ?-  sut
-      %noun  [%base %noun]
-      %void  !!
-    ==
+  ?@  sut  [%base %noun]
   ?-  -.sut
     %atom  ::TODO  constant atoms in $mold
            ?:  &(=(%n p.sut) =(`~ q.sut))  [%base %null]
@@ -499,8 +493,9 @@
         [%cell *]  +.gol
         [%face *]  $(gol q.gol)
         [%hold *]  ?:  (~(has in sog) gol)  !! ::xx do we crash?
+                   ?~  d=(drop gol)  !!  ::xx
                    %=  $
-                     gol  (drop gol)
+                     gol  d
                      sog  (~(put in sog) gol)
                    ==
       ==
@@ -526,7 +521,8 @@
       %wtcl  =+  p=$(naty p.naty, gol [%bcwt (my [%& %f] [%| %f] ~)])
              =+  q=$(naty q.naty)
              =+  r=$(naty r.naty)
-             :-  (make-union -.q -.r)
+             ?~  u=(make-union -.q -.r)  ~|(%mint-vain !!)
+             :-  u
              [%6 +.p +.q +.r]
   ::
       %tsgr
@@ -546,7 +542,7 @@
   ::
       %cnts
     ?:  (lien wing.naty |=(l=limb =([%& 0] l)))
-      [%void [%0 0]]
+      ~|(%need-a-vet !!)  :: [%void [%0 0]]
     =/  [=vein =opal]  (find sut %read wing.naty)
     =/  =axis  (tend:ut vein)
     =|  hej=(list (pair ^axis nock))
@@ -604,28 +600,34 @@
              =/  [=vein =opal]  (find sut %read wing.naty)
              ?>  ?=(%leg -.opal)
              [vein type.opal]
-           =/  [atom=^type cell=^type]  (split-union type)
+           =/  [atom=typo cell=typo]  (split-union type)
+           ?:  |(?=(~ atom) ?=(~ cell))  ~|(%mint-vain !!)
            =+  y=$(naty y.naty, sut (take sut vein atom))
            =+  n=$(naty n.naty, sut (take sut vein cell))
-           :-  (make-union -.y -.n)
+           ?~  u=(make-union -.y -.n)  ~|(%mint-vain !!)
+           :-  u
            [%6 [%3 %0 (tend:ut vein)] +.n +.y]
     %wtcn  =/  [=vein =type]
              =/  [=vein =opal]  (find sut %read wing.naty)
              ?>  ?=(%leg -.opal)
              [vein type.opal]
-           =/  [yt=^type nt=^type]  (pick-case type tom.naty)
+           =/  [yt=typo nt=typo]  (pick-case type tom.naty)
+           ?:  |(?=(~ yt) ?=(~ nt))  ~|(%mint-vain !!)
            =+  y=$(naty y.naty, sut (take sut vein yt))
            =+  n=$(naty n.naty, sut (take sut vein nt))
-           :-  (make-union -.y -.n)
+           ?~  u=(make-union -.y -.n)  ~|(%mint-vain !!)
+           :-  u
            [%6 [%5 [%1 tom.naty] %0 (peg (tend:ut vein) 2)] +.y +.n]
     %wtkt  =/  [=vein =type]
              =/  [=vein =opal]  (find sut %read [[%& 2] wing.naty])
              ?>  ?=(%leg -.opal)
              [vein type.opal]
-           =/  [atom=^type cell=^type]  (split-union type)
+           =/  [atom=typo cell=typo]  (split-union type)
+           ?:  |(?=(~ atom) ?=(~ cell))  ~|(%mint-vain !!)
            =+  y=$(naty y.naty, sut (take sut vein atom))
            =+  n=$(naty n.naty, sut (take sut vein cell))
-           :-  (make-union -.y -.n)
+           ?~  u=(make-union -.y -.n)  ~|(%mint-vain !!)
+           :-  u
            [%6 [%3 %0 (tend:ut vein)] +.y +.n]
   ::
     %xtra  !!
@@ -772,23 +774,24 @@
 ::
 ++  make-union
   |=  [a=type b=type]
-  ^-  type
-  ?:  ?=(%void a)  b
-  ?:  ?=(%void b)  a
+  ^-  typo
+  :: ?:  ?=(%void a)  b
+  :: ?:  ?=(%void b)  a
   ::NOTE  two-sided nest handles %noun types
   ?:  (nest a b)   a
   ?:  (nest b a)   b
   ::  %hold expansion
   ::TODO  track these y/n?
   ::
-  ?:  ?=([%hold *] a)  $(a (drop a))
-  ?:  ?=([%hold *] b)  $(b (drop b))
+  ?:  ?=([%hold *] a)  ?~(d=(drop a) ~ $(a d))
+  ?:  ?=([%hold *] b)  ?~(d=(drop b) ~ $(b d))
   ::  keep faces only if they match
   ::
   ?:  ?=([%face *] a)
     ?:  ?=([%face *] b)
       ?:  =(p.a p.b)
-        a(q $(a q.a, b q.b))
+        ?~  r=%=($ a q.a, b q.b)  ~
+        a(q r)
       $(a q.a, b q.b)
     $(a q.a)
   ?:  ?=([%face *] b)
@@ -819,20 +822,35 @@
       =+  c=(cat-head-map a)
       =+  d=(cat-head-map b)
       :-  %bccn
-      %-  (~(uno by c) d)
-      |=  [k=@ a=[=aura =type] b=[=aura =type]]
-      [(aura-union aura.a aura.b) ^$(a type.a, b type.b)]
+      %-  %~  rep  by
+          ^-  (map @ [aura typo])
+          %-  (~(uno by `(map @ [aura typo])`c) `(map @ [aura typo])`d)
+          |=  [k=@ a=[=aura =typo] b=[=aura =typo]]
+          ?<  |(?=(~ typo.a) ?=(~ typo.b))
+          [(aura-union aura.a aura.b) ^$(a typo.a, b typo.b)]
+      |=  [[k=@ =aura =typo] m=(map @ [aura type])]
+      ^+  m
+      ?~  typo  m
+      (~(put by m) k aura typo)
     ::  both cell types
     ::  both atomic heads
     ::  one of them not cat head, could be %bccn or %bckt
-    :+  %cell
-      $(a (peek a %free 2), b (peek b %free 2))
-    $(a (peek a %free 3), b (peek b %free 3))
+    ?~  a2=(peek a %free 2)  ~
+    ?~  b2=(peek b %free 2)  ~
+    ?~  a3=(peek a %free 3)  ~
+    ?~  b3=(peek b %free 3)  ~
+    ?~  l=%=($ a a2, b b2)   ~
+    ?~  r=%=($ a a3, b b3)   ~
+    [%cell l r]
   ::  neither has atomic head
   ::  one could be %bckt
-  :+  %cell
-    $(a (peek a %free 2), b (peek b %free 2))
-  $(a (peek a %free 3), b (peek b %free 3))
+  ?~  a2=(peek a %free 2)  ~
+  ?~  b2=(peek b %free 2)  ~
+  ?~  a3=(peek a %free 3)  ~
+  ?~  b3=(peek b %free 3)  ~
+  ?~  l=%=($ a a2, b b2)   ~
+  ?~  r=%=($ a a3, b b3)   ~
+  [%cell l r]
 ::
 ++  is-cat  ::  Constant Atomic Type
   |=  a=type
@@ -864,7 +882,8 @@
     ::
         [%hold *]
       ?:  (~(has in gil) p.a)  ~|(%hah-hold !!)
-      $(p.a (drop p.a), gil (~(put in gil) p.a))
+      ?~  d=(drop p.a)  ~
+      $(p.a d, gil (~(put in gil) p.a))
     ==
   ==
 ++  has-cat-head
@@ -882,7 +901,8 @@
     ::
         [%hold *]
       ?:  (~(has in gil) p.a)  ~|(%hah-hold !!)
-      $(p.a (drop p.a), gil (~(put in gil) p.a))
+      ?~  d=(drop p.a)  |
+      $(p.a d, gil (~(put in gil) p.a))
     ==
   ==
 ++  has-atomic-head
@@ -900,7 +920,8 @@
     ::
         [%hold *]
       ?:  (~(has in gil) p.a)  ~|(%hah-hold !!)
-      $(p.a (drop p.a), gil (~(put in gil) p.a))
+      ?~  d=(drop p.a)  |
+      $(p.a d, gil (~(put in gil) p.a))
     ==
   ==
 ++  extract-aura
@@ -918,29 +939,31 @@
 ::
 ++  split-union  :: into atom and cell cases
   |=  a=type
-  ^-  [type type]
-  ?+  a  !!
+  ^-  [typo typo]
+  ?+  a  ~|(a !!)  ::TODO  handle other types
     %noun      [[%atom %$ ~] [%cell %noun %noun]]
     [%bcpt *]  +.a
-    [%face *]  =/  [atom=type cell=type]  $(a q.a)
-               [a(q atom) a(q cell)]
-    [%hold *]  $(a (drop a))  ::TODO  track!
+    [%face *]  =/  [atom=typo cell=typo]  $(a q.a)
+               [?~(atom ~ a(q atom)) ?~(cell ~ a(q cell))]
+    [%hold *]  ?~  d=(drop a)  [~ ~]
+               $(a d)  ::TODO  track!
   ==
 ::
 ++  pick-case  ::  into with and without tom case in a
   |=  [a=type tom=@]
-  ^-  [type type]
+  ^-  [typo typo]
   ?+  a  !!
     [%bccn *]  :-  =+  (~(got by p.a) tom)
                    [%cell [%atom aura `tom] type]
                =.  p.a  (~(del by p.a) tom)
                ?+  p.a  a
-                 ~        %void
+                 ~        ~
                  [* ~ ~]  [%cell [%atom aura.q `p] type.q]:n.p.a
                ==
-    [%face *]  =/  [y=type n=type]  $(a q.a)
-               [a(q y) a(q n)]
-    [%hold *]  $(a (drop a))  ::TODO  track!
+    [%face *]  =/  [y=typo n=typo]  $(a q.a)
+               [?~(y ~ a(q y)) ?~(n ~ a(q n))]
+    [%hold *]  =+  b=(drop a)  ::TODO  track!
+               ?~(b [~ ~] $(a b))  ::TODO  consider crashing
   ==
 ::
 ++  noun-to-type
@@ -983,7 +1006,8 @@
     [%bcpt *]  [%bcpt $(a tom.a) $(a cel.a)]
     [%bccn *]  [%bccn (~(run by p.a) |=([=aura =type] [aura ^$(a type)]))]
     [%bckt *]  a(cel $(a cel.a), tom $(a tom.a))
-    [%hold *]  $(a (drop a), nop (~(put in nop) a))
+    [%hold *]  ?~  d=(drop a)  ~|(%lets-go !!)
+               $(a d, nop (~(put in nop) a))
   ==
 ::
 ++  parse
