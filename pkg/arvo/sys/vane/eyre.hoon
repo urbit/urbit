@@ -2083,15 +2083,16 @@
         %+  instant:response  req
         (login-page 400 [~ ~] our identity ~ %.n)
       =/  target-desk  (get-header:http 'desk' args.u.request-line)
+      =?  target-desk  =(`'' target-desk)  ~
       =/  redirect     (get-header:http 'redirect' args.u.request-line)
+      =?  redirect     =(`'' redirect)  ~
       =/  with-eauth=(unit ?)
         ?:  =(~ eauth-url:eauth)  ~
         `?=(^ (get-header:http 'eauth' args.u.request-line))
       ::  drop weird redirect params, only absolute url paths allowed
-      ::TODO  could be (sane %ta) check?
       ::
       ?:  ?|  &(?=(^ target-desk) !((sane %tas) u.target-desk))
-              &(?=(^ redirect) |(!=('/' (end 3^1 u.redirect)) !((sane %t) u.redirect)))
+              &(?=(^ redirect) |(!=('/' (end 3^1 u.redirect)) !(sane-url u.redirect)))
           ==
         %+  instant:response  req
         (login-page 400 [~ ~] our identity with-eauth %.n)
@@ -2101,16 +2102,15 @@
       ?:  ?=([%& * ^] target)
         ::TODOxx  refactor redirects into dedicated arm?
         %+  instant:response  req
-        =/  next=@t
-          %+  rap  3
-          :~  '//'
-              (host-string -.p.target)
-              '/~/login'
-              '?desk='  u.desk.p.target
-              ?:(=(`& with-eauth) '&eauth' '')
-              ?^(redirect (cat 3 '&redirect=' u.redirect) '')
-          ==
-        [[303 ['location' next]~] data=~]
+        =;  next=@t  [[303 ['location' next]~] data=~]
+        %+  rap  3
+        :~  '//'
+            (host-string -.p.target)
+            '/~/login'
+            '?desk='  u.desk.p.target
+            ?:(=(`& with-eauth) '&eauth' '')
+            ?^(redirect (cat 3 '&redirect=' (crip (en-urlt:html (trip u.redirect)))) '')
+        ==
       ::  if we received a simple get: show the login page
       ::
       ::NOTE  we never auto-redirect, to avoid redirect loops with apps that
@@ -2137,12 +2137,13 @@
         (login-page 400 [~ ~] our identity with-eauth %.n)
       ::
       =/  target-desk=(unit @t)  (get-header:http 'desk' u.parsed)
+      =?  target-desk            =(`'' target-desk)  ~
       =/  redirect=(unit @t)     (get-header:http 'redirect' u.parsed)
+      =?  redirect               =(`'' redirect)  ~
       ::  drop weird redirect params, only absolute url paths allowed
-      ::TODO  could be (sane %ta) check?
       ::
       ?:  ?|  &(?=(^ target-desk) !((sane %tas) u.target-desk))
-              &(?=(^ redirect) !=('' u.redirect) |(!=('/' (end 3^1 u.redirect)) !((sane %t) u.redirect)))
+              &(?=(^ redirect) |(!=('/' (end 3^1 u.redirect)) !(sane-url u.redirect)))
           ==
         %+  instant:response  req
         (login-page 400 [~ ~] our identity with-eauth %.n)
@@ -2151,7 +2152,6 @@
           %+  instant:response  req
           (login-page 400 [target-desk redirect] our identity `& %.n)
         ::TODO  redirect logic here and elsewhere is ugly
-        =/  redirect  (fall redirect '')
         =/  base=@t
           %^  cat  3
             ?:(secure.req 'https://' 'http://')
@@ -2159,7 +2159,7 @@
             %&  (host-string -.p.target)
             %|  (ip-string p.target)
           ==
-        (start:server:eauth req u.ship `base ?:(=(redirect '') '/' redirect))
+        (start:server:eauth req u.ship `base (fall redirect '/'))
       ::
       =.  with-eauth  (bind with-eauth |=(? |))
       ?~  password=(get-header:http 'password' u.parsed)
@@ -2254,8 +2254,10 @@
             ==
           [[303 ['location' next]~] data=~]
       ::
+      ?~  rel=(parse-request-line url.request.req)
+        (instant:response req (logout-page 400 ~))
       ?:  ?=(%'GET' method.request)
-        (instant:response req (logout-page 200 ~))
+        (instant:response req (logout-page 200 (get-header:http 'redirect' args.u.rel)))
       ?.  ?=(%'POST' method.request)
         (instant:response req (logout-page 405 ~))
       ?~  body.request
@@ -2264,15 +2266,12 @@
         (rush q.u.body.request yquy:de-purl:html)
       ?~  parsed
         (instant:response req (logout-page 400 ~))
-      ?~  rel=(parse-request-line url.request.req)
-        (instant:response req (logout-page 400 ~))
       ::  whatever we end up doing, we always respond with a redirect
       ::
       =/  payload=simple-payload:http
-        =/  redirect=(unit @t)
-          (get-header:http 'redirect' args.u.rel)
-        ::TODO  review, make consistent with login?
-        =?  redirect  &(?=(^ redirect) |(!=('/' (end 3^1 u.redirect)) !((sane %t) u.redirect)))
+        =/  redirect=(unit @t)  (get-header:http 'redirect' u.parsed)
+        =?  redirect            =(`'' redirect)  ~
+        =?  redirect  &(?=(^ redirect) |(!=('/' (end 3^1 u.redirect)) !(sane-url u.redirect)))
           ~
         :*  response-header=[303 ['location' (fall redirect '/~/login')]~]
             data=~
@@ -4451,6 +4450,10 @@
   ^-  (unit @t)
   ?.  ?=(^ forwards)  ~
   (~(get by i.forwards) 'host')
+::
+++  sane-url  ::  ascii w/o ctrl chars or newlines or del
+  |=  url=@t
+  (lien (rip 3 url) |=(a=@ &((gte a 32) !=(a 0x7f))))
 ::
 ++  parse-request-line
   |=  url=@t
