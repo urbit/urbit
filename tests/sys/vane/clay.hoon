@@ -1,5 +1,6 @@
 /+  *test
 /=  clay-raw  /sys/vane/clay
+/=  ford-lib  /lib/ford
 /*  gen-hello     %hoon  /gen/hello/hoon
 /*  lib-cram      %hoon  /lib/cram/hoon
 /*  lib-strandio  %hoon  /lib/strandio/hoon
@@ -16,7 +17,7 @@
 ::
 =/  bud=vase  !>(..zuse)
 =/  clay-gate  (clay-raw ~nul)
-=/  fusion  fusion:clay-gate
+=/  fusion  fusion:ford-lib
 ::
 |%
 ++  test-parse-pile  ^-  tang

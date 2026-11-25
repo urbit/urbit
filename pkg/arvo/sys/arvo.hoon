@@ -414,24 +414,28 @@
   ?~  dat=(rof lyc pov u.mon)  ~
   ?~  u.dat  [~ ~]
   =*  vax  q.u.u.dat
-  ::  a prior-kelvin (%136) requested type is migrated forward with
-  ::  +next-type, then checked as usual.  results whose value is itself a
-  ::  vase or tube (clay %cr/%cc) need their type adjusted for an old-kelvin
-  ::  requester first -- gall does that in +ap-look.
+  ::  .ref is the type the requester asked for, tagged with the hoon
+  ::  kelvin it was compiled with.  a type from the previous kelvin is
+  ::  converted with +next-type before the check.  (gall relabels the few
+  ::  results whose value is a vase or tube for such a requester; see
+  ::  +ap-look in gall.)
   ::
-  ::  TODO move under =>
-  =?  ref  =(-.ref %136)
-    :-  %135
-    (slum next-type:h136 +.ref)
-  ~&  >  %okay
-  ?.  =>  [ref=ref vax=p=p.vax hoon-version=hoon-version wa=wa worm=worm]
+  ?.  =>  :*  ref=ref
+              vax=p=p.vax
+              hoon-version=hoon-version
+              next-type=next-type:h136
+              slum=slum
+              wa=wa
+              worm=worm
+          ==
       ~>  %memo./arvo/look                  ::  with memoization
+      =?  ref  ?=([%136 *] ref)
+        [%135 (slum next-type +.ref)]
       ?&  ?=(^ ref)
           =(hoon-version -.ref)
           -:(~(nets wa *worm) +.ref p.vax)
       ==
     ~>(%slog.[0 leaf+"arvo: scry-lost"] ~)
-  ~&  >  u.pax
   [~ ~ q.vax]
 ::  |wyrd: kelvin negotiation
 ::

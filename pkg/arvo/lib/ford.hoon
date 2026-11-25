@@ -1,7 +1,12 @@
+::  /lib/ford: clay's build system
+::
+::    clay compiles this file against a desk's zuse and builds the desk's
+::    files with it (see +build-ford-api in clay).  it lives in base rather
+::    than in clay, so that a desk which ships its own kernel can compile it
+::    with that kernel.
+::
 =>  ..zuse
 !:
-::
-~!  .
 =~
   =/  bud
     ^~

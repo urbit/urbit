@@ -88,16 +88,6 @@
 ::  Rebuilding Clay for any reason discards build caches
 ::
 ~>  %drop
-=/  bud
-  ^~
-  =/  zuse  !>(..zuse)
-  :*  zuse=zuse
-      nave=(slap zuse !,(*hoon nave:clay))
-      cork=(slap zuse !,(*hoon cork))
-      same=(slap zuse !,(*hoon same))
-      mime=(slap zuse !,(*hoon mime))
-      cass=(slap zuse !,(*hoon cass:clay))
-  ==
 ::  virtualization gates without access to namespace
 ::
 =/  mule  ~(mule vi |)
@@ -472,13 +462,6 @@
     %1       peg.fell
   ==
 ::
-++  has-arm
-  |=  [arm=@tas =mark core=vase]
-  ^-  ?
-  ?.  (slob arm p.core)  |
-  ?~  rib=(mole |.((slub core [%wing ~[arm]])))  |
-  (slob mark p.u.rib)
-::
 ++  rave-to-rove
   |=  rav=rave
   ^-  rove
@@ -499,104 +482,10 @@
     %many  [- track moat]:rov
   ==
 ::
-++  parse-pile
-  ~/  %parse-pile
-  |=  [pax=path txt=@t]
-  ^-  pile
-  =/  [=hair res=(unit [=pile =nail])]
-    %-  road  |.
-    =>  [pile-rule=pile-rule pax=pax txt=txt trip=trip]
-    ~>  %memo./clay/pile
-    ((pile-rule pax) [1 1] (trip txt))
-  ?^  res  pile.u.res
-  (report-error pax txt hair)
+::  $pill: a brass pill, as produced by /lib/pill
 ::
-++  report-error
-  |=  [pax=path txt=@t =hair]
-  %-  mean
-  =/  lyn  p.hair
-  =/  col  q.hair
-  ^-  (list tank)
-  :~  leaf+"syntax error at [{<lyn>} {<col>}] in {<pax>}"
-    ::
-      =/  =wain  (to-wain:format txt)
-      ?:  (gth lyn (lent wain))
-        '<<end of file>>'
-      (snag (dec lyn) wain)
-    ::
-      leaf+(runt [(dec col) '-'] "^")
-  ==
-::
-++  parsing-rules
-  |%
-  ++  pant
-    |*  fel=^rule
-    ;~(pose fel (easy ~))
-  ::
-  ++  mast
-    |*  [bus=^rule fel=^rule]
-    ;~(sfix (more bus fel) bus)
-  ::
-  ++  rune
-    |*  [bus=^rule fel=^rule]
-    %-  pant
-    %+  mast  gap
-    ;~(pfix fas bus gap fel)
-  ::
-  ++  taut-rule
-    %+  cook  |=(taut +<)
-    ;~  pose
-      (stag ~ ;~(pfix tar sym))
-      ;~(plug (stag ~ sym) ;~(pfix tis sym))
-      (cook |=(a=term [`a a]) sym)
-    ==
-  --
-::
-++  pile-rule
-  =>  [..lull parsing-rules]
-  =,  clay
-  |=  pax=path
-  %-  full
-  %+  ifix
-    :_  gay
-    ::  parse optional /? and ignore
-    ::
-    ;~(plug gay (punt ;~(plug fas wut gap dem gap)))
-  ;~  plug
-    %+  cook  (bake zing (list (list taut)))
-    %+  rune  hep
-    (most ;~(plug com gaw) taut-rule)
-  ::
-    %+  cook  (bake zing (list (list taut)))
-    %+  rune  lus
-    (most ;~(plug com gaw) taut-rule)
-  ::
-    %+  rune  tis
-    ;~(plug sym ;~(pfix gap stap))
-  ::
-    %+  rune  sig
-    ;~((glue gap) sym wyde:vast stap)
-  ::
-    %+  rune  cen
-    ;~(plug sym ;~(pfix gap ;~(pfix cen sym)))
-  ::
-    %+  rune  buc
-    ;~  (glue gap)
-      sym
-      ;~(pfix cen sym)
-      ;~(pfix cen sym)
-    ==
-  ::
-    %+  rune  tar
-    ;~  (glue gap)
-      sym
-      ;~(pfix cen sym)
-      ;~(pfix stap)
-    ==
-  ::
-    %+  stag  %tssg
-    (most gap tall:(vang & pax))
-  ==
+::    a desk that targets an older kelvin ships that kernel's brass pill at
+::    /brass/pill.  clay boots it to build the desk's files (see +tako-ford).
 ::
 +$  pill
   $%  [%ivory p=(list)]
@@ -625,24 +514,30 @@
       [%verb p=(unit ?)]
       unix-task
   ==
+::  +make-arvo: boot the kernel in a desk's /brass/pill
+::
+::    runs the pill's boot sequence under +mock, the way the runtime would,
+::    and produces the booted arvo core.  only the kernel (/sys) files are
+::    loaded; the pill's userspace is not needed to build the desk.
+::
+::    the %wyrd event tells the kernel which kelvins the runtime supports.
+::    we give it the live kernel's.  kelvins count down, so they satisfy an
+::    older kernel's requirements.
 ::
 ++  make-arvo
-  |=  pil=(unit pill)
-  ^-  (unit *)
-  ?~  pil  ~
+  |=  non=*
+  ^-  *
   =/  pil=$>(%pill pill)
-    ?+    -.u.pil  !!
-        %cash
-      ^-  $>(%pill pill)
-      [%pill +<.u.pil]
-    ::
-        %pill  u.pil
+    =/  any  ~|(%clay-bad-pill ;;(pill non))
+    ?-  -.any
+      %pill   any
+      %cash   [%pill +<.any]
+      %ivory  ~|(%clay-ivory-pill-unsupported !!)
     ==
-  ::
-  =.  kernel-ova.pil                            ::  filter to /sys
+  =.  kernel-ova.pil
     %+  turn  kernel-ova.pil
-    |=  =unix-event:pill
-    ^-  unix-event:pill
+    |=  =unix-event
+    ^+  unix-event
     ?.  ?=([%what *] q.unix-event)  unix-event
     =/  files=(list (pair path (cask)))
       %+  skim  p.q.unix-event
@@ -650,7 +545,7 @@
       ?=([%sys *] path)
     unix-event(q [%what files])
   ::
-  =/  =wynn        ::  XX this is wrong, if we care, double bootstrap it?
+  =/  =wynn
     :~  zuse+zuse
         lull+lull
         arvo+arvo
@@ -672,33 +567,33 @@
       `(list)`(turn kernel-ova.pil (lead *@da))
       `(list)`[*@da [/d/term/1 %boot & %fake *@p]]^~
     ==
-  ::
   ?-  -.res
-    %0  `+7.p.res                       ::  success
-  ::
-    %1  ~&  [%vere-blocked p.res]  !!
-    %2  ~&  %vere-fail  (mean p.res)
+    %0  +7.p.res
+    %1  ~|([%clay-pill-blocked p.res] !!)
+    %2  (mean leaf+"clay: pill boot failed" p.res)
   ==
-::  +make-zuse: produce the desk's zuse vase, in the desk's own universe
+::  +make-zuse: a desk's zuse, as a vase in the desk's kelvin
 ::
-::    for the native kelvin (no arvo) this is the live !>(..zuse); for a
-::    foreign kelvin it's the raw old vase, evaluated in the desk's arvo.
-::    no migration: callers build with the matching slub/slym.
+::    .arv is the desk's booted kernel from +make-arvo, or ~ for a desk that
+::    builds against the live kernel.
 ::
 ++  make-zuse
   |=  arv=(unit *)
-  ~>  %bout.[1 %make-zuse]
+  ^-  *
   ?~  arv  !>(..zuse)
-  ((cury wisher u.arv) '!>(..zuse)')
+  (wisher u.arv '!>(..zuse)')
+::  +wisher: evaluate hoon source .txt in a booted kernel .arv
+::
+::    axis 10 of the arvo core is its +wish arm, which the runtime uses for
+::    the same purpose.  the product is a noun in that kernel's kelvin.
 ::
 ++  wisher
   |=  [arv=* txt=@t]
-  ?>  ?=(^ arv)
+  ^-  *
   =/  res  (mock [arv +10.arv] ~)
-  =/  wish  ?>(?=(%0 -.res) p.res)
-  =/  res  (mule |.((slum wish txt)))
-  ?>  ?=(%& -.res)
-  p.res
+  ?.  ?=(%0 -.res)  ~|(%clay-no-wish !!)
+  ~|  [%clay-wish txt]
+  (slum p.res txt)
 ::
 --  =>
 ~%  %clay  +  ~
@@ -731,215 +626,217 @@
         file-store=(map lobe page)
         verb=@
     ==
-  ::  +build-ford-api: construct ford-api from a desk's zuse + vase tools.
+  ::  +build-ford-api: ford for a desk, built in the desk's kelvin
   ::
-  ::    compiles ford-cord against the desk's zuse and runs every build
-  ::    in the desk's own type universe.  for the native kelvin (wish=~)
-  ::    the live slub/slym/slam/slop are used and results are live vases;
-  ::    for a foreign kelvin the pill-derived tools are used.  outputs in
-  ::    the desk universe are migrated to the live universe via +next.
+  ::    .ford-cord is the source of /lib/ford/hoon, .zud is the desk's zuse
+  ::    vase (from +make-zuse), and .wish evaluates hoon in the desk's kernel
+  ::    (from +wisher), or is ~ for a desk that builds against the live
+  ::    kernel.
+  ::
+  ::    ford is compiled against the desk's zuse, and every build runs with
+  ::    the desk kernel's vase tools (+slam, +slub, ...), so build products
+  ::    are vases in the desk's kelvin.  each arm of the produced core
+  ::    converts them to the live kelvin before producing them.  for the
+  ::    live kelvin that conversion is the identity.
   ::
   ++  build-ford-api
     |=  [zud=* wish=(unit $-(@t *)) ford-cord=@t]
     =/  wis=$-(@t *)  ?~(wish |=(@ !!) u.wish)
+    ::  the desk's zuse kelvin
+    ::
+    =/  zuv=@ud  ?~(wish zuse ;;(@ud (wis 'zuse')))
+    ?.  |(=(zuse zuv) =(%409 zuv))
+      ~|([%clay-unsupported-kelvin zuv] !!)
+    ::  vase tools of the desk's kernel
+    ::
     =/  my-slam=*  ?~(wish slam (wis 'slam'))
     =/  my-slub=*  ?~(wish slub (wis 'slub'))
     =/  my-slop=*  ?~(wish slop (wis 'slop'))
     =/  my-slym=*  ?~(wish slym (wis 'slym'))
-    ::  compile ford-cord against the desk's zuse.  for a foreign kelvin we must
-    ::  +rain it *inside* that arvo, against that kelvin's +hoon AST.  +rain (not
-    ::  +ream) stamps a real path, so traces read /lib/ford/hoon:[line col].
+    ::  compile ford against the desk's zuse.  for another kelvin this must
+    ::  happen inside that kernel, with its compiler.  +rain (not +ream)
+    ::  records the path, so traces read /lib/ford/hoon:<[line col]>.
     ::
     =/  raw
       ?~  wish
         (slum my-slub [zud (rain /lib/ford/hoon ford-cord)])
       =/  builder
         %-  wis
-        '|=(fc=@t =+(x=(~(mint ut -:!>(..zuse)) %noun (rain /lib/ford/hoon fc)) [p.x .*(..zuse q.x)]))'
+        %+  rap  3
+        :~  '|=(fc=@t =+(x=(~(mint ut -:!>(..zuse)) %noun '
+            '(rain /lib/ford/hoon fc)) [p.x .*(..zuse q.x)]))'
+        ==
       (slum builder ford-cord)
     =/  fuz  (slum my-slub [raw [%limb %fusion]])
     =/  ford-gate  (slum my-slub [fuz [%limb %ford]])
-    ::  the desk's zuse kelvin
+    ::  convert a vase between the live kelvin and the desk's
     ::
-    =/  zuv=@ud  ?~(wish zuse ;;(@ud (wis 'zuse')))
-    ::  cross-kelvin migration for build products, keyed on the desk's zuse
-    ::  kelvin (mirrors +vez in gall).  +prev takes a live vase into the desk
-    ::  universe via +prev-vase (to feed a desk-universe gate, e.g. a foreign
-    ::  mark tube); +next brings a desk build product back to live via
-    ::  +next-vase.  the live kelvin is the identity; each supported previous
-    ::  kelvin names its one-step hoon-history converter.  add a case per
-    ::  kelvin we learn to build against.
+    ::    these are called with +slum, since the vase is not of the live
+    ::    $vase type on one side.  a supported kelvin other than the live
+    ::    one is the previous kelvin, which +prev-vase:h135 and
+    ::    +next-vase:h136 convert from and to.
     ::
     =/  prev
-      |=  v=vase  ^-  *
-      ?+  zuv  ~|(unsupported-kelvin+zuv !!)
-        %408  v
-        %409  (slum prev-vase:h135 v)
-      ==
+      |=  v=vase
+      ^-  *
+      ?:  =(zuse zuv)  v
+      (slum prev-vase:h135 v)
     =/  next
-      |=  n=*  ^-  *
-      ?+  zuv  ~|(unsupported-kelvin+zuv !!)
-        %408  n
-        %409  (slum next-vase:h136 n)
-      ==
-    ::  coerce raw (desk-universe) nouns to typed live values
+      |=  n=*
+      ^-  *
+      ?:  =(zuse zuv)  n
+      (slum next-vase:h136 n)
+    ::  a vase or cage produced in the desk's kelvin, as a live one
     ::
-    =/  ntv
+    ::    extract with !< (a type check), not ;; (a clam), which would walk
+    ::    the whole $type noun.
+    ::
+    =/  live-vase
       |=  n=*
       ^-  vase
       !<(vase [-:!>(*vase) (next n)])
-    =/  ntc
+    =/  live-cage
       |=  n=*
       ^-  cage
       ?>  ?=(^ n)
-      ::  TODO next-cage:a235
-      !<(cage [-:!>(*cage) [;;(@tas -.n) (next +.n)]])
+      !<(cage [-:!>(*cage) [;;(mark -.n) (next +.n)]])
+    ::
     |=  [files=(map path (each page lobe)) file-store=(map lobe page) verb=@]
     =/  cor  (slum my-slym [ford-gate [files file-store verb]])
+    ::  .ford-arm: call the ford core's arm .arm on .arg, in the desk's kelvin
+    ::
+    =/  ford-arm
+      |=  [arm=term arg=*]
+      ^-  *
+      (slum +:(slum my-slub [cor [%limb arm]]) arg)
     |%
     ++  zuse-version  zuv
     ++  read-file
       |=  =path
       ^-  cage
-      (ntc (slum +:(slum my-slub [cor [%limb %read-file]]) path))
+      (live-cage (ford-arm %read-file path))
     ::
     ++  build-file
       |=  =path
       ^-  vase
-      (ntv (slum +:(slum my-slub [cor [%limb %build-file]]) path))
+      (live-vase (ford-arm %build-file path))
     ::
     ++  build-nave
       |=  mak=mark
       ^-  vase
-      (ntv (slum +:(slum my-slub [cor [%limb %build-nave]]) mak))
+      (live-vase (ford-arm %build-nave mak))
+    ::  +build-dais: the mark's dais
+    ::
+    ::    the arms run the desk's nave and produce live vases.  their vase
+    ::    arguments are passed to the nave as they are: in practice these
+    ::    are files read from the same desk (clay's merge, kiln's %cr), whose
+    ::    types do not depend on the kelvin.
     ::
     ++  build-dais
       |=  mak=mark
       ^-  dais
-      ::  +:  unwraps the vase-of-vase +slam produces (build-nave returns a
-      ::  vase), so .nav is the nave itself and its arms (%vale/%diff/&c) are
-      ::  reachable by the +slub limbs below.
-      ::
-      =/  nav  +:(slum my-slam [(slum my-slub [cor [%limb %build-nave]]) !>(mak)])
-      ^-  dais
+      =/  nav=*  (ford-arm %build-nave mak)
+      =/  nave-arm
+        |=  [arm=term sam=*]
+        ^-  *
+        (slum my-slam [(slum my-slub [nav limb/arm]) sam])
       |_  sam=vase
       ++  diff
         |=  new=vase
         ^-  vase
-        (ntv (slum my-slam [(slum my-slub [nav limb/%diff]) (slum my-slop [sam new])]))
+        (live-vase (nave-arm %diff (slum my-slop [sam new])))
+      ::
       ++  form  ;;(mark +:(slum my-slub [nav limb/%form]))
       ++  join
         |=  [a=vase b=vase]
         ^-  (unit (unit vase))
-        =/  res  (ntv (slum my-slam [(slum my-slub [nav limb/%join]) (slum my-slop [a b])]))
+        =/  res  (live-vase (nave-arm %join (slum my-slop [a b])))
         ?~  q.res    ~
         ?~  +.q.res  [~ ~]
         ``(slub res !,(*hoon ?>(?=([~ ~ *] .) u.u)))
+      ::
       ++  mash
         |=  [a=[=ship =desk diff=vase] b=[=ship =desk diff=vase]]
         ^-  (unit vase)
+        ::  build the sample vase with type nouns that are the same in
+        ::  every kelvin
+        ::
+        =/  side
+          |=  [=ship =desk diff=vase]
+          ^-  *
+          %+  slum  my-slop
+          :-  [[%atom %p ~] ship]
+          (slum my-slop [[[%atom %tas ~] desk] diff])
         =/  res
-          %-  ntv
-          %+  slum  my-slam
-          :-  (slum my-slub [nav limb/%mash])
-          %+  slum  my-slop
-          :-  %+  slum  my-slop
-              :-  [[%atom %p ~] ship.a]
-              (slum my-slop [[[%atom %tas ~] desk.a] diff.a])
-          %+  slum  my-slop
-          :-  [[%atom %p ~] ship.b]
-          (slum my-slop [[[%atom %tas ~] desk.b] diff.b])
+          (live-vase (nave-arm %mash (slum my-slop [(side a) (side b)])))
         ?~  q.res  ~
         `(slub res !,(*hoon ?>((^ .) u)))
+      ::
       ++  pact
         |=  diff=vase
         ^-  vase
-        (ntv (slum my-slam [(slum my-slub [nav limb/%pact]) (slum my-slop [sam diff])]))
+        (live-vase (nave-arm %pact (slum my-slop [sam diff])))
+      ::
       ++  vale
         |=  noun=*
         ^-  vase
-        ::  no +:  the nave arms (vale=noun:grab, diff, pact, &c) return the
-        ::  marked VALUE, so +slam already yields the value-as-vase [type val];
-        ::  +: would strip the type and +ntv would then mis-wrap the raw atom.
-        ::
-        (ntv (slum my-slam [(slum my-slub [nav limb/%vale]) noun/noun]))
+        (live-vase (nave-arm %vale noun/noun))
       --
     ::
     ++  build-cast
       |=  [a=mark b=mark]
       ^-  vase
-      (ntv (slum +:(slum my-slub [cor [%limb %build-cast]]) [a b]))
+      (live-vase (ford-arm %build-cast a b))
+    ::  +build-tube: a tube from mark .a to .b, taking and producing live vases
     ::
-    ::  XX produce tub as is
-    ::  
+    ::    the desk's own tube does the conversion, in the desk's kelvin: its
+    ::    input is converted to the desk's kelvin and its output back.
+    ::
     ++  build-tube
       |=  [a=mark b=mark]
       ^-  tube
-      ~|  %build-tube-foreign^[a b]^zuv
-      ::  use the desk's own +build-tube, which yields a vase->vase $tube that
-      ::  internally +slams the cast gate (handling the vase (un)wrap and the
-      ::  output-type mint).  raw-+slum that $tube onto v so the whole
-      ::  conversion -- including the mint -- runs in the *desk* universe via
-      ::  the gate's baked-in context, exactly as a native ship would.  feeding
-      ::  a desk-native file vase keeps every type desk-side: no cross-kelvin
-      ::  mint, no bad look.  (+build-cast alone is a content->content gate; its
-      ::  vase (un)wrap only happens inside +slam, so applying it raw mis-shapes
-      ::  the sample.)  the OUTPUT stays desk-universe -- the consumer is a
-      ::  desk-kelvin agent (+in converts for it), so do NOT +ntv to live here.
-      ::
-      =/  dtube
-        %+  slum  my-slam
-        :-  (slum my-slub [cor [%limb %build-tube]])
-        (slum my-slop [!>(a) !>(b)])
+      =/  tub=*  (ford-arm %build-tube a b)
       |=  v=vase
       ^-  vase
-      ::  +slum yields a raw noun; nest-extract it to $vase (never +;;, which
-      ::  would recursively clam the output $type and bail).
-      ::
-      ?:  =(zuv %409)
-        %-  next-vase:h136
-        !<(vase:h136 [-:!>(*vase:h136) (slum +:dtube (prev-vase:h135 v))])
-      !<(vase [-:!>(*vase) (slum +:dtube v)])
-
+      (live-vase (slum tub (prev v)))
     ::
     ++  validate-page
       |=  [=path =page]
       ^-  cage
-      (ntc (slum +:(slum my-slub [cor [%limb %validate-page]]) [path page]))
+      (live-cage (ford-arm %validate-page path page))
     ::
     ++  page-to-cage
       |=  =page
       ^-  cage
-      (ntc (slum +:(slum my-slub [cor [%limb %page-to-cage]]) page))
-    ::  desk-native variant: skip the +next migration, keep the cage in the
-    ::  desk universe.  the $type noun is byte-identical across kelvins, so the
-    ::  desk vase is a structurally valid live vase; we only coerce the label.
-    ::  used by +read-r (%cr) so the file stays desk-native for a desk mark tube.
+      (live-cage (ford-arm %page-to-cage page))
+    ::  +page-to-cage-desk: +page-to-cage, without converting to live
+    ::
+    ::    produces the cage in the desk's kelvin, labeled with the live $cage
+    ::    type.  used by %cr (+read-r), so that an agent of the desk's kelvin
+    ::    gets a vase in its own kelvin.  for the live kelvin this is
+    ::    +page-to-cage.
     ::
     ++  page-to-cage-desk
       |=  =page
       ^-  cage
-      =/  n  (slum +:(slum my-slub [cor [%limb %page-to-cage]]) page)
+      =/  n  (ford-arm %page-to-cage page)
       ?>  ?=(^ n)
-      ::  mirror +ntc but drop +next: extract via a $cage-typed vase (nest,
-      ::  not clam) so the desk vase's recursive $type is passed through raw.
-      ::
-      !<(cage [-:!>(*cage) [;;(@tas -.n) +.n]])
+      !<(cage [-:!>(*cage) [;;(mark -.n) +.n]])
     ::
     ++  cast-path
       |=  [=path mak=mark]
       ^-  cage
-      (ntc (slum +:(slum my-slub [cor [%limb %cast-path]]) [path mak]))
+      (live-cage (ford-arm %cast-path path mak))
     ::
     ++  prelude
       |=  =path
       ^-  vase
-      (ntv (slum +:(slum my-slub [cor [%limb %prelude]]) path))
+      (live-vase (ford-arm %prelude path))
     ::
     ++  build-fit
       |=  [pre=@tas pax=@tas]
       ^-  vase
-      (ntv (slum +:(slum my-slub [cor [%limb %build-fit]]) [pre pax]))
+      (live-vase (ford-arm %build-fit pre pax))
     --
   --
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -1267,32 +1164,21 @@
       ?:((~(has by hut.ran) p.lok) `p.lok ~)
     (bind (case-to-aeon-before lim lok) aeon-to-tako:ze)
   ::
-  ::  Create a ford appropriate for the aeon
+  ::  +tako-ford: ford for the desk at .tak
   ::
-  ::  +get-pill: a desk's own kernel pill (/brass/pill), if it ships one
-  ::
-  ++  get-pill
-    |=  tak=tako
-    ^-  (unit pill)
-    =/  fiz=(map path lobe)  q:(tako-to-yaki:ze tak)
-    =/  pil=(unit lobe)  (~(get by fiz) /brass/pill)
-    ?~  pil  ~
-    =/  foo=(unit page)  (~(get by lat.ran) u.pil)
-    ?~  foo  ~
-    =+  ;;(pil=pill q.u.foo)
-    =?  pil  ?=(%cash -.pil)
-      ^-  $>(%pill pill)
-      [%pill +<.pil]
-    ?>  ?=(%pill -.pil)
-    `[%pill [nam boot-ova kernel-ova userspace-ova]:pil]
-  ::  +tako-ford: build ford-api for a tako; cross-kelvin if the desk ships a pill
+  ::    a desk that ships its own kernel (see +has-own-kernel) builds against
+  ::    that kernel; any other desk builds against the live kernel.  booting
+  ::    the kernel and building its zuse are memoized.
   ::
   ++  tako-ford
     |=  tak=tako
+    =/  fiz=(map path lobe)  q:(tako-to-yaki:ze tak)
     =/  arv=(unit *)
       ?:  =(%base syd)  ~
-      =/  pil=(unit pill)  (get-pill tak)
-      =>  [make-arvo=make-arvo pil=pil]
+      ?~  lob=(~(get by fiz) /brass/pill)  ~
+      ?~  peg=(~(get by lat.ran) u.lob)  ~
+      :-  ~
+      =>  [make-arvo=make-arvo pil=q.u.peg]
       ~>  %memo./clay/ford
       (make-arvo pil)
     =/  zud
@@ -1301,14 +1187,23 @@
       (make-zuse arv)
     =/  wish=(unit $-(@t *))
       ?~  arv  ~
-      =>  [wisher=wisher uarv=u.arv]
-      `|=(t=@t (wisher uarv t))
-    ::  XX review +apply-built-ins
-    ::
-    =/  files
-      :: %-  apply-built-ins
-      (~(run by q:(tako-to-yaki:ze tak)) |=(=lobe |+lobe))
-    =/  ford-cord=@t  (get-ford files)
+      =>  [wisher=wisher arv=u.arv]
+      `|=(txt=@t (wisher arv txt))
+    =/  files=(map path (each page lobe))
+      (~(run by fiz) |=(=lobe |+lobe))
+    (make-ford zud wish files lat.ran veb.bug)
+  ::  +live-ford: ford for .args, built against the live kernel
+  ::
+  ++  live-ford
+    |=  =args:fusion
+    (make-ford !>(..zuse) ~ args)
+  ::  +make-ford: ford for .args, built with zuse .zud and kernel .wish
+  ::
+  ::    see +build-ford-api.  compiling ford is memoized.
+  ::
+  ++  make-ford
+    |=  [zud=* wish=(unit $-(@t *)) =args:fusion]
+    =/  ford-cord=@t  (get-ford files.args)
     =/  ford-api
       =>  :*  build-ford-api=build-ford-api:fusion
               zud=zud
@@ -1316,19 +1211,19 @@
               ford-cord=ford-cord
           ==
       ~>  %memo./clay/ford
-      (build-ford-api [zud wish ford-cord])
-    (ford-api files lat.ran veb.bug)
+      (build-ford-api zud wish ford-cord)
+    (ford-api args)
+  ::  +get-ford: the source of ford (/lib/ford/hoon) for a build of .files
   ::
-  ::  +get-ford: resolve +ford's source (base's /lib/ford/hoon) for a build
-  ::
-  ::    base uses its own copy (from the build's .files, so it bootstraps);
-  ::    every other desk uses base's committed copy.
+  ::    base builds with its own copy, from .files, so that a change to it
+  ::    takes effect in the same commit.  every other desk builds with
+  ::    base's current copy.
   ::
   ++  get-ford
     |=  files=(map path (each page lobe))
     ^-  @t
     =/  =page
-      =/  ep=(each page lobe)
+      =/  fil=(each page lobe)
         ?:  =(%base syd)
           ~|  %base-desk-missing-ford
           (~(got by files) /lib/ford/hoon)
@@ -1336,54 +1231,25 @@
         =/  base-tako  (~(got by hit.base-dome) let.base-dome)
         ~|  %base-missing-ford
         [%| (~(got by q:(tako-to-yaki:ze base-tako)) /lib/ford/hoon)]
-      ?-  -.ep
-        %&  p.ep
-        %|  (~(got by lat.ran) p.ep)
+      ?-  -.fil
+        %&  p.fil
+        %|  (~(got by lat.ran) p.fil)
       ==
     ?+  p.page  ~|([%ford-bad-mark p.page] !!)
       %hoon  ;;(@t q.page)
       %mime  q.q:;;(mime q.page)
     ==
+  ::  +has-own-kernel: whether a desk's files include a kernel to build with
   ::
-  ::  +live-ford: build a ford-api for a desk's files against the live kernel
+  ::    a desk that targets an older kelvin ships that kernel's brass pill at
+  ::    /brass/pill and is built against it (see +tako-ford).  such a desk
+  ::    does not need to support the live kelvin, so a kernel update neither
+  ::    waits for it nor suspends it.
   ::
-  ++  live-ford
-    |=  =args:fusion
-    =/  zud  !>(..zuse)
-    =/  ford-cord=@t  (get-ford files.args)
-    =/  ford-api
-      =>  [build-ford-api=build-ford-api:fusion zud=zud ford-cord=ford-cord]
-      ~>  %memo./clay/ford
-      (build-ford-api [zud ~ ford-cord])
-    (ford-api args)
-  ::
-  :: ++  apply-built-ins
-  ::   |=  files=(map path (each page lobe))
-  ::   ^+  files
-  ::   ::  built-ins come from clay, so never apply there
-  ::   ::REVIEW  feels weird because .files decoupled from .syd,
-  ::   ::        but in practice they're always "our"/"local" files...
-  ::   ::
-  ::   ?:  =(%base syd)  files
-  ::   %-  ~(gas by files)
-  ::   %+  murn
-  ::     ^-  (list path)
-  ::     :~  /mar/noun/hoon
-  ::         /mar/hoon/hoon
-  ::         /mar/mime/hoon
-  ::         /mar/bill/hoon
-  ::         /mar/seal/hoon
-  ::         /mar/kelvin/hoon
-  ::     ==
-  ::   =/  =dojo  (~(got by dos.rom) %base)
-  ::   =/  =yaki  (~(got by hut.ran) (~(got by hit.dom.dojo) let.dom.dojo))
-  ::   |=  =path
-  ::   ?:  (~(has by files) path)  ~
-  ::   ~|  %missing-built-in^path
-  ::   =/  lob  (~(got by q.yaki) path)
-  ::   ~|  %built-in-not-page
-  ::   =/  pag  (~(got by lat.ran) lob)
-  ::   `[path &+pag]
+  ++  has-own-kernel
+    |=  fiz=(map path *)
+    ^-  ?
+    (~(has by fiz) /brass/pill)
   ::
   ++  request-wire
     |=  [kind=@ta =ship =desk index=@ud]
@@ -1457,11 +1323,8 @@
     ?:  (~(has in kel) sys-kel)
       ::  desk alredy supports kel update case
       des
-    ::  a desk that ships its own kernel (/brass/pill) runs cross-kelvin even
-    ::  when it doesn't support the new zuse (see +tako-ford), so it neither
-    ::  blocks the update nor gets suspended by it.
-    ::
-    ?:  (~(has by q.yak) /brass/pill)
+    ?:  (has-own-kernel q.yak)
+      ::  desk builds against its own kernel
       des
     ?~  yok=(~(get by wic.dom.dojo) sys-kel)
       ::  has no pending commit for current kel update case
@@ -1772,12 +1635,10 @@
     ::  and prevent applying commits that will never become compatible
     ::  (because they're only compat with old, and base never downgrades)
     ::
-    ::    exception: a desk compatible only with older kelvins still runs if it
-    ::    ships its own kernel (/brass/pill), since it builds cross-kelvin
-    ::    against that pill rather than the live kernel (see +tako-ford).
+    ::    unless the desk ships its own kernel (see +has-own-kernel)
     ::
     ?:  ?&  (~(all in kel) |=(=weft (gth num.weft zuse)))
-            !(~(has by new-data) /brass/pill)
+            !(has-own-kernel new-data)
         ==
       %-  (slog leaf+"clay: {<syd>} old-kelvin, {<[compat=kel have=zuse+zuse]>}" ~)
       ..park
@@ -1875,7 +1736,6 @@
     =?  changes  updated  (changes-for-upgrade q.old-yaki deletes changes)
     ::
     =/  files
-      :: %-  apply-built-ins
       =/  original=(map path (each page lobe))
         (~(run by q.old-yaki) |=(=lobe |+lobe))
       %-  ~(dif by (~(uni by original) changes))
@@ -2131,7 +1991,6 @@
       ::  ? remove deletes
       ::
       =/  all-changes=(map path (each page lobe))
-        :: %-  apply-built-ins
         =/  original=(map path (each page lobe))
           (~(run by q.yaki) |=(=lobe |+lobe))
         (~(uni by original) changes)
@@ -3192,11 +3051,8 @@
       %+  fall
         (mole |.((get-kelvin %| (aeon-to-yaki:ze let.dom))))
       [[%1 ~] ~]
-    ::  a desk that ships its own kernel (/brass/pill) runs cross-kelvin even
-    ::  when it doesn't support the live zuse (see +tako-ford).
-    ::
     ?.  ?|  (~(has in kel) zuse+zuse)
-            (~(has by q:(aeon-to-yaki:ze let.dom)) /brass/pill)
+            (has-own-kernel q:(aeon-to-yaki:ze let.dom))
         ==
       %.  ..park(liv.dom %held)
       %-  slog
@@ -4285,17 +4141,19 @@
       ``[p.u.peg %noun q.u.peg]
     ::  +read-r: %x wrapped in a vase
     ::
+    ::    the inner vase is in the desk's kelvin (see +read-x-desk).
+    ::
     ++  read-r
       |=  [tak=tako pax=path]
       ^-  (unit (unit cage))
-      :: =/  x  (read-x tak pax)
       =/  x  (read-x-desk tak pax)
       ?~  x     ~
       ?~  u.x  [~ ~]
       ``[p.u.u.x !>(q.u.u.x)]
-    ::  +read-x-desk: like +read-x but keeps the cage in the desk universe
-    ::  (no +next migration), so cross-kelvin the file vase can feed a desk
-    ::  mark tube natively.  native (same-kelvin) this is identical to +read-x.
+    ::  +read-x-desk: +read-x, with the vase in the desk's kelvin
+    ::
+    ::    see +page-to-cage-desk.  for a desk that builds against the live
+    ::    kernel this is +read-x.
     ::
     ++  read-x-desk
       |=  [tak=tako pax=path]
@@ -4746,8 +4604,8 @@
     ?~  bill.i.sat
       =/  den  ((de now rof hen ruf) our desk.i.sat)
       [[our desk.i.sat da+now] zuse-version:f [peg peq]:dom.den duz]
-    ::  keep the raw agent-any vase; gall converts it across kelvin eras
-    ::  (keyed on the desk's zuse kelvin) when installing it.
+    ::  gall checks the agent's type when installing it, which depends
+    ::  on the desk's zuse kelvin (sent along in the $pack)
     ::
     =/  =vase
       ~|  /app/[i.bill.i.sat]/hoon

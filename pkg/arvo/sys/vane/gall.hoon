@@ -15,42 +15,58 @@
 =>
 |%
 +|  %helpers
-::  +vez: cross-kelvin migration for an agent's runtime vases, keyed on the
-::  agent's zuse kelvin .zuv (mirrors the +prev/+next/+ntv helpers in clay's
-::  +build-ford-api).  everything gall hands across the live boundary must be
-::  a live vase: a foreign agent runs as its own (desk) kelvin and emits
-::  desk-universe vases, so +to-live brings its output (on-peek results,
-::  outbound fact/poke cages) back to the live universe before anything else
-::  touches it; +to-desk is the inverse, for values an agent receives.  the
-::  live kelvin is the identity.  both directions are type-only: only the
-::  vase's $type noun is migrated across the boundary; the value is
-::  kelvin-invariant (see +prev-vase/+next-vase).
+::  +vez: vase conversion for an agent of zuse kelvin .zuv
+::
+::    an agent from a desk that ships its own kernel (see +has-own-kernel in
+::    clay) may be of the previous kelvin.  it takes and produces vases in
+::    its own kelvin, while the rest of the system uses the live one.
+::    +to-live converts what such an agent produces (peek results, facts,
+::    pokes), +to-desk what it is given.  only the vase's $type is
+::    converted; the value is the same in either kelvin.  for an agent of
+::    the live kelvin both are the identity.
+::
+::    a .zuv of 0 is a yoke from before .zuv was recorded, which is of the
+::    live kelvin.  clay only builds agents of the live and previous
+::    kelvins (see +build-ford-api in clay).
+::
+::    +next-vase:h136 and +prev-vase:h135 are called with +slum, since the
+::    vase is not of the live $vase type on one side.  the result is
+::    extracted with !< (a type check), not ;; (a clam), which would walk
+::    the whole $type noun.
 ::
 ++  vez
   |=  zuv=@ud
   |%
-  ::  only an explicitly foreign kelvin triggers migration; the live kelvin
-  ::  .zuse, an unset .zuv (0, e.g. a yoke migrated from an older gall state),
-  ::  or any other value is treated as native and passed through unchanged.
-  ::  the h-core gates are applied via +slum (untyped): the ambient (live)
-  ::  $vase does not nest in the h-core's own $vase param, and the input
-  ::  noun's type already belongs to the other kelvin's universe.
+  ::  +prev: whether the agent is of the previous kelvin
+  ::
+  ++  prev  =(%409 zuv)
   ::
   ++  to-live
     |=  v=vase
     ^-  vase
-    ?.  ?=(%409 zuv)  v
+    ?.  prev  v
     !<(vase [-:!>(*vase) (slum next-vase:h136 v)])
+  ::
   ++  to-desk
     |=  v=vase
     ^-  vase
-    ?.  ?=(%409 zuv)  v
+    ?.  prev  v
     !<(vase [-:!>(*vase) (slum prev-vase:h135 v)])
+  ::
   ++  cage-to-live
     |=  c=cage
     ^-  cage
     [p.c (to-live q.c)]
   --
+::  +save-agent: an agent's state, from its +on-save
+::
+::    old-model agents are refused at install (see +mo-receive-core).
+::
+++  save-agent
+  |=  =agent-any
+  ^-  vase
+  ?>  ?=(%new-agent -.agent-any)
+  on-save:fom.agent-any
 ::  +trace: print if .verb is set and we're tracking .dude
 ::
 ++  trace
@@ -387,15 +403,17 @@
     ~/  %mo-receive-core
     |=  [prov=path dap=term bek=beak per=[peg=(set perm) peq=(set perm)] zuv=@ud =vase]
     ^+  mo-core
-    ::  interpret the built agent-any vase under our live kelvin.  a same-
-    ::  kelvin desk extracts directly; a foreign-kelvin desk re-faces the
-    ::  built noun under our $agent-any type (its payload carries concrete
-    ::  types, so it runs; runtime cages are era-converted elsewhere).
+    ::  an agent of the previous kelvin is written against that kelvin's
+    ::  lull, so its type doesn't nest in our $agent-any.  we label it with
+    ::  ours; the vases it takes and produces are converted by +vez.
     ::
     =/  =agent-any
-      ?:  =(zuse zuv)
+      ?.  prev:(vez zuv)
         !<(agent-any vase)
       !<(agent-any [-:!>(*agent-any) q.vase])
+    ?:  ?=(%old-agent -.agent-any)
+      %.  mo-core
+      (slog leaf+"gall: {<dap>} is an old-model agent, which isn't supported" ~)
     =/  yak  (~(get by yokes.state) dap)
     =/  tex=(unit tape)
       ?~  yak  `"installing"
@@ -1817,9 +1835,7 @@
           =/  prov=path  /gall/[from]
           ?-  -.neet
             %huck   note-arvo.neet
-          ::  a foreign agent's outbound poke carries a desk-universe cage;
-          ::  migrate it to live so it travels the inter-agent bus in the live
-          ::  universe (the receiving agent migrates it back at its boundary).
+          ::  pokes travel between agents in the live kelvin (see +vez)
           ::
               %agent
             =/  tsk  task.neet
@@ -2344,9 +2360,7 @@
       |=  =cage
       ^+  ap-core
       ~>  %spin.[(crip "on-poke/{<agent-name>}")]
-      ::  the incoming cage is in the live universe; migrate it into the
-      ::  agent's (possibly foreign) desk universe so the agent sees its own
-      ::  kelvin.  (assumes a live poke source, the common case.)
+      ::  the poke is in the live kelvin; the agent takes its own (see +vez)
       ::
       =.  q.cage  (to-desk:(vez zuv.yoke) q.cage)
       =^  maybe-frag  ap-core
@@ -2501,8 +2515,7 @@
       ++  sub-key  [agent-wire dock]
       ++  ingest
         ~>  %spin.[(crip "on-agent/{<agent-name>}")]
-        ::  migrate an incoming fact's (live) cage into the agent's desk
-        ::  universe so the agent sees its own kelvin.
+        ::  the fact is in the live kelvin; the agent takes its own (see +vez)
         ::
         =/  sin=sign:agent
           ?.  ?=(%fact -.sign)  sign
@@ -2776,9 +2789,9 @@
       ?-    -.res
           %0
         ::  (unit (unit cage)) has the same noun layout in every kelvin, so
-        ::  labeling it with the live type is enough.  for a 409 agent, only
-        ::  the $type inside the cage's vase is in the 409 kelvin, so
-        ::  convert that one to the live kelvin's.
+        ::  labeling it with the live type is enough.  for an agent of the
+        ::  previous kelvin, only the $type inside the cage's vase is in
+        ::  that kelvin, so convert that one to the live kelvin's.
         ::
         =/  out  !<((unit (unit cage)) [-:!>(*(unit (unit cage))) p.res])
         ?.  ?=([~ ~ *] out)  [%& out]
@@ -2804,35 +2817,25 @@
         %+  trace  odd.veb.bug.state
         |+[leaf+"insufficient permission: {sef} scrying for {tar}" ~]
       =/  dat  (rof lyc pov omen)
-      ?.  ?=(%409 zuv.yoke)  dat
+      ?.  prev:(vez zuv.yoke)  dat
       ?.  ?=([~ ~ *] dat)    dat
-      ::  prior-kelvin agent: fix up the type of clay %cr and %cc results
+      ::  an agent of the previous kelvin: relabel clay's %cr and %cc results
       ::
-      ::    clay %cr (+read-r) produces a $vase and %cc (+read-c) a $tube
-      ::    ($-(vase vase)), and the agent's .^ asks for exactly those
-      ::    types -- but its own kelvin's $vase/$tube.  +look checks the
-      ::    result's type against the agent's requested type (after
-      ::    +next-type), and the live $vase type doesn't nest the old one
-      ::    (scry-lost), while converting the value with +prev-vase crashes
-      ::    (bad look).  so we change the type the result is labeled with
-      ::    to the agent kelvin's $vase (vase:h136), which does nest.  the
-      ::    noun itself is unchanged.  all other views produce plain data
-      ::    and pass through.
+      ::    these are a $vase and a $tube, and the agent asks for its own
+      ::    kelvin's $vase and $tube.  +look checks that the result's type
+      ::    nests in the one asked for (converted with +next-type), and the
+      ::    live $vase type doesn't nest the previous kelvin's.  all other
+      ::    results are plain data, whose types do.
       ::
-      ::    %cr: the outer type is only seen by +look's check; the agent
-      ::    gets the noun, which is the file's vase from +read-r.  don't
-      ::    +prev-vase that inner vase: its $type can contain
-      ::    a core holding all of zuse, and walking that explodes.
+      ::    %cr: label the result with the previous kelvin's $vase type.  the
+      ::    file's vase inside is already in the desk's kelvin (see
+      ::    +read-r in clay), which is the agent's when it reads its own
+      ::    desk.  we don't convert it with +prev-vase: the $type of a file
+      ::    can refer to all of zuse, which is too large to walk.
       ::
-      ::    %cc: clay's tube takes and produces live vases (+build-tube
-      ::    converts to and from the desk's kelvin itself).  wrap it in a
-      ::    gate typed $-(vase:h136 vase:h136) that converts the agent's
-      ::    input to live with +next-vase, applies the tube, and converts
-      ::    the output back with +prev-vase.  all three are called with
-      ::    +slum, and the result extracted with !< (not +;;, which would
-      ::    recursively clam the output $type and bail).
-      ::
-      ::    TODO: real cross-kelvin type conversion should retire this.
+      ::    %cc: clay's tube takes and produces live vases (see
+      ::    +build-tube in clay).  wrap it in a gate that converts the
+      ::    agent's vase to the live kelvin and the tube's back.
       ::
       :^  ~  ~  p.u.u.dat
       ?+  vis.omen  q.u.u.dat
@@ -3824,11 +3827,7 @@
         :-  %|
         ?:  ?=(%| -.agent.u.yok)
           p.agent.u.yok
-        :-  clean=|
-        ?-  mod.p.agent.u.yok
-          %new-agent  on-save:fom.p.agent.u.yok
-          %old-agent  !!
-        ==
+        [clean=| (save-agent p.agent.u.yok)]
       ==
     ``noun+!>(`egg-any`[%21 egg])
   ::
@@ -3972,13 +3971,8 @@
     :-  %|
     ?:  ?=(%| -.agent.yoke)
       p.agent.yoke
-    :-  clean=|
-    ?-  mod.p.agent.yoke
-      %new-agent  on-save:fom.p.agent.yoke
-      %old-agent  !!
-    ==
+    [clean=| (save-agent p.agent.yoke)]
   ==
-
 ::  +take: response
 ::
 ++  take
