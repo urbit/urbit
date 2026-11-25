@@ -1748,9 +1748,9 @@
           [agent-duct %give %unto gift]~
         ::
         =/  ducts=(list duct)  (ap-ducts-from-paths paths.gift ~)
-        ::  .cage is in the agent's (possibly foreign) desk universe.
+        ::  the fact, in the live kelvin (see +vez)
         ::
-        =/  =cage  cage.gift
+        =/  =cage  (cage-to-live:(vez zuv.yoke) cage.gift)
         %-  zing
         %+  turn  ducts
         |=  =duct
@@ -1758,10 +1758,8 @@
         ~?  &(=(duct system-duct.state) !=(agent-name %hood))
           [%agent-giving-on-system-duct agent-name -.gift]
         =/  =mark  (~(gut by marks.yoke) duct p.cage)
-        ::  mark matches: no tube, just migrate the vase's kelvin to live.
-        ::
         ?:  =(mark p.cage)
-          [duct %give %unto %fact (cage-to-live:(vez zuv.yoke) cage)]~
+          [duct %give %unto %fact cage]~
         =/  =mars:clay  [p.cage mark]
         =/  =case       da+now
         =/  bek=beak    [our q.beak.yoke case]
