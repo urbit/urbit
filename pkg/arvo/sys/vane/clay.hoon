@@ -4659,13 +4659,9 @@
     |-  ^-  ~
     ?~  marks  ~
     =-  $(marks t.marks)
-    ::  tolerate unbuildable marks (dead/broken marks not in desk.bill):
-    ::  skip + warn rather than crash the whole desk build
-    ::
-    =/  res  (mule |.(`*`(road |.(~:(build-dais:f i.marks)))))
-    ?:  ?=(%& -.res)  ~
-    %-  (slog leaf+"clay: skip unbuildable mark /{(trip i.marks)} on %{(trip i.desks)}" p.res)
-    ~
+    ~|  i.desks
+    %-  road  |.
+    ~:(build-dais:f i.marks)
   ::
   ++  tore
     ^-  rock:tire
