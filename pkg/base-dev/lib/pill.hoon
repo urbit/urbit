@@ -328,44 +328,43 @@
       ?.  prime  ~
       [(prep-ovum (turn dez tail))]~
     ::
-      :: %+  murn  dez
-      :: |=  [dek=desk bas=path]
-      :: ^-  (unit unix-event)
-      :: ?.  .^(? %cu (welp bas /desk/seal))  ~
-      :: =+  .^([@ per=(list perm:gall)] %cx (welp bas /desk/seal))
-      :: `[/c/init-seal %seal dek %.y (silt per)]
+      %+  murn  dez
+      |=  [dek=desk bas=path]
+      ^-  (unit unix-event)
+      ?.  .^(? %cu (welp bas /desk/seal))  ~
+      =+  .^([@ per=(list perm:gall)] %cx (welp bas /desk/seal))
+      `[/c/init-seal %seal dek %.y (silt per)]
     ==
   ::
   =/  =wynn  (get-wynn sys new-wynn)
   ::
-  ~&  >  %test
-  ::
-  =/  res
-    =-  [(mook -.-) +.-]
-    %-  mice
-    :_  [%2 [%0 3] %0 2]
-    ;:  weld
-      boot-ova
-      ^-  (list)
-      :~  [*@da //arvo %wack *@uvJ]
-          [*@da //arvo %whom *@p]
-          [*@da //arvo %wyrd [~.nonce /] wynn]
-      ==
-      `(list)`(turn kernel-ova (lead *@da))
-      `(list)`[*@da [/d/term/1 %boot & %fake *@p]]^~
-      `(list)`(turn userspace-ova (lead *@da))
-      `(list)`[*@da [/c/init-zest %zeal (turn dez |=([d=desk *] [d %live]))]]^~
-    ==
-  ::
-  ?:  ?=(%2 -.-.res)
-    %-  mean
-    +.-.res
-  ::
   =/  cache=(list)
     ?.  cache  ~
-    %~  tap  by
-    =<  +
-    res
+    ::  boot the pill, collecting the %memo results it computes
+    ::
+    =/  res
+      =-  [(mook -.-) +.-]
+      %-  mice
+      :_  [%2 [%0 3] %0 2]
+      ;:  weld
+        boot-ova
+        ^-  (list)
+        :~  [*@da //arvo %wack *@uvJ]
+            [*@da //arvo %whom *@p]
+            [*@da //arvo %wyrd [~.nonce /] wynn]
+        ==
+        `(list)`(turn kernel-ova (lead *@da))
+        `(list)`[*@da [/d/term/1 %boot & %fake *@p]]^~
+        `(list)`(turn userspace-ova (lead *@da))
+        `(list)`[*@da [/c/init-zest %zeal (turn dez |=([d=desk *] [d %live]))]]^~
+      ==
+    ::  if the boot fails, the pill would too, so crash with its trace
+    ::
+    ?-  -.-.res
+      %0  ~(tap by +.res)
+      %1  ~|([%brass-boot-blocked p.-.res] !!)
+      %2  (mean p.-.res)
+    ==
   ::
   ~>  %slog.[0 leaf+"brass: cache entries: {<(lent cache)>}"]
   ::
@@ -459,7 +458,7 @@
 ::  +mice: %memo hint caching version of mink
 ::
 |%
-++  mice  !:
+++  mice  !.
   ~/  %mice
   |=  [subject=* formula=*]
   =|  trace=(list [@ta *])
