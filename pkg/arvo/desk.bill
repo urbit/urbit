@@ -1,13 +1,13 @@
-:~  ::%acme
-::    %azimuth
-::    %dbug
+:~  %acme
+    %azimuth
+    %dbug
     %dojo
-::    %eth-watcher
+    %domains-manager
+    %eth-watcher
     %hood
-::    %herm
-::    %lens
-::    %ping
-::    %domains-manager
-::    %perm-man
+    %herm
+    %lens
+    %perm-man
+    %ping
     %spider
 ==

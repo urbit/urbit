@@ -43,9 +43,10 @@
     state-zero
   ==
 --
-^-  agent:gall
+:-  %new-agent
 %-  agent:dbug
 %+  verb  |
+^-  form:agent:gall
 =|  state-zero
 =*  state  -
 =<
@@ -56,7 +57,7 @@
       def       ~(. (default-agent this %|) bowl)
   ::
   ++  on-init
-    ^+  on-init:*agent:gall
+    ^+  on-init:*form:agent:gall
     ^-  (quip card _this)
     ~&  >  %lsp-init
     :_  this  :_  ~
@@ -67,14 +68,14 @@
   ::
   ++  on-save   !>(state)
   ++  on-load
-    ^+  on-load:*agent:gall
+    ^+  on-load:*form:agent:gall
     |=  old-state=vase
     ^-  (quip card _this)
     ~&  >  %lsp-upgrade
     [~ this(state !<(state-zero old-state))]
   ::
   ++  on-poke
-    ^+  on-poke:*agent:gall
+    ^+  on-poke:*form:agent:gall
     |=  [=mark =vase]
     ^-  (quip card _this)
     ?>  (team:title [our src]:bowl)
@@ -98,7 +99,7 @@
   ++  on-peek  on-peek:def
   ++  on-agent  on-agent:def
   ++  on-arvo
-    ^+  on-arvo:*agent:gall
+    ^+  on-arvo:*form:agent:gall
     |=  [=wire gift=gift-user-v1:gall]
     ^-  (quip card _this)
     =?  gift  ?=([%syscall *] gift)

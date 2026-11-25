@@ -5,7 +5,8 @@
 ::
 +$  card  card:agent:gall
 --
-^-  agent:gall
+:-  %new-agent
+^-  form:agent:gall
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)

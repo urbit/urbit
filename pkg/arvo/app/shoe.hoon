@@ -17,9 +17,10 @@
 =|  state-0
 =*  state  -
 ::
+:-  %new-agent
 %+  verb  |
 %-  agent:dbug
-^-  agent:gall
+^-  form:agent:gall
 %-  (agent:shoe command)
 ^-  (shoe:shoe command)
 |_  =bowl:gall

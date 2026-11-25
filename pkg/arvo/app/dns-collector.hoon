@@ -31,7 +31,8 @@
   [%give %fact ~[the-path] cage]
 --
 ::
-^-  agent:gall
+:-  %new-agent
+^-  form:agent:gall
 =|  state=app-state
 %+  verb  |
 |_  =bowl:gall

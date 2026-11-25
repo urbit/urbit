@@ -9,7 +9,8 @@
 ::
 ::NOTE  =, ward:clay here makes the below not be a proper $agent-gall ??????
 ::
-^-  agent:gall
+:-  %new-agent
+^-  form:agent:gall
 =<
   |_  =bowl:gall
   +*  this  .

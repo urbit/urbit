@@ -67,8 +67,10 @@
 =|  state-0
 =*  state  -
 ::
+:-  %new-agent
 %+  verb  |
 %-  agent:dbug
+^-  form:agent:gall
 |_  =bowl:gall
 +*  this  .
 ::
@@ -147,12 +149,12 @@
   ==
 ::
 ++  on-fail
-  |=  [=term =tang]
+  |=  [=frag:agent:gall =call:agent:gall]
   ^-  (quip card _this)
   %.  [~ this]
   %-  %*(. slog pri 3)
-  :_  tang
-  (cat 3 'verb-logger: dropping the ball: ' term)
+  :_  tang.frag
+  (cat 3 'verb-logger: dropping the ball: ' from.frag)
 ::
 ++  on-watch  |=(* !!)
 ++  on-leave  |=(* !!)

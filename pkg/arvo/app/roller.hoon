@@ -218,9 +218,10 @@
 =|  app-state
 =*  state  -
 ::
+:-  %new-agent
 %-  agent:dbug
 %+  verb  |
-^-  agent:gall
+^-  form:agent:gall
 ::
 =<
   |_  =bowl:gall
@@ -631,9 +632,9 @@
     ==
   ::
   ++  on-fail
-    |=  [=term =tang]
+    |=  [=frag:agent:gall =call:agent:gall]
     ::TODO  if crashed during timer, set new timer? how to detect?
-    (on-fail:def term tang)
+    (on-fail:def frag call)
   ::
   ++  on-watch
     |=  =path

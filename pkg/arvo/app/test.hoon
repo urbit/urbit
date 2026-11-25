@@ -15,7 +15,8 @@
       ted-ok=?
   ==
 --
-^-  agent:gall
+:-  %new-agent
+^-  form:agent:gall
 =|  =state
 |_  =bowl:gall
 +*  this  .

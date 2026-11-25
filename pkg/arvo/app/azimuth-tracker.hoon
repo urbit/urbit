@@ -102,14 +102,15 @@
 --
 ::
 =|  state=app-state
+:-  %new-agent
 %+  verb  |
-^-  agent:gall
+^-  form:agent:gall
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
 ::
 ++  on-init
-  ^-  (quip card:agent:gall agent:gall)
+  ^-  (quip card:agent:gall _this)
   :_  this  :_  ~
   ^-  card:agent:gall
   [%pass /eth-watcher %agent [our.bowl %eth-watcher] %watch /logs/[dap.bowl]]

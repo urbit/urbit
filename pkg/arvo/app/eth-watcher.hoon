@@ -428,7 +428,7 @@
 ::
 ++  on-watch
   |=  =path
-  ^-  (quip card agent:gall)
+  ^-  (quip card _this)
   ?.  ?=([%logs ^] path)
     ~|  [%invalid-subscription-path path]
     !!
@@ -468,7 +468,7 @@
 ++  on-agent
   |=  [=wire =sign:agent:gall]
   |^
-  ^-  (quip card agent:gall)
+  ^-  (quip card _this)
   ?.  ?=([%running *] wire)
     (on-agent:def wire sign)
   ?-    -.sign
@@ -583,7 +583,7 @@
 ::
 ++  on-arvo
   |=  [=wire gift=gift-user-v1:gall]
-  ^-  (quip card agent:gall)
+  ^-  (quip card _this)
   =?  gift  ?=(%syscall -.gift)
     =+  !<(=sign-arvo [-:!>(*sign-arvo) sign-arvo.gift])
     ?.  ?=([%behn %wake *] sign-arvo)  gift
