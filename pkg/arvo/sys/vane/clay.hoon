@@ -727,12 +727,11 @@
       |=  mak=mark
       ^-  vase
       (live-vase (ford-arm %build-nave mak))
-    ::  +build-dais: the mark's dais
+    ::  +build-dais: the mark's dais, taking and producing live vases
     ::
-    ::    the arms run the desk's nave and produce live vases.  their vase
-    ::    arguments are passed to the nave as they are: in practice these
-    ::    are files read from the same desk (clay's merge, kiln's %cr), whose
-    ::    types do not depend on the kelvin.
+    ::    the arms run the desk's nave, in the desk's kelvin: their vase
+    ::    arguments are converted to the desk's kelvin and their results
+    ::    back, as for +build-tube.
     ::
     ++  build-dais
       |=  mak=mark
@@ -746,13 +745,14 @@
       ++  diff
         |=  new=vase
         ^-  vase
-        (live-vase (nave-arm %diff (slum my-slop [sam new])))
+        (live-vase (nave-arm %diff (slum my-slop [(prev sam) (prev new)])))
       ::
       ++  form  ;;(mark +:(slum my-slub [nav limb/%form]))
       ++  join
         |=  [a=vase b=vase]
         ^-  (unit (unit vase))
-        =/  res  (live-vase (nave-arm %join (slum my-slop [a b])))
+        =/  res
+          (live-vase (nave-arm %join (slum my-slop [(prev a) (prev b)])))
         ?~  q.res    ~
         ?~  +.q.res  [~ ~]
         ``(slub res !,(*hoon ?>(?=([~ ~ *] .) u.u)))
@@ -768,7 +768,7 @@
           ^-  *
           %+  slum  my-slop
           :-  [[%atom %p ~] ship]
-          (slum my-slop [[[%atom %tas ~] desk] diff])
+          (slum my-slop [[[%atom %tas ~] desk] (prev diff)])
         =/  res
           (live-vase (nave-arm %mash (slum my-slop [(side a) (side b)])))
         ?~  q.res  ~
@@ -777,7 +777,7 @@
       ++  pact
         |=  diff=vase
         ^-  vase
-        (live-vase (nave-arm %pact (slum my-slop [sam diff])))
+        (live-vase (nave-arm %pact (slum my-slop [(prev sam) (prev diff)])))
       ::
       ++  vale
         |=  noun=*
@@ -811,20 +811,6 @@
       |=  =page
       ^-  cage
       (live-cage (ford-arm %page-to-cage page))
-    ::  +page-to-cage-desk: +page-to-cage, without converting to live
-    ::
-    ::    produces the cage in the desk's kelvin, labeled with the live $cage
-    ::    type.  used by %cr (+read-r), so that an agent of the desk's kelvin
-    ::    gets a vase in its own kelvin.  for the live kelvin this is
-    ::    +page-to-cage.
-    ::
-    ++  page-to-cage-desk
-      |=  =page
-      ^-  cage
-      =/  n  (ford-arm %page-to-cage page)
-      ?>  ?=(^ n)
-      !<(cage [-:!>(*cage) [;;(mark -.n) +.n]])
-    ::
     ++  cast-path
       |=  [=path mak=mark]
       ^-  cage
@@ -4143,27 +4129,13 @@
       ``[p.u.peg %noun q.u.peg]
     ::  +read-r: %x wrapped in a vase
     ::
-    ::    the inner vase is in the desk's kelvin (see +read-x-desk).
-    ::
     ++  read-r
       |=  [tak=tako pax=path]
       ^-  (unit (unit cage))
-      =/  x  (read-x-desk tak pax)
+      =/  x  (read-x tak pax)
       ?~  x     ~
       ?~  u.x  [~ ~]
       ``[p.u.u.x !>(q.u.u.x)]
-    ::  +read-x-desk: +read-x, with the vase in the desk's kelvin
-    ::
-    ::    see +page-to-cage-desk.  for a desk that builds against the live
-    ::    kernel this is +read-x.
-    ::
-    ++  read-x-desk
-      |=  [tak=tako pax=path]
-      ^-  (unit (unit cage))
-      =/  q  (read-q tak pax)
-      ?~  q     ~
-      ?~  u.q  [~ ~]
-      ``(page-to-cage-desk:(tako-ford tak) p.u.u.q q.q.u.u.q)
     ::  +read-s: produce miscellaneous
     ::
     ++  read-s

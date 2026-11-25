@@ -2827,7 +2827,7 @@
       =/  sim  sim:(vez zuv.yoke)
       ?~  sim                dat
       ?.  ?=([~ ~ *] dat)    dat
-      ::  an agent of the previous kelvin: relabel clay's %cr and %cc results
+      ::  an agent of the previous kelvin: convert clay's %cr and %cc results
       ::
       ::    these are a $vase and a $tube, and the agent asks for its own
       ::    kelvin's $vase and $tube.  +look checks that the result's type
@@ -2835,11 +2835,8 @@
       ::    live $vase type doesn't nest the previous kelvin's.  all other
       ::    results are plain data, whose types do.
       ::
-      ::    %cr: label the result with the previous kelvin's $vase type.  the
-      ::    file's vase inside is already in the desk's kelvin (see
-      ::    +read-r in clay), which is the agent's when it reads its own
-      ::    desk.  we don't convert it with .prev: the $type of a file
-      ::    can refer to all of zuse, which is too large to walk.
+      ::    %cr: clay's result is a live vase of the file.  convert it to the
+      ::    agent's kelvin and label it with that kelvin's $vase type.
       ::
       ::    %cc: clay's tube takes and produces live vases (see
       ::    +build-tube in clay).  wrap it in a gate that converts the
@@ -2847,7 +2844,7 @@
       ::
       :^  ~  ~  p.u.u.dat
       ?+  vis.omen  q.u.u.dat
-        ?(%cr [%c %r])  `vase`[vase.u.sim !<(vase q.u.u.dat)]
+        ?(%cr [%c %r])  `vase`[vase.u.sim (slum prev.u.sim !<(vase q.u.u.dat))]
         ?(%cc [%c %c])  (tube.u.sim !<(tube:clay q.u.u.dat))
       ==
     ::  +ap-ingest: call agent arm
