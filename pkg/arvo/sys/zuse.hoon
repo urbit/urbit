@@ -5,6 +5,40 @@
 ~%  %zuse  ..part  ~
 |%
 ++  zuse  %408
+::  +zuse-prev: the previous kelvin, which the kernel can also run
+::
+::    kelvins count down, so the previous kelvin is +(zuse).  a desk that
+::    targets it ships that kernel and is built with it (see
+::    +has-own-kernel in clay), and its vases are converted to and from
+::    the live kelvin.
+::
+::    the conversions are hoon.hoon's history arms, which are specific to
+::    a pair of kelvins, so this is written for one live kelvin and is ~
+::    for any other: after a kelvin bump, desks of the previous kelvin are
+::    refused until it is updated.
+::
+::    .prev (live to previous) and .next (previous to live) are called
+::    with +slum, since one side of each is not the live $vase.  .vase is
+::    the previous kelvin's $vase type.  .tube makes a live tube usable by
+::    code of the previous kelvin.
+::
+++  zuse-prev
+  ?.  =(%408 zuse)  ~
+  %-  some
+  :*  zuse=%409
+      prev=prev-vase:h135
+      next=next-vase:h136
+      vase=-:!>(*vase:h136)
+    ::
+      ^=  tube
+      |=  tub=$-(vase vase)
+      ^-  vase
+      !>
+      |=  v=vase:h136
+      ^-  vase:h136
+      =/  out  (tub !<(vase [-:!>(*vase) (slum next-vase:h136 v)]))
+      !<(vase:h136 [-:!>(*vase:h136) (slum prev-vase:h135 out)])
+  ==
 ::                                                      ::  ::
 ::::                                                    ::  ::  (2) engines
   ::                                                    ::  ::

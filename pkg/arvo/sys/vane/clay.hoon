@@ -645,8 +645,15 @@
     ::  the desk's zuse kelvin
     ::
     =/  zuv=@ud  ?~(wish zuse ;;(@ud (wis 'zuse')))
-    ?.  |(=(zuse zuv) =(%409 zuv))
-      ~|([%clay-unsupported-kelvin zuv] !!)
+    ::  conversions to and from the desk's kelvin, or ~ for the live one.
+    ::  another supported kelvin is the previous one (see +zuse-prev).
+    ::
+    =/  sim
+      ?:  =(zuse zuv)  ~
+      =/  pre  zuse-prev
+      ?.  &(?=(^ pre) =(zuse.u.pre zuv))
+        ~|([%clay-unsupported-kelvin zuv] !!)
+      pre
     ::  vase tools of the desk's kernel
     ::
     =/  my-slam=*  ?~(wish slam (wis 'slam'))
@@ -671,21 +678,16 @@
     =/  ford-gate  (slum my-slub [fuz [%limb %ford]])
     ::  convert a vase between the live kelvin and the desk's
     ::
-    ::    these are called with +slum, since the vase is not of the live
-    ::    $vase type on one side.  a supported kelvin other than the live
-    ::    one is the previous kelvin, which +prev-vase:h135 and
-    ::    +next-vase:h136 convert from and to.
-    ::
     =/  prev
       |=  v=vase
       ^-  *
-      ?:  =(zuse zuv)  v
-      (slum prev-vase:h135 v)
+      ?~  sim  v
+      (slum prev.u.sim v)
     =/  next
       |=  n=*
       ^-  *
-      ?:  =(zuse zuv)  n
-      (slum next-vase:h136 n)
+      ?~  sim  n
+      (slum next.u.sim n)
     ::  a vase or cage produced in the desk's kelvin, as a live one
     ::
     ::    extract with !< (a type check), not ;; (a clam), which would walk

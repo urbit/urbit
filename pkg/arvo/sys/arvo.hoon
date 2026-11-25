@@ -403,6 +403,19 @@
     ~
   `[[q.p.i q.p.i.t]:p.u.lot u.bem]
 ::
+::  +hoon-prev: the previous hoon kelvin, whose types +look converts
+::
+::    kelvins count down, so this is +(hoon-version).  +next-type is
+::    hoon.hoon's history arm for the pair of kelvins, so this is written
+::    for one live kelvin and is ~ for any other: after a kelvin bump, the
+::    previous kelvin's types fail the check until it is updated.  see
+::    +zuse-prev in zuse for the same, by zuse kelvin.
+::
+++  hoon-prev
+  ?.  =(%135 hoon-version)  ~
+  %-  some
+  [kel=%136 next-type=next-type:h136]
+::
 ++  look
   ~/  %look
   |=  [rof=roof lyc=gang pov=path]
@@ -416,21 +429,24 @@
   =*  vax  q.u.u.dat
   ::  .ref is the type the requester asked for, tagged with the hoon
   ::  kelvin it was compiled with.  a type from the previous kelvin is
-  ::  converted with +next-type before the check.  (gall relabels the few
-  ::  results whose value is a vase or tube for such a requester; see
-  ::  +ap-look in gall.)
+  ::  converted to the live one (see +hoon-prev) before the check.  (gall
+  ::  relabels the few results whose value is a vase or tube for such a
+  ::  requester; see +ap-look in gall.)
   ::
   ?.  =>  :*  ref=ref
               vax=p=p.vax
               hoon-version=hoon-version
-              next-type=next-type:h136
+              hoon-prev=hoon-prev
               slum=slum
               wa=wa
               worm=worm
           ==
       ~>  %memo./arvo/look                  ::  with memoization
-      =?  ref  ?=([%136 *] ref)
-        [%135 (slum next-type +.ref)]
+      =?  ref  ?&  ?=(^ hoon-prev)
+                   ?=(^ ref)
+                   =(kel.u.hoon-prev -.ref)
+               ==
+        [hoon-version (slum next-type.u.hoon-prev +.ref)]
       ?&  ?=(^ ref)
           =(hoon-version -.ref)
           -:(~(nets wa *worm) +.ref p.vax)

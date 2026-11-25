@@ -544,15 +544,17 @@
   |=  kel=@ud
   ^-  @t
   =/  old-zuse  (trip zus)
-  =/  i  (find "++  zuse" old-zuse)
+  =/  i  (find "++  zuse  " old-zuse)
   ?~  i  !!
-  =/  next-zuse  "++  zuse  `@`%{(scow %ud kel)}"
-    %-  crip
-    ;:  welp
-      (scag u.i old-zuse)
-      next-zuse
-      (slag (add u.i (lent next-zuse)) old-zuse)
-    ==
+  ::  replace the rest of that line
+  ::
+  =/  len  (need (find "\0a" (slag u.i old-zuse)))
+  %-  crip
+  ;:  welp
+    (scag u.i old-zuse)
+    "++  zuse  `@`%{(scow %ud kel)}"
+    (slag (add u.i len) old-zuse)
+  ==
 ::
 ++  agent
   ^-  page:clay

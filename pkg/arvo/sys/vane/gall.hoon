@@ -29,29 +29,38 @@
 ::    live kelvin.  clay only builds agents of the live and previous
 ::    kelvins (see +build-ford-api in clay).
 ::
-::    +next-vase:h136 and +prev-vase:h135 are called with +slum, since the
-::    vase is not of the live $vase type on one side.  the result is
-::    extracted with !< (a type check), not ;; (a clam), which would walk
-::    the whole $type noun.
+::    the conversions are +zuse-prev's.  the result is extracted with !<
+::    (a type check), not ;; (a clam), which would walk the whole $type
+::    noun.
 ::
 ++  vez
   |=  zuv=@ud
   |%
+  ::  +sim: the conversions, or ~ for an agent of the live kelvin
+  ::
+  ++  sim
+    ?:  |(=(0 zuv) =(zuse zuv))  ~
+    =/  pre  zuse-prev
+    ?.  &(?=(^ pre) =(zuse.u.pre zuv))
+      ~|([%gall-unsupported-kelvin zuv] !!)
+    pre
   ::  +prev: whether the agent is of the previous kelvin
   ::
-  ++  prev  =(%409 zuv)
+  ++  prev  !=(~ sim)
   ::
   ++  to-live
     |=  v=vase
     ^-  vase
-    ?.  prev  v
-    !<(vase [-:!>(*vase) (slum next-vase:h136 v)])
+    =/  s  sim
+    ?~  s  v
+    !<(vase [-:!>(*vase) (slum next.u.s v)])
   ::
   ++  to-desk
     |=  v=vase
     ^-  vase
-    ?.  prev  v
-    !<(vase [-:!>(*vase) (slum prev-vase:h135 v)])
+    =/  s  sim
+    ?~  s  v
+    !<(vase [-:!>(*vase) (slum prev.u.s v)])
   ::
   ++  cage-to-live
     |=  c=cage
@@ -2815,7 +2824,8 @@
         %+  trace  odd.veb.bug.state
         |+[leaf+"insufficient permission: {sef} scrying for {tar}" ~]
       =/  dat  (rof lyc pov omen)
-      ?.  prev:(vez zuv.yoke)  dat
+      =/  sim  sim:(vez zuv.yoke)
+      ?~  sim                dat
       ?.  ?=([~ ~ *] dat)    dat
       ::  an agent of the previous kelvin: relabel clay's %cr and %cc results
       ::
@@ -2828,7 +2838,7 @@
       ::    %cr: label the result with the previous kelvin's $vase type.  the
       ::    file's vase inside is already in the desk's kelvin (see
       ::    +read-r in clay), which is the agent's when it reads its own
-      ::    desk.  we don't convert it with +prev-vase: the $type of a file
+      ::    desk.  we don't convert it with .prev: the $type of a file
       ::    can refer to all of zuse, which is too large to walk.
       ::
       ::    %cc: clay's tube takes and produces live vases (see
@@ -2837,16 +2847,8 @@
       ::
       :^  ~  ~  p.u.u.dat
       ?+  vis.omen  q.u.u.dat
-        ?(%cr [%c %r])  `vase`[p:!>(*vase:h136) !<(vase q.u.u.dat)]
-      ::
-          ?(%cc [%c %c])
-        !>
-        =>  [tv=q.u.u.dat ..vez]
-        |=  v=vase:h136
-        ^-  vase:h136
-        =/  liv  (slum next-vase:h136 v)
-        =/  out  (slum +.tv liv)
-        !<(vase:h136 [-:!>(*vase:h136) (slum prev-vase:h135 out)])
+        ?(%cr [%c %r])  `vase`[vase.u.sim !<(vase q.u.u.dat)]
+        ?(%cc [%c %c])  (tube.u.sim !<(tube:clay q.u.u.dat))
       ==
     ::  +ap-ingest: call agent arm
     ::
