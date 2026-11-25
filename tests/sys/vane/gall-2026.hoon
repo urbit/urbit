@@ -124,7 +124,8 @@
       |=  [a=arm b=vase]
       ^-  (list card:agent:gall)
       (murn (~(get ja j) a) |=(f=fec (f b)))
-    ^-  agent:gall
+    :-  %new-agent
+    ^-  form:agent:gall
     |_  =bowl:gall
     +*  this  .
     ++  on-init   [(c %on-init !>(~)) this]
@@ -186,7 +187,8 @@
   =/  perm=[(set perm:gall) (set perm:gall)]
     ?:  ?=(%.n -.super)  [(~(put in p.super) [%write [~ %mock]]) ~]
     [[[%super ~] ~ ~] ~]
-  (call:g default-duct ~ %load [dude [our.g %desk da+now.g] perm agent]~)
+  =/  =pack:gall  [[our.g %desk da+now.g] zuse perm (my [dude !>(agent)]~)]
+  (call:g default-duct ~ %load (my [%desk pack]~))
 ::
 ++  do-load-mock-super
   ::NOTE  grant super permissions so that perm checks always pass

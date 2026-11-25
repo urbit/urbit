@@ -1,9 +1,10 @@
 /+  default-agent, verb, dbug
 ::
 =|  state=~
+:-  %new-agent
 %-  agent:dbug
 %+  verb  &
-^-  agent:gall
+^-  form:agent:gall
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)
@@ -21,8 +22,8 @@
   (on-agent:def +<)
 ::
 ++  on-fail
-  |=  [=term =tang]
-  (mean ':pub +on-fail' term tang)
+  |=  [=frag:agent:gall =call:agent:gall]
+  (mean leaf+":pub +on-fail {<from.frag>}" tang.frag)
 ::
 ++  on-leave
   |=  =path

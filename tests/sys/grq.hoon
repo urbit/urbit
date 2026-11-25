@@ -25,7 +25,7 @@
       :~  :-  ~[/foo]  [%give %unto %poke-ack ~]
           :-  ~[/init]
           :*  %pass  /use/sub/0w1.d6Isf/out/~bud/pub/1/sub-foo/~bud
-              [%g %deal [~nec ~bud /gall/sub] %pub %watch /foo]
+              [%g %deal [~nec ~bud /gall/base] %pub %watch /foo]
       ==  ==
     ==
   :-  t1  |.  :-  %|
@@ -247,7 +247,7 @@
       [%gall %unto %kick ~]
       :~  :-  ~[/init]
           :*  %pass  /use/sub/0w1.d6Isf/out/~bud/pub/2/sub-foo/~bud
-              [%g %deal [~nec ~bud /gall/sub] %pub %watch /foo]
+              [%g %deal [~nec ~bud /gall/base] %pub %watch /foo]
       ==  ==
     ==
   :-  t17  |.  :-  %|

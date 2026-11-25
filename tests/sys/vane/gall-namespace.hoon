@@ -122,7 +122,8 @@
       |=  [a=arm b=vase]
       ^-  (list card:agent:gall)
       (murn (~(get ja j) a) |=(f=fec (f b)))
-    ^-  agent:gall
+    :-  %new-agent
+    ^-  form:agent:gall
     |_  =bowl:gall
     +*  this  .
     ++  on-init   [(c %on-init !>(~)) this]
@@ -184,7 +185,8 @@
   ::      originating from our agent.
   =/  perm=[(set perm:gall) (set perm:gall)]
     [[[%super ~] ~ ~] ~]
-  (call:g default-duct ~ %load [dude [our.g %desk da+now.g] perm agent]~)
+  =/  =pack:gall  [[our.g %desk da+now.g] zuse perm (my [dude !>(agent)]~)]
+  (call:g default-duct ~ %load (my [%desk pack]~))
 ::
 ++  do-deal
   |=  [=dude:gall =deal:gall]

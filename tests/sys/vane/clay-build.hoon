@@ -12,6 +12,7 @@
 /*  mar-mime  %hoon  /mar/mime/hoon
 /*  mar-bill  %hoon  /mar/bill/hoon
 /*  mar-seal  %hoon  /mar/seal/hoon
+/*  lib-ford  %hoon  /lib/ford/hoon
 ::
 !:
 =/  clay-gate  (clay-raw ~nul)
@@ -173,6 +174,7 @@
           [/mar/mime/hoon [%& hoon+mar-mime]]
           [/mar/bill/hoon [%& hoon+mar-bill]]
           [/mar/seal/hoon [%& hoon+mar-seal]]
+          [/lib/ford/hoon [%& hoon+lib-ford]]
           [/mar/txt/hoon [%& hoon+mar-txt]]
           [/mar/kelvin/hoon [%& hoon+mar-kel]]
       ==
@@ -183,6 +185,11 @@
         [/desk/bill [%& noun+[%bar]~]]
         [/lib/skeleton/hoon [%& hoon+lib-skel]]
         [/lib/default-agent/hoon [%& hoon+lib-def]]
+        [/mar/noun/hoon [%& hoon+mar-noun]]
+        [/mar/hoon/hoon [%& hoon+mar-hoon]]
+        [/mar/txt/hoon [%& hoon+mar-txt]]
+        [/mar/bill/hoon [%& hoon+mar-bill]]
+        [/mar/kelvin/hoon [%& hoon+mar-kel]]
     ==
   =/  =yoki:clay  [%& [*(list tako:clay) files]]
   [%park desk yoki *rang:clay]
@@ -288,14 +295,14 @@
   :-  %hoon
   '''
   /+  default-agent
-  /*  mar-noun  %hoon  /mar/noun/hoon
   /*  deppy     %hoon  /dep/hoon
   |%
   +$  state-0  [%0 val=@ud]
   --
   =|  state-0
   =*  state  -
-  ^-  agent:gall
+  :-  %new-agent
+  ^-  form:agent:gall
   |_  =bowl:gall
   +*  this  .
       def   ~(. (default-agent this %.n) bowl)
@@ -358,63 +365,6 @@
     %+  expect-moves  mov
     :~  ex-wick
         (ex-text ": /~nul/foo/3/dep/hoon")
-        ex-load
-    ==
-  =/  load-3=load:gall  (extract-load (snag 2 mov))
-  ?:  =(load load-3)
-    (fail:m 'agent(s) not rebuilt/changed when expected' ~)
-  (pure:m ~)
-::
-++  test-rebuild-if-builtin-dep-on-base-changes
-  ::  imported file is a built-in, the version of that file on base changes,
-  ::  agent must rebuild
-  ::
-  %-  eval-mare
-  =/  m  (mare ,~)
-  ::  general setup, install desk & run the agent
-  ::
-  ;<  =load:gall       bind:m  (do-setup %foo)
-  ::  changing /mar/noun on base should rebuild the agent
-  ::
-  ;<  mov=(list move)  bind:m
-    %^  do-park  %base  zuse
-    [/mar/noun/hoon %& hoon+(cat 3 '::test\0a' mar-noun)]~
-  ;<  ~  bind:m
-    %+  expect-moves  mov
-    :~  (ex-pass /kiln/bump/zeal %c %zeal ~)
-        ex-what
-        (ex [~[/blah] %slip %c %pork ~])
-    ==
-  ;<  mov=(list move)  bind:m  do-pork
-  ;<  ~  bind:m
-    %+  expect-moves  mov
-    :~  ex-wick
-        (ex-text ": /~nul/base/2/mar/noun/hoon")
-        ex-load
-    ==
-  =/  load-2=load:gall  (extract-load (snag 2 mov))
-  ?:  =(load load-2)
-    (fail:m 'agent(s) not rebuilt/changed when expected' ~)
-  (pure:m ~)
-::
-++  test-rebuild-if-builtin-override-changes
-  ::  imported file is a built-in, the agent desk gains its own version,
-  ::  agent must rebuild
-  ::
-  %-  eval-mare
-  =/  m  (mare ,~)
-  ::  general setup, install desk & run the agent
-  ::
-  ;<  =load:gall       bind:m  (do-setup %foo)
-  ::  adding /mar/noun.hoon to %foo desk should rebuild the agent
-  ::
-  ;<  mov=(list move)  bind:m
-    %^  do-park  %foo  zuse
-    [/mar/noun/hoon %& hoon+(cat 3 '::test\0a' mar-noun)]~
-  ;<  ~  bind:m
-    %+  expect-moves  mov
-    :~  ex-wick
-        (ex-text "+ /~nul/foo/2/mar/noun/hoon")
         ex-load
     ==
   =/  load-3=load:gall  (extract-load (snag 2 mov))

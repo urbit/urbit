@@ -6,6 +6,7 @@
 /*  mar-hoon  %hoon  /mar/hoon/hoon
 /*  mar-mime  %hoon  /mar/mime/hoon
 /*  mar-seal  %hoon  /mar/seal/hoon
+/*  lib-ford  %hoon  /lib/ford/hoon
 /*  mar-txt   %hoon  /mar/txt/hoon
 /*  mar-kel   %hoon  /mar/kelvin/hoon
 /*  mar-bill  %hoon  /mar/bill/hoon
@@ -247,6 +248,7 @@
             [/mar/mime/hoon [%& hoon+mar-mime]]
             [/mar/bill/hoon [%& hoon+mar-bill]]
             [/mar/seal/hoon [%& hoon+mar-seal]]
+            [/lib/ford/hoon [%& hoon+lib-ford]]
             [/mar/kelvin/hoon [%& hoon+mar-kel]]
             [/sys/zuse/hoon [%& hoon+(zuse-upd ?@(kel kel i.kel))]]
         ==
@@ -261,6 +263,7 @@
           [/mar/hoon/hoon [%& hoon+mar-hoon]]
           [/mar/txt/hoon [%& hoon+mar-txt]]
           [/mar/kelvin/hoon [%& hoon+mar-kel]]
+          [/mar/seal/hoon [%& hoon+mar-seal]]
       ::
           :-  /sys/kelvin
           :-  %&
@@ -566,7 +569,8 @@
   --
   =|  state-0
   =*  state  -
-  ^-  agent:gall
+  :-  %new-agent
+  ^-  form:agent:gall
   |_  =bowl:gall
   +*  this  .
       def   ~(. (default-agent this %.n) bowl)

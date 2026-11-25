@@ -127,7 +127,8 @@
       |=  [a=arm b=vase]
       ^-  (list card:agent:gall)
       (murn (~(get ja j) a) |=(f=fec (f b)))
-    ^-  agent:gall
+    :-  %new-agent
+    ^-  form:agent:gall
     |_  =bowl:gall
     +*  this  .
     ++  on-init   [(c %on-init !>(~)) this]
@@ -194,10 +195,14 @@
   =.  s  s(eny +(eny.s))
   %-  %-  do
             |=  g=_(g:*state)
-            =/  =load:gall
+            =/  =pack:gall
+              :^  [our.g %desk da+now.g]  zuse  [[[%super ~] ~ ~] ~]
+              %-  my
               %+  turn  agents
               |=  [=dude:gall =agent:gall]
-              [dude [our.g %desk da+now.g] [[[%super ~] ~ ~] ~] agent]
+              ^-  (pair dude:gall vase)
+              [dude !>(agent)]
+            =/  =load:gall  (my [%desk pack]~)
             (call:g default-duct ~ %load load)
         s
 ::

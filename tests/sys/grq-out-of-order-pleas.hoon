@@ -55,7 +55,7 @@
       :~  :-  ~[/foo]  [%give %unto %poke-ack ~]
           :-  ~[/init]
           :*  %pass  /use/sub/0w1.d6Isf/out/~bud/pub/1/sub-foo/~bud
-              [%g %deal [~nec ~bud /gall/sub] %pub %watch /foo]
+              [%g %deal [~nec ~bud /gall/base] %pub %watch /foo]
       ==  ==
     ==
   :-  t1  |.  :-  %|
@@ -300,7 +300,7 @@
   =^  t-leave  gall.nec
     %:  gall-call:v  gall.nec
         ~[/use/sub/0w1.d6Isf/out/~bud/pub/1/sub-foo/~bud /init]
-        [%deal [~nec ~bud /gall/sub] %pub %leave ~]
+        [%deal [~nec ~bud /gall/base] %pub %leave ~]
         *roof
     ==
   =^  t-leave-out  ames.nec
@@ -504,7 +504,8 @@
   ~?  >  dbug  '~bud revives %pub'
   =^  t-revive  gall.bud
     %+  gall-call:v  gall.bud
-    [~[/load] load/[[%pub [~bud %base da+~1111.1.1] test-pub]~] *roof]
+    =/  =pack:gall  [[~bud %base da+~1111.1.1] zuse [~ ~] (my [%pub !>(test-pub)]~)]
+    [~[/load] load/(my [%base pack]~) *roof]
   ::  ames gets a %spur to un-halt the backward flow, locally
   ::  and a %boon %spur to un-halt the forward flow, over the wire
   ::

@@ -31,7 +31,7 @@
 |%
 ::  voodoo basics
 ::
-+$  agent  $+(agent agent:gall)
++$  agent  $+(agent form:agent:gall)
 +$  bowl   $+(bowl bowl:gall)
 +$  card   $+(card card:agent:gall)
 +$  scry   $-(path (unit vase))
@@ -146,11 +146,11 @@
   ==
 ::
 ++  do  ::  execute agent lifecycle step with mocked scry
-  |=  call=$-(state [(list card) agent:gall])
+  |=  call=$-(state [(list card) agent])
   =/  m  (mare ,(list card))
   ^-  form:m
   |=  s=state
-  =;  result=(each [(list card) agent:gall] (list tank))
+  =;  result=(each [(list card) agent] (list tank))
     ?:  ?=(%| -.result)
       |+p.result
     =^  c  agent.s  p.result
@@ -162,8 +162,8 @@
           ::NOTE  we would ;;, but it's too slow.
           ::      we know for a fact p.res is of the type we expect,
           ::      so we just play pretend with vases instead.
-          !<  [(list card) agent:gall]
-          [-:!>(*[(list card) agent:gall]) p.res]
+          !<  [(list card) agent]
+          [-:!>(*[(list card) agent]) p.res]
       %1  |+~['blocking on scry' >;;(path p.res)<]
       %2  |+p.res
     ==
@@ -202,7 +202,8 @@
 ::
 ++  do-init
   =+  scry-warn=&
-  |=  [dap=term =agent]
+  |=  [dap=term new=agent:gall]
+  =/  =agent  fom.new
   =/  m  (mare ,(list card))
   ^-  form:m
   ;<  old-scry=scry  bind:m  |=(s=state &+[scry.s s])
@@ -219,7 +220,8 @@
 ::
 ++  do-load
   =+  scry-warn=&
-  |=  [=agent vase=(unit vase)]
+  |=  [new=agent:gall vase=(unit vase)]
+  =/  =agent  fom.new
   =/  m  (mare ,(list card))
   ^-  form:m
   ;<  old-scry=scry  bind:m  |=(s=state &+[scry.s s])
@@ -286,10 +288,10 @@
   (~(on-arvo agent.s bowl.s) wire gift)
 ::
 ++  do-fail
-  |=  [=term =tang]
+  |=  [=frag:agent:gall =call:agent:gall]
   %-  do
   |=  s=state
-  (~(on-fail agent.s bowl.s) term tang)
+  (~(on-fail agent.s bowl.s) frag call)
 ::
 ::  data extraction
 ::

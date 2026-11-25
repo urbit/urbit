@@ -21,11 +21,12 @@
       [%tend =coop:gall =path =page]
   ==
 --
+:-  %new-agent
 %+  verb  |
 %-  agent:dbug
 =|  state-0
 =*  state  -
-^-  agent:gall
+^-  form:agent:gall
 |_  =bowl:gall
 +*  this  .
     def   ~(. (default-agent this %|) bowl)

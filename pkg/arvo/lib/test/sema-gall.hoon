@@ -231,19 +231,16 @@
 ::
 ++  load-agent
   |=  [=ship =gall-gate =dude:gall =agent:gall]
+  =/  =load:gall
+    %-  my
+    :~  :-  %base
+        :*  byk=[ship %base da+~1111.1.1]
+            zus=zuse
+            per=[~ ~]
+            duz=(my [dude !>(agent)]~)
+    ==  ==
   =^  *  gall-gate
     %+  gall-call  gall-gate
-    [~[/load] load/[[dude [ship %base da+~1111.1.1] agent]~] *roof]
-  =^  *  gall-gate
-    =/  =sign-arvo
-      :+  %clay  %writ
-      `[[%a da+~1111.1.1 %base] /app/[dude]/hoon vase+!>(!>(agent))]
-    %:  gall-take
-      gall-gate
-      /sys/cor/[dude]/(scot %p ship)/base/(scot %da ~1111.1.1)
-      ~[/load]
-      sign-arvo
-      *roof
-    ==
+    [~[/load] load/load *roof]
   gall-gate
 --
