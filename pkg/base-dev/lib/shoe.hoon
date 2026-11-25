@@ -110,7 +110,7 @@
     *(quip card _^|(..on-init))
   ::
   ++  on-fail
-    |~  [term tang]
+    |~  [frag:agent:gall call:agent:gall]
     *(quip card _^|(..on-init))
   --
 ::  +default: bare-minimum implementations of shoe arms
@@ -149,7 +149,7 @@
   |=  =(shoe command-type)
   =|  state-2
   =*  state  -
-  ^-  agent:gall
+  ^-  form:agent:gall
   =>
     |%
     ++  deal
@@ -184,7 +184,7 @@
       og    ~(. shoe bowl)
   ::
   ++  on-init
-    ^-  (quip card:agent:gall agent:gall)
+    ^-  (quip card:agent:gall form:agent:gall)
     =^  cards  shoe  on-init:og
     [(deal cards) this]
   ::
@@ -192,7 +192,7 @@
   ::
   ++  on-load
     |=  old-state=vase
-    ^-  (quip card:agent:gall agent:gall)
+    ^-  (quip card:agent:gall form:agent:gall)
     ::  we could be upgrading from a shoe-less app, in which case the vase
     ::  contains inner application state instead of our +on-save.
     ::  to distinguish between the two, we check for the presence of our own
@@ -243,7 +243,7 @@
   ::
   ++  on-poke
     |=  [=mark =vase]
-    ^-  (quip card:agent:gall agent:gall)
+    ^-  (quip card:agent:gall form:agent:gall)
     ?.  ?=(%sole-action mark)
       =^  cards  shoe  (on-poke:og mark vase)
       [(deal cards) this]
@@ -360,7 +360,7 @@
   ::
   ++  on-watch
     |=  =path
-    ^-  (quip card:agent:gall agent:gall)
+    ^-  (quip card:agent:gall form:agent:gall)
     ?~  sole-id=(path-to-id:sole path)
       =^  cards  shoe
         (on-watch:og path)
@@ -376,7 +376,7 @@
   ::
   ++  on-leave
     |=  =path
-    ^-  (quip card:agent:gall agent:gall)
+    ^-  (quip card:agent:gall form:agent:gall)
     =^  cards  shoe  (on-leave:og path)
     [(deal cards) this]
   ::
@@ -388,20 +388,20 @@
   ::
   ++  on-agent
     |=  [=wire =sign:agent:gall]
-    ^-  (quip card:agent:gall agent:gall)
+    ^-  (quip card:agent:gall form:agent:gall)
     =^  cards  shoe  (on-agent:og wire sign)
     [(deal cards) this]
   ::
   ++  on-arvo
     |=  [=wire gift=gift-user-v1:gall]
-    ^-  (quip card:agent:gall agent:gall)
+    ^-  (quip card:agent:gall form:agent:gall)
     =^  cards  shoe  (on-arvo:og wire gift)
     [(deal cards) this]
   ::
   ++  on-fail
-    |=  [=term =tang]
-    ^-  (quip card:agent:gall agent:gall)
-    =^  cards  shoe  (on-fail:og term tang)
+    |=  [=frag:agent:gall =call:agent:gall]
+    ^-  (quip card:agent:gall form:agent:gall)
+    =^  cards  shoe  (on-fail:og frag call)
     [(deal cards) this]
   --
 ::
