@@ -10631,9 +10631,13 @@
             ^+  ev-core
             ?:  delete-per
               ev-core(skip-abet delete-per)
+            :: a check for default state is not by itself sufficient:
+            :: a flow can be reset by a halt or resume due to a flub.
+            ::
             =?  flows.per  ?&  !fo-corked
-                               !=(*flow-state state)
-                           ==
+                               ?|  !=(*flow-state state)
+                                   (~(has by flows.per) bone^dire)
+                           ==  ==
               (~(put by flows.per) bone^dire state)
             %_    ev-core
                 ames-state
