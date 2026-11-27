@@ -10631,8 +10631,11 @@
             ^+  ev-core
             ?:  delete-per
               ev-core(skip-abet delete-per)
-            :: a check for default state is not by itself sufficient:
-            :: a flow can be reset by a halt or resume due to a flub.
+            ::  don't create an entry for a flow with no state (e.g. a
+            ::  dropped seq=1 %cork; see +fo-sink-plea), but always write
+            ::  back to an existing one: a flow whose first $plea was
+            ::  flubbed returns to the bunt when the pending ack is dropped
+            ::  or when %spur clears the halt.
             ::
             =?  flows.per  ?&  !fo-corked
                                ?|  !=(*flow-state state)
