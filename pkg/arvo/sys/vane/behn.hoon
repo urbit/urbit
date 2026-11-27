@@ -62,7 +62,7 @@
     =?    ..this
         ?~  unix-duct.state  |
         =/  dif=[old=(unit @da) new=(unit @da)]  [next-wake.state new]
-        ?+  dif  ~|([%unpossible dif] !!)
+        ?-  dif
           [~ ~]  |                        :: no-op
           [~ ^]  &                        :: set
           [^ ~]  &                        :: clear
