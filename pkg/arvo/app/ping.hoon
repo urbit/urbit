@@ -22,18 +22,20 @@
 ::
 +$  card  card:agent:gall
 ::
-+$  state-3
-  $:  %3
++$  state-4
+  $:  %4
      mode=?(%formal %informal)
      pokes=@ud
      timer=(unit [=wire date=@da])
      galaxy=@p
+     timeout=(unit [=wire date=@da])
+     down=?
   ==
 --
 ::
 %-  agent:dbug
 ::
-=|  state=state-3
+=|  state=state-4
 =>  |%
   ++  galaxy-for
     |=  [=ship =bowl:gall]
@@ -48,6 +50,17 @@
     ^-  card
     [%pass wire %arvo %b %wait (add nat-timeout now)]
   ::
+  ++  expire
+    |=  [=wire now=@da]
+    ^-  (quip card _state)
+    :_  state(timeout `[wire (add ~m2 now)])
+    [%pass wire %arvo %b %wait (add ~m2 now)]~
+  ::
+  ++  restore
+    |=  [=wire now=@da]
+    ^-  card
+    [%pass wire %arvo %b %rest (add ~m2 now)]
+  ::
   ++  ping
     |=  [=ship force=?]
     ^-  (quip card _state)
@@ -55,6 +68,7 @@
       [~ state]
     :_  state(pokes +(pokes.state), galaxy ship)
     [%pass /ping %agent [ship %ping] %poke %noun !>(~)]~
+::
 --
 %+  verb  |
 ^-  agent:gall
@@ -78,7 +92,8 @@
   =?  old  ?=(%0 -.old)  (state-0-to-1 old)
   =?  old  ?=(%1 -.old)  (state-1-to-2 old)
   =?  old  ?=(%2 -.old)  (state-2-to-3 old)
-  ?>  ?=(%3 -.old)
+  =?  old  ?=(%3 -.old)  (state-3-to-4 old)
+  ?>  ?=(%4 -.old)
   =.  state  old
   [~ this]
   ::
@@ -88,7 +103,7 @@
         [%http until=@da]
         [%waiting until=@da]
     ==
-  +$  state-any  $%(state-0 state-1 state-2 state-3)
+  +$  state-any  $%(state-0 state-1 state-2 state-3 state-4)
   +$  state-0    [%0 ships=(map ship [=rift =ship-state])]
   +$  state-1
     $:  %1
@@ -111,6 +126,13 @@
             [%one ~]
         ==
     ==
+  +$  state-3
+    $:  %3
+      mode=?(%formal %informal)
+      pokes=@ud
+      timer=(unit [=wire date=@da])
+      galaxy=@p
+    ==
   ::
   ++  state-0-to-1
     |=  old=state-0
@@ -126,13 +148,19 @@
     |=  old=state-2
     ^-  state-3
     :*  %3  %formal  0  ~
-    =/  galaxy=(list @p)
-      %+  skim  ~(tap in ships.old)
-      |=(p=@p ?=(%czar (clan:title p)))
-    ?:  =(1 (lent galaxy))
-      -.galaxy
-    (head (flop (^saxo:title our.bowl)))
+      =/  galaxy=(list @p)
+        %+  skim  ~(tap in ships.old)
+        |=(p=@p ?=(%czar (clan:title p)))
+      ?:  =(1 (lent galaxy))
+        -.galaxy
+      (head (flop (^saxo:title our.bowl)))
     ==
+  ::
+  ++  state-3-to-4
+    |=  old=state-3
+    ^-  state-4
+    old(- %4, galaxy [galaxy.old ~ %.n])
+  ::
   --
 ::  +on-poke: positively acknowledge pokes
 ::
@@ -144,15 +172,30 @@
   ?:  ?=(%czar (clan:title our.bowl))
     `this
   ::
+  ~&  mark^vase
   =^  cards  state
     ?:  ?=([%kick ?] q.vase)
       =?  mode.state  =(+.q.vase %.y)
         %formal
-      (ping (galaxy-for our.bowl bowl) %.n)
+      =^  ping-moves  state
+        (ping (galaxy-for our.bowl bowl) %.n)
+      =^  expire-moves  state
+        ?^  timeout.state  `state
+        (expire /ping now.bowl)
+      [(weld ping-moves expire-moves) state]
     ::
     ?:  |(=(q.vase %once) =(q.vase %stop))  :: NB: ames calls this on %once
       =.  mode.state  %informal
-      (ping (galaxy-for our.bowl bowl) %.y)
+      =^  ping-moves  state
+        (ping (galaxy-for our.bowl bowl) %.y)
+      =^  expire-moves  state
+        ^-  (quip card _state)
+        :_  state(down %.n, timeout ~)
+        ^-  (list card)
+        ?~  timeout.state  ~
+        [%pass wire.u.timeout.state %arvo %b %rest date.u.timeout.state]~
+      [(weld ping-moves expire-moves) state]
+    ::
     `state
   [cards this]
 ::
@@ -160,7 +203,9 @@
   |=  =path
   ^-  (unit (unit cage))
   ?<  ?=([%x %whey ~] path)
-  ``noun+!>(state)
+  ?+  path  ~
+    [%x %down ~]  ``atom+!>(down.state)
+  ==
 ::  +on-agent: handle ames ack
 ::
 ++  on-agent
@@ -176,8 +221,13 @@
   ?.  |(?=(%formal mode.state) ?=(^ p.sign))
     `this
   =/  wir  /wait
-  =.  timer.state  `[wir now.bowl]
-  [[(wait-card wir now.bowl)]~ this]
+  =.  timer.state    `[wir now.bowl]
+  =.  down.state     %.n
+  :_  this(timeout.state ~)
+  :*  [(wait-card wir now.bowl)]
+      ?~  timeout.state  ~
+      [%pass wire.u.timeout.state %arvo %b %rest date.u.timeout.state]~
+  ==
 ::  +on-arvo: handle timer firing
 ::
 ++  on-arvo
@@ -185,6 +235,10 @@
   ^-  [(list card) _this]
   =^  cards  state
     ?+    wire  `state
+        [%ping *]
+      =^  expire-moves  state  (expire wire now.bowl)
+      [expire-moves state(down %.y)]
+    ::
         [%wait *]
       ?:  ?=(%czar (clan:title our.bowl))
         `state
