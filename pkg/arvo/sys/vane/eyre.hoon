@@ -262,6 +262,21 @@
   ::  if we reached this, we have an invalid action key. fail parsing.
   ::
   ~
+::  +html-octs: manx to octs with <!DOCTYPE html>
+::
+++  html-octs
+  |=  =manx
+  ^-  octs
+  %-  as-octt:mimes:html
+  %+  weld  "<!DOCTYPE html>"
+  (en-xml:html manx)
+::  +auth-favicon: icon link for login and eauth pages
+::
+++  auth-favicon
+  "data:image/svg+xml;utf8,".
+  "<svg width='10' height='10' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'>".
+    "<circle r='3.09' cx='5' cy='5' />".
+  "</svg>"
 ::  +auth-styling: css for login and eauth pages
 ::
 ++  auth-styling
@@ -300,7 +315,7 @@
     display: flex;
     flex-flow: column nowrap;
     justify-content: center;
-    max-width: 300px;
+    max-width: 320px;
     padding: 1rem;
     width: 100%;
   }
@@ -312,36 +327,6 @@
   #eauth input {
     /*NOTE dumb hack to get approx equal height with #local */
     margin-bottom: 15px;
-  }
-  body nav {
-    background: var(--gray-100);
-    border-radius: 2rem;
-    display: flex;
-    justify-content: space-around;
-    overflow: hidden;
-    margin-bottom: 1rem;
-  }
-  body nav div {
-    width: 50%;
-    padding: 0.5rem 1rem;
-    text-align: center;
-    cursor: pointer;
-  }
-  body.local nav div.local,
-  body.eauth nav div.eauth {
-    background: var(--gray-800);
-    color: var(--white);
-    cursor: default;
-  }
-  nav div.local {
-    border-right: none;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-  }
-  nav div.eauth {
-    border-left: none;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
   }
   body > *,
   form > input {
@@ -361,6 +346,7 @@
     color: var(--gray-800);
     box-shadow: none;
     width: 100%;
+    box-sizing: border-box;
   }
   input:disabled {
     background: var(--gray-100);
@@ -377,6 +363,35 @@
     outline: none;
     color: var(--red);
   }
+  #access-key-row {
+    position: relative;
+    width: 100%;
+  }
+  #access-key-row input {
+    padding-right: 2rem;
+  }
+  #secret-toggle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    padding: 0 0.6rem;
+    background: none;
+    border: none;
+    color: inherit;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  #secret-toggle svg {
+    color: var(--gray-400);
+  }
+  #secret-toggle.secret .eye-open {
+    display: none;
+  }
+  #secret-toggle:not(.secret) .eye-closed {
+    display: none;
+  }
   button[type=submit] {
     margin-top: 1rem;
   }
@@ -390,7 +405,7 @@
     font-weight: 600;
     text-decoration: none;
   }
-  input:invalid ~ button[type=submit] {
+  form:invalid button[type=submit] {
     border-color: currentColor;
     background: var(--gray-100);
     color: var(--gray-400);
@@ -441,20 +456,14 @@
   |=  [redirect-url=(unit @t) our=@p =identity eauth=(unit ?) failed=?]
   ^-  octs
   =+  redirect-str=?~(redirect-url "" (trip u.redirect-url))
-  %-  as-octs:mimes:html
-  %-  crip
-  %-  en-xml:html
-  =/  favicon  %+
-    weld  "<svg width='10' height='10' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'>"
-          "<circle r='3.09' cx='5' cy='5' /></svg>"
+  %-  html-octs
   ;html
     ;head
       ;meta(charset "utf-8");
-      ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
-      ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
+      ;meta(name "viewport", content "width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no");
+      ;link(rel "icon", type "image/svg+xml", href auth-favicon);
       ;title:"Urbit"
       ;style:"{(trip auth-styling)}"
-      ;style:"{?^(eauth "" "nav \{ display: none; }")}"
       ;script:"our = '{(scow %p our)}';"
       ;script:'''
               let name, pass;
@@ -477,6 +486,16 @@
                   goLocal();
                 }
               }
+              function setSecretMode(btn, val) {
+                let inputType = val ? 'password' : 'text';
+                pass.setAttribute('type', inputType);
+                pass.focus();
+                if (val) {
+                  btn.classList.remove('secret');
+                } else {
+                  btn.classList.add('secret');
+                }
+              }
               '''
     ==
     ;body
@@ -484,7 +503,7 @@
       =onload  "setup({?:(=(`& eauth) "true" "false")})"
       ;div#local
         ;p:"Urbit ID"
-        ;input(value "{(scow %p our)}", disabled "true", class "mono");
+        ;input(id "our", value "{(scow %p our)}", disabled "true", class "mono");
         ;+  ?:  =(%ours -.identity)
               ;div
                 ;p:"Already authenticated"
@@ -492,16 +511,59 @@
               ==
         ;form(action "/~/login", method "post", enctype "application/x-www-form-urlencoded")
           ;p:"Access Key"
-          ;input
-            =type  "password"
-            =name  "password"
-            =id    "pass"
-            =placeholder  "sampel-ticlyt-migfun-falmel"
-            =class  "mono"
-            =required  "true"
-            =minlength  "27"
-            =maxlength  "27"
-            =pattern  "((?:[a-z]\{6}-)\{3}(?:[a-z]\{6}))";
+          ;div#access-key-row
+            ;input
+              =type  "password"
+              =name  "password"
+              =id    "pass"
+              =placeholder  "sampel-ticlyt-migfun-falmel"
+              =spellcheck  "false"
+              =class  "mono"
+              =required  "true"
+              =minlength  "27"
+              =maxlength  "27"
+              =pattern  "((?:[a-z]\{6}-)\{3}(?:[a-z]\{6}))";
+            ;button#secret-toggle.secret
+              =type  "button"
+              =onclick  "setSecretMode(this, pass.getAttribute('type') == 'text')"
+              ;svg.eye-open
+                =xmlns  "http://www.w3.org/2000/svg"
+                =width  "18"
+                =height  "18"
+                =viewBox  "0 0 24 24"
+                =fill  "none"
+                =stroke  "currentColor"
+                =stroke-width  "2"
+                =stroke-linecap  "round"
+                =stroke-linejoin  "round"
+                ;path
+                  =d  "M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 ".
+                      "1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"
+                  ;*  ~
+                ==
+                ;circle(cx "12", cy "12", r "3");
+              ==
+              ;svg.eye-closed
+                =xmlns  "http://www.w3.org/2000/svg"
+                =width  "18"
+                =height  "18"
+                =viewBox  "0 0 24 24"
+                =fill  "none"
+                =stroke  "currentColor"
+                =stroke-width  "2"
+                =stroke-linecap  "round"
+                =stroke-linejoin  "round"
+                ;path
+                  =d  "M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 ".
+                      "1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49";
+                ;path(d "M14.084 14.158a3 3 0 0 1-4.242-4.242");
+                ;path
+                  =d  "M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 ".
+                      "0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143";
+                ;path(d "m2 2 20 20");
+              ==
+            ==
+          ==
           ;input(type "hidden", name "redirect", value redirect-str);
           ;+  ?.  failed  ;span;
             ;span.failed
@@ -519,6 +581,7 @@
           ;input.mono
             =name  "name"
             =id    "name"
+            =autocomplete  "off"
             =placeholder  "{(scow %p our)}"
             =required   "true"
             =minlength  "4"
@@ -535,10 +598,13 @@
         ==
       ==
       ;*  ?:  ?=(%ours -.identity)  ~
-          =+  as="proceed as{?:(?=(%fake -.identity) " guest" "")}"
           ;+  ;span.guest.mono
                 ; Or try to
-                ;a/"{(trip (fall redirect-url '/'))}":"{as}"
+                ;a/"{(trip (fall redirect-url '/'))}"
+                  ;-  "proceed as "
+                  ;-  ?:  ?=(%fake -.identity)  "guest"
+                      (scow %p who.identity)
+                ==
                 ; .
               ==
     ==
@@ -564,9 +630,7 @@
           [%client goal=@t]  ::  we are the client, return to host
       ==
   ^-  octs
-  %-  as-octs:mimes:html
-  %-  crip
-  %-  en-xml:html
+  %-  html-octs
   =/  return=(unit @t)
     ?-  return
       ~            ~
@@ -575,9 +639,6 @@
                    (crip (en-urlt:html (trip last.return)))
       [%client *]  `goal.return  ::TODO  plus nonce? or abort?
     ==
-  =/  favicon  %+
-    weld  "<svg width='10' height='10' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'>"
-          "<circle r='3.09' cx='5' cy='5' /></svg>"
   =/  msg=tape
     ?~  return  "Something went wrong!"
     "Something went wrong! You will be redirected back..."
@@ -587,8 +648,8 @@
           :_  ~
           ;meta(http-equiv "Refresh", content "5; url={(trip u.return)}");
       ;meta(charset "utf-8");
-      ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
-      ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
+      ;meta(name "viewport", content "width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no");
+      ;link(rel "icon", type "image/svg+xml", href auth-favicon);
       ;title:"Urbit"
       ;style:'''
              @import url("https://rsms.me/inter/inter.css");
@@ -643,9 +704,7 @@
 ++  internal-server-error
   |=  [authorized=? url=@t t=tang]
   ^-  octs
-  %-  as-octs:mimes:html
-  %-  crip
-  %-  en-xml:html
+  %-  html-octs
   ;html
     ;head
       ;title:"500 Internal Server Error"
@@ -674,9 +733,7 @@
       %500  "Internal Server Error"
     ==
   ::
-  %-  as-octs:mimes:html
-  %-  crip
-  %-  en-xml:html
+  %-  html-octs
   ;html
     ;head
       ;title:"{(a-co:co code)} {message}"
@@ -2088,17 +2145,12 @@
         ++  confirmation-page
           |=  [server=ship nonce=@uv]
           ^-  octs
-          %-  as-octs:mimes:html
-          %-  crip
-          %-  en-xml:html
-          =/  favicon  %+
-            weld  "<svg width='10' height='10' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'>"
-                  "<circle r='3.09' cx='5' cy='5' /></svg>"
+          %-  html-octs
           ;html
             ;head
               ;meta(charset "utf-8");
-              ;meta(name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no");
-              ;link(rel "icon", type "image/svg+xml", href (weld "data:image/svg+xml;utf8," favicon));
+              ;meta(name "viewport", content "width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no");
+              ;link(rel "icon", type "image/svg+xml", href auth-favicon);
               ;title:"Urbit"
               ;style:"{(trip auth-styling)}"
               ;style:'''
@@ -2108,6 +2160,7 @@
                        padding: 1rem;
                        align-items: stretch;
                        font-size: 14px;
+                       box-sizing: border-box;
                      }
                      .red {
                        background: var(--black05) !important;
